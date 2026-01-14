@@ -1,0 +1,10 @@
+export const HR_ROLES = ["HR Manager", "System Manager", "HR User"];
+export const CRM_ROLES = ["Sales Manager", "CRM Manager", "System Manager", "Sales User"];
+export const SUPPLY_CHAIN_ROLES = ["Stock Manager", "Purchase Manager", "System Manager", "Stock User", "Purchase User"];
+export const FINANCE_ROLES = ["Accounts Manager", "Accounts User", "System Manager"];
+export const LENDING_ROLES = ["Lending Manager", "Loan Manager", "System Manager", "Loan User"];
+export const SYSTEM_ROLES = ["System Manager", "Administrator"];
+export const EMPLOYEE_ROLES = ["Employee", "System Manager", "Administrator"];
+export const HOSTING_ROLES = ["Hosting Client", "System Manager", "Administrator"];
+export const TELEPHONY_ROLES = ["Telephony Customer", "System Manager", "Administrator"];
+export const LMS_ROLES = ["LMS Student", "LMS Instructor", "System Manager", "Administrator"];

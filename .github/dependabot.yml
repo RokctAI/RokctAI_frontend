@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # Maintain Pip (Frappe/Python)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    # SAFETY: Creates PRs only. Does NOT auto-merge.
+    
+  # Maintain NPM (Node/JS)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    # SAFETY: Creates PRs only. Does NOT auto-merge.

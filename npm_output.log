@@ -1,0 +1,9 @@
+
+> gemini-chatbot@0.1.0 dev
+> next dev --turbo
+
+  ▲ Next.js 15.0.0-canary.152 (turbo)
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
