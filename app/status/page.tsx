@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, CheckCircle2, Clock } from "lucide-react";
-import { callPublicApi } from "@/app/services/api";
+import { callPublicApi } from "@/app/services/common/api";
 
 interface LogEntry {
     component: string;
