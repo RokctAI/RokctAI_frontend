@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { verifyHrRole } from "@/app/lib/roles";
-import { ExpenseService, ExpenseClaimData } from "@/app/services/all/hrms/expenses";
+import { ExpenseService } from "@/app/services/all/hrms/expenses";
+import type { ExpenseClaimData } from "@/app/services/all/hrms/expenses";
 
 export type { ExpenseClaimData };
 
