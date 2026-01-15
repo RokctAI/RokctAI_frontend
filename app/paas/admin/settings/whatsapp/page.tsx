@@ -181,7 +181,7 @@ export default function WhatsAppSettingsPage() {
                                 <div className="flex items-center space-x-2">
                                     <Input
                                         disabled
-                                        value={`https://${typeof window !== 'undefined' ? window.location.hostname : 'your-site.com'}/api/method/rokct.integrations.whatsapp.webhook`}
+                                        value={`https://${typeof window !== 'undefined' ? window.location.hostname : 'your-site.com'}/api/method/paas.whatsapp.api.webhook.webhook`}
                                         className="bg-muted"
                                     />
                                 </div>
