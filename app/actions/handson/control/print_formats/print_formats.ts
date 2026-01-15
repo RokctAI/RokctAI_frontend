@@ -1,6 +1,7 @@
 "use server";
 
-import { PrintFormatService, MasterPrintFormat } from "@/app/services/control/print_formats";
+import { PrintFormatService } from "@/app/services/control/print_formats";
+import type { MasterPrintFormat } from "@/app/services/control/print_formats";
 import { revalidatePath } from "next/cache";
 
 export type { MasterPrintFormat };
