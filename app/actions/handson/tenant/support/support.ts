@@ -1,6 +1,7 @@
 "use server";
 
-import { SupportService, ProviderTicketData } from "@/app/services/tenant/support";
+import { SupportService } from "@/app/services/tenant/support";
+import type { ProviderTicketData } from "@/app/services/tenant/support";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
