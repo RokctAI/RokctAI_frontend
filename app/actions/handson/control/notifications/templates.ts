@@ -3,8 +3,6 @@
 import { NotificationService } from "@/app/services/control/notification_templates";
 import type { NotificationTemplate } from "@/app/services/control/notification_templates";
 
-export type { NotificationTemplate };
-
 /**
  * Fetches all Email Templates from the Control Site.
  */
