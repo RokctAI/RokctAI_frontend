@@ -1,6 +1,7 @@
 "use server";
 
-import { ReportService, ReportDefinition } from "@/app/services/control/reports";
+import { ReportService } from "@/app/services/control/reports";
+import type { ReportDefinition } from "@/app/services/control/reports";
 import { revalidatePath } from "next/cache";
 
 export type { ReportDefinition };
