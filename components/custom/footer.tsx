@@ -24,9 +24,12 @@ export async function Footer() {
     if (Array.isArray(fetchedOpenings)) {
       openings = fetchedOpenings;
     }
-  } catch (e) {
-    // Fail silently
-    console.error("Footer jobs fetch error:", e);
+  } catch (e: any) {
+    // Fail silently. Permissions might be missing for Job Opening (Guest/Admin).
+    // Only log if NOT a permission error to avoid build noise.
+    if (e?.exc_type !== "PermissionError" && !e?.message?.includes("PermissionError")) {
+      console.error("Footer jobs fetch error:", e);
+    }
   }
 
   let version = "v1.0.0";
