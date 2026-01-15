@@ -4,8 +4,6 @@ import { TermsService } from "@/app/services/tenant/terms";
 import type { TenantTerm } from "@/app/services/tenant/terms";
 import { revalidatePath } from "next/cache";
 
-export type { TenantTerm };
-
 /**
  * Fetches "Standard" (Master) terms available for import.
  */
