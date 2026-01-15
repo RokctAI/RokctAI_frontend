@@ -91,7 +91,7 @@ export async function syncOnboardingToSite(userEmail: string) {
     }
 
     console.log(`[DUMMY SCRIPT] Connecting to ${userData.siteName}...`);
-    // 2. Real implementation would use fetch() to call `rokct.rokct.api.plan_builder.commit_plan`
+    // 2. Real implementation would use fetch() to call `core.api.plan_builder.commit_plan`
     // const response = await fetch(`https://${userData.siteName}/api/method/core.api.plan_builder.commit_plan`, { ... });
 
     console.log(`[DUMMY SCRIPT] Plan committed successfully to ${userData.siteName}!`);
