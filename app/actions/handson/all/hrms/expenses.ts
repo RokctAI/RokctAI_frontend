@@ -5,8 +5,6 @@ import { verifyHrRole } from "@/app/lib/roles";
 import { ExpenseService } from "@/app/services/all/hrms/expenses";
 import type { ExpenseClaimData } from "@/app/services/all/hrms/expenses";
 
-export type { ExpenseClaimData };
-
 export async function getExpenseClaimTypes() {
     if (!await verifyHrRole()) return [];
     try {
