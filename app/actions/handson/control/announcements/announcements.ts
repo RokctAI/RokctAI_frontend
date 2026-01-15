@@ -1,6 +1,6 @@
 "use server";
 
-import { AnnouncementService, Announcement } from "@/app/services/control/announcements";
+import { AnnouncementService, type Announcement } from "@/app/services/control/announcements";
 import { revalidatePath } from "next/cache";
 
 export type { Announcement };
