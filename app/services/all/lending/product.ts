@@ -3,7 +3,7 @@ import { BaseService, ServiceOptions } from "@/app/services/common/base";
 export class ProductService {
     static async getList(options?: ServiceOptions) {
         // Using existing backend method
-        const response = await BaseService.call("rokct.rlending.api.product.get_loan_product_list", {}, options);
+        const response = await BaseService.call("core.rlending.api.product.get_loan_product_list", {}, options);
         return response?.message || [];
     }
 
@@ -35,7 +35,7 @@ export class ProductService {
     }
 
     static async isControlSite(options?: ServiceOptions) {
-        const response = await BaseService.call("rokct.utils.is_control_site", {}, options);
+        const response = await BaseService.call("control.utils.is_control_site", {}, options);
         return response?.message === true;
     }
 }
