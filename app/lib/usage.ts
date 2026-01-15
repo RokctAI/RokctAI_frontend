@@ -8,7 +8,7 @@ export async function recordTokenUsage(session: any, tokens: number, model: stri
     }
 
     try {
-        await fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.rokct.tenant.api.record_token_usage`, {
+        await fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.record_token_usage`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export async function checkTokenQuota(session: any): Promise<boolean> {
     }
 
     try {
-        const usageRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.rokct.tenant.api.get_token_usage`, {
+        const usageRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`, {
             headers: {
                 "Authorization": `token ${session.user.apiKey}:${session.user.apiSecret}`
             },
