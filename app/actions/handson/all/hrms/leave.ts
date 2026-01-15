@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { verifyHrRole } from "@/app/lib/roles";
-import { LeaveService, LeaveApplicationData } from "@/app/services/all/hrms/leave";
+import { LeaveService } from "@/app/services/all/hrms/leave";
+import type { LeaveApplicationData } from "@/app/services/all/hrms/leave";
 
 export type { LeaveApplicationData };
 
