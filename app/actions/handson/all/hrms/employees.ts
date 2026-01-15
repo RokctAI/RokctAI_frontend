@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { verifyHrRole } from "@/app/lib/roles";
-import { EmployeeService, type EmployeeData } from "@/app/services/all/hrms/employees";
+import { EmployeeService } from "@/app/services/all/hrms/employees";
+import type { EmployeeData } from "@/app/services/all/hrms/employees";
 
 export type { EmployeeData };
 
