@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { verifyHrRole } from "@/app/lib/roles";
-import { DepartmentService, DepartmentData } from "@/app/services/all/hrms/departments";
+import { DepartmentService, type DepartmentData } from "@/app/services/all/hrms/departments";
 
 export type { DepartmentData };
 
