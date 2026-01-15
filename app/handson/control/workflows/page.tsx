@@ -15,12 +15,12 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 
 import {
-    WorkflowRule,
     getGlobalWorkflows,
     saveGlobalWorkflow,
     deleteGlobalWorkflow,
     seedWorkflows
 } from "@/app/actions/handson/control/workflows/workflows";
+import type { WorkflowRule } from "@/app/services/control/workflows";
 
 const OPERATORS = [
     { label: "Equals", value: "equals" },
