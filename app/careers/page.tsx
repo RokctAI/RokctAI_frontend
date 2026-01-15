@@ -10,8 +10,10 @@ export default async function CareersPage() {
     let openings: any[] = [];
     try {
         openings = await JobsService.getOpenings();
-    } catch (e) {
-        console.error("Failed to fetch jobs:", e);
+    } catch (e: any) {
+        if (e?.exc_type !== "PermissionError" && !e?.message?.includes("PermissionError")) {
+            console.error("Failed to fetch jobs:", e);
+        }
     }
 
     return (
