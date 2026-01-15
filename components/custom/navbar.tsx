@@ -34,7 +34,7 @@ export const Navbar = async () => {
     // Logic for AI Usage Check (existing)
     if (session.user.apiKey && session.user.apiSecret && session.user.isPaaS) {
       try {
-        const usageRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.rokct.tenant.api.get_token_usage`, {
+        const usageRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`, {
           headers: {
             "Authorization": `token ${session.user.apiKey}:${session.user.apiSecret}`
           }
