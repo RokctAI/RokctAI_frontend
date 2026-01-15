@@ -247,7 +247,7 @@ export const {
           // If a Tenant Admin logs in, push the secret to their site config
           if (isPaaSLogin && apiKey && apiSecret && platformSecret && roles.includes("System Manager")) {
             // Fire and Forget (don't block login)
-            fetch(`${baseUrl}/api/method/rokct.rokct.tenant.api.set_platform_secret`, {
+            fetch(`${baseUrl}/api/method/core.tenant.api.set_platform_secret`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -274,7 +274,7 @@ export const {
 
           if (isPaaSLogin && !isPlatformUrl) {
             try {
-              const subRes = await fetch(`${baseUrl}/api/method/rokct.rokct.tenant.api.get_subscription_details`, {
+              const subRes = await fetch(`${baseUrl}/api/method/core.tenant.api.get_subscription_details`, {
                 method: "GET",
                 headers: {
                   "Authorization": `token ${apiKey}:${apiSecret}`
@@ -305,7 +305,7 @@ export const {
           } else {
             // Standard Login (Control Site) OR Waiting Room
             try {
-              const subRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.control.api.get_my_subscription`, {
+              const subRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/control.control.api.subscription.get_my_subscription`, {
                 method: "GET",
                 headers: {
                   "Authorization": `token ${apiKey}:${apiSecret}`
