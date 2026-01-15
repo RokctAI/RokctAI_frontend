@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { verifyHrRole } from "@/app/lib/roles";
-import { PromotionService, PromotionData } from "@/app/services/all/hrms/promotions";
+import { PromotionService } from "@/app/services/all/hrms/promotions";
+import type { PromotionData } from "@/app/services/all/hrms/promotions";
 
 export type { PromotionData };
 
