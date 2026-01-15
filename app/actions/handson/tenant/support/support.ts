@@ -3,9 +3,7 @@
 import { SupportService } from "@/app/services/tenant/support";
 import type { ProviderTicketData } from "@/app/services/tenant/support";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
-
-export type { ProviderTicketData }; // Re-export if used elsewhere, or just import from service
+import { headers } from "next/headers"; // Re-export if used elsewhere, or just import from service
 
 /**
  * Fetches tickets raised by this Tenant from the Control Site.
