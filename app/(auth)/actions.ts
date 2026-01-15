@@ -64,7 +64,7 @@ export async function register(
     const baseUrl = process.env.ROKCT_BASE_URL;
     if (baseUrl) {
       // Resolve from Country Name (Dynamic based on form input)
-      const pricingRes = await fetch(`${baseUrl}/api/method/rokct.control.api.subscription.get_pricing_metadata?country=${encodeURIComponent(countryInput)}`, {
+      const pricingRes = await fetch(`${baseUrl}/api/method/control.control.api.subscription.get_pricing_metadata?country=${encodeURIComponent(countryInput)}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" }
       });
@@ -101,7 +101,7 @@ export async function register(
     if (companyName) {
       try {
         if (isServicePlan) { // Method 1: Service Provisioning (Creates Control Plane User)
-          const provisionRes = await fetch(`${baseUrl}/api/v1/method/rokct.control.provisioning.provision_service_subscription`, {
+          const provisionRes = await fetch(`${baseUrl}/api/v1/method/control.control.provisioning.provision_service_subscription`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -133,7 +133,7 @@ export async function register(
           }
 
         } else { // Method 2: Tenant Provisioning (Queues Site, User NOT created on Control Plane)
-          const provisionRes = await fetch(`${baseUrl}/api/v1/method/rokct.control.provisioning.provision_new_tenant`, {
+          const provisionRes = await fetch(`${baseUrl}/api/v1/method/control.control.provisioning.provision_new_tenant`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
