@@ -50,9 +50,8 @@ export async function getGuestCountryCode(): Promise<GeoIPData> {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    title: `GeoIP: Localhost detected`,
-                    message: `IP: ${ip}`,
-                    category: "GeoIP"
+                    error_message: `GeoIP: Localhost detected (IP: ${ip})`,
+                    context: JSON.stringify({ category: "GeoIP", ip: ip, level: "DEBUG" })
                 }),
                 keepalive: true
             }).catch(() => { });
@@ -90,9 +89,8 @@ export async function getGuestCountryCode(): Promise<GeoIPData> {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                            title: `GeoIP Success: ${ip}`,
-                            message: JSON.stringify(result),
-                            category: "GeoIP"
+                            error_message: `GeoIP Success: ${ip}`,
+                            context: JSON.stringify({ category: "GeoIP", result: result, level: "DEBUG" })
                         }),
                         keepalive: true
                     }).catch(() => { });
@@ -104,13 +102,12 @@ export async function getGuestCountryCode(): Promise<GeoIPData> {
     } catch (e) {
         // Remote Logging of failure
         if (isDebug) {
-            fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.control.api.system.log_client_event`, {
+            fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.log_frontend_error`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    title: `GeoIP Failure: ${ip}`,
-                    message: String(e),
-                    category: "GeoIP"
+                    error_message: `GeoIP Failure: ${ip} - ${String(e)}`,
+                    context: JSON.stringify({ category: "GeoIP", error: String(e), level: "ERROR" })
                 }),
                 keepalive: true
             }).catch(() => { });
