@@ -1,5 +1,5 @@
 {
     "git": {
-        "ignore": "case \"$VERCEL_GIT_COMMIT_REF\" in dev|v*) exit 1 ;; *) exit 0 ;; esac"
+        "ignore": "git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" \"$VERCEL_GIT_COMMIT_SHA\" -- versions.json || exit 1; exit 0"
     }
 }
