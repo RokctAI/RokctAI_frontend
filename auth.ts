@@ -111,7 +111,7 @@ export const {
 
           if (isPaaSLogin) {
             try {
-              const subRes = await fetch(`${baseUrl}/api/method/rokct.rokct.tenant.api.get_subscription_details`, {
+              const subRes = await fetch(`${baseUrl}/api/method/core.tenant.api.get_subscription_details`, {
                 method: "GET",
                 headers: {
                   "Authorization": `token ${apiKey}:${apiSecret}`
@@ -143,7 +143,7 @@ export const {
             // NEW: Standard Login (Control Site) - Check for Hosting Client / SaaS Sub
             try {
               const cookie = loginRes.headers.get("set-cookie");
-              const subRes = await fetch(`${baseUrl}/api/method/rokct.control.api.subscription.get_my_subscription`, {
+              const subRes = await fetch(`${baseUrl}/api/method/control.control.api.subscription.get_my_subscription`, {
                 method: "GET",
                 headers: {
                   "Cookie": cookie || ""
