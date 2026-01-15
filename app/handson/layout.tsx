@@ -53,7 +53,8 @@ import {
     Database,
     Folder,
     ShieldCheck,
-    Clock
+    Clock,
+    GraduationCap
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
