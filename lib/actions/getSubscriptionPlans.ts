@@ -25,30 +25,25 @@ const responseSchema = z.object({
 
 export const getSubscriptionPlans = async (category?: string) => {
   try {
-    const url = `${process.env.ROKCT_BASE_URL}/api/v1/method/control.control.api.subscription.get_subscription_plans${category ? `?category=${category}` : ''}`;
-    const response = await fetch(
-      url,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store"
-      }
-    );
+    const { getGuestClient } = await import("@/app/lib/client");
+    const frappe = getGuestClient();
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(`Request to ${url} failed with status ${response.status}: ${errorBody}`);
-    }
+    const result = await (frappe as any).call({
+      method: "control.control.api.subscription.get_subscription_plans",
+      args: category ? { category } : {}
+    });
 
-    const result = await response.json();
-    const validatedData = responseSchema.parse(result);
-    // Standardized Mapping: Backend already correctly maps plan_category -> category
+    // Determine data source: Frappe call returns { message: ... } usually
+    const data = result.message || result;
+
+    // Validate
+    const validatedData = responseSchema.parse({ message: data });
+
+    // Standardized Mapping
     const plans = validatedData.message.map(plan => ({
       ...plan,
       category: plan.category || plan.plan_category,
-      type: plan.plan_type || "Tenant" // Default to Tenant if missing
+      type: plan.plan_type || "Tenant"
     }));
     return { success: true, data: plans };
   } catch (error: any) {
