@@ -38,7 +38,7 @@ export async function POST(request: Request) {
         // Check Token Balance if PaaS
         if (session?.user?.apiKey && session?.user?.apiSecret && session?.user?.isPaaS) {
             try {
-                const usageRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.rokct.tenant.api.get_token_usage`, {
+                const usageRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`, {
                     headers: {
                         "Authorization": `token ${session.user.apiKey}:${session.user.apiSecret}`
                     }
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
 
             // Log to Backend
             if (session.user.apiKey && session.user.apiSecret) {
-                fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.rokct.tenant.api.log_frontend_error`, {
+                fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.log_frontend_error`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -130,7 +130,7 @@ export async function POST(request: Request) {
         // 4. Record Usage
         if (tokensUsed > 0 && session.user.isPaaS && session.user.apiKey && session.user.apiSecret) {
             // Fire and forget usage recording
-            fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.rokct.tenant.api.record_token_usage`, {
+            fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.record_token_usage`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
