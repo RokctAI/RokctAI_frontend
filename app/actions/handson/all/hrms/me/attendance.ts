@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { getCurrentEmployeeId } from "@/app/lib/roles";
-import { AttendanceService, AttendanceData } from "@/app/services/all/hrms/attendance";
+import { AttendanceService } from "@/app/services/all/hrms/attendance";
+import type { AttendanceData } from "@/app/services/all/hrms/attendance";
 
 export type { AttendanceData };
 
