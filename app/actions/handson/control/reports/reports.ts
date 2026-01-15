@@ -4,8 +4,6 @@ import { ReportService } from "@/app/services/control/reports";
 import type { ReportDefinition } from "@/app/services/control/reports";
 import { revalidatePath } from "next/cache";
 
-export type { ReportDefinition };
-
 /**
  * Fetches all Global Report Definitions.
  * Stored in "SaaS Configuration Item" with category="Report Definition".
