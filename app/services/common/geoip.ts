@@ -46,7 +46,7 @@ export async function getGuestCountryCode(): Promise<GeoIPData> {
     if (ip === "127.0.0.1" || ip === "::1" || ip.startsWith("192.168.") || ip.startsWith("10.")) {
         // Remote Logging of Localhost
         if (isDebug) {
-            fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.control.api.system.log_client_event`, {
+            fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.log_frontend_error`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -86,7 +86,7 @@ export async function getGuestCountryCode(): Promise<GeoIPData> {
 
                 // Remote Logging to Frappe for visibility
                 if (isDebug) {
-                    fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.control.api.system.log_client_event`, {
+                    fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.log_frontend_error`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
