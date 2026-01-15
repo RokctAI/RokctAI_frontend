@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { verifyHrRole } from "@/app/lib/roles";
-import { AdvanceService, EmployeeAdvanceData } from "@/app/services/all/hrms/advances";
+import { AdvanceService, type EmployeeAdvanceData } from "@/app/services/all/hrms/advances";
 
 export type { EmployeeAdvanceData };
 
