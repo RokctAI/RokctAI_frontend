@@ -25,7 +25,7 @@ const responseSchema = z.object({
 
 export const getSubscriptionPlans = async (category?: string) => {
   try {
-    const url = `${process.env.ROKCT_BASE_URL}/api/v1/method/rokct.control.api.subscription.get_subscription_plans${category ? `?category=${category}` : ''}`;
+    const url = `${process.env.ROKCT_BASE_URL}/api/v1/method/control.control.api.subscription.get_subscription_plans${category ? `?category=${category}` : ''}`;
     const response = await fetch(
       url,
       {
