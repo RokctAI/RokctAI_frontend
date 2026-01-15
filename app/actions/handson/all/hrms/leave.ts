@@ -5,8 +5,6 @@ import { verifyHrRole } from "@/app/lib/roles";
 import { LeaveService } from "@/app/services/all/hrms/leave";
 import type { LeaveApplicationData } from "@/app/services/all/hrms/leave";
 
-export type { LeaveApplicationData };
-
 export async function getLeaveTypes() {
     if (!await verifyHrRole()) return [];
     try {
