@@ -5,8 +5,6 @@ import { verifyHrRole } from "@/app/lib/roles";
 import { ShiftService } from "@/app/services/all/hrms/shifts";
 import type { ShiftAssignmentData } from "@/app/services/all/hrms/shifts";
 
-export type { ShiftAssignmentData };
-
 export async function getShiftTypes() {
     if (!await verifyHrRole()) return [];
     try {
