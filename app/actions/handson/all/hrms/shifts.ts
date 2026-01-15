@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { verifyHrRole } from "@/app/lib/roles";
-import { ShiftService, ShiftAssignmentData } from "@/app/services/all/hrms/shifts";
+import { ShiftService } from "@/app/services/all/hrms/shifts";
+import type { ShiftAssignmentData } from "@/app/services/all/hrms/shifts";
 
 export type { ShiftAssignmentData };
 
