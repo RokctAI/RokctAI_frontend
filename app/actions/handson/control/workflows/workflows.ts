@@ -1,6 +1,7 @@
 "use server";
 
-import { WorkflowService, WorkflowRule } from "@/app/services/control/workflows";
+import { WorkflowService } from "@/app/services/control/workflows";
+import type { WorkflowRule } from "@/app/services/control/workflows";
 import { revalidatePath } from "next/cache";
 
 export type { WorkflowRule };
