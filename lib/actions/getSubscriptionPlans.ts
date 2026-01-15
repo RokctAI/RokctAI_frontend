@@ -25,25 +25,32 @@ const responseSchema = z.object({
 
 export const getSubscriptionPlans = async (category?: string) => {
   try {
-    const { getGuestClient } = await import("@/app/lib/client");
-    const frappe = getGuestClient();
+    // Fallback to NEXT_PUBLIC_FRAPPE_URL if ROKCT_BASE_URL is missing
+    const baseUrl = process.env.ROKCT_BASE_URL || process.env.NEXT_PUBLIC_FRAPPE_URL;
+    if (!baseUrl) throw new Error("Base URL not configured");
 
-    const result = await (frappe as any).call({
-      method: "control.control.api.subscription.get_subscription_plans",
-      args: category ? { category } : {}
+    const url = `${baseUrl}/api/v1/method/control.control.api.subscription.get_subscription_plans${category ? `?category=${category}` : ''}`;
+
+    // Use no-store to ensure fresh pricing data
+    const response = await fetch(url, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store"
     });
 
-    // Determine data source: Frappe call returns { message: ... } usually
-    const data = result.message || result;
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(`Pricing Fetch Failed: ${response.status}`, errorBody);
+      throw new Error(`Request failed: ${response.status}`);
+    }
 
-    // Validate
-    const validatedData = responseSchema.parse({ message: data });
-
-    // Standardized Mapping
+    const result = await response.json();
+    const validatedData = responseSchema.parse(result);
+    // Standardized Mapping: Backend already correctly maps plan_category -> category
     const plans = validatedData.message.map(plan => ({
       ...plan,
       category: plan.category || plan.plan_category,
-      type: plan.plan_type || "Tenant"
+      type: plan.plan_type || "Tenant" // Default to Tenant if missing
     }));
     return { success: true, data: plans };
   } catch (error: any) {
