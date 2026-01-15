@@ -43,7 +43,7 @@ export async function getPricingMetadata(userCountry?: string) {
         }
 
         const response = await fetch(
-            `${process.env.ROKCT_BASE_URL}/api/method/rokct.control.api.subscription.get_pricing_metadata?${params.toString()}`,
+            `${process.env.ROKCT_BASE_URL}/api/method/control.control.api.subscription.get_pricing_metadata?${params.toString()}`,
             {
                 method: "GET",
                 headers: {
