@@ -73,7 +73,7 @@ export const {
           } else {
             // Standard Login (via /login): Use New Global Auth API with VERBOSE LOGGING
             try {
-              const targetUrl = `${baseUrl}/api/method/rokct.rokct.api.auth.login`;
+              const targetUrl = `${baseUrl}/api/method/core.api.auth.login`;
               console.log(`[Auth] Attempting login to: ${targetUrl} for ${email}`);
 
               loginRes = await fetch(targetUrl, {
@@ -125,7 +125,7 @@ export const {
 
             try {
               baseUrl = platformUrl; // Update context
-              loginRes = await fetch(`${platformUrl}/api/method/rokct.rokct.api.auth.login`, {
+              loginRes = await fetch(`${platformUrl}/api/method/core.api.auth.login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ usr: email, pwd: password }),
