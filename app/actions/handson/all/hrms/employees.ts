@@ -5,8 +5,6 @@ import { verifyHrRole } from "@/app/lib/roles";
 import { EmployeeService } from "@/app/services/all/hrms/employees";
 import type { EmployeeData } from "@/app/services/all/hrms/employees";
 
-export type { EmployeeData };
-
 export async function getEmployees() {
     if (!await verifyHrRole()) return [];
     try {
