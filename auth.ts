@@ -45,7 +45,7 @@ export const {
           if (isPaaSLogin) {
             // PaaS Login (via paas-login.tsx): Try Custom API first (for API Keys)
             try {
-              loginRes = await fetch(`${baseUrl}/api/method/paas.api.user.login`, {
+              loginRes = await fetch(`${baseUrl}/api/method/paas.api.user.user.login`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
