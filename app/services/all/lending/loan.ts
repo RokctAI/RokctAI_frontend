@@ -57,7 +57,7 @@ export class LoanService {
     }
 
     static async realisePawnAsset(loan: string, asset_account: string, options?: ServiceOptions) {
-        const response = await BaseService.call("rokct.rlending.asset_realisation.realise_pawn_asset", {
+        const response = await BaseService.call("core.rlending.asset_realisation.realise_pawn_asset", {
             loan_name: loan,
             asset_account: asset_account
         }, options);
@@ -67,7 +67,7 @@ export class LoanService {
     static async disburse(loanId: string, postingDate?: string, options?: ServiceOptions) {
         // Fetch loan first to get details needed for args
         // Using custom wrapper which handles Mobile App logic if needed
-        const response = await BaseService.call("rokct.rlending.api.loan.disburse_loan", {
+        const response = await BaseService.call("core.rlending.api.loan.disburse_loan", {
             loan_application: loanId
         }, options);
 
