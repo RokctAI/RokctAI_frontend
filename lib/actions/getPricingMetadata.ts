@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { getGuestCountryCode } from "@/app/services/common/geoip";
 import { GlobalSettingsService } from "@/app/services/control/global_settings";
+import { callPublicApi } from "@/app/services/common/api";
 
 const responseSchema = z.object({
     message: z.object({
@@ -30,10 +31,10 @@ export async function getPricingMetadata(userCountry?: string) {
         }
 
         // Pass the full name as well for better backend resolution (matches register flow)
-        const params = new URLSearchParams();
-        if (countryCode) params.append("country_code", countryCode);
-        if (countryName) params.append("country", countryName);
-        if (currencyHint) params.append("currency_hint", currencyHint); // Add currency_hint
+        const params: Record<string, any> = {};
+        if (countryCode) params.country_code = countryCode;
+        if (countryName) params.country = countryName;
+        if (currencyHint) params.currency_hint = currencyHint;
 
         const settings = await GlobalSettingsService.getGlobalSettings();
         const isDebug = settings?.isDebugMode ?? false;
@@ -42,15 +43,13 @@ export async function getPricingMetadata(userCountry?: string) {
             console.log(`[getPricingMetadata] Requesting: code=${countryCode}, name=${countryName}, currency_hint=${currencyHint}`);
         }
 
-        const response = await fetch(
-            `${process.env.ROKCT_BASE_URL}/api/method/control.control.api.subscription.get_pricing_metadata?${params.toString()}`,
+        const data = await callPublicApi(
+            "control.control.api.subscription.get_pricing_metadata",
+            params,
             {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    ...(isDebug ? { "X-Rokct-Debug": "true" } : {})
-                },
-                next: { revalidate: 3600 } // Cache for 1 hour
+                headers: isDebug ? { "X-Rokct-Debug": "true" } : {},
+                next: { revalidate: 3600 }, // Cache for 1 hour
+                timeout: 3000 // 3s Timeout (Restored)
             }
         );
 
@@ -62,18 +61,23 @@ export async function getPricingMetadata(userCountry?: string) {
             ip: (global as any).lastIp || null
         };
 
-        if (!response.ok) {
-            return fallbackData;
-        }
+        if (!data) return fallbackData;
 
-        const result = await response.json();
-        const validated = responseSchema.safeParse(result);
+        const innerSchema = responseSchema.shape.message;
+        const validated = innerSchema.safeParse(data);
 
         if (validated.success) {
-            return { ...validated.data.message, ip: (global as any).lastIp || validated.data.message.ip };
+            return { ...validated.data, ip: (global as any).lastIp || validated.data.ip };
         } else {
-            // Fallback if schema doesn't match
-            return fallbackData;
+            if (isDebug) console.warn("Pricing Metadata Schema Mismatch:", validated.error);
+
+            return {
+                currency: data.currency || "USD",
+                currency_symbol: data.currency_symbol || "$",
+                exchange_rate: data.exchange_rate || 1.0,
+                country_code: data.country_code || countryCode || "US",
+                ip: (global as any).lastIp || data.ip || null
+            };
         }
     } catch (error) {
         console.error("Error in getPricingMetadata:", error);
