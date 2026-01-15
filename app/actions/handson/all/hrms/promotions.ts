@@ -5,8 +5,6 @@ import { verifyHrRole } from "@/app/lib/roles";
 import { PromotionService } from "@/app/services/all/hrms/promotions";
 import type { PromotionData } from "@/app/services/all/hrms/promotions";
 
-export type { PromotionData };
-
 export async function getPromotions() {
     try {
         return await PromotionService.getList();
