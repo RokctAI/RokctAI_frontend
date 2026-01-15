@@ -5,7 +5,7 @@ export class SubscriptionService {
         const client = await getClient();
         try {
             const response = await (client as any).call({
-                method: "rokct.rokct.tenant.api.get_subscription_details",
+                method: "core.tenant.api.get_subscription_details",
                 args: {}
             });
             return response?.message || { plan_name: "Simple", status: "Active" };
