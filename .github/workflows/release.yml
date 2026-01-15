@@ -9,4 +9,6 @@ jobs:
     permissions:
       contents: write
     uses: RokctAI/shared-workflows/.github/workflows/universal-release.yml@main
+    with:
+      brain_endpoint: https://platform.rokct.ai/api/method/brain.api.generate_release_notes
     secrets: inherit
