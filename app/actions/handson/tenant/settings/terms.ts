@@ -1,6 +1,7 @@
 "use server";
 
-import { TermsService, TenantTerm } from "@/app/services/tenant/terms";
+import { TermsService } from "@/app/services/tenant/terms";
+import type { TenantTerm } from "@/app/services/tenant/terms";
 import { revalidatePath } from "next/cache";
 
 export type { TenantTerm };
