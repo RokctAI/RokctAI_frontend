@@ -10,7 +10,7 @@ export class VersionsService {
 
         // Use fetch for rokct to ensure headers are passed reliably
         const rokctFetch = fetch(
-            `${process.env.ROKCT_BASE_URL}/api/method/rokct.rokct.api.versions.get_versions`,
+            `${process.env.ROKCT_BASE_URL}/api/method/control.control.api.versions.get_versions`,
             {
                 method: "GET",
                 headers: {
