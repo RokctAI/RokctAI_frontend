@@ -59,7 +59,7 @@ export async function POST(request: Request) {
 
   if (session?.user?.apiKey && session?.user?.apiSecret && session?.user?.isPaaS) {
     try {
-      const usageRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.rokct.tenant.api.get_token_usage`, {
+      const usageRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`, {
         headers: {
           "Authorization": `token ${session.user.apiKey}:${session.user.apiSecret}`
         }
@@ -232,8 +232,8 @@ export async function POST(request: Request) {
             const isControl = baseUrl === process.env.ROKCT_BASE_URL;
 
             const apiMethod = isControl
-              ? "rokct.rokct.weather.get_weather_data"
-              : "rokct.rokct.tenant.api.get_weather";
+              ? "control.control.weather.get_weather_data"
+              : "core.tenant.api.get_weather";
 
             const res = await fetch(`${baseUrl}/api/method/${apiMethod}?location=${encodeURIComponent(targetLocation)}`, {
               method: "GET",
@@ -428,7 +428,7 @@ export async function POST(request: Request) {
 
             // Try Tenant Proxy or Control Direct? 
             // We should stick to the same Logic as getWeather.
-            // Note: set_weather_alias is in weather.py which is in 'rokct.rokct.weather'.
+            // Note: set_weather_alias is in weather.py which is in 'control.control.weather'.
             // Is it available via Tenant Proxy? 
             // Tenant Proxy 'api.py' handles specific whitelist. 
             // If we didn't whitelist 'set_weather_alias' in 'tenant/api.py', tenant users can't call it.
@@ -439,8 +439,8 @@ export async function POST(request: Request) {
             // Determine Routing
             const isControl = baseUrl === process.env.ROKCT_BASE_URL;
             const apiMethod = isControl
-              ? "rokct.rokct.weather.set_weather_alias" // Control: Direct
-              : "rokct.rokct.tenant.api.set_weather_alias"; // Tenant: Proxy to Control (Global)
+              ? "control.control.weather.set_weather_alias" // Control: Direct
+              : "core.tenant.api.set_weather_alias"; // Tenant: Proxy to Control (Global)
 
             const res = await callMethod(apiMethod);
             const data = await res.json();
@@ -1161,7 +1161,7 @@ export async function POST(request: Request) {
 
           // Record token usage if PaaS login
           if (session.user.isPaaS && session.user.apiKey && session.user.apiSecret && usage) {
-            await fetch(`${process.env.ROKCT_BASE_URL}/api/method/rokct.rokct.tenant.api.record_token_usage`, {
+            await fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.record_token_usage`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
