@@ -10,7 +10,7 @@ export class DeveloperService {
     }
 
     static async generateSwaggerDocumentation() {
-        return ControlBaseService.call("rokct.control.doctype.swagger_settings.swagger_settings.enqueue_swagger_generation");
+        return ControlBaseService.call("control.control.doctype.swagger_settings.swagger_settings.enqueue_swagger_generation");
     }
 
     static async getSwaggerAppRenames() {
