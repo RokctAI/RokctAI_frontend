@@ -2,7 +2,6 @@ name: Release
 on:
   push:
     branches: [main, develop]
-    paths: ['**/versions.json', '**/version.json']
 
 jobs:
   release:
@@ -10,5 +9,7 @@ jobs:
       contents: write
     uses: RokctAI/shared-workflows/.github/workflows/universal-release.yml@main
     with:
+      # Opt-in to Weekly RC Cycle
+      release_strategy: 'weekly'
       brain_endpoint: https://platform.rokct.ai/api/method/brain.api.generate_release_notes
     secrets: inherit
