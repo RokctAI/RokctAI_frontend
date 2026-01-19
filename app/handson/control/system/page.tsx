@@ -23,7 +23,16 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 import {
     getBrainSettings,
@@ -39,27 +48,39 @@ import {
     toggleDebugMode
 } from "@/app/actions/handson/control/system/global-settings";
 
+import {
+    getRoadmaps,
+    setPublicRoadmap,
+    getPublicRoadmapSetting
+} from "@/app/actions/handson/all/roadmap/roadmap";
+
 export default function SystemPage() {
     const [brainSettings, setBrainSettings] = useState<any[]>([]);
     const [weatherSettings, setWeatherSettings] = useState<any[]>([]);
     const [auths, setAuths] = useState<any[]>([]);
     const [globalSettings, setGlobalSettings] = useState<any>(null);
+    const [roadmaps, setRoadmaps] = useState<any[]>([]);
+    const [publicRoadmapId, setPublicRoadmapId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     async function fetchData() {
         setLoading(true);
         try {
-            const [brainData, weatherData, authsData, settingsData] = await Promise.all([
+            const [brainData, weatherData, authsData, settingsData, roadmapsData, publicSetting] = await Promise.all([
                 getBrainSettings(),
                 getWeatherSettings(),
                 getUpdateAuthorizations(),
-                getGlobalSettings()
+                getGlobalSettings(),
+                getRoadmaps(),
+                getPublicRoadmapSetting()
             ]);
             setBrainSettings(brainData || []);
             setWeatherSettings(weatherData || []);
             setAuths(authsData || []);
             setGlobalSettings(settingsData);
+            setRoadmaps(roadmapsData || []);
+            setPublicRoadmapId(publicSetting?.public_roadmap || "none"); // Use "none" for select value if null
         } catch (error) {
             console.error("Error fetching system data:", error);
             toast.error("Failed to fetch system data");
@@ -368,6 +389,49 @@ export default function SystemPage() {
                                         </div>
                                     </CardContent>
                                 </Card>
+                            </div>
+
+                            {/* Public Roadmap Setting */}
+                            <div className="flex items-center justify-between p-4 border rounded-lg bg-secondary/50">
+                                <div className="space-y-0.5">
+                                    <div className="flex items-center gap-2">
+                                        <Label className="text-base">Public Roadmap</Label>
+                                        <span className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-0.5 rounded-full">Global</span>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">
+                                        Select which roadmap is displayed in the public footer.
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-2 w-[250px]">
+                                    {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                                    <Select
+                                        disabled={saving}
+                                        value={publicRoadmapId || "none"}
+                                        onValueChange={async (val) => {
+                                            setSaving(true);
+                                            try {
+                                                const newVal = val === "none" ? null : val;
+                                                await setPublicRoadmap(newVal);
+                                                setPublicRoadmapId(val);
+                                                toast.success("Public Roadmap Updated");
+                                            } catch (e) {
+                                                toast.error("Failed to update public roadmap");
+                                            } finally {
+                                                setSaving(false);
+                                            }
+                                        }}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Roadmap" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">-- None (Hidden) --</SelectItem>
+                                            {roadmaps.map(r => (
+                                                <SelectItem key={r.name} value={r.name}>{r.title}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>

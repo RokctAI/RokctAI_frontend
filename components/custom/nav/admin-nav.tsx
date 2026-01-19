@@ -60,11 +60,7 @@ const menuItems = [
         url: "/paas/admin",
         icon: LayoutDashboard,
     },
-    {
-        title: "Roadmap",
-        url: "/handson/control/roadmap",
-        icon: MapIcon,
-    },
+
     {
         title: "Product Management",
         icon: ShoppingBag,

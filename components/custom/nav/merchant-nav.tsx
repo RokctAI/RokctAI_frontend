@@ -126,11 +126,7 @@ const merchantMenuItems = [
         icon: Settings,
         url: "/paas/dashboard/settings",
     },
-    {
-        title: "Roadmap",
-        icon: Map,
-        url: "/paas/dashboard/roadmap",
-    },
+
 ];
 
 export function MerchantNav() {

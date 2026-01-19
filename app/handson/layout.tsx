@@ -83,7 +83,6 @@ const controlItems = [
     // --- Operations ---
     { title: "Telephony", href: "/handson/control/telephony", icon: Phone, roles: TELEPHONY_ROLES },
     { title: "Tender & Tasks", href: "/handson/control/tender", icon: FileText, roles: SYSTEM_ROLES },
-    { title: "Roadmap", href: "/handson/control/roadmap", icon: Map, roles: SYSTEM_ROLES },
     { title: "Global Workflows", href: "/handson/control/workflows", icon: Workflow, roles: SYSTEM_ROLES },
 
     // --- Configuration ---
@@ -160,6 +159,9 @@ const commonItems = [
 
     // --- Global Settings ---
     { title: "Global Settings", href: "/handson/all/settings", icon: Settings, roles: SYSTEM_ROLES },
+
+    // --- Product ---
+    { title: "Roadmap", href: "/handson/all/roadmap", icon: Map },
 ];
 
 export default async function HandsOnLayout({ children }: { children: React.ReactNode }) {

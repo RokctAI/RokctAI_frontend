@@ -2,8 +2,33 @@ import Link from "next/link";
 import { PLATFORM_NAME, LEGAL_COMPANY_NAME } from "@/app/config/platform";
 import { TermsService } from "@/app/services/control/terms";
 import { BrandLogo } from "./brand-logo";
+import { RoadmapPublicService } from "@/app/services/public/roadmap";
+import { Map } from "lucide-react";
 
+async function PublicRoadmapLink() {
+  try {
+    const roadmap = await RoadmapPublicService.getPublicRoadmap();
+    // Validate if roadmap exists (check for title or valid object)
+    // The API returns { title, description, features } or null or { message: ... }
+    const data = roadmap?.message || roadmap;
 
+    if (data && data.title) {
+      return (
+        <Link
+          href="/public/roadmap"
+          className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 group"
+          title={`View Public Roadmap: ${data.title}`}
+        >
+          <Map className="w-3 h-3 opacity-70 group-hover:opacity-100" />
+          Roadmap
+        </Link>
+      );
+    }
+  } catch (e) {
+    // Fail silently
+  }
+  return null;
+}
 
 export async function Footer() {
   let terms: any[] = [];
@@ -102,6 +127,8 @@ export async function Footer() {
                 {term.title}
               </Link>
             ))}
+            {/* Public Roadmap Link */}
+            <PublicRoadmapLink />
           </nav>
           <div className="flex flex-col gap-1 items-center">
             <p className="text-xs text-muted-foreground text-center">
