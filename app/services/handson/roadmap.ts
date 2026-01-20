@@ -60,6 +60,14 @@ export class RoadmapService {
         return HandsonBaseService.call("rcore.roadmap.tasks.trigger_daily_generation");
     }
 
+    static async discoverContext(name: string) {
+        return await HandsonBaseService.call('rcore.roadmap.tasks.discover_roadmap_context', { roadmap_name: name });
+    }
+
+    static async generateIdeas(name: string) {
+        return await HandsonBaseService.call('rcore.roadmap.tasks.generate_ideas', { roadmap_name: name });
+    }
+
     static async setPublicRoadmap(roadmapName: string | null) {
         // We update the Singleton 'Roadmap Settings'
         // If roadmapName is null, we clear it (making nothing public)
