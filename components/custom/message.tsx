@@ -4,8 +4,7 @@ import { Attachment, ChatRequestOptions, CreateUIMessage as CreateMessage, UIMes
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
-import { Streamdown } from "streamdown";
-
+import { Markdown } from "./markdown";
 import { BotIcon, UserIcon } from "./icons";
 import { PreviewAttachment } from "./preview-attachment";
 import { Weather } from "./weather";
@@ -64,7 +63,7 @@ export const PreviewMessage = ({
       <div className="flex flex-col gap-2 w-full">
         {content && typeof content === "string" && (
           <div className="text-zinc-800 dark:text-zinc-300 flex flex-col gap-4">
-            <Streamdown>{content}</Streamdown>
+            <Markdown>{content}</Markdown>
           </div>
         )}
 
