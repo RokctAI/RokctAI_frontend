@@ -65,6 +65,14 @@ export async function triggerJules() {
     return await RoadmapService.triggerJules();
 }
 
+export async function discoverRoadmapContext(name: string) {
+    return await RoadmapService.discoverContext(name);
+}
+
+export async function generateOneRoadmapIdeas(name: string) {
+    return await RoadmapService.generateIdeas(name);
+}
+
 export async function setPublicRoadmap(roadmapName: string | null) {
     const res = await RoadmapService.setPublicRoadmap(roadmapName);
     revalidatePath("/handson/all/roadmap");
