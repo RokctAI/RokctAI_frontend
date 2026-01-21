@@ -80,6 +80,29 @@ export async function setPublicRoadmap(roadmapName: string | null) {
     return res;
 }
 
+
 export async function getGlobalSettings() {
     return await RoadmapService.getGlobalSettings();
+}
+
+// --- Interactive Jules ---
+
+export async function getJulesStatus(sessionId: string, apiKey?: string) {
+    return await RoadmapService.getJulesStatus(sessionId, apiKey);
+}
+
+export async function getJulesActivities(sessionId: string, apiKey?: string) {
+    return await RoadmapService.getJulesActivities(sessionId, apiKey);
+}
+
+export async function voteOnPlan(sessionId: string, action: "approve", apiKey?: string) {
+    const res = await RoadmapService.voteOnPlan(sessionId, action, apiKey);
+    revalidatePath("/handson/all/roadmap");
+    return res;
+}
+
+export async function sendJulesMessage(sessionId: string, message: string, apiKey?: string) {
+    const res = await RoadmapService.sendJulesMessage(sessionId, message, apiKey);
+    revalidatePath("/handson/all/roadmap");
+    return res;
 }
