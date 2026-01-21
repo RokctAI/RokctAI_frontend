@@ -79,4 +79,30 @@ export class RoadmapService {
     static async getGlobalSettings() {
         return HandsonBaseService.getDoc("Roadmap Settings", "Roadmap Settings");
     }
+
+    // --- Interactive Jules ---
+
+    static async getJulesStatus(sessionId: string, apiKey?: string) {
+        return HandsonBaseService.call("brain.api.get_jules_status", { session_id: sessionId, api_key: apiKey });
+    }
+
+    static async getJulesActivities(sessionId: string, apiKey?: string) {
+        return HandsonBaseService.call("brain.api.get_jules_activities", { session_id: sessionId, api_key: apiKey });
+    }
+
+    static async voteOnPlan(sessionId: string, action: "approve", apiKey?: string) {
+        return HandsonBaseService.call("brain.api.vote_on_plan", {
+            session_id: sessionId,
+            action: action,
+            api_key: apiKey
+        });
+    }
+
+    static async sendJulesMessage(sessionId: string, message: string, apiKey?: string) {
+        return HandsonBaseService.call("brain.api.send_jules_message", {
+            session_id: sessionId,
+            message: message,
+            api_key: apiKey
+        });
+    }
 }
