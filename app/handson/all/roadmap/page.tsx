@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Loader2, RefreshCw, Trash2, Plus, Edit, Bot, Eye, EyeOff, ExternalLink, GitPullRequest, Wand2 } from "lucide-react";
+import { JulesInteractive } from "@/components/handson/JulesInteractive";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -448,7 +449,6 @@ return (
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
                                     <Label htmlFor="description">Description</Label>
-                                    {/* Auto-Detect is now automatic on Save */}
                                 </div>
                                 <Textarea
                                     id="description"
@@ -670,6 +670,20 @@ return (
                                             ))}
                                         </div>
                                     </div>
+
+
+                                    {editingFeature?.jules_session_id && (
+                                        <div className="space-y-2 pt-4 border-t">
+                                            <Label className="text-sm font-semibold flex items-center gap-2">
+                                                <Bot className="h-4 w-4" /> Jules Interactive Session
+                                            </Label>
+                                            <JulesInteractive
+                                                sessionId={editingFeature.jules_session_id}
+                                                apiKey={globalSettings?.jules_api_key || editingRoadmap?.jules_api_key}
+                                                featureName={editingFeature.feature}
+                                            />
+                                        </div>
+                                    )}
 
                                     <DialogFooter>
                                         <Button type="submit">{editingFeature ? "Update" : "Create"}</Button>
