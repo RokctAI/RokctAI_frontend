@@ -1,3 +1,9 @@
+# WORKSPACE PROTOCOL (Protocol V12 - Workspace Ready)
+> 1. **CHECK**: Does a .rokct/memory.md exist in parent folders (e.g., ../.rokct or ../../.rokct)?
+> 2. **IF YES**: **READ IT**. It contains the **Global Memory** and preference overrides for the whole workspace.
+> 3. **HANDSHAKE**: Follow the `workspace_handshake.md` SOP in your local workflows.
+> 4. **PRECEDENCE**: Global Memory overrides technical defaults; Local Memory overrides repo-specific logic.
+
 # CRITICAL AGENT INSTRUCTIONS (Protocol V2)
 
 > **READ THIS FIRST.** This file contains the absolute non-negotiable rules for this project.
@@ -22,3 +28,4 @@
 
 ## 4. Full Documentation
 *   Refer to `The-Rokct-Protocol/README.md` for the complete rulebook structure.
+
