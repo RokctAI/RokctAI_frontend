@@ -6,10 +6,8 @@ import { getModel } from "@/ai";
 import { AI_MODELS } from "@/ai/models";
 import { auth } from "@/app/(auth)/auth";
 import {
-  createReservation,
   deleteChatById,
   getChatById,
-  getReservationById,
   saveChat,
   createPersonalTask,
   setPersonalTaskReminder,

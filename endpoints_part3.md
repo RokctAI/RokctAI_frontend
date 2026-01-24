@@ -1,5 +1,20 @@
+# API Endpoints Summary
+
+**Total Interactions Found:** 897
+
+## Documentation Breakdown
+
+- **`endpoints_part1.md`**: 150 interactions (Nos. 1-150)
+- **`endpoints_part2.md`**: 150 interactions (Nos. 151-300)
+- **`endpoints_part3.md`**: 150 interactions (Nos. 301-450)
+- **`endpoints_part4.md`**: 150 interactions (Nos. 451-600)
+- **`endpoints_part5.md`**: 150 interactions (Nos. 601-750)
+- **`endpoints_part6.md`**: 147 interactions (Nos. 751-897)
+
+---
+
 # API Endpoints (Part 3 of 6)
-Total Interactions: 150
+Total Interactions in this file: 150
 
 | No. | App | Endpoint | Payload / Arguments | Path | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -153,11 +168,3 @@ Total Interactions: 150
 | 448 | HRMS | `getEmployees` | `` | `./app/actions/handson/all/hrms/employees.ts` | Server Action |
 | 449 | HRMS | `getExpenseClaimTypes` | `` | `./app/actions/handson/all/hrms/expenses.ts` | Server Action |
 | 450 | HRMS | `getExpenseClaims` | `` | `./app/actions/handson/all/hrms/expenses.ts` | Server Action |
-
-## Documentation Parts
-- **`endpoints_part1.md`**: 150 interactions (Nos. 1-150)
-- **`endpoints_part2.md`**: 150 interactions (Nos. 151-300)
-- **`endpoints_part3.md`**: 150 interactions (Nos. 301-450)
-- **`endpoints_part4.md`**: 150 interactions (Nos. 451-600)
-- **`endpoints_part5.md`**: 150 interactions (Nos. 601-750)
-- **`endpoints_part6.md`**: 147 interactions (Nos. 751-897)

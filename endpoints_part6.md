@@ -1,5 +1,20 @@
+# API Endpoints Summary
+
+**Total Interactions Found:** 897
+
+## Documentation Breakdown
+
+- **`endpoints_part1.md`**: 150 interactions (Nos. 1-150)
+- **`endpoints_part2.md`**: 150 interactions (Nos. 151-300)
+- **`endpoints_part3.md`**: 150 interactions (Nos. 301-450)
+- **`endpoints_part4.md`**: 150 interactions (Nos. 451-600)
+- **`endpoints_part5.md`**: 150 interactions (Nos. 601-750)
+- **`endpoints_part6.md`**: 147 interactions (Nos. 751-897)
+
+---
+
 # API Endpoints (Part 6 of 6)
-Total Interactions: 147
+Total Interactions in this file: 147
 
 | No. | App | Endpoint | Payload / Arguments | Path | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -150,11 +165,3 @@ Total Interactions: 147
 | 895 | WORKSPACE | `getCommunications` | `doctype: string, docname: string` | `./app/actions/handson/all/workspace/communication.ts` | Server Action |
 | 896 | WORKSPACE | `getEvents` | `filters?: any` | `./app/actions/handson/all/workspace/events.ts` | Server Action |
 | 897 | WORKSPACE | `getWorkItems` | `type: WorkItemType` | `./app/actions/handson/all/workspace/dashboard.ts` | Unified action to fetch work items (Todo, Task, or Note) @param type The type of work item to fetch |
-
-## Documentation Parts
-- **`endpoints_part1.md`**: 150 interactions (Nos. 1-150)
-- **`endpoints_part2.md`**: 150 interactions (Nos. 151-300)
-- **`endpoints_part3.md`**: 150 interactions (Nos. 301-450)
-- **`endpoints_part4.md`**: 150 interactions (Nos. 451-600)
-- **`endpoints_part5.md`**: 150 interactions (Nos. 601-750)
-- **`endpoints_part6.md`**: 147 interactions (Nos. 751-897)
