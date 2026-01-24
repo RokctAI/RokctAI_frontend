@@ -54,7 +54,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^16.6.1",
     "drizzle-orm": "^0.45.1",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-tailwindcss": "^3.17.5",
     "framer-motion": "^12.29.0",
     "frappe-js-sdk": "^1.12.0",
