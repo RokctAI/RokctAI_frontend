@@ -1,4 +1,5 @@
 # API Endpoints (Part 2 of 6)
+Total Interactions: 150
 
 | No. | App | Endpoint | Payload / Arguments | Path | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -152,3 +153,11 @@
 | 298 | CONTROL-TELEPHONY | `updateTelephonySubscription` | `name: string, data: any` | `./app/actions/handson/control/telephony/telephony.ts` | Server Action |
 | 299 | CONTROL-TENDER | `createGeneratedTenderTask` | `data: any` | `./app/actions/handson/control/tender/tender.ts` | Server Action |
 | 300 | CONTROL-TENDER | `createIntelligentTaskSet` | `data: any` | `./app/actions/handson/control/tender/tender.ts` | Server Action |
+
+## Documentation Parts
+- `endpoints_part1.md`: 1-150
+- `endpoints_part2.md`: 151-300
+- `endpoints_part3.md`: 301-450
+- `endpoints_part4.md`: 451-600
+- `endpoints_part5.md`: 601-750
+- `endpoints_part6.md`: 751-897

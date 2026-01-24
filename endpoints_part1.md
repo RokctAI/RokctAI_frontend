@@ -1,4 +1,5 @@
 # API Endpoints (Part 1 of 6)
+Total Interactions: 150
 
 | No. | App | Endpoint | Payload / Arguments | Path | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -152,3 +153,11 @@
 | 148 | AI-HR | `markAiAttendance` | `data: { log_type?: "IN" \| "OUT"; timestamp?: string; latitude?: number; longitude?: number; modelId?: string }` | `./app/actions/ai/hr.ts` | Server Action |
 | 149 | AI-HR | `processApproval` | `data: { doctype: "Leave Application" \| "Expense Claim" \| "Material Request"; name: string; action: "Approve" \| "Reject"; comment?: string; modelId?: string }` | `./app/actions/ai/hr.ts` | Server Action |
 | 150 | AI-HR | `updateAiMyProfile` | `data: { first_name?: string; last_name?: string; id_number?: string; bank_name?: string; bank_account_no?: string; bank_branch_code?: string; tax_id?: string; modelId?: string }` | `./app/actions/ai/hr.ts` | Server Action |
+
+## Documentation Parts
+- `endpoints_part1.md`: 1-150
+- `endpoints_part2.md`: 151-300
+- `endpoints_part3.md`: 301-450
+- `endpoints_part4.md`: 451-600
+- `endpoints_part5.md`: 601-750
+- `endpoints_part6.md`: 751-897

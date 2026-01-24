@@ -1,4 +1,5 @@
 # API Endpoints (Part 3 of 6)
+Total Interactions: 150
 
 | No. | App | Endpoint | Payload / Arguments | Path | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -152,3 +153,11 @@
 | 448 | HRMS | `getEmployees` | `` | `./app/actions/handson/all/hrms/employees.ts` | Server Action |
 | 449 | HRMS | `getExpenseClaimTypes` | `` | `./app/actions/handson/all/hrms/expenses.ts` | Server Action |
 | 450 | HRMS | `getExpenseClaims` | `` | `./app/actions/handson/all/hrms/expenses.ts` | Server Action |
+
+## Documentation Parts
+- `endpoints_part1.md`: 1-150
+- `endpoints_part2.md`: 151-300
+- `endpoints_part3.md`: 301-450
+- `endpoints_part4.md`: 451-600
+- `endpoints_part5.md`: 601-750
+- `endpoints_part6.md`: 751-897

@@ -1,4 +1,5 @@
 # API Endpoints (Part 4 of 6)
+Total Interactions: 150
 
 | No. | App | Endpoint | Payload / Arguments | Path | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -152,3 +153,11 @@
 | 598 | PAAS-ADMIN-PRODUCTS.TS | `getAllCategories` | `page: number = 1, limit: number = 20` | `./app/actions/paas/admin/products.ts` | Server Action |
 | 599 | PAAS-ADMIN-PRODUCTS.TS | `getAllProductExtraGroups` | `page: number = 1, limit: number = 20` | `./app/actions/paas/admin/products.ts` | Server Action |
 | 600 | PAAS-ADMIN-PRODUCTS.TS | `getAllProductReviews` | `page: number = 1, limit: number = 20` | `./app/actions/paas/admin/products.ts` | Server Action |
+
+## Documentation Parts
+- `endpoints_part1.md`: 1-150
+- `endpoints_part2.md`: 151-300
+- `endpoints_part3.md`: 301-450
+- `endpoints_part4.md`: 451-600
+- `endpoints_part5.md`: 601-750
+- `endpoints_part6.md`: 751-897
