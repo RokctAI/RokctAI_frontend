@@ -1,8 +1,8 @@
 # API Endpoints Detailed
 
-Total Endpoints Found: 918
+Total Endpoints Found: 901
 - Route Handlers: 13
-- Server Actions: 905
+- Server Actions: 888
 
 ## Route Handlers
 
@@ -912,22 +912,5 @@ Total Endpoints Found: 918
 | `verifySupplyChainRole` | `` | `./app/lib/roles.ts` |
 | `verifySystemManager` | `` | `./app/lib/roles.ts` |
 | `getGuestCountryCode` | `` | `./app/services/common/geoip.ts` |
-| `createSubscriptionPlan` | `doc: SubscriptionPlan, apiKey: string, apiSecret: string` | `./lib/actions/erpnext/accounts/postSubscriptionPlan/actions.ts` |
-| `updateProcessSubscription` | `name: string, doc: Partial<ProcessSubscription>, apiKey: string, apiSecret: string` | `./lib/actions/erpnext/accounts/putProcessSubscription/actions.ts` |
-| `updateSubscriptionPlan` | `name: string, doc: Partial<SubscriptionPlan>, apiKey: string, apiSecret: string` | `./lib/actions/erpnext/accounts/putSubscriptionPlan/actions.ts` |
-| `createUser` | `doc: User, apiKey: string, apiSecret: string` | `./lib/actions/frappe/core/postUser/actions.ts` |
-| `updateUser` | `name: string, doc: Partial<User>, apiKey: string, apiSecret: string` | `./lib/actions/frappe/core/putUser/actions.ts` |
-| `updateEmailAccount` | `name: string, doc: Partial<EmailAccount>, apiKey: string, apiSecret: string` | `./lib/actions/frappe/email/putEmailAccount/actions.ts` |
-| `updateWebsiteSettings` | `doc: Partial<WebsiteSettings>, apiKey: string, apiSecret: string` | `./lib/actions/frappe/website/putWebsiteSettings/actions.ts` |
 | `getPricingMetadata` | `userCountry?: string` | `./lib/actions/getPricingMetadata.ts` |
 | `getSubscriptionPlans` | `category?: string` | `./lib/actions/getSubscriptionPlans.ts` |
-| `deleteCompanySubscription` | `name: string, apiKey: string, apiSecret: string` | `./lib/actions/rokct/rokct/deleteCompanySubscription/actions.ts` |
-| `createCompanySubscription` | `doc: CompanySubscription, apiKey: string, apiSecret: string` | `./lib/actions/rokct/rokct/postCompanySubscription/actions.ts` |
-| `updateCompanySubscription` | `name: string, doc: Partial<CompanySubscription>, apiKey: string, apiSecret: string` | `./lib/actions/rokct/rokct/putCompanySubscription/actions.ts` |
-| `updatePaystackSettings` | `doc: Partial<PaystackSettings>, apiKey: string, apiSecret: string` | `./lib/actions/rokct/rokct/putPaystackSettings/actions.ts` |
-| `updateStorageSettings` | `doc: Partial<StorageSettings>, apiKey: string, apiSecret: string` | `./lib/actions/rokct/rokct/putStorageSettings/actions.ts` |
-| `updateSubscriptionSettings` | `doc: Partial<SubscriptionSettings>, apiKey: string, apiSecret: string` | `./lib/actions/rokct/rokct/putSubscriptionSettings/actions.ts` |
-| `updateSwaggerSettings` | `doc: Partial<SwaggerSettings>, apiKey: string, apiSecret: string` | `./lib/actions/rokct/rokct/putSwaggerSettings/actions.ts` |
-| `updateTenantEmailSettings` | `doc: Partial<TenantEmailSettings>, apiKey: string, apiSecret: string` | `./lib/actions/rokct/rokct/putTenantEmailSettings/actions.ts` |
-| `updateTenderControlSettings` | `doc: Partial<TenderControlSettings>, apiKey: string, apiSecret: string` | `./lib/actions/rokct/rokct/putTenderControlSettings/actions.ts` |
-| `updateWeatherSettings` | `doc: Partial<WeatherSettings>, apiKey: string, apiSecret: string` | `./lib/actions/rokct/rokct/putWeatherSettings/actions.ts` |

@@ -1,8 +1,8 @@
 # API Endpoints
 
-Total Endpoints Found: 918
+Total Endpoints Found: 901
 - Route Handlers: 13
-- Server Actions: 905
+- Server Actions: 888
 
 ## Route Handlers
 
@@ -912,22 +912,5 @@ Total Endpoints Found: 918
 | `verifySupplyChainRole` | `./app/lib/roles.ts` |
 | `verifySystemManager` | `./app/lib/roles.ts` |
 | `getGuestCountryCode` | `./app/services/common/geoip.ts` |
-| `createSubscriptionPlan` | `./lib/actions/erpnext/accounts/postSubscriptionPlan/actions.ts` |
-| `updateProcessSubscription` | `./lib/actions/erpnext/accounts/putProcessSubscription/actions.ts` |
-| `updateSubscriptionPlan` | `./lib/actions/erpnext/accounts/putSubscriptionPlan/actions.ts` |
-| `createUser` | `./lib/actions/frappe/core/postUser/actions.ts` |
-| `updateUser` | `./lib/actions/frappe/core/putUser/actions.ts` |
-| `updateEmailAccount` | `./lib/actions/frappe/email/putEmailAccount/actions.ts` |
-| `updateWebsiteSettings` | `./lib/actions/frappe/website/putWebsiteSettings/actions.ts` |
 | `getPricingMetadata` | `./lib/actions/getPricingMetadata.ts` |
 | `getSubscriptionPlans` | `./lib/actions/getSubscriptionPlans.ts` |
-| `deleteCompanySubscription` | `./lib/actions/rokct/rokct/deleteCompanySubscription/actions.ts` |
-| `createCompanySubscription` | `./lib/actions/rokct/rokct/postCompanySubscription/actions.ts` |
-| `updateCompanySubscription` | `./lib/actions/rokct/rokct/putCompanySubscription/actions.ts` |
-| `updatePaystackSettings` | `./lib/actions/rokct/rokct/putPaystackSettings/actions.ts` |
-| `updateStorageSettings` | `./lib/actions/rokct/rokct/putStorageSettings/actions.ts` |
-| `updateSubscriptionSettings` | `./lib/actions/rokct/rokct/putSubscriptionSettings/actions.ts` |
-| `updateSwaggerSettings` | `./lib/actions/rokct/rokct/putSwaggerSettings/actions.ts` |
-| `updateTenantEmailSettings` | `./lib/actions/rokct/rokct/putTenantEmailSettings/actions.ts` |
-| `updateTenderControlSettings` | `./lib/actions/rokct/rokct/putTenderControlSettings/actions.ts` |
-| `updateWeatherSettings` | `./lib/actions/rokct/rokct/putWeatherSettings/actions.ts` |
