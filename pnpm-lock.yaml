@@ -15,8 +15,8 @@ importers:
         specifier: ^3.0.11
         version: 3.0.11(zod@4.1.13)
       '@ai-sdk/react':
-        specifier: ^2.0.106
-        version: 2.0.106(react@19.2.3)(zod@4.1.13)
+        specifier: ^3.0.46
+        version: 3.0.46(react@19.2.3)(zod@4.1.13)
       '@editorjs/editorjs':
         specifier: ^2.31.0
         version: 2.31.0
@@ -344,15 +344,11 @@ packages:
       zod:
         optional: true
 
-  '@ai-sdk/react@2.0.106':
-    resolution: {integrity: sha512-TU8ONNhm64GI7O60UDCcOz9CdyCp3emQwSYrSnq+QWBNgS8vDlRQ3ZwXyPNAJQdXyBTafVS2iyS0kvV+KXaPAQ==}
+  '@ai-sdk/react@3.0.46':
+    resolution: {integrity: sha512-0WVvenCr8RymOG3tVP3BESkSjanqAO5yv1pYEz8T80iVI3YpGH19a3lLDiIU58kJm+SE8PIBNKfteXPHAQL0AQ==}
     engines: {node: '>=18'}
     peerDependencies:
-      react: ^18 || ^19 || ^19.0.0-rc
-      zod: ^3.25.76 || ^4.1.8
-    peerDependenciesMeta:
-      zod:
-        optional: true
+      react: ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
 
   '@ai-sdk/ui-utils@1.2.11':
     resolution: {integrity: sha512-3zcwCc8ezzFlwp3ZD15wAPjf2Au4s3vAbKsXQVyhxODHcmu0iyPO2Eua6D/vicq/AUm/BAo60r97O6HU+EI0+w==}
@@ -5609,15 +5605,15 @@ snapshots:
     optionalDependencies:
       zod: 4.1.13
 
-  '@ai-sdk/react@2.0.106(react@19.2.3)(zod@4.1.13)':
+  '@ai-sdk/react@3.0.46(react@19.2.3)(zod@4.1.13)':
     dependencies:
-      '@ai-sdk/provider-utils': 3.0.18(zod@4.1.13)
-      ai: 5.0.106(zod@4.1.13)
+      '@ai-sdk/provider-utils': 4.0.8(zod@4.1.13)
+      ai: 6.0.44(zod@4.1.13)
       react: 19.2.3
       swr: 2.3.8(react@19.2.3)
       throttleit: 2.1.0
-    optionalDependencies:
-      zod: 4.1.13
+    transitivePeerDependencies:
+      - zod
 
   '@ai-sdk/ui-utils@1.2.11(zod@4.1.13)':
     dependencies:
