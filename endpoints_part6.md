@@ -152,9 +152,9 @@ Total Interactions: 147
 | 897 | WORKSPACE | `getWorkItems` | `type: WorkItemType` | `./app/actions/handson/all/workspace/dashboard.ts` | Unified action to fetch work items (Todo, Task, or Note) @param type The type of work item to fetch |
 
 ## Documentation Parts
-- `endpoints_part1.md`: 1-150
-- `endpoints_part2.md`: 151-300
-- `endpoints_part3.md`: 301-450
-- `endpoints_part4.md`: 451-600
-- `endpoints_part5.md`: 601-750
-- `endpoints_part6.md`: 751-897
+- **`endpoints_part1.md`**: 150 interactions (Nos. 1-150)
+- **`endpoints_part2.md`**: 150 interactions (Nos. 151-300)
+- **`endpoints_part3.md`**: 150 interactions (Nos. 301-450)
+- **`endpoints_part4.md`**: 150 interactions (Nos. 451-600)
+- **`endpoints_part5.md`**: 150 interactions (Nos. 601-750)
+- **`endpoints_part6.md`**: 147 interactions (Nos. 751-897)

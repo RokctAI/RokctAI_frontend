@@ -155,9 +155,9 @@ Total Interactions: 150
 | 750 | PAAS-PARCEL.TS | `getParcelOrder` | `name: string` | `./app/actions/paas/parcel.ts` | Server Action |
 
 ## Documentation Parts
-- `endpoints_part1.md`: 1-150
-- `endpoints_part2.md`: 151-300
-- `endpoints_part3.md`: 301-450
-- `endpoints_part4.md`: 451-600
-- `endpoints_part5.md`: 601-750
-- `endpoints_part6.md`: 751-897
+- **`endpoints_part1.md`**: 150 interactions (Nos. 1-150)
+- **`endpoints_part2.md`**: 150 interactions (Nos. 151-300)
+- **`endpoints_part3.md`**: 150 interactions (Nos. 301-450)
+- **`endpoints_part4.md`**: 150 interactions (Nos. 451-600)
+- **`endpoints_part5.md`**: 150 interactions (Nos. 601-750)
+- **`endpoints_part6.md`**: 147 interactions (Nos. 751-897)
