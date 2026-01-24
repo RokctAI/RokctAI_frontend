@@ -82,7 +82,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.7",
+    "@electric-sql/pglite": "^0.3.15",
     "@playwright/test": "^1.55.0",
     "@types/d3-scale": "^4.0.8",
     "@types/node": "^20",
