@@ -152,4 +152,3 @@
 | 148 | AI-HR | `markAiAttendance` | `data: { log_type?: "IN" \| "OUT"; timestamp?: string; latitude?: number; longitude?: number; modelId?: string }` | `./app/actions/ai/hr.ts` | Server Action |
 | 149 | AI-HR | `processApproval` | `data: { doctype: "Leave Application" \| "Expense Claim" \| "Material Request"; name: string; action: "Approve" \| "Reject"; comment?: string; modelId?: string }` | `./app/actions/ai/hr.ts` | Server Action |
 | 150 | AI-HR | `updateAiMyProfile` | `data: { first_name?: string; last_name?: string; id_number?: string; bank_name?: string; bank_account_no?: string; bank_branch_code?: string; tax_id?: string; modelId?: string }` | `./app/actions/ai/hr.ts` | Server Action |
-| 151 | AI-MEETINGS | `getMyEvents` | `data: { modelId?: string } = {}` | `./app/actions/ai/meetings.ts` | Server Action |

@@ -2,6 +2,7 @@
 
 | No. | App | Endpoint | Payload / Arguments | Path | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
+| 151 | AI-MEETINGS | `getMyEvents` | `data: { modelId?: string } = {}` | `./app/actions/ai/meetings.ts` | Server Action |
 | 152 | AI-NOTIFICATIONS | `createNotification` | `recipientEmail: string, subject: string, message: string, link?: string` | `./app/actions/ai/notifications.ts` | Creates a system notification for a specific user. Uses standard Frappe 'Notification Log' doctype. |
 | 153 | AI-NOTIFICATIONS | `notifyDecision` | `doctype: string, docname: string, status: "Approved" \| "Rejected"` | `./app/actions/ai/notifications.ts` | Server Action |
 | 154 | AI-ONBOARDING | `completeOnboarding` | `` | `./app/actions/ai/onboarding.ts` | Marks the onboarding as complete locally. In a real flow, this would trigger the push to the Tenant Site. |
@@ -151,5 +152,3 @@
 | 298 | CONTROL-TELEPHONY | `updateTelephonySubscription` | `name: string, data: any` | `./app/actions/handson/control/telephony/telephony.ts` | Server Action |
 | 299 | CONTROL-TENDER | `createGeneratedTenderTask` | `data: any` | `./app/actions/handson/control/tender/tender.ts` | Server Action |
 | 300 | CONTROL-TENDER | `createIntelligentTaskSet` | `data: any` | `./app/actions/handson/control/tender/tender.ts` | Server Action |
-| 301 | CONTROL-TENDER | `createTenderWorkflowTask` | `data: any` | `./app/actions/handson/control/tender/tender.ts` | Server Action |
-| 302 | CONTROL-TENDER | `createTenderWorkflowTemplate` | `data: any` | `./app/actions/handson/control/tender/tender.ts` | Server Action |
