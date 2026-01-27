@@ -79,7 +79,7 @@ export async function Footer() {
         // Extract version: Look for ROKCT explicitly, then any app, then a raw version string
         let verValue = "";
         if (data && typeof data === 'object') {
-          const appData = data.rokct || Object.values(data).find((v: any) => v && v.version);
+          const appData = data.control || Object.values(data).find((v: any) => v && v.version);
           if (appData && typeof appData.version === 'string') {
             verValue = appData.version;
           } else if (typeof data.version === 'string') {
