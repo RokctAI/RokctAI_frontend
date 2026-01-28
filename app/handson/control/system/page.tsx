@@ -23,8 +23,6 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-    CardHeader,
-    CardTitle,
 } from "@/components/ui/card";
 import {
     Select,
