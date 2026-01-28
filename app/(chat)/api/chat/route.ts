@@ -1,4 +1,4 @@
-import { convertToCoreMessages, streamText, tool } from "ai";
+import { convertToModelMessages, streamText, tool } from "ai";
 import { addDays, addWeeks, startOfTomorrow } from "date-fns";
 import { z } from "zod";
 
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const coreMessages = convertToCoreMessages(messages).filter(
+  const coreMessages = (await convertToModelMessages(messages)).filter(
     (message) => message.content.length > 0,
   );
 
