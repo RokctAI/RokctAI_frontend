@@ -85,6 +85,10 @@ export async function getGlobalSettings() {
     return await RoadmapService.getGlobalSettings();
 }
 
+export async function getPublicRoadmapSetting() {
+    return await RoadmapService.getGlobalSettings();
+}
+
 // --- Interactive Jules ---
 
 export async function getJulesStatus(sessionId: string, apiKey?: string) {
