@@ -91,7 +91,7 @@
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.25.0",
     "eslint": "^9.39.2",
-    "eslint-config-next": "16.1.2",
+    "eslint-config-next": "16.1.6",
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-import": "^2.31.0",
     "postcss": "^8",
