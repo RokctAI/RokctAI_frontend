@@ -37,7 +37,8 @@ import {
     getWeatherSettings,
     approveUpdate,
     rejectUpdate,
-    deleteUpdateAuthorization
+    deleteUpdateAuthorization,
+    getUpdateAuthorizations
 } from "@/app/actions/handson/control/system/system";
 
 import {
