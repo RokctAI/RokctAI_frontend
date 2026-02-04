@@ -7,4 +7,6 @@ on:
 jobs:
   lint:
     uses: RokctAI/shared-workflows/.github/workflows/universal-linter.yml@main
+    with:
+      run-build-runner: true
     secrets: inherit
