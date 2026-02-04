@@ -1,24 +1,17 @@
-name: Build APK
+name: Build Next.js
 
 on:
-  workflow_dispatch:
-    inputs:
-      build-type:
-        description: 'Build Type (apk/appbundle)'
-        required: true
-        default: 'apk'
-        type: choice
-        options:
-        - apk
-        - appbundle
   push:
-    branches: [ main ]
-    paths-ignore:
-      - '**.md'
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
 
 jobs:
-  build:
-    uses: RokctAI/shared-workflows/.github/workflows/universal-flutter-build.yml@main
+  ci:
+    uses: RokctAI/shared-workflows/.github/workflows/universal-node-ci.yml@main
     with:
-      build-type: ${{ inputs.build-type || 'apk' }}
+      node-version: '22'
+      package-manager: 'npm'
+      run-build: true
+      run-test: false # Enable if you have tests
     secrets: inherit
