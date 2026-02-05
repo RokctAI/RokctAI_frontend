@@ -1,5 +1,9 @@
 name: Build (Smart)
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ main, develop ]
@@ -15,6 +19,25 @@ on:
         options:
         - apk
         - appbundle
+      node-version:
+        type: string
+        default: '24'
+      python-version:
+        type: string
+        default: '3.14'
+      mariadb-version:
+        type: string
+        default: '10.6'
+      postgres-version:
+        type: string
+        default: '15'
+      db-type:
+        type: string
+        default: 'mariadb'
+      version_format:
+        type: string
+        default: '##.##.##'
+        description: "Format for version bumping (e.g. ##.##.## or ##.##.#)"
 
 jobs:
   # --- 1. DETECT PROJECT TYPE ---
@@ -54,4 +77,11 @@ jobs:
       run_ci: true
       # Deployment Configuration (Immediate release on Main)
       release_strategy: 'immediate'
+      # Environment configuration
+      node-version: ${{ inputs.node-version }}
+      python-version: ${{ inputs.python-version }}
+      mariadb-version: ${{ inputs.mariadb-version }}
+      postgres-version: ${{ inputs.postgres-version }}
+      db-type: ${{ inputs.db-type }}
+      version_format: ${{ inputs.version_format || '##.##.##' }}
     secrets: inherit
