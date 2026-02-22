@@ -67,23 +67,33 @@ export const conversations: Conversation[] = [
       {
         id: "task-1-user",
         userMessage: "do i have tasks assigned to me today?",
-        botResponse: { text: "yes", action: "Check", intent: "Tasks" }
+        botResponse: { text: "yes", action: "Check", intent: "Tasks" },
       },
       {
         id: "task-2-bot",
         userMessage: "",
-        botResponse: { text: "here they are", action: "List", intent: "Tasks" }
+        botResponse: { text: "here they are", action: "List", intent: "Tasks" },
       },
       {
         id: "task-3-bot",
         userMessage: "",
-        botResponse: { text: "", Component: TaskStack, props: { initialTasks: sampleTasks }, action: "Review", intent: "Tasks" }
+        botResponse: {
+          text: "",
+          Component: TaskStack,
+          props: { initialTasks: sampleTasks },
+          action: "Review",
+          intent: "Tasks",
+        },
       },
       {
         id: "task-4-user",
         userMessage: "accepted",
-        botResponse: { text: "you have accepted all your tasks, i will remind you when they are due.", action: "Update", intent: "Tasks" }
-      }
-    ]
+        botResponse: {
+          text: "you have accepted all your tasks, i will remind you when they are due.",
+          action: "Update",
+          intent: "Tasks",
+        },
+      },
+    ],
   },
 ];

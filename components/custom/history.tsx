@@ -263,7 +263,10 @@ export const History = ({ user }: { user: User | undefined }) => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open={showClearAllDialog} onOpenChange={setShowClearAllDialog}>
+      <AlertDialog
+        open={showClearAllDialog}
+        onOpenChange={setShowClearAllDialog}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>

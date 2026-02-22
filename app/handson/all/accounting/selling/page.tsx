@@ -4,11 +4,11 @@ import { QuotationList } from "@/components/handson/quotation-list";
 export const dynamic = "force-dynamic";
 
 export default async function SellingPage() {
-    const quotations = await getQuotations();
+  const quotations = await getQuotations();
 
-    return (
-        <div className="p-6">
-            <QuotationList quotations={quotations} />
-        </div>
-    );
+  return (
+    <div className="p-6">
+      <QuotationList quotations={quotations} />
+    </div>
+  );
 }

@@ -1,2 +1,4 @@
 import { AssetMovementForm } from "@/components/handson/asset-advanced-components";
-export default function Page() { return <AssetMovementForm />; }
+export default function Page() {
+  return <AssetMovementForm />;
+}

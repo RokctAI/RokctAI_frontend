@@ -11,10 +11,13 @@ import { user, chat, User, reservation, personalTask } from "./schema";
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
 let client;
-if (process.env.POSTGRES_URL && process.env.POSTGRES_URL !== "postgres://dummy:dummy@dummy/dummy") {
-    client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
+if (
+  process.env.POSTGRES_URL &&
+  process.env.POSTGRES_URL !== "postgres://dummy:dummy@dummy/dummy"
+) {
+  client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
 } else {
-    client = postgres({});
+  client = postgres({});
 }
 let db = drizzle(client);
 
@@ -162,11 +165,14 @@ export async function createPersonalTask(props: {
   description?: string;
 }) {
   try {
-    const [newTask] = await db.insert(personalTask).values({
-      userId: props.userId,
-      title: props.title,
-      description: props.description,
-    }).returning();
+    const [newTask] = await db
+      .insert(personalTask)
+      .values({
+        userId: props.userId,
+        title: props.title,
+        description: props.description,
+      })
+      .returning();
     return newTask;
   } catch (error) {
     console.error("Failed to create personal task", error);
@@ -198,8 +204,8 @@ export async function getPendingReminders({ userId }: { userId: string }) {
         and(
           eq(personalTask.userId, userId),
           eq(personalTask.is_dismissed, false),
-          lte(personalTask.reminder_at, new Date())
-        )
+          lte(personalTask.reminder_at, new Date()),
+        ),
       );
   } catch (error) {
     console.error("Failed to get pending reminders", error);

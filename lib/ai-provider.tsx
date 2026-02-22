@@ -3,10 +3,7 @@
 import { LanguageModel } from "ai";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-import {
-  geminiFlashModel,
-  geminiProPaidModel,
-} from "@/ai";
+import { geminiFlashModel, geminiProPaidModel } from "@/ai";
 import { getCurrentSession } from "@/app/(auth)/actions";
 import { Session } from "@/app/(auth)/auth";
 

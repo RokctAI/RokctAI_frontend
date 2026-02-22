@@ -8,7 +8,8 @@ export default async function HandsOnMode() {
   const isPaaS = (session?.user as any)?.isPaaS;
 
   // Same logic as Layout to determine primary destination
-  const isControlUser = !isPaaS || ['System Manager', 'Administrator'].includes(userRole);
+  const isControlUser =
+    !isPaaS || ["System Manager", "Administrator"].includes(userRole);
 
   if (isControlUser) {
     redirect("/handson/control", RedirectType.replace);

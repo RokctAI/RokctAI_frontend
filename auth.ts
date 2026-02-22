@@ -7,12 +7,7 @@ import { user } from "@/db/schema";
 
 import { authConfig } from "./auth.config";
 
-export const {
-  handlers,
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -24,34 +19,48 @@ export const {
           let siteName = (credentials?.site_name as string) || null;
 
           // Check DB for stored site_name (we need dbUser later anyway)
-          const dbUser = await db.select().from(user).where(eq(user.email, email as string)).limit(1);
+          const dbUser = await db
+            .select()
+            .from(user)
+            .where(eq(user.email, email as string))
+            .limit(1);
 
           if (siteName) {
             // Ensure protocol is present for the URL construction
-            baseUrl = siteName.startsWith('http') ? siteName : `https://${siteName}`;
+            baseUrl = siteName.startsWith("http")
+              ? siteName
+              : `https://${siteName}`;
           } else {
             if (dbUser.length > 0 && dbUser[0].siteName) {
               siteName = dbUser[0].siteName;
-              baseUrl = siteName.startsWith('http') ? siteName : `https://${siteName}`;
+              baseUrl = siteName.startsWith("http")
+                ? siteName
+                : `https://${siteName}`;
             }
           }
 
-          if (!baseUrl) throw new Error("ROKCT_BASE_URL is not set and no site found for user.");
+          if (!baseUrl)
+            throw new Error(
+              "ROKCT_BASE_URL is not set and no site found for user.",
+            );
 
           // 2. Login to Frappe
           let loginRes;
-          let isPaaSLogin = credentials?.is_paas === 'true';
+          let isPaaSLogin = credentials?.is_paas === "true";
 
           if (isPaaSLogin) {
             // PaaS Login (via paas-login.tsx): Try Custom API first (for API Keys)
             try {
-              loginRes = await fetch(`${baseUrl}/api/method/paas.api.user.user.login`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
+              loginRes = await fetch(
+                `${baseUrl}/api/method/paas.api.user.user.login`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ usr: email, pwd: password }),
                 },
-                body: JSON.stringify({ usr: email, pwd: password }),
-              });
+              );
             } catch (e) {
               console.warn("PaaS Login connection failed", e);
               loginRes = { ok: false } as Response;
@@ -111,12 +120,15 @@ export const {
 
           if (isPaaSLogin) {
             try {
-              const subRes = await fetch(`${baseUrl}/api/method/core.tenant.api.get_subscription_details`, {
-                method: "GET",
-                headers: {
-                  "Authorization": `token ${apiKey}:${apiSecret}`
-                }
-              });
+              const subRes = await fetch(
+                `${baseUrl}/api/method/core.tenant.api.get_subscription_details`,
+                {
+                  method: "GET",
+                  headers: {
+                    Authorization: `token ${apiKey}:${apiSecret}`,
+                  },
+                },
+              );
               if (subRes.ok) {
                 const subData = await subRes.json();
                 const details = subData.message;
@@ -130,7 +142,8 @@ export const {
                     }
                   }
                   if (details.status) status = details.status;
-                  if (details.is_free_plan !== undefined) is_free_plan = details.is_free_plan;
+                  if (details.is_free_plan !== undefined)
+                    is_free_plan = details.is_free_plan;
                   if (details.is_ai !== undefined) is_ai = details.is_ai;
                   if (details.modules) modules = details.modules;
                   subscriptionFetched = true;
@@ -143,12 +156,15 @@ export const {
             // NEW: Standard Login (Control Site) - Check for Hosting Client / SaaS Sub
             try {
               const cookie = loginRes.headers.get("set-cookie");
-              const subRes = await fetch(`${baseUrl}/api/method/control.control.api.subscription.get_my_subscription`, {
-                method: "GET",
-                headers: {
-                  "Cookie": cookie || ""
-                }
-              });
+              const subRes = await fetch(
+                `${baseUrl}/api/method/control.control.api.subscription.get_my_subscription`,
+                {
+                  method: "GET",
+                  headers: {
+                    Cookie: cookie || "",
+                  },
+                },
+              );
 
               if (subRes.ok) {
                 const subData = await subRes.json();
@@ -170,7 +186,10 @@ export const {
 
           // Fallback / Admin Logic
           if (!subscriptionFetched) {
-            if (roles.includes("System Manager") || roles.includes("Administrator")) {
+            if (
+              roles.includes("System Manager") ||
+              roles.includes("Administrator")
+            ) {
               // Control Panel Admin / System Manager on non-tenant site -> Grant Ultra
               plan = "Ultra";
               status = "Active";
@@ -182,18 +201,24 @@ export const {
           // Derive allowed_models for frontend compatibility (runs for both fetched and fallback data)
           if (is_ai) {
             allowed_models.push("Gemini Flash");
-            if (!is_free_plan && (status === "Active" || status === "Trialing")) {
+            if (
+              !is_free_plan &&
+              (status === "Active" || status === "Trialing")
+            ) {
               allowed_models.push("Gemini Pro");
             }
           }
 
           // 3. Update User in DB with latest keys and site (Persistence)
           if (dbUser.length > 0) {
-            await db.update(user).set({
-              apiKey: apiKey, // Might be null for tenants
-              apiSecret: apiSecret, // Might be null for tenants
-              siteName: siteName || new URL(baseUrl).hostname
-            }).where(eq(user.email, email as string));
+            await db
+              .update(user)
+              .set({
+                apiKey: apiKey, // Might be null for tenants
+                apiSecret: apiSecret, // Might be null for tenants
+                siteName: siteName || new URL(baseUrl).hostname,
+              })
+              .where(eq(user.email, email as string));
           }
 
           // 5. Return User Details
@@ -213,9 +238,8 @@ export const {
             is_free_plan: is_free_plan,
             is_ai: is_ai,
             modules: modules,
-            allowed_models: allowed_models
+            allowed_models: allowed_models,
           };
-
         } catch (e) {
           console.error("Frappe Login Error:", e);
           return null;
@@ -259,6 +283,6 @@ export const {
         (session.user as any).allowed_models = token.allowed_models;
       }
       return session;
-    }
-  }
+    },
+  },
 });

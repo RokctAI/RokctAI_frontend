@@ -4,11 +4,11 @@ import { BOMList } from "@/components/handson/bom-list";
 export const dynamic = "force-dynamic";
 
 export default async function BOMsPage() {
-    const boms = await getBOMs();
+  const boms = await getBOMs();
 
-    return (
-        <div className="p-6">
-            <BOMList boms={boms} />
-        </div>
-    );
+  return (
+    <div className="p-6">
+      <BOMList boms={boms} />
+    </div>
+  );
 }

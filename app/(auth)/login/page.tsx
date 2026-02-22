@@ -14,7 +14,9 @@ import React from "react";
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [state, formAction] = useActionState<ActionState, FormData>(login, { status: "idle" });
+  const [state, formAction] = useActionState<ActionState, FormData>(login, {
+    status: "idle",
+  });
 
   const handleSubmit = (formData: FormData) => {
     setEmail(formData.get("email") as string);
@@ -43,10 +45,35 @@ export default function LoginPage() {
           {/* Header Section */}
           <div className="flex flex-col items-center text-center">
             <div className="mb-4 bg-gradient-to-tr from-indigo-500 to-purple-500 p-3 rounded-xl shadow-lg">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="text-white"
+              >
+                <path
+                  d="M12 2L2 7L12 12L22 7L12 2Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M2 17L12 22L22 17"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M2 12L12 17L22 12"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
@@ -71,17 +98,25 @@ export default function LoginPage() {
                   <div className="w-full border-t border-gray-200 dark:border-gray-700" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="bg-white dark:bg-black px-2 text-gray-500">Or continue with</span>
+                  <span className="bg-white dark:bg-black px-2 text-gray-500">
+                    Or continue with
+                  </span>
                 </div>
               </div>
 
               <div className="mt-6 text-center text-sm">
-                <Link href="/register" className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                <Link
+                  href="/register"
+                  className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+                >
                   Create an account
                 </Link>
               </div>
               <div className="mt-2 text-center text-xs">
-                <Link href="/forgot-password" className="text-gray-500 hover:text-gray-900 dark:hover:text-gray-300">
+                <Link
+                  href="/forgot-password"
+                  className="text-gray-500 hover:text-gray-900 dark:hover:text-gray-300"
+                >
                   Forgot password?
                 </Link>
               </div>

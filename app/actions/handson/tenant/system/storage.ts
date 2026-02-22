@@ -3,5 +3,5 @@
 import { StorageService } from "@/app/services/tenant/storage";
 
 export async function getStorageUsage() {
-    return StorageService.getStorageUsage();
+  return StorageService.getStorageUsage();
 }

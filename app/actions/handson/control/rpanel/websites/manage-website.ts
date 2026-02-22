@@ -21,7 +21,9 @@ export async function deleteWebsite(websiteName: string) {
 
 export async function issueSSL(websiteName: string) {
   try {
-    const res = await WebsitesService.updateWebsite(websiteName, { ssl_status: "Pending" });
+    const res = await WebsitesService.updateWebsite(websiteName, {
+      ssl_status: "Pending",
+    });
 
     if (res.exc) throw new Error(JSON.stringify(res.exc));
 

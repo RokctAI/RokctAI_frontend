@@ -6,30 +6,34 @@ import { ShiftService } from "@/app/services/all/hrms/shifts";
 import type { ShiftAssignmentData } from "@/app/services/all/hrms/shifts";
 
 export async function getShiftTypes() {
-    if (!await verifyHrRole()) return [];
-    try {
-        return await ShiftService.getShiftTypes();
-    } catch (e) {
-        return [];
-    }
+  if (!(await verifyHrRole())) return [];
+  try {
+    return await ShiftService.getShiftTypes();
+  } catch (e) {
+    return [];
+  }
 }
 
 export async function getShiftAssignments() {
-    if (!await verifyHrRole()) return [];
-    try {
-        return await ShiftService.getShiftAssignments();
-    } catch (e) {
-        return [];
-    }
+  if (!(await verifyHrRole())) return [];
+  try {
+    return await ShiftService.getShiftAssignments();
+  } catch (e) {
+    return [];
+  }
 }
 
 export async function createShiftAssignment(data: ShiftAssignmentData) {
-    if (!await verifyHrRole()) return { success: false, error: "Unauthorized" };
-    try {
-        const result = await ShiftService.createAssignment(data);
-        revalidatePath("/handson/all/hrms/shift");
-        return { success: true, message: "Shift Assigned successfully", name: result.name };
-    } catch (e: any) {
-        return { success: false, error: e?.message || "Failed to assign shift" };
-    }
+  if (!(await verifyHrRole())) return { success: false, error: "Unauthorized" };
+  try {
+    const result = await ShiftService.createAssignment(data);
+    revalidatePath("/handson/all/hrms/shift");
+    return {
+      success: true,
+      message: "Shift Assigned successfully",
+      name: result.name,
+    };
+  } catch (e: any) {
+    return { success: false, error: e?.message || "Failed to assign shift" };
+  }
 }

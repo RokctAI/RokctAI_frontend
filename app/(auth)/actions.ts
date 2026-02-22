@@ -64,10 +64,13 @@ export async function register(
     const baseUrl = process.env.ROKCT_BASE_URL;
     if (baseUrl) {
       // Resolve from Country Name (Dynamic based on form input)
-      const pricingRes = await fetch(`${baseUrl}/api/method/control.control.api.subscription.get_pricing_metadata?country=${encodeURIComponent(countryInput)}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-      });
+      const pricingRes = await fetch(
+        `${baseUrl}/api/method/control.control.api.subscription.get_pricing_metadata?country=${encodeURIComponent(countryInput)}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
 
       if (pricingRes.ok) {
         const pricingData = await pricingRes.json();
@@ -92,7 +95,10 @@ export async function register(
     const adminSecret = settings.length > 0 ? settings[0].adminApiSecret : null;
 
     if (!adminKey || !adminSecret) {
-      return { status: "failed", error: "System not initialized. Administrator must login first." };
+      return {
+        status: "failed",
+        error: "System not initialized. Administrator must login first.",
+      };
     }
 
     // 2. Provisioning handles User Creation (Service) or Site Setup (Tenant)
@@ -100,68 +106,88 @@ export async function register(
 
     if (companyName) {
       try {
-        if (isServicePlan) { // Method 1: Service Provisioning (Creates Control Plane User)
-          const provisionRes = await fetch(`${baseUrl}/api/v1/method/control.control.provisioning.provision_service_subscription`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `token ${adminKey}:${adminSecret}`
+        if (isServicePlan) {
+          // Method 1: Service Provisioning (Creates Control Plane User)
+          const provisionRes = await fetch(
+            `${baseUrl}/api/v1/method/control.control.provisioning.provision_service_subscription`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `token ${adminKey}:${adminSecret}`,
+              },
+              body: JSON.stringify({
+                plan: plan,
+                email: email,
+                password: password,
+                first_name: firstName,
+                last_name: lastName,
+                company_name: companyName,
+                currency: currency,
+                country: country,
+                industry: industry,
+                voucher_code: voucherCode,
+                domain: formData.get("domain")
+                  ? (formData.get("domain") as string)
+                  : null,
+                lines: 1,
+              }),
             },
-            body: JSON.stringify({
-              plan: plan,
-              email: email,
-              password: password,
-              first_name: firstName,
-              last_name: lastName,
-              company_name: companyName,
-              currency: currency,
-              country: country,
-              industry: industry,
-              voucher_code: voucherCode,
-              domain: formData.get("domain") ? (formData.get("domain") as string) : null,
-              lines: 1
-            })
-          });
+          );
 
           if (provisionRes.ok) {
             const provisionData = await provisionRes.json();
-            siteName = provisionData.message?.site_name || provisionData.message;
+            siteName =
+              provisionData.message?.site_name || provisionData.message;
           } else {
             // Handle Error
             const err = await provisionRes.json();
-            return { status: "failed", error: err.message || "Service Provisioning failed" };
+            return {
+              status: "failed",
+              error: err.message || "Service Provisioning failed",
+            };
           }
-
-        } else { // Method 2: Tenant Provisioning (Queues Site, User NOT created on Control Plane)
-          const provisionRes = await fetch(`${baseUrl}/api/v1/method/control.control.provisioning.provision_new_tenant`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `token ${adminKey}:${adminSecret}`
+        } else {
+          // Method 2: Tenant Provisioning (Queues Site, User NOT created on Control Plane)
+          const provisionRes = await fetch(
+            `${baseUrl}/api/v1/method/control.control.provisioning.provision_new_tenant`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `token ${adminKey}:${adminSecret}`,
+              },
+              body: JSON.stringify({
+                email: email,
+                company_name: companyName,
+                plan: plan,
+                first_name: firstName,
+                last_name: lastName,
+                currency: currency,
+                country: country,
+                industry: industry,
+                voucher_code: voucherCode,
+              }),
             },
-            body: JSON.stringify({
-              email: email,
-              company_name: companyName,
-              plan: plan,
-              first_name: firstName,
-              last_name: lastName,
-              currency: currency,
-              country: country,
-              industry: industry,
-              voucher_code: voucherCode
-            })
-          });
+          );
 
           if (provisionRes.ok) {
             const provisionData = await provisionRes.json();
-            siteName = provisionData.message?.site_name || provisionData.message;
+            siteName =
+              provisionData.message?.site_name || provisionData.message;
           } else {
             // Handle Error
             try {
               const err = await provisionRes.json();
-              return { status: "failed", error: err.message || "Tenant Provisioning failed" };
+              return {
+                status: "failed",
+                error: err.message || "Tenant Provisioning failed",
+              };
             } catch (e) {
-              return { status: "failed", error: "Provisioning connection failed" };
+              return {
+                status: "failed",
+                error: "Provisioning connection failed",
+              };
             }
           }
         }
@@ -172,15 +198,22 @@ export async function register(
     }
 
     // 3. Save User to Local DB (Persistence)
-    const existingUser = await db.select().from(user).where(eq(user.email, email)).limit(1);
+    const existingUser = await db
+      .select()
+      .from(user)
+      .where(eq(user.email, email))
+      .limit(1);
 
     if (existingUser.length === 0) {
       await db.insert(user).values({
         email: email,
-        siteName: siteName
+        siteName: siteName,
       });
     } else if (siteName) {
-      await db.update(user).set({ siteName: siteName }).where(eq(user.email, email));
+      await db
+        .update(user)
+        .set({ siteName: siteName })
+        .where(eq(user.email, email));
     }
 
     // 4. Auto-Login
@@ -202,7 +235,7 @@ export async function register(
         email: email,
         password: password,
         redirect: false,
-        is_paas: "true"
+        is_paas: "true",
       };
 
       let shouldLogin = true;
@@ -219,12 +252,11 @@ export async function register(
       if (shouldLogin) {
         await signIn("credentials", loginParams);
       } else {
-        // Return success but user is not logged in. 
+        // Return success but user is not logged in.
         // They will be redirected to login page usually, or we can show a specific message?
         // The form expects { status: "success" }.
         // The UI might redirect to /login or show "Check your email".
       }
-
     } catch (loginError) {
       console.warn("Auto-login failed:", loginError);
       // Fallback: If login fails, we still return success for registration.
@@ -253,14 +285,14 @@ export async function getIndustries(): Promise<string[]> {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `token ${adminKey}:${adminSecret}`
+        Authorization: `token ${adminKey}:${adminSecret}`,
       },
       body: JSON.stringify({
         doctype: "Industry Type",
         fields: ["name"],
         limit_page_length: 100,
-        order_by: "name asc"
-      })
+        order_by: "name asc",
+      }),
     });
 
     if (res.ok) {

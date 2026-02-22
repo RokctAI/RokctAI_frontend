@@ -3,6 +3,10 @@ import { ProductionPlanList } from "@/components/handson/production-plan-compone
 
 export const dynamic = "force-dynamic";
 export default async function Page() {
-    const data = await getProductionPlans();
-    return <div className="p-6"><ProductionPlanList plans={data} /></div>;
+  const data = await getProductionPlans();
+  return (
+    <div className="p-6">
+      <ProductionPlanList plans={data} />
+    </div>
+  );
 }

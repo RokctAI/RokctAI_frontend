@@ -1,9 +1,9 @@
 "use client";
 
-import { PanelRightOpen } from 'lucide-react';
-import React from 'react';
+import { PanelRightOpen } from "lucide-react";
+import React from "react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 // import { useAcceptedTasks } from '@/lib/context/accepted-tasks-context';
 
 export function RightPlaneTrigger() {

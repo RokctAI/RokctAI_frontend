@@ -25,7 +25,6 @@ export const metadata: Metadata = {
   },
 };
 
-
 // ... imports
 
 export default async function RootLayout({
@@ -36,8 +35,7 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en">
-      <head>
-      </head>
+      <head></head>
       <body className="antialiased">
         <SessionProvider>
           <ThemeProvider

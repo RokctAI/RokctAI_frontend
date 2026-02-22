@@ -1,2 +1,4 @@
 import { RoutingList } from "@/components/handson/routing-components";
-export default function Page() { return <RoutingList />; }
+export default function Page() {
+  return <RoutingList />;
+}

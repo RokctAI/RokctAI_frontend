@@ -4,11 +4,11 @@ import { ProjectList } from "@/components/handson/project-list";
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
-    const projects = await getProjects();
+  const projects = await getProjects();
 
-    return (
-        <div className="p-6">
-            <ProjectList projects={projects} />
-        </div>
-    );
+  return (
+    <div className="p-6">
+      <ProjectList projects={projects} />
+    </div>
+  );
 }

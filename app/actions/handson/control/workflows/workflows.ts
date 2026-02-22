@@ -7,29 +7,31 @@ import { revalidatePath } from "next/cache";
 /**
  * Fetches Global Workflow Rules.
  */
-export async function getGlobalWorkflows(doctype?: string): Promise<WorkflowRule[]> {
-    return WorkflowService.getGlobalWorkflows(doctype);
+export async function getGlobalWorkflows(
+  doctype?: string,
+): Promise<WorkflowRule[]> {
+  return WorkflowService.getGlobalWorkflows(doctype);
 }
 
 export async function applyGlobalWorkflows(doctype: string, data: any) {
-    return WorkflowService.applyGlobalWorkflows(doctype, data);
+  return WorkflowService.applyGlobalWorkflows(doctype, data);
 }
 
 /**
  * Save a Global Workflow Rule.
  */
 export async function saveGlobalWorkflow(rule: WorkflowRule) {
-    await WorkflowService.saveGlobalWorkflow(rule);
-    revalidatePath("/handson/control/workflows");
-    return { success: true };
+  await WorkflowService.saveGlobalWorkflow(rule);
+  revalidatePath("/handson/control/workflows");
+  return { success: true };
 }
 
 export async function deleteGlobalWorkflow(name: string) {
-    await WorkflowService.deleteGlobalWorkflow(name);
-    revalidatePath("/handson/control/workflows");
-    return { success: true };
+  await WorkflowService.deleteGlobalWorkflow(name);
+  revalidatePath("/handson/control/workflows");
+  return { success: true };
 }
 
 export async function seedWorkflows() {
-    return { success: true, message: "Workflows seeded" };
+  return { success: true, message: "Workflows seeded" };
 }

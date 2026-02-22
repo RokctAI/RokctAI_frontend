@@ -1,7 +1,6 @@
 import NextAuth, { DefaultSession, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 
-
 export interface CompanyContext {
   name: string;
   country: string;
@@ -74,4 +73,3 @@ declare module "next-auth/jwt" {
     company?: CompanyContext;
   }
 }
-

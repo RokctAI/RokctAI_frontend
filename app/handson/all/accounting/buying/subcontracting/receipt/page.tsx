@@ -3,6 +3,10 @@ import { SubcontractingReceiptList } from "@/components/handson/subcontracting-r
 
 export const dynamic = "force-dynamic";
 export default async function Page() {
-    const data = await getSubcontractingReceipts();
-    return <div className="p-6"><SubcontractingReceiptList receipts={data} /></div>;
+  const data = await getSubcontractingReceipts();
+  return (
+    <div className="p-6">
+      <SubcontractingReceiptList receipts={data} />
+    </div>
+  );
 }

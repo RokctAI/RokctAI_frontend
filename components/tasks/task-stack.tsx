@@ -10,8 +10,8 @@ import { DealTask, DealTaskProps } from "./deal-task";
 import { ProjectTask, ProjectTaskProps } from "./project-task";
 
 type Task =
-  | { type: 'project'; data: ProjectTaskProps }
-  | { type: 'deal'; data: DealTaskProps };
+  | { type: "project"; data: ProjectTaskProps }
+  | { type: "deal"; data: DealTaskProps };
 
 interface TaskStackProps {
   initialTasks: Task[];
@@ -22,7 +22,7 @@ export function TaskStack({ initialTasks }: TaskStackProps) {
   // const { addTask } = useAcceptedTasks();
 
   const handleAccept = async (taskId: number, updates?: any) => {
-    const task = tasks.find(t => t.data.id === taskId);
+    const task = tasks.find((t) => t.data.id === taskId);
     if (!task) return;
 
     // Merge updates (e.g. project linking)
@@ -30,10 +30,10 @@ export function TaskStack({ initialTasks }: TaskStackProps) {
 
     try {
       // Send to Backend
-      const response = await fetch('/api/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(finalData)
+      const response = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(finalData),
       });
 
       if (response.ok) {
@@ -51,11 +51,7 @@ export function TaskStack({ initialTasks }: TaskStackProps) {
   };
 
   if (tasks.length === 0) {
-    return (
-      <div className="text-center text-zinc-500 p-4">
-        No more tasks.
-      </div>
-    );
+    return <div className="text-center text-zinc-500 p-4">No more tasks.</div>;
   }
 
   return (
@@ -78,11 +74,23 @@ export function TaskStack({ initialTasks }: TaskStackProps) {
               exit={{ opacity: 0, y: -50, scale: 0.9 }}
               transition={{ duration: 0.3 }}
             >
-              <div className={!isTop ? 'pointer-events-none' : ''}>
-                {task.type === 'project' ? (
-                  <ProjectTask task={{ ...task.data, onAccept: isTop ? (id, updates) => handleAccept(id, updates) : undefined }} />
+              <div className={!isTop ? "pointer-events-none" : ""}>
+                {task.type === "project" ? (
+                  <ProjectTask
+                    task={{
+                      ...task.data,
+                      onAccept: isTop
+                        ? (id, updates) => handleAccept(id, updates)
+                        : undefined,
+                    }}
+                  />
                 ) : (
-                  <DealTask task={{ ...task.data, onAccept: isTop ? handleAccept : undefined }} />
+                  <DealTask
+                    task={{
+                      ...task.data,
+                      onAccept: isTop ? handleAccept : undefined,
+                    }}
+                  />
                 )}
               </div>
             </motion.div>

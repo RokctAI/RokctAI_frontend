@@ -12,7 +12,8 @@ export function Cta() {
           Ready to get started?
         </h2>
         <p className="text-lg md:text-xl text-gray-400 mb-8">
-          Join the other <span className="text-white font-bold">59,239+</span> users who work faster with {PLATFORM_NAME}.
+          Join the other <span className="text-white font-bold">59,239+</span>{" "}
+          users who work faster with {PLATFORM_NAME}.
         </p>
         <button className="bg-white text-black font-semibold py-3 px-6 rounded-lg inline-flex items-center">
           <svg

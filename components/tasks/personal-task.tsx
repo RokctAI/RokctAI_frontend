@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 
 export interface PersonalTaskProps {
   id: string;
@@ -29,14 +29,16 @@ export function PersonalTask({ task }: { task: PersonalTaskProps }) {
         {task.onAccept && (
           <button
             onClick={() => task.onAccept?.(task.id)}
-            className="bg-wealth-green-600 hover:bg-wealth-green-700 text-white px-3 py-1 rounded-md text-sm">
+            className="bg-wealth-green-600 hover:bg-wealth-green-700 text-white px-3 py-1 rounded-md text-sm"
+          >
             Accept
           </button>
         )}
         {task.onDone && (
           <button
             onClick={() => task.onDone?.(task.id)}
-            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm">
+            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm"
+          >
             Done
           </button>
         )}

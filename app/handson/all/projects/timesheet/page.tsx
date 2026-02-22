@@ -3,6 +3,10 @@ import { TimesheetList } from "@/components/handson/timesheet-components";
 
 export const dynamic = "force-dynamic";
 export default async function Page() {
-    const data = await getTimesheets();
-    return <div className="p-6"><TimesheetList items={data} /></div>;
+  const data = await getTimesheets();
+  return (
+    <div className="p-6">
+      <TimesheetList items={data} />
+    </div>
+  );
 }

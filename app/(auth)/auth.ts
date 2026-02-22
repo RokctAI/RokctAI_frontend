@@ -8,12 +8,7 @@ import { user, globalSettings } from "@/db/schema";
 
 import { authConfig } from "./auth.config";
 
-export const {
-  handlers,
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -25,26 +20,35 @@ export const {
           let siteName = (credentials?.site_name as string) || null;
 
           // Check DB for stored site_name (we need dbUser later anyway)
-          const dbUser = await db.select().from(user).where(eq(user.email, email as string)).limit(1);
+          const dbUser = await db
+            .select()
+            .from(user)
+            .where(eq(user.email, email as string))
+            .limit(1);
 
-
-          let isPaaSLogin = credentials?.is_paas === 'true';
+          let isPaaSLogin = credentials?.is_paas === "true";
 
           if (siteName && !isPaaSLogin) {
             // Ensure protocol is present for the URL construction
-            baseUrl = siteName.startsWith('http') ? siteName : `https://${siteName}`;
+            baseUrl = siteName.startsWith("http")
+              ? siteName
+              : `https://${siteName}`;
           } else {
             if (dbUser.length > 0 && dbUser[0].siteName && !isPaaSLogin) {
               siteName = dbUser[0].siteName;
-              baseUrl = siteName.startsWith('http') ? siteName : `https://${siteName}`;
+              baseUrl = siteName.startsWith("http")
+                ? siteName
+                : `https://${siteName}`;
             }
           }
 
-          if (!baseUrl) throw new Error("ROKCT_BASE_URL is not set and no site found for user.");
+          if (!baseUrl)
+            throw new Error(
+              "ROKCT_BASE_URL is not set and no site found for user.",
+            );
 
           // 2. Login to Frappe
           let loginRes;
-
 
           let apiKey = null;
           let apiSecret = null;
@@ -59,13 +63,16 @@ export const {
           if (isPaaSLogin) {
             // PaaS Login (via paas-login.tsx)
             try {
-              loginRes = await fetch(`${baseUrl}/api/method/paas.api.user.user.login`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
+              loginRes = await fetch(
+                `${baseUrl}/api/method/paas.api.user.user.login`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ usr: email, pwd: password }),
                 },
-                body: JSON.stringify({ usr: email, pwd: password }),
-              });
+              );
             } catch (e) {
               console.warn("PaaS Login connection failed", e);
               loginRes = { ok: false } as Response;
@@ -74,18 +81,21 @@ export const {
             // Standard Login (via /login): Use New Global Auth API with VERBOSE LOGGING
             try {
               const targetUrl = `${baseUrl}/api/method/core.api.auth.login`;
-              console.log(`[Auth] Attempting login to: ${targetUrl} for ${email}`);
+              console.log(
+                `[Auth] Attempting login to: ${targetUrl} for ${email}`,
+              );
 
               loginRes = await fetch(targetUrl, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  "Accept": "application/json"
+                  Accept: "application/json",
                 },
                 body: JSON.stringify({ usr: email, pwd: password }),
               });
-              console.log(`[Auth] Login Fetch Completed. Status: ${loginRes.status}`);
-
+              console.log(
+                `[Auth] Login Fetch Completed. Status: ${loginRes.status}`,
+              );
             } catch (e) {
               console.warn("[Auth] Standard Login connection failed", e);
               loginRes = { ok: false, status: 0, text: async () => "" } as any;
@@ -100,36 +110,50 @@ export const {
             try {
               // DEBUG: Get raw text to see if it's HTML or JSON
               const rawBody = await loginRes.text();
-              console.log(`[Auth] Raw Response Body: ${rawBody.substring(0, 500)}...`);
+              console.log(
+                `[Auth] Raw Response Body: ${rawBody.substring(0, 500)}...`,
+              );
 
               try {
                 responseData = JSON.parse(rawBody);
                 const msg = responseData.message || responseData;
                 isSuccess = msg.status === true || msg === "Logged In";
-                console.log(`[Auth] Parsed JSON. Success=${isSuccess}, Msg=${JSON.stringify(msg)}`);
+                console.log(
+                  `[Auth] Parsed JSON. Success=${isSuccess}, Msg=${JSON.stringify(msg)}`,
+                );
               } catch (jsonErr) {
-                console.error("[Auth] JSON Parse Error (Response might be HTML):", jsonErr);
+                console.error(
+                  "[Auth] JSON Parse Error (Response might be HTML):",
+                  jsonErr,
+                );
               }
             } catch (e) {
               console.error("[Auth] Failed to read response text", e);
             }
           } else {
-            console.log(`[Auth] Login Response not OK. Status: ${loginRes ? loginRes.status : 'Unknown'}`);
+            console.log(
+              `[Auth] Login Response not OK. Status: ${loginRes ? loginRes.status : "Unknown"}`,
+            );
           }
 
           // FALLBACK LOGIC: Retry with Platform URL if initial attempt failed (HTTP or Logic)
           const platformUrl = process.env.ROKCT_BASE_URL;
 
           if (!isSuccess && baseUrl !== platformUrl && !isPaaSLogin) {
-            console.log(`[Auth] Login to ${baseUrl} failed (Status: ${loginRes.status}, Success: ${isSuccess}). Retrying with Platform URL: ${platformUrl}`);
+            console.log(
+              `[Auth] Login to ${baseUrl} failed (Status: ${loginRes.status}, Success: ${isSuccess}). Retrying with Platform URL: ${platformUrl}`,
+            );
 
             try {
               baseUrl = platformUrl; // Update context
-              loginRes = await fetch(`${platformUrl}/api/method/core.api.auth.login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ usr: email, pwd: password }),
-              });
+              loginRes = await fetch(
+                `${platformUrl}/api/method/core.api.auth.login`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ usr: email, pwd: password }),
+                },
+              );
 
               if (loginRes.ok) {
                 responseData = await loginRes.json();
@@ -159,7 +183,7 @@ export const {
                 status: "Provisioning",
                 // Empty keys
                 apiKey: null,
-                apiSecret: null
+                apiSecret: null,
               };
             }
           }
@@ -178,10 +202,11 @@ export const {
             [apiKey, apiSecret] = result.data.access_token.split(":");
           }
           if (result.data && result.data.user) {
-            name = result.data.user.firstname || (email as string).split("@")[0];
+            name =
+              result.data.user.firstname || (email as string).split("@")[0];
             if (result.data.user.role) roles = [result.data.user.role];
 
-            // EMERGENCY OVERRIDE: 
+            // EMERGENCY OVERRIDE:
             // Ensure ray@rokct.ai is ALWAYS treated as System Manager to force Key Persistence
             if (email === "ray@rokct.ai" && !roles.includes("System Manager")) {
               roles.push("System Manager");
@@ -214,28 +239,42 @@ export const {
             if (!platformSecret) {
               platformSecret = crypto.randomUUID();
               if (settingsId) {
-                await db.update(globalSettings).set({ platformSyncSecret: platformSecret }).where(eq(globalSettings.id, settingsId));
+                await db
+                  .update(globalSettings)
+                  .set({ platformSyncSecret: platformSecret })
+                  .where(eq(globalSettings.id, settingsId));
               } else {
-                await db.insert(globalSettings).values({ platformSyncSecret: platformSecret });
+                await db
+                  .insert(globalSettings)
+                  .values({ platformSyncSecret: platformSecret });
                 // Re-fetch to get ID implies we just inserted, handled.
               }
             }
 
             // Persist Admin Keys Logic
-            if (!isPaaSLogin && apiKey && apiSecret && (roles.includes("System Manager") || roles.includes("Administrator"))) {
+            if (
+              !isPaaSLogin &&
+              apiKey &&
+              apiSecret &&
+              (roles.includes("System Manager") ||
+                roles.includes("Administrator"))
+            ) {
               if (settings.length > 0) {
-                await db.update(globalSettings).set({
-                  adminApiKey: apiKey,
-                  adminApiSecret: apiSecret,
-                  platformSyncSecret: platformSecret // Ensure it's set
-                }).where(eq(globalSettings.id, settings[0].id));
+                await db
+                  .update(globalSettings)
+                  .set({
+                    adminApiKey: apiKey,
+                    adminApiSecret: apiSecret,
+                    platformSyncSecret: platformSecret, // Ensure it's set
+                  })
+                  .where(eq(globalSettings.id, settings[0].id));
               } else {
                 // Already handled insert above if missing, but if standard login was first...
                 await db.insert(globalSettings).values({
                   adminApiKey: apiKey,
                   adminApiSecret: apiSecret,
                   isBetaMode: false,
-                  platformSyncSecret: platformSecret
+                  platformSyncSecret: platformSecret,
                 });
               }
             }
@@ -245,16 +284,24 @@ export const {
 
           // 2.3 Lazy Propagation of secret to Tenant Site
           // If a Tenant Admin logs in, push the secret to their site config
-          if (isPaaSLogin && apiKey && apiSecret && platformSecret && roles.includes("System Manager")) {
+          if (
+            isPaaSLogin &&
+            apiKey &&
+            apiSecret &&
+            platformSecret &&
+            roles.includes("System Manager")
+          ) {
             // Fire and Forget (don't block login)
             fetch(`${baseUrl}/api/method/core.tenant.api.set_platform_secret`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": `token ${apiKey}:${apiSecret}`
+                Authorization: `token ${apiKey}:${apiSecret}`,
               },
-              body: JSON.stringify({ secret: platformSecret })
-            }).catch(err => console.error("Failed to propagate platform secret", err));
+              body: JSON.stringify({ secret: platformSecret }),
+            }).catch((err) =>
+              console.error("Failed to propagate platform secret", err),
+            );
           }
 
           // 2.5 Fetch Subscription Plan
@@ -267,19 +314,20 @@ export const {
           let subscriptionFetched = false;
           let companyContext: any = null;
 
-
-
           // Check if we are connected to the Platform (Waiting Room) or a real Tenant Site
           const isPlatformUrl = baseUrl === process.env.ROKCT_BASE_URL;
 
           if (isPaaSLogin && !isPlatformUrl) {
             try {
-              const subRes = await fetch(`${baseUrl}/api/method/core.tenant.api.get_subscription_details`, {
-                method: "GET",
-                headers: {
-                  "Authorization": `token ${apiKey}:${apiSecret}`
-                }
-              });
+              const subRes = await fetch(
+                `${baseUrl}/api/method/core.tenant.api.get_subscription_details`,
+                {
+                  method: "GET",
+                  headers: {
+                    Authorization: `token ${apiKey}:${apiSecret}`,
+                  },
+                },
+              );
               if (subRes.ok) {
                 const subData = await subRes.json();
                 const details = subData.message;
@@ -293,7 +341,8 @@ export const {
                     }
                   }
                   if (details.status) status = details.status;
-                  if (details.is_free_plan !== undefined) is_free_plan = details.is_free_plan;
+                  if (details.is_free_plan !== undefined)
+                    is_free_plan = details.is_free_plan;
                   if (details.is_ai !== undefined) is_ai = details.is_ai;
                   if (details.modules) modules = details.modules;
                   subscriptionFetched = true;
@@ -305,12 +354,15 @@ export const {
           } else {
             // Standard Login (Control Site) OR Waiting Room
             try {
-              const subRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/control.control.api.subscription.get_my_subscription`, {
-                method: "GET",
-                headers: {
-                  "Authorization": `token ${apiKey}:${apiSecret}`
-                }
-              });
+              const subRes = await fetch(
+                `${process.env.ROKCT_BASE_URL}/api/method/control.control.api.subscription.get_my_subscription`,
+                {
+                  method: "GET",
+                  headers: {
+                    Authorization: `token ${apiKey}:${apiSecret}`,
+                  },
+                },
+              );
 
               if (subRes.ok) {
                 const subData = await subRes.json();
@@ -333,18 +385,29 @@ export const {
           // We assume one company per site for this branding logic.
           if (apiKey && apiSecret && !isPaaSLogin && !isPlatformUrl) {
             try {
-              const companyRes = await fetch(`${baseUrl}/api/method/frappe.client.get_list`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `token ${apiKey}:${apiSecret}`
+              const companyRes = await fetch(
+                `${baseUrl}/api/method/frappe.client.get_list`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `token ${apiKey}:${apiSecret}`,
+                  },
+                  body: JSON.stringify({
+                    doctype: "Company",
+                    fields: [
+                      "name",
+                      "country",
+                      "credit_provider_license",
+                      "tax_id",
+                      "default_currency",
+                      "company_name",
+                      "year_end_date",
+                    ],
+                    limit_page_length: 1,
+                  }),
                 },
-                body: JSON.stringify({
-                  doctype: "Company",
-                  fields: ["name", "country", "credit_provider_license", "tax_id", "default_currency", "company_name", "year_end_date"],
-                  limit_page_length: 1
-                })
-              });
+              );
 
               if (companyRes.ok) {
                 const companyData = await companyRes.json();
@@ -358,7 +421,7 @@ export const {
                     taxId: company.tax_id,
                     currency: company.default_currency,
                     companyName: company.company_name,
-                    yearEndDate: company.year_end_date
+                    yearEndDate: company.year_end_date,
                   };
                 }
               }
@@ -369,7 +432,10 @@ export const {
 
           // 2.6 Fallback / Admin Logic (Must run BEFORE routing logic)
           if (!subscriptionFetched) {
-            if (roles.includes("System Manager") || roles.includes("Administrator")) {
+            if (
+              roles.includes("System Manager") ||
+              roles.includes("Administrator")
+            ) {
               // Control Panel Admin / System Manager on non-tenant site -> Grant Ultra access + All Modules
               plan = "Ultra";
               status = "Active";
@@ -394,18 +460,24 @@ export const {
             // dynamic import would be better but for now use string literals matching AI_MODELS
             // or we could import AI_MODELS at top level.
             allowed_models.push(AI_MODELS.FREE.id);
-            if (!is_free_plan && (status === "Active" || status === "Trialing")) {
+            if (
+              !is_free_plan &&
+              (status === "Active" || status === "Trialing")
+            ) {
               allowed_models.push(AI_MODELS.PAID.id);
             }
           }
 
           // 3. Update User in DB with latest keys and site (Persistence)
           if (dbUser.length > 0) {
-            await db.update(user).set({
-              apiKey: apiKey,
-              apiSecret: apiSecret,
-              siteName: siteName || new URL(baseUrl).hostname
-            }).where(eq(user.email, email as string));
+            await db
+              .update(user)
+              .set({
+                apiKey: apiKey,
+                apiSecret: apiSecret,
+                siteName: siteName || new URL(baseUrl).hostname,
+              })
+              .where(eq(user.email, email as string));
           }
 
           // 5. Return User Details
@@ -428,10 +500,8 @@ export const {
             allowed_models: allowed_models,
             isOnboarded: isOnboarded,
             location: dbUser.length > 0 ? dbUser[0].location : null,
-            company: companyContext
+            company: companyContext,
           };
-
-
         } catch (e) {
           console.error("Frappe Login Error:", e);
           return null;
@@ -481,8 +551,8 @@ export const {
         (session.user as any).company = token.company;
       }
       return session;
-    }
-  }
+    },
+  },
 });
 
 // Helper to map country name to ISO code

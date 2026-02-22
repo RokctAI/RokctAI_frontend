@@ -36,7 +36,7 @@ export function Hero({
   openSignupPopup,
   signupUrl,
   selectedCategory = "rokct",
-  onSelectCategory
+  onSelectCategory,
 }: {
   openSignupPopup?: () => void;
   signupUrl?: string;
@@ -61,7 +61,7 @@ export function Hero({
   const [demoTasks, setDemoTasks] = useState<any[]>([]);
 
   useEffect(() => {
-    if (messages.some(m => m.id === 'task-4-user')) {
+    if (messages.some((m) => m.id === "task-4-user")) {
       setDemoTasks(sampleTasks);
     } else if (messages.length === 0) {
       setDemoTasks([]);
@@ -91,7 +91,7 @@ export function Hero({
     }
 
     // ... (rest of the effect logic needs to be mindful of isUserTyping)
-    // Actually, simpler: Wrap the ENTIRE existing animation effect in `if (isUserTyping) return;` 
+    // Actually, simpler: Wrap the ENTIRE existing animation effect in `if (isUserTyping) return;`
     // But I need to modify the EXISTING effect.
     // I will use replace_file_content to wrap the start of the primary effect.
   }, [hasStarted, isUserTyping]); // Add isUserTyping dependency
@@ -99,11 +99,10 @@ export function Hero({
   // ...
 
   // Inside Render Logic for MultimodalInput:
-  // setInput={handleInputChange} 
+  // setInput={handleInputChange}
 
   // Wait, I need to know where the Effect starts.
   // I will read Hero.tsx again to be precise with the Effect modification.
-
 
   const currentConversation = conversations[conversationIndex];
 
@@ -126,11 +125,11 @@ export function Hero({
     }
   }, [conversationIndex, timeouts]);
 
-
   // Placeholder animation logic
   useEffect(() => {
     if (isUserTyping) return;
-    if (mode !== "placeholder" || currentConversation.type !== "placeholder") return;
+    if (mode !== "placeholder" || currentConversation.type !== "placeholder")
+      return;
 
     const handleTyping = () => {
       if (!hasStarted) setHasStarted(true);
@@ -152,7 +151,15 @@ export function Hero({
     };
 
     timeouts.push(setTimeout(handleTyping, isDeleting ? 80 : 120));
-  }, [placeholder, isDeleting, mode, currentConversation, timeouts, hasStarted, isUserTyping]);
+  }, [
+    placeholder,
+    isDeleting,
+    mode,
+    currentConversation,
+    timeouts,
+    hasStarted,
+    isUserTyping,
+  ]);
 
   // Chat animation logic
   useEffect(() => {
@@ -165,7 +172,7 @@ export function Hero({
       timeouts.push(
         setTimeout(() => {
           setConversationIndex((prev) => (prev + 1) % conversations.length);
-        }, 3000)
+        }, 3000),
       );
       return;
     }
@@ -199,35 +206,45 @@ export function Hero({
             </div>
           </div>
         );
-        setMessages((prev) => [...prev, { id: `${currentTurn.id}-user`, node: userMessageNode }]);
+        setMessages((prev) => [
+          ...prev,
+          { id: `${currentTurn.id}-user`, node: userMessageNode },
+        ]);
 
         if (currentTurn.botResponse) {
           setPlaceholder(`${PLATFORM_NAME} is thinking...`);
-          timeouts.push(setTimeout(() => {
-            const botResponseNode = (
-              <div className="flex flex-row gap-4 px-4 w-full md:px-0">
-                <div className="size-[24px] border rounded-sm p-1 flex flex-col justify-center items-center shrink-0 text-zinc-500 bg-white dark:bg-black">
-                  <BrandLogo width={16} height={16} />
-                </div>
-                <div className="flex flex-col gap-2 w-full max-w-[90%]">
-                  {/* Badge Row */}
-
-                  <div className="text-zinc-800 dark:text-zinc-300">
-                    {currentTurn.botResponse?.text}
+          timeouts.push(
+            setTimeout(() => {
+              const botResponseNode = (
+                <div className="flex flex-row gap-4 px-4 w-full md:px-0">
+                  <div className="size-[24px] border rounded-sm p-1 flex flex-col justify-center items-center shrink-0 text-zinc-500 bg-white dark:bg-black">
+                    <BrandLogo width={16} height={16} />
                   </div>
+                  <div className="flex flex-col gap-2 w-full max-w-[90%]">
+                    {/* Badge Row */}
 
-                  {currentTurn.botResponse?.Component && (
-                    <div className="w-full mt-2 border rounded-md overflow-hidden bg-background">
-                      <currentTurn.botResponse.Component {...currentTurn.botResponse.props} />
+                    <div className="text-zinc-800 dark:text-zinc-300">
+                      {currentTurn.botResponse?.text}
                     </div>
-                  )}
+
+                    {currentTurn.botResponse?.Component && (
+                      <div className="w-full mt-2 border rounded-md overflow-hidden bg-background">
+                        <currentTurn.botResponse.Component
+                          {...currentTurn.botResponse.props}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-            setMessages((prev) => [...prev, { id: `${currentTurn.id}-bot`, node: botResponseNode }]);
-            setPlaceholder("");
-            timeouts.push(setTimeout(() => setTurnIndex((t) => t + 1), 1500));
-          }, 1500));
+              );
+              setMessages((prev) => [
+                ...prev,
+                { id: `${currentTurn.id}-bot`, node: botResponseNode },
+              ]);
+              setPlaceholder("");
+              timeouts.push(setTimeout(() => setTurnIndex((t) => t + 1), 1500));
+            }, 1500),
+          );
         } else {
           timeouts.push(setTimeout(() => setTurnIndex((t) => t + 1), 1500));
         }
@@ -237,12 +254,22 @@ export function Hero({
     return () => {
       clearInterval(typeInterval);
     };
-  }, [mode, currentConversation, turnIndex, resolvedTheme, timeouts, hasStarted, messages, isUserTyping]);
+  }, [
+    mode,
+    currentConversation,
+    turnIndex,
+    resolvedTheme,
+    timeouts,
+    hasStarted,
+    messages,
+    isUserTyping,
+  ]);
 
   // Auto-scroll for chat
   useEffect(() => {
     if (mode === "chat" && scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+      scrollContainerRef.current.scrollTop =
+        scrollContainerRef.current.scrollHeight;
     }
   }, [messages, mode]);
 
@@ -263,7 +290,13 @@ export function Hero({
     <SidebarProvider defaultOpen={false} storageKey="sidebar:hero-left">
       <div className="flex w-full bg-background h-[calc(100vh-5rem)]">
         <div className="hidden md:block h-full relative z-20">
-          <LeftSidebar style={{ position: 'absolute', height: '100%' }} className="!absolute left-0 top-0 !h-full border-r border-border/30" activeModule={activeModule} onModuleSelect={setActiveModule} onNewSession={() => { }} />
+          <LeftSidebar
+            style={{ position: "absolute", height: "100%" }}
+            className="!absolute left-0 top-0 !h-full border-r border-border/30"
+            activeModule={activeModule}
+            onModuleSelect={setActiveModule}
+            onNewSession={() => {}}
+          />
         </div>
 
         <SidebarProvider defaultOpen={true} storageKey="sidebar:hero-right">
@@ -292,7 +325,8 @@ export function Hero({
                           </span>
                         </h1>
                         <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400">
-                          {PLATFORM_NAME} is an AI Agent that does your tasks for you.
+                          {PLATFORM_NAME} is an AI Agent that does your tasks
+                          for you.
                         </p>
                       </motion.div>
                     ) : mode === "chat" ? (
@@ -334,25 +368,34 @@ export function Hero({
 
                 <div className="relative z-10 w-full max-w-xl px-4 pb-6">
                   {(() => {
-                    const activeTurn = mode === 'chat' && conversations[conversationIndex].type === 'chat'
-                      ? conversations[conversationIndex].turns[turnIndex]
-                      : null;
+                    const activeTurn =
+                      mode === "chat" &&
+                      conversations[conversationIndex].type === "chat"
+                        ? conversations[conversationIndex].turns[turnIndex]
+                        : null;
 
                     const shouldShow = activeTurn && placeholder.length > 3;
-                    const forcedIntent = shouldShow ? activeTurn.botResponse?.intent : undefined;
-                    const forcedAction = shouldShow ? activeTurn.botResponse?.action : undefined;
+                    const forcedIntent = shouldShow
+                      ? activeTurn.botResponse?.intent
+                      : undefined;
+                    const forcedAction = shouldShow
+                      ? activeTurn.botResponse?.action
+                      : undefined;
 
                     // Mock Models with Name Property
-                    const mockModels = Object.values(AI_MODELS).map(m => ({ id: m.id, name: m.label }));
+                    const mockModels = Object.values(AI_MODELS).map((m) => ({
+                      id: m.id,
+                      name: m.label,
+                    }));
 
                     return (
                       <MultimodalInput
                         input={placeholder}
                         setInput={handleInputChange}
                         isLoading={false}
-                        stop={() => { }}
+                        stop={() => {}}
                         attachments={[]}
-                        setAttachments={() => { }}
+                        setAttachments={() => {}}
                         messages={[]}
                         allowSuggestions={false}
                         useWorker={false}
@@ -360,19 +403,21 @@ export function Hero({
                         forcedAction={forcedAction}
                         models={mockModels}
                         selectedModelId={AI_MODELS.PAID.id} // Default to Pro/Paid model for Hero demo
-                        onModelChange={() => { }}
+                        onModelChange={() => {}}
                         append={async () => null}
                         handleSubmit={(e) => {
                           e?.preventDefault?.();
-                          const pricingSection = document.getElementById("pricing");
+                          const pricingSection =
+                            document.getElementById("pricing");
                           if (pricingSection) {
-                            pricingSection.scrollIntoView({ behavior: "smooth" });
+                            pricingSection.scrollIntoView({
+                              behavior: "smooth",
+                            });
                           }
                         }}
                       />
                     );
                   })()}
-
                 </div>
               </section>
             </div>
@@ -381,7 +426,7 @@ export function Hero({
                 activeModule={activeModule}
                 isDemo={true}
                 demoTasks={demoTasks}
-                style={{ position: 'absolute', height: '100%' }}
+                style={{ position: "absolute", height: "100%" }}
                 className="!absolute right-0 top-0 !h-full border-l border-border/30"
               />
             </div>

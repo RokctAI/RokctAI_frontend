@@ -17,7 +17,7 @@ export function Header({
   openLoginPopup,
   openSignupPopup,
   loginUrl,
-  signupUrl
+  signupUrl,
 }: {
   openLoginPopup?: () => void;
   openSignupPopup?: () => void;
@@ -53,20 +53,28 @@ export function Header({
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
               {!isLoginPage && !isRegisterPage && (
-                <Link href="#pricing" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">
+                <Link
+                  href="#pricing"
+                  className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
+                >
                   Pricing
                 </Link>
               )}
 
               {session ? (
                 <>
-                  <Link href="/paas/dashboard" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">
+                  <Link
+                    href="/paas/dashboard"
+                    className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
+                  >
                     Dashboard
                   </Link>
                   <button
                     onClick={() => {
                       const siteName = (session as any)?.user?.siteName;
-                      signOut({ callbackUrl: siteName ? `/?site_name=${siteName}` : "/" });
+                      signOut({
+                        callbackUrl: siteName ? `/?site_name=${siteName}` : "/",
+                      });
                     }}
                     className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
                   >
@@ -78,8 +86,8 @@ export function Header({
                 <>
                   {/* On Register Page: Show Login Button */}
                   {/* On Landing Page: Show Login Button */}
-                  {(!isLoginPage) && (
-                    loginUrl ? (
+                  {!isLoginPage &&
+                    (loginUrl ? (
                       <Link
                         href={loginUrl}
                         className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
@@ -93,20 +101,20 @@ export function Header({
                       >
                         Log in
                       </button>
-                    )
-                  )}
+                    ))}
 
                   {/* On Login Page: Show Register Button */}
                   {/* On Landing Page: Show Get Started Button */}
-                  {(!isRegisterPage) && (
-                    signupUrl ? (
+                  {!isRegisterPage &&
+                    (signupUrl ? (
                       <Link
                         href={signupUrl}
                         className={`text-sm font-medium px-5 py-2.5 rounded-full transition-all duration-200 shadow-sm hover:shadow-md
-                              ${isLoginPage
-                            ? "bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700"
-                            : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:opacity-90"
-                          }
+                              ${
+                                isLoginPage
+                                  ? "bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700"
+                                  : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:opacity-90"
+                              }
                           `}
                       >
                         {isLoginPage ? "Create account" : "Start Now"}
@@ -115,16 +123,16 @@ export function Header({
                       <button
                         onClick={openSignupPopup}
                         className={`text-sm font-medium px-5 py-2.5 rounded-full transition-all duration-200 shadow-sm hover:shadow-md
-                              ${isLoginPage
-                            ? "bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700" // Secondary style for 'Register' on Login page
-                            : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:opacity-90" // Primary style for 'Get Started'
-                          }
+                              ${
+                                isLoginPage
+                                  ? "bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700" // Secondary style for 'Register' on Login page
+                                  : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:opacity-90" // Primary style for 'Get Started'
+                              }
                           `}
                       >
                         {isLoginPage ? "Create account" : "Start Now"}
                       </button>
-                    )
-                  )}
+                    ))}
                 </>
               )}
 
@@ -149,13 +157,16 @@ export function Header({
           <div className="md:hidden absolute top-20 left-0 w-full bg-white dark:bg-black border-b border-gray-100 dark:border-gray-800 shadow-lg animate-in slide-in-from-top-5">
             <div className="container mx-auto px-4 pb-6 flex flex-col space-y-4 pt-4">
               {!isLoginPage && !isRegisterPage && (
-                <Link href="#pricing" className="text-base font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                <Link
+                  href="#pricing"
+                  className="text-base font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                >
                   Pricing
                 </Link>
               )}
 
-              {(!isLoginPage) && (
-                loginUrl ? (
+              {!isLoginPage &&
+                (loginUrl ? (
                   <Link
                     href={loginUrl}
                     className="text-base font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white text-left"
@@ -173,11 +184,10 @@ export function Header({
                   >
                     Log in
                   </button>
-                )
-              )}
+                ))}
 
-              {(!isRegisterPage) && (
-                signupUrl ? (
+              {!isRegisterPage &&
+                (signupUrl ? (
                   <Link
                     href={signupUrl}
                     className="text-base font-medium px-5 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-center"
@@ -195,8 +205,7 @@ export function Header({
                   >
                     {isLoginPage ? "Create account" : "Get Started"}
                   </button>
-                )
-              )}
+                ))}
             </div>
           </div>
         )}

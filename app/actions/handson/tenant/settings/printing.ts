@@ -3,11 +3,11 @@
 import { getClient } from "@/app/lib/client";
 
 export interface PrintFormat {
-    name: string;
-    doc_type: string;
-    format: string; // The HTML content
-    css?: string;
-    standard: boolean;
+  name: string;
+  doc_type: string;
+  format: string; // The HTML content
+  css?: string;
+  standard: boolean;
 }
 
 import { NewYorkTemplate } from "@/app/templates/invoices/new_york";
@@ -136,158 +136,158 @@ const DEFAULT_INVOICE_TEMPLATE = `
 `;
 
 const LEGACY_INVOICE_TEMPLATES: Record<string, string> = {
-    "New York": NewYorkTemplate,
-    "Toronto": TorontoTemplate,
-    "Rio": RioTemplate,
-    "London": LondonTemplate,
-    "Istanbul": IstanbulTemplate,
-    "Mumbai": MumbaiTemplate,
-    "Hong Kong": HongKongTemplate,
-    "Tokyo": TokyoTemplate,
-    "Sydney": SydneyTemplate,
-    "Addis Ababa": AddisAbabaTemplate
+  "New York": NewYorkTemplate,
+  Toronto: TorontoTemplate,
+  Rio: RioTemplate,
+  London: LondonTemplate,
+  Istanbul: IstanbulTemplate,
+  Mumbai: MumbaiTemplate,
+  "Hong Kong": HongKongTemplate,
+  Tokyo: TokyoTemplate,
+  Sydney: SydneyTemplate,
+  "Addis Ababa": AddisAbabaTemplate,
 };
 
 const LEGACY_QUOTE_TEMPLATES: Record<string, string> = {
-    "New York": NewYorkQuotation,
-    "Toronto": TorontoQuotation,
-    "Rio": RioQuotation,
-    "London": LondonQuotation,
-    "Istanbul": IstanbulQuotation,
-    "Mumbai": MumbaiQuotation,
-    "Hong Kong": HongKongQuotation,
-    "Tokyo": TokyoQuotation,
-    "Sydney": SydneyQuotation,
-    "Addis Ababa": AddisAbabaQuotation
+  "New York": NewYorkQuotation,
+  Toronto: TorontoQuotation,
+  Rio: RioQuotation,
+  London: LondonQuotation,
+  Istanbul: IstanbulQuotation,
+  Mumbai: MumbaiQuotation,
+  "Hong Kong": HongKongQuotation,
+  Tokyo: TokyoQuotation,
+  Sydney: SydneyQuotation,
+  "Addis Ababa": AddisAbabaQuotation,
 };
 
 const POS_TEMPLATES: Record<string, string> = {
-    "New York": NewYorkPOS,
-    "Toronto": TorontoPOS,
-    "Rio": RioPOS,
-    "London": LondonPOS,
-    "Istanbul": IstanbulPOS,
-    "Mumbai": MumbaiPOS,
-    "Hong Kong": HongKongPOS,
-    "Tokyo": TokyoPOS,
-    "Sydney": SydneyPOS,
-    "Addis Ababa": AddisAbabaPOS
+  "New York": NewYorkPOS,
+  Toronto: TorontoPOS,
+  Rio: RioPOS,
+  London: LondonPOS,
+  Istanbul: IstanbulPOS,
+  Mumbai: MumbaiPOS,
+  "Hong Kong": HongKongPOS,
+  Tokyo: TokyoPOS,
+  Sydney: SydneyPOS,
+  "Addis Ababa": AddisAbabaPOS,
 };
 
 /**
  * Fetches Print Formats.
  */
 export async function getPrintFormats(doctype: string) {
-    const formats: any[] = [];
+  const formats: any[] = [];
 
-    // 1. Load Hardcoded Standard Templates
-    try {
-        if (doctype === "Sales Invoice") {
-            formats.push({
-                name: "Standard Invoice",
-                doc_type: "Sales Invoice",
-                format: DEFAULT_INVOICE_TEMPLATE,
-                standard: true
-            });
-            Object.keys(LEGACY_INVOICE_TEMPLATES).forEach(key => {
-                formats.push({
-                    name: key,
-                    doc_type: "Sales Invoice",
-                    format: LEGACY_INVOICE_TEMPLATES[key],
-                    standard: true
-                });
-            });
-        } else if (doctype === "Quotation") {
-            Object.keys(LEGACY_QUOTE_TEMPLATES).forEach(key => {
-                formats.push({
-                    name: key,
-                    doc_type: "Quotation",
-                    format: LEGACY_QUOTE_TEMPLATES[key],
-                    standard: true
-                });
-            });
-        } else if (doctype === "POS Invoice") {
-            Object.keys(POS_TEMPLATES).forEach(key => {
-                formats.push({
-                    name: key + " (POS)",
-                    doc_type: "POS Invoice",
-                    format: POS_TEMPLATES[key],
-                    standard: true
-                });
-            });
-        } else if (doctype === "Appointment Letter") {
-            formats.push({
-                name: "Standard Appointment Letter",
-                doc_type: "Appointment Letter",
-                format: AppointmentLetterTemplate,
-                standard: true
-            });
-        } else if (doctype === "Salary Slip") {
-            formats.push({
-                name: "Standard Payslip",
-                doc_type: "Salary Slip",
-                format: SalarySlipTemplate,
-                standard: true
-            });
-        } else if (doctype === "Offer Letter") {
-            formats.push({
-                name: "Standard Offer Letter",
-                doc_type: "Offer Letter",
-                format: OfferLetterTemplate,
-                standard: true
-            });
-        } else if (doctype === "Experience Certificate") {
-            formats.push({
-                name: "Standard Experience Certificate",
-                doc_type: "Experience Certificate",
-                format: ExperienceCertificateTemplate,
-                standard: true
-            });
-        } else if (doctype === "No Objection Certificate") {
-            formats.push({
-                name: "Standard NOC",
-                doc_type: "No Objection Certificate",
-                format: NOCTemplate,
-                standard: true
-            });
-        }
-
-        // 2. Load Dynamic Master Templates from Control DB
-        try {
-            const masterFormats = await getMasterPrintFormats(doctype);
-            if (masterFormats && masterFormats.length > 0) {
-                masterFormats.forEach((mf: any) => {
-                    // If a master format has same name as standard, it OVERRIDES it
-                    const existingIndex = formats.findIndex(f => f.name === mf.name);
-                    if (existingIndex >= 0) {
-                        formats[existingIndex] = {
-                            name: mf.name,
-                            doc_type: mf.doc_type,
-                            format: mf.html || "", // The DB field is 'html'
-                            standard: true
-                        };
-                    } else {
-                        formats.push({
-                            name: mf.name,
-                            doc_type: mf.doc_type,
-                            format: mf.html || "",
-                            standard: true
-                        });
-                    }
-                });
-            }
-        } catch (e) {
-            console.error("Error loading master print formats from DB", e);
-        }
-
-        return formats;
-    } catch (e: any) {
-        console.error("Error generating print formats", e);
-        return [];
+  // 1. Load Hardcoded Standard Templates
+  try {
+    if (doctype === "Sales Invoice") {
+      formats.push({
+        name: "Standard Invoice",
+        doc_type: "Sales Invoice",
+        format: DEFAULT_INVOICE_TEMPLATE,
+        standard: true,
+      });
+      Object.keys(LEGACY_INVOICE_TEMPLATES).forEach((key) => {
+        formats.push({
+          name: key,
+          doc_type: "Sales Invoice",
+          format: LEGACY_INVOICE_TEMPLATES[key],
+          standard: true,
+        });
+      });
+    } else if (doctype === "Quotation") {
+      Object.keys(LEGACY_QUOTE_TEMPLATES).forEach((key) => {
+        formats.push({
+          name: key,
+          doc_type: "Quotation",
+          format: LEGACY_QUOTE_TEMPLATES[key],
+          standard: true,
+        });
+      });
+    } else if (doctype === "POS Invoice") {
+      Object.keys(POS_TEMPLATES).forEach((key) => {
+        formats.push({
+          name: key + " (POS)",
+          doc_type: "POS Invoice",
+          format: POS_TEMPLATES[key],
+          standard: true,
+        });
+      });
+    } else if (doctype === "Appointment Letter") {
+      formats.push({
+        name: "Standard Appointment Letter",
+        doc_type: "Appointment Letter",
+        format: AppointmentLetterTemplate,
+        standard: true,
+      });
+    } else if (doctype === "Salary Slip") {
+      formats.push({
+        name: "Standard Payslip",
+        doc_type: "Salary Slip",
+        format: SalarySlipTemplate,
+        standard: true,
+      });
+    } else if (doctype === "Offer Letter") {
+      formats.push({
+        name: "Standard Offer Letter",
+        doc_type: "Offer Letter",
+        format: OfferLetterTemplate,
+        standard: true,
+      });
+    } else if (doctype === "Experience Certificate") {
+      formats.push({
+        name: "Standard Experience Certificate",
+        doc_type: "Experience Certificate",
+        format: ExperienceCertificateTemplate,
+        standard: true,
+      });
+    } else if (doctype === "No Objection Certificate") {
+      formats.push({
+        name: "Standard NOC",
+        doc_type: "No Objection Certificate",
+        format: NOCTemplate,
+        standard: true,
+      });
     }
+
+    // 2. Load Dynamic Master Templates from Control DB
+    try {
+      const masterFormats = await getMasterPrintFormats(doctype);
+      if (masterFormats && masterFormats.length > 0) {
+        masterFormats.forEach((mf: any) => {
+          // If a master format has same name as standard, it OVERRIDES it
+          const existingIndex = formats.findIndex((f) => f.name === mf.name);
+          if (existingIndex >= 0) {
+            formats[existingIndex] = {
+              name: mf.name,
+              doc_type: mf.doc_type,
+              format: mf.html || "", // The DB field is 'html'
+              standard: true,
+            };
+          } else {
+            formats.push({
+              name: mf.name,
+              doc_type: mf.doc_type,
+              format: mf.html || "",
+              standard: true,
+            });
+          }
+        });
+      }
+    } catch (e) {
+      console.error("Error loading master print formats from DB", e);
+    }
+
+    return formats;
+  } catch (e: any) {
+    console.error("Error generating print formats", e);
+    return [];
+  }
 }
 
 export async function savePrintFormat(name: string, html: string) {
-    // Implementation to save to Frappe
-    return { success: true };
+  // Implementation to save to Frappe
+  return { success: true };
 }

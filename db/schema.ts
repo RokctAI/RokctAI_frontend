@@ -14,7 +14,7 @@ export const user = pgTable("User", {
   email: varchar("email", { length: 64 }).notNull(),
   password: varchar("password", { length: 64 }),
   siteName: varchar("siteName", { length: 255 }), // Stores the tenant URL (e.g., tenant-a.rokct.ai)
-  apiKey: varchar("apiKey", { length: 255 }),     // Stores the user's API Key
+  apiKey: varchar("apiKey", { length: 255 }), // Stores the user's API Key
   apiSecret: varchar("apiSecret", { length: 255 }), // Stores the user's API Secret
   isOnboarded: boolean("isOnboarded").default(false), // Tracks if the user has completed the onboarding chat
   onboardingData: json("onboardingData"), // Stores the "Plan on a Page" JSON temporarily

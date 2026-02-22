@@ -34,17 +34,20 @@ export const Navbar = async () => {
     // Logic for AI Usage Check (existing)
     if (session.user.apiKey && session.user.apiSecret && session.user.isPaaS) {
       try {
-        const usageRes = await fetch(`${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`, {
-          headers: {
-            "Authorization": `token ${session.user.apiKey}:${session.user.apiSecret}`
-          }
-        });
+        const usageRes = await fetch(
+          `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`,
+          {
+            headers: {
+              Authorization: `token ${session.user.apiKey}:${session.user.apiSecret}`,
+            },
+          },
+        );
         if (usageRes.ok) {
           const usageData = await usageRes.json();
           const {
             daily_flash_remaining,
             is_flash_unlimited,
-            seat_limit_exceeded
+            seat_limit_exceeded,
           } = usageData.message || {};
 
           if (seat_limit_exceeded) {
@@ -92,7 +95,10 @@ export const Navbar = async () => {
               {/* 2. RPanel Link (Conditional) */}
               {showRPanel && (
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href="/handson/control/rpanel" className="flex items-center gap-2">
+                  <Link
+                    href="/handson/control/rpanel"
+                    className="flex items-center gap-2"
+                  >
                     <HardDrive className="h-4 w-4" />
                     <span className="hidden md:inline">RPanel</span>
                   </Link>
@@ -107,9 +113,15 @@ export const Navbar = async () => {
               {/* 4. User Avatar Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Button
+                    variant="ghost"
+                    className="relative h-8 w-8 rounded-full"
+                  >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={session.user?.image || ""} alt={session.user?.name || "User"} />
+                      <AvatarImage
+                        src={session.user?.image || ""}
+                        alt={session.user?.name || "User"}
+                      />
                       <AvatarFallback className="bg-muted text-muted-foreground border border-border">
                         {session.user?.name?.slice(0, 2).toUpperCase() || "CN"}
                       </AvatarFallback>
@@ -119,7 +131,9 @@ export const Navbar = async () => {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{session.user?.name}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {session.user?.name}
+                      </p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {session.user?.email}
                       </p>
@@ -149,7 +163,10 @@ export const Navbar = async () => {
                       }}
                       className="w-full"
                     >
-                      <button type="submit" className="flex w-full items-center text-red-600">
+                      <button
+                        type="submit"
+                        className="flex w-full items-center text-red-600"
+                      >
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>Sign out</span>
                       </button>
@@ -159,7 +176,10 @@ export const Navbar = async () => {
               </DropdownMenu>
             </div>
           ) : (
-            <Button className="py-1.5 px-2 h-fit font-normal text-white" asChild>
+            <Button
+              className="py-1.5 px-2 h-fit font-normal text-white"
+              asChild
+            >
               <Link href="/login">Login</Link>
             </Button>
           )}
@@ -169,4 +189,3 @@ export const Navbar = async () => {
     </>
   );
 };
-

@@ -23,21 +23,31 @@ export async function GET(request: Request) {
         doctype: "Notification Log",
         filters: {
           for_user: session.user.email,
-          read: 0
+          read: 0,
         },
-        fields: ["name", "subject", "email_content", "type", "creation", "document_type", "document_name"],
+        fields: [
+          "name",
+          "subject",
+          "email_content",
+          "type",
+          "creation",
+          "document_type",
+          "document_name",
+        ],
         order_by: "creation desc",
-        limit_page_length: 5
-      }
+        limit_page_length: 5,
+      },
     });
 
-    const [reminders, notificationsRes] = await Promise.all([remindersPromise, notificationsPromise]);
+    const [reminders, notificationsRes] = await Promise.all([
+      remindersPromise,
+      notificationsPromise,
+    ]);
 
     return NextResponse.json({
       reminders: reminders || [],
-      notifications: notificationsRes?.message || []
+      notifications: notificationsRes?.message || [],
     });
-
   } catch (error) {
     console.error("Failed to fetch reminders/notifications", error);
     return new Response("An error occurred while processing your request", {

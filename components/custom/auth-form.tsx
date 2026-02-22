@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { PLATFORM_NAME, VOUCHER_OFFSET_Y } from "@/app/config/constants";
 import { Ticket, Globe } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function AuthForm({
   action,
@@ -16,7 +22,7 @@ export function AuthForm({
   defaultCountry,
   industries = [],
   isServicePlan = false,
-  onServicePlanChange = () => { },
+  onServicePlanChange = () => {},
   plans = [],
 }: {
   action: any;
@@ -60,9 +66,21 @@ export function AuthForm({
       <div className="flex flex-col gap-2">
         {mode === "signup" && plans && plans.length > 0 && (
           <div className="flex flex-col gap-2 pb-2">
-            <Label htmlFor="plan" className="text-zinc-600 font-normal dark:text-zinc-400">Selected Plan</Label>
-            <Select name="plan" value={activePlan} onValueChange={setActivePlan}>
-              <SelectTrigger id="plan" className="bg-muted text-md md:text-sm border-none">
+            <Label
+              htmlFor="plan"
+              className="text-zinc-600 font-normal dark:text-zinc-400"
+            >
+              Selected Plan
+            </Label>
+            <Select
+              name="plan"
+              value={activePlan}
+              onValueChange={setActivePlan}
+            >
+              <SelectTrigger
+                id="plan"
+                className="bg-muted text-md md:text-sm border-none"
+              >
                 <SelectValue placeholder="Select Plan" />
               </SelectTrigger>
               <SelectContent>
@@ -79,7 +97,10 @@ export function AuthForm({
         {mode === "signup" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="first_name" className="text-zinc-600 font-normal dark:text-zinc-400">
+              <Label
+                htmlFor="first_name"
+                className="text-zinc-600 font-normal dark:text-zinc-400"
+              >
                 First Name
               </Label>
               <Input
@@ -92,7 +113,10 @@ export function AuthForm({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="last_name" className="text-zinc-600 font-normal dark:text-zinc-400">
+              <Label
+                htmlFor="last_name"
+                className="text-zinc-600 font-normal dark:text-zinc-400"
+              >
                 Last Name
               </Label>
               <Input
@@ -108,9 +132,18 @@ export function AuthForm({
         )}
 
         {/* Row 2: Email & Industry (for Signup) */}
-        <div className={mode === "signup" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "flex flex-col gap-2"}>
+        <div
+          className={
+            mode === "signup"
+              ? "grid grid-cols-1 md:grid-cols-2 gap-4"
+              : "flex flex-col gap-2"
+          }
+        >
           <div className="flex flex-col gap-2">
-            <Label htmlFor="email" className="text-zinc-600 font-normal dark:text-zinc-400">
+            <Label
+              htmlFor="email"
+              className="text-zinc-600 font-normal dark:text-zinc-400"
+            >
               Email
             </Label>
             <Input
@@ -119,26 +152,33 @@ export function AuthForm({
               className="bg-muted text-md md:text-sm border-none"
               type={mode === "signup" ? "email" : "text"}
               placeholder="user@acme.com"
-              autoComplete="email" required
+              autoComplete="email"
+              required
               defaultValue={defaultEmail}
             />
           </div>
 
           {mode === "signup" && (
             <div className="flex flex-col gap-2">
-              <Label htmlFor="industry" className="text-zinc-600 font-normal dark:text-zinc-400">
+              <Label
+                htmlFor="industry"
+                className="text-zinc-600 font-normal dark:text-zinc-400"
+              >
                 Industry
               </Label>
               <Select name="industry" required>
-                <SelectTrigger id="industry" className="bg-muted text-md md:text-sm border-none">
+                <SelectTrigger
+                  id="industry"
+                  className="bg-muted text-md md:text-sm border-none"
+                >
                   <SelectValue placeholder="Select Industry" />
                 </SelectTrigger>
                 <SelectContent>
                   {industries?.map((ind) => (
-                    <SelectItem key={ind} value={ind}>{ind}</SelectItem>
-                  )) || (
-                      <SelectItem value="Other">Other</SelectItem>
-                    )}
+                    <SelectItem key={ind} value={ind}>
+                      {ind}
+                    </SelectItem>
+                  )) || <SelectItem value="Other">Other</SelectItem>}
                 </SelectContent>
               </Select>
             </div>
@@ -146,9 +186,18 @@ export function AuthForm({
         </div>
 
         {/* Row 3: Password & Company Name (for Signup) */}
-        <div className={mode === "signup" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "flex flex-col gap-2"}>
+        <div
+          className={
+            mode === "signup"
+              ? "grid grid-cols-1 md:grid-cols-2 gap-4"
+              : "flex flex-col gap-2"
+          }
+        >
           <div className="flex flex-col gap-2">
-            <Label htmlFor="password" className="text-zinc-600 font-normal dark:text-zinc-400">
+            <Label
+              htmlFor="password"
+              className="text-zinc-600 font-normal dark:text-zinc-400"
+            >
               Password
             </Label>
             <Input
@@ -162,7 +211,10 @@ export function AuthForm({
 
           {mode === "signup" && (
             <div className="flex flex-col gap-2">
-              <Label htmlFor="company_name" className="text-zinc-600 font-normal dark:text-zinc-400">
+              <Label
+                htmlFor="company_name"
+                className="text-zinc-600 font-normal dark:text-zinc-400"
+              >
                 Company Name
               </Label>
               <Input
@@ -181,7 +233,10 @@ export function AuthForm({
         {mode === "signup" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="country" className="text-zinc-600 font-normal dark:text-zinc-400">
+              <Label
+                htmlFor="country"
+                className="text-zinc-600 font-normal dark:text-zinc-400"
+              >
                 Country
               </Label>
               <Input
@@ -197,7 +252,10 @@ export function AuthForm({
 
             {showVoucher && (
               <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-right-1">
-                <Label htmlFor="voucher_code" className="text-indigo-600 font-medium dark:text-indigo-400 flex items-center gap-1">
+                <Label
+                  htmlFor="voucher_code"
+                  className="text-indigo-600 font-medium dark:text-indigo-400 flex items-center gap-1"
+                >
                   <Ticket className="w-3 h-3" />
                   Voucher Code
                 </Label>
@@ -214,16 +272,22 @@ export function AuthForm({
           </div>
         )}
 
-
-        {mode === "signup" && <input type="hidden" name="plan" value={activePlan} />}
+        {mode === "signup" && (
+          <input type="hidden" name="plan" value={activePlan} />
+        )}
 
         {mode === "signup" && (
           <>
             {/* Auto-detect if Service Plan, OR if name involves Hosting (Safe Fallback) */}
-            {(plans.find(p => p.plan_name === activePlan)?.plan_type === "Service" || activePlan?.toLowerCase().includes("hosting")) && (
+            {(plans.find((p) => p.plan_name === activePlan)?.plan_type ===
+              "Service" ||
+              activePlan?.toLowerCase().includes("hosting")) && (
               <div className="flex flex-col gap-2 pt-2 animate-in fade-in slide-in-from-top-1">
                 <input type="hidden" name="is_service_plan" value="true" />
-                <Label htmlFor="domain" className="text-zinc-600 font-normal dark:text-zinc-400 flex items-center gap-1">
+                <Label
+                  htmlFor="domain"
+                  className="text-zinc-600 font-normal dark:text-zinc-400 flex items-center gap-1"
+                >
                   <Globe className="w-3 h-3" />
                   Domain (Optional)
                 </Label>

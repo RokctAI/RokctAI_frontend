@@ -3,6 +3,10 @@ import { TaskList } from "@/components/handson/task-components";
 
 export const dynamic = "force-dynamic";
 export default async function Page() {
-    const data = await getTasks();
-    return <div className="p-6"><TaskList tasks={data} /></div>;
+  const data = await getTasks();
+  return (
+    <div className="p-6">
+      <TaskList tasks={data} />
+    </div>
+  );
 }

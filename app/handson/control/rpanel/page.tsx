@@ -18,7 +18,7 @@ export default function OverviewPage() {
       setIsLoading(true);
       const [usageRes, infoRes] = await Promise.all([
         getClientUsage(),
-        getServerInfo()
+        getServerInfo(),
       ]);
 
       if (usageRes.message?.success) {
@@ -64,8 +64,12 @@ export default function OverviewPage() {
           />
           <StatCard
             title="Disk Usage"
-            value={usage?.storage_gb?.used ? `${usage.storage_gb.used} GB` : "0 GB"}
-            limit={usage?.storage_gb?.limit ? `${usage.storage_gb.limit} GB` : "∞"}
+            value={
+              usage?.storage_gb?.used ? `${usage.storage_gb.used} GB` : "0 GB"
+            }
+            limit={
+              usage?.storage_gb?.limit ? `${usage.storage_gb.limit} GB` : "∞"
+            }
             icon={<HardDrive className="h-4 w-4 text-orange-400" />}
             loading={isLoading}
           />

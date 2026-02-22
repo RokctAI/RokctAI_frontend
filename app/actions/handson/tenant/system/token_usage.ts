@@ -3,5 +3,5 @@
 import { SystemService } from "@/app/services/tenant/system";
 
 export async function getTokenUsageLogs() {
-    return SystemService.getTokenUsageLogs();
+  return SystemService.getTokenUsageLogs();
 }

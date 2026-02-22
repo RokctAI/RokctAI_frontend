@@ -53,9 +53,11 @@ export const authConfig = {
 
             // Fallback Role-based redirection
             const userRole = (auth?.user as any)?.roles?.[0]; // Assuming first role is primary
-            if (['admin', 'System Manager', 'Administrator'].includes(userRole)) {
+            if (
+              ["admin", "System Manager", "Administrator"].includes(userRole)
+            ) {
               return Response.redirect(new URL("/paas/admin", nextUrl));
-            } else if (['seller', 'manager', 'Seller'].includes(userRole)) {
+            } else if (["seller", "manager", "Seller"].includes(userRole)) {
               return Response.redirect(new URL("/paas/dashboard", nextUrl));
             }
           }

@@ -1,6 +1,12 @@
 "use client";
 
-import { Attachment, ChatRequestOptions, CreateUIMessage as CreateMessage, UIMessage as Message, UIToolInvocation as ToolInvocation } from "ai";
+import {
+  Attachment,
+  ChatRequestOptions,
+  CreateUIMessage as CreateMessage,
+  UIMessage as Message,
+  UIToolInvocation as ToolInvocation,
+} from "ai";
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
@@ -49,7 +55,10 @@ export const PreviewMessage = ({
   content: string | ReactNode;
   toolInvocations: Array<ToolInvocation> | undefined;
   attachments?: Array<Attachment>;
-  append?: (message: Message | CreateMessage, chatRequestOptions?: ChatRequestOptions) => Promise<string | null | undefined>;
+  append?: (
+    message: Message | CreateMessage,
+    chatRequestOptions?: ChatRequestOptions,
+  ) => Promise<string | null | undefined>;
 }) => {
   return (
     <motion.div
@@ -96,40 +105,58 @@ export const PreviewMessage = ({
                       <DisplayBoardingPass boardingPass={result} />
                     ) : toolName === "verifyPayment" ? (
                       <VerifyPayment result={result} />
-                    ) : toolName === 'displayNote' ? (
+                    ) : toolName === "displayNote" ? (
                       <NoteCard note={result as any} />
-                    ) : toolName === 'displayTaskStack' ? (
+                    ) : toolName === "displayTaskStack" ? (
                       <TaskStack initialTasks={result.tasks as any} />
-                    ) : toolName === 'displayProjectOverview' ? (
+                    ) : toolName === "displayProjectOverview" ? (
                       <ProjectOverview project={result as any} />
-                    ) : toolName === 'disambiguate_task_type' ? (
-                      <DisambiguateTask taskTitle={result.taskTitle} append={append as any} />
-                    ) : toolName === 'display_task_with_reminders' ? (
+                    ) : toolName === "disambiguate_task_type" ? (
+                      <DisambiguateTask
+                        taskTitle={result.taskTitle}
+                        append={append as any}
+                      />
+                    ) : toolName === "display_task_with_reminders" ? (
                       <div className="flex flex-col gap-2">
                         <PersonalTask task={result.task} />
-                        <SetReminder taskId={result.task.id} append={append as any} />
+                        <SetReminder
+                          taskId={result.task.id}
+                          append={append as any}
+                        />
                       </div>
-                    ) : toolName === 'displayProjectCard' ? (
+                    ) : toolName === "displayProjectCard" ? (
                       <ProjectCard project={result as any} />
-                    ) : toolName === 'display_leave_application' ? (
+                    ) : toolName === "display_leave_application" ? (
                       <LeaveApplication {...result} />
-                    ) : toolName === 'initiate_resignation' ? (
+                    ) : toolName === "initiate_resignation" ? (
                       <ResignationConfirmation />
-                    ) : toolName === 'mark_attendance' && (result as any).requestLocation ? (
+                    ) : toolName === "mark_attendance" &&
+                      (result as any).requestLocation ? (
                       <AttendanceCard log_type={(result as any).log_type} />
-                    ) : toolName === 'check_hr_dashboard' ? (
-                      <ApprovalDashboard leaves={(result as any).leaves} expenses={(result as any).expenses} />
-                    ) : toolName === 'check_announcements' ? (
-                      <AnnouncementCard announcements={(result as any).announcements} />
-                    ) : toolName === 'get_leave_analytics' ? (
-                      <AnalyticsCard data={(result as any).data} title="Leave Trends by Department" />
-                    ) : toolName === 'draft_competitor' ? (
+                    ) : toolName === "check_hr_dashboard" ? (
+                      <ApprovalDashboard
+                        leaves={(result as any).leaves}
+                        expenses={(result as any).expenses}
+                      />
+                    ) : toolName === "check_announcements" ? (
+                      <AnnouncementCard
+                        announcements={(result as any).announcements}
+                      />
+                    ) : toolName === "get_leave_analytics" ? (
+                      <AnalyticsCard
+                        data={(result as any).data}
+                        title="Leave Trends by Department"
+                      />
+                    ) : toolName === "draft_competitor" ? (
                       <CompetitorForm name={(result as any).name} />
-                    ) : toolName === 'manage_holiday_work' ? (
-                      <HolidayWorkForm holidayName={(result as any).holidayName} holidayDate={(result as any).holidayDate} />
-                    ) : toolName === 'lead_creation' ? (
+                    ) : toolName === "manage_holiday_work" ? (
+                      <HolidayWorkForm
+                        holidayName={(result as any).holidayName}
+                        holidayDate={(result as any).holidayDate}
+                      />
+                    ) : toolName === "lead_creation" ? (
                       <LeadFormCard initialData={result as any} />
-                    ) : toolName === 'profile_update' ? (
+                    ) : toolName === "profile_update" ? (
                       <ProfileFormCard initialData={result as any} />
                     ) : (
                       <div>{JSON.stringify(result, null, 2)}</div>
@@ -153,17 +180,17 @@ export const PreviewMessage = ({
                       <AuthorizePayment />
                     ) : toolName === "displayBoardingPass" ? (
                       <DisplayBoardingPass />
-                    ) : toolName === 'displayNote' ? (
+                    ) : toolName === "displayNote" ? (
                       <div className="h-24 w-full" /> // Placeholder skeleton
-                    ) : toolName === 'displayTaskStack' ? (
+                    ) : toolName === "displayTaskStack" ? (
                       <div className="h-48 w-full" /> // Placeholder skeleton
-                    ) : toolName === 'displayProjectOverview' ? (
+                    ) : toolName === "displayProjectOverview" ? (
                       <div className="h-64 w-full" /> // Placeholder skeleton
-                    ) : toolName === 'disambiguate_task_type' ? (
+                    ) : toolName === "disambiguate_task_type" ? (
                       <div className="h-32 w-full" /> // Placeholder skeleton
-                    ) : toolName === 'display_task_with_reminders' ? (
+                    ) : toolName === "display_task_with_reminders" ? (
                       <div className="h-48 w-full" /> // Placeholder skeleton
-                    ) : toolName === 'displayProjectCard' ? (
+                    ) : toolName === "displayProjectCard" ? (
                       <div className="h-32 w-full" /> // Placeholder skeleton
                     ) : null}
                   </div>

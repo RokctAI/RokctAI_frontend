@@ -25,7 +25,8 @@ export default async function Page({
 
   const isPaidUser =
     !session?.user?.is_free_plan &&
-    (session?.user?.status === "Active" || session?.user?.status === "Trialing");
+    (session?.user?.status === "Active" ||
+      session?.user?.status === "Trialing");
 
   return <Chat id={id} initialMessages={[]} isPaidUser={isPaidUser} />;
 }

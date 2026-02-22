@@ -18,7 +18,8 @@ export const HandsOnButton = ({ canUseAI = true }: { canUseAI?: boolean }) => {
       } else {
         // Logic for upgrade (placeholder)
         toast.info("Upgrade Required", {
-          description: "You need to upgrade your plan or add seats/quota to enable AI."
+          description:
+            "You need to upgrade your plan or add seats/quota to enable AI.",
         });
       }
     } else {
@@ -33,9 +34,7 @@ export const HandsOnButton = ({ canUseAI = true }: { canUseAI?: boolean }) => {
 
   return (
     <Button variant="ghost" size="sm" onClick={handleClick}>
-      <div className="w-full text-left px-1 py-0.5">
-        {label}
-      </div>
+      <div className="w-full text-left px-1 py-0.5">{label}</div>
     </Button>
   );
 };

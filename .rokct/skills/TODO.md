@@ -3,6 +3,7 @@
 Recommended future additions.
 
 ## Completed (V8)
+
 - [x] **frontend-design**: Implemented as **Canvas** (Design/UX).
 - [x] **git**: Implemented as **Git Standard** (Local Profile).
 - [x] **security**: Implemented as **Guardian**.
@@ -12,12 +13,14 @@ Recommended future additions.
 - [x] **web-architect**: Enforced Feature Verticals (Next.js/Web).
 
 ## High Priority
+
 - [ ] **project-management**: Breakdown of tasks and estimation.
 
 ## Medium Priority
+
 - [ ] **data-analysis**: Python Pandas/Matplotlib workflows.
 - [ ] **communication**: Email and Slack status update templates.
 
 ## Specialized
-- [ ] **flutter-dev**: Best practices for mobile.
 
+- [ ] **flutter-dev**: Best practices for mobile.

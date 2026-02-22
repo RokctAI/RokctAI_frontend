@@ -8,7 +8,8 @@ config({
 });
 
 const runMigrate = async () => {
-  const connectionString = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
+  const connectionString =
+    process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
   if (!connectionString) {
     throw new Error("POSTGRES_URL is not defined");
   }
