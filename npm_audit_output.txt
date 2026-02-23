@@ -141,14 +141,14 @@ node_modules/minimatch
   eslint-plugin-import  >=1.15.0
   Depends on vulnerable versions of minimatch
   node_modules/eslint-plugin-import
-  eslint-plugin-jsx-a11y  >=6.5.0
-  Depends on vulnerable versions of minimatch
-  node_modules/eslint-plugin-jsx-a11y
     eslint-config-next  >=10.2.1-canary.2
     Depends on vulnerable versions of eslint-plugin-import
     Depends on vulnerable versions of eslint-plugin-jsx-a11y
     Depends on vulnerable versions of eslint-plugin-react
     node_modules/eslint-config-next
+  eslint-plugin-jsx-a11y  >=6.5.0
+  Depends on vulnerable versions of minimatch
+  node_modules/eslint-plugin-jsx-a11y
   eslint-plugin-react  >=7.23.0
   Depends on vulnerable versions of minimatch
   node_modules/eslint-plugin-react
