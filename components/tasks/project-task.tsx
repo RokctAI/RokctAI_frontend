@@ -50,16 +50,14 @@ export function ProjectTask({ task }: { task: ProjectTaskProps }) {
     if (isSelectingUser && users.length === 0) {
       // Lazy load users
       import("@/app/actions/handson/all/hrms/employees").then((mod) => {
-        mod
-          .getEmployees()
-          .then((res) =>
-            setUsers(
-              res.map((e: any) => ({
-                email: e.user_id,
-                full_name: e.employee_name,
-              })),
-            ),
-          );
+        mod.getEmployees().then((res) =>
+          setUsers(
+            res.map((e: any) => ({
+              email: e.user_id,
+              full_name: e.employee_name,
+            })),
+          ),
+        );
       });
     }
   }, [isSelectingUser]);
