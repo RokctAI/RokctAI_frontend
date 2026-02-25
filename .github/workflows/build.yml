@@ -69,7 +69,9 @@ jobs:
   pipeline:
     needs: detect
     permissions:
-      contents: write
+  contents: write
+  issues: write
+  pull-requests: write
       issues: write
     uses: RokctAI/shared-workflows/.github/workflows/universal-pipeline.yml@main
     with:
