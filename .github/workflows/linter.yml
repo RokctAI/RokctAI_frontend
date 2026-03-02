@@ -1,5 +1,8 @@
 name: Code Quality
 on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
   push:
     branches: [main]
   pull_request:

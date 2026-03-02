@@ -11,6 +11,11 @@ on:
     - cron: '0 23 * * 5'
   workflow_dispatch:
     inputs:
+      backfill_ai_notes_cutoff_version:
+        type: string
+        default: ""
+        description: "Regenerate AI release notes starting from this version (use 'all' for full history)"
+
       node-version:
         type: string
         default: '24'
@@ -39,6 +44,7 @@ jobs:
       pull-requests: write
     uses: RokctAI/shared-workflows/.github/workflows/universal-pipeline.yml@main
     with:
+      backfill_ai_notes_cutoff_version: ${{ inputs.backfill_ai_notes_cutoff_version }}
       project_type: 'node'
       # Dogfooding: Use the new Weekly Strategy
       release_strategy: 'weekly'
