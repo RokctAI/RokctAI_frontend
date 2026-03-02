@@ -11,6 +11,11 @@ on:
       - '**.md'
   workflow_dispatch:
     inputs:
+      backfill_ai_notes_cutoff_version:
+        type: string
+        default: ""
+        description: "Regenerate AI release notes starting from this version (use 'all' for full history)"
+
       build-type:
         description: 'Build Type (apk/appbundle) - Ignored for Node'
         required: true
@@ -75,6 +80,7 @@ jobs:
       issues: write
     uses: RokctAI/shared-workflows/.github/workflows/universal-pipeline.yml@main
     with:
+      backfill_ai_notes_cutoff_version: ${{ inputs.backfill_ai_notes_cutoff_version }}
       project_type: ${{ needs.detect.outputs.is_flutter == 'true' && 'flutter' || (needs.detect.outputs.is_node == 'true' && 'node' || 'frappe') }}
       # Quality Gate Toggles
       run_security: true
