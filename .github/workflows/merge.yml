@@ -10,5 +10,5 @@ jobs:
       pull-requests: write
       contents: write
     with:
-      allowed_users: 'RendaniSinyage,Rendani Sinyage'
+      allowed_users: 'RendaniSinyage, Rendani Sinyage, rokctbot, rokctbot[bot]'
     secrets: inherit
