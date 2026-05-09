@@ -1,5 +1,6 @@
 import { getSubscriptionPlans } from "@/lib/actions/getSubscriptionPlans";
 import { LandingContent } from "@/components/custom/landing-content";
+import { Footer } from "@/components/custom/footer";
 
 export const dynamic = "force-dynamic";
 
@@ -15,5 +16,10 @@ export default async function LandingPage() {
     console.error("Prefetch error:", e);
   }
 
-  return <LandingContent plans={plans} />;
+  return (
+    <>
+      <LandingContent plans={plans} />
+      <Footer />
+    </>
+  );
 }
