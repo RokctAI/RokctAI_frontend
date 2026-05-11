@@ -14,6 +14,17 @@ export function Hero({
 }) {
   return (
     <section className="relative w-full overflow-hidden bg-black py-20 md:pt-32 pb-20">
+      {/* Background Vector */}
+      <div className="absolute inset-0 z-0 opacity-40">
+        <Image
+          src="https://cdn.getmerlin.in/cms/Gradient_Animation_2_a3db99fe6f.png"
+          alt="background"
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
 
         {/* Top Graphics */}
@@ -76,7 +87,7 @@ export function Hero({
           className="text-5xl md:text-8xl font-black tracking-tighter text-white mb-12 flex flex-col items-center"
         >
           <div className="flex items-center gap-4">
-            <span className="text-gray-400 blur-[2px] font-serif italic">Essays</span>
+            <span className="text-gray-400 blur-[2px] font-serif italic">Ideas</span>
             <span className="font-sans">are a chat away</span>
           </div>
         </motion.h1>

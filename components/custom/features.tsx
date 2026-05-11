@@ -18,10 +18,22 @@ const features = [
     tag: "Efficiency"
   },
   {
+    title: "Search better and get answers at a glance",
+    description: "Avoid spending time going through each search result on Google. Instead, get a summary and ask for specific details.",
+    image: "https://cdn.getmerlin.in/cms/image_5_a028a37070.webp", // Reusing standard feature image format
+    tag: "Search better"
+  },
+  {
     title: "Add context with...anything",
     description: "Writing a contract or making a quiz? Just upload guidebooks or lecture PDFs, let Merlin learn from them and respond.",
     image: "https://cdn.getmerlin.in/cms/image_7_f6eefa4244.webp",
     tag: "Knowledge Base"
+  },
+  {
+    title: "Learn smart, not in a rush",
+    description: "Spend time actively learning using video summaries and chat with the video, instead of rushing videos on 2x.",
+    image: "https://cdn.getmerlin.in/cms/image_8_eb258bba3b.webp",
+    tag: "Learning"
   }
 ];
 
