@@ -87,101 +87,89 @@ export async function Footer() {
           {/* Column 2: Productivity & Summary */}
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-6">
-            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Productivity</h4>
-            <div className="flex flex-col gap-4">
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI for Google</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI for Twitter</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI for LinkedIn</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI Transformation</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Text to Image - Bonkers</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI Email Writer</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Question AI</Link>
+              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Productivity</h4>
+              <div className="flex flex-col gap-4">
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI for Google</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI for Twitter</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI for LinkedIn</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI Transformation</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Text to Image - Bonkers</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI Email Writer</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Question AI</Link>
+              </div>
             </div>
-          </div>
-
-            </div>
-
             <div className="flex flex-col gap-6">
-            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI chat</h4>
-            <div className="flex flex-col gap-4">
-              <Link href="/chat" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with {PLATFORM_NAME}</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Free GPT-4o</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with Web Access</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with PDF</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with Websites</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with Image</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Ask AI</Link>
-            </div>
-          </div>
-
+              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Summary</h4>
+              <div className="flex flex-col gap-4">
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">YouTube Summarizer</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Article Summarizer</Link>
+              </div>
             </div>
           </div>
 
           {/* Column 3: AI Chat & Company */}
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-6">
-            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI Tools</h4>
-            <div className="flex flex-col gap-4">
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                AI Detector <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
-              </Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI Essay Writer</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                Plagiarism Checker <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
-              </Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                AI Translator <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
-              </Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Bible GPT</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                70+ More AI Tools <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
-              </Link>
+              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI chat</h4>
+              <div className="flex flex-col gap-4">
+                <Link href="/chat" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with {PLATFORM_NAME}</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Free GPT-4o</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with Web Access</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with PDF</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with Websites</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with Image</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Ask AI</Link>
+              </div>
             </div>
-          </div>
-
-            </div>
-
             <div className="flex flex-col gap-6">
-            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Summary</h4>
-            <div className="flex flex-col gap-4">
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">YouTube Summarizer</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Article Summarizer</Link>
-            </div>
-          </div>
-
+              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Company</h4>
+              <div className="flex flex-col gap-4">
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Team</Link>
+                <Link href={getTermLink("Privacy")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Privacy Policy</Link>
+                <Link href={getTermLink("Legal")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Legal</Link>
+                <Link href={getTermLink("Cookie")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Cookie Policy</Link>
+                <Link href={getTermLink("Terms and Conditions")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Terms and Conditions</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Data Protection</Link>
+                <Link href="/careers" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Careers</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Refund Policy</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Query Standards</Link>
+              </div>
             </div>
           </div>
 
           {/* Column 4: AI Tools & Resources */}
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-6">
-            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Company</h4>
-            <div className="flex flex-col gap-4">
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Team</Link>
-              <Link href={getTermLink("Privacy")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Privacy Policy</Link>
-              <Link href={getTermLink("Legal")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Legal</Link>
-              <Link href={getTermLink("Cookie")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Cookie Policy</Link>
-              <Link href={getTermLink("Terms and Conditions")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Terms and Conditions</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Data Protection</Link>
-              <Link href="/careers" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Careers</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Refund Policy</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Query Standards</Link>
+              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI Tools</h4>
+              <div className="flex flex-col gap-4">
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
+                  AI Detector <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
+                </Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI Essay Writer</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
+                  Plagiarism Checker <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
+                </Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
+                  AI Translator <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
+                </Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Bible GPT</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
+                  70+ More AI Tools <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
+                </Link>
+              </div>
             </div>
-          </div>
-
-            </div>
-
             <div className="flex flex-col gap-6">
-            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Resources</h4>
-            <div className="flex flex-col gap-4">
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Product Wiki</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Newsroom</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Blogs</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Change Shortcut</Link>
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">How It Works</Link>
-              <PublicRoadmapLink />
-              <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Feature Request</Link>
-              <button className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors text-left">Cookie preferences</button>
+              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Resources</h4>
+              <div className="flex flex-col gap-4">
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Product Wiki</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Newsroom</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Blogs</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Change Shortcut</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">How It Works</Link>
+                <PublicRoadmapLink />
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Feature Request</Link>
+                <button className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors text-left">Cookie preferences</button>
+              </div>
             </div>
           </div>
         </div>
