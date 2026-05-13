@@ -87,7 +87,7 @@ export function Hero({
           className="text-5xl md:text-8xl font-black tracking-tighter text-white mb-12 flex flex-col items-center"
         >
           <div className="flex items-center gap-4">
-            <span className="text-gray-400 blur-[2px] font-serif italic">Ideas</span>
+            <span className="text-gray-400 blur-[2px] font-serif italic">Charts</span>
             <span className="font-sans">are a chat away</span>
           </div>
         </motion.h1>
@@ -99,21 +99,21 @@ export function Hero({
           transition={{ duration: 0.6, delay: 0.4 }}
           className="w-full max-w-3xl"
         >
-          <div className="relative flex items-center p-1.5 bg-[#121212] rounded-2xl border border-indigo-500/30 group focus-within:border-indigo-500 transition-all shadow-[0_0_30px_rgba(79,70,229,0.1)]">
-            <div className="pl-4 text-indigo-400">
-              <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+          <div className="relative flex items-center p-2 bg-[#1a1a1a] rounded-[24px] border border-white/10 group focus-within:border-indigo-500/50 transition-all shadow-2xl">
+            <div className="pl-5 text-indigo-400">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
                 <path d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z" />
               </svg>
             </div>
             <input
               type="text"
-              placeholder="Plan my weekend getaway"
-              className="w-full bg-transparent border-none focus:ring-0 px-4 py-4 text-lg text-white placeholder-gray-500"
+              placeholder="Analyze my sales data from last quarter"
+              className="w-full bg-transparent border-none focus:ring-0 px-5 py-5 text-xl text-white placeholder-gray-500"
             />
             <button
-              className="p-3 bg-[#222] text-gray-400 rounded-xl hover:text-white transition-colors"
+              className="mr-2 p-4 bg-[#2a2a2a] text-gray-300 rounded-[18px] hover:text-white hover:bg-indigo-600 transition-all active:scale-95"
             >
-              <FiSend size={20} />
+              <FiSend size={24} />
             </button>
           </div>
         </motion.div>
@@ -134,7 +134,7 @@ export function Hero({
           <div className="flex flex-wrap justify-center items-center gap-4">
             <Link
               href="#"
-              className="flex items-center gap-3 bg-white text-black px-5 py-2.5 rounded-xl hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-3 bg-white text-black px-6 py-3 rounded-2xl hover:bg-gray-100 transition-all active:scale-95"
             >
               <Image
                 src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
@@ -150,7 +150,7 @@ export function Hero({
 
             <Link
               href="#"
-              className="flex items-center gap-3 bg-white text-black px-5 py-2.5 rounded-xl hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-3 bg-white text-black px-6 py-3 rounded-2xl hover:bg-gray-100 transition-all active:scale-95"
             >
               <Image
                 src="https://cdn.getmerlin.in/cms/Google_Play_logo_64f9907f74.svg"
@@ -166,7 +166,7 @@ export function Hero({
 
             <Link
               href="#"
-              className="flex items-center gap-3 bg-white text-black px-5 py-2.5 rounded-xl hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-3 bg-white text-black px-6 py-3 rounded-2xl hover:bg-gray-100 transition-all active:scale-95"
             >
               <svg viewBox="0 0 384 512" fill="currentColor" className="w-7 h-7">
                 <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-31.4-73.3-114.8-1.7-152zM219 114.4c15.7-20 26.2-47.6 23.3-75.1-23.3 1-51.2 15.5-67.9 35.1-14.9 17.5-27.1 46-24.2 72.3 25.4 2 51.1-12.3 68.8-32.3z" />

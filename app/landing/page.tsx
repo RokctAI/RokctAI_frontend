@@ -19,7 +19,6 @@ export default async function LandingPage() {
   return (
     <>
       <LandingContent plans={plans} />
-      <Footer />
     </>
   );
 }
