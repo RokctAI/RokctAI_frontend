@@ -87,8 +87,6 @@ export default async function CareersPage() {
           </div>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 }
