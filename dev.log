@@ -9,93 +9,36 @@
 
 ✓ Starting...
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-✓ Ready in 5.7s
+✓ Ready in 4.1s
+[31m[auth][error][0m MissingSecret: Please define a `secret`. Read more at https://errors.authjs.dev#missingsecret
+    at assertConfig (/app/.next/dev/server/edge/chunks/691c0_@auth_core_f74cf8fb._.js:513:16)
+    at Auth (/app/.next/dev/server/edge/chunks/691c0_@auth_core_f74cf8fb._.js:5331:270)
 ○ Compiling /landing ...
-getSubscriptionPlans Error: Error: Base URL not configured
-    at getSubscriptionPlans (lib/actions/getSubscriptionPlans.ts:35:25)
-    at LandingPage (app/landing/page.tsx:11:48)
-  33 |     const baseUrl =
-  34 |       process.env.ROKCT_BASE_URL || process.env.NEXT_PUBLIC_FRAPPE_URL;
-> 35 |     if (!baseUrl) throw new Error("Base URL not configured");
-     |                         ^
-  36 |
-  37 |     const url = `${baseUrl}/api/v1/method/control.control.api.subscription.get_subscription_plans${category ? `?category=${category}` : ""}`;
-  38 |
-Failed to fetch System Keys from DB Error: Failed query: select "id", "isBetaMode", "isDebugMode", "admin_api_key", "admin_api_secret", "platform_sync_secret" from "GlobalSettings" limit $1
-params: 1
-    at async getSystemControlClient (app/lib/client.ts:54:22)
-    at async TermsService.getMasterTerms (app/services/control/terms.ts:10:20)
-    at async Footer (components/custom/footer.tsx:30:26)
-  52 |
-  53 |   try {
-> 54 |     const settings = await db.select().from(globalSettings).limit(1);
-     |                      ^
-  55 |     if (settings.length > 0) {
-  56 |       apiKey = settings[0].adminApiKey || undefined;
-  57 |       apiSecret = settings[0].adminApiSecret || undefined; {
-  query: 'select "id", "isBetaMode", "isDebugMode", "admin_api_key", "admin_api_secret", "platform_sync_secret" from "GlobalSettings" limit $1',
-  params: [Array],
-  [cause]: AggregateError:
-      at ignore-listed frames {
-    code: 'ECONNREFUSED'
-  }
+⨯ Error: POSTGRES_URL environment variable is not set
+    at module evaluation (db/index.ts:6:9)
+    at module evaluation (app/(auth)/auth.ts:6:1)
+    at module evaluation (app/layout.tsx:5:1)
+    at module evaluation (.next/dev/server/chunks/ssr/[root-of-the-server]__18bdd259._.js:14:47)
+  4 |
+  5 | if (!process.env.POSTGRES_URL) {
+> 6 |   throw new Error("POSTGRES_URL environment variable is not set");
+    |         ^
+  7 | }
+  8 |
+  9 | const client = postgres(process.env.POSTGRES_URL);
+⨯ Error: POSTGRES_URL environment variable is not set
+    at module evaluation (db/index.ts:6:9)
+    at module evaluation (app/(auth)/auth.ts:6:1)
+    at module evaluation (app/layout.tsx:5:1)
+    at module evaluation (.next/dev/server/chunks/ssr/[root-of-the-server]__18bdd259._.js:14:47)
+  4 |
+  5 | if (!process.env.POSTGRES_URL) {
+> 6 |   throw new Error("POSTGRES_URL environment variable is not set");
+    |         ^
+  7 | }
+  8 |
+  9 | const client = postgres(process.env.POSTGRES_URL); {
+  page: '/landing'
 }
-Failed to fetch System Keys from DB Error: Failed query: select "id", "isBetaMode", "isDebugMode", "admin_api_key", "admin_api_secret", "platform_sync_secret" from "GlobalSettings" limit $1
-params: 1
-    at async getSystemControlClient (app/lib/client.ts:54:22)
-    at async TermsService.getMasterTerms (app/services/control/terms.ts:10:20)
-    at async Footer (components/custom/footer.tsx:30:26)
-  52 |
-  53 |   try {
-> 54 |     const settings = await db.select().from(globalSettings).limit(1);
-     |                      ^
-  55 |     if (settings.length > 0) {
-  56 |       apiKey = settings[0].adminApiKey || undefined;
-  57 |       apiSecret = settings[0].adminApiSecret || undefined; {
-  query: 'select "id", "isBetaMode", "isDebugMode", "admin_api_key", "admin_api_secret", "platform_sync_secret" from "GlobalSettings" limit $1',
-  params: [Array],
-  [cause]: AggregateError:
-      at ignore-listed frames {
-    code: 'ECONNREFUSED'
-  }
-}
-Failed to fetch global settings: Error: Failed query: select "id", "isBetaMode", "isDebugMode", "admin_api_key", "admin_api_secret", "platform_sync_secret" from "GlobalSettings" limit $1
-params: 1
-    at async GlobalSettingsService.getGlobalSettings (app/services/control/global_settings.ts:8:24)
-    at async VersionsService.getPublicVersions (app/services/public/versions.ts:8:22)
-    at async Footer (components/custom/footer.tsx:39:22)
-   6 |   static async getGlobalSettings() {
-   7 |     try {
->  8 |       const settings = await db.select().from(globalSettings).limit(1);
-     |                        ^
-   9 |       if (settings.length === 0) {
-  10 |         const newSettings = await db
-  11 |           .insert(globalSettings) {
-  query: 'select "id", "isBetaMode", "isDebugMode", "admin_api_key", "admin_api_secret", "platform_sync_secret" from "GlobalSettings" limit $1',
-  params: [Array],
-  [cause]: AggregateError:
-      at ignore-listed frames {
-    code: 'ECONNREFUSED'
-  }
-}
-Failed to fetch global settings: Error: Failed query: select "id", "isBetaMode", "isDebugMode", "admin_api_key", "admin_api_secret", "platform_sync_secret" from "GlobalSettings" limit $1
-params: 1
-    at async GlobalSettingsService.getGlobalSettings (app/services/control/global_settings.ts:8:24)
-    at async VersionsService.getPublicVersions (app/services/public/versions.ts:8:22)
-    at async Footer (components/custom/footer.tsx:39:22)
-   6 |   static async getGlobalSettings() {
-   7 |     try {
->  8 |       const settings = await db.select().from(globalSettings).limit(1);
-     |                        ^
-   9 |       if (settings.length === 0) {
-  10 |         const newSettings = await db
-  11 |           .insert(globalSettings) {
-  query: 'select "id", "isBetaMode", "isDebugMode", "admin_api_key", "admin_api_secret", "platform_sync_secret" from "GlobalSettings" limit $1',
-  params: [Array],
-  [cause]: AggregateError:
-      at ignore-listed frames {
-    code: 'ECONNREFUSED'
-  }
-}
- GET /landing 200 in 30.0s (compile: 6.9s, proxy.ts: 328ms, render: 22.7s)
-✓ Compiled in 622ms
+ GET /landing 500 in 23.0s (compile: 22.2s, proxy.ts: 287ms, render: 512ms)
+✓ Finished writing to filesystem cache in 13.6s

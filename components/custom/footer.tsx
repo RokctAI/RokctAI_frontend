@@ -58,9 +58,11 @@ export async function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-12 mb-24">
           {/* Column 1: Brand */}
           <div className="flex flex-col gap-6 lg:col-span-1">
-            <div className="flex items-center gap-3 scale-125 origin-left mb-2">
+            <div className="flex items-center gap-3">
               <BrandLogo width={32} height={32} />
-              <Branding showBadge forceWhite />
+              <span className="text-2xl font-bold text-white uppercase tracking-tighter italic">
+                {PLATFORM_NAME}
+              </span>
             </div>
             <p className="text-base text-gray-400 leading-relaxed max-w-[240px]">
               All-in-One AI extension to Write, Summarize, Code & Play
