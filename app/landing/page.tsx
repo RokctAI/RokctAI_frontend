@@ -1,10 +1,11 @@
 import { getSubscriptionPlans } from "@/lib/actions/getSubscriptionPlans";
 import { LandingContent } from "@/components/custom/landing-content";
-import { Footer } from "@/components/custom/footer";
+import { auth } from "@/app/(auth)/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function LandingPage() {
+  const session = await auth();
   let plans: any[] = [];
 
   try {
@@ -18,8 +19,7 @@ export default async function LandingPage() {
 
   return (
     <>
-      <LandingContent plans={plans} />
-      <Footer />
+      <LandingContent plans={plans} session={session} />
     </>
   );
 }

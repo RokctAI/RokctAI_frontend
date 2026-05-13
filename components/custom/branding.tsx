@@ -12,7 +12,13 @@ import {
  * It uses localStorage caching to ensure the branding appears instantly on refresh.
  * Uses a 'mounted' state to prevent hydration mismatches from localStorage access.
  */
-export function Branding({ showBadge = false }: { showBadge?: boolean }) {
+export function Branding({
+  showBadge = false,
+  forceWhite = false
+}: {
+  showBadge?: boolean;
+  forceWhite?: boolean;
+}) {
   const [mounted, setMounted] = useState(false);
   const [branding, setBranding] = useState<any>(null);
 
@@ -30,7 +36,7 @@ export function Branding({ showBadge = false }: { showBadge?: boolean }) {
   if (!mounted || !branding) {
     return (
       <span className="flex items-center gap-2">
-        <span className="text-xl text-black dark:text-white font-bold italic">
+        <span className={`text-xl font-bold italic ${forceWhite ? 'text-white' : 'text-black dark:text-white'}`}>
           {PLATFORM_NAME}
         </span>
       </span>
@@ -44,7 +50,7 @@ export function Branding({ showBadge = false }: { showBadge?: boolean }) {
   return (
     <span className="flex items-center gap-1.5">
       <span
-        className="text-xl text-black dark:text-white tracking-tighter leading-none"
+        className={`text-xl tracking-tighter leading-none ${forceWhite ? 'text-white' : 'text-black dark:text-white'}`}
         style={{
           fontFamily: '"Arial Black", "Arial", sans-serif',
           fontWeight: 900,
@@ -56,10 +62,10 @@ export function Branding({ showBadge = false }: { showBadge?: boolean }) {
       </span>
       {showBetaBadge && (
         <span className="flex items-start gap-0">
-          <span className="text-[10px] bg-black text-white dark:bg-yellow-400 dark:text-black rounded-full px-2 py-0.5 font-sans not-italic font-bold uppercase tracking-tighter">
+          <span className={`text-[10px] rounded-full px-2 py-0.5 font-sans not-italic font-bold uppercase tracking-tighter ${forceWhite ? 'bg-yellow-400 text-black' : 'bg-black text-white dark:bg-yellow-400 dark:text-black'}`}>
             Beta
           </span>
-          <span className="text-[9px] font-bold text-zinc-800 dark:text-zinc-300 -mt-1 ml-px">
+          <span className={`text-[9px] font-bold -mt-1 ml-px ${forceWhite ? 'text-zinc-300' : 'text-zinc-800 dark:text-zinc-300'}`}>
             {branding.code}
           </span>
         </span>

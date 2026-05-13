@@ -8,13 +8,13 @@ import { Features } from "@/components/custom/features";
 import { AIModels } from "@/components/custom/ai-models";
 import { useState } from "react";
 
-export function LandingContent({ plans }: { plans: any[] }) {
+export function LandingContent({ plans, session }: { plans: any[], session?: any }) {
   const router = useRouter();
   const [category, setCategory] = useState("rokct");
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black">
-      <Header loginUrl="/login" signupUrl="/register" />
+      <Header loginUrl="/login" signupUrl="/register" session={session} />
       <main className="flex-1">
         <Hero signupUrl="/register" />
         <Features />
