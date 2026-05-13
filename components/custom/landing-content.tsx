@@ -6,6 +6,7 @@ import { Hero } from "@/components/custom/hero";
 import { Pricing } from "@/components/custom/pricing";
 import { Features } from "@/components/custom/features";
 import { AIModels } from "@/components/custom/ai-models";
+import { Footer } from "@/components/custom/footer";
 import { useState } from "react";
 
 export function LandingContent({ plans, session }: { plans: any[], session?: any }) {
@@ -26,6 +27,7 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
           initialPlans={plans}
         />
       </main>
+      <Footer />
     </div>
   );
 }
