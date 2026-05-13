@@ -156,7 +156,7 @@ export async function Footer() {
           <div className="flex flex-col gap-4">
             <h4 className="font-semibold text-foreground">AI chat</h4>
             <div className="flex flex-col gap-3">
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Chat with Merlin</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Chat with {PLATFORM_NAME}</Link>
               <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Free GPT-4o</Link>
               <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Chat with Web Access</Link>
               <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Chat with PDF</Link>
@@ -193,7 +193,7 @@ export async function Footer() {
               <h4 className="font-semibold text-foreground">Summary</h4>
               <div className="flex flex-col gap-3">
                 <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">YouTube Summarizer</Link>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Article Summaizer</Link>
+                <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Article Summarizer</Link>
               </div>
             </div>
             <div className="flex flex-col gap-4">
@@ -218,6 +218,23 @@ export async function Footer() {
                     </span>
                   </Link>
                 )}
+                {/* Status Indicator */}
+                <Link 
+                  href="/status" 
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+                  title={errorMessage || "System Online"}
+                >
+                  Status
+                  <div className="relative flex h-2 w-2 items-center justify-center">
+                    <div
+                      className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-pulse ${isOnline ? "bg-emerald-500" : "bg-red-500"}`}
+                      style={{ filter: "blur(1px)" }}
+                    ></div>
+                    <div
+                      className={`relative inline-flex rounded-full h-1.5 w-1.5 ${isOnline ? "bg-emerald-500" : "bg-red-500"}`}
+                    ></div>
+                  </div>
+                </Link>
                 <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Refund Policy</Link>
                 <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Query Standards</Link>
               </div>
@@ -250,25 +267,11 @@ export async function Footer() {
               {PLATFORM_NAME} is a trademark of {LEGAL_COMPANY_NAME}. &copy; {new Date().getFullYear()} {LEGAL_COMPANY_NAME}. All rights reserved.
             </p>
           </div>
-
-          <div className="flex justify-center items-center gap-4">
-             <div className="flex items-center gap-1.5" title={errorMessage || "System Online"}>
-              <BrandLogo width={16} height={16} variant="auto" className="opacity-80" />
-              <div className="relative flex h-2 w-2 items-center justify-center">
-                <div
-                  className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-pulse ${isOnline ? "bg-emerald-500" : "bg-red-500"}`}
-                  style={{ filter: "blur(1px)" }}
-                ></div>
-                <div
-                  className={`relative inline-flex rounded-full h-1.5 w-1.5 ${isOnline ? "bg-emerald-500" : "bg-red-500"}`}
-                ></div>
-              </div>
-              <Link href="/status" className="hover:opacity-80 transition-opacity">
-                <span className="text-[10px] font-mono font-bold text-muted-foreground leading-none">
-                  {version}
-                </span>
-              </Link>
-            </div>
+          
+          <div className="flex justify-center items-center">
+            <span className="text-[10px] font-mono font-bold text-muted-foreground leading-none">
+              {version}
+            </span>
           </div>
         </div>
       </div>
