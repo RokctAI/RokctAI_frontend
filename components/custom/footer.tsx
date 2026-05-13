@@ -56,9 +56,9 @@ export async function Footer() {
   return (
     <footer className="bg-white dark:bg-black text-black dark:text-white pt-24 pb-12 border-t border-gray-200 dark:border-white/5">
       <div className="container mx-auto px-6 max-w-screen-2xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-12 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-24">
           {/* Column 1: Brand */}
-          <div className="flex flex-col gap-6 lg:col-span-1">
+          <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <BrandLogo width={32} height={32} />
               <span className="text-2xl font-bold text-black dark:text-white uppercase tracking-tighter italic">
@@ -84,8 +84,9 @@ export async function Footer() {
             </div>
           </div>
 
-          {/* Column 2: Productivity */}
-          <div className="flex flex-col gap-6">
+          {/* Column 2: Productivity & Summary */}
+          <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-6">
             <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Productivity</h4>
             <div className="flex flex-col gap-4">
               <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI for Google</Link>
@@ -98,8 +99,9 @@ export async function Footer() {
             </div>
           </div>
 
-          {/* Column 3: AI Chat */}
-          <div className="flex flex-col gap-6">
+            </div>
+
+            <div className="flex flex-col gap-6">
             <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI chat</h4>
             <div className="flex flex-col gap-4">
               <Link href="/chat" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with {PLATFORM_NAME}</Link>
@@ -112,8 +114,12 @@ export async function Footer() {
             </div>
           </div>
 
-          {/* Column 4: AI Tools */}
-          <div className="flex flex-col gap-6">
+            </div>
+          </div>
+
+          {/* Column 3: AI Chat & Company */}
+          <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-6">
             <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI Tools</h4>
             <div className="flex flex-col gap-4">
               <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
@@ -133,8 +139,9 @@ export async function Footer() {
             </div>
           </div>
 
-          {/* Column 5: Summary */}
-          <div className="flex flex-col gap-6">
+            </div>
+
+            <div className="flex flex-col gap-6">
             <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Summary</h4>
             <div className="flex flex-col gap-4">
               <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">YouTube Summarizer</Link>
@@ -142,8 +149,12 @@ export async function Footer() {
             </div>
           </div>
 
-          {/* Column 6: Company */}
-          <div className="flex flex-col gap-6">
+            </div>
+          </div>
+
+          {/* Column 4: AI Tools & Resources */}
+          <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-6">
             <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Company</h4>
             <div className="flex flex-col gap-4">
               <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Team</Link>
@@ -158,8 +169,9 @@ export async function Footer() {
             </div>
           </div>
 
-          {/* Column 7: Resources */}
-          <div className="flex flex-col gap-6">
+            </div>
+
+            <div className="flex flex-col gap-6">
             <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Resources</h4>
             <div className="flex flex-col gap-4">
               <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Product Wiki</Link>
