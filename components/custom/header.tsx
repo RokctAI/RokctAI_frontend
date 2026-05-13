@@ -1,228 +1,180 @@
 "use client";
 
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
-import { FiMenu, FiX, FiChevronDown } from "react-icons/fi";
+import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
 import { Branding } from "./branding";
-import { ThemeToggle } from "./theme-toggle";
 import { BrandLogo } from "./brand-logo";
+import { ThemeToggle } from "./theme-toggle";
+import { PLATFORM_NAME } from "@/app/config/platform";
 
 export function Header({
-  openLoginPopup,
-  openSignupPopup,
-  loginUrl,
-  signupUrl,
+  loginUrl = "/login",
+  signupUrl = "/register",
+  session = null,
 }: {
-  openLoginPopup?: () => void;
-  openSignupPopup?: () => void;
   loginUrl?: string;
   signupUrl?: string;
+  session?: any;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: session } = useSession();
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const isLoginPage = pathname === "/login";
-  const isRegisterPage = pathname === "/register";
+  const user = session?.user;
 
   return (
-    <>
-      <header className="sticky top-0 z-50 bg-white/70 dark:bg-black/70 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            {/* Logo Area */}
-            <div className="flex-shrink-0">
-              <Link href="/" className="flex items-center space-x-2 group">
-                <div className="relative w-8 h-8 transition-transform duration-300 group-hover:scale-105">
-                  <BrandLogo
-                    width={32}
-                    height={32}
-                    className="object-contain"
-                  />
-                </div>
-                <Branding showBadge={true} />
-              </Link>
-            </div>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
-              {!isLoginPage && !isRegisterPage && (
-                <>
-                  <div className="relative group">
-                    <button className="flex items-center space-x-1 text-sm font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors py-2">
-                      <span>Product</span>
-                      <FiChevronDown className="w-3 h-3 transition-transform group-hover:rotate-180" />
-                    </button>
-                    <div className="absolute top-full left-0 w-48 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                      <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-xl border border-gray-100 dark:border-zinc-800 p-2">
-                        <Link
-                          href="/features"
-                          className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white rounded-lg"
-                        >
-                          Features
-                        </Link>
-                        <Link
-                          href="/ai-chat"
-                          className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white rounded-lg"
-                        >
-                          AI Chat
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                  <Link
-                    href="#pricing"
-                    className="text-sm font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                  >
-                    Pricing
-                  </Link>
-                  <Link
-                    href="/affiliate"
-                    className="text-sm font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                  >
-                    Affiliate
-                  </Link>
-                  <Link
-                    href="/teams"
-                    className="text-sm font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                  >
-                    Teams
-                  </Link>
-                  <Link
-                    href="/chat"
-                    className="text-sm font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                  >
-                    Chat with Merlin
-                  </Link>
-                </>
-              )}
-            </nav>
-
-            {/* Desktop Actions */}
-            <div className="hidden md:flex items-center space-x-4">
-              {session ? (
-                <>
-                  <Link
-                    href="/paas/dashboard"
-                    className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
-                  >
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    className="text-sm font-medium px-4 py-2 text-gray-600 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-800 rounded-full transition-colors"
-                  >
-                    Log out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="https://chromewebstore.google.com/"
-                    target="_blank"
-                    className="flex items-center gap-2 px-4 py-2 bg-white text-black border border-gray-200 rounded-lg text-sm font-bold hover:bg-gray-50 transition-colors shadow-sm"
-                  >
-                    <Image
-                      src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
-                      alt="Chrome"
-                      width={18}
-                      height={18}
-                    />
-                    Add Merlin Extension
-                  </Link>
-
-                  <ThemeToggle />
-
-                  <Link
-                    href={loginUrl || "/login"}
-                    className="text-sm font-bold px-5 py-2 border border-gray-200 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
-                  >
-                    Log in
-                  </Link>
-                </>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center gap-4">
-              <ThemeToggle />
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="text-gray-900 dark:text-gray-100 focus:outline-none p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
-              >
-                {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-              </button>
-            </div>
+    <header className="sticky top-0 z-50 bg-[#0a0a0a] border-b border-white/5 transition-all duration-300">
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link href="/" className="flex items-center gap-3">
+              <BrandLogo width={36} height={36} />
+              <Branding showBadge={true} forceWhite={true} />
+            </Link>
           </div>
-        </div>
 
-        {/* Mobile Menu */}
-        <div
-          className={`md:hidden absolute top-full left-0 w-full bg-white dark:bg-black border-b border-gray-100 dark:border-zinc-800 shadow-xl transition-all duration-300 ease-in-out ${
-            isOpen
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-4 pointer-events-none"
-          }`}
-        >
-          <div className="px-4 pt-2 pb-8 space-y-2">
-            {!isLoginPage && !isRegisterPage && (
-              <>
-                <Link
-                  href="/features"
-                  className="block px-4 py-3 text-base font-medium text-gray-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 rounded-xl"
-                >
-                  Product
-                </Link>
-                <Link
-                  href="#pricing"
-                  className="block px-4 py-3 text-base font-medium text-gray-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 rounded-xl"
-                >
-                  Pricing
-                </Link>
-                <Link
-                  href="/affiliate"
-                  className="block px-4 py-3 text-base font-medium text-gray-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 rounded-xl"
-                >
-                  Affiliate
-                </Link>
-                <Link
-                  href="/teams"
-                  className="block px-4 py-3 text-base font-medium text-gray-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 rounded-xl"
-                >
-                  Teams
-                </Link>
-                <Link
-                  href="/chat"
-                  className="block px-4 py-3 text-base font-medium text-gray-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 rounded-xl"
-                >
-                  Chat with Merlin
-                </Link>
-              </>
-            )}
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center gap-10 h-full static">
+            <div
+              className="h-full flex items-center"
+              onMouseEnter={() => setIsMegaMenuOpen(true)}
+              onMouseLeave={() => setIsMegaMenuOpen(false)}
+            >
+              <button className="flex items-center gap-1.5 text-[15px] font-bold text-gray-400 hover:text-white transition-colors h-full px-2">
+                Product <FiChevronDown className={`transition-transform duration-200 ${isMegaMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-            <div className="pt-4 border-t border-gray-100 dark:border-zinc-800 mt-4">
+              {/* Mega Menu Overlay */}
+              <div
+                className={`absolute top-20 left-0 right-0 w-full bg-[#0a0a0a] border-b border-white/5 p-12 shadow-[0_40px_100px_rgba(0,0,0,0.8)] transition-all duration-300 z-50 ${isMegaMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-4'}`}
+              >
+                <div className="max-w-screen-2xl mx-auto grid grid-cols-5 gap-12 px-6 md:px-12">
+                  {/* Platforms */}
+                  <div className="space-y-6">
+                    <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Platforms</h4>
+                    <ul className="space-y-4">
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">Chrome Extension</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">Edge Extension</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">Android App</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">iOS App</Link></li>
+                    </ul>
+                  </div>
+                  {/* AI Chat */}
+                  <div className="space-y-6">
+                    <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">AI Chat</h4>
+                    <ul className="space-y-4">
+                      <li><Link href="/chat" className="text-gray-400 hover:text-white font-medium block">Chat with {PLATFORM_NAME}</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">Free GPT-4o</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">Chat with Web Access</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">Chat with PDF</Link></li>
+                    </ul>
+                  </div>
+                  {/* Productivity */}
+                  <div className="space-y-6">
+                    <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Productivity</h4>
+                    <ul className="space-y-4">
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">AI for Google</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">AI for LinkedIn</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">AI for Twitter</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">Email Writer</Link></li>
+                    </ul>
+                  </div>
+                  {/* AI Tools */}
+                  <div className="space-y-6">
+                    <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">AI Tools</h4>
+                    <ul className="space-y-4">
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">AI Detector</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">Plagiarism Checker</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">AI Translator</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">AI Essay Writer</Link></li>
+                    </ul>
+                  </div>
+                  {/* Summary */}
+                  <div className="space-y-6">
+                    <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Summary</h4>
+                    <ul className="space-y-4">
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">YouTube Summarizer</Link></li>
+                      <li><Link href="#" className="text-gray-400 hover:text-white font-medium block">Article Summarizer</Link></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <Link href="#pricing" className="text-[15px] font-bold text-gray-400 hover:text-white transition-colors">Pricing</Link>
+            <Link href="/affiliate" className="text-[15px] font-bold text-gray-400 hover:text-white transition-colors">Affiliate</Link>
+            <Link href="/teams" className="text-[15px] font-bold text-gray-400 hover:text-white transition-colors">Teams</Link>
+            <Link href="/chat" className="text-[15px] font-bold text-gray-400 hover:text-white transition-colors">Chat with {PLATFORM_NAME}</Link>
+          </nav>
+
+          {/* Actions */}
+          <div className="hidden lg:flex items-center gap-6">
+            <ThemeToggle className="text-zinc-400 hover:text-white" />
+            <Link
+              href="https://chromewebstore.google.com/"
+              target="_blank"
+              className="flex items-center gap-2 px-6 py-2.5 bg-[#4f46e5] text-white rounded-full text-sm font-bold hover:bg-[#4338ca] transition-all shadow-lg hover:scale-105 active:scale-95"
+            >
+              <Image
+                src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
+                alt="Chrome"
+                width={20}
+                height={20}
+              />
+              Add to Chrome
+            </Link>
+            {user ? (
+               <Link
+                href="/dashboard"
+                className="text-[15px] font-bold text-white hover:text-gray-300 transition-colors"
+              >
+                Dashboard
+              </Link>
+            ) : (
               <Link
-                href={loginUrl || "/login"}
-                className="block w-full text-left px-4 py-3 text-base font-medium text-gray-600 dark:text-zinc-400"
+                href={loginUrl}
+                className="text-[15px] font-bold text-white hover:text-gray-300 transition-colors"
               >
                 Log in
               </Link>
-              <div className="px-4 pt-2">
-                <Link
-                  href="https://chromewebstore.google.com/"
-                  className="block w-full px-5 py-3 bg-indigo-600 text-white text-center font-semibold rounded-xl hover:bg-indigo-700 shadow-md"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Add Merlin Extension
-                </Link>
-              </div>
-            </div>
+            )}
+          </div>
+
+          {/* Mobile Button */}
+          <button
+            className="lg:hidden text-white p-2"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {isOpen && (
+        <div className="lg:hidden fixed inset-0 top-20 bg-black z-40 p-6 space-y-4 overflow-y-auto">
+          <div className="flex justify-between items-center py-4 border-b border-white/5">
+            <span className="text-2xl font-bold text-white">Menu</span>
+            <ThemeToggle />
+          </div>
+          <Link href="/chat" className="block text-2xl font-bold text-white py-4 border-b border-white/5">Product</Link>
+          <Link href="#pricing" className="block text-2xl font-bold text-white py-4 border-b border-white/5">Pricing</Link>
+          <Link href="/affiliate" className="block text-2xl font-bold text-white py-4 border-b border-white/5">Affiliate</Link>
+          <Link href="/teams" className="block text-2xl font-bold text-white py-4 border-b border-white/5">Teams</Link>
+          <div className="pt-8 space-y-4 pb-20">
+             {user ? (
+                <Link href="/dashboard" className="block text-xl font-bold text-white text-center py-4 bg-zinc-900 rounded-2xl">Dashboard</Link>
+             ) : (
+                <Link href={loginUrl} className="block text-xl font-bold text-white text-center py-4 bg-zinc-900 rounded-2xl">Log in</Link>
+             )}
+             <Link href="https://chromewebstore.google.com/" target="_blank" className="block text-xl font-bold text-white text-center py-4 bg-[#4f46e5] rounded-2xl">Add to Chrome</Link>
           </div>
         </div>
-      </header>
-    </>
+      )}
+    </header>
   );
 }

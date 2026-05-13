@@ -9,6 +9,7 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function CareersPage() {
+  const session = await auth();
   let openings: any[] = [];
   try {
     openings = await JobsService.getOpenings();
@@ -23,7 +24,7 @@ export default async function CareersPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <Header />
+      <Header session={session} />
 
       <main className="flex-1 container mx-auto px-4 py-12 md:py-24">
         <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
@@ -87,7 +88,6 @@ export default async function CareersPage() {
           </div>
         )}
       </main>
-
       <Footer />
     </div>
   );

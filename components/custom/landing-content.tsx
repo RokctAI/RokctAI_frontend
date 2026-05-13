@@ -6,15 +6,16 @@ import { Hero } from "@/components/custom/hero";
 import { Pricing } from "@/components/custom/pricing";
 import { Features } from "@/components/custom/features";
 import { AIModels } from "@/components/custom/ai-models";
+import { Footer } from "@/components/custom/footer";
 import { useState } from "react";
 
-export function LandingContent({ plans }: { plans: any[] }) {
+export function LandingContent({ plans, session }: { plans: any[], session?: any }) {
   const router = useRouter();
   const [category, setCategory] = useState("rokct");
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black">
-      <Header loginUrl="/login" signupUrl="/register" />
+      <Header loginUrl="/login" signupUrl="/register" session={session} />
       <main className="flex-1">
         <Hero signupUrl="/register" />
         <Features />
@@ -26,6 +27,7 @@ export function LandingContent({ plans }: { plans: any[] }) {
           initialPlans={plans}
         />
       </main>
+      <Footer />
     </div>
   );
 }
