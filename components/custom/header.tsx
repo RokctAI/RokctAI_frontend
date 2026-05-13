@@ -45,7 +45,7 @@ export function Header({
 
               {/* Mega Menu Overlay */}
               <div
-                className={`absolute top-full left-1/2 -translate-x-1/2 w-[1000px] bg-zinc-950 border border-white/10 rounded-3xl p-10 shadow-[0_40px_100px_rgba(0,0,0,0.8)] transition-all duration-300 ${isMegaMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-4'}`}
+                className={`absolute top-full left-1/2 -translate-x-1/2 w-[95vw] max-w-[1100px] bg-zinc-950 border border-white/10 rounded-3xl p-10 shadow-[0_40px_100px_rgba(0,0,0,0.8)] transition-all duration-300 ${isMegaMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-4'}`}
               >
                 <div className="grid grid-cols-5 gap-10">
                   {/* Platforms */}

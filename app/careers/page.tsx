@@ -1,6 +1,5 @@
 import { JobsService } from "@/app/services/control/jobs";
 import { Header } from "@/components/custom/header";
-import { Footer } from "@/components/custom/footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Briefcase, ArrowRight } from "lucide-react";

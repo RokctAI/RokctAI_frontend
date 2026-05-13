@@ -5,6 +5,7 @@ import { BrandLogo } from "./brand-logo";
 import { RoadmapPublicService } from "@/app/services/public/roadmap";
 import { Twitter, Youtube, Linkedin, Instagram, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import versionData from "@/version.json";
 
 async function PublicRoadmapLink() {
   try {
@@ -31,19 +32,12 @@ export async function Footer() {
     if (Array.isArray(fetchedTerms)) terms = fetchedTerms;
   } catch (e) {}
 
-  let version = "v1.0.0";
   let isOnline = false;
 
   try {
     const { VersionsService } = await import("@/app/services/public/versions");
     const versions = await VersionsService.getPublicVersions();
     if (versions) {
-        let data = versions;
-        while (data && data.message) data = data.message;
-        if (data && typeof data === "object") {
-            const v = data.control?.version || data.version;
-            if (v) version = `v${v}`;
-        }
         isOnline = true;
     }
   } catch (e) {}
@@ -54,6 +48,8 @@ export async function Footer() {
     if (term) return `/legal/${term.name}`;
     return "#";
   };
+
+  const version = versionData.frontend;
 
   return (
     <footer className="bg-black text-white pt-24 pb-12 border-t border-white/5">
@@ -150,19 +146,11 @@ export async function Footer() {
               <Link href={getTermLink("Privacy")} className="text-base text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
               <Link href={getTermLink("Legal")} className="text-base text-gray-400 hover:text-white transition-colors">Legal</Link>
               <Link href={getTermLink("Cookie")} className="text-base text-gray-400 hover:text-white transition-colors">Cookie Policy</Link>
+              <Link href={getTermLink("Terms and Conditions")} className="text-base text-gray-400 hover:text-white transition-colors">Terms and Conditions</Link>
               <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Data Protection</Link>
               <Link href="/careers" className="text-base text-gray-400 hover:text-white transition-colors">Careers</Link>
               <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Refund Policy</Link>
-              <Link
-                  href="/status"
-                  className="text-base text-gray-400 hover:text-white transition-colors flex items-center gap-2"
-                >
-                  Status
-                  <div className="relative flex h-2 w-2 items-center justify-center">
-                    <div className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-pulse ${isOnline ? "bg-emerald-500" : "bg-red-500"}`} />
-                    <div className={`relative inline-flex rounded-full h-1.5 w-1.5 ${isOnline ? "bg-emerald-500" : "bg-red-500"}`} />
-                  </div>
-              </Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Query Standards</Link>
             </div>
           </div>
 
@@ -183,17 +171,12 @@ export async function Footer() {
         </div>
 
         {/* Footer Bottom */}
-        <div className="flex flex-col gap-8 pt-12 border-t border-white/5">
-          <div className="flex flex-col gap-4">
-            <p className="text-sm text-gray-500 text-center">
-              Disclaimer: {PLATFORM_NAME} can make mistakes so double-check it and use code with caution.
-            </p>
-            <p className="text-xs text-gray-600 text-center">
-              {PLATFORM_NAME} is a trademark of {LEGAL_COMPANY_NAME}. &copy; {new Date().getFullYear()} {LEGAL_COMPANY_NAME}. All rights reserved.
-            </p>
-          </div>
-          <div className="flex justify-center items-center">
-            <span className="text-xs font-mono font-bold text-gray-700">{version}</span>
+        <div className="flex flex-col md:flex-row justify-between items-center pt-12 border-t border-white/5 gap-6">
+          <p className="text-sm text-gray-500">
+            © Copyright {new Date().getFullYear()} - {LEGAL_COMPANY_NAME}
+          </p>
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-mono font-bold text-gray-700 uppercase">Version {version}</span>
           </div>
         </div>
       </div>
