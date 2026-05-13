@@ -7,7 +7,6 @@ import { RoadmapPublicService } from "@/app/services/public/roadmap";
 import { Twitter, Youtube, Linkedin, Instagram, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import versionData from "@/version.json";
-import { ThemeToggle } from "./theme-toggle";
 
 async function PublicRoadmapLink() {
   try {
@@ -77,11 +76,6 @@ export async function Footer() {
               <Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"><Linkedin className="w-6 h-6" /></Link>
               <Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"><Instagram className="w-6 h-6" /></Link>
             </div>
-            <div className="mt-4">
-               <button className="flex items-center gap-2 bg-gray-100 dark:bg-zinc-900 px-6 py-3 rounded-xl text-gray-300 hover:text-black dark:text-white transition-colors">
-                  English <ChevronDown className="w-4 h-4" />
-               </button>
-            </div>
           </div>
 
           {/* Column 2: Productivity & Summary */}
@@ -89,10 +83,6 @@ export async function Footer() {
             <div className="flex flex-col gap-6">
               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Productivity</h4>
               <div className="flex flex-col gap-4">
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI for Google</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI for Twitter</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI for LinkedIn</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI Transformation</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Text to Image - Bonkers</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI Email Writer</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Question AI</Link>
@@ -115,10 +105,6 @@ export async function Footer() {
                 <Link href="/chat" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with {PLATFORM_NAME}</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Free GPT-4o</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with Web Access</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with PDF</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with Websites</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with Image</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Ask AI</Link>
               </div>
             </div>
             <div className="flex flex-col gap-6">
@@ -132,7 +118,6 @@ export async function Footer() {
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Data Protection</Link>
                 <Link href="/careers" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Careers</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Refund Policy</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Query Standards</Link>
               </div>
             </div>
           </div>
@@ -144,10 +129,6 @@ export async function Footer() {
               <div className="flex flex-col gap-4">
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
                   AI Detector <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
-                </Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI Essay Writer</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                  Plagiarism Checker <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
                 </Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
                   AI Translator <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
@@ -180,7 +161,6 @@ export async function Footer() {
             © Copyright {new Date().getFullYear()} - {LEGAL_COMPANY_NAME}
           </p>
           <div className="flex items-center gap-6">
-            <ThemeToggle />
             <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10">
               <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'}`} />
               <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">System {isOnline ? 'Online' : 'Offline'}</span>
