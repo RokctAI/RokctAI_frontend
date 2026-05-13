@@ -70,16 +70,12 @@ export function Header({
                       <li><Link href="/chat" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Chat with {PLATFORM_NAME}</Link></li>
                       <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Free GPT-4o</Link></li>
                       <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Chat with Web Access</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Chat with PDF</Link></li>
                     </ul>
                   </div>
                   {/* Productivity */}
                   <div className="space-y-6">
                     <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Productivity</h4>
                     <ul className="space-y-4">
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">AI for Google</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">AI for LinkedIn</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">AI for Twitter</Link></li>
                       <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Email Writer</Link></li>
                     </ul>
                   </div>
@@ -88,9 +84,7 @@ export function Header({
                     <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">AI Tools</h4>
                     <ul className="space-y-4">
                       <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">AI Detector</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Plagiarism Checker</Link></li>
                       <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">AI Translator</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">AI Essay Writer</Link></li>
                     </ul>
                   </div>
                   {/* Summary */}
