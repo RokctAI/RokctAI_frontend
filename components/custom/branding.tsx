@@ -12,10 +12,10 @@ import {
  * It uses localStorage caching to ensure the branding appears instantly on refresh.
  * Uses a 'mounted' state to prevent hydration mismatches from localStorage access.
  */
-export function Branding({
+export function Branding({ 
   showBadge = false,
   forceWhite = false
-}: {
+}: { 
   showBadge?: boolean;
   forceWhite?: boolean;
 }) {
