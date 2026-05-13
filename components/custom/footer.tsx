@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PLATFORM_NAME, LEGAL_COMPANY_NAME } from "@/app/config/platform";
 import { TermsService } from "@/app/services/control/terms";
 import { BrandLogo } from "./brand-logo";
+import { Branding } from "./branding";
 import { RoadmapPublicService } from "@/app/services/public/roadmap";
 import { Twitter, Youtube, Linkedin, Instagram, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -57,9 +58,9 @@ export async function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-12 mb-24">
           {/* Column 1: Brand */}
           <div className="flex flex-col gap-6 lg:col-span-1">
-            <div className="flex items-center gap-3">
-              <BrandLogo width={40} height={40} />
-              <span className="text-4xl font-bold tracking-tighter text-white uppercase">{PLATFORM_NAME}</span>
+            <div className="flex items-center gap-3 scale-125 origin-left mb-2">
+              <BrandLogo width={32} height={32} />
+              <Branding showBadge forceWhite />
             </div>
             <p className="text-base text-gray-400 leading-relaxed max-w-[240px]">
               All-in-One AI extension to Write, Summarize, Code & Play
@@ -175,7 +176,11 @@ export async function Footer() {
           <p className="text-sm text-gray-500">
             © Copyright {new Date().getFullYear()} - {LEGAL_COMPANY_NAME}
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10">
+              <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'}`} />
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">System {isOnline ? 'Online' : 'Offline'}</span>
+            </div>
             <span className="text-xs font-mono font-bold text-gray-700 uppercase">Version {version}</span>
           </div>
         </div>
