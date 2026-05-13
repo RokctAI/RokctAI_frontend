@@ -49,14 +49,14 @@ export function Hero({
            const shift = 40 - (dist * dist * 0.25);
            const opacity = Math.max(0.05, 0.25 - (dist / 16));
            return (
-             <div
-               key={i}
-               className="h-[1px] bg-white transition-all duration-700"
-               style={{
+             <div 
+               key={i} 
+               className="h-[1px] bg-white transition-all duration-700" 
+               style={{ 
                  width: "28px",
                  marginLeft: `${Math.max(0, shift)}px`,
                  opacity: opacity
-               }}
+               }} 
              />
            );
          })}
@@ -69,8 +69,8 @@ export function Hero({
             const dist = Math.abs(i - mid);
             const opacity = Math.max(0.05, 0.25 - (dist / 16));
             return (
-                <div
-                    key={i}
+                <div 
+                    key={i} 
                     className="w-10 h-[1px] bg-white"
                     style={{ opacity: opacity }}
                 />
