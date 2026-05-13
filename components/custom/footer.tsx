@@ -10,21 +10,17 @@ async function PublicRoadmapLink() {
   try {
     const roadmap = await RoadmapPublicService.getPublicRoadmap();
     const data = roadmap?.message || roadmap;
-
     if (data && data.title) {
       return (
         <Link
           href="/public/roadmap"
-          className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 group"
-          title={`View Public Roadmap: ${data.title}`}
+          className="text-base text-gray-400 hover:text-white transition-colors"
         >
           Roadmap
         </Link>
       );
     }
-  } catch (e) {
-    // Fail silently
-  }
+  } catch (e) {}
   return null;
 }
 
@@ -32,246 +28,172 @@ export async function Footer() {
   let terms: any[] = [];
   try {
     const fetchedTerms = await TermsService.getMasterTerms();
-    if (Array.isArray(fetchedTerms)) {
-      terms = fetchedTerms;
-    }
-  } catch (e) {
-    console.error("Footer fetch error:", e);
-  }
-
-  let openings: any[] = [];
-  try {
-    const { JobsService } = await import("@/app/services/control/jobs");
-    const fetchedOpenings = await JobsService.getOpenings();
-    if (Array.isArray(fetchedOpenings)) {
-      openings = fetchedOpenings;
-    }
-  } catch (e: any) {
-    if (
-      e?.exc_type !== "PermissionError" &&
-      !e?.message?.includes("PermissionError")
-    ) {
-      console.error("Footer jobs fetch error:", e);
-    }
-  }
+    if (Array.isArray(fetchedTerms)) terms = fetchedTerms;
+  } catch (e) {}
 
   let version = "v1.0.0";
   let isOnline = false;
-  let errorMessage = "";
 
   try {
     const { VersionsService } = await import("@/app/services/public/versions");
-    if (
-      VersionsService &&
-      typeof VersionsService.getPublicVersions === "function"
-    ) {
-      const versions = await VersionsService.getPublicVersions().catch(
-        (err: any) => {
-          errorMessage = err instanceof Error ? err.message : String(err);
-          return null;
-        },
-      );
-      if (versions) {
+    const versions = await VersionsService.getPublicVersions();
+    if (versions) {
         let data = versions;
-        while (data && data.message) {
-          data = data.message;
-        }
-
-        let verValue = "";
+        while (data && data.message) data = data.message;
         if (data && typeof data === "object") {
-          const appData =
-            data.control ||
-            Object.values(data).find((v: any) => v && v.version);
-          if (appData && typeof appData.version === "string") {
-            verValue = appData.version;
-          } else if (typeof data.version === "string") {
-            verValue = data.version;
-          }
+            const v = data.control?.version || data.version;
+            if (v) version = `v${v}`;
         }
-
-        if (verValue) {
-          version = `v${verValue}`;
-          isOnline = true;
-        } else if (data && Object.keys(data).length > 0) {
-          isOnline = true;
-        }
-      }
+        isOnline = true;
     }
-  } catch (e: any) {
-    errorMessage = e.message || String(e);
-  }
+  } catch (e) {}
+
+  // Helper to find term by likely title or name
+  const getTermLink = (preferredTitle: string) => {
+    const term = terms.find(t => t.title?.toLowerCase().includes(preferredTitle.toLowerCase()) || t.name?.toLowerCase().includes(preferredTitle.toLowerCase()));
+    if (term) return `/legal/${term.name}`;
+    return "#";
+  };
 
   return (
-    <footer className="border-t bg-background pt-16 pb-8">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12 mb-16">
-          {/* Column 1: Logo & Brand Info */}
+    <footer className="bg-black text-white pt-24 pb-12 border-t border-white/5">
+      <div className="container mx-auto px-6 max-w-screen-2xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-12 mb-24">
+          {/* Column 1: Brand */}
           <div className="flex flex-col gap-6 lg:col-span-1">
-            <div className="flex items-center gap-2">
-              <BrandLogo width={32} height={32} variant="auto" />
-              <span className="text-2xl font-bold tracking-tight">{PLATFORM_NAME}</span>
+            <div className="flex items-center gap-3">
+              <BrandLogo width={40} height={40} />
+              <span className="text-4xl font-bold tracking-tighter text-white uppercase">{PLATFORM_NAME}</span>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-base text-gray-400 leading-relaxed max-w-[240px]">
               All-in-One AI extension to Write, Summarize, Code & Play
             </p>
-            <Button variant="outline" className="w-fit bg-[#4f46e5] hover:bg-[#4338ca] text-white border-none rounded-md px-8">
+            <Button className="w-full bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold py-6 rounded-lg text-lg">
               Contact us
             </Button>
-            <div className="flex gap-4">
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Twitter className="w-5 h-5" />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Youtube className="w-5 h-5" />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Instagram className="w-5 h-5" />
-              </Link>
+            <div className="flex gap-6 mt-2">
+              <Link href="#" className="text-gray-400 hover:text-white transition-colors"><Twitter className="w-6 h-6" /></Link>
+              <Link href="#" className="text-gray-400 hover:text-white transition-colors"><Youtube className="w-6 h-6" /></Link>
+              <Link href="#" className="text-gray-400 hover:text-white transition-colors"><Linkedin className="w-6 h-6" /></Link>
+              <Link href="#" className="text-gray-400 hover:text-white transition-colors"><Instagram className="w-6 h-6" /></Link>
             </div>
             <div className="mt-4">
-              <Button variant="ghost" size="sm" className="bg-secondary/50 rounded-full px-4 flex gap-2">
-                English <ChevronDown className="w-4 h-4" />
-              </Button>
+               <button className="flex items-center gap-2 bg-zinc-900 px-6 py-3 rounded-xl text-gray-300 hover:text-white transition-colors">
+                  English <ChevronDown className="w-4 h-4" />
+               </button>
             </div>
           </div>
 
           {/* Column 2: Productivity */}
-          <div className="flex flex-col gap-4">
-            <h4 className="font-semibold text-foreground">Productivity</h4>
-            <div className="flex flex-col gap-3">
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">AI for Google</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">AI for Twitter</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">AI for LinkedIn</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">AI Transformation</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Text to Image - Bonkers</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">AI Email Writer</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Question AI</Link>
+          <div className="flex flex-col gap-6">
+            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Productivity</h4>
+            <div className="flex flex-col gap-4">
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">AI for Google</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">AI for Twitter</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">AI for LinkedIn</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">AI Transformation</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Text to Image - Bonkers</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">AI Email Writer</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Question AI</Link>
             </div>
           </div>
 
           {/* Column 3: AI Chat */}
-          <div className="flex flex-col gap-4">
-            <h4 className="font-semibold text-foreground">AI chat</h4>
-            <div className="flex flex-col gap-3">
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Chat with {PLATFORM_NAME}</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Free GPT-4o</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Chat with Web Access</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Chat with PDF</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Chat with Websites</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Chat with Image</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Ask AI</Link>
+          <div className="flex flex-col gap-6">
+            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI chat</h4>
+            <div className="flex flex-col gap-4">
+              <Link href="/chat" className="text-base text-gray-400 hover:text-white transition-colors">Chat with {PLATFORM_NAME}</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Free GPT-4o</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Chat with Web Access</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Chat with PDF</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Chat with Websites</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Chat with Image</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Ask AI</Link>
             </div>
           </div>
 
           {/* Column 4: AI Tools */}
-          <div className="flex flex-col gap-4">
-            <h4 className="font-semibold text-foreground">AI Tools</h4>
-            <div className="flex flex-col gap-3">
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
-                AI Detector <span className="text-[10px] bg-blue-100 text-blue-600 px-1 rounded dark:bg-blue-900 dark:text-blue-200">New</span>
+          <div className="flex flex-col gap-6">
+            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI Tools</h4>
+            <div className="flex flex-col gap-4">
+              <Link href="#" className="text-base text-gray-400 hover:text-white flex items-center gap-2">
+                AI Detector <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
               </Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">AI Essay Writer</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
-                Plagiarism Checker <span className="text-[10px] bg-blue-100 text-blue-600 px-1 rounded dark:bg-blue-900 dark:text-blue-200">New</span>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">AI Essay Writer</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white flex items-center gap-2">
+                Plagiarism Checker <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
               </Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
-                AI Translator <span className="text-[10px] bg-blue-100 text-blue-600 px-1 rounded dark:bg-blue-900 dark:text-blue-200">New</span>
+              <Link href="#" className="text-base text-gray-400 hover:text-white flex items-center gap-2">
+                AI Translator <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
               </Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Bible GPT</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
-                70+ More AI Tools <span className="text-[10px] bg-blue-100 text-blue-600 px-1 rounded dark:bg-blue-900 dark:text-blue-200">New</span>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Bible GPT</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white flex items-center gap-2">
+                70+ More AI Tools <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
               </Link>
             </div>
           </div>
 
-          {/* Column 5: Summary & Company */}
-          <div className="flex flex-col gap-8">
+          {/* Column 5: Summary */}
+          <div className="flex flex-col gap-6">
+            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Summary</h4>
             <div className="flex flex-col gap-4">
-              <h4 className="font-semibold text-foreground">Summary</h4>
-              <div className="flex flex-col gap-3">
-                <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">YouTube Summarizer</Link>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Article Summarizer</Link>
-              </div>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">YouTube Summarizer</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Article Summarizer</Link>
             </div>
+          </div>
+
+          {/* Column 6: Company */}
+          <div className="flex flex-col gap-6">
+            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Company</h4>
             <div className="flex flex-col gap-4">
-              <h4 className="font-semibold text-foreground">Company</h4>
-              <div className="flex flex-col gap-3">
-                <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Team</Link>
-                {terms.map((term) => (
-                  <Link
-                    key={term.name}
-                    href={`/legal/${term.name}`}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {term.title}
-                  </Link>
-                ))}
-                {openings.length > 0 && (
-                  <Link href="/careers" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2">
-                    Careers
-                    <span className="flex h-2 w-2 relative">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
-                    </span>
-                  </Link>
-                )}
-                {/* Status Indicator */}
-                <Link 
-                  href="/status" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
-                  title={errorMessage || "System Online"}
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Team</Link>
+              <Link href={getTermLink("Privacy")} className="text-base text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href={getTermLink("Legal")} className="text-base text-gray-400 hover:text-white transition-colors">Legal</Link>
+              <Link href={getTermLink("Cookie")} className="text-base text-gray-400 hover:text-white transition-colors">Cookie Policy</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Data Protection</Link>
+              <Link href="/careers" className="text-base text-gray-400 hover:text-white transition-colors">Careers</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Refund Policy</Link>
+              <Link
+                  href="/status"
+                  className="text-base text-gray-400 hover:text-white transition-colors flex items-center gap-2"
                 >
                   Status
                   <div className="relative flex h-2 w-2 items-center justify-center">
-                    <div
-                      className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-pulse ${isOnline ? "bg-emerald-500" : "bg-red-500"}`}
-                      style={{ filter: "blur(1px)" }}
-                    ></div>
-                    <div
-                      className={`relative inline-flex rounded-full h-1.5 w-1.5 ${isOnline ? "bg-emerald-500" : "bg-red-500"}`}
-                    ></div>
+                    <div className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-pulse ${isOnline ? "bg-emerald-500" : "bg-red-500"}`} />
+                    <div className={`relative inline-flex rounded-full h-1.5 w-1.5 ${isOnline ? "bg-emerald-500" : "bg-red-500"}`} />
                   </div>
-                </Link>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Refund Policy</Link>
-                <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Query Standards</Link>
-              </div>
+              </Link>
             </div>
           </div>
 
-          {/* Column 6: Resources */}
-          <div className="flex flex-col gap-4">
-            <h4 className="font-semibold text-foreground">Resources</h4>
-            <div className="flex flex-col gap-3">
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Product Wiki</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Newsroom</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Blogs</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Change Shortcut</Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</Link>
+          {/* Column 7: Resources */}
+          <div className="flex flex-col gap-6">
+            <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Resources</h4>
+            <div className="flex flex-col gap-4">
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Product Wiki</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Newsroom</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Blogs</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Change Shortcut</Link>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">How It Works</Link>
               <PublicRoadmapLink />
-              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Feature Request</Link>
-              <button className="text-sm text-muted-foreground hover:text-foreground transition-colors text-left">Cookie preferences</button>
+              <Link href="#" className="text-base text-gray-400 hover:text-white transition-colors">Feature Request</Link>
+              <button className="text-base text-gray-400 hover:text-white transition-colors text-left">Cookie preferences</button>
             </div>
           </div>
         </div>
 
         {/* Footer Bottom */}
-        <div className="flex flex-col gap-6 pt-8 border-t border-border/50">
-          <div className="flex flex-col gap-2">
-            <p className="text-xs text-muted-foreground text-center">
+        <div className="flex flex-col gap-8 pt-12 border-t border-white/5">
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-gray-500 text-center">
               Disclaimer: {PLATFORM_NAME} can make mistakes so double-check it and use code with caution.
             </p>
-            <p className="text-[10px] text-muted-foreground/60 text-center">
+            <p className="text-xs text-gray-600 text-center">
               {PLATFORM_NAME} is a trademark of {LEGAL_COMPANY_NAME}. &copy; {new Date().getFullYear()} {LEGAL_COMPANY_NAME}. All rights reserved.
             </p>
           </div>
-          
           <div className="flex justify-center items-center">
-            <span className="text-[10px] font-mono font-bold text-muted-foreground leading-none">
-              {version}
-            </span>
+            <span className="text-xs font-mono font-bold text-gray-700">{version}</span>
           </div>
         </div>
       </div>
