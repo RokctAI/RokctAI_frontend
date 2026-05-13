@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PLATFORM_NAME, LEGAL_COMPANY_NAME } from "@/app/config/platform";
 import { TermsService } from "@/app/services/control/terms";
 import { BrandLogo } from "./brand-logo";
+import { Branding } from "./branding";
 import { RoadmapPublicService } from "@/app/services/public/roadmap";
 import { Twitter, Youtube, Linkedin, Instagram, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
