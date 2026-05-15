@@ -14,9 +14,9 @@ const models = [
   { name: "Grok 3", icon: "https://cdn.getmerlin.in/cms/grok_3_38b2f92210.svg" }
 ];
 
-export function AIModels() {
+export function AIModels({ id }: { id?: string }) {
   return (
-    <section className="py-24 bg-gray-50 dark:bg-zinc-950">
+    <section id={id} className="py-24 bg-gray-50 dark:bg-zinc-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-gray-900 dark:text-white mb-4">
           All top AI Models in one
