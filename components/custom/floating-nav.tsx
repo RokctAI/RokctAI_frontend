@@ -62,34 +62,37 @@ export function FloatingNav() {
   };
 
   return (
-    <div className="fixed left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-1.5 items-start">
+    <div className="fixed left-2 lg:left-4 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-1 items-start">
       {SECTIONS.map((section, i) => {
         const isActive = activeSection === section.id;
-
-        // Calculate curve shift for the wheel effect (convex)
-        const activeIndex = SECTIONS.findIndex(s => s.id === activeSection);
-        const distFromActive = Math.abs(i - activeIndex);
 
         // Curvature logic: middle items are shifted right
         const mid = (SECTIONS.length - 1) / 2;
         const distFromMid = Math.abs(i - mid);
-        const curveShift = 12 - (distFromMid * distFromMid * 0.2);
+        // Convex curve math: shift increases towards the middle of the list
+        // y = a - b(x - mid)^2
+        const curveShift = 20 - (distFromMid * distFromMid * 0.3);
+
+        const activeIndex = SECTIONS.findIndex(s => s.id === activeSection);
+        const distFromActive = Math.abs(i - activeIndex);
 
         return (
           <button
             key={section.id}
             onClick={() => scrollToSection(section.id)}
-            className="group relative flex items-center py-0.5"
+            className="group relative flex items-center py-0.5 px-2"
             aria-label={`Scroll to ${section.label}`}
           >
             <motion.div
               animate={{
-                width: isActive ? 28 : (distFromActive === 1 ? 18 : 12),
-                opacity: isActive ? 1 : (distFromActive <= 2 ? 0.4 : 0.2),
+                width: isActive ? 36 : (distFromActive === 1 ? 20 : 12),
+                opacity: isActive ? 1 : (distFromActive <= 2 ? 0.6 : 0.3),
                 marginLeft: `${Math.max(0, curveShift)}px`,
               }}
-              className={`h-[1.5px] rounded-full transition-colors duration-300 ${
-                isActive ? "bg-black dark:bg-white" : "bg-zinc-400 dark:bg-zinc-600"
+              className={`h-[3px] rounded-full transition-all duration-300 ${
+                isActive
+                  ? "bg-purple-600 dark:bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                  : "bg-zinc-400 dark:bg-zinc-600"
               }`}
             />
 
