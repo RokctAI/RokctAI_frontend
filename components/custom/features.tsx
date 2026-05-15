@@ -37,9 +37,9 @@ const features = [
   }
 ];
 
-export function Features() {
+export function Features({ id }: { id?: string }) {
   return (
-    <section className="py-24 bg-white dark:bg-black overflow-hidden">
+    <section id={id} className="py-24 bg-white dark:bg-black overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-32">
           {features.map((feature, index) => (
