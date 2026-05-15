@@ -29,12 +29,14 @@ export function Pricing({
   category = "rokct",
   onCategoryChange,
   initialPlans,
+  id,
 }: {
   openSignupPopup?: (plan?: string, country?: string) => void;
   signupUrl?: (plan?: string) => string;
   category?: string;
   onCategoryChange?: (category: string) => void;
   initialPlans?: any[];
+  id?: string;
 }) {
   const [isAnnual, setIsAnnual] = useState(false);
   const [loading, setLoading] = useState(
@@ -281,7 +283,7 @@ export function Pricing({
 
   return (
     <section
-      id="pricing"
+      id={id || "pricing"}
       className="w-full py-12 md:py-24 lg:py-32 bg-background text-foreground relative"
     >
       <div className="container mx-auto px-4 md:px-6">
