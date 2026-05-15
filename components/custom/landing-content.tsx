@@ -19,8 +19,23 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
       <main className="flex-1">
         <FloatingNav />
         <Hero id="hero" signupUrl="/register" />
+
+        {/* Placeholder Sections for Navigation */}
+        <div id="extension" className="h-[20vh] border-t border-transparent" />
+        <div id="chat" className="h-[20vh] border-t border-transparent" />
+        <div id="projects" className="h-[20vh] border-t border-transparent" />
+        <div id="crafts" className="h-[20vh] border-t border-transparent" />
+        <div id="research" className="h-[20vh] border-t border-transparent" />
+        <div id="social" className="h-[20vh] border-t border-transparent" />
+
         <Features id="features" />
+
+        <div id="security" className="h-[20vh] border-t border-transparent" />
+        <div id="devices" className="h-[20vh] border-t border-transparent" />
+        <div id="workflow" className="h-[20vh] border-t border-transparent" />
+
         <AIModels id="ai-models" />
+
         <Pricing
           id="pricing"
           signupUrl={(plan) => (plan ? `/register?plan=${plan}` : "/register")}
@@ -28,6 +43,12 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
           onCategoryChange={setCategory}
           initialPlans={plans}
         />
+
+        <div id="faq" className="h-[50vh] flex items-center justify-center bg-zinc-50 dark:bg-zinc-900/50">
+           <h2 className="text-2xl font-bold opacity-50">FAQ Section Placeholder</h2>
+        </div>
+
+        <div id="footer" />
       </main>
     </div>
   );

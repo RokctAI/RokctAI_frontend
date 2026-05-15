@@ -10,9 +10,20 @@ interface Section {
 
 const SECTIONS: Section[] = [
   { id: "hero", label: "Hero" },
-  { id: "features", label: "Features" },
-  { id: "ai-models", label: "AI Models" },
+  { id: "extension", label: "Chrome Extension" },
+  { id: "chat", label: "Merlin Chat" },
+  { id: "projects", label: "Projects" },
+  { id: "crafts", label: "Crafts" },
+  { id: "research", label: "Research Machine" },
+  { id: "social", label: "Social Media" },
+  { id: "features", label: "Features" }, // Moved up to match DOM order
+  { id: "security", label: "Data Security" },
+  { id: "devices", label: "Devices" },
+  { id: "workflow", label: "Workflow" },
+  { id: "ai-models", label: "AI Models" }, // Moved down
   { id: "pricing", label: "Pricing" },
+  { id: "faq", label: "FAQ" },
+  { id: "footer", label: "Footer" },
 ];
 
 export function FloatingNav() {
@@ -21,8 +32,8 @@ export function FloatingNav() {
   useEffect(() => {
     const observerOptions = {
       root: null,
-      rootMargin: "-50% 0px -50% 0px",
-      threshold: 0,
+      rootMargin: "-20% 0px -20% 0px",
+      threshold: 0.1,
     };
 
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
@@ -51,31 +62,39 @@ export function FloatingNav() {
   };
 
   return (
-    <div className="fixed left-6 lg:left-12 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-2.5">
+    <div className="fixed left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-1.5 items-start">
       {SECTIONS.map((section, i) => {
         const isActive = activeSection === section.id;
 
-        // Calculate curve shift for the wheel effect
+        // Calculate curve shift for the wheel effect (convex)
+        const activeIndex = SECTIONS.findIndex(s => s.id === activeSection);
+        const distFromActive = Math.abs(i - activeIndex);
+
+        // Curvature logic: middle items are shifted right
         const mid = (SECTIONS.length - 1) / 2;
-        const dist = Math.abs(i - mid);
-        const shift = 20 - (dist * dist * 4); // Adjusted for fewer items
+        const distFromMid = Math.abs(i - mid);
+        const curveShift = 12 - (distFromMid * distFromMid * 0.2);
 
         return (
           <button
             key={section.id}
             onClick={() => scrollToSection(section.id)}
-            className="group relative flex items-center"
+            className="group relative flex items-center py-0.5"
             aria-label={`Scroll to ${section.label}`}
           >
             <motion.div
               animate={{
-                width: isActive ? 40 : 20,
-                opacity: isActive ? 1 : 0.3,
-                marginLeft: `${Math.max(0, shift)}px`,
+                width: isActive ? 28 : (distFromActive === 1 ? 18 : 12),
+                opacity: isActive ? 1 : (distFromActive <= 2 ? 0.4 : 0.2),
+                marginLeft: `${Math.max(0, curveShift)}px`,
               }}
-              className="h-[2px] bg-white transition-all duration-300 rounded-full"
+              className={`h-[1.5px] rounded-full transition-colors duration-300 ${
+                isActive ? "bg-black dark:bg-white" : "bg-zinc-400 dark:bg-zinc-600"
+              }`}
             />
-            <span className="absolute left-full ml-4 px-2 py-1 bg-zinc-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+
+            {/* Label Tooltip */}
+            <span className="absolute left-full ml-4 px-2 py-1 bg-zinc-900 dark:bg-zinc-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-medium">
               {section.label}
             </span>
           </button>
