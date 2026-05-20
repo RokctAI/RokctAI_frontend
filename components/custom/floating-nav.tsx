@@ -66,13 +66,6 @@ export function FloatingNav() {
       {SECTIONS.map((section, i) => {
         const isActive = activeSection === section.id;
 
-        // Curvature logic: middle items are shifted right
-        const mid = (SECTIONS.length - 1) / 2;
-        const distFromMid = Math.abs(i - mid);
-        // Convex curve math: shift increases towards the middle of the list
-        // y = a - b(x - mid)^2
-        const curveShift = 20 - (distFromMid * distFromMid * 0.3);
-
         const activeIndex = SECTIONS.findIndex(s => s.id === activeSection);
         const distFromActive = Math.abs(i - activeIndex);
 
@@ -87,7 +80,6 @@ export function FloatingNav() {
               animate={{
                 width: isActive ? 36 : (distFromActive === 1 ? 20 : 12),
                 opacity: isActive ? 1 : (distFromActive <= 2 ? 0.6 : 0.3),
-                marginLeft: `${Math.max(0, curveShift)}px`,
               }}
               className={`h-[3px] rounded-full transition-all duration-300 ${
                 isActive
