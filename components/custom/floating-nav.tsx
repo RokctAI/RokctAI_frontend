@@ -63,28 +63,24 @@ export function FloatingNav() {
 
   return (
     <div className="fixed left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-1.5 items-start">
-      {SECTIONS.map((section, i) => {
+      {SECTIONS.map((section) => {
         const isActive = activeSection === section.id;
-
-        const activeIndex = SECTIONS.findIndex(s => s.id === activeSection);
-        const distFromActive = Math.abs(i - activeIndex);
 
         return (
           <button
             key={section.id}
             onClick={() => scrollToSection(section.id)}
-            className="group relative flex items-center py-0.5 px-2"
+            className="group relative flex items-center py-1.5 px-2"
             aria-label={`Scroll to ${section.label}`}
           >
             <motion.div
               animate={{
-                width: isActive ? 32 : (distFromActive === 1 ? 16 : 8),
-                opacity: isActive ? 1 : (distFromActive <= 2 ? 0.4 : 0.2),
+                width: isActive ? 32 : 16,
               }}
               className={`h-[2px] rounded-full transition-all duration-300 ${
                 isActive
-                  ? "bg-zinc-900 dark:bg-white"
-                  : "bg-zinc-400 dark:bg-zinc-600"
+                  ? "bg-zinc-900 dark:bg-white opacity-100"
+                  : "bg-zinc-400 dark:bg-zinc-500 opacity-50 group-hover:opacity-100 group-hover:w-[24px]"
               }`}
             />
 
