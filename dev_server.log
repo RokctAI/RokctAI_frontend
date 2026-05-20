@@ -1,0 +1,43 @@
+
+> gemini-chatbot@0.1.0 dev /app
+> next dev --turbo
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+- Environments: .env
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 2.4s
+[31m[auth][error][0m MissingSecret: Please define a `secret`. Read more at https://errors.authjs.dev#missingsecret
+    at assertConfig (/app/.next/dev/server/edge/chunks/691c0_@auth_core_f74cf8fb._.js:513:16)
+    at Auth (/app/.next/dev/server/edge/chunks/691c0_@auth_core_f74cf8fb._.js:5331:270)
+○ Compiling / ...
+⨯ Error: POSTGRES_URL environment variable is not set
+    at module evaluation (db/index.ts:6:9)
+    at module evaluation (app/(auth)/auth.ts:6:1)
+    at module evaluation (app/layout.tsx:5:1)
+    at module evaluation (.next/dev/server/chunks/ssr/[root-of-the-server]__760ddeac._.js:22:47)
+  4 |
+  5 | if (!process.env.POSTGRES_URL) {
+> 6 |   throw new Error("POSTGRES_URL environment variable is not set");
+    |         ^
+  7 | }
+  8 |
+  9 | const client = postgres(process.env.POSTGRES_URL);
+⨯ Error: POSTGRES_URL environment variable is not set
+    at module evaluation (db/index.ts:6:9)
+    at module evaluation (app/(auth)/auth.ts:6:1)
+    at module evaluation (app/layout.tsx:5:1)
+    at module evaluation (.next/dev/server/chunks/ssr/[root-of-the-server]__760ddeac._.js:22:47)
+  4 |
+  5 | if (!process.env.POSTGRES_URL) {
+> 6 |   throw new Error("POSTGRES_URL environment variable is not set");
+    |         ^
+  7 | }
+  8 |
+  9 | const client = postgres(process.env.POSTGRES_URL); {
+  page: '/'
+}
+ GET / 500 in 30.8s (compile: 30.4s, proxy.ts: 183ms, render: 243ms)
