@@ -35,6 +35,47 @@ interface SearchResults {
 
 type FilterType = "All" | "Tenders" | "Grants" | "Equity" | "Chat";
 
+function TypewriterPlaceholder({ placeholders, isSearching }: { placeholders: string[], isSearching: boolean }) {
+  const [currentText, setCurrentText] = useState("");
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [speed, setSpeed] = useState(150);
+
+  useEffect(() => {
+    if (isSearching) return;
+
+    const handleTyping = () => {
+      const fullText = placeholders[placeholderIndex];
+
+      if (!isDeleting) {
+        setCurrentText(fullText.substring(0, currentText.length + 1));
+        setSpeed(150);
+        if (currentText === fullText) {
+          setTimeout(() => setIsDeleting(true), 1500);
+        }
+      } else {
+        setCurrentText(fullText.substring(0, currentText.length - 1));
+        setSpeed(75);
+        if (currentText === "") {
+          setIsDeleting(false);
+          setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+        }
+      }
+    };
+
+    const timer = setTimeout(handleTyping, speed);
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, placeholderIndex, placeholders, speed, isSearching]);
+
+  if (isSearching) return null;
+
+  return (
+    <div className="absolute inset-0 flex items-center px-5 pointer-events-none text-gray-500 font-medium whitespace-nowrap">
+      {currentText}<span className="w-[1.5px] h-5 bg-purple-500 ml-0.5 animate-pulse" />
+    </div>
+  );
+}
+
 export function Hero({
   signupUrl = "/register",
   id,
@@ -43,7 +84,6 @@ export function Hero({
   id?: string;
 }) {
   const [index, setIndex] = useState(0);
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [lastSearchedQuery, setLastSearchedQuery] = useState("");
   const [results, setResults] = useState<SearchResults | null>(null);
@@ -55,13 +95,6 @@ export function Hero({
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % WORDS.length);
     }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPlaceholderIndex((prev) => (prev + 1) % SEARCH_PLACEHOLDERS.length);
-    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -209,7 +242,7 @@ export function Hero({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -30 }}
                         transition={{ duration: 0.5, ease: "easeInOut" }}
-                        className="font-serif italic font-medium"
+                        className="font-serif italic font-bold"
                     >
                         {WORDS[index].text}
                     </motion.span>
@@ -247,20 +280,7 @@ export function Hero({
                     </svg>
                 </div>
                 <div className="relative w-full overflow-hidden">
-                  <AnimatePresence mode="wait">
-                    {!searchQuery && (
-                      <motion.div
-                        key={SEARCH_PLACEHOLDERS[placeholderIndex]}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.4 }}
-                        className="absolute inset-0 flex items-center px-5 pointer-events-none text-gray-500 font-medium whitespace-nowrap"
-                      >
-                        {SEARCH_PLACEHOLDERS[placeholderIndex]}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  <TypewriterPlaceholder placeholders={SEARCH_PLACEHOLDERS} isSearching={!!searchQuery} />
                   <input
                       type="text"
                       value={searchQuery}

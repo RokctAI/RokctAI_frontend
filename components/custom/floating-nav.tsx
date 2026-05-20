@@ -16,11 +16,11 @@ const SECTIONS: Section[] = [
   { id: "crafts", label: "Crafts" },
   { id: "research", label: "Research Machine" },
   { id: "social", label: "Social Media" },
-  { id: "features", label: "Features" }, // Moved up to match DOM order
+  { id: "features", label: "Features" },
   { id: "security", label: "Data Security" },
   { id: "devices", label: "Devices" },
   { id: "workflow", label: "Workflow" },
-  { id: "ai-models", label: "AI Models" }, // Moved down
+  { id: "ai-models", label: "AI Models" },
   { id: "pricing", label: "Pricing" },
   { id: "faq", label: "FAQ" },
   { id: "footer", label: "Footer" },
@@ -62,7 +62,7 @@ export function FloatingNav() {
   };
 
   return (
-    <div className="fixed left-2 lg:left-4 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-1 items-start">
+    <div className="fixed left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-1.5 items-start">
       {SECTIONS.map((section, i) => {
         const isActive = activeSection === section.id;
 
@@ -78,12 +78,12 @@ export function FloatingNav() {
           >
             <motion.div
               animate={{
-                width: isActive ? 36 : (distFromActive === 1 ? 20 : 12),
-                opacity: isActive ? 1 : (distFromActive <= 2 ? 0.6 : 0.3),
+                width: isActive ? 32 : (distFromActive === 1 ? 16 : 8),
+                opacity: isActive ? 1 : (distFromActive <= 2 ? 0.4 : 0.2),
               }}
-              className={`h-[3px] rounded-full transition-all duration-300 ${
+              className={`h-[2px] rounded-full transition-all duration-300 ${
                 isActive
-                  ? "bg-purple-600 dark:bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                  ? "bg-zinc-900 dark:bg-white"
                   : "bg-zinc-400 dark:bg-zinc-600"
               }`}
             />

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/custom/header";
 import { Hero } from "@/components/custom/hero";
+import { Logos } from "@/components/custom/logos";
 import { Pricing } from "@/components/custom/pricing";
 import { Features } from "@/components/custom/features";
 import { AIModels } from "@/components/custom/ai-models";
@@ -19,6 +20,7 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
       <main className="flex-1">
         <FloatingNav />
         <Hero id="hero" signupUrl="/register" />
+        <Logos />
 
         {/* Placeholder Sections for Navigation */}
         <div id="extension" className="h-[20vh] border-t border-transparent" />
