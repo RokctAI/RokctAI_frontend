@@ -33,7 +33,7 @@ interface SearchResults {
   equity: Opportunity[];
 }
 
-type FilterType = "All" | "Tenders" | "Grants" | "Equity";
+type FilterType = "All" | "Tenders" | "Grants" | "Equity" | "Chat";
 
 export function Hero({
   signupUrl = "/register",
@@ -101,8 +101,16 @@ export function Hero({
     setActiveFilter("All");
   };
 
+  const handleFilterChange = (filter: FilterType) => {
+    if (filter === "Chat") {
+      clearResults();
+    } else {
+      setActiveFilter(filter);
+    }
+  };
+
   const filteredResults = useMemo(() => {
-    if (!results) return [];
+    if (!results || activeFilter === "Chat") return [];
 
     const all = [
       ...results.tenders.map(t => ({ ...t, type: 'Tender' })),
@@ -193,7 +201,7 @@ export function Hero({
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white leading-tight flex flex-wrap items-center justify-center gap-x-3"
             >
-                <div className="relative inline-flex items-center min-w-[140px] md:min-w-[260px] justify-center">
+                <div className="relative inline-flex items-center justify-center">
                     <AnimatePresence mode="wait">
                     <motion.span
                         key={WORDS[index].text}
@@ -258,7 +266,7 @@ export function Hero({
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder=""
-                      className="w-full bg-transparent border-none focus:ring-0 px-5 py-3 text-base md:text-lg text-zinc-900 dark:text-white placeholder-transparent font-medium relative z-10"
+                      className="w-full bg-transparent border-none outline-none focus:ring-0 focus:outline-none px-5 py-3 text-base md:text-lg text-zinc-900 dark:text-white placeholder-transparent font-medium relative z-10"
                   />
                 </div>
 
@@ -271,10 +279,10 @@ export function Hero({
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-                        {(["All", "Tenders", "Grants", "Equity"] as FilterType[]).map((filter) => (
+                        {(["All", "Tenders", "Grants", "Equity", "Chat"] as FilterType[]).map((filter) => (
                           <DropdownMenuItem
                             key={filter}
-                            onClick={() => setActiveFilter(filter)}
+                            onClick={() => handleFilterChange(filter)}
                             className="rounded-lg cursor-pointer focus:bg-zinc-100 dark:focus:bg-zinc-800"
                           >
                             {filter}
