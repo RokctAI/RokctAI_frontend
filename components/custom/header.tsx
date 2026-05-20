@@ -21,30 +21,53 @@ export function Header({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
 
   const user = session?.user;
 
+  React.useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        expandHeader();
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isExpanded]);
+
+  const expandHeader = () => {
+    if (!isExpanded) {
+      setIsExpanded(true);
+      window.dispatchEvent(new Event('headerExpanded'));
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-[#0a0a0a] border-b border-gray-200 dark:border-white/5 transition-all duration-300">
-      <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-        <div className="flex items-center justify-between h-20">
+    <header 
+      className={`sticky top-0 z-50 transition-all duration-500 ${isExpanded ? 'bg-white/70 dark:bg-[#0a0a0a]/70 backdrop-blur-md border-b border-gray-200 dark:border-white/5 w-full' : 'bg-transparent border-transparent w-fit mt-4 ml-4 lg:ml-8 absolute'} `}
+      onMouseEnter={expandHeader}
+    >
+      <div className={`${isExpanded ? 'max-w-screen-2xl mx-auto px-6 md:px-12' : 'px-4 py-2 bg-purple-50 dark:bg-purple-900/20 rounded-2xl shadow-sm border border-purple-200 dark:border-purple-800 backdrop-blur-sm'}`}>
+        <div className={`flex items-center ${isExpanded ? 'justify-between h-20' : 'justify-center h-12'}`}>
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-3">
-              <BrandLogo width={36} height={36} />
-              <Branding showBadge={true}  />
+          <div className="flex-shrink-0 flex items-center">
+            <Link href="/" className="flex items-center gap-2">
+              <BrandLogo width={isExpanded ? 36 : 28} height={isExpanded ? 36 : 28} />
+              <div className={`transition-all duration-300 overflow-hidden ${isExpanded ? 'w-auto opacity-100' : 'w-0 opacity-0'}`}>
+                <Branding showBadge={true}  />
+              </div>
             </Link>
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-10 h-full static">
+          <nav className={`hidden lg:flex items-center gap-2 h-full static transition-all duration-300 ${isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none absolute right-0'}`}>
             <div
-              className="h-full flex items-center"
+              className="flex items-center h-full"
               onMouseEnter={() => setIsMegaMenuOpen(true)}
               onMouseLeave={() => setIsMegaMenuOpen(false)}
             >
-              <button className="flex items-center gap-1.5 text-[15px] font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white transition-colors h-full px-2">
+              <button className="flex items-center gap-1.5 text-[15px] font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">
                 Product <FiChevronDown className={`transition-transform duration-200 ${isMegaMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -57,56 +80,54 @@ export function Header({
                   <div className="space-y-6">
                     <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Platforms</h4>
                     <ul className="space-y-4">
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Chrome Extension</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Edge Extension</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Android App</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">iOS App</Link></li>
+                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block">Chrome Extension</Link></li>
+                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block">Edge Extension</Link></li>
+                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block">Android App</Link></li>
+                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block">iOS App</Link></li>
                     </ul>
                   </div>
                   {/* AI Chat */}
                   <div className="space-y-6">
                     <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">AI Chat</h4>
                     <ul className="space-y-4">
-                      <li><Link href="/chat" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Chat with {PLATFORM_NAME}</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Free GPT-4o</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Chat with Web Access</Link></li>
+                      <li><Link href="/chat" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block">Chat with {PLATFORM_NAME}</Link></li>
                     </ul>
                   </div>
                   {/* Productivity */}
                   <div className="space-y-6">
                     <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Productivity</h4>
                     <ul className="space-y-4">
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Email Writer</Link></li>
+                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block">TenderAssist</Link></li>
                     </ul>
                   </div>
                   {/* AI Tools */}
                   <div className="space-y-6">
                     <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">AI Tools</h4>
                     <ul className="space-y-4">
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">AI Detector</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">AI Translator</Link></li>
+                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block">AI Detector</Link></li>
+                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block">AI Translator</Link></li>
                     </ul>
                   </div>
                   {/* Summary */}
                   <div className="space-y-6">
                     <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Summary</h4>
                     <ul className="space-y-4">
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">YouTube Summarizer</Link></li>
-                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white font-medium block">Article Summarizer</Link></li>
+                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block">YouTube Summarizer</Link></li>
+                      <li><Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block">Article Summarizer</Link></li>
                     </ul>
                   </div>
                 </div>
               </div>
             </div>
 
-            <Link href="#pricing" className="text-[15px] font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white transition-colors">Pricing</Link>
-            <Link href="/affiliate" className="text-[15px] font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white transition-colors">Affiliate</Link>
-            <Link href="/teams" className="text-[15px] font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white transition-colors">Teams</Link>
-            <Link href="/chat" className="text-[15px] font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-black dark:hover:text-white transition-colors">Chat with {PLATFORM_NAME}</Link>
+            <Link href="#pricing" className="text-[15px] font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">Pricing</Link>
+            <Link href="/affiliate" className="text-[15px] font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">Affiliate</Link>
+            <Link href="/teams" className="text-[15px] font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">Teams</Link>
+            <Link href="/chat" className="text-[15px] font-bold text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">Chat with {PLATFORM_NAME}</Link>
           </nav>
 
           {/* Actions */}
-          <div className="hidden lg:flex items-center gap-6">
+          <div className={`hidden lg:flex items-center gap-6 transition-all duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none absolute right-0'}`}>
             <ThemeToggle className="text-zinc-400 hover:text-black dark:hover:text-black dark:hover:text-white" />
             <Link
               href="https://chromewebstore.google.com/"
@@ -140,7 +161,7 @@ export function Header({
 
           {/* Mobile Button */}
           <button
-            className="lg:hidden text-black dark:text-white p-2"
+            className={`lg:hidden text-black dark:text-white p-2 transition-all duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none absolute right-0'}`}
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
