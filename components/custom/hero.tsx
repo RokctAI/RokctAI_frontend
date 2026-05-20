@@ -237,6 +237,45 @@ export function Hero({
           </div>
         </motion.div>
 
+        {/* Main Headline */}
+        <div className="mb-6 h-[1.2em] flex items-center justify-center">
+            <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white leading-tight flex flex-wrap items-center justify-center gap-x-3"
+            >
+                <div className="relative inline-flex items-center justify-center">
+                    <AnimatePresence mode="wait">
+                    <motion.span
+                        key={WORDS[index].text}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -30 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                        className="font-serif italic font-bold"
+                    >
+                        {WORDS[index].text}
+                    </motion.span>
+                    </AnimatePresence>
+                </div>
+                <div className="flex items-center gap-4">
+                    <AnimatePresence mode="wait">
+                        <motion.span
+                            key={WORDS[index].verb}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {WORDS[index].verb}
+                        </motion.span>
+                    </AnimatePresence>
+                    <span>a chat away</span>
+                </div>
+            </motion.h1>
+        </div>
+
         {/* Search-style CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
