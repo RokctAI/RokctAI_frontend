@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiSend, FiLoader, FiExternalLink, FiX, FiFilter, FiChevronDown } from "react-icons/fi";
 import { OpportunityPublicService, Opportunity } from "@/app/services/public/opportunities";
 import { Badge } from "@/components/ui/badge";
+import { BrandLogo } from "./brand-logo";
+import { PLATFORM_NAME } from "@/app/config/platform";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -113,6 +115,22 @@ export function Hero({
   const [hasSearched, setHasSearched] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
   const [isFocused, setIsFocused] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsExpanded(true);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    const handleHeaderExpand = () => setIsExpanded(true);
+    window.addEventListener("headerExpanded", handleHeaderExpand);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("headerExpanded", handleHeaderExpand);
+    };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -202,91 +220,22 @@ export function Hero({
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
 
-        {/* Top Graphics */}
+        {/* Top Graphics & Logo */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative mb-6"
+          className="relative mb-8 mt-4 md:mt-12 flex flex-col items-center justify-center"
         >
-          <div className="flex items-center justify-center -space-x-10 scale-[0.4] md:scale-[0.55] lg:scale-[0.65]">
-             <div className="relative z-0 transform -rotate-6 translate-y-4">
-                <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-2xl p-1 overflow-hidden w-24 h-16 md:w-36 md:h-24">
-                  <Image
-                    src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
-                    alt="Browser"
-                    width={140}
-                    height={100}
-                    className="opacity-20 mt-2 mx-auto"
-                  />
-                </div>
-             </div>
-             <div className="relative z-20">
-                <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-2xl p-1 overflow-hidden w-24 h-32 md:w-36 md:h-48">
-                   <div className="p-3 space-y-1.5">
-                     <div className="h-1.5 w-full bg-gray-100 dark:bg-zinc-800 rounded" />
-                     <div className="h-1.5 w-full bg-gray-100 dark:bg-zinc-800 rounded" />
-                     <div className="h-1.5 w-3/4 bg-gray-100 dark:bg-zinc-800 rounded" />
-                     <div className="h-1.5 w-full bg-gray-100 dark:bg-zinc-800 rounded" />
-                     <div className="h-1.5 w-5/6 bg-gray-100 dark:bg-zinc-800 rounded" />
-                     <div className="h-1.5 w-full bg-gray-100 dark:bg-zinc-800 rounded" />
-                     <div className="h-1.5 w-2/3 bg-gray-100 dark:bg-zinc-800 rounded" />
-                   </div>
-                </div>
-             </div>
-             <div className="relative z-10 transform rotate-6 translate-y-4">
-                <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-2xl p-1 overflow-hidden w-24 h-16 md:w-36 md:h-24">
-                  <Image
-                    src="https://cdn.getmerlin.in/cms/Frame_1321318057_c8c5638b09.webp"
-                    alt="Photo"
-                    width={140}
-                    height={100}
-                    className="object-cover h-full w-full"
-                  />
-                </div>
-             </div>
+          <div className="flex flex-col items-center justify-center transition-all duration-500">
+            <BrandLogo width={isExpanded ? 56 : 84} height={isExpanded ? 56 : 84} />
+            <div className={`overflow-hidden transition-all duration-500 flex items-center justify-center ${isExpanded ? 'h-0 opacity-0 mt-0' : 'h-16 opacity-100 mt-4'}`}>
+              <span className="text-4xl md:text-5xl font-bold uppercase italic text-black dark:text-white tracking-tighter">
+                {PLATFORM_NAME}
+              </span>
+            </div>
           </div>
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3/5 h-1 bg-zinc-400/20 dark:bg-white/10 blur-sm rounded-full" />
         </motion.div>
-
-        {/* Main Headline */}
-        <div className="mb-6 h-[1.2em] flex items-center justify-center">
-            <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white leading-tight flex flex-wrap items-center justify-center gap-x-3"
-            >
-                <div className="relative inline-flex items-center justify-center">
-                    <AnimatePresence mode="wait">
-                    <motion.span
-                        key={WORDS[index].text}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -30 }}
-                        transition={{ duration: 0.5, ease: "easeInOut" }}
-                        className="font-serif italic font-bold"
-                    >
-                        {WORDS[index].text}
-                    </motion.span>
-                    </AnimatePresence>
-                </div>
-                <div className="flex items-center gap-4">
-                    <AnimatePresence mode="wait">
-                        <motion.span
-                            key={WORDS[index].verb}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            {WORDS[index].verb}
-                        </motion.span>
-                    </AnimatePresence>
-                    <span>a chat away</span>
-                </div>
-            </motion.h1>
-        </div>
 
         {/* Search-style CTA */}
         <motion.div
