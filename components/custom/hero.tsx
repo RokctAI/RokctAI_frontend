@@ -4,22 +4,26 @@ import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiSend, FiLoader, FiExternalLink, FiX } from "react-icons/fi";
+import { FiSend, FiLoader, FiExternalLink, FiX, FiFilter, FiChevronDown } from "react-icons/fi";
 import { OpportunityPublicService, Opportunity } from "@/app/services/public/opportunities";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 const WORDS = [
   { text: "Everything", verb: "is" },
-  { text: "Knowledge", verb: "is" },
+  { text: "Funding", verb: "is" },
   { text: "Research", verb: "is" },
-  { text: "Summaries", verb: "are" },
-  { text: "PDFs", verb: "are" }
+  { text: "Grants", verb: "are" },
+  { text: "Tenders", verb: "are" }
 ];
 
 const SEARCH_PLACEHOLDERS = [
-  "search tenders",
-  "search grants",
-  "search for funding",
+  "search...",
   "talk to Rokct"
 ];
 
@@ -28,6 +32,8 @@ interface SearchResults {
   grants: Opportunity[];
   equity: Opportunity[];
 }
+
+type FilterType = "All" | "Tenders" | "Grants" | "Equity";
 
 export function Hero({
   signupUrl = "/register",
@@ -43,6 +49,7 @@ export function Hero({
   const [results, setResults] = useState<SearchResults | null>(null);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<FilterType>("All");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,6 +71,7 @@ export function Hero({
       setResults(null);
       setHasSearched(false);
       setLastSearchedQuery("");
+      setActiveFilter("All");
     }
   }, [searchQuery]);
 
@@ -90,16 +98,21 @@ export function Hero({
     setHasSearched(false);
     setLastSearchedQuery("");
     setSearchQuery("");
+    setActiveFilter("All");
   };
 
-  const allResults = useMemo(() => {
+  const filteredResults = useMemo(() => {
     if (!results) return [];
-    return [
+
+    const all = [
       ...results.tenders.map(t => ({ ...t, type: 'Tender' })),
       ...results.grants.map(g => ({ ...g, type: 'Grant' })),
       ...results.equity.map(e => ({ ...e, type: 'Equity' }))
     ];
-  }, [results]);
+
+    if (activeFilter === "All") return all;
+    return all.filter(r => r.type === activeFilter.slice(0, -1) || r.type === activeFilter);
+  }, [results, activeFilter]);
 
   const getOpportunityPath = (type: string) => {
     switch (type.toLowerCase()) {
@@ -248,13 +261,37 @@ export function Hero({
                       className="w-full bg-transparent border-none focus:ring-0 px-5 py-3 text-base md:text-lg text-zinc-900 dark:text-white placeholder-transparent font-medium relative z-10"
                   />
                 </div>
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="mr-1.5 p-3 bg-zinc-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-300 rounded-[20px] hover:text-zinc-900 dark:hover:text-white transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 disabled:opacity-50"
-                >
-                    {loading ? <FiLoader className="animate-spin" size={20} /> : <FiSend size={20} />}
-                </button>
+
+                {hasSearched && !loading ? (
+                  <div className="flex items-center mr-1.5 gap-1">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="flex items-center gap-1 px-3 py-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-[20px] hover:text-zinc-900 dark:hover:text-white transition-all text-sm font-medium border border-zinc-200 dark:border-zinc-700">
+                          {activeFilter} <FiChevronDown size={14} />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                        {(["All", "Tenders", "Grants", "Equity"] as FilterType[]).map((filter) => (
+                          <DropdownMenuItem
+                            key={filter}
+                            onClick={() => setActiveFilter(filter)}
+                            className="rounded-lg cursor-pointer focus:bg-zinc-100 dark:focus:bg-zinc-800"
+                          >
+                            {filter}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                ) : (
+                  <button
+                      type="submit"
+                      disabled={loading}
+                      className="mr-1.5 p-3 bg-zinc-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-300 rounded-[20px] hover:text-zinc-900 dark:hover:text-white transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 disabled:opacity-50"
+                  >
+                      {loading ? <FiLoader className="animate-spin" size={20} /> : <FiSend size={20} />}
+                  </button>
+                )}
             </div>
           </form>
 
@@ -283,9 +320,15 @@ export function Hero({
                       <FiLoader className="w-8 h-8 animate-spin text-purple-500" />
                       <p className="text-zinc-500 dark:text-zinc-400 animate-pulse">Searching for opportunities...</p>
                     </div>
-                  ) : allResults.length > 0 ? (
-                    allResults.map((result, idx) => (
-                      <div key={idx} className="group flex flex-col space-y-1 pr-8">
+                  ) : filteredResults.length > 0 ? (
+                    filteredResults.map((result, idx) => (
+                      <motion.div
+                        layout
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        key={`${result.type}-${result.slug}-${idx}`}
+                        className="group flex flex-col space-y-1 pr-8"
+                      >
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-zinc-500 dark:text-zinc-400">
                             rokct.ai › {getOpportunityPath(result.type)} › {result.slug}
@@ -317,11 +360,11 @@ export function Hero({
                           Explore this {result.type.toLowerCase()} opportunity from {result.institution || 'the organization'}.
                           {result.category ? ` Category: ${result.category}.` : ''}
                         </p>
-                      </div>
+                      </motion.div>
                     ))
                   ) : (
                     <div className="py-10 text-center pr-8">
-                      <p className="text-zinc-500 dark:text-zinc-400">No results found for &quot;{lastSearchedQuery}&quot;</p>
+                      <p className="text-zinc-500 dark:text-zinc-400">No {activeFilter !== "All" ? activeFilter.toLowerCase() : ""} results found for &quot;{lastSearchedQuery}&quot;</p>
                       <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-1">Try searching for something else like &quot;solar&quot; or &quot;education&quot;</p>
                     </div>
                   )}
