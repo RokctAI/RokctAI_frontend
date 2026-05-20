@@ -83,8 +83,8 @@ export async function Footer() {
             <div className="flex flex-col gap-6">
               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Productivity</h4>
               <div className="flex flex-col gap-4">
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Text to Image - Bonkers</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI Email Writer</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI-first ERP</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">TenderAssist</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Question AI</Link>
               </div>
             </div>
@@ -103,8 +103,6 @@ export async function Footer() {
               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI chat</h4>
               <div className="flex flex-col gap-4">
                 <Link href="/chat" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with {PLATFORM_NAME}</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Free GPT-4o</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with Web Access</Link>
               </div>
             </div>
             <div className="flex flex-col gap-6">
@@ -133,7 +131,6 @@ export async function Footer() {
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
                   AI Translator <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
                 </Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Bible GPT</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
                   70+ More AI Tools <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
                 </Link>
@@ -143,13 +140,11 @@ export async function Footer() {
               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Resources</h4>
               <div className="flex flex-col gap-4">
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Product Wiki</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Newsroom</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Blogs</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Change Shortcut</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">funding</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">How It Works</Link>
                 <PublicRoadmapLink />
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Feature Request</Link>
-                <button className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors text-left">Cookie preferences</button>
               </div>
             </div>
           </div>
