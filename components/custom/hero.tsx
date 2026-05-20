@@ -35,44 +35,66 @@ interface SearchResults {
 
 type FilterType = "All" | "Tenders" | "Grants" | "Equity" | "Chat";
 
-function TypewriterPlaceholder({ placeholders, isSearching }: { placeholders: string[], isSearching: boolean }) {
+function TypewriterPlaceholder({
+  placeholders,
+  isSearching,
+  isFocused
+}: {
+  placeholders: string[],
+  isSearching: boolean,
+  isFocused: boolean
+}) {
   const [currentText, setCurrentText] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [speed, setSpeed] = useState(150);
+  const [isTyping, setIsTyping] = useState(true);
+  const [isFading, setIsFading] = useState(false);
 
   useEffect(() => {
-    if (isSearching) return;
+    if (isSearching || isFocused) return;
 
-    const handleTyping = () => {
+    if (isFading) {
+      const timeout = setTimeout(() => {
+        setIsFading(false);
+        setCurrentText("");
+        setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+        setIsTyping(true);
+      }, 500); // Fade duration
+      return () => clearTimeout(timeout);
+    }
+
+    if (isTyping) {
       const fullText = placeholders[placeholderIndex];
-
-      if (!isDeleting) {
-        setCurrentText(fullText.substring(0, currentText.length + 1));
-        setSpeed(150);
-        if (currentText === fullText) {
-          setTimeout(() => setIsDeleting(true), 1500);
-        }
+      if (currentText.length < fullText.length) {
+        const timeout = setTimeout(() => {
+          setCurrentText(fullText.substring(0, currentText.length + 1));
+        }, 150);
+        return () => clearTimeout(timeout);
       } else {
-        setCurrentText(fullText.substring(0, currentText.length - 1));
-        setSpeed(75);
-        if (currentText === "") {
-          setIsDeleting(false);
-          setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
-        }
+        const timeout = setTimeout(() => {
+          setIsTyping(false);
+          setIsFading(true);
+        }, 2000); // Wait before fade
+        return () => clearTimeout(timeout);
       }
-    };
+    }
+  }, [currentText, isTyping, isFading, placeholderIndex, placeholders, isSearching, isFocused]);
 
-    const timer = setTimeout(handleTyping, speed);
-    return () => clearTimeout(timer);
-  }, [currentText, isDeleting, placeholderIndex, placeholders, speed, isSearching]);
-
-  if (isSearching) return null;
+  if (isSearching || isFocused) return null;
 
   return (
-    <div className="absolute inset-0 flex items-center px-5 pointer-events-none text-gray-500 font-medium whitespace-nowrap">
-      {currentText}<span className="w-[1.5px] h-5 bg-purple-500 ml-0.5 animate-pulse" />
-    </div>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={`${placeholderIndex}-${isFading}`}
+        initial={{ opacity: 1 }}
+        animate={{ opacity: isFading ? 0 : 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        className="absolute inset-0 flex items-center px-5 pointer-events-none text-gray-500 font-medium whitespace-nowrap"
+      >
+        {currentText}
+        {isTyping && <span className="w-[1.5px] h-5 bg-purple-500 ml-0.5 animate-pulse" />}
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
@@ -90,6 +112,7 @@ export function Hero({
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -280,11 +303,17 @@ export function Hero({
                     </svg>
                 </div>
                 <div className="relative w-full overflow-hidden">
-                  <TypewriterPlaceholder placeholders={SEARCH_PLACEHOLDERS} isSearching={!!searchQuery} />
+                  <TypewriterPlaceholder
+                    placeholders={SEARCH_PLACEHOLDERS}
+                    isSearching={!!searchQuery}
+                    isFocused={isFocused}
+                  />
                   <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
                       placeholder=""
                       className="w-full bg-transparent border-none outline-none focus:ring-0 focus:outline-none px-5 py-3 text-base md:text-lg text-zinc-900 dark:text-white placeholder-transparent font-medium relative z-10"
                   />

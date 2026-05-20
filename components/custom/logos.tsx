@@ -40,19 +40,20 @@ export function Logos() {
             Trusted by professionals at
           </p>
 
-          <div className="w-full overflow-hidden relative">
-            <div className="flex items-center justify-between gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500 flex-wrap justify-center">
+          <div className="w-full relative">
+            <div className="flex items-center justify-between gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 flex-wrap justify-center">
               {LOGOS.map((logo) => (
                 <motion.div
                   key={logo.name}
-                  whileHover={{ scale: 1.1 }}
-                  className="relative h-8 w-24 md:h-10 md:w-32"
+                  whileHover={{ scale: 1.1, opacity: 1 }}
+                  className="relative h-8 w-24 md:h-12 md:w-40 flex items-center justify-center"
                 >
                   <Image
                     src={logo.url}
                     alt={logo.name}
                     fill
                     className="object-contain"
+                    unoptimized // Try unoptimized if Next.js Image optimization fails on these URLs
                   />
                 </motion.div>
               ))}
