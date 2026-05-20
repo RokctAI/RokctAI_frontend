@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiSend, FiLoader, FiExternalLink } from "react-icons/fi";
+import { FiSend, FiLoader, FiExternalLink, FiX } from "react-icons/fi";
 import { OpportunityPublicService, Opportunity } from "@/app/services/public/opportunities";
 import { Badge } from "@/components/ui/badge";
 
@@ -14,6 +14,13 @@ const WORDS = [
   { text: "Research", verb: "is" },
   { text: "Summaries", verb: "are" },
   { text: "PDFs", verb: "are" }
+];
+
+const SEARCH_PLACEHOLDERS = [
+  "search tenders",
+  "search grants",
+  "search for funding",
+  "talk to Rokct"
 ];
 
 interface SearchResults {
@@ -30,6 +37,7 @@ export function Hero({
   id?: string;
 }) {
   const [index, setIndex] = useState(0);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [lastSearchedQuery, setLastSearchedQuery] = useState("");
   const [results, setResults] = useState<SearchResults | null>(null);
@@ -42,6 +50,22 @@ export function Hero({
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % SEARCH_PLACEHOLDERS.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Clear results if search query is erased
+  useEffect(() => {
+    if (searchQuery === "") {
+      setResults(null);
+      setHasSearched(false);
+      setLastSearchedQuery("");
+    }
+  }, [searchQuery]);
 
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -59,6 +83,13 @@ export function Hero({
     } finally {
       setLoading(false);
     }
+  };
+
+  const clearResults = () => {
+    setResults(null);
+    setHasSearched(false);
+    setLastSearchedQuery("");
+    setSearchQuery("");
   };
 
   const allResults = useMemo(() => {
@@ -194,13 +225,29 @@ export function Hero({
                         <path d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z" />
                     </svg>
                 </div>
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for opportunities (Tenders, Grants, Equity)..."
-                    className="w-full bg-transparent border-none focus:ring-0 px-5 py-3 text-base md:text-lg text-zinc-900 dark:text-white placeholder-gray-500 font-medium"
-                />
+                <div className="relative w-full overflow-hidden">
+                  <AnimatePresence mode="wait">
+                    {!searchQuery && (
+                      <motion.div
+                        key={SEARCH_PLACEHOLDERS[placeholderIndex]}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.4 }}
+                        className="absolute inset-0 flex items-center px-5 pointer-events-none text-gray-500 font-medium whitespace-nowrap"
+                      >
+                        {SEARCH_PLACEHOLDERS[placeholderIndex]}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder=""
+                      className="w-full bg-transparent border-none focus:ring-0 px-5 py-3 text-base md:text-lg text-zinc-900 dark:text-white placeholder-transparent font-medium relative z-10"
+                  />
+                </div>
                 <button
                     type="submit"
                     disabled={loading}
@@ -218,8 +265,18 @@ export function Hero({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="mt-4 w-full bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden text-left"
+                className="mt-4 w-full bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden text-left relative"
               >
+                {!loading && (
+                  <button
+                    onClick={clearResults}
+                    className="absolute top-4 right-4 p-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors z-20"
+                    aria-label="Close results"
+                  >
+                    <FiX size={18} />
+                  </button>
+                )}
+
                 <div className="max-h-[400px] overflow-y-auto p-4 space-y-6">
                   {loading ? (
                     <div className="flex flex-col items-center justify-center py-10 space-y-4">
@@ -228,7 +285,7 @@ export function Hero({
                     </div>
                   ) : allResults.length > 0 ? (
                     allResults.map((result, idx) => (
-                      <div key={idx} className="group flex flex-col space-y-1">
+                      <div key={idx} className="group flex flex-col space-y-1 pr-8">
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-zinc-500 dark:text-zinc-400">
                             rokct.ai › {getOpportunityPath(result.type)} › {result.slug}
@@ -263,7 +320,7 @@ export function Hero({
                       </div>
                     ))
                   ) : (
-                    <div className="py-10 text-center">
+                    <div className="py-10 text-center pr-8">
                       <p className="text-zinc-500 dark:text-zinc-400">No results found for &quot;{lastSearchedQuery}&quot;</p>
                       <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-1">Try searching for something else like &quot;solar&quot; or &quot;education&quot;</p>
                     </div>
