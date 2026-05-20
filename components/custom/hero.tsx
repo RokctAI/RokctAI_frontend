@@ -115,22 +115,6 @@ export function Hero({
   const [hasSearched, setHasSearched] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
   const [isFocused, setIsFocused] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsExpanded(true);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    const handleHeaderExpand = () => setIsExpanded(true);
-    window.addEventListener("headerExpanded", handleHeaderExpand);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("headerExpanded", handleHeaderExpand);
-    };
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
