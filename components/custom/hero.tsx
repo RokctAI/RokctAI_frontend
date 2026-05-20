@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiSend } from "react-icons/fi";
+import { FiSend, FiLoader, FiExternalLink } from "react-icons/fi";
+import { OpportunityPublicService, Opportunity } from "@/app/services/public/opportunities";
+import { Badge } from "@/components/ui/badge";
 
 const WORDS = [
   { text: "Everything", verb: "is" },
@@ -14,6 +16,12 @@ const WORDS = [
   { text: "PDFs", verb: "are" }
 ];
 
+interface SearchResults {
+  tenders: Opportunity[];
+  grants: Opportunity[];
+  equity: Opportunity[];
+}
+
 export function Hero({
   signupUrl = "/register",
   id,
@@ -22,6 +30,11 @@ export function Hero({
   id?: string;
 }) {
   const [index, setIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [lastSearchedQuery, setLastSearchedQuery] = useState("");
+  const [results, setResults] = useState<SearchResults | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -29,6 +42,42 @@ export function Hero({
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    setLoading(true);
+    setHasSearched(true);
+    setLastSearchedQuery(searchQuery);
+    try {
+      const data = await OpportunityPublicService.search(searchQuery);
+      setResults(data);
+    } catch (error) {
+      console.error("Search failed:", error);
+      setResults({ tenders: [], grants: [], equity: [] });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const allResults = useMemo(() => {
+    if (!results) return [];
+    return [
+      ...results.tenders.map(t => ({ ...t, type: 'Tender' })),
+      ...results.grants.map(g => ({ ...g, type: 'Grant' })),
+      ...results.equity.map(e => ({ ...e, type: 'Equity' }))
+    ];
+  }, [results]);
+
+  const getOpportunityPath = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'tender': return 'tenders';
+      case 'grant': return 'grants';
+      case 'equity': return 'equity';
+      default: return 'opportunities';
+    }
+  };
 
   return (
     <section id={id} className="relative w-full overflow-hidden bg-white dark:bg-[#0a0a0a] pt-6 md:pt-8 pb-10">
@@ -138,7 +187,7 @@ export function Hero({
           transition={{ duration: 0.6, delay: 0.4 }}
           className="w-full max-w-xl px-4"
         >
-          <div className="relative flex items-center p-[1px] bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-indigo-500/30 rounded-[24px] group focus-within:from-purple-500 focus-within:to-indigo-500 transition-all shadow-[0_0_40px_rgba(139,92,246,0.12)]">
+          <form onSubmit={handleSearch} className="relative flex items-center p-[1px] bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-indigo-500/30 rounded-[24px] group focus-within:from-purple-500 focus-within:to-indigo-500 transition-all shadow-[0_0_40px_rgba(139,92,246,0.12)]">
             <div className="flex items-center w-full bg-white dark:bg-black rounded-[23px] p-1">
                 <div className="pl-5 text-purple-400">
                     <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
@@ -147,16 +196,82 @@ export function Hero({
                 </div>
                 <input
                     type="text"
-                    placeholder="Explain bitcoin simply"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search for opportunities (Tenders, Grants, Equity)..."
                     className="w-full bg-transparent border-none focus:ring-0 px-5 py-3 text-base md:text-lg text-zinc-900 dark:text-white placeholder-gray-500 font-medium"
                 />
                 <button
-                    className="mr-1.5 p-3 bg-zinc-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-300 rounded-[20px] hover:text-zinc-900 dark:hover:text-white transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95"
+                    type="submit"
+                    disabled={loading}
+                    className="mr-1.5 p-3 bg-zinc-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-300 rounded-[20px] hover:text-zinc-900 dark:hover:text-white transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 disabled:opacity-50"
                 >
-                    <FiSend size={20} />
+                    {loading ? <FiLoader className="animate-spin" size={20} /> : <FiSend size={20} />}
                 </button>
             </div>
-          </div>
+          </form>
+
+          {/* Search Results */}
+          <AnimatePresence>
+            {(loading || hasSearched) && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="mt-4 w-full bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden text-left"
+              >
+                <div className="max-h-[400px] overflow-y-auto p-4 space-y-6">
+                  {loading ? (
+                    <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                      <FiLoader className="w-8 h-8 animate-spin text-purple-500" />
+                      <p className="text-zinc-500 dark:text-zinc-400 animate-pulse">Searching for opportunities...</p>
+                    </div>
+                  ) : allResults.length > 0 ? (
+                    allResults.map((result, idx) => (
+                      <div key={idx} className="group flex flex-col space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                            rokct.ai › {getOpportunityPath(result.type)} › {result.slug}
+                          </span>
+                        </div>
+                        <Link
+                          href={`/opportunities/${getOpportunityPath(result.type)}/${result.slug}`}
+                          className="text-xl text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center gap-2"
+                        >
+                          {result.title}
+                          <FiExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </Link>
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <Badge variant="outline" className="bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800">
+                            {result.type}
+                          </Badge>
+                          {result.institution && (
+                            <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                              {result.institution}
+                            </span>
+                          )}
+                          {(result.closing_date || result.deadline) && (
+                            <span className="text-sm text-zinc-500 dark:text-zinc-500 flex items-center gap-1">
+                              • Ends: {result.closing_date || result.deadline}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2 mt-1">
+                          Explore this {result.type.toLowerCase()} opportunity from {result.institution || 'the organization'}.
+                          {result.category ? ` Category: ${result.category}.` : ''}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="py-10 text-center">
+                      <p className="text-zinc-500 dark:text-zinc-400">No results found for &quot;{lastSearchedQuery}&quot;</p>
+                      <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-1">Try searching for something else like &quot;solar&quot; or &quot;education&quot;</p>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Social Proof & Platform badges */}
