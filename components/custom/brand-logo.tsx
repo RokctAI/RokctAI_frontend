@@ -17,6 +17,7 @@ export function BrandLogo({
   className?: string;
   variant?: "auto" | "light" | "dark" | "inverted";
   showBadge?: boolean;
+  isCircle?: boolean;
 }) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -47,7 +48,7 @@ export function BrandLogo({
 
   return (
     <div
-      className="relative flex items-center justify-center overflow-hidden rounded-[5px] bg-gradient-to-br from-zinc-800 to-zinc-950 dark:from-zinc-100 dark:to-zinc-300"
+      className={`relative flex items-center justify-center overflow-hidden ${isCircle ? 'rounded-full' : 'rounded-[5px]'} bg-gradient-to-br from-zinc-800 to-zinc-950 dark:from-zinc-100 dark:to-zinc-300`}
       style={{ width, height, minWidth: width, minHeight: height }}
     >
       <Image
