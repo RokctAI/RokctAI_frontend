@@ -74,7 +74,7 @@ export async function Footer() {
             <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-[240px]">
               All-in-One AI extension to Write, Summarize, Code & Play
             </p>
-            <Button className="w-full bg-[#4f46e5] hover:bg-[#4338ca] text-black dark:text-white font-bold py-6 rounded-lg text-lg">
+            <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-6 rounded-lg text-lg">
               Contact us
             </Button>
             <div className="flex gap-6 mt-2">
