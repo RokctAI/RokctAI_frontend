@@ -46,11 +46,7 @@ export function Branding({
   return (
     <span className="flex items-center gap-1.5">
       <span
-        className={`text-xl tracking-tighter leading-none ${forceWhite ? 'text-white' : 'text-black dark:text-white'}`}
-        style={{
-          fontFamily: '"Arial Black", "Arial", sans-serif',
-          fontWeight: 900,
-        }}
+        className={`text-2xl font-sans font-bold tracking-tight leading-none ${forceWhite ? 'text-white' : 'text-black dark:text-white'}`}
       >
         {branding.before}
         {showBadge && branding.code && <span style={branding.style}>{branding.code}</span>}
