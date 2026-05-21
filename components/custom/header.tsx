@@ -26,7 +26,7 @@ export function Header({
   const user = session?.user;
 
   return (
-    <header className="fixed w-full top-0 z-50 bg-white/10 dark:bg-black/10 backdrop-blur-2xl transition-all duration-300">
+    <header className="fixed w-full top-0 z-50 bg-white/5 dark:bg-black/5 backdrop-blur-xl transition-all duration-300">
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="flex items-center justify-between h-16">
 
@@ -47,7 +47,7 @@ export function Header({
               onMouseEnter={() => setIsMegaMenuOpen(true)}
               onMouseLeave={() => setIsMegaMenuOpen(false)}
             >
-              <button className={`flex items-center gap-1.5 text-[14px] font-semibold px-4 py-2 rounded-full transition-all ${isMegaMenuOpen ? 'bg-white/15 dark:bg-white/10 text-black dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10'}`}>
+              <button className={`flex items-center gap-1.5 text-[14px] font-semibold px-3 py-1.5 rounded-md transition-all ${isMegaMenuOpen ? 'bg-white/10 dark:bg-white/10 text-black dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/8 dark:hover:bg-white/8'}`}>
                 Product <FiChevronDown className={`transition-transform duration-200 ${isMegaMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -108,10 +108,10 @@ export function Header({
               </div>
             </div>
 
-            <Link href="#pricing" className="text-[14px] font-semibold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">Pricing</Link>
-            <Link href="/affiliate" className="text-[14px] font-semibold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">Affiliate</Link>
-            <Link href="/teams" className="text-[14px] font-semibold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">Teams</Link>
-            <Link href="/chat" className="text-[14px] font-semibold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 px-4 py-2 rounded-lg transition-all">Chat with {PLATFORM_NAME}</Link>
+            <Link href="#pricing" className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all">Pricing</Link>
+            <Link href="/affiliate" className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all">Affiliate</Link>
+            <Link href="/teams" className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all">Teams</Link>
+            <Link href="/chat" className="text-[14px] font-semibold text-white dark:text-white bg-zinc-700 dark:bg-zinc-700 hover:bg-zinc-600 dark:hover:bg-zinc-600 px-3 py-1.5 rounded-md transition-all">Chat with {PLATFORM_NAME}</Link>
           </nav>
 
           {/* Actions */}
@@ -119,7 +119,7 @@ export function Header({
             <Link
               href="https://chromewebstore.google.com/"
               target="_blank"
-              className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-black border border-gray-300 rounded-lg text-[13px] font-medium hover:bg-white transition-all shadow-sm"
+              className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-zinc-800 text-black dark:text-white border border-gray-200 dark:border-zinc-700 rounded-md text-[13px] font-medium hover:bg-gray-50 dark:hover:bg-zinc-700 transition-all"
             >
               <Image
                 src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
@@ -131,11 +131,11 @@ export function Header({
             </Link>
             <ThemeToggle className="text-zinc-500 hover:text-black dark:hover:text-white" />
             {user ? (
-              <Link href="/dashboard" className="px-4 py-1.5 bg-transparent border border-gray-200 dark:border-zinc-700 text-black dark:text-white rounded-lg text-[13px] font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-all">
+              <Link href="/dashboard" className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium hover:text-gray-500 dark:hover:text-gray-300 transition-all">
                 Dashboard
               </Link>
             ) : (
-              <Link href={loginUrl} className="px-4 py-1.5 bg-transparent border border-gray-200 dark:border-zinc-700 text-black dark:text-white rounded-lg text-[13px] font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-all">
+              <Link href={loginUrl} className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium hover:text-gray-500 dark:hover:text-gray-300 transition-all">
                 Log in
               </Link>
             )}
