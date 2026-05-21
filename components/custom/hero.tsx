@@ -18,11 +18,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const WORDS = [
-  { text: "Everything", verb: "is" },
   { text: "Funding", verb: "is" },
-  { text: "Research", verb: "is" },
+  { text: "Accounting", verb: "is" },
+  { text: "ERP", verb: "is" },
   { text: "Grants", verb: "are" },
-  { text: "Tenders", verb: "are" }
+  { text: "Tenders", verb: "are" },
+  { text: "Everything", verb: "is" }
 ];
 
 const SEARCH_PLACEHOLDERS = [
