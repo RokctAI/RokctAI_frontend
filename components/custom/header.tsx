@@ -47,17 +47,17 @@ export function Header({
                 <BrandLogo width={44} height={44} showBadge={true} />
                 {/* Country code appears next to logo when collapsed */}
                 <div
-                  className="transition-all duration-500 overflow-hidden"
+                  className="transition-all duration-500 overflow-hidden flex items-start"
                   style={{
-                    opacity: logoCollapsed && branding?.code ? 1 : 0,
-                    width: logoCollapsed && branding?.code ? '24px' : '0px',
+                    width: logoCollapsed ? (branding?.code ? '28px' : '0px') : '0px',
                     height: '44px',
+                    opacity: logoCollapsed ? 1 : 0,
                   }}
                 >
                   <span
                     style={{
-                      display: 'block',
-                      paddingTop: '2px', // Align with top edge
+                      alignSelf: 'flex-start',
+                      marginTop: '-2px',
                       fontSize: '14px',
                       fontWeight: 500,
                       marginLeft: '4px',
@@ -73,8 +73,8 @@ export function Header({
                 className="overflow-hidden transition-all duration-500 ease-in-out flex items-center"
                 style={{ width: logoCollapsed ? '0px' : '150px', opacity: logoCollapsed ? 0 : 1 }}
               >
-                <div className="pl-3 flex items-center h-full pt-1">
-                  <Branding showBadge={false} className="text-[44px] tracking-tighter leading-none" />
+                <div className="pl-2 flex items-center h-[44px]" style={{ paddingTop: '2px' }}>
+                  <Branding showBadge={false} className="text-[60px] tracking-tighter leading-[44px]" />
                 </div>
               </div>
             </Link>
@@ -95,7 +95,7 @@ export function Header({
 
               {/* Mega Menu — anchored to the header bottom */}
               <div
-                className={`fixed left-0 right-0 top-16 bg-white dark:bg-black border-b border-gray-200 dark:border-white/10 shadow-2xl transition-all duration-200 z-50 ${isMegaMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}
+                className={`fixed left-0 right-0 top-16 bg-white dark:bg-[#0a0a0a] border-b border-gray-200 dark:border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.4)] transition-all duration-200 z-50 ${isMegaMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}
               >
                 <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-8 flex flex-col lg:flex-row gap-12">
                   
@@ -148,10 +148,6 @@ export function Header({
                       <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">AI Chat</h4>
                       <ul className="space-y-4">
                         <li><Link href="/chat" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with {PLATFORM_NAME}</Link></li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with PDF</Link></li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with Websites</Link></li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with Image</Link></li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Question AI</Link></li>
                       </ul>
                     </div>
 
@@ -166,13 +162,12 @@ export function Header({
                         </li>
                         <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">TenderAssist</Link></li>
                         <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Telephony</Link></li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">AI Email Writer</Link></li>
                       </ul>
                     </div>
 
                     {/* Tools */}
                     <div className="space-y-4">
-                      <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">AI Tools</h4>
+                      <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Tools</h4>
                       <ul className="space-y-4">
                         <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">FraudDetector</Link></li>
                         <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">LoanMan</Link></li>
