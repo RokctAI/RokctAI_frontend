@@ -59,7 +59,7 @@ export function Header({
     
     if (label === "new") {
       return (
-        <span className="text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none shrink-0">
+        <span className="text-[9px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none shrink-0">
           New
         </span>
       );
@@ -97,7 +97,7 @@ export function Header({
                       transition: 'all 0.5s ease-in-out',
                       alignSelf: 'flex-start',
                       marginTop: '-2px',
-                      fontSize: '20px',
+                      fontSize: '24px',
                       fontWeight: 500,
                       marginLeft: '4px',
                       ...branding?.style,
