@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiChevronDown, FiMenu, FiX, FiBox, FiGlobe, FiSmartphone, FiArrowUpRight, FiMonitor } from "react-icons/fi";
+import { FiChevronRight, FiChevronDown, FiMenu, FiX, FiBox, FiGlobe, FiSmartphone, FiArrowUpRight, FiMonitor } from "react-icons/fi";
 import { Branding } from "./branding";
 import { BrandLogo } from "./brand-logo";
 import { ThemeToggle } from "./theme-toggle";
@@ -23,20 +23,32 @@ export function Header({
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [logoCollapsed, setLogoCollapsed] = useState(false);
   const [branding, setBranding] = useState<any>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
-    // Read branding immediately from cache
     setBranding(getBrandingSync());
-    // Collapse the logo text shortly after page load
     const timer = setTimeout(() => setLogoCollapsed(true), 1500);
-    return () => clearTimeout(timer);
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
+
+  // nav is visible when: logo hasn't collapsed yet, OR user is hovering/scrolling
+  const navVisible = !logoCollapsed || isHovered || isScrolled;
 
   const user = session?.user;
 
   return (
-    <header className="fixed w-full top-0 z-50 bg-white/5 dark:bg-black/5 backdrop-blur-xl transition-all duration-300">
+    <header
+      className="fixed w-full top-0 z-50 bg-white/5 dark:bg-black/5 backdrop-blur-xl transition-all duration-300"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="flex items-center justify-between h-16">
 
@@ -80,10 +92,20 @@ export function Header({
                 </div>
               </div>
             </Link>
+            {/* Chevron shown only when logo is collapsed */}
+            <span
+              className="transition-all duration-500 text-zinc-400 dark:text-zinc-600 ml-1"
+              style={{ opacity: logoCollapsed ? 1 : 0, pointerEvents: 'none' }}
+            >
+              <FiChevronRight size={14} />
+            </span>
           </div>
 
-          {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1 h-full">
+          {/* Desktop Nav — fades when collapsed, reappears on hover/scroll */}
+          <nav
+            className="hidden lg:flex items-center gap-1 h-full transition-all duration-500"
+            style={{ opacity: navVisible ? 1 : 0, pointerEvents: navVisible ? 'auto' : 'none' }}
+          >
 
             {/* Product dropdown */}
             <div
@@ -197,12 +219,12 @@ export function Header({
             <Link href="/chat" className="text-[14px] font-semibold text-white dark:text-white bg-zinc-700 dark:bg-zinc-700 hover:bg-zinc-600 dark:hover:bg-zinc-600 px-3 py-1.5 rounded-md transition-all">Chat with {PLATFORM_NAME.toUpperCase()}</Link>
           </nav>
 
-          {/* Actions */}
+          {/* Actions — always visible */}
           <div className="hidden lg:flex items-center gap-4">
             <Link
               href="https://chromewebstore.google.com/"
               target="_blank"
-              className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-zinc-800 text-black dark:text-white border border-gray-200 dark:border-zinc-700 rounded-md text-[13px] font-medium hover:bg-gray-50 dark:hover:bg-zinc-700 transition-all"
+              className="flex items-center gap-2 px-3 py-1.5 bg-yellow-400 text-black rounded-md text-[13px] font-medium hover:bg-yellow-300 transition-all"
             >
               <Image
                 src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
@@ -214,11 +236,11 @@ export function Header({
             </Link>
             <ThemeToggle className="text-zinc-500 hover:text-black dark:hover:text-white" />
             {user ? (
-              <Link href="/dashboard" className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium hover:text-gray-500 dark:hover:text-gray-300 transition-all">
+              <Link href="/dashboard" className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium border border-gray-200 dark:border-zinc-700 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all">
                 Dashboard
               </Link>
             ) : (
-              <Link href={loginUrl} className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium hover:text-gray-500 dark:hover:text-gray-300 transition-all">
+              <Link href={loginUrl} className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium border border-gray-200 dark:border-zinc-700 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all">
                 Log in
               </Link>
             )}
