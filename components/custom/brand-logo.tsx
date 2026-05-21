@@ -72,11 +72,6 @@ export function BrandLogo({
           BETA
         </div>
       )}
-      {showBadge && countryCode && (
-        <div className="absolute -bottom-[5%] -left-[10%] text-zinc-400 text-[9px] font-bold bg-white/10 px-1 rounded backdrop-blur-md">
-          {countryCode}
-        </div>
-      )}
     </div>
   );
 }
