@@ -147,7 +147,7 @@ export function Header({
                     <div className="space-y-4">
                       <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">AI Chat</h4>
                       <ul className="space-y-4">
-                        <li><Link href="/chat" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with {PLATFORM_NAME}</Link></li>
+                        <li><Link href="/chat" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with {PLATFORM_NAME.toUpperCase()}</Link></li>
                       </ul>
                     </div>
 
@@ -192,7 +192,7 @@ export function Header({
             <Link href="#pricing" className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all">Pricing</Link>
             <Link href="/affiliate" className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all">Affiliate</Link>
             <Link href="/teams" className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all">Teams</Link>
-            <Link href="/chat" className="text-[14px] font-semibold text-white dark:text-white bg-zinc-700 dark:bg-zinc-700 hover:bg-zinc-600 dark:hover:bg-zinc-600 px-3 py-1.5 rounded-md transition-all">Chat with {PLATFORM_NAME}</Link>
+            <Link href="/chat" className="text-[14px] font-semibold text-white dark:text-white bg-zinc-700 dark:bg-zinc-700 hover:bg-zinc-600 dark:hover:bg-zinc-600 px-3 py-1.5 rounded-md transition-all">Chat with {PLATFORM_NAME.toUpperCase()}</Link>
           </nav>
 
           {/* Actions */}
