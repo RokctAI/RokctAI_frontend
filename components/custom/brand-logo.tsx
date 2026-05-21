@@ -51,14 +51,30 @@ export function BrandLogo({
     else src = "/images/logo_dark.svg";
   }
 
+  const branding = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("rokct_branding_data") || "null") : null;
+  const isBeta = branding?.showBeta !== false;
+  const countryCode = branding?.code;
+
   return (
-    <Image
-      src={src}
-      height={height}
-      width={width}
-      alt={PLATFORM_NAME}
-      className={className}
-      priority
-    />
+    <div className="relative inline-flex items-center justify-center">
+      <Image
+        src={src}
+        height={height}
+        width={width}
+        alt={PLATFORM_NAME}
+        className={className}
+        priority
+      />
+      {isBeta && (
+        <div className="absolute -top-1 -right-4 bg-yellow-400 text-black text-[8px] font-bold px-1 rounded uppercase shadow-sm">
+          BETA
+        </div>
+      )}
+      {countryCode && !isBeta && (
+        <div className="absolute -top-1 -left-2 text-zinc-400 text-[8px] font-bold bg-white/10 px-1 rounded backdrop-blur-md">
+          {countryCode}
+        </div>
+      )}
+    </div>
   );
 }
