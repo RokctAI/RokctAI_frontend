@@ -70,11 +70,11 @@ export function Header({
               </div>
               {/* Brand text slides away after load */}
               <div
-                className="overflow-hidden transition-all duration-500 ease-in-out flex items-center h-[44px]"
-                style={{ width: logoCollapsed ? '0px' : '110px', opacity: logoCollapsed ? 0 : 1 }}
+                className="overflow-hidden transition-all duration-500 ease-in-out flex items-center"
+                style={{ width: logoCollapsed ? '0px' : '150px', opacity: logoCollapsed ? 0 : 1 }}
               >
-                <div className="pl-2 flex items-center h-full">
-                  <Branding showBadge={false} className="text-[34px] leading-none" />
+                <div className="pl-3 flex items-center h-full pt-1">
+                  <Branding showBadge={false} className="text-[44px] tracking-tighter leading-none" />
                 </div>
               </div>
             </Link>
