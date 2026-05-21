@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const WORDS = [
+  { text: "Everything", verb: "is" },
   { text: "Funding", verb: "is" },
   { text: "Accounting", verb: "is" },
   { text: "ERP", verb: "is" },
   { text: "Grants", verb: "are" },
-  { text: "Tenders", verb: "are" },
-  { text: "Everything", verb: "is" }
+  { text: "Tenders", verb: "are" }
 ];
 
 const SEARCH_PLACEHOLDERS = [
@@ -247,7 +247,7 @@ export function Hero({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative mb-8 mt-4 md:mt-12 flex flex-col items-center justify-center"
+          className="relative mb-14 mt-4 md:mt-12 flex flex-col items-center justify-center"
         >
           <div className="flex flex-row items-center justify-center h-[72px]">
             <div className="relative flex items-center h-[56px]">
