@@ -41,11 +41,13 @@ type FilterType = "All" | "Tenders" | "Grants" | "Equity" | "Chat";
 function TypewriterPlaceholder({
   placeholders,
   isSearching,
-  isFocused
+  isFocused,
+  onPlaceholderChange
 }: {
   placeholders: string[],
   isSearching: boolean,
-  isFocused: boolean
+  isFocused: boolean,
+  onPlaceholderChange?: (index: number) => void
 }) {
   const [currentText, setCurrentText] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -58,7 +60,9 @@ function TypewriterPlaceholder({
       const timeout = setTimeout(() => {
         setIsFading(false);
         setCurrentText("");
-        setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+        const nextIndex = (placeholderIndex + 1) % placeholders.length;
+        setPlaceholderIndex(nextIndex);
+        onPlaceholderChange?.(nextIndex);
         setIsTyping(true);
       }, 500); // Fade duration
       return () => clearTimeout(timeout);
@@ -108,6 +112,7 @@ export function Hero({
   id?: string;
 }) {
   const [index, setIndex] = useState(0);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [lastSearchedQuery, setLastSearchedQuery] = useState("");
   const [results, setResults] = useState<SearchResults | null>(null);
@@ -309,13 +314,18 @@ export function Hero({
           <form onSubmit={handleSearch} className="relative flex items-center p-[1px] bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-indigo-500/30 rounded-[24px] group focus-within:from-purple-500 focus-within:to-indigo-500 transition-all shadow-[0_0_40px_rgba(139,92,246,0.12)]">
             <div className="flex items-center w-full bg-white dark:bg-black rounded-[23px] p-1">
                 <div className="pl-3 flex items-center text-zinc-400 dark:text-zinc-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    {(!searchQuery && !isFocused && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct")) ? (
+                      <BrandLogo width={20} height={20} variant="auto" showBadge={false} />
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    )}
                 </div>
                 <div className="relative w-full overflow-hidden">
                   <TypewriterPlaceholder
                     placeholders={SEARCH_PLACEHOLDERS}
                     isSearching={!!searchQuery}
                     isFocused={isFocused}
+                    onPlaceholderChange={setPlaceholderIndex}
                   />
                   <input
                       type="text"
