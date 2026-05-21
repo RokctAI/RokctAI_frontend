@@ -111,31 +111,31 @@ export function Header({
             <Link href="#pricing" className="text-[14px] font-semibold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">Pricing</Link>
             <Link href="/affiliate" className="text-[14px] font-semibold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">Affiliate</Link>
             <Link href="/teams" className="text-[14px] font-semibold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 px-4 py-2 rounded-full transition-all">Teams</Link>
-            <Link href="/chat" className="text-[14px] font-semibold text-black dark:text-white bg-white/15 dark:bg-white/10 hover:bg-white/25 dark:hover:bg-white/20 px-4 py-2 rounded-full transition-all border border-white/20 dark:border-white/10">Chat with {PLATFORM_NAME}</Link>
+            <Link href="/chat" className="text-[14px] font-semibold text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 px-4 py-2 rounded-lg transition-all">Chat with {PLATFORM_NAME}</Link>
           </nav>
 
           {/* Actions */}
           <div className="hidden lg:flex items-center gap-4">
-            <ThemeToggle className="text-zinc-500 hover:text-black dark:hover:text-white" />
             <Link
               href="https://chromewebstore.google.com/"
               target="_blank"
-              className="flex items-center gap-2 px-5 py-2 bg-[#4f46e5] text-white rounded-full text-sm font-bold hover:bg-[#4338ca] transition-all shadow-lg hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-black border border-gray-300 rounded-lg text-[13px] font-medium hover:bg-white transition-all shadow-sm"
             >
               <Image
                 src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
                 alt="Chrome"
-                width={18}
-                height={18}
+                width={16}
+                height={16}
               />
-              Add to Chrome
+              Add {PLATFORM_NAME} Extension
             </Link>
+            <ThemeToggle className="text-zinc-500 hover:text-black dark:hover:text-white" />
             {user ? (
-              <Link href="/dashboard" className="text-[14px] font-bold text-black dark:text-white hover:text-gray-400 transition-colors">
+              <Link href="/dashboard" className="px-4 py-1.5 bg-transparent border border-gray-200 dark:border-zinc-700 text-black dark:text-white rounded-lg text-[13px] font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-all">
                 Dashboard
               </Link>
             ) : (
-              <Link href={loginUrl} className="text-[14px] font-bold text-black dark:text-white hover:text-gray-400 transition-colors">
+              <Link href={loginUrl} className="px-4 py-1.5 bg-transparent border border-gray-200 dark:border-zinc-700 text-black dark:text-white rounded-lg text-[13px] font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-all">
                 Log in
               </Link>
             )}
