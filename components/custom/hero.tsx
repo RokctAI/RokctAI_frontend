@@ -224,21 +224,11 @@ export function Hero({
           className="relative mb-8 mt-4 md:mt-12 flex flex-col items-center justify-center"
         >
           <div className="flex flex-row items-center justify-center gap-3 transition-all duration-500">
-            <div className="flex items-start text-[56px] font-sans font-bold leading-none">
-              <BrandLogo width={56} height={56} showBadge={true} />
-              {isExpanded && branding?.code && (
-                <span 
-                  style={branding.style} 
-                  className="text-black dark:text-white opacity-100 transition-opacity duration-500"
-                >
-                  {branding.code}
-                </span>
-              )}
-            </div>
+            <BrandLogo width={56} height={56} showBadge={true} />
             <div className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-w-0 opacity-0' : 'max-w-sm opacity-100'}`}>
               <Branding 
                 showBadge={true} 
-                className="text-[56px]" 
+                className="text-[76px]" 
               />
             </div>
           </div>
