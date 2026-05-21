@@ -26,8 +26,8 @@ const WORDS = [
 ];
 
 const SEARCH_PLACEHOLDERS = [
-  "search...",
-  "chat with ROKCT"
+  "chat with ROKCT",
+  "search..."
 ];
 
 interface SearchResults {
@@ -305,7 +305,7 @@ export function Hero({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -30 }}
                         transition={{ duration: 0.5, ease: "easeInOut" }}
-                        className="font-serif italic font-bold"
+                        className="font-serif italic font-bold text-yellow-400"
                     >
                         {WORDS[index].text}
                     </motion.span>
@@ -323,7 +323,7 @@ export function Hero({
                             {WORDS[index].verb}
                         </motion.span>
                     </AnimatePresence>
-                    <span className="text-yellow-400">a chat away</span>
+                    <span>a chat away</span>
                 </div>
             </motion.h1>
         </div>
@@ -339,7 +339,9 @@ export function Hero({
             <div className="flex items-center w-full bg-white dark:bg-black rounded-[23px] p-1">
                 <div className="pl-3 flex items-center text-zinc-400 dark:text-zinc-500 transition-opacity duration-500" style={{ opacity: isFading && !isFocused && !searchQuery ? 0 : 1 }}>
                     {(() => {
-                      const activeIcon = isFocused ? (frozenIcon || "search") : (frozenIcon || "search");
+                      const shouldShowLogo = (!searchQuery && visiblePlaceholder.length > 0 && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct"));
+                      const liveIcon = shouldShowLogo ? "logo" : "search";
+                      const activeIcon = isFocused ? (frozenIcon || "search") : liveIcon;
                       return activeIcon === "logo" ? (
                         <BrandLogo width={20} height={20} variant="auto" showBadge={false} isCircle={true} />
                       ) : (
