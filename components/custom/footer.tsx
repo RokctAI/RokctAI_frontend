@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PLATFORM_NAME, LEGAL_COMPANY_NAME } from "@/app/config/platform";
+import { PLATFORM_FEATURES } from "@/app/config/features";
 import { TermsService } from "@/app/services/control/terms";
 import { JobsService } from "@/app/services/control/jobs";
 import { BrandLogo } from "./brand-logo";
@@ -57,6 +58,53 @@ export async function Footer() {
     return "#";
   };
 
+  // Helper to render premium badges dynamically
+  const renderBadge = (id: number) => {
+    const label = PLATFORM_FEATURES[id]?.label;
+    if (!label || label === "none") return null;
+    
+    if (label === "soon") {
+      return (
+        <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
+          Soon
+        </span>
+      );
+    }
+    
+    if (label === "new") {
+      return (
+        <span className="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
+          New
+        </span>
+      );
+    }
+    
+    return null;
+  };
+
+  // Helper to render dynamic footer links
+  const renderFooterLink = (id: number) => {
+    const feature = PLATFORM_FEATURES[id];
+    if (!feature || !feature.active) return null;
+
+    if (feature.label === "soon") {
+      return (
+        <span className="text-base text-gray-400 dark:text-zinc-600 cursor-not-allowed flex items-center gap-2">
+          {feature.name} {renderBadge(id)}
+        </span>
+      );
+    }
+
+    return (
+      <Link
+        href={feature.href}
+        className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors flex items-center gap-2"
+      >
+        {feature.name} {renderBadge(id)}
+      </Link>
+    );
+  };
+
   const version = versionData.frontend;
 
   return (
@@ -86,34 +134,40 @@ export async function Footer() {
           </div>
 
           {/* Column 2: Productivity & Summary */}
-          <div className="flex flex-col gap-12">
-            <div className="flex flex-col gap-6">
-              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Productivity</h4>
-              <div className="flex flex-col gap-4">
-                <span className="text-base text-gray-400 dark:text-zinc-600 cursor-not-allowed flex items-center gap-2">
-                  AI-first ERP <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">Soon</span>
-                </span>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">TenderAssist</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Telephony</Link>
-              </div>
+          {(PLATFORM_FEATURES[5]?.active || PLATFORM_FEATURES[6]?.active || PLATFORM_FEATURES[7]?.active || PLATFORM_FEATURES[12]?.active || PLATFORM_FEATURES[13]?.active) && (
+            <div className="flex flex-col gap-12">
+              {(PLATFORM_FEATURES[5]?.active || PLATFORM_FEATURES[6]?.active || PLATFORM_FEATURES[7]?.active) && (
+                <div className="flex flex-col gap-6">
+                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Productivity</h4>
+                  <div className="flex flex-col gap-4">
+                    {renderFooterLink(5)}
+                    {renderFooterLink(6)}
+                    {renderFooterLink(7)}
+                  </div>
+                </div>
+              )}
+              {(PLATFORM_FEATURES[12]?.active || PLATFORM_FEATURES[13]?.active) && (
+                <div className="flex flex-col gap-6">
+                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Summary</h4>
+                  <div className="flex flex-col gap-4">
+                    {renderFooterLink(12)}
+                    {renderFooterLink(13)}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="flex flex-col gap-6">
-              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Summary</h4>
-              <div className="flex flex-col gap-4">
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">YouTube Summarizer</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Article Summarizer</Link>
-              </div>
-            </div>
-          </div>
+          )}
 
           {/* Column 3: AI Chat & Company */}
           <div className="flex flex-col gap-12">
-            <div className="flex flex-col gap-6">
-              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI chat</h4>
-              <div className="flex flex-col gap-4">
-                <Link href="/chat" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Chat with {PLATFORM_NAME}</Link>
+            {PLATFORM_FEATURES[4]?.active && (
+              <div className="flex flex-col gap-6">
+                <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI chat</h4>
+                <div className="flex flex-col gap-4">
+                  {renderFooterLink(4)}
+                </div>
               </div>
-            </div>
+            )}
             <div className="flex flex-col gap-6">
               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Company</h4>
               <div className="flex flex-col gap-4">
@@ -131,23 +185,17 @@ export async function Footer() {
 
           {/* Column 4: AI Tools & Resources */}
           <div className="flex flex-col gap-12">
-            <div className="flex flex-col gap-6">
-              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Tools</h4>
-              <div className="flex flex-col gap-4">
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                  FraudDetector <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
-                </Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                  LoanMan <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
-                </Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">
-                  Tenders
-                </Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">
-                  Funding
-                </Link>
+            {(PLATFORM_FEATURES[8]?.active || PLATFORM_FEATURES[9]?.active || PLATFORM_FEATURES[10]?.active || PLATFORM_FEATURES[11]?.active) && (
+              <div className="flex flex-col gap-6">
+                <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Tools</h4>
+                <div className="flex flex-col gap-4">
+                  {renderFooterLink(8)}
+                  {renderFooterLink(9)}
+                  {renderFooterLink(10)}
+                  {renderFooterLink(11)}
+                </div>
               </div>
-            </div>
+            )}
             <div className="flex flex-col gap-6">
               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Resources</h4>
               <div className="flex flex-col gap-4">
