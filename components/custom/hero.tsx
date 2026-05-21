@@ -317,8 +317,10 @@ export function Hero({
           <form onSubmit={handleSearch} className="relative flex items-center p-[1px] bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-indigo-500/30 rounded-[24px] group focus-within:from-purple-500 focus-within:to-indigo-500 transition-all shadow-[0_0_40px_rgba(139,92,246,0.12)]">
             <div className="flex items-center w-full bg-white dark:bg-black rounded-[23px] p-1">
                 <div className="pl-3 flex items-center text-zinc-400 dark:text-zinc-500">
-                    {(!searchQuery && !isFocused && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct")) ? (
-                      <BrandLogo width={20} height={20} variant="auto" showBadge={false} className="!rounded-full" />
+                    {(!searchQuery && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct")) ? (
+                      <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center">
+                        <BrandLogo width={20} height={20} variant="auto" showBadge={false} className="!rounded-full w-full h-full" />
+                      </div>
                     ) : (
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     )}
