@@ -17,6 +17,15 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+
+  async rewrites() {
+    return [
+      {
+        source: "/favicon.ico",
+        destination: "/images/logo.svg",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
