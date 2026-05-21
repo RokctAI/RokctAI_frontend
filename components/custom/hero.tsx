@@ -215,7 +215,7 @@ export function Hero({
           className="relative mb-8 mt-4 md:mt-12 flex flex-col items-center justify-center"
         >
           <div className="flex flex-row items-center justify-center gap-3 transition-all duration-500">
-            <BrandLogo width={isExpanded ? 40 : 56} height={isExpanded ? 40 : 56} />
+            <BrandLogo width={isExpanded ? 40 : 56} height={isExpanded ? 40 : 56} showBadge={true} />
             <div className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-w-0 opacity-0' : 'max-w-sm opacity-100'}`}>
               <span
                 className="text-black dark:text-white whitespace-nowrap tracking-tighter leading-none"
