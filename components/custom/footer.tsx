@@ -138,8 +138,11 @@ export async function Footer() {
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
                   LoanMan <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
                 </Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                  70+ More Tools <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">
+                  Tenders
+                </Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">
+                  Funding
                 </Link>
               </div>
             </div>
@@ -147,8 +150,6 @@ export async function Footer() {
               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Resources</h4>
               <div className="flex flex-col gap-4">
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Product Wiki</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Tenders</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Funding</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">How It Works</Link>
                 <PublicRoadmapLink />
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Feature Request</Link>
