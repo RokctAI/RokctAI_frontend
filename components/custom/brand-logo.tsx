@@ -47,7 +47,7 @@ export function BrandLogo({
 
   return (
     <div
-      className="relative flex items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-300 dark:from-zinc-800 dark:to-zinc-950"
+      className="relative flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-zinc-100 to-zinc-300 dark:from-zinc-800 dark:to-zinc-950"
       style={{ width, height, minWidth: width, minHeight: height }}
     >
       <Image
