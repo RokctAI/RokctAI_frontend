@@ -14,10 +14,12 @@ import {
  */
 export function Branding({ 
   showBadge = false,
-  forceWhite = false
+  forceWhite = false,
+  className
 }: { 
   showBadge?: boolean;
   forceWhite?: boolean;
+  className?: string;
 }) {
   const [mounted, setMounted] = useState(false);
   const [branding, setBranding] = useState<any>(null);
@@ -46,7 +48,7 @@ export function Branding({
   return (
     <span className="flex items-center gap-1.5">
       <span
-        className={`text-2xl font-sans font-bold tracking-tight leading-none ${forceWhite ? 'text-white' : 'text-black dark:text-white'}`}
+        className={`${className || 'text-2xl'} font-sans font-bold tracking-tight leading-none ${forceWhite ? 'text-white' : 'text-black dark:text-white'}`}
       >
         {branding.before}
         {showBadge && branding.code && <span style={branding.style}>{branding.code}</span>}
