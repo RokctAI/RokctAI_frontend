@@ -37,8 +37,8 @@ export function Branding({
   // Fallback during initial load or server-side render
   if (!mounted || !branding) {
     return (
-      <span className="flex items-center gap-2">
-        <span className={`text-xl font-bold italic ${forceWhite ? 'text-white' : 'text-black dark:text-white'}`}>
+      <span className="flex items-center gap-1.5">
+        <span className={`${className || 'text-2xl'} font-sans font-bold tracking-tight leading-none ${forceWhite ? 'text-white' : 'text-black dark:text-white'}`}>
           {PLATFORM_NAME}
         </span>
       </span>
