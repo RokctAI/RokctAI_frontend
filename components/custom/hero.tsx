@@ -223,14 +223,14 @@ export function Hero({
           transition={{ duration: 0.6 }}
           className="relative mb-8 mt-4 md:mt-12 flex flex-col items-center justify-center"
         >
-          <div className="flex flex-row items-center justify-center gap-3 transition-all duration-500">
+          <div className="flex flex-row items-center justify-center gap-3">
             <BrandLogo width={56} height={56} showBadge={true} />
-            <div className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-w-0 opacity-0' : 'max-w-sm opacity-100'}`}>
+            {!isExpanded && (
               <Branding 
                 showBadge={true} 
                 className="text-[76px]" 
               />
-            </div>
+            )}
           </div>
         </motion.div>
 
