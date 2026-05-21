@@ -17,7 +17,7 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black">
       <Header loginUrl="/login" signupUrl="/register" session={session} />
-      <main className="flex-1 pt-16">
+      <main className="flex-1">
         <FloatingNav />
         <Hero id="hero" signupUrl="/register" />
         <Logos />
