@@ -68,13 +68,7 @@ export async function Footer() {
             <div className="flex items-center gap-3">
               <BrandLogo width={48} height={48} />
               <span
-                className="text-black dark:text-white tracking-tighter leading-none"
-                style={{
-                  fontFamily: '"Arial Black", "Arial", sans-serif',
-                  fontWeight: 900,
-                  fontSize: '36px',
-                  lineHeight: '36px',
-                }}
+                className="text-black dark:text-white tracking-tight font-sans font-bold leading-none text-2xl"
               >
                 {PLATFORM_NAME}
               </span>
