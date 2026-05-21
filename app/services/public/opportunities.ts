@@ -15,20 +15,23 @@ export class OpportunityPublicService {
   static async search(query: string) {
     const types = ["tenders", "grants", "equity"];
 
-    // We call the public API for each type
     const results = await Promise.all(
       types.map(type =>
-        callPublicApi("control.control.api.get_public_opportunities", {
-          opportunity_type: type,
-          filters: JSON.stringify({ title: ["like", `%${query}%`] })
+        callPublicApi("rokct.platform.api.control", {
+          cmd: "control:get_public_opportunities",
+          payload: JSON.stringify({
+            opportunity_type: type,
+            filters: JSON.stringify({ title: ["like", `%${query}%`] })
+          })
         })
       )
     );
 
+    // rcore gateway wraps response in { status, data } — unwrap it
     return {
-      tenders: (results[0] || []) as Opportunity[],
-      grants: (results[1] || []) as Opportunity[],
-      equity: (results[2] || []) as Opportunity[]
+      tenders: ((results[0]?.data) ?? results[0] ?? []) as Opportunity[],
+      grants:  ((results[1]?.data) ?? results[1] ?? []) as Opportunity[],
+      equity:  ((results[2]?.data) ?? results[2] ?? []) as Opportunity[],
     };
   }
 }
