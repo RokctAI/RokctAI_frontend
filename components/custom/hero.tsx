@@ -202,7 +202,7 @@ export function Hero({
   };
 
   return (
-    <section id={id} className="relative w-full overflow-hidden bg-white dark:bg-[#0a0a0a] pt-6 md:pt-8 pb-10">
+    <section id={id} className="relative w-full overflow-hidden bg-white dark:bg-[#0a0a0a] pt-16 pb-10">
       {/* Background Vector */}
       <div className="absolute inset-0 z-0 opacity-10 dark:opacity-30">
         <Image
