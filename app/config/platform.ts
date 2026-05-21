@@ -63,8 +63,8 @@ export async function getGuestBranding(force = false) {
           verticalAlign: "baseline",
           position: "relative" as const,
           top: BRANDING_COUNTRY_Y_OFFSET,
-          marginLeft: "0.1em",
-          fontWeight: 600,
+          marginLeft: "0.05em",
+          fontWeight: 400,
         },
       };
 
