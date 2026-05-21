@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,7 +8,7 @@ import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
 import { Branding } from "./branding";
 import { BrandLogo } from "./brand-logo";
 import { ThemeToggle } from "./theme-toggle";
-import { PLATFORM_NAME } from "@/app/config/platform";
+import { PLATFORM_NAME, getBrandingSync } from "@/app/config/platform";
 
 export function Header({
   loginUrl = "/login",
@@ -21,7 +21,17 @@ export function Header({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [logoCollapsed, setLogoCollapsed] = useState(false);
+  const [branding, setBranding] = useState<any>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    // Read branding immediately from cache
+    setBranding(getBrandingSync());
+    // Collapse the logo text shortly after page load
+    const timer = setTimeout(() => setLogoCollapsed(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const user = session?.user;
 
@@ -33,8 +43,34 @@ export function Header({
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2">
-              <BrandLogo width={44} height={44} showBadge={true} />
-              <Branding showBadge={true} />
+              <div className="relative flex items-center">
+                <BrandLogo width={44} height={44} showBadge={true} />
+                {/* Country code appears next to logo when collapsed */}
+                <span
+                  className="transition-all duration-500"
+                  style={{
+                    opacity: logoCollapsed && branding?.code ? 1 : 0,
+                    maxWidth: logoCollapsed && branding?.code ? '2em' : '0px',
+                    overflow: 'hidden',
+                    display: 'inline-block',
+                    ...branding?.style,
+                    position: 'relative',
+                    top: '-0.6em',
+                    fontSize: '0.5em',
+                    fontWeight: 300,
+                    marginLeft: '0.1em',
+                  }}
+                >
+                  {branding?.code}
+                </span>
+              </div>
+              {/* Brand text slides away after load */}
+              <div
+                className="overflow-hidden transition-all duration-500 ease-in-out"
+                style={{ maxWidth: logoCollapsed ? '0px' : '200px', opacity: logoCollapsed ? 0 : 1 }}
+              >
+                <Branding showBadge={false} />
+              </div>
             </Link>
           </div>
 
