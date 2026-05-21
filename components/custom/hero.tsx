@@ -235,7 +235,6 @@ export function Hero({
           alt="background"
           fill
           className="object-cover"
-          priority
         />
       </div>
 
