@@ -84,9 +84,9 @@ export function Header({
                 <BrandLogo width={44} height={44} showBadge={true} />
                 {/* Country code appears next to logo when collapsed */}
                 <div
-                  className="transition-all duration-500 overflow-hidden flex items-start"
+                  className="transition-all duration-500 overflow-hidden flex items-start whitespace-nowrap"
                   style={{
-                    width: logoCollapsed ? (branding?.code ? '36px' : '0px') : '0px',
+                    maxWidth: logoCollapsed ? (branding?.code ? '120px' : '0px') : '0px',
                     height: '44px',
                     opacity: logoCollapsed ? 1 : 0,
                   }}
