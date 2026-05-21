@@ -73,7 +73,7 @@ export function Header({
               {/* Brand text slides away after load */}
               <div
                 className="overflow-hidden transition-all duration-500 ease-in-out flex items-center"
-                style={{ width: logoCollapsed ? '0px' : '150px', opacity: logoCollapsed ? 0 : 1 }}
+                style={{ width: logoCollapsed ? '0px' : '250px', opacity: logoCollapsed ? 0 : 1 }}
               >
                 <div className="pl-2 flex items-center h-[44px]" style={{ paddingTop: '2px' }}>
                   <Branding showBadge={false} className="text-[60px] tracking-tighter leading-[44px]" />
