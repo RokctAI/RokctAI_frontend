@@ -26,7 +26,7 @@ export function Header({
   const user = session?.user;
 
   return (
-    <header className="fixed w-full top-0 z-50 bg-white/10 dark:bg-black/10 backdrop-blur-2xl border-b border-white/10 dark:border-white/10 transition-all duration-300">
+    <header className="fixed w-full top-0 z-50 bg-white/10 dark:bg-black/10 backdrop-blur-2xl transition-all duration-300">
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="flex items-center justify-between h-16">
 
