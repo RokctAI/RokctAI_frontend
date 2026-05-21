@@ -214,10 +214,18 @@ export function Hero({
           transition={{ duration: 0.6 }}
           className="relative mb-8 mt-4 md:mt-12 flex flex-col items-center justify-center"
         >
-          <div className="flex flex-row items-center justify-center gap-4 transition-all duration-500">
-            <BrandLogo width={isExpanded ? 48 : 64} height={isExpanded ? 48 : 64} />
-            <div className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-w-0 opacity-0' : 'max-w-xs opacity-100'}`}>
-              <span className="text-4xl md:text-5xl font-bold uppercase italic text-black dark:text-white tracking-tighter whitespace-nowrap">
+          <div className="flex flex-row items-center justify-center gap-3 transition-all duration-500">
+            <BrandLogo width={isExpanded ? 40 : 56} height={isExpanded ? 40 : 56} />
+            <div className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-w-0 opacity-0' : 'max-w-sm opacity-100'}`}>
+              <span
+                className="text-black dark:text-white whitespace-nowrap leading-none"
+                style={{
+                  fontFamily: '"Arial Black", "Arial", sans-serif',
+                  fontWeight: 900,
+                  fontSize: '56px',
+                  lineHeight: '56px',
+                }}
+              >
                 {PLATFORM_NAME}
               </span>
             </div>
