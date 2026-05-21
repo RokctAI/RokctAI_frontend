@@ -274,10 +274,8 @@ export function Hero({
         >
           <form onSubmit={handleSearch} className="relative flex items-center p-[1px] bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-indigo-500/30 rounded-[24px] group focus-within:from-purple-500 focus-within:to-indigo-500 transition-all shadow-[0_0_40px_rgba(139,92,246,0.12)]">
             <div className="flex items-center w-full bg-white dark:bg-black rounded-[23px] p-1">
-                <div className="pl-5 text-purple-400">
-                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
-                        <path d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z" />
-                    </svg>
+                <div className="pl-3 flex items-center">
+                    <BrandLogo width={28} height={28} variant="auto" />
                 </div>
                 <div className="relative w-full overflow-hidden">
                   <TypewriterPlaceholder
