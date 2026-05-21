@@ -48,7 +48,8 @@ function TypewriterPlaceholder({
   isSearching: boolean,
   isFocused: boolean,
   onPlaceholderChange?: (index: number) => void,
-  onTextChange?: (text: string) => void
+  onTextChange?: (text: string) => void,
+  onFadingChange?: (fading: boolean) => void
 }) {
   const [currentText, setCurrentText] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -60,6 +61,7 @@ function TypewriterPlaceholder({
     if (isFading) {
       const timeout = setTimeout(() => {
         setIsFading(false);
+        onFadingChange?.(false);
         setCurrentText("");
         onTextChange?.("");
         const nextIndex = (placeholderIndex + 1) % placeholders.length;
@@ -82,6 +84,7 @@ function TypewriterPlaceholder({
         const timeout = setTimeout(() => {
           setIsTyping(false);
           setIsFading(true);
+          onFadingChange?.(true);
         }, 2000); // Wait before fade
         return () => clearTimeout(timeout);
       }
@@ -125,6 +128,8 @@ export function Hero({
   const [isFocused, setIsFocused] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [visiblePlaceholder, setVisiblePlaceholder] = useState("");
+  const [isFading, setIsFading] = useState(false);
+  const [frozenIcon, setFrozenIcon] = useState<"logo" | "search" | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -237,18 +242,19 @@ export function Hero({
               <BrandLogo width={56} height={56} showBadge={true} />
               {/* Country code appears next to logo only when text is collapsed */}
               <div
-                className="transition-all duration-500 overflow-hidden"
+                className="transition-all duration-500 overflow-hidden flex items-start"
                 style={{
                   opacity: isExpanded && branding?.code ? 1 : 0,
-                  width: isExpanded && branding?.code ? '28px' : '0px',
+                  width: isExpanded && branding?.code ? '36px' : '0px',
                   height: '56px',
                 }}
               >
                 <span
                   style={{
-                    display: 'block',
-                    paddingTop: '3px',
-                    fontSize: '16px',
+                    display: 'inline-block',
+                    alignSelf: 'flex-start',
+                    marginTop: '-2px',
+                    fontSize: '20px',
                     fontWeight: 500,
                     marginLeft: '6px',
                     color: 'inherit',
@@ -320,12 +326,24 @@ export function Hero({
         >
           <form onSubmit={handleSearch} className="relative flex items-center p-[1px] bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-indigo-500/30 rounded-[24px] group focus-within:from-purple-500 focus-within:to-indigo-500 transition-all shadow-[0_0_40px_rgba(139,92,246,0.12)]">
             <div className="flex items-center w-full bg-white dark:bg-black rounded-[23px] p-1">
-                <div className="pl-3 flex items-center text-zinc-400 dark:text-zinc-500">
-                    {(!searchQuery && visiblePlaceholder.length > 0 && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct")) ? (
+                <div className="pl-3 flex items-center text-zinc-400 dark:text-zinc-500 transition-opacity duration-500" style={{ opacity: isFading && !isFocused && !searchQuery ? 0 : 1 }}>
+                    {(() => {
+                      // Determine what icon should be shown normally
+                      const shouldShowLogo = (!searchQuery && visiblePlaceholder.length > 0 && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct"));
+                      // If focused, freeze the icon state to whatever it was before clicking
+                      const activeIcon = isFocused && frozenIcon ? frozenIcon : (shouldShowLogo ? "logo" : "search");
+                      
+                      // Save the active icon to frozen state so it persists on focus
+                      if (!isFocused && activeIcon !== frozenIcon) {
+                        setFrozenIcon(activeIcon);
+                      }
+
+                      return activeIcon === "logo" ? (
                         <BrandLogo width={20} height={20} variant="auto" showBadge={false} isCircle={true} />
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    )}
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                      );
+                    })()}
                 </div>
                 <div className="relative w-full overflow-hidden">
                   <TypewriterPlaceholder
@@ -334,6 +352,7 @@ export function Hero({
                     isFocused={isFocused}
                     onPlaceholderChange={setPlaceholderIndex}
                     onTextChange={setVisiblePlaceholder}
+                    onFadingChange={setIsFading}
                   />
                   <input
                       type="text"
