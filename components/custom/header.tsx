@@ -208,7 +208,7 @@ export function Header({
                 width={16}
                 height={16}
               />
-              Add {PLATFORM_NAME} Extension
+              Add {PLATFORM_NAME.toUpperCase()} Extension
             </Link>
             <ThemeToggle className="text-zinc-500 hover:text-black dark:hover:text-white" />
             {user ? (
@@ -246,7 +246,7 @@ export function Header({
             ) : (
               <Link href={loginUrl} className="block text-xl font-bold text-black dark:text-white text-center py-4 bg-gray-100 dark:bg-zinc-900 rounded-2xl">Log in</Link>
             )}
-            <Link href="https://chromewebstore.google.com/" target="_blank" className="block text-xl font-bold text-white text-center py-4 bg-[#4f46e5] rounded-2xl">Add to Chrome</Link>
+            <Link href="https://chromewebstore.google.com/" target="_blank" className="block text-xl font-bold text-white text-center py-4 bg-[#4f46e5] rounded-2xl">Add {PLATFORM_NAME.toUpperCase()} Extension</Link>
           </div>
         </div>
       )}
