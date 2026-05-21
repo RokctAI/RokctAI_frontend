@@ -116,6 +116,9 @@ export function Hero({
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
   const [isFocused, setIsFocused] = useState(false);
 
+  // Collapse hero logo/text when user is actively using the search
+  const isExpanded = isFocused || hasSearched;
+
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % WORDS.length);
