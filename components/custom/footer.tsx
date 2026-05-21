@@ -67,11 +67,7 @@ export async function Footer() {
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <BrandLogo width={48} height={48} />
-              <span
-                className="text-black dark:text-white tracking-tight font-sans font-bold leading-none text-2xl"
-              >
-                {PLATFORM_NAME}
-              </span>
+              <Branding showBadge={true} className="text-[36px]" />
             </div>
             <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-[240px]">
               All-in-One AI extension to Write, Summarize, Code & Play
