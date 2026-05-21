@@ -53,6 +53,7 @@ export function Branding({
         }}
       >
         {branding.before}
+        {showBadge && branding.code && <span style={branding.style}>{branding.code}</span>}
         {branding.after}
       </span>
     </span>
