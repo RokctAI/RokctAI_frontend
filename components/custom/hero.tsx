@@ -258,10 +258,10 @@ export function Hero({
               className="overflow-hidden transition-all duration-500 ease-in-out flex items-center h-[56px]"
               style={{ width: isExpanded ? '0px' : '150px', opacity: isExpanded ? 0 : 1 }}
             >
-              <div className="pl-3 flex items-center h-full">
+              <div className="pl-3 flex items-center h-full pt-1">
                 <Branding 
                   showBadge={false} 
-                  className="text-[44px] leading-none" 
+                  className="text-[56px] tracking-tighter leading-none" 
                 />
               </div>
             </div>
