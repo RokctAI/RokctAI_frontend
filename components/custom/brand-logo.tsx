@@ -10,11 +10,13 @@ export function BrandLogo({
   height = 24,
   className,
   variant = "auto",
+  showBadge = false,
 }: {
   width?: number;
   height?: number;
   className?: string;
   variant?: "auto" | "light" | "dark" | "inverted";
+  showBadge?: boolean;
 }) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -65,12 +67,12 @@ export function BrandLogo({
         className={className}
         priority
       />
-      {isBeta && (
-        <div className="absolute -top-1 -right-4 bg-yellow-400 text-black text-[8px] font-bold px-1 rounded uppercase shadow-sm">
+      {showBadge && isBeta && (
+        <div className="absolute -top-[15%] right-[5%] bg-yellow-400 text-black text-[9px] leading-none font-bold px-1 py-0.5 rounded-sm uppercase shadow-sm">
           BETA
         </div>
       )}
-      {countryCode && !isBeta && (
+      {showBadge && countryCode && !isBeta && (
         <div className="absolute -top-1 -left-2 text-zinc-400 text-[8px] font-bold bg-white/10 px-1 rounded backdrop-blur-md">
           {countryCode}
         </div>
