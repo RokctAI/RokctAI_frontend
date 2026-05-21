@@ -89,7 +89,7 @@ export function Header({
 
               {/* Mega Menu — anchored to the header bottom */}
               <div
-                className={`fixed left-0 right-0 top-16 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-white/10 dark:border-white/10 shadow-2xl transition-all duration-200 z-50 ${isMegaMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}
+                className={`fixed left-0 right-0 top-16 bg-white dark:bg-black border-b border-gray-200 dark:border-white/10 shadow-2xl transition-all duration-200 z-50 ${isMegaMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}
               >
                 <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-10 grid grid-cols-5 gap-10">
                   {/* Platforms */}
