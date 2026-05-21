@@ -1,4 +1,4 @@
-export const PLATFORM_NAME = "ROKCT";
+export const PLATFORM_NAME = "Rokct";
 export const LEGAL_COMPANY_NAME = "ROKCT INTELLIGENCE (PTY) LTD";
 
 /**
