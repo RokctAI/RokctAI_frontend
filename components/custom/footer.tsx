@@ -68,7 +68,7 @@ export async function Footer() {
             <div className="flex items-center h-[64px]">
               <BrandLogo width={64} height={64} showBadge={false} />
               <div className="pl-3 h-[64px] flex items-center pt-1">
-                <Branding showBadge={false} className="text-[64px] tracking-tighter leading-none" />
+                <Branding showBadge={false} className="text-[88px] tracking-tighter leading-[64px]" />
               </div>
             </div>
             <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-[240px]">
