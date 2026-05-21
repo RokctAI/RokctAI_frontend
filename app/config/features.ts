@@ -20,7 +20,7 @@ export const PLATFORM_FEATURES: Record<number, FeatureLink> = {
 
   // Productivity Column
   5: { name: "AI-first ERP", href: "#", active: true, label: "soon" },
-  6: { name: "TenderAssist", href: "#", active: true, label: "none" },
+  6: { name: "TenderAssist", href: "#", active: true, label: "new" },
   7: { name: "Telephony", href: "#", active: true, label: "none" },
 
   // Tools Column
