@@ -27,7 +27,7 @@ const WORDS = [
 
 const SEARCH_PLACEHOLDERS = [
   "search...",
-  "talk to Rokct"
+  "chat with ROKCT"
 ];
 
 interface SearchResults {
@@ -134,6 +134,17 @@ export function Hero({
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Sync frozenIcon when not focused
+  useEffect(() => {
+    if (!isFocused) {
+      const shouldShowLogo = (!searchQuery && visiblePlaceholder.length > 0 && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct"));
+      const newIcon = shouldShowLogo ? "logo" : "search";
+      if (newIcon !== frozenIcon) {
+        setFrozenIcon(newIcon);
+      }
+    }
+  }, [isFocused, searchQuery, visiblePlaceholder, placeholderIndex, frozenIcon]);
 
   const branding = mounted && typeof window !== "undefined" 
     ? JSON.parse(localStorage.getItem("rokct_branding_data") || "null") 
@@ -245,7 +256,7 @@ export function Hero({
                 className="transition-all duration-500 overflow-hidden flex items-start"
                 style={{
                   opacity: isExpanded && branding?.code ? 1 : 0,
-                  width: isExpanded && branding?.code ? '36px' : '0px',
+                  width: isExpanded && branding?.code ? '28px' : '0px',
                   height: '56px',
                 }}
               >
@@ -254,7 +265,7 @@ export function Hero({
                     display: 'inline-block',
                     alignSelf: 'flex-start',
                     marginTop: '-2px',
-                    fontSize: '20px',
+                    fontSize: '16px',
                     fontWeight: 500,
                     marginLeft: '6px',
                     color: 'inherit',
@@ -312,7 +323,7 @@ export function Hero({
                             {WORDS[index].verb}
                         </motion.span>
                     </AnimatePresence>
-                    <span>a chat away</span>
+                    <span className="text-yellow-400">a chat away</span>
                 </div>
             </motion.h1>
         </div>
@@ -328,16 +339,7 @@ export function Hero({
             <div className="flex items-center w-full bg-white dark:bg-black rounded-[23px] p-1">
                 <div className="pl-3 flex items-center text-zinc-400 dark:text-zinc-500 transition-opacity duration-500" style={{ opacity: isFading && !isFocused && !searchQuery ? 0 : 1 }}>
                     {(() => {
-                      // Determine what icon should be shown normally
-                      const shouldShowLogo = (!searchQuery && visiblePlaceholder.length > 0 && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct"));
-                      // If focused, freeze the icon state to whatever it was before clicking
-                      const activeIcon = isFocused && frozenIcon ? frozenIcon : (shouldShowLogo ? "logo" : "search");
-                      
-                      // Save the active icon to frozen state so it persists on focus
-                      if (!isFocused && activeIcon !== frozenIcon) {
-                        setFrozenIcon(activeIcon);
-                      }
-
+                      const activeIcon = isFocused ? (frozenIcon || "search") : (frozenIcon || "search");
                       return activeIcon === "logo" ? (
                         <BrandLogo width={20} height={20} variant="auto" showBadge={false} isCircle={true} />
                       ) : (
