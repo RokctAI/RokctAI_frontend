@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
+import { FiChevronDown, FiMenu, FiX, FiBox, FiGlobe, FiSmartphone, FiArrowUpRight, FiMonitor } from "react-icons/fi";
 import { Branding } from "./branding";
 import { BrandLogo } from "./brand-logo";
 import { ThemeToggle } from "./theme-toggle";
@@ -97,54 +97,98 @@ export function Header({
               <div
                 className={`fixed left-0 right-0 top-16 bg-white dark:bg-black border-b border-gray-200 dark:border-white/10 shadow-2xl transition-all duration-200 z-50 ${isMegaMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}
               >
-                <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-10 grid grid-cols-5 gap-10">
-                  {/* Platforms */}
-                  <div className="space-y-4">
-                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Platforms</h4>
-                    <ul className="space-y-3">
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium block transition-colors">Chrome Extension</Link></li>
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium block transition-colors">Edge Extension</Link></li>
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium block transition-colors">Android App</Link></li>
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium block transition-colors">iOS App</Link></li>
-                    </ul>
+                <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-8 flex flex-col lg:flex-row gap-12">
+                  
+                  {/* Left Column: Platform Cards */}
+                  <div className="w-[300px] flex flex-col gap-3 flex-shrink-0">
+                    <Link href="#" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
+                           <FiBox className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Browser Extension</h5>
+                          <p className="text-[12px] text-gray-500 mt-0.5">Supports Chrome</p>
+                        </div>
+                      </div>
+                      <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
+                    </Link>
+
+                    <Link href="/dashboard" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
+                           <FiGlobe className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Web App</h5>
+                          <p className="text-[12px] text-gray-500 mt-0.5">Open in browser</p>
+                        </div>
+                      </div>
+                      <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
+                    </Link>
+
+                    <Link href="#" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
+                           <FiSmartphone className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Mobile Apps</h5>
+                          <p className="text-[12px] text-gray-500 mt-0.5">iOS and Android</p>
+                        </div>
+                      </div>
+                      <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
+                    </Link>
                   </div>
-                  {/* AI Chat */}
-                  <div className="space-y-4">
-                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">AI Chat</h4>
-                    <ul className="space-y-3">
-                      <li><Link href="/chat" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with {PLATFORM_NAME}</Link></li>
-                    </ul>
-                  </div>
-                  {/* Productivity */}
-                  <div className="space-y-4">
-                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Productivity</h4>
-                    <ul className="space-y-3">
-                      <li>
-                        <span className="text-sm text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                          AI-first ERP <span className="text-[9px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">Soon</span>
-                        </span>
-                      </li>
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">TenderAssist</Link></li>
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">Telephony</Link></li>
-                    </ul>
-                  </div>
-                  {/* Tools */}
-                  <div className="space-y-4">
-                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tools</h4>
-                    <ul className="space-y-3">
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">FraudDetector</Link></li>
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">LoanMan</Link></li>
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">Tenders</Link></li>
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">Funding</Link></li>
-                    </ul>
-                  </div>
-                  {/* Summary */}
-                  <div className="space-y-4">
-                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Summary</h4>
-                    <ul className="space-y-3">
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium block transition-colors">YouTube Summarizer</Link></li>
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium block transition-colors">Article Summarizer</Link></li>
-                    </ul>
+
+                  {/* Right Columns Grid */}
+                  <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-8">
+                    {/* AI Chat */}
+                    <div className="space-y-4">
+                      <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">AI Chat</h4>
+                      <ul className="space-y-4">
+                        <li><Link href="/chat" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with {PLATFORM_NAME}</Link></li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with PDF</Link></li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with Websites</Link></li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with Image</Link></li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Question AI</Link></li>
+                      </ul>
+                    </div>
+
+                    {/* Productivity */}
+                    <div className="space-y-4">
+                      <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Productivity</h4>
+                      <ul className="space-y-4">
+                        <li>
+                          <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                            AI-first ERP <span className="text-[9px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">Soon</span>
+                          </span>
+                        </li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">TenderAssist</Link></li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Telephony</Link></li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">AI Email Writer</Link></li>
+                      </ul>
+                    </div>
+
+                    {/* Tools */}
+                    <div className="space-y-4">
+                      <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">AI Tools</h4>
+                      <ul className="space-y-4">
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">FraudDetector</Link></li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">LoanMan</Link></li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Tenders</Link></li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Funding</Link></li>
+                      </ul>
+                    </div>
+
+                    {/* Summary */}
+                    <div className="space-y-4">
+                      <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Summary</h4>
+                      <ul className="space-y-4">
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">YouTube Summarizer</Link></li>
+                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Article Summarizer</Link></li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
