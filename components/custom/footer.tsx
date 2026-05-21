@@ -68,7 +68,7 @@ export async function Footer() {
             <div className="flex items-center gap-3">
               <BrandLogo width={48} height={48} />
               <span
-                className="text-black dark:text-white uppercase tracking-tighter leading-none"
+                className="text-black dark:text-white tracking-tighter leading-none"
                 style={{
                   fontFamily: '"Arial Black", "Arial", sans-serif',
                   fontWeight: 900,
@@ -102,7 +102,7 @@ export async function Footer() {
                   AI-first ERP <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">Soon</span>
                 </span>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">TenderAssist</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Question AI</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Telephony</Link>
               </div>
             </div>
             <div className="flex flex-col gap-6">
@@ -140,16 +140,16 @@ export async function Footer() {
           {/* Column 4: AI Tools & Resources */}
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-6">
-              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI Tools</h4>
+              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Tools</h4>
               <div className="flex flex-col gap-4">
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                  AI Detector <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
+                  FraudDetector <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
                 </Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                  AI Translator <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
+                  LoanMan <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
                 </Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                  70+ More AI Tools <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
+                  70+ More Tools <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
                 </Link>
               </div>
             </div>
