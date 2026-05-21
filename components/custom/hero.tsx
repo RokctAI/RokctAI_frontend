@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiSend, FiLoader, FiExternalLink, FiX, FiFilter, FiChevronDown } from "react-icons/fi";
+import { FiSend, FiLoader, FiExternalLink, FiX, FiFilter, FiChevronDown, FiArrowRight, FiArrowUpRight } from "react-icons/fi";
 import { OpportunityPublicService, Opportunity } from "@/app/services/public/opportunities";
 import { Badge } from "@/components/ui/badge";
 import { BrandLogo } from "./brand-logo";
@@ -318,7 +318,7 @@ export function Hero({
             <div className="flex items-center w-full bg-white dark:bg-black rounded-[23px] p-1">
                 <div className="pl-3 flex items-center text-zinc-400 dark:text-zinc-500">
                     {(!searchQuery && !isFocused && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct")) ? (
-                      <BrandLogo width={20} height={20} variant="auto" showBadge={false} />
+                      <BrandLogo width={20} height={20} variant="auto" showBadge={false} className="!rounded-full" />
                     ) : (
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     )}
@@ -366,9 +366,13 @@ export function Hero({
                   <button
                       type="submit"
                       disabled={loading}
-                      className="mr-1.5 p-3 bg-zinc-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-300 rounded-[20px] hover:text-zinc-900 dark:hover:text-white transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95 disabled:opacity-50"
+                      className={`mr-1.5 p-3 rounded-[20px] transition-all active:scale-95 disabled:opacity-50 ${
+                        searchQuery.trim().length > 0
+                          ? 'bg-yellow-400 text-black hover:bg-yellow-500'
+                          : 'bg-zinc-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                      }`}
                   >
-                      {loading ? <FiLoader className="animate-spin" size={20} /> : <FiSend size={20} />}
+                      {loading ? <FiLoader className="animate-spin" size={20} /> : (searchQuery.trim().length > 0 ? <FiArrowRight size={20} strokeWidth={2.5} /> : <FiArrowUpRight size={20} />)}
                   </button>
                 )}
             </div>
