@@ -27,19 +27,17 @@ export function BrandLogo({
     setMounted(true);
   }, []);
 
-  // Determine logo src — swapped: white logo in light mode, dark logo in dark mode
-  let src = "/images/logo.svg"; // Default (Light Mode -> White Logo on dark bg)
-  if (mounted) {
-    if (variant === "auto") {
-      if (resolvedTheme === "dark") src = "/images/logo_dark.svg"; // Dark Mode -> Black Logo on light bg
-    } else if (variant === "dark") {
-      src = "/images/logo.svg";
-    } else if (variant === "light") {
-      src = "/images/logo_dark.svg";
-    } else if (variant === "inverted") {
-      if (resolvedTheme === "light") src = "/images/logo_dark.svg";
-      else src = "/images/logo.svg";
-    }
+  // Determine logo src — always render immediately, swap after theme resolves
+  let src = "/images/logo.svg"; // Default shown instantly on first paint
+  if (variant === "auto") {
+    if (resolvedTheme === "dark") src = "/images/logo_dark.svg";
+  } else if (variant === "dark") {
+    src = "/images/logo.svg";
+  } else if (variant === "light") {
+    src = "/images/logo_dark.svg";
+  } else if (variant === "inverted") {
+    if (resolvedTheme === "light") src = "/images/logo_dark.svg";
+    else src = "/images/logo.svg";
   }
 
   const branding = mounted && typeof window !== "undefined"
