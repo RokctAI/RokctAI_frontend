@@ -26,8 +26,8 @@ export const PLATFORM_FEATURES: Record<number, FeatureLink> = {
   // Tools Column
   8: { name: "FraudDetector", href: "#", active: true, label: "none" },
   9: { name: "LoanMan", href: "#", active: true, label: "none" },
-  10: { name: "Tenders", href: "#", active: true, label: "none" },
-  11: { name: "Funding", href: "#", active: true, label: "none" },
+  10: { name: "Tenders", href: "#", active: true, label: "new" },
+  11: { name: "Funding", href: "#", active: true, label: "new" },
 
   // Summary Column
   12: { name: "YouTube Summarizer", href: "#", active: true, label: "none" },
