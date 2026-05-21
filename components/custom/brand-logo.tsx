@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { PLATFORM_NAME } from "@/app/config/platform";
 
@@ -22,44 +21,89 @@ export function BrandLogo({
   isCircle?: boolean;
   priority?: boolean;
 }) {
-  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Determine logo src — always render immediately, swap after theme resolves
-  let src = "/images/logo.svg"; // Default shown instantly on first paint
-  if (variant === "auto") {
-    if (resolvedTheme === "dark") src = "/images/logo_dark.svg";
-  } else if (variant === "dark") {
-    src = "/images/logo.svg";
-  } else if (variant === "light") {
-    src = "/images/logo_dark.svg";
-  } else if (variant === "inverted") {
-    if (resolvedTheme === "light") src = "/images/logo_dark.svg";
-    else src = "/images/logo.svg";
-  }
-
   const branding = mounted && typeof window !== "undefined"
     ? JSON.parse(localStorage.getItem("rokct_branding_data") || "null")
     : null;
   const isBeta = branding?.showBeta !== false;
+
+  const imageClasses = `${className || ""} ${showBadge && isBeta ? "mb-[14%]" : ""}`;
 
   return (
     <div
       className={`relative flex items-center justify-center overflow-hidden ${isCircle ? 'rounded-full' : 'rounded-[5px]'} bg-gradient-to-br from-zinc-800 to-zinc-950 dark:from-zinc-100 dark:to-zinc-300`}
       style={{ width, height, minWidth: width, minHeight: height }}
     >
-      <Image
-        src={src}
-        height={height * 0.55}
-        width={width * 0.55}
-        alt={PLATFORM_NAME}
-        className={`${className || ""} ${showBadge && isBeta ? "mb-[14%]" : ""}`}
-        priority={priority}
-      />
+      {/* CSS-based theme-toggling images to prevent hydration flicker on first paint */}
+      {variant === "auto" && (
+        <>
+          <Image
+            src="/images/logo.svg"
+            height={height * 0.55}
+            width={width * 0.55}
+            alt={PLATFORM_NAME}
+            className={`${imageClasses} dark:hidden`}
+            priority={priority}
+          />
+          <Image
+            src="/images/logo_dark.svg"
+            height={height * 0.55}
+            width={width * 0.55}
+            alt={PLATFORM_NAME}
+            className={`${imageClasses} hidden dark:block`}
+            priority={priority}
+          />
+        </>
+      )}
+
+      {variant === "light" && (
+        <Image
+          src="/images/logo_dark.svg"
+          height={height * 0.55}
+          width={width * 0.55}
+          alt={PLATFORM_NAME}
+          className={imageClasses}
+          priority={priority}
+        />
+      )}
+
+      {variant === "dark" && (
+        <Image
+          src="/images/logo.svg"
+          height={height * 0.55}
+          width={width * 0.55}
+          alt={PLATFORM_NAME}
+          className={imageClasses}
+          priority={priority}
+        />
+      )}
+
+      {variant === "inverted" && (
+        <>
+          <Image
+            src="/images/logo_dark.svg"
+            height={height * 0.55}
+            width={width * 0.55}
+            alt={PLATFORM_NAME}
+            className={`${imageClasses} dark:hidden`}
+            priority={priority}
+          />
+          <Image
+            src="/images/logo.svg"
+            height={height * 0.55}
+            width={width * 0.55}
+            alt={PLATFORM_NAME}
+            className={`${imageClasses} hidden dark:block`}
+            priority={priority}
+          />
+        </>
+      )}
+
       {showBadge && isBeta && (
         <div
           className="absolute bottom-0 left-0 right-0 bg-yellow-400 text-black font-bold text-center uppercase tracking-tight flex items-center justify-center"
