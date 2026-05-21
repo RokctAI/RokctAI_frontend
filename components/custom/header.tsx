@@ -42,34 +42,40 @@ export function Header({
 
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="relative flex items-center">
+            <Link href="/" className="flex items-center">
+              <div className="relative flex items-center h-[44px]">
                 <BrandLogo width={44} height={44} showBadge={true} />
                 {/* Country code appears next to logo when collapsed */}
-                <span
-                  className="transition-all duration-500"
+                <div
+                  className="transition-all duration-500 overflow-hidden"
                   style={{
                     opacity: logoCollapsed && branding?.code ? 1 : 0,
-                    maxWidth: logoCollapsed && branding?.code ? '2em' : '0px',
-                    overflow: 'hidden',
-                    display: 'inline-block',
-                    ...branding?.style,
-                    position: 'relative',
-                    top: '-0.6em',
-                    fontSize: '0.5em',
-                    fontWeight: 300,
-                    marginLeft: '0.1em',
+                    width: logoCollapsed && branding?.code ? '24px' : '0px',
+                    height: '44px',
                   }}
                 >
-                  {branding?.code}
-                </span>
+                  <span
+                    style={{
+                      display: 'block',
+                      paddingTop: '2px', // Align with top edge
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      marginLeft: '4px',
+                      ...branding?.style,
+                    }}
+                  >
+                    {branding?.code}
+                  </span>
+                </div>
               </div>
               {/* Brand text slides away after load */}
               <div
-                className="overflow-hidden transition-all duration-500 ease-in-out"
-                style={{ maxWidth: logoCollapsed ? '0px' : '200px', opacity: logoCollapsed ? 0 : 1 }}
+                className="overflow-hidden transition-all duration-500 ease-in-out flex items-center h-[44px]"
+                style={{ width: logoCollapsed ? '0px' : '110px', opacity: logoCollapsed ? 0 : 1 }}
               >
-                <Branding showBadge={false} />
+                <div className="pl-2 flex items-center h-full">
+                  <Branding showBadge={false} className="text-[34px] leading-none" />
+                </div>
               </div>
             </Link>
           </div>
