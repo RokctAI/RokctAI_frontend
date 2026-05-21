@@ -218,7 +218,7 @@ export function Hero({
             <BrandLogo width={isExpanded ? 40 : 56} height={isExpanded ? 40 : 56} />
             <div className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-w-0 opacity-0' : 'max-w-sm opacity-100'}`}>
               <span
-                className="text-black dark:text-white whitespace-nowrap leading-none"
+                className="text-black dark:text-white whitespace-nowrap tracking-tighter leading-none"
                 style={{
                   fontFamily: '"Arial Black", "Arial", sans-serif',
                   fontWeight: 900,
