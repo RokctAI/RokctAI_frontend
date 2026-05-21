@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
 import { Toaster } from "sonner";
+import localFont from "next/font/local";
 
 import { auth } from "@/app/(auth)/auth";
 import { Footer } from "@/components/custom/footer";
@@ -14,6 +15,18 @@ import "./globals.css";
 
 import { PLATFORM_NAME } from "@/app/config/constants";
 
+const geistSans = localFont({
+  src: "../public/fonts/geist.woff2",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+
+const geistMono = localFont({
+  src: "../public/fonts/geist-mono.woff2",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://gemini.vercel.ai"),
   title: PLATFORM_NAME,
@@ -25,8 +38,6 @@ export const metadata: Metadata = {
   },
 };
 
-// ... imports
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -34,9 +45,9 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   return (
-    <html lang="en">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head></head>
-      <body className="antialiased">
+      <body className="font-sans antialiased">
         <SessionProvider>
           <ThemeProvider
             attribute="class"
