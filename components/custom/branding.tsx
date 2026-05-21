@@ -43,10 +43,6 @@ export function Branding({
     );
   }
 
-  const isBeta = branding.showBeta !== false;
-  const showSuperscript = showBadge && !isBeta;
-  const showBetaBadge = showBadge && isBeta;
-
   return (
     <span className="flex items-center gap-1.5">
       <span
@@ -57,7 +53,6 @@ export function Branding({
         }}
       >
         {branding.before}
-        {showSuperscript && <span style={branding.style}>{branding.code}</span>}
         {branding.after}
       </span>
     </span>
