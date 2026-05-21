@@ -51,7 +51,6 @@ function TypewriterPlaceholder({
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
   const [isFading, setIsFading] = useState(false);
-
   useEffect(() => {
     if (isSearching || isFocused) return;
 
@@ -116,6 +115,15 @@ export function Hero({
   const [hasSearched, setHasSearched] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
   const [isFocused, setIsFocused] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const branding = mounted && typeof window !== "undefined" 
+    ? JSON.parse(localStorage.getItem("rokct_branding_data") || "null") 
+    : null;
 
   // Collapse hero logo/text when user is actively using the search
   const isExpanded = isFocused || hasSearched;
@@ -216,11 +224,21 @@ export function Hero({
           className="relative mb-8 mt-4 md:mt-12 flex flex-col items-center justify-center"
         >
           <div className="flex flex-row items-center justify-center gap-3 transition-all duration-500">
-            <BrandLogo width={isExpanded ? 40 : 56} height={isExpanded ? 40 : 56} showBadge={true} />
+            <div className="flex items-start text-[56px] font-sans font-bold leading-none">
+              <BrandLogo width={56} height={56} showBadge={true} />
+              {isExpanded && branding?.code && (
+                <span 
+                  style={branding.style} 
+                  className="text-black dark:text-white opacity-100 transition-opacity duration-500"
+                >
+                  {branding.code}
+                </span>
+              )}
+            </div>
             <div className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-w-0 opacity-0' : 'max-w-sm opacity-100'}`}>
               <Branding 
                 showBadge={true} 
-                className={isExpanded ? 'text-[40px]' : 'text-[56px]'} 
+                className="text-[56px]" 
               />
             </div>
           </div>
@@ -270,7 +288,7 @@ export function Hero({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="w-full max-w-xl px-4"
+          className="w-full max-w-3xl px-4"
         >
           <form onSubmit={handleSearch} className="relative flex items-center p-[1px] bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-indigo-500/30 rounded-[24px] group focus-within:from-purple-500 focus-within:to-indigo-500 transition-all shadow-[0_0_40px_rgba(139,92,246,0.12)]">
             <div className="flex items-center w-full bg-white dark:bg-black rounded-[23px] p-1">
