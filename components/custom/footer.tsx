@@ -147,8 +147,8 @@ export async function Footer() {
               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Resources</h4>
               <div className="flex flex-col gap-4">
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Product Wiki</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Blogs</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">funding</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Tenders</Link>
+                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Funding</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">How It Works</Link>
                 <PublicRoadmapLink />
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Feature Request</Link>
