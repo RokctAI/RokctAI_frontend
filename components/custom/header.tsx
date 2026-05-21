@@ -34,7 +34,7 @@ export function Header({
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2">
               <BrandLogo width={32} height={32} showBadge={true} />
-              <Branding />
+              <Branding showBadge={true} />
             </Link>
           </div>
 
