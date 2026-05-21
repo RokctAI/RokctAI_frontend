@@ -246,7 +246,7 @@ export function Hero({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative mb-20 mt-16 md:mt-24 flex flex-col items-center justify-center"
+          className="relative mb-[6.7rem] mt-16 md:mt-24 flex flex-col items-center justify-center"
         >
           <div className="flex flex-row items-center justify-center h-[72px]">
             <div className="relative flex items-center h-[56px]">
@@ -290,7 +290,7 @@ export function Hero({
         </motion.div>
 
         {/* Main Headline */}
-        <div className="mb-6 h-[1.2em] flex items-center justify-center">
+        <div className="mb-12 h-[1.2em] flex items-center justify-center">
             <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
