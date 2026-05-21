@@ -92,6 +92,8 @@ export function Header({
                     <ul className="space-y-3">
                       <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">FraudDetector</Link></li>
                       <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">LoanMan</Link></li>
+                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">Tenders</Link></li>
+                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">Funding</Link></li>
                     </ul>
                   </div>
                   {/* Summary */}
