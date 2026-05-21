@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiChevronRight, FiChevronDown, FiMenu, FiX, FiBox, FiGlobe, FiSmartphone, FiArrowUpRight, FiMonitor } from "react-icons/fi";
+import { FiChevronRight, FiChevronDown, FiMenu, FiX, FiBox, FiGlobe, FiSmartphone, FiArrowUpRight } from "react-icons/fi";
 import { Branding } from "./branding";
 import { BrandLogo } from "./brand-logo";
 import { ThemeToggle } from "./theme-toggle";
 import { PLATFORM_NAME, getBrandingSync } from "@/app/config/platform";
-import { SHOW_EXTENSION, SHOW_WEB_APP, SHOW_MOBILE_APPS } from "@/app/config/features";
+import { PLATFORM_FEATURES } from "@/app/config/features";
 
 export function Header({
   loginUrl = "/login",
@@ -43,6 +43,30 @@ export function Header({
   const navVisible = !logoCollapsed || isHovered || isScrolled;
 
   const user = session?.user;
+
+  // Premium styled dynamic badges helper (accepts numeric ID)
+  const renderBadge = (id: number) => {
+    const label = PLATFORM_FEATURES[id]?.label;
+    if (!label || label === "none") return null;
+    
+    if (label === "soon") {
+      return (
+        <span className="text-[9px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none shrink-0">
+          Soon
+        </span>
+      );
+    }
+    
+    if (label === "new") {
+      return (
+        <span className="text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none shrink-0">
+          New
+        </span>
+      );
+    }
+    
+    return null;
+  };
 
   return (
     <header
@@ -125,16 +149,19 @@ export function Header({
                 <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-8 flex flex-col lg:flex-row gap-12">
                   
                   {/* Left Column: Platform Cards */}
-                  {(SHOW_EXTENSION || SHOW_WEB_APP || SHOW_MOBILE_APPS) && (
+                  {(PLATFORM_FEATURES[1]?.active || PLATFORM_FEATURES[2]?.active || PLATFORM_FEATURES[3]?.active) && (
                     <div className="w-[300px] flex flex-col gap-3 flex-shrink-0">
-                      {SHOW_EXTENSION && (
-                        <Link href="#" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
+                      {PLATFORM_FEATURES[1]?.active && (
+                        <Link href={PLATFORM_FEATURES[1].href} className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
                                <FiBox className="w-5 h-5" />
                             </div>
                             <div>
-                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Browser Extension</h5>
+                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight flex items-center gap-2">
+                                {PLATFORM_FEATURES[1].name}
+                                {renderBadge(1)}
+                              </h5>
                               <p className="text-[12px] text-gray-500 mt-0.5">Supports Chrome</p>
                             </div>
                           </div>
@@ -142,14 +169,17 @@ export function Header({
                         </Link>
                       )}
 
-                      {SHOW_WEB_APP && (
-                        <Link href="/dashboard" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
+                      {PLATFORM_FEATURES[2]?.active && (
+                        <Link href={PLATFORM_FEATURES[2].href} className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
                                <FiGlobe className="w-5 h-5" />
                             </div>
                             <div>
-                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Web App</h5>
+                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight flex items-center gap-2">
+                                {PLATFORM_FEATURES[2].name}
+                                {renderBadge(2)}
+                              </h5>
                               <p className="text-[12px] text-gray-500 mt-0.5">Open in browser</p>
                             </div>
                           </div>
@@ -157,14 +187,17 @@ export function Header({
                         </Link>
                       )}
 
-                      {SHOW_MOBILE_APPS && (
-                        <Link href="#" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
+                      {PLATFORM_FEATURES[3]?.active && (
+                        <Link href={PLATFORM_FEATURES[3].href} className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
                                <FiSmartphone className="w-5 h-5" />
                             </div>
                             <div>
-                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Mobile Apps</h5>
+                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight flex items-center gap-2">
+                                {PLATFORM_FEATURES[3].name}
+                                {renderBadge(3)}
+                              </h5>
                               <p className="text-[12px] text-gray-500 mt-0.5">iOS and Android</p>
                             </div>
                           </div>
@@ -177,62 +210,224 @@ export function Header({
                   {/* Right Columns Grid */}
                   <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-8">
                     {/* AI Chat */}
-                    <div className="space-y-4">
-                      <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">AI Chat</h4>
-                      <ul className="space-y-4">
-                        <li><Link href="/chat" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Chat with {PLATFORM_NAME.toUpperCase()}</Link></li>
-                      </ul>
-                    </div>
+                    {PLATFORM_FEATURES[4]?.active && (
+                      <div className="space-y-4">
+                        <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">AI Chat</h4>
+                        <ul className="space-y-4">
+                          <li>
+                            {PLATFORM_FEATURES[4].label === "soon" ? (
+                              <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                {PLATFORM_FEATURES[4].name}
+                                {renderBadge(4)}
+                              </span>
+                            ) : (
+                              <Link href={PLATFORM_FEATURES[4].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                {PLATFORM_FEATURES[4].name}
+                                {renderBadge(4)}
+                              </Link>
+                            )}
+                          </li>
+                        </ul>
+                      </div>
+                    )}
 
                     {/* Productivity */}
-                    <div className="space-y-4">
-                      <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Productivity</h4>
-                      <ul className="space-y-4">
-                        <li>
-                          <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                            AI-first ERP <span className="text-[9px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">Soon</span>
-                          </span>
-                        </li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">TenderAssist</Link></li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Telephony</Link></li>
-                      </ul>
-                    </div>
+                    {(PLATFORM_FEATURES[5]?.active || PLATFORM_FEATURES[6]?.active || PLATFORM_FEATURES[7]?.active) && (
+                      <div className="space-y-4">
+                        <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Productivity</h4>
+                        <ul className="space-y-4">
+                          {PLATFORM_FEATURES[5]?.active && (
+                            <li>
+                              {PLATFORM_FEATURES[5].label === "soon" ? (
+                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                  {PLATFORM_FEATURES[5].name}
+                                  {renderBadge(5)}
+                                </span>
+                              ) : (
+                                <Link href={PLATFORM_FEATURES[5].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                  {PLATFORM_FEATURES[5].name}
+                                  {renderBadge(5)}
+                                </Link>
+                              )}
+                            </li>
+                          )}
+                          {PLATFORM_FEATURES[6]?.active && (
+                            <li>
+                              {PLATFORM_FEATURES[6].label === "soon" ? (
+                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                  {PLATFORM_FEATURES[6].name}
+                                  {renderBadge(6)}
+                                </span>
+                              ) : (
+                                <Link href={PLATFORM_FEATURES[6].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                  {PLATFORM_FEATURES[6].name}
+                                  {renderBadge(6)}
+                                </Link>
+                              )}
+                            </li>
+                          )}
+                          {PLATFORM_FEATURES[7]?.active && (
+                            <li>
+                              {PLATFORM_FEATURES[7].label === "soon" ? (
+                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                  {PLATFORM_FEATURES[7].name}
+                                  {renderBadge(7)}
+                                </span>
+                              ) : (
+                                <Link href={PLATFORM_FEATURES[7].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                  {PLATFORM_FEATURES[7].name}
+                                  {renderBadge(7)}
+                                </Link>
+                              )}
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
 
                     {/* Tools */}
-                    <div className="space-y-4">
-                      <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Tools</h4>
-                      <ul className="space-y-4">
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">FraudDetector</Link></li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">LoanMan</Link></li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Tenders</Link></li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Funding</Link></li>
-                      </ul>
-                    </div>
+                    {(PLATFORM_FEATURES[8]?.active || PLATFORM_FEATURES[9]?.active || PLATFORM_FEATURES[10]?.active || PLATFORM_FEATURES[11]?.active) && (
+                      <div className="space-y-4">
+                        <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Tools</h4>
+                        <ul className="space-y-4">
+                          {PLATFORM_FEATURES[8]?.active && (
+                            <li>
+                              {PLATFORM_FEATURES[8].label === "soon" ? (
+                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                  {PLATFORM_FEATURES[8].name}
+                                  {renderBadge(8)}
+                                </span>
+                              ) : (
+                                <Link href={PLATFORM_FEATURES[8].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                  {PLATFORM_FEATURES[8].name}
+                                  {renderBadge(8)}
+                                </Link>
+                              )}
+                            </li>
+                          )}
+                          {PLATFORM_FEATURES[9]?.active && (
+                            <li>
+                              {PLATFORM_FEATURES[9].label === "soon" ? (
+                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                  {PLATFORM_FEATURES[9].name}
+                                  {renderBadge(9)}
+                                </span>
+                              ) : (
+                                <Link href={PLATFORM_FEATURES[9].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                  {PLATFORM_FEATURES[9].name}
+                                  {renderBadge(9)}
+                                </Link>
+                              )}
+                            </li>
+                          )}
+                          {PLATFORM_FEATURES[10]?.active && (
+                            <li>
+                              {PLATFORM_FEATURES[10].label === "soon" ? (
+                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                  {PLATFORM_FEATURES[10].name}
+                                  {renderBadge(10)}
+                                </span>
+                              ) : (
+                                <Link href={PLATFORM_FEATURES[10].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                  {PLATFORM_FEATURES[10].name}
+                                  {renderBadge(10)}
+                                </Link>
+                              )}
+                            </li>
+                          )}
+                          {PLATFORM_FEATURES[11]?.active && (
+                            <li>
+                              {PLATFORM_FEATURES[11].label === "soon" ? (
+                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                  {PLATFORM_FEATURES[11].name}
+                                  {renderBadge(11)}
+                                </span>
+                              ) : (
+                                <Link href={PLATFORM_FEATURES[11].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                  {PLATFORM_FEATURES[11].name}
+                                  {renderBadge(11)}
+                                </Link>
+                              )}
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
 
                     {/* Summary */}
-                    <div className="space-y-4">
-                      <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Summary</h4>
-                      <ul className="space-y-4">
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">YouTube Summarizer</Link></li>
-                        <li><Link href="#" className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors">Article Summarizer</Link></li>
-                      </ul>
-                    </div>
+                    {(PLATFORM_FEATURES[12]?.active || PLATFORM_FEATURES[13]?.active) && (
+                      <div className="space-y-4">
+                        <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Summary</h4>
+                        <ul className="space-y-4">
+                          {PLATFORM_FEATURES[12]?.active && (
+                            <li>
+                              {PLATFORM_FEATURES[12].label === "soon" ? (
+                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                  {PLATFORM_FEATURES[12].name}
+                                  {renderBadge(12)}
+                                </span>
+                              ) : (
+                                <Link href={PLATFORM_FEATURES[12].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                  {PLATFORM_FEATURES[12].name}
+                                  {renderBadge(12)}
+                                </Link>
+                              )}
+                            </li>
+                          )}
+                          {PLATFORM_FEATURES[13]?.active && (
+                            <li>
+                              {PLATFORM_FEATURES[13].label === "soon" ? (
+                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                  {PLATFORM_FEATURES[13].name}
+                                  {renderBadge(13)}
+                                </span>
+                              ) : (
+                                <Link href={PLATFORM_FEATURES[13].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                  {PLATFORM_FEATURES[13].name}
+                                  {renderBadge(13)}
+                                </Link>
+                              )}
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
 
-            <Link href="#pricing" className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all">Pricing</Link>
-            <Link href="/affiliate" className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all">Affiliate</Link>
-            <Link href="/teams" className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all">Teams</Link>
-            <Link href="/chat" className="text-[14px] font-semibold text-white dark:text-white bg-zinc-700 dark:bg-zinc-700 hover:bg-zinc-600 dark:hover:bg-zinc-600 px-3 py-1.5 rounded-md transition-all">Chat with {PLATFORM_NAME.toUpperCase()}</Link>
+            {PLATFORM_FEATURES[14]?.active && (
+              <Link href={PLATFORM_FEATURES[14].href} className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all flex items-center gap-1.5">
+                {PLATFORM_FEATURES[14].name}
+                {renderBadge(14)}
+              </Link>
+            )}
+            {PLATFORM_FEATURES[15]?.active && (
+              <Link href={PLATFORM_FEATURES[15].href} className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all flex items-center gap-1.5">
+                {PLATFORM_FEATURES[15].name}
+                {renderBadge(15)}
+              </Link>
+            )}
+            {PLATFORM_FEATURES[16]?.active && (
+              <Link href={PLATFORM_FEATURES[16].href} className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all flex items-center gap-1.5">
+                {PLATFORM_FEATURES[16].name}
+                {renderBadge(16)}
+              </Link>
+            )}
+            {PLATFORM_FEATURES[17]?.active && (
+              <Link href={PLATFORM_FEATURES[17].href} className="text-[14px] font-semibold text-white dark:text-white bg-zinc-700 dark:bg-zinc-700 hover:bg-zinc-600 dark:hover:bg-zinc-600 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+                {PLATFORM_FEATURES[17].name}
+                {renderBadge(17)}
+              </Link>
+            )}
           </nav>
 
           {/* Actions — always visible */}
           <div className="hidden lg:flex items-center gap-4">
-            {SHOW_EXTENSION && (
+            {PLATFORM_FEATURES[1]?.active && (
               <Link
-                href="https://chromewebstore.google.com/"
+                href={PLATFORM_FEATURES[1].href}
                 target="_blank"
                 className="flex items-center gap-2 px-3 py-1.5 bg-yellow-400 text-black rounded-md text-[13px] font-medium hover:bg-yellow-300 transition-all"
               >
@@ -271,18 +466,40 @@ export function Header({
             <span className="text-2xl font-bold text-black dark:text-white">Menu</span>
             <ThemeToggle />
           </div>
-          <Link href="/chat" className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5">Product</Link>
-          <Link href="#pricing" className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5">Pricing</Link>
-          <Link href="/affiliate" className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5">Affiliate</Link>
-          <Link href="/teams" className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5">Teams</Link>
+          {PLATFORM_FEATURES[4]?.active && (
+            <Link href={PLATFORM_FEATURES[4].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+              <span>{PLATFORM_FEATURES[4].name}</span>
+              {renderBadge(4)}
+            </Link>
+          )}
+          {PLATFORM_FEATURES[14]?.active && (
+            <Link href={PLATFORM_FEATURES[14].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+              <span>{PLATFORM_FEATURES[14].name}</span>
+              {renderBadge(14)}
+            </Link>
+          )}
+          {PLATFORM_FEATURES[15]?.active && (
+            <Link href={PLATFORM_FEATURES[15].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+              <span>{PLATFORM_FEATURES[15].name}</span>
+              {renderBadge(15)}
+            </Link>
+          )}
+          {PLATFORM_FEATURES[16]?.active && (
+            <Link href={PLATFORM_FEATURES[16].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+              <span>{PLATFORM_FEATURES[16].name}</span>
+              {renderBadge(16)}
+            </Link>
+          )}
           <div className="pt-8 space-y-4 pb-20">
             {user ? (
               <Link href="/dashboard" className="block text-xl font-bold text-black dark:text-white text-center py-4 bg-gray-100 dark:bg-zinc-900 rounded-2xl">Dashboard</Link>
             ) : (
               <Link href={loginUrl} className="block text-xl font-bold text-black dark:text-white text-center py-4 bg-gray-100 dark:bg-zinc-900 rounded-2xl">Log in</Link>
             )}
-            {SHOW_EXTENSION && (
-              <Link href="https://chromewebstore.google.com/" target="_blank" className="block text-xl font-bold text-white text-center py-4 bg-[#4f46e5] rounded-2xl">Add {PLATFORM_NAME.toUpperCase()} Extension</Link>
+            {PLATFORM_FEATURES[1]?.active && (
+              <Link href={PLATFORM_FEATURES[1].href} target="_blank" className="block text-xl font-bold text-white text-center py-4 bg-[#4f46e5] rounded-2xl">
+                Add {PLATFORM_NAME.toUpperCase()} Extension
+              </Link>
             )}
           </div>
         </div>
