@@ -229,36 +229,39 @@ export function Hero({
           className="relative mb-8 mt-4 md:mt-12 flex flex-col items-center justify-center"
         >
           <div className="flex flex-row items-center justify-center h-[72px]">
-            <div className="relative flex items-center">
+            <div className="relative flex items-center h-[56px]">
               <BrandLogo width={56} height={56} showBadge={true} />
               {/* Country code appears next to logo only when text is collapsed */}
-              <span
-                className="transition-all duration-500"
+              <div
+                className="transition-all duration-500 overflow-hidden"
                 style={{
                   opacity: isExpanded && branding?.code ? 1 : 0,
-                  maxWidth: isExpanded && branding?.code ? '2em' : '0px',
-                  overflow: 'hidden',
-                  display: 'inline-block',
-                  position: 'relative',
-                  top: '-0.55em',
-                  fontSize: '0.45em',
-                  fontWeight: 300,
-                  marginLeft: '0.12em',
-                  color: 'inherit',
-                  whiteSpace: 'nowrap',
+                  width: isExpanded && branding?.code ? '28px' : '0px',
+                  height: '56px',
                 }}
               >
-                {branding?.code}
-              </span>
+                <span
+                  style={{
+                    display: 'block',
+                    paddingTop: '3px',
+                    fontSize: '16px',
+                    fontWeight: 500,
+                    marginLeft: '6px',
+                    color: 'inherit',
+                  }}
+                >
+                  {branding?.code}
+                </span>
+              </div>
             </div>
             <div
-              className="overflow-hidden transition-all duration-500 ease-in-out whitespace-nowrap"
-              style={{ maxWidth: isExpanded ? '0px' : '400px', opacity: isExpanded ? 0 : 1 }}
+              className="overflow-hidden transition-all duration-500 ease-in-out flex items-center h-[56px]"
+              style={{ width: isExpanded ? '0px' : '150px', opacity: isExpanded ? 0 : 1 }}
             >
-              <div className="pl-3">
+              <div className="pl-3 flex items-center h-full">
                 <Branding 
                   showBadge={false} 
-                  className="text-[76px]" 
+                  className="text-[44px] leading-none" 
                 />
               </div>
             </div>
