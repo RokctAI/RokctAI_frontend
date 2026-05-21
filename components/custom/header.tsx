@@ -26,7 +26,7 @@ export function Header({
   const user = session?.user;
 
   return (
-    <header className="sticky top-0 z-50 bg-white/40 dark:bg-black/40 backdrop-blur-xl border-b border-white/10 dark:border-white/5 transition-all duration-300">
+    <header className="sticky top-0 z-50 bg-white/10 dark:bg-black/10 backdrop-blur-2xl border-b border-white/10 dark:border-white/10 transition-all duration-300">
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="flex items-center justify-between h-16">
 
@@ -77,7 +77,12 @@ export function Header({
                   <div className="space-y-4">
                     <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Productivity</h4>
                     <ul className="space-y-3">
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium block transition-colors">TenderAssist</Link></li>
+                      <li>
+                        <span className="text-sm text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                          AI-first ERP <span className="text-[9px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">Soon</span>
+                        </span>
+                      </li>
+                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">TenderAssist</Link></li>
                     </ul>
                   </div>
                   {/* AI Tools */}
