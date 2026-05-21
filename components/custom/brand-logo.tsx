@@ -12,6 +12,7 @@ export function BrandLogo({
   variant = "auto",
   showBadge = false,
   isCircle = false,
+  priority = false,
 }: {
   width?: number;
   height?: number;
@@ -19,6 +20,7 @@ export function BrandLogo({
   variant?: "auto" | "light" | "dark" | "inverted";
   showBadge?: boolean;
   isCircle?: boolean;
+  priority?: boolean;
 }) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -56,7 +58,7 @@ export function BrandLogo({
         width={width * 0.55}
         alt={PLATFORM_NAME}
         className={`${className || ""} ${showBadge && isBeta ? "mb-[14%]" : ""}`}
-        priority
+        priority={priority}
       />
       {showBadge && isBeta && (
         <div
