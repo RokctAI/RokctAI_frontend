@@ -58,17 +58,23 @@ export function BrandLogo({
   const countryCode = branding?.code;
 
   return (
-    <div className="relative inline-flex items-center justify-center">
+    <div 
+      className="relative flex items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-50 to-zinc-200 dark:from-zinc-800 dark:to-zinc-950 shadow-sm border border-black/5 dark:border-white/10"
+      style={{ width, height, minWidth: width, minHeight: height }}
+    >
       <Image
         src={src}
-        height={height}
-        width={width}
+        height={height * 0.55}
+        width={width * 0.55}
         alt={PLATFORM_NAME}
-        className={className}
+        className={`${className || ''} ${showBadge && isBeta ? 'mb-[15%]' : ''}`}
         priority
       />
       {showBadge && isBeta && (
-        <div className="absolute -top-[15%] right-[5%] bg-yellow-400 text-black text-[9px] leading-none font-bold px-1 py-0.5 rounded-sm uppercase shadow-sm">
+        <div 
+          className="absolute bottom-0 left-0 right-0 bg-yellow-400 text-black font-extrabold text-center uppercase tracking-tight flex items-center justify-center"
+          style={{ height: '30%', fontSize: Math.max(8, width * 0.22) }}
+        >
           BETA
         </div>
       )}
