@@ -11,6 +11,7 @@ export function BrandLogo({
   className,
   variant = "auto",
   showBadge = false,
+  isCircle = false,
 }: {
   width?: number;
   height?: number;
