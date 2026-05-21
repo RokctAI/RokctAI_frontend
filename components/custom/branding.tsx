@@ -60,16 +60,6 @@ export function Branding({
         {showSuperscript && <span style={branding.style}>{branding.code}</span>}
         {branding.after}
       </span>
-      {showBetaBadge && (
-        <span className="flex items-start gap-0">
-          <span className={`text-[10px] rounded-full px-2 py-0.5 font-sans not-italic font-bold uppercase tracking-tighter ${forceWhite ? 'bg-yellow-400 text-black' : 'bg-black text-white dark:bg-yellow-400 dark:text-black'}`}>
-            Beta
-          </span>
-          <span className={`text-[9px] font-bold -mt-1 ml-px ${forceWhite ? 'text-zinc-300' : 'text-zinc-800 dark:text-zinc-300'}`}>
-            {branding.code}
-          </span>
-        </span>
-      )}
     </span>
   );
 }
