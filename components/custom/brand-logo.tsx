@@ -25,18 +25,18 @@ export function BrandLogo({
     setMounted(true);
   }, []);
 
-  // Determine logo src
-  let src = "/images/logo_dark.svg"; // Default (Light Mode -> Black Logo)
+  // Determine logo src — swapped: white logo in light mode, dark logo in dark mode
+  let src = "/images/logo.svg"; // Default (Light Mode -> White Logo on dark bg)
   if (mounted) {
     if (variant === "auto") {
-      if (resolvedTheme === "dark") src = "/images/logo.svg";
+      if (resolvedTheme === "dark") src = "/images/logo_dark.svg"; // Dark Mode -> Black Logo on light bg
     } else if (variant === "dark") {
       src = "/images/logo.svg";
     } else if (variant === "light") {
       src = "/images/logo_dark.svg";
     } else if (variant === "inverted") {
-      if (resolvedTheme === "light") src = "/images/logo.svg";
-      else src = "/images/logo_dark.svg";
+      if (resolvedTheme === "light") src = "/images/logo_dark.svg";
+      else src = "/images/logo.svg";
     }
   }
 
@@ -47,7 +47,7 @@ export function BrandLogo({
 
   return (
     <div
-      className="relative flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-zinc-100 to-zinc-300 dark:from-zinc-800 dark:to-zinc-950"
+      className="relative flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-zinc-800 to-zinc-950 dark:from-zinc-100 dark:to-zinc-300"
       style={{ width, height, minWidth: width, minHeight: height }}
     >
       <Image
