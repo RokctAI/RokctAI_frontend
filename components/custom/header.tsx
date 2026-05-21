@@ -97,7 +97,7 @@ export function Header({
                       transition: 'all 0.5s ease-in-out',
                       alignSelf: 'flex-start',
                       marginTop: '-2px',
-                      fontSize: '24px',
+                      fontSize: '36px',
                       fontWeight: 500,
                       marginLeft: '4px',
                       ...branding?.style,
