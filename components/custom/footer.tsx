@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PLATFORM_NAME, LEGAL_COMPANY_NAME } from "@/app/config/platform";
 import { TermsService } from "@/app/services/control/terms";
+import { JobsService } from "@/app/services/control/jobs";
 import { BrandLogo } from "./brand-logo";
 import { Branding } from "./branding";
 import { RoadmapPublicService } from "@/app/services/public/roadmap";
@@ -41,6 +42,12 @@ export async function Footer() {
     if (versions) {
         isOnline = true;
     }
+  } catch (e) {}
+
+  let hasCareers = false;
+  try {
+    const jobs = await JobsService.getOpenings();
+    if (jobs && jobs.length > 0) hasCareers = true;
   } catch (e) {}
 
   // Helper to find term by likely title or name
@@ -124,7 +131,7 @@ export async function Footer() {
                 <Link href={getTermLink("Cookie")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Cookie Policy</Link>
                 <Link href={getTermLink("Terms and Conditions")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Terms and Conditions</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Data Protection</Link>
-                <Link href="/careers" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Careers</Link>
+                {hasCareers && <Link href="/careers" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Careers</Link>}
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Refund Policy</Link>
               </div>
             </div>
