@@ -9,6 +9,7 @@ import { Branding } from "./branding";
 import { BrandLogo } from "./brand-logo";
 import { ThemeToggle } from "./theme-toggle";
 import { PLATFORM_NAME, getBrandingSync } from "@/app/config/platform";
+import { SHOW_EXTENSION, SHOW_WEB_APP, SHOW_MOBILE_APPS } from "@/app/config/features";
 
 export function Header({
   loginUrl = "/login",
@@ -124,46 +125,54 @@ export function Header({
                 <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-8 flex flex-col lg:flex-row gap-12">
                   
                   {/* Left Column: Platform Cards */}
-                  <div className="w-[300px] flex flex-col gap-3 flex-shrink-0">
-                    <Link href="#" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
-                           <FiBox className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Browser Extension</h5>
-                          <p className="text-[12px] text-gray-500 mt-0.5">Supports Chrome</p>
-                        </div>
-                      </div>
-                      <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
-                    </Link>
+                  {(SHOW_EXTENSION || SHOW_WEB_APP || SHOW_MOBILE_APPS) && (
+                    <div className="w-[300px] flex flex-col gap-3 flex-shrink-0">
+                      {SHOW_EXTENSION && (
+                        <Link href="#" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
+                               <FiBox className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Browser Extension</h5>
+                              <p className="text-[12px] text-gray-500 mt-0.5">Supports Chrome</p>
+                            </div>
+                          </div>
+                          <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
+                        </Link>
+                      )}
 
-                    <Link href="/dashboard" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
-                           <FiGlobe className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Web App</h5>
-                          <p className="text-[12px] text-gray-500 mt-0.5">Open in browser</p>
-                        </div>
-                      </div>
-                      <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
-                    </Link>
+                      {SHOW_WEB_APP && (
+                        <Link href="/dashboard" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
+                               <FiGlobe className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Web App</h5>
+                              <p className="text-[12px] text-gray-500 mt-0.5">Open in browser</p>
+                            </div>
+                          </div>
+                          <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
+                        </Link>
+                      )}
 
-                    <Link href="#" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
-                           <FiSmartphone className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Mobile Apps</h5>
-                          <p className="text-[12px] text-gray-500 mt-0.5">iOS and Android</p>
-                        </div>
-                      </div>
-                      <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
-                    </Link>
-                  </div>
+                      {SHOW_MOBILE_APPS && (
+                        <Link href="#" className="flex items-center justify-between p-3 border border-gray-200 dark:border-zinc-800 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 transition-all group">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-black dark:text-white">
+                               <FiSmartphone className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight">Mobile Apps</h5>
+                              <p className="text-[12px] text-gray-500 mt-0.5">iOS and Android</p>
+                            </div>
+                          </div>
+                          <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
+                        </Link>
+                      )}
+                    </div>
+                  )}
 
                   {/* Right Columns Grid */}
                   <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -221,19 +230,21 @@ export function Header({
 
           {/* Actions — always visible */}
           <div className="hidden lg:flex items-center gap-4">
-            <Link
-              href="https://chromewebstore.google.com/"
-              target="_blank"
-              className="flex items-center gap-2 px-3 py-1.5 bg-yellow-400 text-black rounded-md text-[13px] font-medium hover:bg-yellow-300 transition-all"
-            >
-              <Image
-                src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
-                alt="Chrome"
-                width={16}
-                height={16}
-              />
-              Add {PLATFORM_NAME.toUpperCase()} Extension
-            </Link>
+            {SHOW_EXTENSION && (
+              <Link
+                href="https://chromewebstore.google.com/"
+                target="_blank"
+                className="flex items-center gap-2 px-3 py-1.5 bg-yellow-400 text-black rounded-md text-[13px] font-medium hover:bg-yellow-300 transition-all"
+              >
+                <Image
+                  src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
+                  alt="Chrome"
+                  width={16}
+                  height={16}
+                />
+                Add {PLATFORM_NAME.toUpperCase()} Extension
+              </Link>
+            )}
             <ThemeToggle className="text-zinc-500 hover:text-black dark:hover:text-white" />
             {user ? (
               <Link href="/dashboard" className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium border border-gray-200 dark:border-zinc-700 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all">
@@ -270,7 +281,9 @@ export function Header({
             ) : (
               <Link href={loginUrl} className="block text-xl font-bold text-black dark:text-white text-center py-4 bg-gray-100 dark:bg-zinc-900 rounded-2xl">Log in</Link>
             )}
-            <Link href="https://chromewebstore.google.com/" target="_blank" className="block text-xl font-bold text-white text-center py-4 bg-[#4f46e5] rounded-2xl">Add {PLATFORM_NAME.toUpperCase()} Extension</Link>
+            {SHOW_EXTENSION && (
+              <Link href="https://chromewebstore.google.com/" target="_blank" className="block text-xl font-bold text-white text-center py-4 bg-[#4f46e5] rounded-2xl">Add {PLATFORM_NAME.toUpperCase()} Extension</Link>
+            )}
           </div>
         </div>
       )}
