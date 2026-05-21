@@ -49,16 +49,18 @@ export function Header({
                 <div
                   className="transition-all duration-500 overflow-hidden flex items-start"
                   style={{
-                    width: logoCollapsed ? (branding?.code ? '28px' : '0px') : '0px',
+                    width: logoCollapsed ? (branding?.code ? '32px' : '0px') : '0px',
                     height: '44px',
                     opacity: logoCollapsed ? 1 : 0,
                   }}
                 >
                   <span
                     style={{
+                      display: 'inline-block',
+                      transition: 'all 0.5s ease-in-out',
                       alignSelf: 'flex-start',
                       marginTop: '-2px',
-                      fontSize: '14px',
+                      fontSize: '16px',
                       fontWeight: 500,
                       marginLeft: '4px',
                       ...branding?.style,
