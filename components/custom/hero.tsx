@@ -27,8 +27,8 @@ const WORDS = [
 ];
 
 const SEARCH_PLACEHOLDERS = [
-  "chat with ROKCT",
-  "search..."
+  "search...",
+  "chat with ROKCT"
 ];
 
 interface SearchResults {
@@ -136,16 +136,15 @@ export function Hero({
     setMounted(true);
   }, []);
 
-  // Sync frozenIcon when not focused
   useEffect(() => {
     if (!isFocused) {
-      const shouldShowLogo = (!searchQuery && visiblePlaceholder.length > 0 && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct"));
+      const shouldShowLogo = (!searchQuery && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct"));
       const newIcon = shouldShowLogo ? "logo" : "search";
       if (newIcon !== frozenIcon) {
         setFrozenIcon(newIcon);
       }
     }
-  }, [isFocused, searchQuery, visiblePlaceholder, placeholderIndex, frozenIcon]);
+  }, [isFocused, searchQuery, placeholderIndex, frozenIcon]);
 
   const branding = mounted && typeof window !== "undefined" 
     ? JSON.parse(localStorage.getItem("rokct_branding_data") || "null") 
@@ -340,7 +339,7 @@ export function Hero({
             <div className="flex items-center w-full bg-white dark:bg-black rounded-[23px] p-1">
                 <div className="pl-3 flex items-center text-zinc-400 dark:text-zinc-500 transition-opacity duration-500" style={{ opacity: isFading && !isFocused && !searchQuery ? 0 : 1 }}>
                     {(() => {
-                      const shouldShowLogo = (!searchQuery && visiblePlaceholder.length > 0 && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct"));
+                      const shouldShowLogo = (!searchQuery && SEARCH_PLACEHOLDERS[placeholderIndex]?.toLowerCase().includes("rokct"));
                       const liveIcon = shouldShowLogo ? "logo" : "search";
                       const activeIcon = isFocused ? (frozenIcon || "search") : liveIcon;
                       return activeIcon === "logo" ? (
