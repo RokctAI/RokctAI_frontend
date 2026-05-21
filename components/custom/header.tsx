@@ -83,14 +83,15 @@ export function Header({
                         </span>
                       </li>
                       <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">TenderAssist</Link></li>
+                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">Telephony</Link></li>
                     </ul>
                   </div>
-                  {/* AI Tools */}
+                  {/* Tools */}
                   <div className="space-y-4">
-                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">AI Tools</h4>
+                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tools</h4>
                     <ul className="space-y-3">
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium block transition-colors">AI Detector</Link></li>
-                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white font-medium block transition-colors">AI Translator</Link></li>
+                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">FraudDetector</Link></li>
+                      <li><Link href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-black dark:text-white font-medium block transition-colors">LoanMan</Link></li>
                     </ul>
                   </div>
                   {/* Summary */}
