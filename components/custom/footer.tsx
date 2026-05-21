@@ -59,8 +59,16 @@ export async function Footer() {
           {/* Column 1: Brand */}
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
-              <BrandLogo width={32} height={32} />
-              <span className="text-2xl font-bold text-black dark:text-white uppercase tracking-tighter italic">
+              <BrandLogo width={48} height={48} />
+              <span
+                className="text-black dark:text-white uppercase tracking-tighter leading-none"
+                style={{
+                  fontFamily: '"Arial Black", "Arial", sans-serif',
+                  fontWeight: 900,
+                  fontSize: '36px',
+                  lineHeight: '36px',
+                }}
+              >
                 {PLATFORM_NAME}
               </span>
             </div>
@@ -83,7 +91,9 @@ export async function Footer() {
             <div className="flex flex-col gap-6">
               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Productivity</h4>
               <div className="flex flex-col gap-4">
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">AI-first ERP</Link>
+                <span className="text-base text-gray-400 dark:text-zinc-600 cursor-not-allowed flex items-center gap-2">
+                  AI-first ERP <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">Soon</span>
+                </span>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">TenderAssist</Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Question AI</Link>
               </div>
@@ -126,13 +136,13 @@ export async function Footer() {
               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI Tools</h4>
               <div className="flex flex-col gap-4">
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                  AI Detector <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
+                  AI Detector <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
                 </Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                  AI Translator <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
+                  AI Translator <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
                 </Link>
                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white flex items-center gap-2">
-                  70+ More AI Tools <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">New</span>
+                  70+ More AI Tools <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none">New</span>
                 </Link>
               </div>
             </div>
