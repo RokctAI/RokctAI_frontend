@@ -73,7 +73,7 @@ export async function Footer() {
     
     if (label === "new") {
       return (
-        <span className="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
+        <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
           New
         </span>
       );
