@@ -76,16 +76,10 @@ export async function completeOnboarding() {
   }
 }
 
-/**
- * Dummy Script: Pushes the saved plan to the Tenant Site.
- * This corresponds to the user's request: "once site is ready we push it to the site".
- */
 export async function syncOnboardingToSite(userEmail: string) {
-  console.log(
-    `[DUMMY SCRIPT] Syncing onboarding data for ${userEmail} to Tenant Site...`,
-  );
+  console.log(`Syncing onboarding data for ${userEmail} to Tenant Site...`);
 
-  // 1. Fetch user and their data
+  // 1. Fetch user and their keys
   const dbUser = await db
     .select()
     .from(user)
@@ -94,15 +88,50 @@ export async function syncOnboardingToSite(userEmail: string) {
   const userData = dbUser[0];
 
   if (!userData || !userData.siteName || !userData.onboardingData) {
-    console.log("[DUMMY SCRIPT] Missing data or site name, cannot sync yet.");
-    return;
+    console.log("Missing data, site name, or onboarding answers; cannot sync yet.");
+    return { success: false, error: "Missing data or site name" };
   }
 
-  console.log(`[DUMMY SCRIPT] Connecting to ${userData.siteName}...`);
-  // 2. Real implementation would use fetch() to call `core.api.plan_builder.commit_plan`
-  // const response = await fetch(`https://${userData.siteName}/api/method/core.api.plan_builder.commit_plan`, { ... });
+  // Determine profile type and instance name dynamically
+  // If user onboardingData has 'full_name', it's a life profile; otherwise business.
+  const onboardingData = userData.onboardingData as Record<string, any>;
+  const profileType = onboardingData.full_name ? "life" : "business";
+  const instanceName = userData.siteName.split('.')[0] || "MyVenture";
 
-  console.log(
-    `[DUMMY SCRIPT] Plan committed successfully to ${userData.siteName}!`,
-  );
+  console.log(`Connecting to ${userData.siteName} to commit ${profileType} profile: ${instanceName}...`);
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (userData.apiKey && userData.apiSecret) {
+    headers["Authorization"] = `token ${userData.apiKey}:${userData.apiSecret}`;
+  }
+
+  try {
+    const url = `https://${userData.siteName}/api/method/rcore.api.plan_builder.commit_onboarding_answers`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        profile_type: profileType,
+        instance_name: instanceName,
+        answers: JSON.stringify(onboardingData),
+        milestones: JSON.stringify([]), // can be expanded to sync milestones
+      }),
+    });
+
+    const result = await response.json();
+    
+    if (response.ok && result.message?.status === "success") {
+      console.log(`Plan committed successfully to ${userData.siteName}!`);
+      return { success: true };
+    } else {
+      console.error(`Sync failed for ${userData.siteName}:`, result);
+      return { success: false, error: result.message || "Failed to commit onboarding profile" };
+    }
+  } catch (e) {
+    console.error("Failed to connect to tenant site onboarding API", e);
+    return { success: false, error: String(e) };
+  }
 }
