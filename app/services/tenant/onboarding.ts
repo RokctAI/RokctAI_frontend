@@ -25,13 +25,14 @@ export class OnboardingService {
   /**
    * Sends a message to the secure ROK chat bridge on the Tenant VPS.
    */
-  static async chatWithRok(message: string, sessionId?: string) {
+  static async chatWithRok(message: string, sessionId?: string, model?: string) {
     const client = await getClient();
     return (client as any).call({
       method: "rcore.api.plan_builder.chat_with_rok",
       args: {
         message,
         session_id: sessionId,
+        model,
       },
     });
   }
