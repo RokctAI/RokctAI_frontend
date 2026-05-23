@@ -21,14 +21,59 @@ export async function POST(request: Request) {
   const isBusiness = !!session.user.siteName;
   let responseMessage = "";
   let chatRes: any = null;
+  let newSessionId: string | null = null;
+
+  // Threshold logic: 20 messages (10 conversation turns)
+  const ROLLING_THRESHOLD = 20;
+  const shouldRoll = coreMessages.length >= ROLLING_THRESHOLD;
 
   try {
+    let messageToSend = userMessage;
+
+    // If rolling session, summarize old context and inject it as Golden Thread memory
+    if (shouldRoll) {
+      const { generateUUID } = await import("@/lib/utils");
+      newSessionId = generateUUID();
+      console.log(`[Session Roll] Threshold reached. Transitioning ${id} -> ${newSessionId}`);
+
+      let summary = "";
+      try {
+        if (isBusiness) {
+          const { getClient } = await import("@/app/lib/client");
+          const client = await getClient();
+          const sumRes = await (client as any).call({
+            method: "rcore.api.plan_builder.summarize_chat_session",
+            args: {
+              session_id: id,
+              messages: JSON.stringify(coreMessages),
+            },
+          });
+          summary = sumRes?.summary || "";
+        } else {
+          const { ControlBaseService } = await import("@/app/services/control/base");
+          const sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {
+            session_id: id,
+            messages: JSON.stringify(coreMessages),
+          });
+          summary = sumRes?.summary || "";
+        }
+      } catch (err) {
+        console.error("Failed to summarize old session:", err);
+      }
+
+      if (summary) {
+        messageToSend = `[SYSTEM MEMORY blueprinted from completed session ${id}]:\n${summary}\n\n[USER NEW MESSAGE]:\n${userMessage}`;
+      }
+    }
+
+    const activeSessionId = newSessionId || id;
+
     if (isBusiness) {
       const { OnboardingService } = await import("@/app/services/tenant/onboarding");
-      chatRes = await OnboardingService.chatWithRok(userMessage, id, model);
+      chatRes = await OnboardingService.chatWithRok(messageToSend, activeSessionId, model);
     } else {
       const { OnboardingService } = await import("@/app/services/control/onboarding");
-      chatRes = await OnboardingService.chatWithRok(userMessage, id, model);
+      chatRes = await OnboardingService.chatWithRok(messageToSend, activeSessionId, model);
     }
 
     if (chatRes && chatRes.message) {
@@ -36,15 +81,50 @@ export async function POST(request: Request) {
     } else {
       responseMessage = chatRes?.error || "I encountered an error connecting to ROK.";
     }
+
+    // Onboarding Completion Detection: if completed, trigger an immediate session roll in background
+    const isOnboardingComplete = 
+      responseMessage.toLowerCase().includes("committed successfully") || 
+      responseMessage.toLowerCase().includes("database plan updated") ||
+      responseMessage.toLowerCase().includes("plan on a page committed");
+
+    if (isOnboardingComplete && !newSessionId) {
+      const { generateUUID } = await import("@/lib/utils");
+      newSessionId = generateUUID();
+      console.log(`[Onboarding Complete Roll] Onboarding completed. Auto-rolling ${id} -> ${newSessionId}`);
+
+      try {
+        if (isBusiness) {
+          const { getClient } = await import("@/app/lib/client");
+          const client = await getClient();
+          await (client as any).call({
+            method: "rcore.api.plan_builder.summarize_chat_session",
+            args: {
+              session_id: id,
+              messages: JSON.stringify([...coreMessages, { role: "assistant", content: responseMessage }]),
+            },
+          });
+        } else {
+          const { ControlBaseService } = await import("@/app/services/control/base");
+          await ControlBaseService.call("control.api.summarize_chat_session", {
+            session_id: id,
+            messages: JSON.stringify([...coreMessages, { role: "assistant", content: responseMessage }]),
+          });
+        }
+      } catch (err) {
+        console.error("Failed to summarize onboarding session:", err);
+      }
+    }
   } catch (e) {
     console.error("ROK Chat failed:", e);
     responseMessage = "Failed to communicate with ROK on the remote VPS.";
   }
 
   // Save the chat locally for web history persistence
+  const targetIdToSave = newSessionId || id;
   try {
     await saveChat({
-      id,
+      id: targetIdToSave,
       messages: [
         ...coreMessages,
         { 
@@ -112,12 +192,18 @@ export async function POST(request: Request) {
     }
   });
 
+  const responseHeaders: Record<string, string> = {
+    "Content-Type": "text/plain; charset=utf-8",
+    "Cache-Control": "no-cache",
+    "Connection": "keep-alive",
+  };
+
+  if (newSessionId) {
+    responseHeaders["X-New-Session-Id"] = newSessionId;
+  }
+
   return new Response(stream, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
-    }
+    headers: responseHeaders
   });
 }
 
