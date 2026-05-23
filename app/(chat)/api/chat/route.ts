@@ -2,7 +2,7 @@ import { auth } from "@/app/(auth)/auth";
 import { saveChat, getChatById, deleteChatById } from "@/db/queries";
 
 export async function POST(request: Request) {
-  const { id, messages } = await request.json();
+  const { id, messages, model } = await request.json();
   const session = await auth();
 
   if (!session || !session.user || !session.user.id) {
@@ -25,10 +25,10 @@ export async function POST(request: Request) {
     let chatRes;
     if (isBusiness) {
       const { OnboardingService } = await import("@/app/services/tenant/onboarding");
-      chatRes = await OnboardingService.chatWithRok(userMessage, id);
+      chatRes = await OnboardingService.chatWithRok(userMessage, id, model);
     } else {
       const { OnboardingService } = await import("@/app/services/control/onboarding");
-      chatRes = await OnboardingService.chatWithRok(userMessage, id);
+      chatRes = await OnboardingService.chatWithRok(userMessage, id, model);
     }
 
     if (chatRes && chatRes.message) {
