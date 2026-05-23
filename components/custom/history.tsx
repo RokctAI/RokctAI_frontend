@@ -103,17 +103,7 @@ export const History = ({ user }: { user: User | undefined }) => {
     setShowClearAllDialog(false);
   };
 
-  return (
-    <>
-      <Button
-        variant="outline"
-        className="p-1.5 h-fit"
-        onClick={() => {
-          setIsHistoryVisible(true);
-        }}
-      >
-        <MenuIcon />
-      </Button>
+  return null;
 
       <Sheet
         open={isHistoryVisible}
