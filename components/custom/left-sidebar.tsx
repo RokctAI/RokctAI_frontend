@@ -94,24 +94,6 @@ export function LeftSidebar({
           ))}
         </SidebarMenu>
       </SidebarContent>
-
-      <SidebarFooter className="p-2">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={onNewSession}
-              tooltip="New Session"
-              variant="outline"
-              className="bg-primary/10 text-primary hover:bg-primary/20 justify-center"
-            >
-              <MessageSquare />
-              <span className="group-data-[collapsible=icon]:hidden">
-                New Session
-              </span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
