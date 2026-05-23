@@ -73,6 +73,14 @@ export function Chat({
     body: { id, model: selectedModelId },
     initialMessages,
     maxSteps: 10,
+    onResponse: (response) => {
+      const newSessionId = response.headers.get("x-new-session-id");
+      if (newSessionId) {
+        // Seamless background URL switch
+        router.replace(`/chat/${newSessionId}`);
+        aiStore.push("Session optimized & context compressed", "info");
+      }
+    },
     onFinish: () => {
       window.history.replaceState({}, "", `/chat/${id}`);
     },
