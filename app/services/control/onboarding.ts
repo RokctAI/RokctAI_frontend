@@ -10,4 +10,15 @@ export class OnboardingService {
       profile_type: profileType,
     });
   }
+
+  /**
+   * Sends a message to the secure ROK chat bridge on the Control VPS.
+   */
+  static async chatWithRok(message: string, sessionId?: string) {
+    return ControlBaseService.call("control.api.chat_with_rok", {
+      message,
+      session_id: sessionId,
+    });
+  }
 }
+
