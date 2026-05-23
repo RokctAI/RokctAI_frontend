@@ -30,6 +30,29 @@ export async function POST(request: Request) {
   try {
     let messageToSend = userMessage;
 
+    // First message in a session: Fetch the last rolled context summary as the Golden Thread
+    if (coreMessages.length === 1 && !shouldRoll) {
+      try {
+        const { db } = await import("@/db");
+        const { user: userTable } = await import("@/db/schema");
+        const { eq } = await import("drizzle-orm");
+
+        const dbUser = await db
+          .select()
+          .from(userTable)
+          .where(eq(userTable.id, session.user.id))
+          .limit(1);
+
+        const lastSummary = (dbUser[0]?.onboardingData as any)?.lastSummary;
+        if (lastSummary) {
+          console.log(`[Golden Thread Context] Injecting memory from previous sessions.`);
+          messageToSend = `[SYSTEM MEMORY blueprinted from completed sessions]:\n${lastSummary}\n\n[USER NEW MESSAGE]:\n${userMessage}`;
+        }
+      } catch (err) {
+        console.error("Failed to query and inject golden thread context:", err);
+      }
+    }
+
     // If rolling session, summarize old context and inject it as Golden Thread memory
     if (shouldRoll) {
       const { generateUUID } = await import("@/lib/utils");
@@ -63,6 +86,41 @@ export async function POST(request: Request) {
 
       if (summary) {
         messageToSend = `[SYSTEM MEMORY blueprinted from completed session ${id}]:\n${summary}\n\n[USER NEW MESSAGE]:\n${userMessage}`;
+
+        // Save context summary to User table JSON
+        try {
+          const { db } = await import("@/db");
+          const { user: userTable } = await import("@/db/schema");
+          const { eq } = await import("drizzle-orm");
+
+          const dbUser = await db
+            .select()
+            .from(userTable)
+            .where(eq(userTable.id, session.user.id))
+            .limit(1);
+
+          const currentData = (dbUser[0]?.onboardingData as Record<string, any>) || {};
+          await db
+            .update(userTable)
+            .set({
+              onboardingData: {
+                ...currentData,
+                lastSummary: summary
+              }
+            })
+            .where(eq(userTable.id, session.user.id));
+        } catch (err) {
+          console.error("Failed to save summary context:", err);
+        }
+      }
+
+      // Delete the old raw chat session completely to keep DB clean
+      try {
+        const { deleteChatById } = await import("@/db/queries");
+        await deleteChatById({ id });
+        console.log(`[Auto-Clean] Cleaned up completed session ${id} from local logs.`);
+      } catch (err) {
+        console.error("Failed to clean up old session:", err);
       }
     }
 
@@ -93,26 +151,67 @@ export async function POST(request: Request) {
       newSessionId = generateUUID();
       console.log(`[Onboarding Complete Roll] Onboarding completed. Auto-rolling ${id} -> ${newSessionId}`);
 
+      let onboardingSummary = "";
       try {
+        const fullMessagesHistory = [...coreMessages, { role: "assistant", content: responseMessage }];
         if (isBusiness) {
           const { getClient } = await import("@/app/lib/client");
           const client = await getClient();
-          await (client as any).call({
+          const sumRes = await (client as any).call({
             method: "rcore.api.plan_builder.summarize_chat_session",
             args: {
               session_id: id,
-              messages: JSON.stringify([...coreMessages, { role: "assistant", content: responseMessage }]),
+              messages: JSON.stringify(fullMessagesHistory),
             },
           });
+          onboardingSummary = sumRes?.summary || "";
         } else {
           const { ControlBaseService } = await import("@/app/services/control/base");
-          await ControlBaseService.call("control.api.summarize_chat_session", {
+          const sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {
             session_id: id,
-            messages: JSON.stringify([...coreMessages, { role: "assistant", content: responseMessage }]),
+            messages: JSON.stringify(fullMessagesHistory),
           });
+          onboardingSummary = sumRes?.summary || "";
         }
       } catch (err) {
         console.error("Failed to summarize onboarding session:", err);
+      }
+
+      if (onboardingSummary) {
+        // Save onboarding summary context to User table JSON
+        try {
+          const { db } = await import("@/db");
+          const { user: userTable } = await import("@/db/schema");
+          const { eq } = await import("drizzle-orm");
+
+          const dbUser = await db
+            .select()
+            .from(userTable)
+            .where(eq(userTable.id, session.user.id))
+            .limit(1);
+
+          const currentData = (dbUser[0]?.onboardingData as Record<string, any>) || {};
+          await db
+            .update(userTable)
+            .set({
+              onboardingData: {
+                ...currentData,
+                lastSummary: onboardingSummary
+              }
+            })
+            .where(eq(userTable.id, session.user.id));
+        } catch (err) {
+          console.error("Failed to save onboarding summary context:", err);
+        }
+      }
+
+      // Delete the onboarding chat session
+      try {
+        const { deleteChatById } = await import("@/db/queries");
+        await deleteChatById({ id });
+        console.log(`[Auto-Clean] Cleaned up onboarding session ${id} from logs.`);
+      } catch (err) {
+        console.error("Failed to clean up onboarding session:", err);
       }
     }
   } catch (e) {
