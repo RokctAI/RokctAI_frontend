@@ -214,9 +214,9 @@ export async function POST(request: Request) {
         console.error("Failed to clean up onboarding session:", err);
       }
     }
-  } catch (e) {
+  } catch (e: any) {
     console.error("ROK Chat failed:", e);
-    responseMessage = "Failed to communicate with ROK on the remote VPS.";
+    responseMessage = e?.message || e?.description || "Failed to communicate with ROK on the remote VPS.";
   }
 
   // Save the chat locally for web history persistence
