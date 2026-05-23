@@ -20,9 +20,9 @@ export async function POST(request: Request) {
   // Resolve base domain and call appropriate VPS chat bridge
   const isBusiness = !!session.user.siteName;
   let responseMessage = "";
+  let chatRes: any = null;
 
   try {
-    let chatRes;
     if (isBusiness) {
       const { OnboardingService } = await import("@/app/services/tenant/onboarding");
       chatRes = await OnboardingService.chatWithRok(userMessage, id, model);
@@ -47,7 +47,27 @@ export async function POST(request: Request) {
       id,
       messages: [
         ...coreMessages,
-        { role: "assistant", content: responseMessage }
+        { 
+          role: "assistant", 
+          content: responseMessage,
+          ...(chatRes && chatRes.tool_calls && chatRes.tool_calls.length > 0 ? {
+            toolInvocations: chatRes.tool_calls.map((tc: any) => {
+              let args = {};
+              try {
+                args = typeof tc.function.arguments === 'string' 
+                  ? JSON.parse(tc.function.arguments) 
+                  : tc.function.arguments;
+              } catch (e) {}
+              return {
+                state: "result",
+                toolCallId: tc.id,
+                toolName: tc.function.name,
+                args,
+                result: args
+              };
+            })
+          } : {})
+        }
       ],
       userId: session.user.id,
     });
@@ -59,6 +79,29 @@ export async function POST(request: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       const encoder = new TextEncoder();
+
+      // Stream tool calls/results if they exist
+      if (chatRes && chatRes.tool_calls && chatRes.tool_calls.length > 0) {
+        for (const tc of chatRes.tool_calls) {
+          const toolCallId = tc.id;
+          const toolName = tc.function.name;
+          let args = {};
+          try {
+            args = typeof tc.function.arguments === 'string' 
+              ? JSON.parse(tc.function.arguments) 
+              : tc.function.arguments;
+          } catch (e) {
+            console.error("Failed to parse tool call arguments:", e);
+          }
+
+          const callPayload = `9:${JSON.stringify({ toolCallId, toolName, args })}\n`;
+          controller.enqueue(encoder.encode(callPayload));
+
+          const resultPayload = `a:${JSON.stringify({ toolCallId, toolName, result: args })}\n`;
+          controller.enqueue(encoder.encode(resultPayload));
+        }
+      }
+
       const chunks = responseMessage.split(/(\s+)/);
       for (const chunk of chunks) {
         const payload = `0:${JSON.stringify(chunk)}\n`;
