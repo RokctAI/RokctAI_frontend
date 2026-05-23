@@ -10,7 +10,6 @@ export default async function Page({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const session = await getCurrentSession();
-  const id = generateUUID();
 
   if (!session || !session.user) {
     const params = await searchParams;
@@ -22,6 +21,21 @@ export default async function Page({
 
     return <PaaSLogin />;
   }
+
+  // Auto-route to the latest active chat session if one exists in database
+  try {
+    if (session.user.id) {
+      const { getChatsByUserId } = await import("@/db/queries");
+      const chats = await getChatsByUserId({ id: session.user.id });
+      if (chats && chats.length > 0) {
+        redirect(`/chat/${chats[0].id}`);
+      }
+    }
+  } catch (e) {
+    console.error("Failed to query latest chat session, fallback to new session:", e);
+  }
+
+  const id = generateUUID();
 
   const isPaidUser =
     !session?.user?.is_free_plan &&
