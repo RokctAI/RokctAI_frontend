@@ -9,6 +9,8 @@ on:
     branches: [ main, develop ]
     paths-ignore:
       - '**.md'
+  repository_dispatch:
+    types: [schema_updated]
   workflow_dispatch:
     inputs:
       backfill_ai_notes_cutoff_version:
@@ -70,9 +72,36 @@ jobs:
              echo "is_node=false" >> $GITHUB_OUTPUT
           fi
 
+  # --- 1.5. SYNC API SCHEMAS ---
+  sync-schemas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MONOREPO_PAT || secrets.GITHUB_TOKEN }}
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Fetch Latest API Schemas
+        env:
+          MONOREPO_PAT: ${{ secrets.MONOREPO_PAT }}
+        run: node scripts/fetch-schemas.mjs
+      - name: Commit and Push Updated Schemas
+        run: |
+          if git status --porcelain app/config/schemas | grep -q .; then
+            git config user.email "bot@rokct.ai"
+            git config user.name "RokctAI Bot"
+            git add app/config/schemas
+            git commit -m "chore: auto-sync and bake API schemas [skip ci]"
+            git push origin HEAD:${{ github.ref }}
+          else
+            echo "Schemas are already up to date."
+          fi
+
   # --- 2. UNIFIED PIPELINE (Smart) ---
   pipeline:
-    needs: detect
+    needs: [detect, sync-schemas]
     permissions:
   contents: write
   issues: write
