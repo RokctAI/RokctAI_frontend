@@ -89,14 +89,14 @@ jobs:
         run: node scripts/fetch-schemas.mjs
       - name: Commit and Push Updated Schemas
         run: |
-          if git status --porcelain app/config/schemas | grep -q .; then
+          if git status --porcelain app/config/schemas app/services/platform app/actions/platform lib/platform/validators components/platform/forms | grep -q .; then
             git config user.email "bot@rokct.ai"
             git config user.name "RokctAI Bot"
-            git add app/config/schemas
-            git commit -m "chore: auto-sync and bake API schemas [skip ci]"
+            git add app/config/schemas app/services/platform app/actions/platform lib/platform/validators components/platform/forms
+            git commit -m "chore: auto-sync, bake schemas, and hydrate TS files [skip ci]"
             git push origin HEAD:${{ github.ref }}
           else
-            echo "Schemas are already up to date."
+            echo "Schemas and hydrated files are already up to date."
           fi
 
   # --- 2. UNIFIED PIPELINE (Smart) ---
