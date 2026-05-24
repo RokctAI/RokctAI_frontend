@@ -137,7 +137,11 @@ export async function POST(request: Request) {
     if (chatRes && chatRes.message) {
       responseMessage = chatRes.message;
     } else {
-      responseMessage = chatRes?.error || "I encountered an error connecting to ROK.";
+      const errMessage = chatRes?.error || "I encountered an error connecting to ROK.";
+      if (errMessage.includes("Quota Exceeded")) {
+        return new Response(errMessage, { status: 403 });
+      }
+      responseMessage = errMessage;
     }
 
     // Onboarding Completion Detection: if completed, trigger an immediate session roll in background
@@ -216,7 +220,11 @@ export async function POST(request: Request) {
     }
   } catch (e: any) {
     console.error("ROK Chat failed:", e);
-    responseMessage = e?.message || e?.description || "Failed to communicate with ROK on the remote VPS.";
+    const errMessage = e?.message || e?.description || "Failed to communicate with ROK on the remote VPS.";
+    if (errMessage.includes("Quota Exceeded")) {
+      return new Response(errMessage, { status: 403 });
+    }
+    responseMessage = errMessage;
   }
 
   // Save the chat locally for web history persistence
