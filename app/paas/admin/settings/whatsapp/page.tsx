@@ -1,6 +1,12 @@
+/**
+ * Author: ROKCT Code Generator
+ * Premium WhatsApp settings manager with toggle between 
+ * Meta Official Cloud API and Host-Level Baileys Bridge
+ */
+
 "use client";
 
-import { Loader2, Save, ExternalLink } from "lucide-react";
+import { Loader2, Save, ExternalLink, Smartphone, MessageSquare } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -8,7 +14,9 @@ import Link from "next/link";
 import {
   getWhatsAppConfig,
   updateWhatsAppConfig,
+  getTenantId,
 } from "@/app/actions/paas/whatsapp";
+import WhatsAppLinkCard from "@/components/custom/WhatsAppLinkCard";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,30 +33,37 @@ import { Switch } from "@/components/ui/switch";
 export default function WhatsAppSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [mode, setMode] = useState<"cloud" | "link">("link");
+  const [tenantId, setTenantId] = useState("");
   const [formData, setFormData] = useState({
     enabled: false,
     phone_number_id: "",
     access_token: "",
     app_secret: "",
-    verify_token: "rokct_secure_token", // Default suggestion
+    verify_token: "rokct_secure_token",
   });
 
   useEffect(() => {
     async function fetchConfig() {
       try {
-        const data = await getWhatsAppConfig();
-        if (data) {
+        const [configData, activeTenantId] = await Promise.all([
+          getWhatsAppConfig(),
+          getTenantId(),
+        ]);
+        
+        setTenantId(activeTenantId);
+
+        if (configData) {
           setFormData({
-            enabled: !!data.enabled,
-            phone_number_id: data.phone_number_id || "",
-            access_token: data.access_token || "",
-            app_secret: data.app_secret || "",
-            verify_token: data.verify_token || "rokct_secure_token",
+            enabled: !!configData.enabled,
+            phone_number_id: configData.phone_number_id || "",
+            access_token: configData.access_token || "",
+            app_secret: configData.app_secret || "",
+            verify_token: configData.verify_token || "rokct_secure_token",
           });
         }
       } catch (error) {
         console.error("Error fetching config:", error);
-        // toast.error("Failed to load WhatsApp settings");
       } finally {
         setLoading(false);
       }
@@ -80,172 +95,215 @@ export default function WhatsAppSettingsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="size-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-8">
-      <div className="flex items-center justify-between">
+      {/* Title Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-muted/20 pb-6">
         <div>
-          <h1 className="text-3xl font-bold">WhatsApp Integration</h1>
-          <p className="text-muted-foreground mt-2">
-            Connect your platform to the Meta Cloud API.
+          <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70">
+            WhatsApp Integration
+          </h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Configure how your business agents communicate with customers on WhatsApp.
           </p>
         </div>
-        <Button variant="outline" asChild>
-          <Link href="https://developers.facebook.com/apps" target="_blank">
-            <ExternalLink className="mr-2 size-4" />
-            Meta Dashboard
-          </Link>
-        </Button>
+        
+        {mode === "cloud" && (
+          <Button variant="outline" size="sm" asChild>
+            <Link href="https://developers.facebook.com/apps" target="_blank" className="flex items-center">
+              <ExternalLink className="mr-2 size-4" />
+              Meta Dashboard
+            </Link>
+          </Button>
+        )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Status</CardTitle>
-            <CardDescription>
-              Enable or disable the WhatsApp bot globally for this tenant.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <Label className="text-base">Active</Label>
-                <p className="text-sm text-muted-foreground">
-                  When disabled, the bot will not reply to any messages.
+      {/* Integration Mode Switcher */}
+      <div className="grid grid-cols-2 p-1.5 bg-muted/30 border border-muted/50 rounded-2xl max-w-lg shadow-inner">
+        <button
+          onClick={() => setMode("link")}
+          className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-300 ${
+            mode === "link"
+              ? "bg-background shadow-lg text-primary border border-muted/20"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Smartphone className="size-4" />
+          ROKCT Web Link (Baileys)
+        </button>
+        <button
+          onClick={() => setMode("cloud")}
+          className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-300 ${
+            mode === "cloud"
+              ? "bg-background shadow-lg text-primary border border-muted/20"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <MessageSquare className="size-4" />
+          Meta Cloud API
+        </button>
+      </div>
+
+      {/* Conditional Content Rendering */}
+      {mode === "link" ? (
+        <div className="space-y-6">
+          <WhatsAppLinkCard tenantId={tenantId} />
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in-50 duration-300">
+          <Card className="border border-muted/40 bg-background/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-lg">Status</CardTitle>
+              <CardDescription className="text-xs">
+                Enable or disable the WhatsApp bot globally for this tenant.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between rounded-xl border border-muted/20 p-4 bg-muted/5">
+                <div className="space-y-0.5">
+                  <Label className="text-sm font-medium">Active Status</Label>
+                  <p className="text-xs text-muted-foreground">
+                    When disabled, the bot will not reply to any messages.
+                  </p>
+                </div>
+                <Switch
+                  checked={formData.enabled}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({ ...prev, enabled: checked }))
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border border-muted/40 bg-background/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-lg">API Credentials</CardTitle>
+              <CardDescription className="text-xs">
+                Get these from your{" "}
+                <a
+                  href="https://developers.facebook.com"
+                  className="underline text-primary hover:text-primary/95 transition-colors"
+                >
+                  Meta App Dashboard
+                </a>{" "}
+                under WhatsApp &gt; API Setup.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-4 text-xs text-amber-600 dark:text-amber-400 font-medium">
+                <strong>Note:</strong> You must create the App in the Meta
+                Dashboard first. This form is only for pasting the keys generated
+                there.
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone_number_id" className="text-xs font-semibold">Phone Number ID</Label>
+                <Input
+                  id="phone_number_id"
+                  name="phone_number_id"
+                  value={formData.phone_number_id}
+                  onChange={handleChange}
+                  placeholder="e.g. 100293485..."
+                  className="h-10 text-sm"
+                  required
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  Found in API Setup step.
                 </p>
               </div>
-              <Switch
-                checked={formData.enabled}
-                onCheckedChange={(checked) =>
-                  setFormData((prev) => ({ ...prev, enabled: checked }))
-                }
-              />
-            </div>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>API Credentials</CardTitle>
-            <CardDescription>
-              Get these from your{" "}
-              <a
-                href="https://developers.facebook.com"
-                className="underline text-primary"
-              >
-                Meta App Dashboard
-              </a>{" "}
-              under WhatsApp &gt; API Setup.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-4 text-sm text-amber-800 dark:text-amber-200">
-              <strong>Note:</strong> You must create the App in the Meta
-              Dashboard first. This form is only for pasting the keys generated
-              there.
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone_number_id">Phone Number ID</Label>
-              <Input
-                id="phone_number_id"
-                name="phone_number_id"
-                value={formData.phone_number_id}
-                onChange={handleChange}
-                placeholder="e.g. 100293485..."
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Found in API Setup step.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="access_token">Permanent Access Token</Label>
-              <Input
-                id="access_token"
-                name="access_token"
-                type="password"
-                value={formData.access_token}
-                onChange={handleChange}
-                placeholder="EAA..."
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Use a System User Token, not a temporary 24h token.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="app_secret">App Secret (Optional)</Label>
-              <Input
-                id="app_secret"
-                name="app_secret"
-                type="password"
-                value={formData.app_secret}
-                onChange={handleChange}
-              />
-              <p className="text-xs text-muted-foreground">
-                Used to validate incoming webhooks (HMAC).
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Webhook Configuration</CardTitle>
-            <CardDescription>
-              Enter this in your Meta App Dashboard under "Configuration".
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Callback URL</Label>
-                <div className="flex items-center space-x-2">
+                <Label htmlFor="access_token" className="text-xs font-semibold">Permanent Access Token</Label>
+                <Input
+                  id="access_token"
+                  name="access_token"
+                  type="password"
+                  value={formData.access_token}
+                  onChange={handleChange}
+                  placeholder="EAA..."
+                  className="h-10 text-sm"
+                  required
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  Use a System User Token, not a temporary 24h token.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="app_secret" className="text-xs font-semibold">App Secret (Optional)</Label>
+                <Input
+                  id="app_secret"
+                  name="app_secret"
+                  type="password"
+                  value={formData.app_secret}
+                  onChange={handleChange}
+                  className="h-10 text-sm"
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  Used to validate incoming webhooks (HMAC).
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border border-muted/40 bg-background/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-lg">Webhook Configuration</CardTitle>
+              <CardDescription className="text-xs">
+                Enter this in your Meta App Dashboard under "Configuration".
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold">Callback URL</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      disabled
+                      value={`https://${typeof window !== "undefined" ? window.location.hostname : "your-site.com"}/api/method/paas.whatsapp.api.webhook.webhook`}
+                      className="bg-muted/50 border-muted/30 text-xs h-10 select-all"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="verify_token" className="text-xs font-semibold">Verify Token</Label>
                   <Input
-                    disabled
-                    value={`https://${typeof window !== "undefined" ? window.location.hostname : "your-site.com"}/api/method/paas.whatsapp.api.webhook.webhook`}
-                    className="bg-muted"
+                    id="verify_token"
+                    name="verify_token"
+                    value={formData.verify_token}
+                    onChange={handleChange}
+                    className="h-10 text-sm"
+                    placeholder="rokct_secure_token"
                   />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="verify_token">Verify Token</Label>
-                <Input
-                  id="verify_token"
-                  name="verify_token"
-                  value={formData.verify_token}
-                  onChange={handleChange}
-                  placeholder="rokct_secure_token"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <div className="flex justify-end">
-          <Button type="submit" disabled={saving} size="lg">
-            {saving ? (
-              <>
-                <Loader2 className="mr-2 size-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="mr-2 size-4" />
-                Save Configuration
-              </>
-            )}
-          </Button>
-        </div>
-      </form>
+          <div className="flex justify-end">
+            <Button type="submit" disabled={saving} size="lg" className="px-6 font-semibold shadow-lg shadow-primary/10">
+              {saving ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 size-4" />
+                  Save Configuration
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }
