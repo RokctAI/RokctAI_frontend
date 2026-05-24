@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "node scripts/fetch-schemas.mjs && tsx -r dotenv/config db/migrate && next build",
+    "build": "tsx -r dotenv/config db/migrate && next build",
     "start": "next start",
     "lint": "next lint",
     "migrate:generate": "drizzle-kit generate"
