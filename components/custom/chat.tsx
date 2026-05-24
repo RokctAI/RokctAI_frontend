@@ -86,6 +86,11 @@ export function Chat({
     },
     onError: (error) => {
       if (error.message.includes("Quota Exceeded")) {
+        const cleanMsg = error.message.replace(/^Quota Exceeded:\s*/i, "");
+        toast.warning("Conversational ROK Limit Complete", {
+          description: cleanMsg,
+          duration: 15000,
+        });
         router.push("/handson");
       } else {
         // System Error -> Keep Toast as it's a crash/network issue
