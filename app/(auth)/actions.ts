@@ -198,6 +198,16 @@ export async function register(
     }
 
     // 3. Save User to Local DB (Persistence)
+    const initialOnboardingData = {
+      user_fullname: `${firstName} ${lastName}`,
+      company_name: companyName,
+      location: country,
+      industry: industry,
+      full_name: `${firstName} ${lastName}`,
+      trading_name: companyName,
+      primary_base: country,
+    };
+
     const existingUser = await db
       .select()
       .from(user)
@@ -208,11 +218,15 @@ export async function register(
       await db.insert(user).values({
         email: email,
         siteName: siteName,
+        onboardingData: initialOnboardingData,
       });
-    } else if (siteName) {
+    } else {
       await db
         .update(user)
-        .set({ siteName: siteName })
+        .set({ 
+          siteName: siteName,
+          onboardingData: initialOnboardingData,
+        })
         .where(eq(user.email, email));
     }
 
