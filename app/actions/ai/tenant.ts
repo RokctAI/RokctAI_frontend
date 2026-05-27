@@ -61,3 +61,19 @@ export async function contactSupport(data: {
     };
   }
 }
+
+export async function getAvailableModels() {
+  const client = await getClient();
+  try {
+    const res = await client.call({
+      method: "rcore.api.plan_builder.get_available_models",
+    });
+    if (res && res.message && (res.message.FREE || res.message.PAID)) {
+      return { success: true, models: res.message };
+    }
+    return { success: false, error: "Invalid models data returned from backend." };
+  } catch (e: any) {
+    console.error("Failed to fetch available models from backend:", e);
+    return { success: false, error: e?.message || "Failed to fetch available models." };
+  }
+}
