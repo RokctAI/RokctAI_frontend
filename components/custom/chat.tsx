@@ -40,15 +40,32 @@ export function Chat({
   isPaidUser?: boolean;
 }) {
   const router = useRouter();
-  const [selectedModelId, setSelectedModelId] = useState<ModelId>(
+  const [selectedModelId, setSelectedModelId] = useState<string>(
     AI_MODELS.FREE.id,
   );
+  const [availableModels, setAvailableModels] = useState<any>(AI_MODELS);
+
+  useEffect(() => {
+    async function loadModels() {
+      try {
+        const { getAvailableModels } = await import("@/app/actions/ai/tenant");
+        const res = await getAvailableModels();
+        if (res.success && res.models) {
+          setAvailableModels(res.models);
+        }
+      } catch (err) {
+        console.warn("Failed to load models dynamically from backend:", err);
+      }
+    }
+    loadModels();
+  }, []);
+
   const [activeModule, setActiveModule] = useState<string>("HR");
   const [isLeftOpen, setIsLeftOpen] = useState(true);
   const [isRightOpen, setIsRightOpen] = useState(true);
 
   // Reset Session on Model Change
-  const handleModelChange = (newModelId: ModelId) => {
+  const handleModelChange = (newModelId: string) => {
     setSelectedModelId(newModelId);
     // setMessages([]); // Removed per user request to preserve context
     aiStore.push(`Model Switched to ${newModelId}`, "info");
@@ -220,6 +237,7 @@ export function Chat({
                 selectedModelId={selectedModelId}
                 onModelChange={handleModelChange}
                 isPaidUser={isPaidUser}
+                models={availableModels}
                 onUpgradeClick={() =>
                   toast.info("Upgrade to Pro", {
                     description: "Upgrade required.",
@@ -280,7 +298,7 @@ export function Chat({
                   setAttachments={setAttachments}
                   messages={messages}
                   append={append}
-                  models={Object.values(AI_MODELS)}
+                  models={Object.values(availableModels).map((m: any) => ({ id: m.id, name: m.label || m.name }))}
                   selectedModelId={selectedModelId}
                   onModelChange={handleModelChange}
                   onLocalSubmit={(intent, details, text) => {
