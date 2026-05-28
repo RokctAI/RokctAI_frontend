@@ -125,8 +125,29 @@ export async function POST(request: Request) {
     }
 
     const activeSessionId = newSessionId || id;
+    const isEmployeePlan = session.user.plan === "Employee Plan" || session.user.subscriptionTier === "Employee Plan";
 
-    if (isBusiness) {
+    if (isEmployeePlan) {
+      // Forward chat turns of Employee Plan users directly to Paperclip
+      const paperclipUrl = process.env.PAPERCLIP_API_URL || "https://platform.rokct.ai/paperclip/api/chat";
+      const paperclipRes = await fetch(paperclipUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.PAPERCLIP_API_TOKEN || ""}`
+        },
+        body: JSON.stringify({
+          id: activeSessionId,
+          messages: [...coreMessages, { role: "user", content: messageToSend }],
+          model
+        })
+      });
+      if (paperclipRes.ok) {
+        chatRes = await paperclipRes.json();
+      } else {
+        throw new Error("Failed to communicate with Paperclip agent host.");
+      }
+    } else if (isBusiness) {
       const { OnboardingService } = await import("@/app/services/tenant/onboarding");
       chatRes = await OnboardingService.chatWithRok(messageToSend, activeSessionId, model);
     } else {
