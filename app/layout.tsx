@@ -9,6 +9,7 @@ import { Navbar } from "@/components/custom/navbar";
 import { SessionProvider } from "@/components/custom/session-provider";
 import { ThemeProvider } from "@/components/custom/theme-provider";
 import { AiProvider } from "@/lib/ai-provider";
+import { VisitorTracker } from "@/components/custom/visitor-tracker";
 // import { AcceptedTasksProvider } from "@/lib/context/accepted-tasks-context";
 
 import "./globals.css";
@@ -57,6 +58,7 @@ export default async function RootLayout({
           >
             {/* <AcceptedTasksProvider> */}
             <AiProvider>
+              <VisitorTracker />
               <Toaster position="top-center" />
               {/* We use Header in page.tsx usually, but if Navbar is global: */}
               {session?.user && <Navbar />}
