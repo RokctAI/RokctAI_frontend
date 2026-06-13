@@ -103,8 +103,7 @@ export const History = ({ user }: { user: User | undefined }) => {
     setShowClearAllDialog(false);
   };
 
-  return null;
-
+  return (
       <Sheet
         open={isHistoryVisible}
         onOpenChange={(state) => {
