@@ -198,12 +198,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return null;
           }
 
-          if (result.data && result.data.access_token) {
-            [apiKey, apiSecret] = result.data.access_token.split(":");
-          }
-          if (result.data && result.data.user) {
-            name =
-              result.data.user.firstname || (email as string).split("@")[0];
+           if (result.data && result.data.access_token) {
+             [apiKey, apiSecret] = result.data.access_token.split(":");
+           }
+           
+           // Extract rotation tokens from backend response
+           const refreshToken = result.data?.refresh_token || null;
+           const tokenExpiry = result.data?.expires_at || null;
+
+           if (result.data && result.data.user) {
+             name =
+               result.data.user.firstname || (email as string).split("@")[0];
             if (result.data.user.role) roles = [result.data.user.role];
 
             // EMERGENCY OVERRIDE:
@@ -482,26 +487,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           // 5. Return User Details
           // Note: These fields are transient and not persisted to the DB
-          return {
-            id: email as string,
-            email: email as string,
-            name: name,
-            apiKey: apiKey,
-            apiSecret: apiSecret,
-            homePage: homePage,
-            siteName: siteName || new URL(baseUrl).hostname,
-            roles: roles,
-            isPaaS: isPaaSLogin,
-            plan: plan,
-            status: status,
-            is_free_plan: is_free_plan,
-            is_ai: is_ai,
-            modules: modules,
-            allowed_models: allowed_models,
-            isOnboarded: isOnboarded,
-            location: dbUser.length > 0 ? dbUser[0].location : null,
-            company: companyContext,
-          };
+           return {
+             id: email as string,
+             email: email as string,
+             name: name,
+             apiKey: apiKey,
+             apiSecret: apiSecret,
+             refreshToken: refreshToken,
+             tokenExpiry: tokenExpiry,
+             homePage: homePage,
+             siteName: siteName || new URL(baseUrl).hostname,
+             roles: roles,
+             isPaaS: isPaaSLogin,
+             plan: plan,
+             status: status,
+             is_free_plan: is_free_plan,
+             is_ai: is_ai,
+             modules: modules,
+             allowed_models: allowed_models,
+             isOnboarded: isOnboarded,
+             location: dbUser.length > 0 ? dbUser[0].location : null,
+             company: companyContext,
+           };
+
         } catch (e) {
           console.error("Frappe Login Error:", e);
           return null;
@@ -515,6 +523,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id;
         token.apiKey = (user as any).apiKey;
         token.apiSecret = (user as any).apiSecret;
+        token.refreshToken = (user as any).refreshToken;
+        token.tokenExpiry = (user as any).tokenExpiry;
         token.roles = (user as any).roles;
         token.siteName = (user as any).siteName;
         token.isPaaS = (user as any).isPaaS;
@@ -536,6 +546,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.id as string;
         (session.user as any).apiKey = token.apiKey;
         (session.user as any).apiSecret = token.apiSecret;
+        (session.user as any).refreshToken = token.refreshToken;
+        (session.user as any).tokenExpiry = token.tokenExpiry;
         (session.user as any).roles = token.roles;
         (session.user as any).siteName = token.siteName;
         (session.user as any).isPaaS = token.isPaaS;
