@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createAiNote } from "@/app/actions/ai/create";
 
+export const revalidate = 0;
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();

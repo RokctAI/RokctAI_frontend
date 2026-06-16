@@ -1,6 +1,8 @@
 import { auth } from "@/app/(auth)/auth";
 import { getChatsByUserId } from "@/db/queries";
 
+export const revalidate = 0;
+
 export async function GET() {
   const session = await auth();
 

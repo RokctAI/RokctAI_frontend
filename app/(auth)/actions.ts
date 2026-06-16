@@ -11,6 +11,44 @@ export async function getCurrentSession() {
   return await auth();
 }
 
+export async function refreshTokens() {
+  const session = await auth();
+  if (!session || !session.user) return { success: false, error: "No active session" };
+
+  try {
+    const user = session.user as any;
+    const refresh_token = user.refreshToken;
+    const baseUrl = process.env.ROKCT_BASE_URL;
+
+    if (!refresh_token || !baseUrl) {
+      return { success: false, error: "Refresh token or Base URL missing" };
+    }
+
+    const response = await fetch(`${baseUrl}/api/method/rcore.api.auth.refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Backend refresh failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.status === true) {
+      return { 
+        success: true, 
+        data: data.data // { access_token, refresh_token, expires_at }
+      };
+    }
+    
+    return { success: false, error: data.message || "Token rotation failed" };
+  } catch (error) {
+    console.error("Token refresh failed:", error);
+    return { success: false, error: "Failed to rotate tokens" };
+  }
+}
+
 export type ActionState = {
   error?: string;
   status?: "idle" | "success" | "failed" | "invalid_data" | "user_exists";

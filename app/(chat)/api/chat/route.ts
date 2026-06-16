@@ -1,10 +1,18 @@
 import { auth } from "@/app/(auth)/auth";
 import { saveChat, getChatById, deleteChatById } from "@/db/queries";
+import { getAuthenticatedTokens } from "@/app/lib/auth-utils";
 
 export async function POST(request: Request) {
   const { id, messages, model } = await request.json();
+  
+  let tokens;
+  try {
+    tokens = await getAuthenticatedTokens();
+  } catch (e) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+  
   const session = await auth();
-
   if (!session || !session.user || !session.user.id) {
     return new Response("Unauthorized", { status: 401 });
   }

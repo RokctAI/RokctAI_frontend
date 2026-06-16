@@ -1,5 +1,7 @@
 import { auth } from "@/app/(auth)/auth";
 
+export const revalidate = 0;
+
 export async function POST(request: Request) {
   const session = await auth();
 

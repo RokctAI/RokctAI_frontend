@@ -3,9 +3,19 @@ import { z } from "zod";
 import { getModel } from "@/ai";
 import { AI_MODELS } from "@/ai/models";
 import { auth } from "@/app/(auth)/auth";
+import { getAuthenticatedTokens } from "@/app/lib/auth-utils";
+
+export const revalidate = 0;
 
 export async function POST(request: Request) {
   try {
+    let tokens;
+    try {
+      tokens = await getAuthenticatedTokens();
+    } catch (e) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
     const {
       text,
       promptType,

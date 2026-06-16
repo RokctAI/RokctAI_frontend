@@ -6,6 +6,7 @@
 import { NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -18,7 +19,13 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL || "http://localhost:9000";
+  const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL;
+  if (!BRIDGE_URL) {
+    return new Response(JSON.stringify({ error: "WhatsApp Bridge URL is not configured" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   try {
     const res = await fetch(`${BRIDGE_URL}/sessions/status?tenantId=${tenantId}`, {

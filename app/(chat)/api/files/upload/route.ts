@@ -4,6 +4,8 @@ import { z } from "zod";
 
 import { auth } from "@/app/(auth)/auth";
 
+export const revalidate = 0;
+
 const FileSchema = z.object({
   file: z
     .instanceof(File)

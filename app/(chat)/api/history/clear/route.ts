@@ -1,6 +1,8 @@
 import { auth } from "@/app/(auth)/auth";
 import { deleteAllChatsByUserId } from "@/db/queries";
 
+export const revalidate = 0;
+
 export async function POST(request: Request) {
   const session = await auth();
 

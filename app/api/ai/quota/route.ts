@@ -2,12 +2,20 @@ import { auth } from "@/app/(auth)/auth";
 import { AI_MODELS } from "@/ai/models";
 import { getModel } from "@/ai";
 import { generateText } from "ai";
+import { getAuthenticatedTokens } from "@/app/lib/auth-utils";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(request: Request) {
-  const session = await auth();
+  let tokens;
+  try {
+    tokens = await getAuthenticatedTokens();
+  } catch (e) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
+  const session = await auth();
   if (!session || !session.user) {
     return new Response("Unauthorized", { status: 401 });
   }

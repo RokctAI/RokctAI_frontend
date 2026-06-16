@@ -40,7 +40,7 @@ export default function WhatsAppSettingsPage() {
     phone_number_id: "",
     access_token: "",
     app_secret: "",
-    verify_token: "rokct_secure_token",
+    verify_token: "",
   });
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function WhatsAppSettingsPage() {
             phone_number_id: configData.phone_number_id || "",
             access_token: configData.access_token || "",
             app_secret: configData.app_secret || "",
-            verify_token: configData.verify_token || "rokct_secure_token",
+             verify_token: configData.verify_token || "",
           });
         }
       } catch (error) {
@@ -280,7 +280,7 @@ export default function WhatsAppSettingsPage() {
                     value={formData.verify_token}
                     onChange={handleChange}
                     className="h-10 text-sm"
-                    placeholder="rokct_secure_token"
+                     placeholder="Enter verify token"
                   />
                 </div>
               </div>

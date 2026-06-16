@@ -5,6 +5,8 @@ import { getPendingReminders } from "@/db/queries";
 
 import { getClient } from "@/app/lib/client";
 
+export const revalidate = 0;
+
 export async function GET(request: Request) {
   const session = await auth();
 

@@ -2,12 +2,15 @@ import { db } from "@/db";
 import { user } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 
 import { globalSettings } from "@/db/schema";
 
+export const revalidate = 0;
+
 export async function POST(request: NextRequest) {
   try {
-    // 1. Security Check
+    // 1. Security Check - HMAC Verification
     let validSecret = process.env.PLATFORM_SYNC_SECRET;
 
     // Fetch from DB if available (preferred)
@@ -16,12 +19,26 @@ export async function POST(request: NextRequest) {
       validSecret = settings[0].platformSyncSecret;
     }
 
-    const secret = request.headers.get("X-Rokct-Webhook-Secret");
-    if (!validSecret || secret !== validSecret) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    if (!validSecret) {
+      return NextResponse.json({ message: "Webhook secret not configured on server" }, { status: 500 });
     }
 
-    const body = await request.json();
+    const signature = request.headers.get("X-Rokct-Signature");
+    if (!signature) {
+      return NextResponse.json({ message: "Missing X-Rokct-Signature header" }, { status: 401 });
+    }
+
+    const rawBody = await request.text();
+    const expectedSignature = crypto
+      .createHmac("sha256", validSecret)
+      .update(rawBody)
+      .digest("hex");
+
+    if (signature !== expectedSignature) {
+      return NextResponse.json({ message: "Invalid payload signature" }, { status: 401 });
+    }
+
+    const body = JSON.parse(rawBody);
     const { event, email, site_name, first_name, last_name } = body;
 
     // Validation

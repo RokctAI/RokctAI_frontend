@@ -18,7 +18,13 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL || "http://localhost:9000";
+  const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL;
+  if (!BRIDGE_URL) {
+    return new Response(JSON.stringify({ error: "WhatsApp Bridge URL is not configured" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
   const targetUrl = `${BRIDGE_URL}/sessions/init?tenantId=${tenantId}`;
 
   try {

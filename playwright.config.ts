@@ -3,11 +3,11 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   webServer: {
     command: "pnpm dev",
-    url: "http://localhost:3000",
+    url: process.env.PLAYWRIGHT_BASE_URL,
     reuseExistingServer: !process.env.CI,
   },
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL,
   },
   projects: [
     {
