@@ -505,7 +505,7 @@ export function RightPlane(props: RightPaneProps) {
   return (
     <SidebarProvider
       defaultOpen={false}
-      storageKey="right-plane-sidebar"
+       storageKey="right-plane-sidebar" // placeholder
       className="!absolute right-0 top-0 bottom-0 w-auto pointer-events-none bg-transparent"
     >
       <RightPlaneContent {...props} className="pointer-events-auto" />

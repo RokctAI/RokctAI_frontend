@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Loader2, Printer, AlertCircle } from "lucide-react";
 import { getLendingLicenseDetails } from "@/app/lib/roles";
 import { AssuranceReportTemplate } from "@/app/templates/lending/AssuranceReportTemplate";
+import t from "@/app/lib/i18n";
 
 export default function AssuranceReportPage() {
   const [loading, setLoading] = useState(true);
@@ -38,50 +39,52 @@ export default function AssuranceReportPage() {
       <div className="bg-gray-50 p-6 border-b border-gray-200 print:hidden flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
         <div className="flex items-center space-x-4">
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-              Entity Type
-            </label>
-            <select
-              value={reportType}
-              onChange={(e: any) => setReportType(e.target.value)}
-              className="p-2 border border-gray-300 rounded text-sm min-w-[200px]"
-            >
-              <option value="accounting_officer">
-                Accounting Officer (Standard)
-              </option>
-              <option value="audited">Registered Auditor (Large Entity)</option>
-            </select>
+             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+               {t('common.entity_type')}
+             </label>
+             <select
+               value={reportType}
+               onChange={(e: any) => setReportType(e.target.value)}
+               className="p-2 border border-gray-300 rounded text-sm min-w-[200px]"
+             >
+               <option value="accounting_officer">
+                 {t('app.lending.assurance.type_accounting')}
+               </option>
+               <option value="audited">
+                 {t('app.lending.assurance.type_auditor')}
+               </option>
+             </select>
           </div>
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-              Financial Year End
-            </label>
-            <input
-              type="date"
-              value={yearEnd}
-              onChange={(e) => setYearEnd(e.target.value)}
-              className="p-2 border border-gray-300 rounded text-sm"
-            />
+             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+               {t('common.financial_year_end')}
+             </label>
+             <input
+               type="date"
+               value={yearEnd}
+               onChange={(e) => setYearEnd(e.target.value)}
+               className="p-2 border border-gray-300 rounded text-sm"
+             />
           </div>
         </div>
-        <button
-          onClick={() => window.print()}
-          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition"
-        >
-          <Printer className="w-4 h-4 mr-2" /> Print for Signature
-        </button>
+           <button
+             onClick={() => window.print()}
+             className="flex items-center bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition"
+           >
+             <Printer className="w-4 h-4 mr-2" /> {t('common.print_for_signature')}
+           </button>
       </div>
 
       {/* Notification */}
-      <div className="bg-yellow-50 p-4 print:hidden border-b border-yellow-100 flex items-start space-x-3">
-        <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
-        <p className="text-sm text-yellow-800">
-          <strong>Print Instruction:</strong> Use your{" "}
-          {reportType === "audited" ? "Auditor" : "Accounting Officer"}{" "}
-          Letterhead paper in the printer tray. This report is formatted to fit
-          standard letterhead margins.
-        </p>
-      </div>
+         <div className="bg-yellow-50 p-4 print:hidden border-b border-yellow-100 flex items-start space-x-3">
+           <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
+           <p className="text-sm text-yellow-800">
+             <strong>{t('common.print_instruction')}:</strong> Use your{" "}
+             {reportType === "audited" ? t('app.lending.assurance.type_auditor') : t('app.lending.assurance.type_accounting')}{" "}
+             Letterhead paper in the printer tray. This report is formatted to fit
+             standard letterhead margins.
+           </p>
+         </div>
 
       <div className="p-12 bg-white">
         <AssuranceReportTemplate

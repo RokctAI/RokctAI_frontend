@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import t from "@/app/lib/i18n";
 
 export default function StoriesPage() {
   const [stories, setStories] = useState<any[]>([]);
@@ -167,14 +168,14 @@ export default function StoriesPage() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="title">Title *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, title: e.target.value }))
-                }
-                placeholder="New Product Launch"
-              />
+               <Input
+                 id="title"
+                 value={formData.title}
+                 onChange={(e) =>
+                   setFormData((prev) => ({ ...prev, title: e.target.value }))
+                 }
+                 placeholder={t('app.paas.dashboard.content.stories.ph_title')}
+               />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="link">Link (Optional)</Label>
@@ -187,13 +188,13 @@ export default function StoriesPage() {
                 placeholder="https://..."
               />
             </div>
-            <ImageUpload
-              label="Story Image (9:16 ratio recommended) *"
-              value={formData.image}
-              onChange={(url) =>
-                setFormData((prev) => ({ ...prev, image: url }))
-              }
-            />
+             <ImageUpload
+               label={t('app.paas.dashboard.content.stories.label_image')}
+               value={formData.image}
+               onChange={(url) =>
+                 setFormData((prev) => ({ ...prev, image: url }))
+               }
+             />
           </div>
           <DialogFooter>
             <Button onClick={handleSubmit} disabled={processing}>

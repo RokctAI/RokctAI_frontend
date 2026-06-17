@@ -10,6 +10,7 @@ import {
   NCR_MAX_SERVICE_FEE_PM,
   NCR_MAX_INTEREST_RATE_SHORT_TERM,
 } from "@/app/lib/ncr_calculator";
+import t from "@/app/lib/i18n";
 
 // --- DATA STRUCTURES ---
 
@@ -759,14 +760,23 @@ export default function ComplianceReportPage() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Compliance Report
-            </h1>
-            <p className="text-sm text-gray-500">
-              Regulation 63 - Annual Return
-            </p>
-          </div>
+           <div>
+             <h1 className="text-2xl font-bold text-gray-900">
+               {t('app.lending.compliance_report_title')}
+             </h1>
+             <p className="text-sm text-gray-500">
+               {t('app.lending.compliance_report_subtitle')}
+             </p>
+           </div>
+           <div className="flex space-x-3">
+             <button
+               onClick={handlePrint}
+               className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+             >
+               <Printer className="w-4 h-4" />
+               <span>{t('common.print_report')}</span>
+             </button>
+           </div>
         </div>
         <div className="flex space-x-3">
           <button
@@ -780,49 +790,46 @@ export default function ComplianceReportPage() {
       </div>
 
       {/* Instruction Box */}
-      <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg flex items-start space-x-3 print:hidden">
-        <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
-        <div className="text-sm text-blue-800">
-          <strong>Instructions:</strong> Complete this form by selecting the
-          appropriate response for each question. If you select{" "}
-          <strong>Not Applicable</strong>, you must provide an Annexure
-          Reference Number. Ensure all sections are signed off at the bottom.
-        </div>
-      </div>
+       <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg flex items-start space-x-3 print:hidden">
+         <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+         <div className="text-sm text-blue-800">
+           <strong>{t('common.instructions')}:</strong> {t('app.lending.compliance_instructions')}
+         </div>
+       </div>
 
       {/* REPORT CONTENT */}
       <div className="bg-white p-8 print:p-0 shadow-sm border border-gray-200 print:shadow-none print:border-none">
         {/* Title Section */}
-        <div className="text-center border-b-2 border-black pb-4 mb-6">
-          <h1 className="text-2xl font-bold uppercase">
-            Compliance Report to the National Credit Regulator (NCR)
-          </h1>
-          <p className="font-semibold mt-1">In terms of Regulation 63(1)</p>
-        </div>
+         <div className="text-center border-b-2 border-black pb-4 mb-6">
+           <h1 className="text-2xl font-bold uppercase">
+             {t('app.lending.compliance_report_header')}
+           </h1>
+           <p className="font-semibold mt-1">{t('app.lending.compliance_report_sub_header')}</p>
+         </div>
 
         {/* Company & Period Info */}
-        <div className="grid grid-cols-2 gap-x-12 gap-y-4 mb-8 text-sm">
-          <div className="flex border-b border-dotted border-gray-400 pb-1">
-            <span className="font-bold w-48">Name of credit provider:</span>
-            <span className="flex-1">{companyName}</span>
-          </div>
-          <div className="flex border-b border-dotted border-gray-400 pb-1">
-            <span className="font-bold w-48">Registration number:</span>
-            <span className="flex-1">{regNumber}</span>
-          </div>
-          <div className="flex border-b border-dotted border-gray-400 pb-1">
-            <span className="font-bold w-48">Reporting period:</span>
-            <span className="flex-1">
-              [Insert Period Start] to [Insert Period End]
-            </span>
-          </div>
-          <div className="flex border-b border-dotted border-gray-400 pb-1">
-            <span className="font-bold w-48">Type of credit provider:</span>
-            <span className="flex-1">
-              Retailer / Developmental / Other (Circle One)
-            </span>
-          </div>
-        </div>
+         <div className="grid grid-cols-2 gap-x-12 gap-y-4 mb-8 text-sm">
+           <div className="flex border-b border-dotted border-gray-400 pb-1">
+             <span className="font-bold w-48">{t('app.lending.compliance_company_name')}</span>
+             <span className="flex-1">{companyName}</span>
+           </div>
+           <div className="flex border-b border-dotted border-gray-400 pb-1">
+             <span className="font-bold w-48">{t('app.lending.compliance_reg_number')}</span>
+             <span className="flex-1">{regNumber}</span>
+           </div>
+           <div className="flex border-b border-dotted border-gray-400 pb-1">
+             <span className="font-bold w-48">{t('app.lending.compliance_reporting_period')}</span>
+             <span className="flex-1">
+               [Insert Period Start] to [Insert Period End]
+             </span>
+           </div>
+           <div className="flex border-b border-dotted border-gray-400 pb-1">
+             <span className="font-bold w-48">{t('app.lending.compliance_provider_type')}</span>
+             <span className="flex-1">
+               Retailer / Developmental / Other (Circle One)
+             </span>
+           </div>
+         </div>
 
         {/* Questionnaire Table */}
         <div className="space-y-6">
@@ -957,25 +964,36 @@ export default function ComplianceReportPage() {
         </div>
 
         {/* Sign Off Section */}
-        <div className="mt-12 border-t-2 border-black pt-8 break-inside-avoid">
-          <h3 className="text-lg font-bold uppercase mb-6">
-            Compliance Report Sign-Off
-          </h3>
-          <p className="mb-8 text-justify">
-            I, the undersigned, do hereby report on behalf of{" "}
-            <span className="font-bold underline px-1">{companyName}</span> with
-            registration number{" "}
-            <span className="font-bold underline px-1">{regNumber}</span> for
-            the reporting period{" "}
-            <span className="underline px-1">[Insert Start]</span> to{" "}
-            <span className="underline px-1">[Insert End]</span>.
-          </p>
-
-          <div className="grid grid-cols-2 gap-16 mt-8">
-            <div>
-              <div className="border-b border-black mb-1 p-1"></div>
-              <p className="text-sm">Name of person signing the report</p>
-            </div>
+         <div className="mt-12 border-t-2 border-black pt-8 break-inside-avoid">
+           <h3 className="text-lg font-bold uppercase mb-6">
+             {t('app.lending.compliance_sign_off')}
+           </h3>
+           <p className="mb-8 text-justify">
+             {t('app.lending.compliance_sign_off_text', { company: companyName, reg: regNumber, start: '[Insert Start]', end: '[Insert End]' })}
+           </p>
+           <div className="grid grid-cols-2 gap-16 mt-8">
+             <div>
+               <div className="border-b border-black mb-1 p-1"></div>
+               <p className="text-sm">{t('app.lending.compliance_sign_off_name')}</p>
+             </div>
+             <div>
+               <div className="border-b border-black mb-1 p-1"></div>
+               <p className="text-sm">
+                 {t('app.lending.compliance_sign_off_designation')}
+               </p>
+             </div>
+           </div>
+           <div className="grid grid-cols-2 gap-16 mt-12">
+             <div>
+               <div className="border-b border-black mb-1 p-1"></div>
+               <p className="text-sm">{t('common.signature')}</p>
+             </div>
+             <div>
+               <div className="border-b border-black mb-1 p-1"></div>
+               <p className="text-sm">{t('common.date')}</p>
+             </div>
+           </div>
+         </div>
             <div>
               <div className="border-b border-black mb-1 p-1"></div>
               <p className="text-sm">

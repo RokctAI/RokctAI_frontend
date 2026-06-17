@@ -43,6 +43,7 @@ import {
   Download,
   RotateCcw,
 } from "lucide-react";
+import t from "@/app/lib/i18n";
 import {
   getBackups,
   createBackup,
@@ -247,9 +248,9 @@ function BackupsContent() {
                   value={selectedWebsite}
                   onValueChange={setSelectedWebsite}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select website" />
-                  </SelectTrigger>
+                   <SelectTrigger>
+                     <SelectValue placeholder={t('app.control.rpanel.backups.ph_website')} />
+                   </SelectTrigger>
                   <SelectContent>
                     {websites.map((site) => (
                       <SelectItem key={site.name} value={site.name}>
@@ -261,10 +262,10 @@ function BackupsContent() {
               </div>
               <div className="space-y-2">
                 <Label>Backup Type</Label>
-                <Select value={selectedType} onValueChange={setSelectedType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
+                 <Select value={selectedType} onValueChange={setSelectedType}>
+                   <SelectTrigger>
+                     <SelectValue placeholder={t('app.control.rpanel.backups.ph_type')} />
+                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Full">
                       Full Backup (Files + DB)

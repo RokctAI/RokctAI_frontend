@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import t from "@/app/lib/i18n";
 
 import {
   Collapsible,
@@ -36,97 +37,97 @@ import {
 
 const merchantMenuItems = [
   {
-    title: "Products",
+    title: t('nav.merchant.products'),
     icon: ShoppingBag,
     items: [
-      { title: "All Products", url: "/paas/dashboard/products" },
-      { title: "Categories", url: "/paas/dashboard/products/categories" },
-      { title: "Extras & Addons", url: "/paas/dashboard/products/extras" },
-      { title: "Recipes", url: "/paas/dashboard/products/receipts" },
-      { title: "Menus", url: "/paas/dashboard/products/menus" },
-      { title: "Combos", url: "/paas/dashboard/products/combos" },
+      { title: t('nav.merchant.all_products'), url: "/paas/dashboard/products" },
+      { title: t('nav.merchant.categories'), url: "/paas/dashboard/products/categories" },
+      { title: t('nav.merchant.extras'), url: "/paas/dashboard/products/extras" },
+      { title: t('nav.merchant.recipes'), url: "/paas/dashboard/products/receipts" },
+      { title: t('nav.merchant.menus'), url: "/paas/dashboard/products/menus" },
+      { title: t('nav.merchant.combos'), url: "/paas/dashboard/products/combos" },
     ],
   },
   {
-    title: "Orders",
+    title: t('nav.merchant.orders'),
     icon: List,
     items: [
-      { title: "All Orders", url: "/paas/dashboard/orders" },
-      { title: "Parcel Orders", url: "/paas/dashboard/orders/parcels" },
-      { title: "Refunds", url: "/paas/dashboard/orders/refunds" },
-      { title: "Reviews", url: "/paas/dashboard/orders/reviews" },
+      { title: t('nav.merchant.all_orders'), url: "/paas/dashboard/orders" },
+      { title: t('nav.merchant.parcel_orders'), url: "/paas/dashboard/orders/parcels" },
+      { title: t('nav.merchant.refunds'), url: "/paas/dashboard/orders/refunds" },
+      { title: t('nav.merchant.reviews'), url: "/paas/dashboard/orders/reviews" },
     ],
   },
   {
-    title: "Restaurant",
+    title: t('nav.merchant.restaurant'),
     icon: Store,
     items: [
-      { title: "Branches", url: "/paas/dashboard/restaurant/branches" },
-      { title: "Kitchens", url: "/paas/dashboard/restaurant/kitchens" },
-      { title: "Staff", url: "/paas/dashboard/restaurant/staff" },
+      { title: t('nav.merchant.branches'), url: "/paas/dashboard/restaurant/branches" },
+      { title: t('nav.merchant.kitchens'), url: "/paas/dashboard/restaurant/kitchens" },
+      { title: t('nav.merchant.staff'), url: "/paas/dashboard/restaurant/staff" },
     ],
   },
   {
-    title: "Booking",
+    title: t('nav.merchant.booking'),
     icon: Calendar,
     items: [
-      { title: "Reservations", url: "/paas/dashboard/booking/reservations" },
-      { title: "Tables & Zones", url: "/paas/dashboard/booking/tables" },
+      { title: t('nav.merchant.reservations'), url: "/paas/dashboard/booking/reservations" },
+      { title: t('nav.merchant.tables_zones'), url: "/paas/dashboard/booking/tables" },
     ],
   },
   {
-    title: "Business",
+    title: t('nav.merchant.business'),
     icon: Briefcase,
     items: [
-      { title: "Subscriptions", url: "/paas/dashboard/business/subscriptions" },
-      { title: "Ad Packages", url: "/paas/dashboard/business/ads" },
-      { title: "Invites", url: "/paas/dashboard/invites" },
+      { title: t('nav.merchant.subscriptions'), url: "/paas/dashboard/business/subscriptions" },
+      { title: t('nav.merchant.ad_packages'), url: "/paas/dashboard/business/ads" },
+      { title: t('nav.merchant.invites'), url: "/paas/dashboard/invites" },
     ],
   },
   {
-    title: "Finance",
+    title: t('nav.merchant.finance'),
     icon: DollarSign,
     items: [
-      { title: "Wallet", url: "/paas/dashboard/finance/wallet" },
-      { title: "Transactions", url: "/paas/dashboard/finance/transactions" },
-      { title: "Payouts", url: "/paas/dashboard/finance/payouts" },
+      { title: t('nav.merchant.wallet'), url: "/paas/dashboard/finance/wallet" },
+      { title: t('nav.merchant.transactions'), url: "/paas/dashboard/finance/transactions" },
+      { title: t('nav.merchant.payouts'), url: "/paas/dashboard/finance/payouts" },
     ],
   },
   {
-    title: "Marketing",
+    title: t('nav.merchant.marketing'),
     icon: Megaphone,
     items: [
-      { title: "Coupons", url: "/paas/dashboard/marketing/coupons" },
-      { title: "Bonuses", url: "/paas/dashboard/marketing/bonuses" },
+      { title: t('nav.merchant.coupons'), url: "/paas/dashboard/marketing/coupons" },
+      { title: t('nav.merchant.bonuses'), url: "/paas/dashboard/marketing/bonuses" },
     ],
   },
   {
-    title: "Content",
+    title: t('nav.merchant.content'),
     icon: Layers,
     items: [
-      { title: "Stories", url: "/paas/dashboard/content/stories" },
-      { title: "Brands", url: "/paas/dashboard/content/brands" },
-      { title: "Shop Gallery", url: "/paas/dashboard/settings/gallery" },
-      { title: "Parcel Settings", url: "/paas/dashboard/settings/parcel" },
+      { title: t('nav.merchant.stories'), url: "/paas/dashboard/content/stories" },
+      { title: t('nav.merchant.brands'), url: "/paas/dashboard/content/brands" },
+      { title: t('nav.merchant.shop_gallery'), url: "/paas/dashboard/settings/gallery" },
+      { title: t('nav.merchant.parcel_settings'), url: "/paas/dashboard/settings/parcel" },
     ],
   },
   {
-    title: "Customers",
+    title: t('nav.merchant.customers'),
     icon: Users,
     url: "/paas/dashboard/customers",
   },
   {
-    title: "Reports",
+    title: t('nav.merchant.reports'),
     icon: BarChart3,
     url: "/paas/dashboard/reports",
   },
   {
-    title: "POS",
+    title: t('nav.merchant.pos'),
     icon: Store, // Or another suitable icon
     url: "/paas/dashboard/pos",
   },
   {
-    title: "Settings",
+    title: t('nav.merchant.settings'),
     icon: Settings,
     url: "/paas/dashboard/settings",
   },
@@ -137,7 +138,7 @@ export function MerchantNav() {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Merchant Panel</SidebarGroupLabel>
+      <SidebarGroupLabel>{t('nav.merchant.panel_label')}</SidebarGroupLabel>
       <SidebarMenu>
         {merchantMenuItems.map((item) =>
           item.items ? (

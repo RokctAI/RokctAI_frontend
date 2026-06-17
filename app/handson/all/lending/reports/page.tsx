@@ -7,6 +7,7 @@ import { getSessionCurrency } from "@/app/actions/currency";
 import { LENDING_REPORTS, ReportConfig } from "@/app/lib/reports_config";
 import { FileText, Loader2, Download, Table as TableIcon } from "lucide-react";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 
 export default function ReportsDashboard() {
   const [selectedReport, setSelectedReport] = useState<ReportConfig | null>(
@@ -48,10 +49,10 @@ export default function ReportsDashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
-          Regulatory & Operational Reports
+          {t('app.lending.reports_title')}
         </h1>
         <p className="text-gray-500 mt-1">
-          Generate standard reports for compliance and auditing.
+          {t('app.lending.reports_desc')}
         </p>
       </div>
 
@@ -79,7 +80,7 @@ export default function ReportsDashboard() {
           {!selectedReport ? (
             <div className="flex-1 flex flex-col items-center justify-center text-gray-400 p-8">
               <TableIcon className="w-12 h-12 mb-4 opacity-20" />
-              <p>Select a report to generate</p>
+              <p>{t('app.lending.reports_select_prompt')}</p>
             </div>
           ) : (
             <>
@@ -87,14 +88,14 @@ export default function ReportsDashboard() {
                 <h3 className="font-semibold text-gray-900">
                   {selectedReport.title}
                 </h3>
-                {reportData && reportData.data.length > 0 && (
-                  <button
-                    onClick={() => toast.info("Export feature coming soon")}
-                    className="text-gray-500 hover:text-blue-600 transition-colors"
-                  >
-                    <Download className="w-5 h-5" />
-                  </button>
-                )}
+                 {reportData && reportData.data.length > 0 && (
+                   <button
+                     onClick={() => toast.info(t('app.lending.export_soon'))}
+                     className="text-gray-500 hover:text-blue-600 transition-colors"
+                   >
+                     <Download className="w-5 h-5" />
+                   </button>
+                 )}
               </div>
 
               <div className="flex-1 overflow-auto p-0 relative">
@@ -102,11 +103,11 @@ export default function ReportsDashboard() {
                   <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
                     <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
                   </div>
-                ) : reportData?.data?.length === 0 ? (
-                  <div className="p-12 text-center text-gray-500">
-                    No data found for this report.
-                  </div>
-                ) : (
+                 ) : reportData?.data?.length === 0 ? (
+                   <div className="p-12 text-center text-gray-500">
+                     {t('common.no_data')}
+                   </div>
+                 ) : (
                   <table className="w-full text-left text-sm whitespace-nowrap">
                     <thead className="bg-gray-50 text-gray-500 font-medium sticky top-0 z-10 shadow-sm">
                       <tr>

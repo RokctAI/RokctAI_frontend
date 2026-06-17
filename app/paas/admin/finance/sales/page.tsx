@@ -3,6 +3,7 @@
 import { format, subDays } from "date-fns";
 import { Loader2, Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import t from "@/app/lib/i18n";
 
 import { getSalesReport } from "@/app/actions/paas/admin/finance";
 import { Button } from "@/components/ui/button";
@@ -50,12 +51,12 @@ export default function AdminSalesReportPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Sales Report</h1>
-
+      <h1 className="text-3xl font-bold">{t('paas.admin.finance.sales.title')}</h1>
+ 
       <Card>
         <CardContent className="p-4 flex flex-wrap gap-4 items-end">
           <div className="space-y-2">
-            <label className="text-sm font-medium">From Date</label>
+            <label className="text-sm font-medium">{t('paas.admin.finance.sales.label_from')}</label>
             <Input
               type="date"
               value={fromDate}
@@ -63,7 +64,7 @@ export default function AdminSalesReportPage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">To Date</label>
+            <label className="text-sm font-medium">{t('paas.admin.finance.sales.label_to')}</label>
             <Input
               type="date"
               value={toDate}
@@ -71,9 +72,9 @@ export default function AdminSalesReportPage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Shop (Optional)</label>
+            <label className="text-sm font-medium">{t('paas.admin.finance.sales.label_shop')}</label>
             <Input
-              placeholder="Shop Name"
+              placeholder={t('paas.admin.finance.sales.ph_shop')}
               value={company}
               onChange={(e) => setCompany(e.target.value)}
             />
@@ -84,15 +85,15 @@ export default function AdminSalesReportPage() {
             ) : (
               <Search className="mr-2 size-4" />
             )}
-            Generate Report
+            {t('paas.admin.finance.sales.btn_generate')}
           </Button>
         </CardContent>
       </Card>
-
+ 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('paas.admin.finance.sales.card_total_sales')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${totalSales.toFixed(2)}</div>
@@ -101,7 +102,7 @@ export default function AdminSalesReportPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Commission
+              {t('paas.admin.finance.sales.card_total_commission')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -111,23 +112,23 @@ export default function AdminSalesReportPage() {
           </CardContent>
         </Card>
       </div>
-
+ 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Shop</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Commission</TableHead>
+              <TableHead>{t('paas.admin.finance.sales.col_date')}</TableHead>
+              <TableHead>{t('paas.admin.finance.sales.col_order_id')}</TableHead>
+              <TableHead>{t('paas.admin.finance.sales.col_shop')}</TableHead>
+              <TableHead>{t('paas.admin.finance.sales.col_total')}</TableHead>
+              <TableHead>{t('paas.admin.finance.sales.col_commission')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {report.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center h-24">
-                  No data found for selected period.
+                  {t('paas.admin.finance.sales.no_data')}
                 </TableCell>
               </TableRow>
             ) : (

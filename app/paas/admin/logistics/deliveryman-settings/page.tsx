@@ -3,6 +3,7 @@
 import { Loader2, Save } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 
 import {
   getDeliverySettings,
@@ -35,18 +36,18 @@ export default function DeliverymanSettingsPage() {
         setFormData(data);
       }
     } catch (error) {
-      toast.error("Failed to load delivery settings");
+      toast.error(t('paas.admin.logistics.deliveryman_settings.toast_load_fail'));
     } finally {
       setLoading(false);
     }
   }
-
+ 
   async function handleSave() {
     try {
       await updateDeliverySettings(formData);
-      toast.success("Delivery settings updated");
+      toast.success(t('paas.admin.logistics.deliveryman_settings.toast_save_success'));
     } catch (error) {
-      toast.error("Failed to update delivery settings");
+      toast.error(t('paas.admin.logistics.deliveryman_settings.toast_save_fail'));
     }
   }
 
@@ -62,24 +63,24 @@ export default function DeliverymanSettingsPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
-          Deliveryman Settings
+          {t('paas.admin.logistics.deliveryman_settings.title')}
         </h2>
         <p className="text-muted-foreground">
-          Configure global settings for delivery operations.
+          {t('paas.admin.logistics.deliveryman_settings.desc')}
         </p>
       </div>
-
+ 
       <Card>
         <CardHeader>
-          <CardTitle>General Configuration</CardTitle>
+          <CardTitle>{t('paas.admin.logistics.deliveryman_settings.card_title')}</CardTitle>
           <CardDescription>
-            Set default values and rules for deliverymen.
+            {t('paas.admin.logistics.deliveryman_settings.card_desc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Search Radius (km)</Label>
+              <Label>{t('paas.admin.logistics.deliveryman_settings.label_search_radius')}</Label>
               <Input
                 type="number"
                 value={formData.search_radius || ""}
@@ -89,11 +90,11 @@ export default function DeliverymanSettingsPage() {
                     search_radius: parseFloat(e.target.value),
                   })
                 }
-                placeholder="e.g., 10"
+                placeholder={t('paas.admin.logistics.deliveryman_settings.ph_search_radius')}
               />
             </div>
             <div className="space-y-2">
-              <Label>Max Orders per Driver</Label>
+              <Label>{t('paas.admin.logistics.deliveryman_settings.label_max_orders')}</Label>
               <Input
                 type="number"
                 value={formData.max_orders || ""}
@@ -103,11 +104,11 @@ export default function DeliverymanSettingsPage() {
                     max_orders: parseInt(e.target.value),
                   })
                 }
-                placeholder="e.g., 5"
+                placeholder={t('paas.admin.logistics.deliveryman_settings.ph_max_orders')}
               />
             </div>
             <div className="space-y-2">
-              <Label>Base Delivery Fee</Label>
+              <Label>{t('paas.admin.logistics.deliveryman_settings.label_base_fee')}</Label>
               <Input
                 type="number"
                 value={formData.base_fee || ""}
@@ -121,7 +122,7 @@ export default function DeliverymanSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Fee per km</Label>
+              <Label>{t('paas.admin.logistics.deliveryman_settings.label_fee_per_km')}</Label>
               <Input
                 type="number"
                 value={formData.fee_per_km || ""}
@@ -135,7 +136,7 @@ export default function DeliverymanSettingsPage() {
               />
             </div>
           </div>
-
+ 
           <div className="flex items-center space-x-2 pt-4">
             <Switch
               checked={!!formData.auto_assign}
@@ -143,15 +144,15 @@ export default function DeliverymanSettingsPage() {
                 setFormData({ ...formData, auto_assign: checked ? 1 : 0 })
               }
             />
-            <Label>Auto-assign Orders</Label>
+            <Label>{t('paas.admin.logistics.deliveryman_settings.label_auto_assign')}</Label>
           </div>
         </CardContent>
       </Card>
-
+ 
       <div className="flex justify-end">
         <Button onClick={handleSave}>
           <Save className="mr-2 size-4" />
-          Save Changes
+          {t('paas.admin.logistics.deliveryman_settings.btn_save')}
         </Button>
       </div>
     </div>

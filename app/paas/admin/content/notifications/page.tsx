@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import t from "@/app/lib/i18n";
 
 import { getNotifications } from "@/app/actions/paas/admin/content";
 import {
@@ -34,16 +35,16 @@ export default function AdminNotificationsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Push Notifications</h1>
-
+      <h1 className="text-3xl font-bold">{t('paas.admin.notifications.title')}</h1>
+ 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Message</TableHead>
-              <TableHead>Sent At</TableHead>
-              <TableHead>Target</TableHead>
+              <TableHead>{t('paas.admin.notifications.col_title')}</TableHead>
+              <TableHead>{t('paas.admin.notifications.col_message')}</TableHead>
+              <TableHead>{t('paas.admin.notifications.col_sent_at')}</TableHead>
+              <TableHead>{t('paas.admin.notifications.col_target')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -59,7 +60,7 @@ export default function AdminNotificationsPage() {
                   colSpan={4}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No notifications found.
+                  {t('paas.admin.notifications.no_notifications')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -70,7 +71,7 @@ export default function AdminNotificationsPage() {
                   <TableCell>
                     {format(new Date(notif.creation), "PPP p")}
                   </TableCell>
-                  <TableCell>{notif.target_audience || "All Users"}</TableCell>
+                  <TableCell>{notif.target_audience || t('paas.admin.notifications.all_users')}</TableCell>
                 </TableRow>
               ))
             )}

@@ -1,0 +1,1251 @@
+{
+  "timestamp": "2026-06-18T20:33:44.040642+00:00Z",
+  "control_id": "SOC2-CC7.1-COMPLIANCE",
+  "status": "FAIL",
+  "system": "compliance-scanner",
+  "detail": "Architectural compliance scan failed with 207 violations across source code checks.",
+  "violations": [
+    {
+      "file": ".\\app\\handson\\tenant\\settings\\integrations\\page.tsx",
+      "line": 314,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'M21 12a9 9 0 1 ...' detected in 'page.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\paas\\admin\\settings\\whatsapp\\page.tsx",
+      "line": 226,
+      "what": "Layer 4 & 5 (Security - Next.js)",
+      "why": "Hardcoded security parameter or UI label detected in 'page.tsx'. Use translation keys (e.g., t('key')) or dynamic server env variables instead of static front-end strings."
+    },
+    {
+      "file": ".\\app\\paas\\admin\\settings\\whatsapp\\page.tsx",
+      "line": 245,
+      "what": "Layer 4 & 5 (Security - Next.js)",
+      "why": "Hardcoded security parameter or UI label detected in 'page.tsx'. Use translation keys (e.g., t('key')) or dynamic server env variables instead of static front-end strings."
+    },
+    {
+      "file": ".\\app\\paas\\admin\\settings\\whatsapp\\page.tsx",
+      "line": 284,
+      "what": "Layer 4 & 5 (Security - Next.js)",
+      "why": "Hardcoded security parameter or UI label detected in 'page.tsx'. Use translation keys (e.g., t('key')) or dynamic server env variables instead of static front-end strings."
+    },
+    {
+      "file": ".\\app\\services\\all\\crm\\deals.ts",
+      "line": 79,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 's just ...' detected in 'deals.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\addis_ababa.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'addis_ababa.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\addis_ababa.ts",
+      "line": 6,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'addis_ababa.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\hong_kong.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\hong_kong.ts",
+      "line": 6,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\hong_kong.ts",
+      "line": 9,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'color: #d9534f;...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\hong_kong.ts",
+      "line": 26,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\istanbul.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Courier, mono...' detected in 'istanbul.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\istanbul.ts",
+      "line": 22,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'background: #33...' detected in 'istanbul.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\london.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Times, serif;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\london.ts",
+      "line": 4,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\london.ts",
+      "line": 30,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\london.ts",
+      "line": 32,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 50%;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\london.ts",
+      "line": 39,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 50%;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\mumbai.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'mumbai.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\mumbai.ts",
+      "line": 9,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'color: #28a745;...' detected in 'mumbai.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\new_york.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\new_york.ts",
+      "line": 6,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\new_york.ts",
+      "line": 22,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\rio.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'rio.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\rio.ts",
+      "line": 7,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'rio.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\rio.ts",
+      "line": 34,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'rio.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\sydney.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'sydney.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\sydney.ts",
+      "line": 6,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'sydney.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\tokyo.ts",
+      "line": 6,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'tokyo.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\toronto.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\toronto.ts",
+      "line": 6,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\toronto.ts",
+      "line": 9,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'color: #007bff;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\toronto.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'color: #777;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\invoices\\toronto.ts",
+      "line": 21,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\addis_ababa.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Courier, mono...' detected in 'addis_ababa.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\addis_ababa.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'addis_ababa.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\addis_ababa.ts",
+      "line": 9,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'addis_ababa.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\addis_ababa.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'addis_ababa.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\addis_ababa.ts",
+      "line": 33,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'addis_ababa.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\hong_kong.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Courier, mono...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\hong_kong.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0; colo...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\hong_kong.ts",
+      "line": 9,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\hong_kong.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\hong_kong.ts",
+      "line": 33,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\istanbul.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Courier, mono...' detected in 'istanbul.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\istanbul.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'istanbul.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\istanbul.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'istanbul.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\istanbul.ts",
+      "line": 11,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'istanbul.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\istanbul.ts",
+      "line": 34,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'istanbul.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\london.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Times, serif;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\london.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\london.ts",
+      "line": 11,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\london.ts",
+      "line": 34,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\mumbai.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0; colo...' detected in 'mumbai.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\mumbai.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'mumbai.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\mumbai.ts",
+      "line": 11,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'mumbai.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\mumbai.ts",
+      "line": 34,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'mumbai.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\new_york.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Courier, mono...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\new_york.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\new_york.ts",
+      "line": 11,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\new_york.ts",
+      "line": 12,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\new_york.ts",
+      "line": 13,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\new_york.ts",
+      "line": 36,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\rio.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Courier, mono...' detected in 'rio.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\rio.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0; colo...' detected in 'rio.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\rio.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'rio.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\rio.ts",
+      "line": 11,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'rio.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\rio.ts",
+      "line": 34,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'rio.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\sydney.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Courier, mono...' detected in 'sydney.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\sydney.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0; colo...' detected in 'sydney.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\sydney.ts",
+      "line": 9,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'sydney.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\sydney.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'sydney.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\sydney.ts",
+      "line": 26,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'sydney.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\tokyo.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Courier, mono...' detected in 'tokyo.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\tokyo.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'tokyo.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\tokyo.ts",
+      "line": 9,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'tokyo.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\tokyo.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'tokyo.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\tokyo.ts",
+      "line": 33,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'tokyo.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\toronto.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Courier, mono...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\toronto.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0; colo...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\toronto.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\toronto.ts",
+      "line": 11,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\pos\\toronto.ts",
+      "line": 34,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\addis_ababa.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'addis_ababa.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\addis_ababa.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'margin: 0;...' detected in 'addis_ababa.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\hong_kong.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\hong_kong.ts",
+      "line": 5,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'color: #d9534f;...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\hong_kong.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'hong_kong.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\istanbul.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Courier, mono...' detected in 'istanbul.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\istanbul.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'istanbul.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\istanbul.ts",
+      "line": 31,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'background: #33...' detected in 'istanbul.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\london.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Times, serif;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\london.ts",
+      "line": 4,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'london.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\mumbai.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'mumbai.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\mumbai.ts",
+      "line": 9,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'color: #28a745;...' detected in 'mumbai.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\new_york.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\new_york.ts",
+      "line": 6,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\new_york.ts",
+      "line": 23,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'new_york.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\rio.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'rio.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\rio.ts",
+      "line": 21,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'rio.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\sydney.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'sydney.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\sydney.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'sydney.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\tokyo.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'tokyo.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\tokyo.ts",
+      "line": 12,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'tokyo.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\toronto.ts",
+      "line": 2,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string ', Helvetica, Ar...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\toronto.ts",
+      "line": 6,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\toronto.ts",
+      "line": 9,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'color: #007bff;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\toronto.ts",
+      "line": 10,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'color: #777;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\app\\templates\\quotations\\toronto.ts",
+      "line": 21,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'width: 100%;...' detected in 'toronto.ts'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\custom\\hero.tsx",
+      "line": 349,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string '0 0 24 24...' detected in 'hero.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\custom\\hero.tsx",
+      "line": 545,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'M318.7 268.7c-....' detected in 'hero.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\custom\\icons.tsx",
+      "line": 297,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'M8 0V4...' detected in 'icons.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\custom\\multimodal-input.tsx",
+      "line": 199,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'show competitor...' detected in 'multimodal-input.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\custom\\multimodal-input.tsx",
+      "line": 205,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'says checkin...' detected in 'multimodal-input.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\custom\\multimodal-input.tsx",
+      "line": 207,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'tap again add c...' detected in 'multimodal-input.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\custom\\merlin\\all-features-section.tsx",
+      "line": 87,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string '0 0 24 24...' detected in 'all-features-section.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\custom\\merlin\\devices-section.tsx",
+      "line": 50,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'M318.7 268.7c-....' detected in 'devices-section.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\custom\\merlin\\workflow-section.tsx",
+      "line": 126,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string '0 0 24 24...' detected in 'workflow-section.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\asset-form.tsx",
+      "line": 225,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Server Roo...' detected in 'asset-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\asset-form.tsx",
+      "line": 233,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Status...' detected in 'asset-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\blanket-order-components.tsx",
+      "line": 164,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Supplier...' detected in 'blanket-order-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\bom-form.tsx",
+      "line": 155,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Finished P...' detected in 'bom-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\bom-form.tsx",
+      "line": 179,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Company...' detected in 'bom-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\bom-list.tsx",
+      "line": 58,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search BOMs......' detected in 'bom-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\budget-components.tsx",
+      "line": 103,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Main - JVO...' detected in 'budget-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\budget-components.tsx",
+      "line": 114,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Expenses...' detected in 'budget-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\cost-center-components.tsx",
+      "line": 90,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Main - JVO...' detected in 'cost-center-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\invoice-form.tsx",
+      "line": 156,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Test Custo...' detected in 'invoice-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\invoice-list.tsx",
+      "line": 57,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search......' detected in 'invoice-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\issue-form.tsx",
+      "line": 136,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Brief summary o...' detected in 'issue-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\issue-form.tsx",
+      "line": 183,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Detailed explan...' detected in 'issue-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\issue-form.tsx",
+      "line": 234,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Type your reply...' detected in 'issue-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\issue-list.tsx",
+      "line": 52,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search Issues.....' detected in 'issue-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\item-form.tsx",
+      "line": 130,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Group...' detected in 'item-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\item-form.tsx",
+      "line": 145,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select UOM...' detected in 'item-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\job-applicant-list.tsx",
+      "line": 66,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search candidat...' detected in 'job-applicant-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\job-opening-list.tsx",
+      "line": 50,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search jobs......' detected in 'job-opening-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\journal-entry-components.tsx",
+      "line": 111,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Bank...' detected in 'journal-entry-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\journal-entry-components.tsx",
+      "line": 133,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Cash...' detected in 'journal-entry-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\JulesInteractive.tsx",
+      "line": 38,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Loading......' detected in 'JulesInteractive.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\JulesInteractive.tsx",
+      "line": 219,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Type a message ...' detected in 'JulesInteractive.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\lead-form.tsx",
+      "line": 106,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. John Doe...' detected in 'lead-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\lead-form.tsx",
+      "line": 116,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Acme Corp...' detected in 'lead-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\lead-form.tsx",
+      "line": 147,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Status...' detected in 'lead-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\lead-list.tsx",
+      "line": 62,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search Leads......' detected in 'lead-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\naming-series-form.tsx",
+      "line": 82,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Document...' detected in 'naming-series-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\naming-series-form.tsx",
+      "line": 100,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. INV-.YYYY....' detected in 'naming-series-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\naming-series-form.tsx",
+      "line": 116,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. 100...' detected in 'naming-series-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\note-components.tsx",
+      "line": 109,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Details......' detected in 'note-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\opportunity-form.tsx",
+      "line": 137,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Status...' detected in 'opportunity-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\opportunity-list.tsx",
+      "line": 60,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search Opportun...' detected in 'opportunity-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\project-form.tsx",
+      "line": 113,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Website Ov...' detected in 'project-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\project-form.tsx",
+      "line": 124,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Status...' detected in 'project-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\project-form.tsx",
+      "line": 137,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Priority...' detected in 'project-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\project-list.tsx",
+      "line": 93,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search......' detected in 'project-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\prospect-form.tsx",
+      "line": 130,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Wayne Ente...' detected in 'prospect-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\prospect-form.tsx",
+      "line": 152,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Commercial...' detected in 'prospect-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\prospect-form.tsx",
+      "line": 162,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. South Afri...' detected in 'prospect-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\prospect-form.tsx",
+      "line": 179,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Tech...' detected in 'prospect-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\prospect-form.tsx",
+      "line": 189,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Enterprise...' detected in 'prospect-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\prospect-form.tsx",
+      "line": 197,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Range...' detected in 'prospect-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\prospect-list.tsx",
+      "line": 61,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search Prospect...' detected in 'prospect-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\purchase-invoice-components.tsx",
+      "line": 95,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Supplier Name...' detected in 'purchase-invoice-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\purchase-invoice-list.tsx",
+      "line": 61,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search......' detected in 'purchase-invoice-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\purchase-order-form.tsx",
+      "line": 158,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Test Suppl...' detected in 'purchase-order-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\purchase-order-list.tsx",
+      "line": 58,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search......' detected in 'purchase-order-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\purchase-order-list.tsx",
+      "line": 124,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Make Bill...' detected in 'purchase-order-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\purchase-receipt-components.tsx",
+      "line": 83,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Supplier Name...' detected in 'purchase-receipt-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\quotation-form.tsx",
+      "line": 162,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Test Custo...' detected in 'quotation-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\quotation-list.tsx",
+      "line": 57,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search......' detected in 'quotation-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\routing-components.tsx",
+      "line": 122,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Operation (e.g....' detected in 'routing-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\sales-order-components.tsx",
+      "line": 105,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Customer Name...' detected in 'sales-order-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\stock-entry-form.tsx",
+      "line": 193,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Company...' detected in 'stock-entry-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\stock-logistics-components.tsx",
+      "line": 314,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'DN-202X-XXXX...' detected in 'stock-logistics-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\subcontracting-order-form.tsx",
+      "line": 91,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Supplier Name...' detected in 'subcontracting-order-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\subcontracting-order-list.tsx",
+      "line": 36,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search......' detected in 'subcontracting-order-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\subscription-components.tsx",
+      "line": 273,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Customer...' detected in 'subscription-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\subscription-components.tsx",
+      "line": 296,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Plan...' detected in 'subscription-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\supplier-list.tsx",
+      "line": 60,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search supplier...' detected in 'supplier-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\support-extras-components.tsx",
+      "line": 254,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select Customer...' detected in 'support-extras-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\timesheet-components.tsx",
+      "line": 89,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Developmen...' detected in 'timesheet-components.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\unified-workspace.tsx",
+      "line": 85,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Select type...' detected in 'unified-workspace.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\work-order-form.tsx",
+      "line": 107,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Finished P...' detected in 'work-order-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\work-order-list.tsx",
+      "line": 44,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Search Work Ord...' detected in 'work-order-list.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\ai\\AiTextHelper.tsx",
+      "line": 203,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Translate ...' detected in 'AiTextHelper.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\handson\\contracts\\create-contract-dialog.tsx",
+      "line": 53,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Create Contract...' detected in 'create-contract-dialog.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\platform\\forms\\lending\\operations.tsx",
+      "line": 81,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Enter term_loan...' detected in 'operations.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\platform\\forms\\paas\\orders.tsx",
+      "line": 82,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Enter status......' detected in 'orders.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\projects\\project-card.tsx",
+      "line": 64,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Project Name...' detected in 'project-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\projects\\project-card.tsx",
+      "line": 72,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Add a descripti...' detected in 'project-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\announcement-card.tsx",
+      "line": 38,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'M12 2a3 3 0 0 0...' detected in 'announcement-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\announcement-card.tsx",
+      "line": 39,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'M19 10v2a7 7 0 ...' detected in 'announcement-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\competitor-form.tsx",
+      "line": 135,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. Woolworths...' detected in 'competitor-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\holiday-work-form.tsx",
+      "line": 19,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Me Only...' detected in 'holiday-work-form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\lead-form-card.tsx",
+      "line": 94,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. John Doe...' detected in 'lead-form-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\lead-form-card.tsx",
+      "line": 132,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string '13 digits...' detected in 'lead-form-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\lead-form-card.tsx",
+      "line": 151,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Company Name...' detected in 'lead-form-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\leave-application.tsx",
+      "line": 100,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Taking a break....' detected in 'leave-application.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\profile-form-card.tsx",
+      "line": 118,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'e.g. FNB...' detected in 'profile-form-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\profile-form-card.tsx",
+      "line": 135,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'SARS Ref...' detected in 'profile-form-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\profile-form-card.tsx",
+      "line": 155,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Digits only...' detected in 'profile-form-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\profile-form-card.tsx",
+      "line": 172,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string '6 digits...' detected in 'profile-form-card.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\resignation-confirmation.tsx",
+      "line": 69,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'I have decided ...' detected in 'resignation-confirmation.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\set-reminder.tsx",
+      "line": 14,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Next Week...' detected in 'set-reminder.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\tasks\\set-reminder.tsx",
+      "line": 37,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Next Week...' detected in 'set-reminder.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\ui\\form.tsx",
+      "line": 52,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'useFormField sh...' detected in 'form.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    },
+    {
+      "file": ".\\components\\ui\\sidebar.tsx",
+      "line": 291,
+      "what": "Layer 4 & 5 (Localization - Next.js)",
+      "why": "Hardcoded UI string 'Toggle Sidebar...' detected in 'sidebar.tsx'. All user-facing text must be wrapped in t('key') for translation compliance."
+    }
+  ]
+}

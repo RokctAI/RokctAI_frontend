@@ -54,6 +54,7 @@ import {
   createUser,
   UserRole,
 } from "@/app/actions/handson/tenant/settings/users";
+import t from "@/app/lib/i18n";
 
 const userSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -84,7 +85,7 @@ export default function UsersPage() {
       setUsers(data || []);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to load users");
+      toast.error(t('app.users.toast_load_fail'));
     } finally {
       setLoading(false);
     }
@@ -108,57 +109,57 @@ export default function UsersPage() {
     try {
       const res = await createUser(values);
       if (res.success) {
-        toast.success("User created successfully");
+        toast.success(t('app.users.toast_create_success'));
         fetchUsers();
         setIsDialogOpen(false);
       } else {
-        toast.error("Failed to create user: " + res.error);
+        toast.error(t('app.users.toast_create_fail', { error: res.error }));
       }
     } catch (error) {
-      toast.error("An error occurred");
+      toast.error(t('app.users.toast_error'));
     }
   };
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">User Management</h1>
-          <p className="text-muted-foreground">
-            Manage login access and roles for your team & clients.
-          </p>
-        </div>
-        <Button onClick={openDialog}>
-          <Plus className="mr-2 h-4 w-4" /> Add User
-        </Button>
-      </div>
+       <div className="flex justify-between items-center">
+         <div>
+           <h1 className="text-3xl font-bold">{t('app.users.title')}</h1>
+           <p className="text-muted-foreground">
+             {t('app.users.desc')}
+           </p>
+         </div>
+         <Button onClick={openDialog}>
+           <Plus className="mr-2 h-4 w-4" /> {t('app.users.btn_add')}
+         </Button>
+       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Users</CardTitle>
-          <CardDescription>
-            Accounts with access to the platform.
-          </CardDescription>
-        </CardHeader>
+         <CardHeader>
+           <CardTitle>{t('app.users.card_title')}</CardTitle>
+           <CardDescription>
+             {t('app.users.card_desc')}
+           </CardDescription>
+         </CardHeader>
         <CardContent>
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+             <TableHeader>
+               <TableRow>
+                 <TableHead>{t('app.users.col_name')}</TableHead>
+                 <TableHead>{t('app.users.col_email')}</TableHead>
+                 <TableHead>{t('app.users.col_status')}</TableHead>
+                 <TableHead>{t('app.users.col_actions')}</TableHead>
+               </TableRow>
+             </TableHeader>
             <TableBody>
               {users.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="text-center h-24 text-muted-foreground"
-                  >
-                    No users found.
-                  </TableCell>
+                   <TableCell
+                     colSpan={4}
+                     className="text-center h-24 text-muted-foreground"
+                   >
+                     {t('app.users.no_users')}
+                   </TableCell>
                 </TableRow>
               ) : (
                 users.map((user) => (
@@ -173,9 +174,9 @@ export default function UsersPage() {
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
-                      <Badge variant={user.enabled ? "default" : "secondary"}>
-                        {user.enabled ? "Active" : "Disabled"}
-                      </Badge>
+                       <Badge variant={user.enabled ? "default" : "secondary"}>
+                         {user.enabled ? t('app.users.status_active') : t('app.users.status_disabled')}
+                       </Badge>
                     </TableCell>
                     <TableCell></TableCell>
                   </TableRow>
@@ -186,15 +187,14 @@ export default function UsersPage() {
         </CardContent>
       </Card>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>New User Account</DialogTitle>
-            <DialogDescription>
-              Create a login for a new team member or client. They will receive
-              an email to set their password.
-            </DialogDescription>
-          </DialogHeader>
+       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+         <DialogContent className="sm:max-w-[500px]">
+           <DialogHeader>
+             <DialogTitle>{t('app.users.dialog_title')}</DialogTitle>
+             <DialogDescription>
+                {t('app.users.dialog_desc')}
+             </DialogDescription>
+           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -202,26 +202,26 @@ export default function UsersPage() {
                   control={form.control}
                   name="first_name"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                   <FormItem>
+                     <FormLabel>{t('app.users.label_first_name')}</FormLabel>
+                     <FormControl>
+                       <Input {...field} />
+                     </FormControl>
+                     <FormMessage />
+                   </FormItem>
                   )}
                 />
                 <FormField
                   control={form.control}
                   name="last_name"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                   <FormItem>
+                     <FormLabel>{t('app.users.label_last_name')}</FormLabel>
+                     <FormControl>
+                       <Input {...field} />
+                     </FormControl>
+                     <FormMessage />
+                   </FormItem>
                   )}
                 />
               </div>
@@ -230,17 +230,17 @@ export default function UsersPage() {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email Address</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="email"
-                        placeholder="colleague@company.com"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                   <FormItem>
+                     <FormLabel>{t('app.users.label_email')}</FormLabel>
+                     <FormControl>
+                       <Input
+                         {...field}
+                         type="email"
+                         placeholder={t('app.users.ph_email')}
+                       />
+                     </FormControl>
+                     <FormMessage />
+                   </FormItem>
                 )}
               />
 
@@ -248,60 +248,60 @@ export default function UsersPage() {
                 control={form.control}
                 name="role"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role Profile</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Employee">
-                          <div className="flex flex-col">
-                            <span className="font-medium">Employee</span>
-                            <span className="text-xs text-muted-foreground">
-                              Standard access to modules
-                            </span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="Accountant">
-                          <div className="flex flex-col">
-                            <span className="font-medium">Accountant</span>
-                            <span className="text-xs text-muted-foreground">
-                              Finance & Billing access
-                            </span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="Client">
-                          <div className="flex flex-col">
-                            <span className="font-medium">Client</span>
-                            <span className="text-xs text-muted-foreground">
-                              Restricted Portal access
-                            </span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="Viewer">
-                          <div className="flex flex-col">
-                            <span className="font-medium">Viewer</span>
-                            <span className="text-xs text-muted-foreground">
-                              Read-only (Demo/Audit)
-                            </span>
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
+                   <FormItem>
+                     <FormLabel>{t('app.users.label_role')}</FormLabel>
+                     <Select
+                       onValueChange={field.onChange}
+                       defaultValue={field.value}
+                     >
+                       <FormControl>
+                         <SelectTrigger>
+                           <SelectValue placeholder={t('app.users.ph_role')} />
+                         </SelectTrigger>
+                       </FormControl>
+                       <SelectContent>
+                         <SelectItem value="Employee">
+                           <div className="flex flex-col">
+                             <span className="font-medium">{t('app.users.role_employee')}</span>
+                             <span className="text-xs text-muted-foreground">
+                               {t('app.users.role_employee_desc')}
+                             </span>
+                           </div>
+                         </SelectItem>
+                         <SelectItem value="Accountant">
+                           <div className="flex flex-col">
+                             <span className="font-medium">{t('app.users.role_accountant')}</span>
+                             <span className="text-xs text-muted-foreground">
+                               {t('app.users.role_accountant_desc')}
+                             </span>
+                           </div>
+                         </SelectItem>
+                         <SelectItem value="Client">
+                           <div className="flex flex-col">
+                             <span className="font-medium">{t('app.users.role_client')}</span>
+                             <span className="text-xs text-muted-foreground">
+                               {t('app.users.role_client_desc')}
+                             </span>
+                           </div>
+                         </SelectItem>
+                         <SelectItem value="Viewer">
+                           <div className="flex flex-col">
+                             <span className="font-medium">{t('app.users.role_viewer')}</span>
+                             <span className="text-xs text-muted-foreground">
+                               {t('app.users.role_viewer_desc')}
+                             </span>
+                           </div>
+                         </SelectItem>
+                       </SelectContent>
+                     </Select>
+                     <FormMessage />
+                   </FormItem>
                 )}
               />
 
-              <DialogFooter>
-                <Button type="submit">Create User</Button>
-              </DialogFooter>
+               <DialogFooter>
+                 <Button type="submit">{t('app.users.btn_create')}</Button>
+               </DialogFooter>
             </form>
           </Form>
         </DialogContent>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Loader2, Filter } from "lucide-react";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 import {
   Select,
   SelectContent,
@@ -196,11 +197,11 @@ export default function FinancialReportsPage() {
         <h1 className="text-3xl font-bold">Financial Reports</h1>
 
         <div className="flex items-center gap-2">
-          <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select Company" />
-            </SelectTrigger>
-            <SelectContent>
+            <Select value={selectedCompany} onValueChange={setSelectedCompany}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder={t('common.select_company')} />
+              </SelectTrigger>
+              <SelectContent>
               {companies.map((c) => (
                 <SelectItem key={c.name} value={c.name}>
                   {c.company_name || c.name}

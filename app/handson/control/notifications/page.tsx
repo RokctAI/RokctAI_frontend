@@ -39,6 +39,7 @@ import {
   createMasterTemplate,
 } from "@/app/actions/handson/control/notifications/templates";
 import { PLATFORM_NAME, getGuestBranding } from "@/app/config/platform";
+import t from "@/app/lib/i18n";
 import React from "react";
 
 export default function NotificationTemplatesPage() {
@@ -222,41 +223,41 @@ export default function NotificationTemplatesPage() {
             <div className="flex flex-col gap-4 overflow-y-auto pr-2">
               <div className="space-y-2">
                 <Label>Template Name (ID)</Label>
-                <Input
-                  value={editingTemplate?.name || ""}
-                  onChange={(e) =>
-                    setEditingTemplate((prev) =>
-                      prev ? { ...prev, name: e.target.value } : null,
-                    )
-                  }
-                  disabled={!isNew}
-                  placeholder="e.g. Welcome Email"
-                />
+                   <Input
+                     value={editingTemplate?.name || ""}
+                     onChange={(e) =>
+                       setEditingTemplate((prev) =>
+                         prev ? { ...prev, name: e.target.value } : null,
+                       )
+                     }
+                     disabled={!isNew}
+                     placeholder={t('app.control.notifications.ph_template_name')}
+                   />
               </div>
               <div className="space-y-2">
                 <Label>Subject Line</Label>
-                <Input
-                  value={editingTemplate?.subject || ""}
-                  onChange={(e) =>
-                    setEditingTemplate((prev) =>
-                      prev ? { ...prev, subject: e.target.value } : null,
-                    )
-                  }
-                  placeholder="Welcome to our platform!"
-                />
+                   <Input
+                     value={editingTemplate?.subject || ""}
+                     onChange={(e) =>
+                       setEditingTemplate((prev) =>
+                         prev ? { ...prev, subject: e.target.value } : null,
+                       )
+                     }
+                     placeholder={t('app.control.notifications.ph_subject')}
+                   />
               </div>
               <div className="flex-1 flex flex-col space-y-2">
                 <Label>Email Body (HTML)</Label>
-                <Textarea
-                  className="flex-1 font-mono text-sm resize-none"
-                  value={editingTemplate?.response || ""}
-                  onChange={(e) =>
-                    setEditingTemplate((prev) =>
-                      prev ? { ...prev, response: e.target.value } : null,
-                    )
-                  }
-                  placeholder="Hi {{ doc.customer_name }}, ..."
-                />
+                   <Textarea
+                     className="flex-1 font-mono text-sm resize-none"
+                     value={editingTemplate?.response || ""}
+                     onChange={(e) =>
+                       setEditingTemplate((prev) =>
+                         prev ? { ...prev, response: e.target.value } : null,
+                       )
+                     }
+                     placeholder={t('app.control.notifications.ph_body')}
+                   />
               </div>
             </div>
 

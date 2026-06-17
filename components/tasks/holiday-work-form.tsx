@@ -6,6 +6,8 @@ import { Check, X, Users, User, Building } from "lucide-react";
 import { announceHolidayWork } from "@/app/actions/ai/holiday";
 import { getDepartments } from "@/app/actions/handson/all/hrms/departments";
 
+import t from "@/app/lib/i18n";
+
 interface HolidayWorkFormProps {
   holidayName: string;
   holidayDate: string;
@@ -16,8 +18,8 @@ export const HolidayWorkForm = ({
   holidayDate,
 }: HolidayWorkFormProps) => {
   const [step, setStep] = useState<"confirm" | "audience" | "done">("confirm");
-  const [audience, setAudience] = useState<"Me Only" | "All" | "Departments">(
-    "Me Only",
+  const [audience, setAudience] = useState<"me_only" | "all" | "departments">(
+    "me_only",
   );
   const [selectedDepts, setSelectedDepts] = useState<string[]>([]);
   const [availableDepts, setAvailableDepts] = useState<any[]>([]);
@@ -96,9 +98,9 @@ export const HolidayWorkForm = ({
 
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: "Me Only", icon: User, label: "Me Only" },
-                { id: "All", icon: Users, label: "All Staff" },
-                { id: "Departments", icon: Building, label: "Depts" },
+                { id: "me_only", icon: User, label: t("Me Only") },
+                { id: "all", icon: Users, label: t("All Staff") },
+                { id: "departments", icon: Building, label: t("Depts") },
               ].map((opt) => (
                 <button
                   key={opt.id}
@@ -116,7 +118,7 @@ export const HolidayWorkForm = ({
             </div>
           </div>
 
-          {audience === "Departments" && (
+          {audience === "departments" && (
             <div className="flex flex-col gap-2 max-h-32 overflow-y-auto border p-2 rounded-md bg-zinc-50 dark:bg-zinc-900">
               {availableDepts.length === 0 ? (
                 <span className="text-xs text-zinc-400">
@@ -158,7 +160,7 @@ export const HolidayWorkForm = ({
             onClick={handleConfirm}
             disabled={
               loading ||
-              (audience === "Departments" && selectedDepts.length === 0)
+              (audience === "departments" && selectedDepts.length === 0)
             }
             className="w-full bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >

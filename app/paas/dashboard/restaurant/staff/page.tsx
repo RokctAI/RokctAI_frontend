@@ -6,14 +6,7 @@ import { toast } from "sonner";
 
 import { getWaiters, getCooks, getDeliveryMen } from "@/app/actions/paas/staff";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import t from "@/app/lib/i18n";
 
 export default function StaffPage() {
   const [waiters, setWaiters] = useState<any[]>([]);
@@ -92,71 +85,71 @@ export default function StaffPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Staff Management</h1>
-        <p className="text-muted-foreground">
-          Manage your restaurant staff members.
-        </p>
-      </div>
+         <div>
+           <h1 className="text-3xl font-bold">{t('app.paas.dashboard.restaurant.staff.title')}</h1>
+           <p className="text-muted-foreground">
+             {t('app.paas.dashboard.restaurant.staff.desc')}
+           </p>
+         </div>
 
       <Tabs defaultValue="waiters" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="waiters" className="flex items-center gap-2">
-            <Users className="size-4" />
-            Waiters ({waiters.length})
-          </TabsTrigger>
-          <TabsTrigger value="cooks" className="flex items-center gap-2">
-            <ChefHat className="size-4" />
-            Cooks ({cooks.length})
-          </TabsTrigger>
-          <TabsTrigger value="delivery" className="flex items-center gap-2">
-            <Bike className="size-4" />
-            Delivery ({deliveryMen.length})
-          </TabsTrigger>
-        </TabsList>
+         <TabsList>
+           <TabsTrigger value="waiters" className="flex items-center gap-2">
+             <Users className="size-4" />
+             {t('app.paas.dashboard.restaurant.staff.waiters')} ({waiters.length})
+           </TabsTrigger>
+           <TabsTrigger value="cooks" className="flex items-center gap-2">
+             <ChefHat className="size-4" />
+             {t('app.paas.dashboard.restaurant.staff.cooks')} ({cooks.length})
+           </TabsTrigger>
+           <TabsTrigger value="delivery" className="flex items-center gap-2">
+             <Bike className="size-4" />
+             {t('app.paas.dashboard.restaurant.staff.delivery')} ({deliveryMen.length})
+           </TabsTrigger>
+         </TabsList>
 
-        <TabsContent value="waiters">
-          <Card>
-            <CardHeader>
-              <CardTitle>Waiters</CardTitle>
-              <CardDescription>
-                Staff members serving customers.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <StaffList staff={waiters} emptyMessage="No waiters found." />
-            </CardContent>
-          </Card>
-        </TabsContent>
+         <TabsContent value="waiters">
+           <Card>
+             <CardHeader>
+               <CardTitle>{t('app.paas.dashboard.restaurant.staff.waiters')}</CardTitle>
+               <CardDescription>
+                 {t('app.paas.dashboard.restaurant.staff.waiters_desc')}
+               </CardDescription>
+             </CardHeader>
+             <CardContent>
+               <StaffList staff={waiters} emptyMessage={t('app.paas.dashboard.restaurant.staff.waiters_empty')} />
+             </CardContent>
+           </Card>
+         </TabsContent>
 
-        <TabsContent value="cooks">
-          <Card>
-            <CardHeader>
-              <CardTitle>Cooks</CardTitle>
-              <CardDescription>Kitchen staff preparing orders.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <StaffList staff={cooks} emptyMessage="No cooks found." />
-            </CardContent>
-          </Card>
-        </TabsContent>
+         <TabsContent value="cooks">
+           <Card>
+             <CardHeader>
+               <CardTitle>{t('app.paas.dashboard.restaurant.staff.cooks')}</CardTitle>
+               <CardDescription>{t('app.paas.dashboard.restaurant.staff.cooks_desc')}</CardDescription>
+             </CardHeader>
+             <CardContent>
+               <StaffList staff={cooks} emptyMessage={t('app.paas.dashboard.restaurant.staff.cooks_empty')} />
+             </CardContent>
+           </Card>
+         </TabsContent>
 
-        <TabsContent value="delivery">
-          <Card>
-            <CardHeader>
-              <CardTitle>Delivery Personnel</CardTitle>
-              <CardDescription>
-                Staff members delivering orders.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <StaffList
-                staff={deliveryMen}
-                emptyMessage="No delivery personnel found."
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
+         <TabsContent value="delivery">
+           <Card>
+             <CardHeader>
+               <CardTitle>{t('app.paas.dashboard.restaurant.staff.delivery_title')}</CardTitle>
+               <CardDescription>
+                 {t('app.paas.dashboard.restaurant.staff.delivery_desc')}
+               </CardDescription>
+             </CardHeader>
+             <CardContent>
+               <StaffList
+                 staff={deliveryMen}
+                 emptyMessage={t('app.paas.dashboard.restaurant.staff.delivery_empty')}
+               />
+             </CardContent>
+           </Card>
+         </TabsContent>
       </Tabs>
     </div>
   );

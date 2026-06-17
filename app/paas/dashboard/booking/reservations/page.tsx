@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { Loader2, Check, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 
 import {
   getReservations,
@@ -60,43 +61,43 @@ export default function ReservationsPage() {
   const handleStatusUpdate = async (name: string, newStatus: string) => {
     try {
       await updateReservationStatus(name, newStatus);
-      toast.success(`Reservation ${newStatus.toLowerCase()} successfully`);
+      toast.success(t('app.paas.dashboard.booking.reservations.toast_update_success', { status: newStatus.toLowerCase() }));
       fetchData();
     } catch (error) {
       console.error("Error updating reservation:", error);
-      toast.error("Failed to update reservation status");
+      toast.error(t('app.paas.dashboard.booking.reservations.toast_update_fail'));
     }
   };
-
+ 
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Reservations</h1>
+          <h1 className="text-3xl font-bold">{t('app.paas.dashboard.booking.reservations.title')}</h1>
           <p className="text-muted-foreground">
-            Manage table reservations for your shop.
+            {t('app.paas.dashboard.booking.reservations.desc')}
           </p>
         </div>
         <div className="w-[200px]">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger>
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t('app.paas.dashboard.booking.reservations.ph_filter')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="New">New</SelectItem>
-              <SelectItem value="Accepted">Accepted</SelectItem>
-              <SelectItem value="Rejected">Rejected</SelectItem>
-              <SelectItem value="Cancelled">Cancelled</SelectItem>
+              <SelectItem value="all">{t('app.paas.dashboard.booking.reservations.status_all')}</SelectItem>
+              <SelectItem value="New">{t('app.paas.dashboard.booking.reservations.status_new')}</SelectItem>
+              <SelectItem value="Accepted">{t('app.paas.dashboard.booking.reservations.status_accepted')}</SelectItem>
+              <SelectItem value="Rejected">{t('app.paas.dashboard.booking.reservations.status_rejected')}</SelectItem>
+              <SelectItem value="Cancelled">{t('app.paas.dashboard.booking.reservations.status_cancelled')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
-
+ 
       <Card>
         <CardHeader>
-          <CardTitle>Reservation List</CardTitle>
-          <CardDescription>View and manage customer bookings.</CardDescription>
+          <CardTitle>{t('app.paas.dashboard.booking.reservations.card_title')}</CardTitle>
+          <CardDescription>{t('app.paas.dashboard.booking.reservations.card_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -107,12 +108,12 @@ export default function ReservationsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date & Time</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Table</TableHead>
-                  <TableHead>Guests</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t('app.paas.dashboard.booking.reservations.col_date_time')}</TableHead>
+                  <TableHead>{t('app.paas.dashboard.booking.reservations.col_customer')}</TableHead>
+                  <TableHead>{t('app.paas.dashboard.booking.reservations.col_table')}</TableHead>
+                  <TableHead>{t('app.paas.dashboard.booking.reservations.col_guests')}</TableHead>
+                  <TableHead>{t('app.paas.dashboard.booking.reservations.col_status')}</TableHead>
+                  <TableHead className="text-right">{t('app.paas.dashboard.booking.reservations.col_actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -122,7 +123,7 @@ export default function ReservationsPage() {
                       colSpan={6}
                       className="text-center h-24 text-muted-foreground"
                     >
-                      No reservations found.
+                      {t('app.paas.dashboard.booking.reservations.no_reservations')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -146,9 +147,9 @@ export default function ReservationsPage() {
                             res.status === "Accepted"
                               ? "default"
                               : res.status === "Rejected" ||
-                                  res.status === "Cancelled"
-                                ? "destructive"
-                                : "secondary"
+                                   res.status === "Cancelled"
+                                 ? "destructive"
+                                 : "secondary"
                           }
                         >
                           {res.status}
@@ -165,7 +166,7 @@ export default function ReservationsPage() {
                                 handleStatusUpdate(res.name, "Accepted")
                               }
                             >
-                              <Check className="size-4 mr-1" /> Accept
+                              <Check className="size-4 mr-1" /> {t('app.paas.dashboard.booking.reservations.btn_accept')}
                             </Button>
                             <Button
                               size="sm"
@@ -175,7 +176,7 @@ export default function ReservationsPage() {
                                 handleStatusUpdate(res.name, "Rejected")
                               }
                             >
-                              <X className="size-4 mr-1" /> Reject
+                              <X className="size-4 mr-1" /> {t('app.paas.dashboard.booking.reservations.btn_reject')}
                             </Button>
                           </div>
                         )}

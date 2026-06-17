@@ -3,6 +3,7 @@
 import { LayoutDashboard, Package, DollarSign, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import t from "@/app/lib/i18n";
 
 import {
   SidebarGroup,
@@ -14,22 +15,22 @@ import {
 
 const deliveryMenuItems = [
   {
-    title: "Dashboard",
+    title: t('nav.delivery.dashboard'),
     url: "/paas/dashboard/delivery",
     icon: LayoutDashboard,
   },
   {
-    title: "My Orders",
+    title: t('nav.delivery.my_orders'),
     url: "/paas/dashboard/delivery/orders",
     icon: Package,
   },
   {
-    title: "Earnings",
+    title: t('nav.delivery.earnings'),
     url: "/paas/dashboard/delivery/finance",
     icon: DollarSign,
   },
   {
-    title: "Profile",
+    title: t('nav.delivery.profile'),
     url: "/paas/dashboard/delivery/profile",
     icon: User,
   },
@@ -40,7 +41,7 @@ export function DeliveryNav() {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Delivery Panel</SidebarGroupLabel>
+      <SidebarGroupLabel>{t('nav.delivery.panel_label')}</SidebarGroupLabel>
       <SidebarMenu>
         {deliveryMenuItems.map((item) => (
           <SidebarMenuItem key={item.title}>

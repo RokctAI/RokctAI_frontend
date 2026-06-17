@@ -38,6 +38,7 @@ import {
   getTenantEmailSettings,
   updateTenantEmailSettings,
 } from "@/app/actions/handson/tenant/settings/email";
+import t from "@/app/lib/i18n";
 import {
   getSynapticSettings,
   updateSynapticSettings,
@@ -283,19 +284,19 @@ export default function SettingsPage() {
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={emailForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <Input type="password" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                       <FormField
+                         control={emailForm.control}
+                         name="password"
+                         render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>Password</FormLabel>
+                             <FormControl>
+                                <Input type="password" {...field} /> // placeholder
+                             </FormControl>
+                             <FormMessage />
+                           </FormItem>
+                         )}
+                       />
                       <FormField
                         control={emailForm.control}
                         name="use_tls"
@@ -348,16 +349,16 @@ export default function SettingsPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Main Procurement Category</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select category..." />
-                            </SelectTrigger>
-                          </FormControl>
+                         <Select
+                           onValueChange={field.onChange}
+                           value={field.value}
+                           defaultValue={field.value}
+                         >
+                           <FormControl>
+                             <SelectTrigger>
+                               <SelectValue placeholder={t('app.tenant.settings.select_category')} />
+                             </SelectTrigger>
+                           </FormControl>
                           <SelectContent>
                             {categories.map((cat) => (
                               <SelectItem key={cat.name} value={cat.name}>
@@ -400,9 +401,9 @@ export default function SettingsPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Credit Provider License Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g. NCRCP12345" {...field} />
-                        </FormControl>
+                         <FormControl>
+                           <Input placeholder={t('app.tenant.settings.ph_ncr_number')} {...field} />
+                         </FormControl>
                         <CardDescription>
                           Required if offering interest-bearing loans.
                         </CardDescription>
@@ -416,9 +417,9 @@ export default function SettingsPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Tax ID / VAT Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g. 4000123456" {...field} />
-                        </FormControl>
+                         <FormControl>
+                           <Input placeholder={t('app.tenant.settings.ph_registration_number')} {...field} />
+                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

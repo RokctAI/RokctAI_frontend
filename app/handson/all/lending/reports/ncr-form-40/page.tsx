@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 
 export default function NCRForm40Page() {
   const [data, setData] = useState<NCRForm40Data | null>(null);
@@ -71,340 +72,330 @@ export default function NCRForm40Page() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              NCR Form 40 Data
-            </h1>
-            <p className="text-sm text-gray-500">
-              Annual Financial & Operational Return Helper
-            </p>
-          </div>
+           <div>
+             <h1 className="text-2xl font-bold text-gray-900">
+               {t('app.lending.ncr_form_40_title')}
+             </h1>
+             <p className="text-sm text-gray-500">
+               {t('app.lending.ncr_form_40_desc')}
+             </p>
+           </div>
         </div>
         <div className="flex space-x-3">
-          <button
-            onClick={handlePrint}
-            className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <Printer className="w-4 h-4" />
-            <span>Print Report</span>
-          </button>
-          {/* Placeholder for CSV Export */}
-          <button
-            disabled
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg opacity-50 cursor-not-allowed"
-          >
-            <Download className="w-4 h-4" />
-            <span>Export CSV (Coming Soon)</span>
-          </button>
+           <button
+             onClick={handlePrint}
+             className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+           >
+             <Printer className="w-4 h-4" />
+             <span>{t('common.print_report')}</span>
+           </button>
+           {/* Placeholder for CSV Export */}
+           <button
+             disabled
+             className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg opacity-50 cursor-not-allowed"
+           >
+             <Download className="w-4 h-4" />
+             <span>{t('app.lending.export_csv_soon')}</span>
+           </button>
         </div>
       </div>
 
       {/* Compliance Note */}
-      <div className="bg-blue-50 border-l-4 border-blue-500 p-4 print:hidden">
-        <p className="text-sm text-blue-700">
-          <strong>Note to Accounting Officer:</strong> This report aggregates
-          data from the Lending Management System to assist in completing NCR
-          Form 40. Please verify all figures against the General Ledger before
-          submission. Non-Lending income (e.g., Investments) is not included
-          here.
-        </p>
-      </div>
+       <div className="bg-blue-50 border-l-4 border-blue-500 p-4 print:hidden">
+         <p className="text-sm text-blue-700">
+           <strong>{t('common.note')} to Accounting Officer:</strong> {t('app.lending.ncr_form_40_note')}
+         </p>
+       </div>
 
       {/* The "Form" View */}
       <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden print:border-none print:shadow-none">
-        <div className="p-8 border-b border-gray-100 bg-gray-50/50 print:bg-white print:border-b-2 print:border-black">
-          <h2 className="text-xl font-bold text-gray-900 text-center uppercase tracking-wide">
-            Statistical Return - Form 40 Data
-          </h2>
-          <p className="text-center text-gray-500 text-sm mt-1">
-            Based on Lending Module Activity
-          </p>
-        </div>
+         <div className="p-8 border-b border-gray-100 bg-gray-50/50 print:bg-white print:border-b-2 print:border-black">
+           <h2 className="text-xl font-bold text-gray-900 text-center uppercase tracking-wide">
+             {t('app.lending.ncr_form_40_form_title')}
+           </h2>
+           <p className="text-center text-gray-500 text-sm mt-1">
+             {t('app.lending.ncr_form_40_form_subtitle')}
+           </p>
+         </div>
 
         <div className="p-8 space-y-10">
           {/* SECTION 1: INCOME STATEMENT */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
-              1. Income Statement (Lending Activities)
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
-              <ReportRow
-                label="Interest Income (NCA)"
-                value={data?.income_statement.revenue.interest_income_nca}
-                currency={currency}
-              />
-              <ReportRow
-                label="Initiation Fees"
-                value={data?.income_statement.revenue.initiation_service_fees}
-                currency={currency}
-              />
-              <ReportRow
-                label="Service Fees"
-                value={data?.income_statement.revenue.initiation_service_fees}
-                currency={currency}
-              />
-              {/* Simplified mapping since API returns combined */}
-              <div className="border-t border-gray-100 my-2 col-span-2"></div>
-              <ReportRow
-                label="Less: Bad Debts Written Off"
-                value={data?.income_statement.expenses.bad_debt_write_offs}
-                isNegative
-                currency={currency}
-              />
-              <div className="border-t border-black my-2 col-span-2"></div>
-              <ReportRow
-                label="Total Revenue (Calculated Proxy)"
-                value={data?.income_statement.revenue.total_revenue}
-                bold
-                currency={currency}
-              />
-            </div>
-          </section>
+           <section>
+             <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+               {t('app.lending.ncr_form_40.income_statement_title')}
+             </h3>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.interest_income')}
+                 value={data?.income_statement.revenue.interest_income_nca}
+                 currency={currency}
+               />
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.initiation_fees')}
+                 value={data?.income_statement.revenue.initiation_service_fees}
+                 currency={currency}
+               />
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.service_fees')}
+                 value={data?.income_statement.revenue.initiation_service_fees}
+                 currency={currency}
+               />
+               {/* Simplified mapping since API returns combined */}
+               <div className="border-t border-gray-100 my-2 col-span-2"></div>
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.less_bad_debts')}
+                 value={data?.income_statement.expenses.bad_debt_write_offs}
+                 isNegative
+                 currency={currency}
+               />
+               <div className="border-t border-black my-2 col-span-2"></div>
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.total_revenue')}
+                 value={data?.income_statement.revenue.total_revenue}
+                 bold
+                 currency={currency}
+               />
+             </div>
+           </section>
 
           {/* SECTION 2: BALANCE SHEET */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
-              2. Balance Sheet (Loan Book)
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
-              <ReportRow
-                label="Gross Debtors (Outstanding Balance)"
-                value={data?.balance_sheet.gross_debtors}
-                currency={currency}
-              />
-              <ReportRow
-                label="Less: Provision for Bad Debt"
-                value={data?.balance_sheet.provision_bad_debt}
-                isNegative
-                currency={currency}
-              />
-              <div className="border-t border-black my-2 col-span-2"></div>
-              <ReportRow
-                label="Net Debtors"
-                value={data?.balance_sheet.net_debtors}
-                bold
-                currency={currency}
-              />
-            </div>
-          </section>
+           <section>
+             <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+               {t('app.lending.ncr_form_40.balance_sheet_title')}
+             </h3>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.gross_debtors')}
+                 value={data?.balance_sheet.gross_debtors}
+                 currency={currency}
+               />
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.less_provision')}
+                 value={data?.balance_sheet.provision_bad_debt}
+                 isNegative
+                 currency={currency}
+               />
+               <div className="border-t border-black my-2 col-span-2"></div>
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.net_debtors')}
+                 value={data?.balance_sheet.net_debtors}
+                 bold
+                 currency={currency}
+               />
+             </div>
+           </section>
 
           {/* SECTION 3: OPERATIONAL IS REPLACED BY PAGE 3 & 4 */}
         </div>
 
         {/* PAGE 3: BEE & EMPLOYMENT */}
-        <div className="p-8 space-y-8 print:break-before-page">
-          <div className="border-b-2 border-black pb-4 mb-6">
-            <div className="flex justify-between items-end">
-              <div>
-                <h1 className="text-xl font-bold uppercase">
-                  BEE & EMPLOYMENT
-                </h1>
-                <p>Form 40 - Page 3 of 4</p>
-              </div>
-            </div>
-          </div>
+         <div className="p-8 space-y-8 print:break-before-page">
+           <div className="border-b-2 border-black pb-4 mb-6">
+             <div className="flex justify-between items-end">
+               <div>
+                 <h1 className="text-xl font-bold uppercase">
+                   {t('app.lending.ncr_form_40.bee_employment_title')}
+                 </h1>
+                 <p>{t('app.lending.ncr_form_40.page_3')}</p>
+               </div>
+             </div>
+           </div>
 
           {/* Section 12: BEE */}
-          <section>
-            <h3 className="font-bold border-b border-gray-300 pb-1 mb-3 uppercase">
-              12. Black Economic Empowerment
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Please indicate the percentage of ownership/shareholding by:
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <ReportRow
-                  label="Historically Disadvantaged Persons (HDP)"
-                  value={data?.bee.hdp_ownership_percent}
-                  isCurrency={false}
-                  suffix="%"
-                />
-                <ReportRow
-                  label="Other"
-                  value={data?.bee.other_ownership_percent}
-                  isCurrency={false}
-                  suffix="%"
-                />
-              </div>
-
-              <div className="space-y-4 text-sm text-gray-500 italic border border-dashed border-gray-300 p-4 rounded">
-                <p>Commitments to Broad Based BEE:</p>
-                <div className="h-6 border-b border-gray-300"></div>
-                <div className="h-6 border-b border-gray-300"></div>
-              </div>
-            </div>
-          </section>
+           <section>
+             <h3 className="font-bold border-b border-gray-300 pb-1 mb-3 uppercase">
+               {t('app.lending.ncr_form_40.bee_title')}
+             </h3>
+             <p className="text-sm text-gray-600 mb-4">
+               {t('app.lending.ncr_form_40.bee_desc')}
+             </p>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+               <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                 <ReportRow
+                   label={t('app.lending.ncr_form_40.historically_doubtful')}
+                   value={data?.bee.hdp_ownership_percent}
+                   isCurrency={false}
+                   suffix="%"
+                 />
+                 <ReportRow
+                   label={t('common.other')}
+                   value={data?.bee.other_ownership_percent}
+                   isCurrency={false}
+                   suffix="%"
+                 />
+               </div>
+               <div className="space-y-4 text-sm text-gray-500 italic border border-dashed border-gray-300 p-4 rounded">
+                 <p>{t('app.lending.ncr_form_40.bee_commitments')}</p>
+                 <div className="h-6 border-b border-gray-300"></div>
+                 <div className="h-6 border-b border-gray-300"></div>
+               </div>
+             </div>
+           </section>
 
           {/* Section 13: Employment */}
-          <section>
-            <h3 className="font-bold border-b border-gray-300 pb-1 mb-3 uppercase mt-8">
-              13. Employment Equity
-            </h3>
-
-            <div className="mb-6 space-y-2">
-              <div className="flex justify-between items-center text-sm border-b border-gray-100 py-2">
-                <span>
-                  Have you submitted an Employment Equity plan to the Dept of
-                  Labour?
-                </span>
-                <div className="flex space-x-4 font-bold">
-                  <span>Yes</span> / <span>No</span>
-                </div>
-              </div>
-            </div>
-
-            <h4 className="font-semibold text-gray-600 mb-2">
-              13.1 Employment Records
-            </h4>
-            <div className="space-y-1 bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <ReportRow
-                label="Total number of people employed"
-                value={data?.employment.total_employees}
-                isCurrency={false}
-              />
-              <ReportRow
-                label="Number of HDP employed"
-                value={data?.employment.hdp_employees}
-                isCurrency={false}
-              />
-              <ReportRow
-                label="Percentage of total employment (HDP)"
-                value={data?.employment.hdp_percent}
-                isCurrency={false}
-                suffix="%"
-              />
-            </div>
-          </section>
+           <section>
+             <h3 className="font-bold border-b border-gray-300 pb-1 mb-3 uppercase mt-8">
+               {t('app.lending.ncr_form_40.employment_title')}
+             </h3>
+             
+             <div className="mb-6 space-y-2">
+               <div className="flex justify-between items-center text-sm border-b border-gray-100 py-2">
+                 <span>
+                   {t('app.lending.ncr_form_40.employment_equity_plan')}
+                 </span>
+                 <div className="flex space-x-4 font-bold">
+                   <span>{t('common.yes')}</span> / <span>{t('common.no')}</span>
+                 </div>
+               </div>
+             </div>
+             
+             <h4 className="font-semibold text-gray-600 mb-2">
+               {t('app.lending.ncr_form_40.employment_records_title')}
+             </h4>
+             <div className="space-y-1 bg-gray-50 p-4 rounded-lg border border-gray-200">
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.total_number_accounts')}
+                 value={data?.employment.total_employees}
+                 isCurrency={false}
+               />
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.hdp_accounts')}
+                 value={data?.employment.hdp_employees}
+                 isCurrency={false}
+               />
+               <ReportRow
+                 label={t('app.lending.ncr_form_40.percentage_hdp')}
+                 value={data?.employment.hdp_percent}
+                 isCurrency={false}
+                 suffix="%"
+               />
+             </div>
+           </section>
         </div>
 
         {/* PAGE 4: DECLARATION */}
-        <div className="p-8 space-y-8 bg-gray-50/30 print:bg-white print:break-before-page">
-          <div className="border-b-2 border-black pb-4 mb-6">
-            <div className="flex justify-between items-end">
-              <div>
-                <h1 className="text-xl font-bold uppercase">DECLARATION</h1>
-                <p>Form 40 - Page 4 of 4</p>
-              </div>
-            </div>
-          </div>
+         <div className="p-8 space-y-8 bg-gray-50/30 print:bg-white print:break-before-page">
+           <div className="border-b-2 border-black pb-4 mb-6">
+             <div className="flex justify-between items-end">
+               <div>
+                 <h1 className="text-xl font-bold uppercase">
+                   {t('app.lending.ncr_form_40.declaration_title')}
+                 </h1>
+                 <p>{t('app.lending.ncr_form_40.page_4')}</p>
+               </div>
+             </div>
+           </div>
 
-          <section className="space-y-6">
-            <h3 className="font-bold border-b border-gray-300 pb-1 mb-3 uppercase">
-              14. Declaration by Auditor / Accounting Officer
-            </h3>
-
-            <div className="bg-blue-50 p-6 rounded-lg text-sm text-gray-700 space-y-4 border border-blue-100">
-              <p className="italic">
-                "I the undersigned, am the appointed Auditor / Accounting
-                officer and declare that I have reviewed the information
-                provided in this return and that it reflects the information as
-                provided to me by the registered entity."
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
-              <div className="space-y-6">
-                <div className="border-b border-gray-400 pb-1">
-                  <span className="text-xs text-gray-400 block mb-1">
-                    Name of Accounting Officer
-                  </span>
-                  <div className="h-6"></div>
-                </div>
-                <div className="border-b border-gray-400 pb-1">
-                  <span className="text-xs text-gray-400 block mb-1">
-                    Professional Body
-                  </span>
-                  <div className="h-6"></div>
-                </div>
-                <div className="border-b border-gray-400 pb-1">
-                  <span className="text-xs text-gray-400 block mb-1">
-                    Registration Number
-                  </span>
-                  <div className="h-6"></div>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className="border-b border-gray-400 pb-1">
-                  <span className="text-xs text-gray-400 block mb-1">
-                    Signature
-                  </span>
-                  <div className="h-6"></div>
-                </div>
-                <div className="border-b border-gray-400 pb-1">
-                  <span className="text-xs text-gray-400 block mb-1">Date</span>
-                  <div className="h-6"></div>
-                </div>
-              </div>
-            </div>
-          </section>
+           <section className="space-y-6">
+             <h3 className="font-bold border-b border-gray-300 pb-1 mb-3 uppercase">
+               {t('app.lending.ncr_form_40.declaration_header')}
+             </h3>
+             <div className="bg-blue-50 p-6 rounded-lg text-sm text-gray-700 space-y-4 border border-blue-100">
+               <p className="italic">
+                 "{t('app.lending.ncr_form_40.declaration_text')}"
+               </p>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-8">
+               <div className="space-y-6">
+                 <div className="border-b border-gray-400 pb-1">
+                   <span className="text-xs text-gray-400 block mb-1">
+                     {t('app.lending.ncr_form_40.officer_name')}
+                   </span>
+                   <div className="h-6"></div>
+                 </div>
+                 <div className="border-b border-gray-400 pb-1">
+                   <span className="text-xs text-gray-400 block mb-1">
+                     {t('app.lending.ncr_form_40.professional_body')}
+                   </span>
+                   <div className="h-6"></div>
+                 </div>
+                 <div className="border-b border-gray-400 pb-1">
+                   <span className="text-xs text-gray-400 block mb-1">
+                     {t('app.lending.ncr_form_40.registration_number')}
+                   </span>
+                   <div className="h-6"></div>
+                 </div>
+               </div>
+               <div className="space-y-6">
+                 <div className="border-b border-gray-400 pb-1">
+                   <span className="text-xs text-gray-400 block mb-1">
+                     {t('common.signature')}
+                   </span>
+                   <div className="h-6"></div>
+                 </div>
+                 <div className="border-b border-gray-400 pb-1">
+                   <span className="text-xs text-gray-400 block mb-1">
+                     {t('common.date')}
+                   </span>
+                   <div className="h-6"></div>
+                 </div>
+               </div>
+             </div>
+           </section>
         </div>
 
         {/* REGULATORY CHECKLIST (Helper for User) */}
-        <div className="mt-8 bg-indigo-50 border border-indigo-100 rounded-xl p-6 print:hidden">
-          <h3 className="text-lg font-semibold text-indigo-900 mb-4 flex items-center">
-            <AlertCircle className="w-5 h-5 mr-2" />
-            Annual Compliance Checklist
-          </h3>
-          <p className="text-sm text-indigo-800 mb-6">
-            According to NCR Regulations, you must submit the following returns
-            **within 6 months of your Financial Year End**:
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ChecklistItem
-              label="Form 40 (Annual Financial & Operational Return)"
-              desc="Generated via this report."
-              completed={true}
-            />
-            <ChecklistItem
-              label="Annual Financial Statements (AFS)"
-              desc="Prepared by your Accountant."
-              completed={false}
-            />
-            <ChecklistItem
-              label="Compliance Report"
-              desc="Management declaration of Act compliance."
-              completed={false}
-            />
-            <ChecklistItem
-              label="Compliance Report"
-              desc={
-                <span className="flex items-center">
-                  Annual Regulation 63 Self-Assessment.
-                  <Link
-                    href="/handson/all/lending/reports/compliance-report"
-                    className="ml-2 underline text-blue-600 hover:text-blue-800 font-semibold"
-                  >
-                    Fill Report
-                  </Link>
-                </span>
-              }
-              completed={false}
-            />
-            <ChecklistItem
-              label="Assurance Engagement Report"
-              desc={
-                <span className="flex items-center">
-                  Issued by your Auditor.
-                  <Link
-                    href="/handson/all/lending/reports/assurance-report"
-                    className="ml-2 underline text-blue-600 hover:text-blue-800 font-semibold"
-                  >
-                    Generate Draft
-                  </Link>
-                </span>
-              }
-              completed={false}
-            />
-          </div>
+         <div className="mt-8 bg-indigo-50 border border-indigo-100 rounded-xl p-6 print:hidden">
+           <h3 className="text-lg font-semibold text-indigo-900 mb-4 flex items-center">
+             <AlertCircle className="w-5 h-5 mr-2" />
+             {t('app.lending.ncr_form_40.checklist_title')}
+           </h3>
+           <p className="text-sm text-indigo-800 mb-6">
+             {t('app.lending.ncr_form_40.checklist_desc')}
+           </p>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <ChecklistItem
+               label={t('app.lending.ncr_form_40.checklist_form_40')}
+               desc={t('app.lending.ncr_form_40.checklist_form_40_desc')}
+               completed={true}
+             />
+             <ChecklistItem
+               label={t('app.lending.ncr_form_40.checklist_afs')}
+               desc={t('app.lending.ncr_form_40.checklist_afs_desc')}
+               completed={false}
+             />
+             <ChecklistItem
+               label={t('app.lending.ncr_form_40.checklist_compliance')}
+               desc={t('app.lending.ncr_form_40.checklist_compliance_desc')}
+               completed={false}
+             />
+             <ChecklistItem
+               label={t('app.lending.ncr_form_40.checklist_reg_63')}
+               desc={
+                 <span className="flex items-center">
+                   {t('app.lending.ncr_form_40.checklist_reg_63')}
+                   <Link
+                     href="/handson/all/lending/reports/compliance-report"
+                     className="ml-2 underline text-blue-600 hover:text-blue-800 font-semibold"
+                   >
+                     {t('app.lending.fill_report')}
+                   </Link>
+                 </span>
+               }
+               completed={false}
+             />
+             <ChecklistItem
+               label={t('app.lending.ncr_form_40.checklist_assurance')}
+               desc={
+                 <span className="flex items-center">
+                   {t('app.lending.ncr_form_40.checklist_assurance_desc')}
+                   <Link
+                     href="/handson/all/lending/reports/assurance-report"
+                     className="ml-2 underline text-blue-600 hover:text-blue-800 font-semibold"
+                   >
+                     {t('app.lending.generate_draft')}
+                   </Link>
+                 </span>
+               }
+               completed={false}
+             />
+           </div>
+         </div>
         </div>
 
-        <div className="bg-gray-50 px-8 py-4 border-t border-gray-200 text-xs text-gray-400 text-center print:hidden">
-          Generated by Rokct Lending Module • {new Date().toLocaleDateString()}
-        </div>
+         <div className="bg-gray-50 px-8 py-4 border-t border-gray-200 text-xs text-gray-400 text-center print:hidden">
+           {t('app.lending.generated_by', { date: new Date().toLocaleDateString() })}
+         </div>
       </div>
     </div>
   );

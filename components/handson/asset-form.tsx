@@ -13,6 +13,7 @@ import { updateAsset } from "@/app/actions/handson/all/accounting/assets/updateA
 import { AssetData } from "@/app/actions/handson/all/accounting/assets/types";
 import { getCompanies } from "@/app/actions/handson/all/hrms/companies";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 import {
   Select,
   SelectContent,
@@ -134,10 +135,10 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="assetName">Asset Name</Label>
-            <Input
-              id="assetName"
-              placeholder="e.g. MacBook Pro M1"
-              value={assetName}
+             <Input
+               id="assetName"
+               placeholder={t('common.ph_macbook')}
+               value={assetName}
               onChange={(e) => setAssetName(e.target.value)}
             />
           </div>
@@ -159,9 +160,9 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
               onValueChange={setCompany}
               disabled={isEdit}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Company" />
-              </SelectTrigger>
+               <SelectTrigger>
+                 <SelectValue placeholder={t('common.select_company')} />
+               </SelectTrigger>
               <SelectContent>
                 {companies.map((c) => (
                   <SelectItem key={c.name} value={c.name}>

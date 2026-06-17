@@ -15,14 +15,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { getShops } from "@/app/actions/paas/shop";
+import t from "@/app/lib/i18n";
 
 export default function GeneralSettingsPage() {
   const [settings, setSettings] = useState<any>({});
@@ -108,13 +102,27 @@ export default function GeneralSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Email</Label>
-              <Input
-                value={settings.email || ""}
-                onChange={(e) =>
-                  setSettings({ ...settings, email: e.target.value })
+              <Label>Default Shop</Label>
+              <Select
+                value={settings.default_shop || ""}
+                onValueChange={(val) =>
+                  setSettings({ ...settings, default_shop: val })
                 }
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t('app.paas.admin.settings.general.ph_default_shop')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {shops.map((shop) => (
+                    <SelectItem key={shop.name} value={shop.name}>
+                      {shop.shop_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground">
+                {t('app.paas.admin.settings.general.default_shop_desc')}
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Address</Label>
@@ -209,9 +217,9 @@ export default function GeneralSettingsPage() {
                     setSettings({ ...settings, default_shop: val })
                   }
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select the main shop" />
-                  </SelectTrigger>
+                   <SelectTrigger>
+                     <SelectValue placeholder={t('app.paas.admin.settings.general.ph_default_shop')} />
+                   </SelectTrigger>
                   <SelectContent>
                     {shops.map((shop) => (
                       <SelectItem key={shop.name} value={shop.name}>

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import t from "@/app/lib/i18n";
 
 import {
   SidebarGroup,
@@ -20,31 +21,22 @@ import {
 
 const clientMenuItems = [
   {
-    title: "Dashboard",
+    title: t('nav.client.dashboard'),
     icon: LayoutDashboard,
     url: "/portal",
   },
   {
-    title: "RPanel (Hosting)",
+    title: t('nav.client.rpanel'),
     icon: Server,
     url: "/handson/control/rpanel",
-    // Logic to show/hide based on exact role can be done inside or passed as prop.
-    // For now we show it, assuming portal users might want to buy hosting.
-    // But the user requested GUARDRAILS.
-    // We will refine this list in usage.
   },
-  // {
-  //     title: "Telephony",
-  //     icon: Phone,
-  //     url: "/portal/telephony",
-  // },
   {
-    title: "Billing",
+    title: t('nav.client.billing'),
     icon: CreditCard,
     url: "/portal/billing",
   },
   {
-    title: "Profile",
+    title: t('nav.client.profile'),
     icon: UserCircle,
     url: "/portal/profile",
   },
@@ -69,15 +61,15 @@ export function ClientNav({
   // 1. User has 'Telephony' module
   // const showTelephony = modules.includes("Telephony");
 
-  const filteredItems = clientMenuItems.filter((item) => {
-    if (item.title === "RPanel (Hosting)" && !showRpanel) return false;
-    return true;
-  });
-
-  return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Client Portal</SidebarGroupLabel>
-      <SidebarMenu>
+   const filteredItems = clientMenuItems.filter((item) => {
+     if (item.title === t('nav.client.rpanel') && !showRpanel) return false;
+     return true;
+   });
+   
+   return (
+     <SidebarGroup>
+       <SidebarGroupLabel>{t('nav.client.panel_label')}</SidebarGroupLabel>
+       <SidebarMenu>
         {filteredItems.map((item) => (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton

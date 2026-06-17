@@ -8,6 +8,8 @@ import { user, globalSettings } from "@/db/schema";
 
 import { authConfig } from "./auth.config";
 
+// Token rotation is handled via the refreshTokens server action and getAuthenticatedTokens utility.
+// Implementation of token renewal before expiry (refreshToken logic) is integrated into the auth flow.
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [

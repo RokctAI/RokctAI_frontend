@@ -11,33 +11,33 @@ export interface FeatureLink {
 
 export const PLATFORM_FEATURES: Record<number, FeatureLink> = {
   // Left Column Platforms
-  1: { name: "Browser Extension", href: "https://chromewebstore.google.com/", active: true, label: "none" },
-  2: { name: "Web App", href: "/dashboard", active: true, label: "none" },
-  3: { name: "Mobile Apps", href: "#", active: true, label: "none" },
+  1: { name: "features.browser_extension", href: "https://chromewebstore.google.com/", active: true, label: "none" },
+  2: { name: "features.web_app", href: "/dashboard", active: true, label: "none" },
+  3: { name: "features.mobile_apps", href: "#", active: true, label: "none" },
 
   // AI Chat
-  4: { name: "Chat with ROKCT", href: "/chat", active: true, label: "none" },
+  4: { name: "features.chat_rokct", href: "/chat", active: true, label: "none" },
 
   // Productivity Column
-  5: { name: "AI-first ERP", href: "#", active: true, label: "soon" },
-  6: { name: "TenderAssist", href: "#", active: true, label: "new" },
-  7: { name: "Telephony", href: "#", active: true, label: "none" },
+  5: { name: "features.ai_erp", href: "#", active: true, label: "soon" },
+  6: { name: "features.tender_assist", href: "#", active: true, label: "new" },
+  7: { name: "features.telephony", href: "#", active: true, label: "none" },
 
   // Tools Column
-  8: { name: "FraudDetector", href: "#", active: true, label: "none" },
-  9: { name: "LoanMan", href: "#", active: true, label: "none" },
-  10: { name: "Tenders", href: "#", active: true, label: "new" },
-  11: { name: "Funding", href: "#", active: true, label: "new" },
+  8: { name: "features.fraud_detector", href: "#", active: true, label: "none" },
+  9: { name: "features.loan_man", href: "#", active: true, label: "none" },
+  10: { name: "features.tenders", href: "#", active: true, label: "new" },
+  11: { name: "features.funding", href: "#", active: true, label: "new" },
 
   // Summary Column
-  12: { name: "YouTube Summarizer", href: "#", active: true, label: "none" },
-  13: { name: "Article Summarizer", href: "#", active: true, label: "none" },
+  12: { name: "features.yt_summarizer", href: "#", active: true, label: "none" },
+  13: { name: "features.article_summarizer", href: "#", active: true, label: "none" },
 
   // Top-Level Nav Links
-  14: { name: "Pricing", href: "#pricing", active: true, label: "none" },
-  15: { name: "Affiliate", href: "/affiliate", active: true, label: "none" },
-  16: { name: "Teams", href: "/teams", active: true, label: "none" },
-  17: { name: "Chat with ROKCT", href: "/chat", active: true, label: "none" },
+  14: { name: "features.pricing", href: "#pricing", active: true, label: "none" },
+  15: { name: "features.affiliate", href: "/affiliate", active: true, label: "none" },
+  16: { name: "features.teams", href: "/teams", active: true, label: "none" },
+  17: { name: "features.chat_rokct", href: "/chat", active: true, label: "none" },
 };
 
 // Legacy boolean exports for backward compatibility if imported elsewhere

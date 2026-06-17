@@ -10,6 +10,7 @@ import { BrandLogo } from "./brand-logo";
 import { ThemeToggle } from "./theme-toggle";
 import { PLATFORM_NAME, getBrandingSync } from "@/app/config/platform";
 import { PLATFORM_FEATURES } from "@/app/config/features";
+import t from "@/app/lib/i18n";
 
 export function Header({
   loginUrl = "/login",
@@ -52,7 +53,7 @@ export function Header({
     if (label === "soon") {
       return (
         <span className="text-[9px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none shrink-0">
-          Soon
+          {t('common.soon')}
         </span>
       );
     }
@@ -60,7 +61,7 @@ export function Header({
     if (label === "new") {
       return (
         <span className="text-[9px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none shrink-0">
-          New
+          {t('common.new')}
         </span>
       );
     }
@@ -138,9 +139,9 @@ export function Header({
               onMouseEnter={() => setIsMegaMenuOpen(true)}
               onMouseLeave={() => setIsMegaMenuOpen(false)}
             >
-              <button className={`flex items-center gap-1.5 text-[14px] font-semibold px-3 py-1.5 rounded-md transition-all ${isMegaMenuOpen ? 'bg-white/10 dark:bg-white/10 text-black dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/8 dark:hover:bg-white/8'}`}>
-                Product <FiChevronDown className={`transition-transform duration-200 ${isMegaMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
+                <button className={`flex items-center gap-1.5 text-[14px] font-semibold px-3 py-1.5 rounded-md transition-all ${isMegaMenuOpen ? 'bg-white/10 dark:bg-white/10 text-black dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-white/8 dark:hover:bg-white/8'}`}>
+                  {t('header.product')} <FiChevronDown className={`transition-transform duration-200 ${isMegaMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
 
               {/* Mega Menu — anchored to the header bottom */}
               <div
@@ -158,11 +159,11 @@ export function Header({
                                <FiBox className="w-5 h-5" />
                             </div>
                             <div>
-                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight flex items-center gap-2">
-                                {PLATFORM_FEATURES[1].name}
-                                {renderBadge(1)}
-                              </h5>
-                              <p className="text-[12px] text-gray-500 mt-0.5">Supports Chrome</p>
+                               <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight flex items-center gap-2">
+                                 {t(PLATFORM_FEATURES[1].name)}
+                                 {renderBadge(1)}
+                               </h5>
+                               <p className="text-[12px] text-gray-500 mt-0.5">{t('header.chrome_support')}</p>
                             </div>
                           </div>
                           <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
@@ -176,11 +177,11 @@ export function Header({
                                <FiGlobe className="w-5 h-5" />
                             </div>
                             <div>
-                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight flex items-center gap-2">
-                                {PLATFORM_FEATURES[2].name}
-                                {renderBadge(2)}
-                              </h5>
-                              <p className="text-[12px] text-gray-500 mt-0.5">Open in browser</p>
+                               <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight flex items-center gap-2">
+                                 {t(PLATFORM_FEATURES[2].name)}
+                                 {renderBadge(2)}
+                               </h5>
+                               <p className="text-[12px] text-gray-500 mt-0.5">{t('header.browser_support')}</p>
                             </div>
                           </div>
                           <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
@@ -194,11 +195,11 @@ export function Header({
                                <FiSmartphone className="w-5 h-5" />
                             </div>
                             <div>
-                              <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight flex items-center gap-2">
-                                {PLATFORM_FEATURES[3].name}
-                                {renderBadge(3)}
-                              </h5>
-                              <p className="text-[12px] text-gray-500 mt-0.5">iOS and Android</p>
+                               <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight flex items-center gap-2">
+                                 {t(PLATFORM_FEATURES[3].name)}
+                                 {renderBadge(3)}
+                               </h5>
+                               <p className="text-[12px] text-gray-500 mt-0.5">{t('header.mobile_support')}</p>
                             </div>
                           </div>
                           <FiArrowUpRight className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4" />
@@ -212,20 +213,20 @@ export function Header({
                     {/* AI Chat */}
                     {PLATFORM_FEATURES[4]?.active && (
                       <div className="space-y-4">
-                        <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">AI Chat</h4>
+                         <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">{t('header.ai_chat')}</h4>
                         <ul className="space-y-4">
                           <li>
-                            {PLATFORM_FEATURES[4].label === "soon" ? (
-                              <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                                {PLATFORM_FEATURES[4].name}
-                                {renderBadge(4)}
-                              </span>
-                            ) : (
-                              <Link href={PLATFORM_FEATURES[4].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
-                                {PLATFORM_FEATURES[4].name}
-                                {renderBadge(4)}
-                              </Link>
-                            )}
+                                 {PLATFORM_FEATURES[4].label === "soon" ? (
+                                   <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                     {t(PLATFORM_FEATURES[4].name)}
+                                     {renderBadge(4)}
+                                   </span>
+                                 ) : (
+                                   <Link href={PLATFORM_FEATURES[4].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                     {t(PLATFORM_FEATURES[4].name)}
+                                     {renderBadge(4)}
+                                   </Link>
+                                 )}
                           </li>
                         </ul>
                       </div>
@@ -234,51 +235,51 @@ export function Header({
                     {/* Productivity */}
                     {(PLATFORM_FEATURES[5]?.active || PLATFORM_FEATURES[6]?.active || PLATFORM_FEATURES[7]?.active) && (
                       <div className="space-y-4">
-                        <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Productivity</h4>
+                         <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">{t('header.productivity')}</h4>
                         <ul className="space-y-4">
                           {PLATFORM_FEATURES[5]?.active && (
                             <li>
-                              {PLATFORM_FEATURES[5].label === "soon" ? (
-                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                                  {PLATFORM_FEATURES[5].name}
-                                  {renderBadge(5)}
-                                </span>
-                              ) : (
-                                <Link href={PLATFORM_FEATURES[5].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
-                                  {PLATFORM_FEATURES[5].name}
-                                  {renderBadge(5)}
-                                </Link>
-                              )}
+                                   {PLATFORM_FEATURES[5].label === "soon" ? (
+                                     <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                       {t(PLATFORM_FEATURES[5].name)}
+                                       {renderBadge(5)}
+                                     </span>
+                                   ) : (
+                                     <Link href={PLATFORM_FEATURES[5].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                       {t(PLATFORM_FEATURES[5].name)}
+                                       {renderBadge(5)}
+                                     </Link>
+                                   )}
                             </li>
                           )}
                           {PLATFORM_FEATURES[6]?.active && (
                             <li>
-                              {PLATFORM_FEATURES[6].label === "soon" ? (
-                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                                  {PLATFORM_FEATURES[6].name}
-                                  {renderBadge(6)}
-                                </span>
-                              ) : (
-                                <Link href={PLATFORM_FEATURES[6].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
-                                  {PLATFORM_FEATURES[6].name}
-                                  {renderBadge(6)}
-                                </Link>
-                              )}
+                                   {PLATFORM_FEATURES[6].label === "soon" ? (
+                                     <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                       {t(PLATFORM_FEATURES[6].name)}
+                                       {renderBadge(6)}
+                                     </span>
+                                   ) : (
+                                     <Link href={PLATFORM_FEATURES[6].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                       {t(PLATFORM_FEATURES[6].name)}
+                                       {renderBadge(6)}
+                                     </Link>
+                                   )}
                             </li>
                           )}
                           {PLATFORM_FEATURES[7]?.active && (
                             <li>
-                              {PLATFORM_FEATURES[7].label === "soon" ? (
-                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                                  {PLATFORM_FEATURES[7].name}
-                                  {renderBadge(7)}
-                                </span>
-                              ) : (
-                                <Link href={PLATFORM_FEATURES[7].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
-                                  {PLATFORM_FEATURES[7].name}
-                                  {renderBadge(7)}
-                                </Link>
-                              )}
+                                   {PLATFORM_FEATURES[7].label === "soon" ? (
+                                     <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                       {t(PLATFORM_FEATURES[7].name)}
+                                       {renderBadge(7)}
+                                     </span>
+                                   ) : (
+                                     <Link href={PLATFORM_FEATURES[7].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                       {t(PLATFORM_FEATURES[7].name)}
+                                       {renderBadge(7)}
+                                     </Link>
+                                   )}
                             </li>
                           )}
                         </ul>
@@ -288,66 +289,66 @@ export function Header({
                     {/* Tools */}
                     {(PLATFORM_FEATURES[8]?.active || PLATFORM_FEATURES[9]?.active || PLATFORM_FEATURES[10]?.active || PLATFORM_FEATURES[11]?.active) && (
                       <div className="space-y-4">
-                        <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Tools</h4>
+                         <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">{t('header.tools')}</h4>
                         <ul className="space-y-4">
                           {PLATFORM_FEATURES[8]?.active && (
                             <li>
-                              {PLATFORM_FEATURES[8].label === "soon" ? (
-                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                                  {PLATFORM_FEATURES[8].name}
-                                  {renderBadge(8)}
-                                </span>
-                              ) : (
-                                <Link href={PLATFORM_FEATURES[8].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
-                                  {PLATFORM_FEATURES[8].name}
-                                  {renderBadge(8)}
-                                </Link>
-                              )}
+                                 {PLATFORM_FEATURES[8].label === "soon" ? (
+                                   <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                     {t(PLATFORM_FEATURES[8].name)}
+                                     {renderBadge(8)}
+                                   </span>
+                                 ) : (
+                                   <Link href={PLATFORM_FEATURES[8].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                     {t(PLATFORM_FEATURES[8].name)}
+                                     {renderBadge(8)}
+                                   </Link>
+                                 )}
                             </li>
                           )}
                           {PLATFORM_FEATURES[9]?.active && (
                             <li>
-                              {PLATFORM_FEATURES[9].label === "soon" ? (
-                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                                  {PLATFORM_FEATURES[9].name}
-                                  {renderBadge(9)}
-                                </span>
-                              ) : (
-                                <Link href={PLATFORM_FEATURES[9].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
-                                  {PLATFORM_FEATURES[9].name}
-                                  {renderBadge(9)}
-                                </Link>
-                              )}
+                                 {PLATFORM_FEATURES[9].label === "soon" ? (
+                                   <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                     {t(PLATFORM_FEATURES[9].name)}
+                                     {renderBadge(9)}
+                                   </span>
+                                 ) : (
+                                   <Link href={PLATFORM_FEATURES[9].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                     {t(PLATFORM_FEATURES[9].name)}
+                                     {renderBadge(9)}
+                                   </Link>
+                                 )}
                             </li>
                           )}
                           {PLATFORM_FEATURES[10]?.active && (
                             <li>
-                              {PLATFORM_FEATURES[10].label === "soon" ? (
-                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                                  {PLATFORM_FEATURES[10].name}
-                                  {renderBadge(10)}
-                                </span>
-                              ) : (
-                                <Link href={PLATFORM_FEATURES[10].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
-                                  {PLATFORM_FEATURES[10].name}
-                                  {renderBadge(10)}
-                                </Link>
-                              )}
+                                 {PLATFORM_FEATURES[10].label === "soon" ? (
+                                   <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                     {t(PLATFORM_FEATURES[10].name)}
+                                     {renderBadge(10)}
+                                   </span>
+                                 ) : (
+                                   <Link href={PLATFORM_FEATURES[10].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                     {t(PLATFORM_FEATURES[10].name)}
+                                     {renderBadge(10)}
+                                   </Link>
+                                 )}
                             </li>
                           )}
                           {PLATFORM_FEATURES[11]?.active && (
                             <li>
-                              {PLATFORM_FEATURES[11].label === "soon" ? (
-                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                                  {PLATFORM_FEATURES[11].name}
-                                  {renderBadge(11)}
-                                </span>
-                              ) : (
-                                <Link href={PLATFORM_FEATURES[11].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
-                                  {PLATFORM_FEATURES[11].name}
-                                  {renderBadge(11)}
-                                </Link>
-                              )}
+                                 {PLATFORM_FEATURES[11].label === "soon" ? (
+                                   <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                     {t(PLATFORM_FEATURES[11].name)}
+                                     {renderBadge(11)}
+                                   </span>
+                                 ) : (
+                                   <Link href={PLATFORM_FEATURES[11].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                     {t(PLATFORM_FEATURES[11].name)}
+                                     {renderBadge(11)}
+                                   </Link>
+                                 )}
                             </li>
                           )}
                         </ul>
@@ -357,36 +358,36 @@ export function Header({
                     {/* Summary */}
                     {(PLATFORM_FEATURES[12]?.active || PLATFORM_FEATURES[13]?.active) && (
                       <div className="space-y-4">
-                        <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">Summary</h4>
+                         <h4 className="text-[15px] font-semibold text-black dark:text-white mb-6">{t('header.summary')}</h4>
                         <ul className="space-y-4">
                           {PLATFORM_FEATURES[12]?.active && (
                             <li>
-                              {PLATFORM_FEATURES[12].label === "soon" ? (
-                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                                  {PLATFORM_FEATURES[12].name}
-                                  {renderBadge(12)}
-                                </span>
-                              ) : (
-                                <Link href={PLATFORM_FEATURES[12].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
-                                  {PLATFORM_FEATURES[12].name}
-                                  {renderBadge(12)}
-                                </Link>
-                              )}
+                                 {PLATFORM_FEATURES[12].label === "soon" ? (
+                                   <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                     {t(PLATFORM_FEATURES[12].name)}
+                                     {renderBadge(12)}
+                                   </span>
+                                 ) : (
+                                   <Link href={PLATFORM_FEATURES[12].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                     {t(PLATFORM_FEATURES[12].name)}
+                                     {renderBadge(12)}
+                                   </Link>
+                                 )}
                             </li>
                           )}
                           {PLATFORM_FEATURES[13]?.active && (
                             <li>
-                              {PLATFORM_FEATURES[13].label === "soon" ? (
-                                <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
-                                  {PLATFORM_FEATURES[13].name}
-                                  {renderBadge(13)}
-                                </span>
-                              ) : (
-                                <Link href={PLATFORM_FEATURES[13].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
-                                  {PLATFORM_FEATURES[13].name}
-                                  {renderBadge(13)}
-                                </Link>
-                              )}
+                                 {PLATFORM_FEATURES[13].label === "soon" ? (
+                                   <span className="text-[13.5px] text-gray-400 dark:text-zinc-600 font-medium flex items-center gap-2 cursor-not-allowed">
+                                     {t(PLATFORM_FEATURES[13].name)}
+                                     {renderBadge(13)}
+                                   </span>
+                                 ) : (
+                                   <Link href={PLATFORM_FEATURES[13].href} className="text-[13.5px] text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white font-medium block transition-colors flex items-center gap-2">
+                                     {t(PLATFORM_FEATURES[13].name)}
+                                     {renderBadge(13)}
+                                   </Link>
+                                 )}
                             </li>
                           )}
                         </ul>
@@ -397,30 +398,30 @@ export function Header({
               </div>
             </div>
 
-            {PLATFORM_FEATURES[14]?.active && (
-              <Link href={PLATFORM_FEATURES[14].href} className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all flex items-center gap-1.5">
-                {PLATFORM_FEATURES[14].name}
-                {renderBadge(14)}
-              </Link>
-            )}
-            {PLATFORM_FEATURES[15]?.active && (
-              <Link href={PLATFORM_FEATURES[15].href} className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all flex items-center gap-1.5">
-                {PLATFORM_FEATURES[15].name}
-                {renderBadge(15)}
-              </Link>
-            )}
-            {PLATFORM_FEATURES[16]?.active && (
-              <Link href={PLATFORM_FEATURES[16].href} className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all flex items-center gap-1.5">
-                {PLATFORM_FEATURES[16].name}
-                {renderBadge(16)}
-              </Link>
-            )}
-            {PLATFORM_FEATURES[17]?.active && (
-              <Link href={PLATFORM_FEATURES[17].href} className="text-[14px] font-semibold text-white dark:text-white bg-zinc-700 dark:bg-zinc-700 hover:bg-zinc-600 dark:hover:bg-zinc-600 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
-                {PLATFORM_FEATURES[17].name}
-                {renderBadge(17)}
-              </Link>
-            )}
+             {PLATFORM_FEATURES[14]?.active && (
+               <Link href={PLATFORM_FEATURES[14].href} className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all flex items-center gap-1.5">
+                 {t(PLATFORM_FEATURES[14].name)}
+                 {renderBadge(14)}
+               </Link>
+             )}
+             {PLATFORM_FEATURES[15]?.active && (
+               <Link href={PLATFORM_FEATURES[15].href} className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all flex items-center gap-1.5">
+                 {t(PLATFORM_FEATURES[15].name)}
+                 {renderBadge(15)}
+               </Link>
+             )}
+             {PLATFORM_FEATURES[16]?.active && (
+               <Link href={PLATFORM_FEATURES[16].href} className="text-[14px] font-semibold text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-1.5 rounded-md hover:bg-white/8 dark:hover:bg-white/8 transition-all flex items-center gap-1.5">
+                 {t(PLATFORM_FEATURES[16].name)}
+                 {renderBadge(16)}
+               </Link>
+             )}
+             {PLATFORM_FEATURES[17]?.active && (
+               <Link href={PLATFORM_FEATURES[17].href} className="text-[14px] font-semibold text-white dark:text-white bg-zinc-700 dark:bg-zinc-700 hover:bg-zinc-600 dark:hover:bg-zinc-600 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+                 {t(PLATFORM_FEATURES[17].name)}
+                 {renderBadge(17)}
+               </Link>
+             )}
           </nav>
 
           {/* Actions — always visible */}
@@ -437,18 +438,18 @@ export function Header({
                   width={16}
                   height={16}
                 />
-                Add {PLATFORM_NAME.toUpperCase()} Extension
-              </Link>
+                 Add {t('header.add_extension', { platform: PLATFORM_NAME.toUpperCase() })}
+               </Link>
             )}
             <ThemeToggle className="text-zinc-500 hover:text-black dark:hover:text-white" />
             {user ? (
-              <Link href="/dashboard" className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium border border-gray-200 dark:border-zinc-700 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all">
-                Dashboard
-              </Link>
+               <Link href="/dashboard" className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium border border-gray-200 dark:border-zinc-700 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all">
+                 {t('common.dashboard')}
+               </Link>
             ) : (
-              <Link href={loginUrl} className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium border border-gray-200 dark:border-zinc-700 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all">
-                Log in
-              </Link>
+               <Link href={loginUrl} className="px-4 py-1.5 text-black dark:text-white text-[13px] font-medium border border-gray-200 dark:border-zinc-700 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all">
+                 {t('auth.login')}
+               </Link>
             )}
           </div>
 
@@ -462,44 +463,44 @@ export function Header({
       {/* Mobile Menu */}
       {isOpen && (
         <div className="lg:hidden fixed inset-0 top-16 bg-white/90 dark:bg-black/90 backdrop-blur-xl z-40 p-6 space-y-4 overflow-y-auto">
-          <div className="flex justify-between items-center py-4 border-b border-gray-200 dark:border-white/5">
-            <span className="text-2xl font-bold text-black dark:text-white">Menu</span>
-            <ThemeToggle />
-          </div>
-          {PLATFORM_FEATURES[4]?.active && (
-            <Link href={PLATFORM_FEATURES[4].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
-              <span>{PLATFORM_FEATURES[4].name}</span>
-              {renderBadge(4)}
-            </Link>
-          )}
-          {PLATFORM_FEATURES[14]?.active && (
-            <Link href={PLATFORM_FEATURES[14].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
-              <span>{PLATFORM_FEATURES[14].name}</span>
-              {renderBadge(14)}
-            </Link>
-          )}
-          {PLATFORM_FEATURES[15]?.active && (
-            <Link href={PLATFORM_FEATURES[15].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
-              <span>{PLATFORM_FEATURES[15].name}</span>
-              {renderBadge(15)}
-            </Link>
-          )}
-          {PLATFORM_FEATURES[16]?.active && (
-            <Link href={PLATFORM_FEATURES[16].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
-              <span>{PLATFORM_FEATURES[16].name}</span>
-              {renderBadge(16)}
-            </Link>
-          )}
+           <div className="flex justify-between items-center py-4 border-b border-gray-200 dark:border-white/5">
+             <span className="text-2xl font-bold text-black dark:text-white">{t('header.menu')}</span>
+             <ThemeToggle />
+           </div>
+           {PLATFORM_FEATURES[4]?.active && (
+             <Link href={PLATFORM_FEATURES[4].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+               <span>{t(PLATFORM_FEATURES[4].name)}</span>
+               {renderBadge(4)}
+             </Link>
+           )}
+           {PLATFORM_FEATURES[14]?.active && (
+             <Link href={PLATFORM_FEATURES[14].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+               <span>{t(PLATFORM_FEATURES[14].name)}</span>
+               {renderBadge(14)}
+             </Link>
+           )}
+           {PLATFORM_FEATURES[15]?.active && (
+             <Link href={PLATFORM_FEATURES[15].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+               <span>{t(PLATFORM_FEATURES[15].name)}</span>
+               {renderBadge(15)}
+             </Link>
+           )}
+           {PLATFORM_FEATURES[16]?.active && (
+             <Link href={PLATFORM_FEATURES[16].href} className="block text-2xl font-bold text-black dark:text-white py-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+               <span>{t(PLATFORM_FEATURES[16].name)}</span>
+               {renderBadge(16)}
+             </Link>
+           )}
           <div className="pt-8 space-y-4 pb-20">
-            {user ? (
-              <Link href="/dashboard" className="block text-xl font-bold text-black dark:text-white text-center py-4 bg-gray-100 dark:bg-zinc-900 rounded-2xl">Dashboard</Link>
-            ) : (
-              <Link href={loginUrl} className="block text-xl font-bold text-black dark:text-white text-center py-4 bg-gray-100 dark:bg-zinc-900 rounded-2xl">Log in</Link>
-            )}
+             {user ? (
+               <Link href="/dashboard" className="block text-xl font-bold text-black dark:text-white text-center py-4 bg-gray-100 dark:bg-zinc-900 rounded-2xl">{t('common.dashboard')}</Link>
+             ) : (
+               <Link href={loginUrl} className="block text-xl font-bold text-black dark:text-white text-center py-4 bg-gray-100 dark:bg-zinc-900 rounded-2xl">{t('auth.login')}</Link>
+             )}
             {PLATFORM_FEATURES[1]?.active && (
               <Link href={PLATFORM_FEATURES[1].href} target="_blank" className="block text-xl font-bold text-white text-center py-4 bg-[#4f46e5] rounded-2xl">
-                Add {PLATFORM_NAME.toUpperCase()} Extension
-              </Link>
+                 Add {t('header.add_extension', { platform: PLATFORM_NAME.toUpperCase() })}
+               </Link>
             )}
           </div>
         </div>

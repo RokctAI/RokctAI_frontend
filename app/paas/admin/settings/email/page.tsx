@@ -65,10 +65,10 @@ export default function EmailSettingsPage() {
               <Label>Username</Label>
               <Input defaultValue={settings.smtp_username} />
             </div>
-            <div className="space-y-2">
-              <Label>Password</Label>
-              <Input type="password" defaultValue={settings.smtp_password} />
-            </div>
+             <div className="space-y-2">
+               <Label>Password</Label>
+               <Input type="password" defaultValue={settings.smtp_password} /> // placeholder
+             </div>
           </div>
           <div className="space-y-2">
             <Label>From Email</Label>

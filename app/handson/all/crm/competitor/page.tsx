@@ -52,6 +52,7 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
+import t from "@/app/lib/i18n";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -126,6 +127,12 @@ const competitorSchema = z.object({
 const industrySchema = z.object({
   industry_name: z.string().min(2, "Name is required"),
 });
+
+const PRICING_MODELS = {
+  SUBSCRIPTION: "Subscription",
+  ONE_TIME: "One-Time",
+  FREEMIUM: "Freemium",
+} as const;
 
 export default function CompetitorPage() {
   const [competitors, setCompetitors] = useState<any[]>([]);
@@ -320,9 +327,9 @@ export default function CompetitorPage() {
     <div className="space-y-8 p-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Competitor Intelligence</h1>
+          <h1 className="text-3xl font-bold">{t('app.crm.competitor.title')}</h1>
           <p className="text-muted-foreground">
-            Track market rivals, products, and threats.
+            {t('app.crm.competitor.desc')}
           </p>
         </div>
         <div className="flex gap-2">
@@ -331,12 +338,12 @@ export default function CompetitorPage() {
               variant="outline"
               onClick={() => setIsIndustryDialogOpen(true)}
             >
-              Add Industry
+              {t('app.crm.competitor.add_industry')}
             </Button>
           )}
           {canEdit && (
             <Button onClick={() => openDialog()}>
-              <Plus className="mr-2 h-4 w-4" /> New Competitor
+              <Plus className="mr-2 h-4 w-4" /> {t('app.crm.competitor.new_competitor')}
             </Button>
           )}
         </div>
@@ -344,8 +351,8 @@ export default function CompetitorPage() {
 
       <Tabs defaultValue="list" value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="list">List View</TabsTrigger>
-          <TabsTrigger value="map">Map View</TabsTrigger>
+          <TabsTrigger value="list">{t('app.crm.competitor.list_view')}</TabsTrigger>
+          <TabsTrigger value="map">{t('app.crm.competitor.map_view')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
@@ -360,22 +367,22 @@ export default function CompetitorPage() {
                     <CardTitle className="text-xl font-bold">
                       {comp.competitor_name}
                     </CardTitle>
-                    <CardDescription className="flex items-center mt-1">
-                      <Building2 className="h-3 w-3 mr-1" />
-                      {comp.industry || "Unknown Industry"}
-                    </CardDescription>
+                     <CardDescription className="flex items-center mt-1">
+                       <Building2 className="h-3 w-3 mr-1" />
+                       {comp.industry || t('app.crm.competitor.unknown_industry')}
+                     </CardDescription>
                   </div>
-                  <Badge
-                    variant={
-                      comp.threat_level === "High"
-                        ? "destructive"
-                        : comp.threat_level === "Medium"
-                          ? "secondary"
-                          : "outline"
-                    }
-                  >
-                    {comp.threat_level} Threat
-                  </Badge>
+                   <Badge
+                     variant={
+                       comp.threat_level === "High"
+                         ? "destructive"
+                         : comp.threat_level === "Medium"
+                           ? "secondary"
+                           : "outline"
+                     }
+                   >
+                     {t('app.crm.competitor.threat_label', { level: comp.threat_level })}
+                   </Badge>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2 text-sm">
@@ -402,13 +409,13 @@ export default function CompetitorPage() {
                   <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
                     {canEdit && (
                       <>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openDialog(comp)}
-                        >
-                          <Pencil className="h-4 w-4 mr-2" /> Edit
-                        </Button>
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={() => openDialog(comp)}
+                         >
+                           <Pencil className="h-4 w-4 mr-2" /> {t('app.crm.competitor.edit')}
+                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -423,14 +430,14 @@ export default function CompetitorPage() {
                 </CardContent>
               </Card>
             ))}
-            {competitors.length === 0 && (
-              <div className="col-span-full flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-lg text-muted-foreground">
-                <p>No competitors tracked yet.</p>
-                <Button variant="link" onClick={() => openDialog()}>
-                  Add your first competitor
-                </Button>
-              </div>
-            )}
+             {competitors.length === 0 && (
+               <div className="col-span-full flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-lg text-muted-foreground">
+                 <p>{t('app.crm.competitor.no_competitors')}</p>
+                 <Button variant="link" onClick={() => openDialog()}>
+                   {t('app.crm.competitor.add_first')}
+                 </Button>
+               </div>
+             )}
           </div>
         </TabsContent>
 
@@ -452,87 +459,87 @@ export default function CompetitorPage() {
             // We can add a 'Load Locations' button on the map or fetch them separately if needed.
             // For now, let's show routes and zones which are master data.
           />
-          <div className="absolute top-4 left-4 bg-white/90 p-4 rounded shadow-md text-sm max-w-xs backdrop-blur">
-            <h4 className="font-semibold mb-2">Map Legend</h4>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-blue-500/20 border border-blue-500"></div>{" "}
-                Zones
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-1 bg-red-500"></div> Primary Routes
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-1 bg-orange-500"></div> Secondary Routes
-              </div>
-            </div>
-          </div>
+           <div className="absolute top-4 left-4 bg-white/90 p-4 rounded shadow-md text-sm max-w-xs backdrop-blur">
+             <h4 className="font-semibold mb-2">{t('app.crm.competitor.map_legend')}</h4>
+             <div className="space-y-1">
+               <div className="flex items-center gap-2">
+                 <div className="w-3 h-3 bg-blue-500/20 border border-blue-500"></div>{" "}
+                 {t('app.crm.competitor.zones')}
+               </div>
+               <div className="flex items-center gap-2">
+                 <div className="w-4 h-1 bg-red-500"></div> {t('app.crm.competitor.primary_routes')}
+               </div>
+               <div className="flex items-center gap-2">
+                 <div className="w-4 h-1 bg-orange-500"></div> {t('app.crm.competitor.secondary_routes')}
+               </div>
+             </div>
+           </div>
         </TabsContent>
       </Tabs>
 
       {/* --- Competitor Dialog --- */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {editingCompetitor ? "Edit Competitor" : "Track New Competitor"}
-            </DialogTitle>
-          </DialogHeader>
+           <DialogHeader>
+             <DialogTitle>
+               {editingCompetitor ? t('app.crm.competitor.edit_title') : t('app.crm.competitor.new_title')}
+             </DialogTitle>
+           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <Tabs defaultValue="general">
-                <TabsList className="grid w-full grid-cols-5">
-                  <TabsTrigger value="general">General</TabsTrigger>
-                  <TabsTrigger value="details">Details</TabsTrigger>
-                  <TabsTrigger value="products">Products</TabsTrigger>
-                  <TabsTrigger value="locations">Locations</TabsTrigger>
-                  <TabsTrigger value="analysis">SWOT</TabsTrigger>
-                </TabsList>
+                 <TabsList className="grid w-full grid-cols-5">
+                   <TabsTrigger value="general">{t('app.crm.competitor.tab_general')}</TabsTrigger>
+                   <TabsTrigger value="details">{t('app.crm.competitor.tab_details')}</TabsTrigger>
+                   <TabsTrigger value="products">{t('app.crm.competitor.tab_products')}</TabsTrigger>
+                   <TabsTrigger value="locations">{t('app.crm.competitor.tab_locations')}</TabsTrigger>
+                   <TabsTrigger value="analysis">{t('app.crm.competitor.tab_swot')}</TabsTrigger>
+                 </TabsList>
 
                 <TabsContent value="general" className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="competitor_name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="website"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Website</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                     <FormField
+                       control={form.control}
+                       name="competitor_name"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel>{t('app.crm.competitor.label_name')}</FormLabel>
+                           <FormControl>
+                             <Input {...field} />
+                           </FormControl>
+                           <FormMessage />
+                         </FormItem>
+                       )}
+                     />
+                     <FormField
+                       control={form.control}
+                       name="website"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel>{t('app.crm.competitor.label_website')}</FormLabel>
+                           <FormControl>
+                             <Input placeholder="https://..." {...field} />
+                           </FormControl>
+                           <FormMessage />
+                         </FormItem>
+                       )}
+                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="industry"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Industry</FormLabel>
-                          <Select
+                     <FormField
+                       control={form.control}
+                       name="industry"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel>{t('app.crm.competitor.label_industry')}</FormLabel>
+                           <Select
                             onValueChange={field.onChange}
                             value={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select..." />
-                              </SelectTrigger>
+                               <SelectTrigger>
+                                 <SelectValue placeholder={t('common.select')} />
+                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               {industries.map((ind) => (
@@ -545,13 +552,13 @@ export default function CompetitorPage() {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="competitor_type"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Type</FormLabel>
-                          <Select
+                     <FormField
+                       control={form.control}
+                       name="competitor_type"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel>{t('app.crm.competitor.label_type')}</FormLabel>
+                           <Select
                             onValueChange={field.onChange}
                             value={field.value}
                           >
@@ -560,27 +567,27 @@ export default function CompetitorPage() {
                                 <SelectValue />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
-                              <SelectItem value="Direct">Direct</SelectItem>
-                              <SelectItem value="Primary">Primary</SelectItem>
-                              <SelectItem value="Secondary">
-                                Secondary
-                              </SelectItem>
-                              <SelectItem value="Indirect">Indirect</SelectItem>
-                            </SelectContent>
+                               <SelectContent>
+                                 <SelectItem value="Direct">{t('app.crm.competitor.type_direct')}</SelectItem>
+                                 <SelectItem value="Primary">{t('app.crm.competitor.type_primary')}</SelectItem>
+                                 <SelectItem value="Secondary">
+                                   {t('app.crm.competitor.type_secondary')}
+                                 </SelectItem>
+                                 <SelectItem value="Indirect">{t('app.crm.competitor.type_indirect')}</SelectItem>
+                               </SelectContent>
                           </Select>
                         </FormItem>
                       )}
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="threat_level"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Threat Level</FormLabel>
-                          <Select
+                     <FormField
+                       control={form.control}
+                       name="threat_level"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel>{t('app.crm.competitor.label_threat')}</FormLabel>
+                           <Select
                             onValueChange={field.onChange}
                             value={field.value}
                           >
@@ -589,11 +596,11 @@ export default function CompetitorPage() {
                                 <SelectValue />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
-                              <SelectItem value="High">High</SelectItem>
-                              <SelectItem value="Medium">Medium</SelectItem>
-                              <SelectItem value="Low">Low</SelectItem>
-                            </SelectContent>
+                             <SelectContent>
+                               <SelectItem value="High">{t('app.crm.competitor.threat_high')}</SelectItem>
+                               <SelectItem value="Medium">{t('app.crm.competitor.threat_medium')}</SelectItem>
+                               <SelectItem value="Low">{t('app.crm.competitor.threat_low')}</SelectItem>
+                             </SelectContent>
                           </Select>
                         </FormItem>
                       )}
@@ -603,32 +610,32 @@ export default function CompetitorPage() {
 
                 <TabsContent value="details" className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="year_founded"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Year Founded</FormLabel>
-                          <FormControl>
+                     <FormField
+                       control={form.control}
+                       name="year_founded"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel>{t('app.crm.competitor.label_founded')}</FormLabel>
+                           <FormControl>
                             <Input type="number" {...field} />
                           </FormControl>
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="number_of_employees"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Employees</FormLabel>
-                          <Select
+                     <FormField
+                       control={form.control}
+                       name="number_of_employees"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel>{t('app.crm.competitor.label_employees')}</FormLabel>
+                           <Select
                             onValueChange={field.onChange}
                             value={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select..." />
-                              </SelectTrigger>
+                               <SelectTrigger>
+                                 <SelectValue placeholder={t('common.select')} />
+                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="1-10">1-10</SelectItem>
@@ -642,25 +649,25 @@ export default function CompetitorPage() {
                       )}
                     />
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="headquarters_location"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>HQ Location</FormLabel>
-                        <FormControl>
-                          <Input placeholder="City, Country" {...field} />
-                        </FormControl>
+                   <FormField
+                     control={form.control}
+                     name="headquarters_location"
+                     render={({ field }) => (
+                       <FormItem>
+                         <FormLabel>{t('app.crm.competitor.label_hq')}</FormLabel>
+                          <FormControl>
+                           <Input placeholder={t('app.crm.competitor.ph_hq')} {...field} />
+                         </FormControl>
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="company_overview"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Overview</FormLabel>
-                        <FormControl>
+                   <FormField
+                     control={form.control}
+                     name="company_overview"
+                     render={({ field }) => (
+                       <FormItem>
+                         <FormLabel>{t('app.crm.competitor.label_overview')}</FormLabel>
+                         <FormControl>
                           <Textarea className="h-24" {...field} />
                         </FormControl>
                       </FormItem>
@@ -668,17 +675,17 @@ export default function CompetitorPage() {
                   />
                 </TabsContent>
 
-                <TabsContent value="products" className="space-y-4 mt-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium">Products & Services</h4>
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={() => appendProduct({ their_product_name: "" })}
-                    >
-                      <Plus className="h-4 w-4 mr-1" /> Add
-                    </Button>
-                  </div>
+                 <TabsContent value="products" className="space-y-4 mt-4">
+                   <div className="flex justify-between items-center mb-2">
+                     <h4 className="font-medium">{t('app.crm.competitor.label_products')}</h4>
+                     <Button
+                       type="button"
+                       size="sm"
+                       onClick={() => appendProduct({ their_product_name: "" })}
+                     >
+                       <Plus className="h-4 w-4 mr-1" /> {t('app.crm.competitor.btn_add')}
+                     </Button>
+                   </div>
                   <div className="space-y-3">
                     {productFields.map((field, index) => (
                       <div
@@ -691,12 +698,12 @@ export default function CompetitorPage() {
                             name={`products_services.${index}.their_product_name`}
                             render={({ field }) => (
                               <FormItem>
-                                <FormControl>
-                                  <Input
-                                    placeholder="Product Name"
-                                    {...field}
-                                  />
-                                </FormControl>
+                                   <FormControl>
+                                     <Input
+                                       placeholder={t('app.crm.competitor.ph_product')}
+                                       {...field}
+                                     />
+                                   </FormControl>
                               </FormItem>
                             )}
                           />
@@ -712,21 +719,21 @@ export default function CompetitorPage() {
                                   value={field.value}
                                 >
                                   <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Model" />
-                                    </SelectTrigger>
+                                     <SelectTrigger>
+                                       <SelectValue placeholder={t('app.crm.competitor.ph_model')} />
+                                     </SelectTrigger>
                                   </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="Subscription">
-                                      Subscription
-                                    </SelectItem>
-                                    <SelectItem value="One-Time">
-                                      One-Time
-                                    </SelectItem>
-                                    <SelectItem value="Freemium">
-                                      Freemium
-                                    </SelectItem>
-                                  </SelectContent>
+                                    <SelectContent>
+                                      <SelectItem value={PRICING_MODELS.SUBSCRIPTION}>
+                                        {t('app.crm.competitor.model_subscription')}
+                                      </SelectItem>
+                                      <SelectItem value={PRICING_MODELS.ONE_TIME}>
+                                        {t('app.crm.competitor.model_one_time')}
+                                      </SelectItem>
+                                      <SelectItem value={PRICING_MODELS.FREEMIUM}>
+                                        {t('app.crm.competitor.model_freemium')}
+                                      </SelectItem>
+                                    </SelectContent>
                                 </Select>
                               </FormItem>
                             )}
@@ -738,13 +745,13 @@ export default function CompetitorPage() {
                             name={`products_services.${index}.price_point`}
                             render={({ field }) => (
                               <FormItem>
-                                <FormControl>
-                                  <Input
-                                    type="number"
-                                    placeholder="Price"
-                                    {...field}
-                                  />
-                                </FormControl>
+                                   <FormControl>
+                                     <Input
+                                       type="number"
+                                       placeholder={t('app.crm.competitor.ph_price')}
+                                       {...field}
+                                     />
+                                   </FormControl>
                               </FormItem>
                             )}
                           />
@@ -755,9 +762,9 @@ export default function CompetitorPage() {
                             name={`products_services.${index}.description`}
                             render={({ field }) => (
                               <FormItem>
-                                <FormControl>
-                                  <Input placeholder="Desc" {...field} />
-                                </FormControl>
+                                   <FormControl>
+                                     <Input placeholder={t('app.crm.competitor.ph_desc')} {...field} />
+                                   </FormControl>
                               </FormItem>
                             )}
                           />
@@ -777,17 +784,17 @@ export default function CompetitorPage() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="locations" className="space-y-4 mt-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium">Office Locations</h4>
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={() => appendLocation({ location_name: "" })}
-                    >
-                      <Plus className="h-4 w-4 mr-1" /> Add
-                    </Button>
-                  </div>
+                 <TabsContent value="locations" className="space-y-4 mt-4">
+                   <div className="flex justify-between items-center mb-2">
+                     <h4 className="font-medium">{t('app.crm.competitor.label_offices')}</h4>
+                     <Button
+                       type="button"
+                       size="sm"
+                       onClick={() => appendLocation({ location_name: "" })}
+                     >
+                       <Plus className="h-4 w-4 mr-1" /> {t('app.crm.competitor.btn_add')}
+                     </Button>
+                   </div>
                   <div className="space-y-3">
                     {locationFields.map((field, index) => (
                       <div
@@ -800,12 +807,12 @@ export default function CompetitorPage() {
                             name={`office_locations.${index}.location_name`}
                             render={({ field }) => (
                               <FormItem>
-                                <FormControl>
-                                  <Input
-                                    placeholder="Location Name"
-                                    {...field}
-                                  />
-                                </FormControl>
+                                 <FormControl>
+                                   <Input
+                                     placeholder={t('app.crm.competitor.ph_loc_name')}
+                                     {...field}
+                                   />
+                                 </FormControl>
                               </FormItem>
                             )}
                           />
@@ -820,10 +827,10 @@ export default function CompetitorPage() {
                                   onValueChange={field.onChange}
                                   value={field.value}
                                 >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Type" />
-                                    </SelectTrigger>
+                                 <FormControl>
+                                   <SelectTrigger>
+                                     <SelectValue placeholder={t('app.crm.competitor.label_loc_type')} />
+                                   </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
                                     {locTypes.map((t) => (
@@ -839,16 +846,16 @@ export default function CompetitorPage() {
                         </div>
                         <div className="col-span-3 flex items-center justify-end gap-2">
                           {field.location_geolocation && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() =>
-                                openMap(field.location_geolocation as string)
-                              }
-                            >
-                              <Map className="h-3 w-3 mr-1" /> View
-                            </Button>
+                             <Button
+                               type="button"
+                               variant="outline"
+                               size="sm"
+                               onClick={() =>
+                                 openMap(field.location_geolocation as string)
+                               }
+                             >
+                               <Map className="h-3 w-3 mr-1" /> {t('app.crm.competitor.btn_view')}
+                             </Button>
                           )}
                           <Button
                             type="button"
@@ -866,38 +873,38 @@ export default function CompetitorPage() {
 
                 <TabsContent value="analysis" className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="strengths"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Strengths</FormLabel>
-                          <FormControl>
+                     <FormField
+                       control={form.control}
+                       name="strengths"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel>{t('app.crm.competitor.label_strengths')}</FormLabel>
+                           <FormControl>
                             <Textarea className="h-20" {...field} />
                           </FormControl>
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="weaknesses"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Weaknesses</FormLabel>
-                          <FormControl>
+                     <FormField
+                       control={form.control}
+                       name="weaknesses"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel>{t('app.crm.competitor.label_weaknesses')}</FormLabel>
+                           <FormControl>
                             <Textarea className="h-20" {...field} />
                           </FormControl>
                         </FormItem>
                       )}
                     />
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="notes"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Strategic Notes</FormLabel>
-                        <FormControl>
+                     <FormField
+                       control={form.control}
+                       name="notes"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel>{t('app.crm.competitor.label_notes')}</FormLabel>
+                           <FormControl>
                           <Textarea className="h-32" {...field} />
                         </FormControl>
                       </FormItem>
@@ -906,9 +913,9 @@ export default function CompetitorPage() {
                 </TabsContent>
               </Tabs>
 
-              <DialogFooter>
-                <Button type="submit">Save Competitor</Button>
-              </DialogFooter>
+               <DialogFooter>
+                 <Button type="submit">{t('app.crm.competitor.btn_save')}</Button>
+               </DialogFooter>
             </form>
           </Form>
         </DialogContent>
@@ -920,9 +927,9 @@ export default function CompetitorPage() {
         onOpenChange={setIsIndustryDialogOpen}
       >
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Industry</DialogTitle>
-          </DialogHeader>
+           <DialogHeader>
+             <DialogTitle>{t('app.crm.competitor.add_industry_title')}</DialogTitle>
+           </DialogHeader>
           <Form {...industryForm}>
             <form
               onSubmit={industryForm.handleSubmit(onIndustrySubmit)}
@@ -932,18 +939,18 @@ export default function CompetitorPage() {
                 control={industryForm.control}
                 name="industry_name"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Industry Name</FormLabel>
-                    <FormControl>
+                   <FormItem>
+                     <FormLabel>{t('app.crm.competitor.label_ind_name')}</FormLabel>
+                     <FormControl>
                       <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <DialogFooter>
-                <Button type="submit">Create</Button>
-              </DialogFooter>
+               <DialogFooter>
+                 <Button type="submit">{t('app.crm.competitor.btn_create')}</Button>
+               </DialogFooter>
             </form>
           </Form>
         </DialogContent>

@@ -33,6 +33,7 @@ import {
   saveTenantTerm,
   deleteTenantTerm,
 } from "@/app/actions/handson/tenant/settings/terms";
+import t from "@/app/lib/i18n";
 
 export default function TermsSettings() {
   const [terms, setTerms] = useState<any[]>([]);
@@ -203,24 +204,28 @@ export default function TermsSettings() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Title</Label>
-              <Input
-                value={editingTerm.title}
-                onChange={(e) =>
-                  setEditingTerm({ ...editingTerm, title: e.target.value })
-                }
-                placeholder="e.g. Standard Payment Terms"
-              />
+               <Input
+                 value={editingTerm?.title || ""}
+                 onChange={(e) =>
+                   setEditingTerm((prev) =>
+                     prev ? { ...prev, title: e.target.value } : null,
+                   )
+                 }
+                 placeholder={t('app.control.terms.ph_title')}
+               />
             </div>
             <div className="space-y-2">
               <Label>Terms Content</Label>
-              <Textarea
-                className="min-h-[200px]"
-                value={editingTerm.terms}
-                onChange={(e) =>
-                  setEditingTerm({ ...editingTerm, terms: e.target.value })
-                }
-                placeholder="Full legal text..."
-              />
+               <Textarea
+                 className="min-h-[200px]"
+                 value={editingTerm?.terms || ""}
+                 onChange={(e) =>
+                   setEditingTerm((prev) =>
+                     prev ? { ...prev, terms: e.target.value } : null,
+                   )
+                 }
+                 placeholder={t('app.control.terms.ph_content')}
+               />
             </div>
           </div>
           <DialogFooter>

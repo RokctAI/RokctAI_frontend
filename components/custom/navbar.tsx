@@ -5,6 +5,7 @@ import { HardDrive, User, Settings, LogOut } from "lucide-react";
 import { auth, signOut } from "@/app/(auth)/auth";
 import { getGuestBranding } from "@/app/config/platform";
 import { PLATFORM_NAME } from "@/app/config/constants";
+import t from "@/app/lib/i18n";
 
 import { HandsOnButton } from "./hands_on_button";
 import { History } from "./history";
@@ -95,13 +96,13 @@ export const Navbar = async () => {
               {/* 2. RPanel Link (Conditional) */}
               {showRPanel && (
                 <Button variant="ghost" size="sm" asChild>
-                  <Link
-                    href="/handson/control/rpanel"
-                    className="flex items-center gap-2"
-                  >
-                    <HardDrive className="h-4 w-4" />
-                    <span className="hidden md:inline">RPanel</span>
-                  </Link>
+                     <Link
+                       href="/handson/control/rpanel"
+                       className="flex items-center gap-2"
+                     >
+                       <HardDrive className="h-4 w-4" />
+                       <span className="hidden md:inline">{t('navbar.rpanel')}</span>
+                     </Link>
                 </Button>
               )}
 
@@ -141,18 +142,18 @@ export const Navbar = async () => {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem asChild>
-                      <Link href="/handson/settings/profile">
-                        <User className="mr-2 h-4 w-4" />
-                        <span>My Profile</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/handson/settings/users">
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Settings</span>
-                      </Link>
-                    </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                       <Link href="/handson/settings/profile">
+                         <User className="mr-2 h-4 w-4" />
+                         <span>{t('common.profile')}</span>
+                       </Link>
+                     </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                       <Link href="/handson/settings/users">
+                         <Settings className="mr-2 h-4 w-4" />
+                         <span>{t('common.settings')}</span>
+                       </Link>
+                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
@@ -163,25 +164,25 @@ export const Navbar = async () => {
                       }}
                       className="w-full"
                     >
-                      <button
-                        type="submit"
-                        className="flex w-full items-center text-red-600"
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Sign out</span>
-                      </button>
+                         <button
+                           type="submit"
+                           className="flex w-full items-center text-red-600"
+                         >
+                           <LogOut className="mr-2 h-4 w-4" />
+                           <span>{t('auth.sign_out')}</span>
+                         </button>
                     </form>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           ) : (
-            <Button
-              className="py-1.5 px-2 h-fit font-normal text-white"
-              asChild
-            >
-              <Link href="/login">Login</Link>
-            </Button>
+             <Button
+               className="py-1.5 px-2 h-fit font-normal text-white"
+               asChild
+             >
+               <Link href="/login">{t('auth.login')}</Link>
+             </Button>
           )}
           <RightPlaneTrigger />
         </div>

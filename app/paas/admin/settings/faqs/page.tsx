@@ -10,6 +10,7 @@ import {
   updateFAQ,
   deleteFAQ,
 } from "@/app/actions/paas/admin/content";
+import t from "@/app/lib/i18n";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -126,14 +127,14 @@ export default function FAQsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">FAQs</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t('app.paas.admin.settings.faqs.title')}</h2>
           <p className="text-muted-foreground">
-            Manage Frequently Asked Questions for your users.
+            {t('app.paas.admin.settings.faqs.desc')}
           </p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
           <Plus className="mr-2 size-4" />
-          Add FAQ
+          {t('app.paas.admin.settings.faqs.btn_add')}
         </Button>
       </div>
 
@@ -147,11 +148,11 @@ export default function FAQsPage() {
                   <CardDescription className="mt-1">
                     Type: <span className="capitalize">{faq.type}</span> •
                     Status:{" "}
-                    <span
-                      className={faq.active ? "text-green-600" : "text-red-600"}
-                    >
-                      {faq.active ? "Active" : "Inactive"}
-                    </span>
+                                <span
+                                  className={faq.active ? "text-green-600" : "text-red-600"}
+                                >
+                                  {faq.active ? t('app.paas.admin.settings.faqs.status_active') : t('app.paas.admin.settings.faqs.status_inactive')}
+                                </span>
                   </CardDescription>
                 </div>
                 <div className="flex space-x-2">
@@ -180,84 +181,84 @@ export default function FAQsPage() {
             </CardContent>
           </Card>
         ))}
-        {faqs.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
-            No FAQs found. Create one to get started.
-          </div>
-        )}
+         {faqs.length === 0 && (
+           <div className="text-center py-12 text-muted-foreground">
+             {t('app.paas.admin.settings.faqs.no_faqs')}
+           </div>
+         )}
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingFaq ? "Edit FAQ" : "Add FAQ"}</DialogTitle>
+            <DialogTitle>{editingFaq ? t('app.paas.admin.settings.faqs.edit_title') : t('app.paas.admin.settings.faqs.add_title')}</DialogTitle>
             <DialogDescription>
               {editingFaq
-                ? "Update the details of this FAQ."
-                : "Create a new Frequently Asked Question."}
+                ? t('app.paas.admin.settings.faqs.edit_desc')
+                : t('app.paas.admin.settings.faqs.add_desc')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Question</Label>
-              <Input
-                value={formData.question}
-                onChange={(e) =>
-                  setFormData({ ...formData, question: e.target.value })
-                }
-                placeholder="e.g., How do I reset my password?"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Answer</Label>
-              <Textarea
-                value={formData.answer}
-                onChange={(e) =>
-                  setFormData({ ...formData, answer: e.target.value })
-                }
-                placeholder="Enter the answer here..."
-                className="min-h-[100px]"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Type</Label>
-                <Select
-                  value={formData.type}
-                  onValueChange={(val) =>
-                    setFormData({ ...formData, type: val })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="web">Web</SelectItem>
-                    <SelectItem value="mobile">Mobile</SelectItem>
-                    <SelectItem value="driver">Driver</SelectItem>
-                    <SelectItem value="seller">Seller</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2 flex flex-col justify-end pb-2">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    checked={!!formData.active}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, active: checked ? 1 : 0 })
-                    }
-                  />
-                  <Label>Active</Label>
-                </div>
-              </div>
-            </div>
+             <div className="space-y-2">
+               <Label>{t('app.paas.admin.settings.faqs.label_question')}</Label>
+                                <Input
+                                  value={formData.question}
+                                  onChange={(e) =>
+                                    setFormData({ ...formData, question: e.target.value })
+                                  }
+                                  placeholder={t('app.paas.admin.settings.faqs.ph_question')}
+                                />
+             </div>
+             <div className="space-y-2">
+               <Label>{t('app.paas.admin.settings.faqs.label_answer')}</Label>
+               <Textarea
+                 value={formData.answer}
+                 onChange={(e) =>
+                   setFormData({ ...formData, answer: e.target.value })
+                 }
+                 placeholder={t('app.paas.admin.settings.faqs.ph_answer')}
+                 className="min-h-[100px]"
+               />
+             </div>
+             <div className="grid grid-cols-2 gap-4">
+               <div className="space-y-2">
+                 <Label>{t('app.paas.admin.settings.faqs.label_type')}</Label>
+                 <Select
+                   value={formData.type}
+                   onValueChange={(val) =>
+                     setFormData({ ...formData, type: val })
+                   }
+                 >
+                   <SelectTrigger>
+                     <SelectValue />
+                   </SelectTrigger>
+                   <SelectContent>
+                     <SelectItem value="web">Web</SelectItem>
+                     <SelectItem value="mobile">Mobile</SelectItem>
+                     <SelectItem value="driver">Driver</SelectItem>
+                     <SelectItem value="seller">Seller</SelectItem>
+                   </SelectContent>
+                 </Select>
+               </div>
+               <div className="space-y-2 flex flex-col justify-end pb-2">
+                 <div className="flex items-center space-x-2">
+                   <Switch
+                     checked={!!formData.active}
+                     onCheckedChange={(checked) =>
+                       setFormData({ ...formData, active: checked ? 1 : 0 })
+                     }
+                   />
+                   <Label>{t('app.paas.admin.settings.faqs.label_active')}</Label>
+                 </div>
+               </div>
+             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>Save</Button>
-          </DialogFooter>
+           <DialogFooter>
+             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+               {t('app.paas.admin.settings.faqs.btn_cancel')}
+             </Button>
+             <Button onClick={handleSave}>{t('app.paas.admin.settings.faqs.btn_save')}</Button>
+           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

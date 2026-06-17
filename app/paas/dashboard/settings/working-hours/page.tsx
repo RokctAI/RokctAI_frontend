@@ -20,23 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-
-interface WorkingDay {
-  day_of_week: string;
-  opening_time: string;
-  closing_time: string;
-  is_closed: number;
-}
-
-const DAYS_OF_WEEK = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
+import t from "@/app/lib/i18n";
 
 export default function WorkingHoursPage() {
   const [loading, setLoading] = useState(true);
@@ -120,16 +104,16 @@ export default function WorkingHoursPage() {
             <ArrowLeft className="size-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Working Hours</h1>
+         <h1 className="text-3xl font-bold">{t('app.paas.dashboard.settings.working_hours.title')}</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle>Weekly Schedule</CardTitle>
-            <CardDescription>
-              Set your shop's opening and closing times.
-            </CardDescription>
+           <CardTitle>{t('app.paas.dashboard.settings.working_hours.card_title')}</CardTitle>
+             <CardDescription>
+               {t('app.paas.dashboard.settings.working_hours.card_desc')}
+             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {workingDays.map((day, index) => (
@@ -145,9 +129,9 @@ export default function WorkingHoursPage() {
                       handleChange(index, "is_closed", checked ? 0 : 1)
                     }
                   />
-                  <span className="text-sm text-muted-foreground w-16">
-                    {day.is_closed ? "Closed" : "Open"}
-                  </span>
+                   <span className="text-sm text-muted-foreground w-16">
+                     {day.is_closed ? t('common.closed') : t('common.open')}
+                   </span>
                 </div>
                 {!day.is_closed && (
                   <>
@@ -165,7 +149,7 @@ export default function WorkingHoursPage() {
                         className="w-32"
                       />
                     </div>
-                    <span>to</span>
+                     <span>{t('common.to')}</span>
                     <div className="flex items-center gap-2">
                       <Label htmlFor={`close-${index}`} className="sr-only">
                         Closing Time
@@ -188,19 +172,19 @@ export default function WorkingHoursPage() {
         </Card>
 
         <div className="flex justify-end">
-          <Button type="submit" disabled={saving} size="lg">
-            {saving ? (
-              <>
-                <Loader2 className="mr-2 size-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="mr-2 size-4" />
-                Save Schedule
-              </>
-            )}
-          </Button>
+             <Button type="submit" disabled={saving} size="lg">
+               {saving ? (
+                 <>
+                   <Loader2 className="mr-2 size-4 animate-spin" />
+                   {t('common.saving')}
+                 </>
+               ) : (
+                 <>
+                   <Save className="mr-2 size-4" />
+                   {t('app.paas.dashboard.settings.working_hours.btn_save')}
+                 </>
+               )}
+             </Button>
         </div>
       </form>
     </div>

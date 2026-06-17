@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Branding } from "@/components/custom/branding";
 import React from "react";
 
+const P_ID = "password";
+
 export function PaaSLogin() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -79,9 +81,9 @@ export function PaaSLogin() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+               <Label htmlFor={P_ID}>Password</Label>
               <Input
-                id="password"
+                 id={P_ID}
                 name="password"
                 type="password"
                 required

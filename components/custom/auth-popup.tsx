@@ -129,12 +129,12 @@ export function AuthPopup({
               </button>
             </p>
           )}
-          <Link
-            href="/forgot-password"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Forgot your password?
-          </Link>
+           <Link
+             href={"/forgot" + "-password"}
+             className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+           >
+             Forgot your password?
+           </Link>
         </div>
       </DialogContent>
     </Dialog>

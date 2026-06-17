@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import t from "@/app/lib/i18n";
 
 export default function ExtrasPage() {
   const [groups, setGroups] = useState<any[]>([]);
@@ -178,32 +179,31 @@ export default function ExtrasPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Product Extras</h1>
-          <p className="text-muted-foreground">
-            Manage product add-ons and variants (e.g., Sizes, Toppings).
-          </p>
-        </div>
-        <Button
-          onClick={() => {
-            setEditingGroup(null);
-            setGroupForm({ name: "" });
-            setIsGroupDialogOpen(true);
-          }}
-        >
-          <Plus className="mr-2 size-4" />
-          Add Group
-        </Button>
+         <div>
+           <h1 className="text-3xl font-bold">{t('app.paas.dashboard.products.extras.title')}</h1>
+           <p className="text-muted-foreground">
+             {t('app.paas.dashboard.products.extras.desc')}
+           </p>
+         </div>
+         <Button
+           onClick={() => {
+             setEditingGroup(null);
+             setGroupForm({ name: "" });
+             setIsGroupDialogOpen(true);
+           }}
+         >
+           <Plus className="mr-2 size-4" /> {t('app.paas.dashboard.products.extras.btn_add_group')}
+         </Button>
       </div>
 
       <div className="grid gap-4">
-        {groups.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center text-muted-foreground">
-              No extra groups found. Create one to get started.
-            </CardContent>
-          </Card>
-        ) : (
+         {groups.length === 0 ? (
+           <Card>
+             <CardContent className="py-12 text-center text-muted-foreground">
+               {t('app.paas.dashboard.products.extras.no_data')}
+             </CardContent>
+           </Card>
+         ) : (
           groups.map((group) => (
             <Card key={group.name}>
               <Collapsible
@@ -224,18 +224,17 @@ export default function ExtrasPage() {
                     <span className="font-medium text-lg">{group.name}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedGroup(group);
-                        setValueForm({ value: "", price: 0 });
-                        setIsValueDialogOpen(true);
-                      }}
-                    >
-                      <Plus className="mr-2 size-4" />
-                      Add Value
-                    </Button>
+                     <Button
+                       variant="outline"
+                       size="sm"
+                       onClick={() => {
+                         setSelectedGroup(group);
+                         setValueForm({ value: "", price: 0 });
+                         setIsValueDialogOpen(true);
+                       }}
+                     >
+                       <Plus className="mr-2 size-4" /> {t('app.paas.dashboard.products.extras.btn_add_value')}
+                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -260,37 +259,37 @@ export default function ExtrasPage() {
                 <CollapsibleContent>
                   <div className="px-4 pb-4 pt-0">
                     <div className="rounded-md border p-4 bg-muted/50">
-                      {groupValues[group.name]?.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {groupValues[group.name].map((val) => (
-                            <div
-                              key={val.name}
-                              className="flex items-center justify-between bg-background p-3 rounded border"
-                            >
-                              <div>
-                                <div className="font-medium">{val.value}</div>
-                                <div className="text-sm text-muted-foreground">
-                                  +${val.price.toFixed(2)}
-                                </div>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="size-8 text-red-500"
-                                onClick={() =>
-                                  handleDeleteValue(val.name, group.name)
-                                }
-                              >
-                                <Trash2 className="size-4" />
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-muted-foreground text-center py-2">
-                          No values added yet.
-                        </p>
-                      )}
+                       {groupValues[group.name]?.length > 0 ? (
+                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                           {groupValues[group.name].map((val) => (
+                             <div
+                               key={val.name}
+                               className="flex items-center justify-between bg-background p-3 rounded border"
+                             >
+                               <div>
+                                 <div className="font-medium">{val.value}</div>
+                                 <div className="text-sm text-muted-foreground">
+                                   +{t('common.currency_symbol', { symbol: '$' })} {val.price.toFixed(2)}
+                                 </div>
+                               </div>
+                               <Button
+                                 variant="ghost"
+                                 size="icon"
+                                 className="size-8 text-red-500"
+                                 onClick={() =>
+                                   handleDeleteValue(val.name, group.name)
+                                 }
+                               >
+                                 <Trash2 className="size-4" />
+                               </Button>
+                             </div>
+                           ))}
+                         </div>
+                       ) : (
+                         <p className="text-sm text-muted-foreground text-center py-2">
+                           {t('app.paas.dashboard.products.extras.no_values')}
+                         </p>
+                       )}
                     </div>
                   </div>
                 </CollapsibleContent>
@@ -303,81 +302,81 @@ export default function ExtrasPage() {
       {/* Group Dialog */}
       <Dialog open={isGroupDialogOpen} onOpenChange={setIsGroupDialogOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editingGroup ? "Edit Group" : "Add Group"}
-            </DialogTitle>
-            <DialogDescription>
-              Create a group for extras (e.g., "Size", "Toppings").
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <Label htmlFor="groupName">Group Name</Label>
-            <Input
-              id="groupName"
-              value={groupForm.name}
-              onChange={(e) => setGroupForm({ name: e.target.value })}
-              placeholder="e.g. Size"
-            />
-          </div>
-          <DialogFooter>
-            <Button onClick={handleGroupSubmit} disabled={processing}>
-              {processing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                "Save Group"
-              )}
-            </Button>
-          </DialogFooter>
+           <DialogHeader>
+             <DialogTitle>
+               {editingGroup ? t('app.paas.dashboard.products.extras.dialog_edit') : t('app.paas.dashboard.products.extras.dialog_add')}
+             </DialogTitle>
+             <DialogDescription>
+               {t('app.paas.dashboard.products.extras.dialog_desc')}
+             </DialogDescription>
+           </DialogHeader>
+             <div className="py-4">
+               <Label htmlFor="groupName">{t('app.paas.dashboard.products.extras.label_group_name')}</Label>
+               <Input
+                 id="groupName"
+                 value={groupForm.name}
+                 onChange={(e) => setGroupForm({ name: e.target.value })}
+                 placeholder={t('app.paas.dashboard.products.extras.ph_group_name')}
+               />
+             </div>
+           <DialogFooter>
+             <Button onClick={handleGroupSubmit} disabled={processing}>
+               {processing ? (
+                 <Loader2 className="size-4 animate-spin" />
+               ) : (
+                 t('common.save')
+               )}
+             </Button>
+           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Value Dialog */}
       <Dialog open={isValueDialogOpen} onOpenChange={setIsValueDialogOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Value to {selectedGroup?.name}</DialogTitle>
-            <DialogDescription>
-              Add an option to this group (e.g., "Small", "Cheese").
-            </DialogDescription>
-          </DialogHeader>
+           <DialogHeader>
+             <DialogTitle>{t('app.paas.dashboard.products.extras.add_value_title', { group: selectedGroup?.name })}</DialogTitle>
+             <DialogDescription>
+               {t('app.paas.dashboard.products.extras.add_value_desc')}
+             </DialogDescription>
+           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="valueName">Value Name</Label>
-              <Input
-                id="valueName"
-                value={valueForm.value}
-                onChange={(e) =>
-                  setValueForm((prev) => ({ ...prev, value: e.target.value }))
-                }
-                placeholder="e.g. Small"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="price">Additional Price</Label>
-              <Input
-                id="price"
-                type="number"
-                value={valueForm.price}
-                onChange={(e) =>
-                  setValueForm((prev) => ({
-                    ...prev,
-                    price: parseFloat(e.target.value),
-                  }))
-                }
-                placeholder="0.00"
-              />
-            </div>
+             <div className="grid gap-2">
+               <Label htmlFor="valueName">{t('app.paas.dashboard.products.extras.label_value_name')}</Label>
+               <Input
+                 id="valueName"
+                 value={valueForm.value}
+                 onChange={(e) =>
+                   setValueForm((prev) => ({ ...prev, value: e.target.value }))
+                 }
+                 placeholder={t('app.paas.dashboard.products.extras.ph_value_name')}
+               />
+             </div>
+             <div className="grid gap-2">
+               <Label htmlFor="price">{t('app.paas.dashboard.products.extras.label_price')}</Label>
+               <Input
+                 id="price"
+                 type="number"
+                 value={valueForm.price}
+                 onChange={(e) =>
+                   setValueForm((prev) => ({
+                     ...prev,
+                     price: parseFloat(e.target.value),
+                   }))
+                 }
+                 placeholder="0.00"
+               />
+             </div>
           </div>
-          <DialogFooter>
-            <Button onClick={handleValueSubmit} disabled={processing}>
-              {processing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                "Add Value"
-              )}
-            </Button>
-          </DialogFooter>
+           <DialogFooter>
+             <Button onClick={handleValueSubmit} disabled={processing}>
+               {processing ? (
+                 <Loader2 className="size-4 animate-spin" />
+               ) : (
+                 t('common.create')
+               )}
+             </Button>
+           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

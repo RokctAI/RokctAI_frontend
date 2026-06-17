@@ -20,6 +20,7 @@ import { HongKongTemplate } from "@/app/templates/invoices/hong_kong";
 import { TokyoTemplate } from "@/app/templates/invoices/tokyo";
 import { SydneyTemplate } from "@/app/templates/invoices/sydney";
 import { AddisAbabaTemplate } from "@/app/templates/invoices/addis_ababa";
+import t from "@/app/lib/i18n";
 import { NewYorkQuotation } from "@/app/templates/quotations/new_york";
 import { TorontoQuotation } from "@/app/templates/quotations/toronto";
 import { RioQuotation } from "@/app/templates/quotations/rio";
@@ -53,11 +54,11 @@ const DEFAULT_INVOICE_TEMPLATE = `
     <div class="header">
         <div class="row">
             <div class="col-6">
-                <h1>INVOICE</h1>
+                <h1>${t('printing.invoice')}</h1>
                 <p class="text-muted">{{ doc.name }}</p>
             </div>
             <div class="col-6 text-right">
-                <img src="{{ doc.company_logo }}" style="max-height: 80px;" />
+                <img src="${t('printing.company_logo_src')}" style="${t('printing.company_logo_style')}" />
                 <p><strong>{{ doc.company }}</strong><br>
                 {{ doc.company_address }}</p>
             </div>
@@ -66,14 +67,14 @@ const DEFAULT_INVOICE_TEMPLATE = `
     
     <div class="row info-section">
         <div class="col-6">
-            <p><strong>Bill To:</strong><br>
+            <p><strong>${t('printing.bill_to')}</strong><br>
             {{ doc.customer_name }}<br>
             {{ doc.address_display }}</p>
         </div>
         <div class="col-6 text-right">
             <table class="meta-table">
-                <tr><td>Date:</td><td>{{ doc.posting_date }}</td></tr>
-                <tr><td>Due Date:</td><td>{{ doc.due_date }}</td></tr>
+                <tr><td>${t('printing.date')}</td><td>{{ doc.posting_date }}</td></tr>
+                <tr><td>${t('printing.due_date')}</td><td>{{ doc.due_date }}</td></tr>
             </table>
         </div>
     </div>
@@ -81,10 +82,10 @@ const DEFAULT_INVOICE_TEMPLATE = `
     <table class="table item-table">
         <thead>
             <tr>
-                <th>Item</th>
-                <th class="text-right">Qty</th>
-                <th class="text-right">Rate</th>
-                <th class="text-right">Amount</th>
+                <th>${t('printing.item')}</th>
+                <th class="text-right">${t('printing.qty')}</th>
+                <th class="text-right">${t('printing.rate')}</th>
+                <th class="text-right">${t('printing.amount')}</th>
             </tr>
         </thead>
         <tbody>
@@ -106,23 +107,23 @@ const DEFAULT_INVOICE_TEMPLATE = `
         <div class="col-6">
             {% if invoice_qr_display %}
             <div class="qr-code" style="margin-top: 20px;">
-                <p><strong>Scan to Verify:</strong></p>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ doc.name }}" style="border: 1px solid #eee; padding: 5px;" />
+                <p><strong>${t('printing.scan_to_verify')}</strong></p>
+                <img src="${t('printing.qr_code_url')}" style="${t('printing.qr_code_style')}" />
             </div>
             {% endif %}
         </div>
         <div class="col-6">
             <table class="table-borderless w-100">
                 <tr>
-                    <td class="text-right">Net Total</td>
+                    <td class="text-right">${t('printing.net_total')}</td>
                     <td class="text-right">{{ doc.net_total }}</td>
                 </tr>
                  <tr>
-                    <td class="text-right">Tax</td>
+                    <td class="text-right">${t('printing.tax')}</td>
                     <td class="text-right">{{ doc.total_taxes_and_charges }}</td>
                 </tr>
                  <tr class="grand-total-row">
-                    <td class="text-right"><strong>Grand Total</strong></td>
+                    <td class="text-right"><strong>${t('printing.grand_total')}</strong></td>
                     <td class="text-right"><strong>{{ doc.grand_total }}</strong></td>
                 </tr>
             </table>
@@ -130,7 +131,7 @@ const DEFAULT_INVOICE_TEMPLATE = `
     </div>
 
     <div class="footer">
-        <p>Thank you for your business!</p>
+        <p>${t('printing.thank_you')}</p>
     </div>
 </div>
 `;

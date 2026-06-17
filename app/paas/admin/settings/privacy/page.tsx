@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import t from "@/app/lib/i18n";
 
 export default function PrivacyPolicyPage() {
   const [loading, setLoading] = useState(true);
@@ -194,24 +195,24 @@ export default function PrivacyPolicyPage() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Title</Label>
-              <Input
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                placeholder="e.g., General Privacy Policy"
-              />
+               <Input
+                 value={formData.title}
+                 onChange={(e) =>
+                   setFormData({ ...formData, title: e.target.value })
+                 }
+                 placeholder={t('app.paas.admin.settings.privacy.ph_title')}
+               />
             </div>
             <div className="space-y-2">
               <Label>Content</Label>
-              <Textarea
-                value={formData.content}
-                onChange={(e) =>
-                  setFormData({ ...formData, content: e.target.value })
-                }
-                placeholder="Enter the full privacy policy content here..."
-                className="min-h-[200px]"
-              />
+               <Textarea
+                 value={formData.content}
+                 onChange={(e) =>
+                   setFormData({ ...formData, content: e.target.value })
+                 }
+                 placeholder={t('app.paas.admin.settings.privacy.ph_content')}
+                 className="min-h-[200px]"
+               />
             </div>
             <div className="space-y-2 flex flex-col justify-end pb-2">
               <div className="flex items-center space-x-2">

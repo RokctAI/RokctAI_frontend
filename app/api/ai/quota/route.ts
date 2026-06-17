@@ -4,6 +4,7 @@ import { getModel } from "@/ai";
 import { generateText } from "ai";
 import { getAuthenticatedTokens } from "@/app/lib/auth-utils";
 
+// Token rotation and renewal are handled by getAuthenticatedTokens() which calls refreshTokens() before expiry.
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 

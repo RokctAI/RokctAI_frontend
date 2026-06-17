@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import t from "@/app/lib/i18n";
 import {
   Table,
   TableBody,
@@ -138,52 +139,52 @@ export default function BrandsPage() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Brands</h1>
+          <h1 className="text-3xl font-bold">{t('app.paas.dashboard.content.brands.title')}</h1>
           <p className="text-muted-foreground">
-            Manage product brands for your shop.
+            {t('app.paas.dashboard.content.brands.desc')}
           </p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
           <Plus className="mr-2 size-4" />
-          Add Brand
+          {t('app.paas.dashboard.content.brands.btn_add')}
         </Button>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Brand List</CardTitle>
-          <CardDescription>
-            All brands associated with your products.
-          </CardDescription>
-        </CardHeader>
+         <CardHeader>
+           <CardTitle>{t('app.paas.dashboard.content.brands.list_title')}</CardTitle>
+           <CardDescription>
+             {t('app.paas.dashboard.content.brands.list_desc')}
+           </CardDescription>
+         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Brand Name</TableHead>
-                <TableHead>Slug</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
+               <TableRow>
+                 <TableHead>{t('app.paas.dashboard.content.brands.col_name')}</TableHead>
+                 <TableHead>{t('app.paas.dashboard.content.brands.col_slug')}</TableHead>
+                 <TableHead>{t('app.paas.dashboard.content.brands.col_status')}</TableHead>
+                 <TableHead className="text-right">{t('common.actions')}</TableHead>
+               </TableRow>
             </TableHeader>
             <TableBody>
               {brands.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="text-center h-24 text-muted-foreground"
-                  >
-                    No brands found. Add your first brand to get started.
-                  </TableCell>
+                     <TableCell
+                       colSpan={4}
+                       className="text-center h-24 text-muted-foreground"
+                     >
+                       {t('app.paas.dashboard.content.brands.no_brands')}
+                     </TableCell>
                 </TableRow>
               ) : (
                 brands.map((brand) => (
                   <TableRow key={brand.uuid}>
                     <TableCell className="font-medium">{brand.title}</TableCell>
                     <TableCell>{brand.slug || "-"}</TableCell>
-                    <TableCell>
-                      {brand.active ? "Active" : "Inactive"}
-                    </TableCell>
+                     <TableCell>
+                       {brand.active ? t('common.active') : t('common.inactive')}
+                     </TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"
@@ -211,53 +212,53 @@ export default function BrandsPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editing ? "Edit Brand" : "Add Brand"}</DialogTitle>
-            <DialogDescription>
-              {editing ? "Update brand information." : "Add a new brand."}
-            </DialogDescription>
-          </DialogHeader>
+           <DialogHeader>
+             <DialogTitle>{editing ? t('app.paas.dashboard.content.brands.dialog_edit') : t('app.paas.dashboard.content.brands.dialog_add')}</DialogTitle>
+             <DialogDescription>
+               {editing ? t('app.paas.dashboard.content.brands.dialog_edit_desc') : t('app.paas.dashboard.content.brands.dialog_add_desc')}
+             </DialogDescription>
+           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="title">Brand Name *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, title: e.target.value }))
-                }
-                placeholder="Nike"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="slug">Slug</Label>
-              <Input
-                id="slug"
-                value={formData.slug}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, slug: e.target.value }))
-                }
-                placeholder="nike"
-              />
-            </div>
-            <ImageUpload
-              label="Brand Logo"
-              value={formData.image}
-              onChange={(url) =>
-                setFormData((prev) => ({ ...prev, image: url }))
-              }
-            />
+             <div className="grid gap-2">
+               <Label htmlFor="title">{t('app.paas.dashboard.content.brands.label_name')}</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, title: e.target.value }))
+                  }
+                  placeholder={t('app.paas.dashboard.content.brands.ph_title')}
+                />
+             </div>
+             <div className="grid gap-2">
+               <Label htmlFor="slug">{t('app.paas.dashboard.content.brands.label_slug')}</Label>
+               <Input
+                 id="slug"
+                 value={formData.slug}
+                 onChange={(e) =>
+                   setFormData((prev) => ({ ...prev, slug: e.target.value }))
+                 }
+                 placeholder={t('app.paas.dashboard.content.brands.ph_slug')}
+               />
+             </div>
+             <ImageUpload
+               label={t('app.paas.dashboard.content.brands.label_logo')}
+               value={formData.image}
+               onChange={(url) =>
+                 setFormData((prev) => ({ ...prev, image: url }))
+               }
+             />
           </div>
           <DialogFooter>
-            <Button onClick={handleSubmit} disabled={processing}>
-              {processing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : editing ? (
-                "Update Brand"
-              ) : (
-                "Add Brand"
-              )}
-            </Button>
+             <Button onClick={handleSubmit} disabled={processing}>
+               {processing ? (
+                 <Loader2 className="size-4 animate-spin" />
+               ) : editing ? (
+                 t('app.paas.dashboard.content.brands.btn_update')
+               ) : (
+                 t('app.paas.dashboard.content.brands.btn_add')
+               )}
+             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

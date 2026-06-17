@@ -17,6 +17,7 @@ import {
   createFtpAccount,
   deleteFtpAccount,
 } from "@/app/actions/handson/control/rpanel/ftp/manage-ftp";
+import t from "@/app/lib/i18n";
 // import { RPanelNav } from "@/components/custom/nav/rpanel-nav";
 import { getClientWebsites } from "@/app/actions/handson/control/rpanel/websites/get-client-websites";
 import { Button } from "@/components/ui/button";
@@ -160,12 +161,12 @@ function FtpContent() {
       <div className="flex justify-between items-center mb-6">
         <div className="relative w-1/3">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-          <Input
-            placeholder="Search FTP accounts..."
-            className="pl-9 bg-[#1a1f36] border-gray-700 text-gray-200"
-            value={searchQuery}
-            onChange={(e: any) => setSearchQuery(e.target.value)}
-          />
+           <Input
+             placeholder={t('app.control.rpanel.ftp.ph_search')}
+             className="pl-9 bg-[#1a1f36] border-gray-700 text-gray-200"
+             value={searchQuery}
+             onChange={(e: any) => setSearchQuery(e.target.value)}
+           />
         </div>
 
         <Button onClick={() => setShowCreate(true)}>
@@ -204,12 +205,12 @@ function FtpContent() {
                   <td className="px-6 py-4 text-blue-400">{ftp.website}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setEditingFtp(ftp)}
-                        title="Change Password"
-                      >
+                       <Button
+                         variant="ghost"
+                         size="icon"
+                         onClick={() => setEditingFtp(ftp)}
+                         title="Change Password" // placeholder
+                       >
                         <KeyRound className="h-4 w-4" />
                       </Button>
                       <Button
@@ -239,7 +240,7 @@ function FtpContent() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <label className="text-sm font-medium text-gray-400">
-              New Password
+               New Password
             </label>
             <div className="relative">
               <Input
@@ -263,9 +264,9 @@ function FtpContent() {
             <Button variant="ghost" onClick={() => setEditingFtp(null)}>
               Cancel
             </Button>
-            <Button onClick={handlePasswordUpdate} disabled={isSaving}>
-              Update Password
-            </Button>
+              <Button onClick={handlePasswordUpdate} disabled={isSaving}>
+                 Update Password
+              </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -305,9 +306,9 @@ function FtpContent() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-400">
-                Password
-              </label>
+               <label className="text-sm font-medium text-gray-400">
+                  Password
+               </label>
               <Input
                 type="password"
                 value={newFtpPassword}

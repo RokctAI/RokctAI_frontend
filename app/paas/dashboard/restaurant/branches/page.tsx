@@ -28,14 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import t from "@/app/lib/i18n";
 
 export default function BranchesPage() {
   const [branches, setBranches] = useState<any[]>([]);
@@ -136,34 +129,33 @@ export default function BranchesPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Branch Management</h1>
-          <p className="text-muted-foreground">
-            Manage multiple locations for your restaurant.
-          </p>
-        </div>
-        <Button onClick={() => handleOpenDialog()}>
-          <Plus className="mr-2 size-4" />
-          Add Branch
-        </Button>
+         <div>
+           <h1 className="text-3xl font-bold">{t('app.paas.dashboard.restaurant.branches.title')}</h1>
+           <p className="text-muted-foreground">
+             {t('app.paas.dashboard.restaurant.branches.desc')}
+           </p>
+         </div>
+         <Button onClick={() => handleOpenDialog()}>
+           <Plus className="mr-2 size-4" /> {t('app.paas.dashboard.restaurant.branches.btn_add')}
+         </Button>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Branches</CardTitle>
-          <CardDescription>
-            List of all your restaurant branches.
-          </CardDescription>
-        </CardHeader>
+         <CardHeader>
+           <CardTitle>{t('app.paas.dashboard.restaurant.branches.card_title')}</CardTitle>
+           <CardDescription>
+             {t('app.paas.dashboard.restaurant.branches.card_desc')}
+           </CardDescription>
+         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Branch Name</TableHead>
-                <TableHead>Address</TableHead>
-                <TableHead>Coordinates</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
+               <TableRow>
+                 <TableHead>{t('app.paas.dashboard.restaurant.branches.col_name')}</TableHead>
+                 <TableHead>{t('app.paas.dashboard.restaurant.branches.col_address')}</TableHead>
+                 <TableHead>{t('app.paas.dashboard.restaurant.branches.col_coords')}</TableHead>
+                 <TableHead className="text-right">Actions</TableHead>
+               </TableRow>
             </TableHeader>
             <TableBody>
               {branches.length === 0 ? (
@@ -189,9 +181,9 @@ export default function BranchesPage() {
                           {branch.latitude}, {branch.longitude}
                         </span>
                       ) : (
-                        <span className="text-sm text-muted-foreground">
-                          Not set
-                        </span>
+                         <span className="text-sm text-muted-foreground">
+                           {t('app.paas.dashboard.restaurant.branches.not_set')}
+                         </span>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
@@ -221,82 +213,82 @@ export default function BranchesPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editing ? "Edit Branch" : "Add Branch"}</DialogTitle>
-            <DialogDescription>
-              {editing
-                ? "Update branch information."
-                : "Add a new branch location."}
-            </DialogDescription>
-          </DialogHeader>
+           <DialogHeader>
+             <DialogTitle>{editing ? t('app.paas.dashboard.restaurant.branches.dialog_edit') : t('app.paas.dashboard.restaurant.branches.dialog_add')}</DialogTitle>
+             <DialogDescription>
+               {editing
+                 ? t('app.paas.dashboard.restaurant.branches.dialog_edit_desc')
+                 : t('app.paas.dashboard.restaurant.branches.dialog_add_desc')}
+             </DialogDescription>
+           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Branch Name *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, name: e.target.value }))
-                }
-                placeholder="Main Branch"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="address">Address *</Label>
-              <Input
-                id="address"
-                value={formData.address}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, address: e.target.value }))
-                }
-                placeholder="123 Main St, City"
-              />
-            </div>
+             <div className="grid gap-2">
+               <Label htmlFor="name">{t('app.paas.dashboard.restaurant.branches.label_name')}</Label>
+               <Input
+                 id="name"
+                 value={formData.name}
+                 onChange={(e) =>
+                   setFormData((prev) => ({ ...prev, name: e.target.value }))
+                 }
+                 placeholder={t('app.paas.dashboard.restaurant.branches.ph_name')}
+               />
+             </div>
+             <div className="grid gap-2">
+               <Label htmlFor="address">{t('app.paas.dashboard.restaurant.branches.label_address')}</Label>
+               <Input
+                 id="address"
+                 value={formData.address}
+                 onChange={(e) =>
+                   setFormData((prev) => ({ ...prev, address: e.target.value }))
+                 }
+                 placeholder={t('app.paas.dashboard.restaurant.branches.ph_address')}
+               />
+             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="latitude">Latitude</Label>
-                <Input
-                  id="latitude"
-                  type="number"
-                  step="any"
-                  value={formData.latitude}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      latitude: e.target.value,
-                    }))
-                  }
-                  placeholder="0.0"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="longitude">Longitude</Label>
-                <Input
-                  id="longitude"
-                  type="number"
-                  step="any"
-                  value={formData.longitude}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      longitude: e.target.value,
-                    }))
-                  }
-                  placeholder="0.0"
-                />
-              </div>
+               <div className="grid gap-2">
+                 <Label htmlFor="latitude">{t('app.paas.dashboard.restaurant.branches.label_latitude')}</Label>
+                 <Input
+                   id="latitude"
+                   type="number"
+                   step="any"
+                   value={formData.latitude}
+                   onChange={(e) =>
+                     setFormData((prev) => ({
+                       ...prev,
+                       latitude: e.target.value,
+                     }))
+                   }
+                   placeholder="0.0"
+                 />
+               </div>
+               <div className="grid gap-2">
+                 <Label htmlFor="longitude">{t('app.paas.dashboard.restaurant.branches.label_longitude')}</Label>
+                 <Input
+                   id="longitude"
+                   type="number"
+                   step="any"
+                   value={formData.longitude}
+                   onChange={(e) =>
+                     setFormData((prev) => ({
+                       ...prev,
+                       longitude: e.target.value,
+                     }))
+                   }
+                   placeholder="0.0"
+                 />
+               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleSubmit} disabled={processing}>
-              {processing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : editing ? (
-                "Update Branch"
-              ) : (
-                "Add Branch"
-              )}
-            </Button>
+             <Button onClick={handleSubmit} disabled={processing}>
+               {processing ? (
+                 <Loader2 className="size-4 animate-spin" />
+               ) : editing ? (
+                 t('common.update')
+               ) : (
+                 t('common.create')
+               )}
+             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

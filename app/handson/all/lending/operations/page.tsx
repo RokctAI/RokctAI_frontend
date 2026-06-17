@@ -19,6 +19,7 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
+import t from "@/app/lib/i18n";
 
 export default function OperationsDashboard() {
   const router = useRouter();
@@ -86,107 +87,103 @@ export default function OperationsDashboard() {
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-12">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-          <Settings className="w-8 h-8 mr-3 text-gray-700" />
-          Lending Operations
-        </h1>
-        <p className="text-gray-500 mt-2">
-          Orchestrate end-of-day processes and monitor automated periodic tasks.
-          These jobs normally run automatically at midnight.
-        </p>
+         <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+           <Settings className="w-8 h-8 mr-3 text-gray-700" />
+           {t('app.lending.operations_title')}
+         </h1>
+         <p className="text-gray-500 mt-2">
+           {t('app.lending.operations_desc')}
+         </p>
       </div>
 
       {/* Operations Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Interest Accrual Card */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-            <TrendingUp className="w-6 h-6 text-blue-600" />
-          </div>
-          <h3 className="text-lg font-bold text-gray-900">Interest Accrual</h3>
-          <p className="text-sm text-gray-500 mt-2 min-h-[40px]">
-            Calculate and book interest for all active Term Loans based on their
-            repayment schedule.
-          </p>
-          <button
-            onClick={handleInterestAccrual}
-            disabled={isLoading}
-            className="mt-6 w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium transition-colors flex items-center justify-center"
-          >
-            <Play className="w-4 h-4 mr-2" />
-            Run Job
-          </button>
-          <p className="mt-3 text-xs text-center text-gray-400">
-            Usually runs Daily at 00:00
-          </p>
-        </div>
+         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+           <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
+             <TrendingUp className="w-6 h-6 text-blue-600" />
+           </div>
+           <h3 className="text-lg font-bold text-gray-900">{t('app.lending.operations.interest_accrual_title')}</h3>
+           <p className="text-sm text-gray-500 mt-2 min-h-[40px]">
+             {t('app.lending.operations.interest_accrual_desc')}
+           </p>
+           <button
+             onClick={handleInterestAccrual}
+             disabled={isLoading}
+             className="mt-6 w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium transition-colors flex items-center justify-center"
+           >
+             <Play className="w-4 h-4 mr-2" />
+             {t('common.run_job')}
+           </button>
+           <p className="mt-3 text-xs text-center text-gray-400">
+             {t('app.lending.operations.job_schedule')}
+           </p>
+         </div>
 
         {/* Security Shortfall Card */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4">
-            <ShieldAlert className="w-6 h-6 text-amber-600" />
-          </div>
-          <h3 className="text-lg font-bold text-gray-900">LTV Monitor</h3>
-          <p className="text-sm text-gray-500 mt-2 min-h-[40px]">
-            Check if pledged assets have dropped in value below the required
-            Loan-to-Value ratio.
-          </p>
-          <button
-            onClick={handleSecurityShortfall}
-            disabled={isLoading}
-            className="mt-6 w-full py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-colors flex items-center justify-center"
-          >
-            <Play className="w-4 h-4 mr-2" />
-            Run Check
-          </button>
-          <p className="mt-3 text-xs text-center text-gray-400">
-            Usually runs Daily at 00:00
-          </p>
-        </div>
+         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+           <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4">
+             <ShieldAlert className="w-6 h-6 text-amber-600" />
+           </div>
+           <h3 className="text-lg font-bold text-gray-900">{t('app.lending.operations.ltv_monitor_title')}</h3>
+           <p className="text-sm text-gray-500 mt-2 min-h-[40px]">
+             {t('app.lending.operations.ltv_monitor_desc')}
+           </p>
+           <button
+             onClick={handleSecurityShortfall}
+             disabled={isLoading}
+             className="mt-6 w-full py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-colors flex items-center justify-center"
+           >
+             <Play className="w-4 h-4 mr-2" />
+             {t('common.run_check')}
+           </button>
+           <p className="mt-3 text-xs text-center text-gray-400">
+             {t('app.lending.operations.job_schedule')}
+           </p>
+         </div>
 
         {/* Classification Card */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-4">
-            <Settings className="w-6 h-6 text-purple-600" />
-          </div>
-          <h3 className="text-lg font-bold text-gray-900">Loan Grading</h3>
-          <p className="text-sm text-gray-500 mt-2 min-h-[40px]">
-            Classify loans (Standard, Sub-Standard, Doubtful, Loss) based on
-            days past due.
-          </p>
-          <button
-            onClick={handleClassification}
-            disabled={isLoading}
-            className="mt-6 w-full py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-colors flex items-center justify-center"
-          >
-            <Play className="w-4 h-4 mr-2" />
-            Run Grading
-          </button>
-          <p className="mt-3 text-xs text-center text-gray-400">
-            Usually runs Daily at 00:00
-          </p>
-        </div>
+         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+           <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-4">
+             <Settings className="w-6 h-6 text-purple-600" />
+           </div>
+           <h3 className="text-lg font-bold text-gray-900">{t('app.lending.operations.loan_grading_title')}</h3>
+           <p className="text-sm text-gray-500 mt-2 min-h-[40px]">
+             {t('app.lending.operations.loan_grading_desc')}
+           </p>
+           <button
+             onClick={handleClassification}
+             disabled={isLoading}
+             className="mt-6 w-full py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-colors flex items-center justify-center"
+           >
+             <Play className="w-4 h-4 mr-2" />
+             {t('common.run_grading')}
+           </button>
+           <p className="mt-3 text-xs text-center text-gray-400">
+             {t('app.lending.operations.job_schedule')}
+           </p>
+         </div>
       </div>
 
       {/* Recent Executions Log */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="font-bold text-gray-900 flex items-center">
-            <History className="w-5 h-5 mr-2 text-gray-400" />
-            Recent Job Executions
-          </h3>
-          <button
-            onClick={fetchLogs}
-            className="text-sm text-blue-600 hover:underline"
-          >
-            Refresh
-          </button>
-        </div>
-        {logs.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 italic">
-            No recent jobs found.
-          </div>
-        ) : (
+         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+           <h3 className="font-bold text-gray-900 flex items-center">
+             <History className="w-5 h-5 mr-2 text-gray-400" />
+             {t('app.lending.recent_executions')}
+           </h3>
+           <button
+             onClick={fetchLogs}
+             className="text-sm text-blue-600 hover:underline"
+           >
+             {t('common.refresh')}
+           </button>
+         </div>
+         {logs.length === 0 ? (
+           <div className="p-8 text-center text-gray-400 italic">
+             {t('common.no_logs')}
+           </div>
+         ) : (
           <div className="divide-y divide-gray-100">
             {logs.map((log, i) => (
               <div

@@ -29,6 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import t from "@/app/lib/i18n";
 
 export default function WhatsAppSettingsPage() {
   const [loading, setLoading] = useState(true);
@@ -104,25 +105,26 @@ export default function WhatsAppSettingsPage() {
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-8">
       {/* Title Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-muted/20 pb-6">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70">
-            WhatsApp Integration
-          </h1>
-          <p className="text-sm text-muted-foreground mt-2">
-            Configure how your business agents communicate with customers on WhatsApp.
-          </p>
-        </div>
-        
-        {mode === "cloud" && (
-          <Button variant="outline" size="sm" asChild>
-            <Link href="https://developers.facebook.com/apps" target="_blank" className="flex items-center">
-              <ExternalLink className="mr-2 size-4" />
-              Meta Dashboard
-            </Link>
-          </Button>
-        )}
-      </div>
+       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-muted/20 pb-6">
+         <div>
+           <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70">
+             {t('app.paas.admin.settings.whatsapp.title')}
+           </h1>
+           <p className="text-sm text-muted-foreground mt-2">
+             {t('app.paas.admin.settings.whatsapp.desc')}
+           </p>
+         </div>
+         
+         {mode === "cloud" && (
+           <Button variant="outline" size="sm" asChild>
+             <Link href="https://developers.facebook.com/apps" target="_blank" className="flex items-center">
+               <ExternalLink className="mr-2 size-4" />
+               {t('app.paas.admin.settings.whatsapp.meta_dashboard')}
+             </Link>
+           </Button>
+         )}
+       </div>
+
 
       {/* Integration Mode Switcher */}
       <div className="grid grid-cols-2 p-1.5 bg-muted/30 border border-muted/50 rounded-2xl max-w-lg shadow-inner">
@@ -196,92 +198,100 @@ export default function WhatsAppSettingsPage() {
                 under WhatsApp &gt; API Setup.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-4 text-xs text-amber-600 dark:text-amber-400 font-medium">
-                <strong>Note:</strong> You must create the App in the Meta
-                Dashboard first. This form is only for pasting the keys generated
-                there.
-              </div>
+             <CardContent className="space-y-4">
+               <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-4 text-xs text-amber-600 dark:text-amber-400 font-medium">
+                 {t('app.paas.admin.settings.whatsapp.note_meta_dashboard')}
+               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="phone_number_id" className="text-xs font-semibold">Phone Number ID</Label>
-                <Input
-                  id="phone_number_id"
-                  name="phone_number_id"
-                  value={formData.phone_number_id}
-                  onChange={handleChange}
-                  placeholder="e.g. 100293485..."
-                  className="h-10 text-sm"
-                  required
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  Found in API Setup step.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="access_token" className="text-xs font-semibold">Permanent Access Token</Label>
-                <Input
-                  id="access_token"
-                  name="access_token"
-                  type="password"
-                  value={formData.access_token}
-                  onChange={handleChange}
-                  placeholder="EAA..."
-                  className="h-10 text-sm"
-                  required
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  Use a System User Token, not a temporary 24h token.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="app_secret" className="text-xs font-semibold">App Secret (Optional)</Label>
-                <Input
-                  id="app_secret"
-                  name="app_secret"
-                  type="password"
-                  value={formData.app_secret}
-                  onChange={handleChange}
-                  className="h-10 text-sm"
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  Used to validate incoming webhooks (HMAC).
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-muted/40 bg-background/50 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-lg">Webhook Configuration</CardTitle>
-              <CardDescription className="text-xs">
-                Enter this in your Meta App Dashboard under "Configuration".
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold">Callback URL</Label>
-                  <div className="flex items-center space-x-2">
-                    <Input
-                      disabled
-                      value={`https://${typeof window !== "undefined" ? window.location.hostname : "your-site.com"}/api/method/paas.whatsapp.api.webhook.webhook`}
-                      className="bg-muted/50 border-muted/30 text-xs h-10 select-all"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="verify_token" className="text-xs font-semibold">Verify Token</Label>
+                  <Label htmlFor="phone_number_id" className="text-xs font-semibold">
+                    {t('app.paas.admin.settings.whatsapp.label_phone_id')}
+                  </Label>
                   <Input
-                    id="verify_token"
-                    name="verify_token"
-                    value={formData.verify_token}
+                    id="phone_number_id"
+                    name="phone_number_id"
+                    value={formData.phone_number_id}
+                    onChange={handleChange}
+                    placeholder={t('app.paas.admin.settings.whatsapp.ph_phone_id')}
+                    className="h-10 text-sm"
+                    required
+                  />
+                 <p className="text-[10px] text-muted-foreground">
+                   {t('app.paas.admin.settings.whatsapp.hint_phone_id')}
+                 </p>
+               </div>
+
+
+                <div className="space-y-2">
+                         <Label htmlFor="access_token" className="text-xs font-semibold">
+                           {t('app.paas.admin.settings.whatsapp.label_access_token')}
+                         </Label>
+                  <Input
+                    id="access_token"
+                    name="access_token"
+                    type="password"
+                    value={formData.access_token}
+                    onChange={handleChange}
+                    placeholder={t('app.paas.admin.settings.whatsapp.ph_access_token')}
+                    className="h-10 text-sm"
+                    required
+                  />
+                 <p className="text-[10px] text-muted-foreground">
+                   {t('app.paas.admin.settings.whatsapp.hint_access_token')}
+                 </p>
+               </div>
+
+                <div className="space-y-2">
+                         <Label htmlFor="app_secret" className="text-xs font-semibold">
+                           {t('app.paas.admin.settings.whatsapp.label_app_secret')}
+                         </Label>
+                  <Input
+                    id="app_secret"
+                    name="app_secret"
+                    type="password"
+                    value={formData.app_secret}
                     onChange={handleChange}
                     className="h-10 text-sm"
-                     placeholder="Enter verify token"
                   />
+                 <p className="text-[10px] text-muted-foreground">
+                   {t('app.paas.admin.settings.whatsapp.hint_app_secret')}
+                 </p>
+               </div>
+             </CardContent>
+           </Card>
+
+           <Card className="border border-muted/40 bg-background/50 backdrop-blur-sm">
+             <CardHeader>
+               <CardTitle className="text-lg">{t('app.paas.admin.settings.whatsapp.webhook_title')}</CardTitle>
+               <CardDescription className="text-xs">
+                 {t('app.paas.admin.settings.whatsapp.webhook_desc')}
+               </CardDescription>
+             </CardHeader>
+             <CardContent className="space-y-4">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="space-y-2">
+                   <Label className="text-xs font-semibold">{t('app.paas.admin.settings.whatsapp.label_callback_url')}</Label>
+                   <div className="flex items-center space-x-2">
+                     <Input
+                       disabled
+                       value={`https://${typeof window !== "undefined" ? window.location.hostname : "your-site.com"}/api/method/paas.whatsapp.api.webhook.webhook`}
+                       className="bg-muted/50 border-muted/30 text-xs h-10 select-all"
+                     />
+                   </div>
+                 </div>
+
+                 <div className="space-y-2">
+                    <Label htmlFor="verify_token" className="text-xs font-semibold">
+                      {t('app.paas.admin.settings.whatsapp.label_verify_token')}
+                    </Label>
+                   <Input
+                     id="verify_token"
+                     name="verify_token"
+                     value={formData.verify_token}
+                     onChange={handleChange}
+                     className="h-10 text-sm"
+                      placeholder={t('app.paas.admin.settings.whatsapp.ph_verify_token')}
+                   />
                 </div>
               </div>
             </CardContent>

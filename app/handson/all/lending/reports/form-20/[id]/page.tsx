@@ -11,6 +11,7 @@ import {
 import { Loader2, Printer, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { Form20Template } from "@/app/templates/lending/Form20Template";
+import t from "@/app/lib/i18n";
 
 export default function Form20Page({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
@@ -53,9 +54,7 @@ export default function Form20Page({ params }: { params: { id: string } }) {
     );
   if (!data)
     return (
-      <div className="text-center p-12 text-red-600">
-        Failed to load data for Form 20.
-      </div>
+      <div className="text-center p-12 text-red-600">{t('app.lending.form_20_load_error')}</div>
     );
 
   const { app, product, company } = data;
@@ -76,62 +75,64 @@ export default function Form20Page({ params }: { params: { id: string } }) {
     <div className="max-w-4xl mx-auto my-8 space-y-8">
       {/* Control Panel (Test Different Scenarios) */}
       <div className="bg-gray-100 p-6 rounded-lg border border-gray-300 print:hidden relative">
-        <h3 className="font-bold text-gray-700 mb-4 flex items-center">
-          <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded mr-2">
-            ADMIN
-          </span>
-          Quote Simulator & Compliance Check
-        </h3>
+         <h3 className="font-bold text-gray-700 mb-4 flex items-center">
+           <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded mr-2">
+             ADMIN
+           </span>
+           {t('app.lending.quote_simulator_title')}
+         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-              Loan Period (Days)
-            </label>
-            <input
-              type="number"
-              value={days}
-              onChange={(e) => setDays(Number(e.target.value))}
-              className="w-full border border-gray-300 rounded p-2 text-sm"
-            />
-            <p className="text-xs text-gray-400 mt-1">
-              Simulate early settlement
-            </p>
+             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+               {t('app.lending.quote_simulator.loan_period')}
+             </label>
+             <input
+               type="number"
+               value={days}
+               onChange={(e) => setDays(Number(e.target.value))}
+               className="w-full border border-gray-300 rounded p-2 text-sm"
+             />
+             <p className="text-xs text-gray-400 mt-1">
+               {t('app.lending.quote_simulator.loan_period_desc')}
+             </p>
           </div>
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-              Service Fee
-            </label>
-            <div className="flex items-center">
-              <span className="p-2 bg-gray-200 border border-gray-300 border-r-0 rounded-l text-gray-500 text-sm">
-                R
-              </span>
-              <input
-                type="number"
-                value={desiredServiceFee}
-                onChange={(e) => setDesiredServiceFee(Number(e.target.value))}
-                className="w-full border border-gray-300 rounded-r p-2 text-sm"
-              />
-            </div>
-            <p className="text-xs text-gray-400 mt-1">
-              Max R{NCR_MAX_SERVICE_FEE_PM.toFixed(2)}
-            </p>
+             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+               {t('app.lending.quote_simulator.service_fee')}
+             </label>
+             <div className="flex items-center">
+               <span className="p-2 bg-gray-200 border border-gray-300 border-r-0 rounded-l text-gray-500 text-sm">
+                 R
+               </span>
+               <input
+                 type="number"
+                 value={desiredServiceFee}
+                 onChange={(e) => setDesiredServiceFee(Number(e.target.value))}
+                 className="w-full border border-gray-300 rounded-r p-2 text-sm"
+               />
+             </div>
+             <p className="text-xs text-gray-400 mt-1">
+               {t('app.lending.quote_simulator.service_fee_max', { amount: NCR_MAX_SERVICE_FEE_PM.toFixed(2) })}
+             </p>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-              Insurance
-            </label>
-            <div className="flex items-center space-x-2 mt-2">
-              <input
-                type="checkbox"
-                checked={includeInsurance}
-                onChange={(e) => setIncludeInsurance(e.target.checked)}
-                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
-              />
-              <span className="text-sm font-medium">Include Credit Life</span>
-            </div>
-            <p className="text-xs text-gray-400 mt-1">Reg 106 (R4.50/R1000)</p>
+             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+               {t('app.lending.quote_simulator.insurance')}
+             </label>
+             <div className="flex items-center space-x-2 mt-2">
+               <input
+                 type="checkbox"
+                 checked={includeInsurance}
+                 onChange={(e) => setIncludeInsurance(e.target.checked)}
+                 className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
+               />
+               <span className="text-sm font-medium">{t('app.lending.quote_simulator.include_insurance')}</span>
+             </div>
+             <p className="text-xs text-gray-400 mt-1">
+               {t('app.lending.quote_simulator.insurance_desc')}
+             </p>
           </div>
 
           {/* Compliance Status Indicator */}
@@ -142,16 +143,16 @@ export default function Form20Page({ params }: { params: { id: string } }) {
               {quoteResult.validation.isCompliant ? (
                 <React.Fragment>
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="font-bold text-green-700 text-sm">
-                    NCR Compliant
-                  </span>
+                           <span className="font-bold text-green-700 text-sm">
+                             {t('app.lending.quote_simulator_compliant')}
+                           </span>
                 </React.Fragment>
               ) : (
                 <React.Fragment>
                   <AlertCircle className="w-4 h-4 text-red-600" />
-                  <span className="font-bold text-red-700 text-sm">
-                    NON-COMPLIANT
-                  </span>
+                           <span className="font-bold text-red-700 text-sm">
+                             {t('app.lending.quote_simulator_non_compliant')}
+                           </span>
                 </React.Fragment>
               )}
             </div>

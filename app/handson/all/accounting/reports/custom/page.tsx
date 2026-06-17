@@ -19,6 +19,7 @@ import {
   ShoppingCart,
   Download,
 } from "lucide-react";
+import t from "@/app/lib/i18n";
 import {
   Select,
   SelectContent,
@@ -120,18 +121,18 @@ export default function FinancialDashboard() {
         <div className="flex gap-2">
           <Select value={period} onValueChange={setPeriod}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Period" />
+              <SelectValue placeholder={t('app.accounting.select_period')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="This Month">This Month</SelectItem>
-              <SelectItem value="Last Month">Last Month</SelectItem>
-              <SelectItem value="This Quarter">This Quarter</SelectItem>
-              <SelectItem value="This Year">This Year</SelectItem>
-              <SelectItem value="Last Year">Last Year</SelectItem>
+              <SelectItem value="This Month">{t('app.accounting.this_month')}</SelectItem>
+              <SelectItem value="Last Month">{t('app.accounting.last_month')}</SelectItem>
+              <SelectItem value="This Quarter">{t('app.accounting.this_quarter')}</SelectItem>
+              <SelectItem value="This Year">{t('app.accounting.this_year')}</SelectItem>
+              <SelectItem value="Last Year">{t('app.accounting.last_year')}</SelectItem>
             </SelectContent>
           </Select>
           <Button variant="outline">
-            <Download className="mr-2 h-4 w-4" /> Export
+            <Download className="mr-2 h-4 w-4" /> {t('common.export') || 'Export'}
           </Button>
         </div>
       </div>

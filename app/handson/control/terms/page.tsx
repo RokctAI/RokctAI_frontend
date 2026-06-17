@@ -37,6 +37,7 @@ import {
   saveMasterTerm,
   deleteMasterTerm,
 } from "@/app/actions/handson/control/terms/terms";
+import t from "@/app/lib/i18n";
 
 export default function MasterTermsPage() {
   const [terms, setTerms] = useState<MasterTerm[]>([]);
@@ -191,29 +192,29 @@ export default function MasterTermsPage() {
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <Label>Title</Label>
-              <Input
-                value={editingTerm?.title || ""}
-                onChange={(e) =>
-                  setEditingTerm((prev) =>
-                    prev ? { ...prev, title: e.target.value } : null,
-                  )
-                }
-                placeholder="e.g. Standard Payment Terms"
-              />
+               <Input
+                 value={editingTerm?.title || ""}
+                 onChange={(e) =>
+                   setEditingTerm((prev) =>
+                     prev ? { ...prev, title: e.target.value } : null,
+                   )
+                 }
+                 placeholder={t('app.control.terms.ph_title')}
+               />
             </div>
 
             <div className="space-y-2">
               <Label>Content (Legal Text)</Label>
-              <Textarea
-                className="min-h-[200px]"
-                value={editingTerm?.terms || ""}
-                onChange={(e) =>
-                  setEditingTerm((prev) =>
-                    prev ? { ...prev, terms: e.target.value } : null,
-                  )
-                }
-                placeholder="Enter the full legal text here..."
-              />
+               <Textarea
+                 className="min-h-[200px]"
+                 value={editingTerm?.terms || ""}
+                 onChange={(e) =>
+                   setEditingTerm((prev) =>
+                     prev ? { ...prev, terms: e.target.value } : null,
+                   )
+                 }
+                 placeholder={t('app.control.terms.ph_content')}
+               />
             </div>
           </div>
 

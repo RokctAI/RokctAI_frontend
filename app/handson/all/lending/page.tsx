@@ -5,6 +5,7 @@ import { getLoans } from "@/app/actions/handson/all/lending/loan";
 import { getLoanApplications } from "@/app/actions/handson/all/lending/application";
 import { CreditCard, FileText, DollarSign, Activity } from "lucide-react";
 import Link from "next/link";
+import t from "@/app/lib/i18n";
 
 export default function LendingDashboard() {
   const [stats, setStats] = useState({
@@ -98,64 +99,64 @@ export default function LendingDashboard() {
   return (
     <div className="space-y-8 p-2">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent">
-            Lending Intelligence
-          </h1>
-          <p className="text-slate-500 font-medium">
-            Real-time portfolio analytics and compliance monitoring.
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <Link
-            href="/handson/all/lending/application/new"
-            className="px-6 py-2.5 bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-200 hover:shadow-indigo-300 active:scale-95"
-          >
-            New Application
-          </Link>
-        </div>
+         <div>
+           <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent">
+             {t('app.lending.dashboard_title')}
+           </h1>
+           <p className="text-slate-500 font-medium">
+             {t('app.lending.dashboard_desc')}
+           </p>
+         </div>
+         <div className="flex gap-3">
+           <Link
+             href="/handson/all/lending/application/new"
+             className="px-6 py-2.5 bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-200 hover:shadow-indigo-300 active:scale-95"
+           >
+             {t('app.lending.new_application')}
+           </Link>
+         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Widget
-          title="Active Loans"
-          value={stats.activeLoans}
-          icon={CreditCard}
-          color="blue"
-          href="/handson/all/lending/loan"
-        />
-        <Widget
-          title="Pending Applications"
-          value={stats.pendingApps}
-          icon={FileText}
-          color="amber"
-          href="/handson/all/lending/application?status=Open"
-        />
-        <Widget
-          title="Total Disbursed"
-          value={`$${stats.totalDisbursed.toLocaleString()}`}
-          icon={DollarSign}
-          color="emerald"
-          href="/handson/all/lending/loan"
-        />
-        <Widget
-          title="Approved (Not Disbursed)"
-          value={stats.approvedApps}
-          icon={Activity}
-          color="indigo"
-          href="/handson/all/lending/application?status=Approved"
-        />
-      </div>
+       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+         <Widget
+           title={t('app.lending.active_loans_title')}
+           value={stats.activeLoans}
+           icon={CreditCard}
+           color="blue"
+           href="/handson/all/lending/loan"
+         />
+         <Widget
+           title={t('app.lending.pending_apps')}
+           value={stats.pendingApps}
+           icon={FileText}
+           color="amber"
+           href="/handson/all/lending/application?status=Open"
+         />
+         <Widget
+           title={t('app.lending.total_disbursed')}
+           value={`$${stats.totalDisbursed.toLocaleString()}`}
+           icon={DollarSign}
+           color="emerald"
+           href="/handson/all/lending/loan"
+         />
+         <Widget
+           title={t('app.lending.approved_apps')}
+           value={stats.approvedApps}
+           icon={Activity}
+           color="indigo"
+           href="/handson/all/lending/application?status=Approved"
+         />
+       </div>
 
       {/* Recent Activity or Charts could go here via Recharts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm min-h-[300px] flex items-center justify-center text-gray-400 border-dashed border-2">
-          Chart Placeholder: Loan Portfolio Growth
-        </div>
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm min-h-[300px] flex items-center justify-center text-gray-400 border-dashed border-2">
-          Chart Placeholder: Repayment Trends
-        </div>
-      </div>
+       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm min-h-[300px] flex items-center justify-center text-gray-400 border-dashed border-2">
+           {t('app.lending.chart_growth')}
+         </div>
+         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm min-h-[300px] flex items-center justify-center text-gray-400 border-dashed border-2">
+           {t('app.lending.chart_trends')}
+         </div>
+       </div>
     </div>
   );
 }

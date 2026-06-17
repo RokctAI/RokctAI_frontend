@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import t from "@/app/lib/i18n";
 import {
   Table,
   TableBody,
@@ -266,9 +267,9 @@ function CronJobsContent() {
                   onValueChange={setSelectedWebsite}
                   disabled={!!editingJob}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select website" />
-                  </SelectTrigger>
+                   <SelectTrigger>
+                     <SelectValue placeholder={t('app.control.rpanel.cron.ph_website')} />
+                   </SelectTrigger>
                   <SelectContent>
                     {websites.map((site) => (
                       <SelectItem key={site.name} value={site.name}>
@@ -288,22 +289,22 @@ function CronJobsContent() {
               </div>
               <div className="space-y-2">
                 <Label>Schedule (Cron Format)</Label>
-                <Input
-                  value={schedule}
-                  onChange={(e) => setSchedule(e.target.value)}
-                  placeholder="* * * * *"
-                />
+                 <Input
+                   value={schedule}
+                   onChange={(e) => setSchedule(e.target.value)}
+                   placeholder={t('app.control.rpanel.cron.ph_cron')}
+                 />
                 <p className="text-xs text-muted-foreground">
                   Minute Hour Day Month Weekday
                 </p>
               </div>
               <div className="space-y-2">
                 <Label>Description (Optional)</Label>
-                <Input
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Daily cleanup script"
-                />
+                 <Input
+                   value={description}
+                   onChange={(e) => setDescription(e.target.value)}
+                   placeholder={t('app.control.rpanel.cron.ph_command')}
+                 />
               </div>
             </div>
             <DialogFooter>

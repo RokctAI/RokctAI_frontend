@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import t from "@/app/lib/i18n";
 
 import { getParcelOrders, updateParcelStatus } from "@/app/actions/paas/parcel";
 import { Badge } from "@/components/ui/badge";
@@ -51,28 +52,28 @@ export default function ParcelOrdersPage() {
       setOrders(data || []);
     } catch (error) {
       console.error("Error fetching parcel orders:", error);
-      toast.error("Failed to fetch parcel orders");
+      toast.error(t('app.paas.dashboard.orders.parcels.toast_load_fail'));
     } finally {
       setLoading(false);
     }
   }
-
+ 
   useEffect(() => {
     fetchOrders();
   }, []);
-
+ 
   const filteredOrders =
     statusFilter === "all"
       ? orders
       : orders.filter((order) => order.status === statusFilter);
-
+ 
   async function handleStatusUpdate(name: string, status: string) {
     try {
       await updateParcelStatus(name, status);
-      toast.success(`Order status updated to ${status}`);
+      toast.success(t('app.paas.dashboard.orders.parcels.toast_update_success', { status }));
       fetchOrders();
     } catch (error) {
-      toast.error("Failed to update status");
+      toast.error(t('app.paas.dashboard.orders.parcels.toast_update_fail'));
     }
   }
 
@@ -88,44 +89,44 @@ export default function ParcelOrdersPage() {
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Parcel Orders</h1>
+          <h1 className="text-3xl font-bold">{t('app.paas.dashboard.orders.parcels.title')}</h1>
           <p className="text-muted-foreground">
-            Manage your delivery requests.
+            {t('app.paas.dashboard.orders.parcels.desc')}
           </p>
         </div>
         <div className="w-[200px]">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger>
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t('app.paas.dashboard.orders.parcels.ph_filter')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="New">New</SelectItem>
-              <SelectItem value="Accepted">Accepted</SelectItem>
-              <SelectItem value="Ready">Ready</SelectItem>
-              <SelectItem value="On a way">On a way</SelectItem>
-              <SelectItem value="Delivered">Delivered</SelectItem>
-              <SelectItem value="Canceled">Canceled</SelectItem>
+              <SelectItem value="all">{t('app.paas.dashboard.orders.parcels.status_all')}</SelectItem>
+              <SelectItem value="New">{t('app.paas.dashboard.orders.parcels.status_new')}</SelectItem>
+              <SelectItem value="Accepted">{t('app.paas.dashboard.orders.parcels.status_accepted')}</SelectItem>
+              <SelectItem value="Ready">{t('app.paas.dashboard.orders.parcels.status_ready')}</SelectItem>
+              <SelectItem value="On a way">{t('app.paas.dashboard.orders.parcels.status_on_way')}</SelectItem>
+              <SelectItem value="Delivered">{t('app.paas.dashboard.orders.parcels.status_delivered')}</SelectItem>
+              <SelectItem value="Canceled">{t('app.paas.dashboard.orders.parcels.status_canceled')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
-
+ 
       <Card>
         <CardHeader>
-          <CardTitle>Orders List</CardTitle>
-          <CardDescription>View and manage all parcel orders.</CardDescription>
+          <CardTitle>{t('app.paas.dashboard.orders.parcels.card_title')}</CardTitle>
+          <CardDescription>{t('app.paas.dashboard.orders.parcels.card_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Order ID</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Destination</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t('app.paas.dashboard.orders.parcels.col_order_id')}</TableHead>
+                <TableHead>{t('app.paas.dashboard.orders.parcels.col_date')}</TableHead>
+                <TableHead>{t('app.paas.dashboard.orders.parcels.col_destination')}</TableHead>
+                <TableHead>{t('app.paas.dashboard.orders.parcels.col_price')}</TableHead>
+                <TableHead>{t('app.paas.dashboard.orders.parcels.col_status')}</TableHead>
+                <TableHead className="text-right">{t('app.paas.dashboard.orders.parcels.col_actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -135,7 +136,7 @@ export default function ParcelOrdersPage() {
                     colSpan={6}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No parcel orders found.
+                    {t('app.paas.dashboard.orders.parcels.no_orders')}
                   </TableCell>
                 </TableRow>
               ) : (

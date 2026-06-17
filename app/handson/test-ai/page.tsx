@@ -11,6 +11,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import t from "@/app/lib/i18n";
 
 export default function AiTestPage() {
   const [text, setText] = useState("");
@@ -24,47 +25,45 @@ export default function AiTestPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            ✨ Universal AI Text Helper
+            ✨ {t('app.test_ai.title')}
           </CardTitle>
           <CardDescription>
-            Test the new "Sparkle" feature. Type something below (e.g., "bad
-            grammer here") and click the Sparkle icon.
+            {t('app.test_ai.desc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <Label htmlFor="bio">Your Text</Label>
+              <Label htmlFor="bio">{t('app.test_ai.label_text')}</Label>
               <AiTextHelper text={text} onAccept={handleAiAccept} />
             </div>
             <Textarea
               id="bio"
-              placeholder="Type something here..."
+              placeholder={t('app.test_ai.ph_text')}
               className="min-h-[200px] resize-none"
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
             <p className="text-xs text-muted-foreground text-right">
-              {text.length} characters
+              {t('app.test_ai.char_count', { count: text.length })}
             </p>
           </div>
         </CardContent>
       </Card>
-
+ 
       <div className="mt-8 p-4 bg-muted rounded-lg text-sm">
-        <h4 className="font-semibold mb-2">How to Verify:</h4>
+        <h4 className="font-semibold mb-2">{t('app.test_ai.verify_title')}</h4>
         <ul className="list-disc pl-4 space-y-1">
-          <li>Type a sentence with errors like "i want to go to store".</li>
-          <li>Click the ✨ icon.</li>
+          <li>{t('app.test_ai.verify_step_1')}</li>
+          <li>{t('app.test_ai.verify_step_2')}</li>
           <li>
-            Select <strong>Fix Grammar</strong>.
+            <strong>{t('app.test_ai.verify_step_3')}</strong>
           </li>
           <li>
-            Wait for the result and click <strong>Replace</strong>.
+            {t('app.test_ai.verify_step_4')}
           </li>
           <li>
-            Try <strong>Make Professional</strong> or <strong>Custom</strong>{" "}
-            prompts too.
+            {t('app.test_ai.verify_step_5')}
           </li>
         </ul>
       </div>

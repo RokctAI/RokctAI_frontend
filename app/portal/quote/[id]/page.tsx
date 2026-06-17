@@ -59,13 +59,12 @@ export default function QuoteAcceptancePage({
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-green-50 p-6 text-center">
         <CheckCircle className="w-20 h-20 text-green-500 mb-6" />
-        <h1 className="text-3xl font-bold text-green-900 mb-2">
-          Quote Accepted!
-        </h1>
-        <p className="text-green-700 max-w-md">
-          Thank you. We have received your "Selfie Signature" and verified your
-          acceptance. Your loan is now being processed for final approval.
-        </p>
+         <h1 className="text-3xl font-bold text-green-900 mb-2">
+           {t('app.portal.quote.success_title')}
+         </h1>
+         <p className="text-green-700 max-w-md">
+           {t('app.portal.quote.success_desc')}
+         </p>
       </div>
     );
 
@@ -73,60 +72,60 @@ export default function QuoteAcceptancePage({
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
         {/* Header */}
-        <div className="bg-blue-600 p-6 text-white text-center">
-          <h1 className="text-xl font-bold">Secure Acceptance</h1>
-          <p className="text-blue-100 text-sm opacity-90">
-            Loan Ref: {app?.name}
-          </p>
-        </div>
+         <div className="bg-blue-600 p-6 text-white text-center">
+           <h1 className="text-xl font-bold">{t('app.portal.quote.header_title')}</h1>
+           <p className="text-blue-100 text-sm opacity-90">
+             {t('app.portal.quote.header_ref', { ref: app?.name })}
+           </p>
+         </div>
 
         <div className="p-6">
           {step === "review" && (
             <div className="space-y-6">
-              <div className="text-center space-y-2">
-                <h2 className="text-lg font-bold text-gray-900">
-                  Review your Quote
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Please confirm the details below.
-                </p>
-              </div>
+               <div className="text-center space-y-2">
+                 <h2 className="text-lg font-bold text-gray-900">
+                   {t('app.portal.quote.review_title')}
+                 </h2>
+                 <p className="text-sm text-gray-500">
+                   {t('app.portal.quote.review_desc')}
+                 </p>
+               </div>
 
               <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Loan Amount</span>
-                  <span className="font-bold">
-                    R {app?.loan_amount?.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Period</span>
-                  <span className="font-bold">
-                    {app?.repayment_periods} Months
-                  </span>
-                </div>
+                 <div className="flex justify-between">
+                   <span className="text-gray-500">{t('app.portal.quote.label_amount')}</span>
+                   <span className="font-bold">
+                     R {app?.loan_amount?.toLocaleString()}
+                   </span>
+                 </div>
+                 <div className="flex justify-between">
+                   <span className="text-gray-500">{t('app.portal.quote.label_period')}</span>
+                   <span className="font-bold">
+                     {app?.repayment_periods} {t('app.portal.quote.unit_months')}
+                   </span>
+                 </div>
                 {/* Add Interest/Installment here if data available */}
               </div>
 
-              <button
-                onClick={() => setStep("selfie")}
-                className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition"
-              >
-                Everything Looks Good
-              </button>
+               <button
+                 onClick={() => setStep("selfie")}
+                 className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition"
+               >
+                 {t('app.portal.quote.btn_confirm')}
+               </button>
             </div>
           )}
 
           {step === "selfie" && (
             <div className="space-y-6">
-              <div className="text-center space-y-2">
-                <h2 className="text-lg font-bold text-gray-900">
-                  Sign with a Selfie
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Take a photo of yourself to digitally sign this agreement.
-                </p>
-              </div>
+               <div className="text-center space-y-2">
+                 <h2 className="text-lg font-bold text-gray-900">
+                   {t('app.portal.quote.selfie_title')}
+                 </h2>
+                 <p className="text-sm text-gray-500">
+                   {t('app.portal.quote.selfie_desc')}
+                 </p>
+               </div>
 
               <div className="relative aspect-square bg-gray-100 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
                 {selfie ? (
@@ -136,10 +135,10 @@ export default function QuoteAcceptancePage({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="text-center text-gray-400">
-                    <Camera className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <span className="text-xs">Tap below to capture</span>
-                  </div>
+                    <div className="text-center text-gray-400">
+                      <Camera className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <span className="text-xs">{t('app.portal.quote.ph_capture')}</span>
+                    </div>
                 )}
               </div>
 
@@ -152,19 +151,19 @@ export default function QuoteAcceptancePage({
                     onChange={handleSelfieCapture}
                     className="hidden"
                   />
-                  <div className="w-full bg-gray-900 text-white py-3 rounded-xl font-bold flex items-center justify-center space-x-2 hover:bg-gray-800 transition">
-                    <Camera className="w-5 h-5" />
-                    <span>{selfie ? "Retake Photo" : "Take Selfie"}</span>
-                  </div>
+                   <div className="w-full bg-gray-900 text-white py-3 rounded-xl font-bold flex items-center justify-center space-x-2 hover:bg-gray-800 transition">
+                     <Camera className="w-5 h-5" />
+                     <span>{selfie ? t('app.portal.quote.btn_retake') : t('app.portal.quote.btn_take_selfie')}</span>
+                   </div>
                 </label>
 
                 {selfie && (
-                  <button
-                    onClick={handleConfirm}
-                    className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition"
-                  >
-                    Submit & Sign
-                  </button>
+                   <button
+                     onClick={handleConfirm}
+                     className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition"
+                   >
+                     {t('app.portal.quote.btn_submit')}
+                   </button>
                 )}
               </div>
             </div>
@@ -172,10 +171,10 @@ export default function QuoteAcceptancePage({
         </div>
       </div>
 
-      <div className="text-center mt-6 text-xs text-gray-400">
-        <p>Secured by 256-bit Encryption</p>
-        <p>IP Address & Device Verification Active</p>
-      </div>
+       <div className="text-center mt-6 text-xs text-gray-400">
+         <p>{t('app.portal.quote.footer_encryption')}</p>
+         <p>{t('app.portal.quote.footer_verification')}</p>
+       </div>
     </div>
   );
 }

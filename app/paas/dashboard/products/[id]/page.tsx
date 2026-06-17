@@ -18,12 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
-interface ProductFormProps {
-  params: {
-    id: string;
-  };
-}
+import t from "@/app/lib/i18n";
 
 export default function ProductFormPage({ params }: ProductFormProps) {
   const router = useRouter();
@@ -120,124 +115,124 @@ export default function ProductFormPage({ params }: ProductFormProps) {
             <ArrowLeft className="size-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">
-          {isNew ? "Create Product" : "Edit Product"}
-        </h1>
+         <h1 className="text-3xl font-bold">
+           {isNew ? t('app.paas.dashboard.products.form.create_title') : t('app.paas.dashboard.products.form.edit_title')}
+         </h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
+         <div className="space-y-2">
+           <Label htmlFor="title">{t('app.paas.dashboard.products.form.label_title')}</Label>
+           <Input
+             id="title"
+             name="title"
+             value={formData.title}
+             onChange={handleChange}
+             required
+           />
+         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={4}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="price">Price</Label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              step="0.01"
-              value={formData.price}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="unit">Unit</Label>
-            <Input
-              id="unit"
-              name="unit"
-              value={formData.unit}
-              onChange={handleChange}
-              placeholder="e.g. kg, pcs"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
-          <Input
-            id="category"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            placeholder="Category ID or Name"
-          />
-        </div>
-
-        <ImageUpload
-          label="Product Image"
-          value={formData.image}
-          onChange={(url) => setFormData((prev) => ({ ...prev, image: url }))}
-        />
+         <div className="space-y-2">
+           <Label htmlFor="description">{t('app.paas.dashboard.products.form.label_description')}</Label>
+           <Textarea
+             id="description"
+             name="description"
+             value={formData.description}
+             onChange={handleChange}
+             rows={4}
+           />
+         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="published">Published</option>
-              <option value="pending">Pending</option>
-              <option value="unpublished">Unpublished</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="active">Active</Label>
-            <select
-              id="active"
-              name="active"
-              value={formData.active}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  active: parseInt(e.target.value),
-                }))
-              }
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value={1}>Yes</option>
-              <option value={0}>No</option>
-            </select>
-          </div>
+           <div className="space-y-2">
+             <Label htmlFor="price">{t('app.paas.dashboard.products.form.label_price')}</Label>
+             <Input
+               id="price"
+               name="price"
+               type="number"
+               step="0.01"
+               value={formData.price}
+               onChange={handleChange}
+               required
+             />
+           </div>
+           <div className="space-y-2">
+             <Label htmlFor="unit">{t('app.paas.dashboard.products.form.label_unit')}</Label>
+             <Input
+               id="unit"
+               name="unit"
+               value={formData.unit}
+               onChange={handleChange}
+               placeholder={t('app.paas.dashboard.products.form.ph_unit')}
+             />
+           </div>
         </div>
 
-        <Button type="submit" className="w-full" disabled={saving}>
-          {saving ? (
-            <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 size-4" />
-              Save Product
-            </>
-          )}
-        </Button>
+         <div className="space-y-2">
+           <Label htmlFor="category">{t('app.paas.dashboard.products.form.label_category')}</Label>
+           <Input
+             id="category"
+             name="category"
+             value={formData.category}
+             onChange={handleChange}
+             placeholder={t('app.paas.dashboard.products.form.ph_category')}
+           />
+         </div>
+
+         <ImageUpload
+           label={t('app.paas.dashboard.products.form.label_image')}
+           value={formData.image}
+           onChange={(url) => setFormData((prev) => ({ ...prev, image: url }))}
+         />
+
+        <div className="grid grid-cols-2 gap-4">
+           <div className="space-y-2">
+             <Label htmlFor="status">{t('app.paas.dashboard.products.form.label_status')}</Label>
+             <select
+               id="status"
+               name="status"
+               value={formData.status}
+               onChange={handleChange}
+               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+             >
+               <option value="published">{t('app.paas.dashboard.products.form.status_published')}</option>
+               <option value="pending">{t('app.paas.dashboard.products.form.status_pending')}</option>
+               <option value="unpublished">{t('app.paas.dashboard.products.form.status_unpublished')}</option>
+             </select>
+           </div>
+           <div className="space-y-2">
+             <Label htmlFor="active">{t('app.paas.dashboard.products.form.label_active')}</Label>
+             <select
+               id="active"
+               name="active"
+               value={formData.active}
+               onChange={(e) =>
+                 setFormData((prev) => ({
+                   ...prev,
+                   active: parseInt(e.target.value),
+                 }))
+               }
+               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+             >
+               <option value={1}>{t('common.yes')}</option>
+               <option value={0}>{t('common.no')}</option>
+             </select>
+           </div>
+        </div>
+
+         <Button type="submit" className="w-full" disabled={saving}>
+           {saving ? (
+             <>
+               <Loader2 className="mr-2 size-4 animate-spin" />
+               {t('common.saving')}
+             </>
+           ) : (
+             <>
+               <Save className="mr-2 size-4" />
+               {t('app.paas.dashboard.products.form.btn_save')}
+             </>
+           )}
+         </Button>
       </form>
 
       {!isNew && <InventoryManager itemCode={params.id} />}
@@ -249,11 +244,11 @@ function InventoryManager({ itemCode }: { itemCode: string }) {
   const [inventory, setInventory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-
+  
   useEffect(() => {
     loadInventory();
   }, [itemCode]);
-
+  
   async function loadInventory() {
     try {
       const data = await getInventory(itemCode);
@@ -264,28 +259,28 @@ function InventoryManager({ itemCode }: { itemCode: string }) {
       setLoading(false);
     }
   }
-
+  
   const handleUpdate = async (warehouse: string, newQty: number) => {
     setUpdating(true);
     try {
       await adjustInventory(itemCode, warehouse, newQty);
-      toast.success("Inventory updated");
+      toast.success(t('app.paas.dashboard.products.inventory.toast_success'));
       loadInventory();
     } catch (error) {
-      toast.error("Failed to update inventory");
+      toast.error(t('app.paas.dashboard.products.inventory.toast_fail'));
     } finally {
       setUpdating(false);
     }
   };
-
-  if (loading) return <div>Loading inventory...</div>;
-
+  
+  if (loading) return <div>{t('common.loading')}</div>;
+  
   return (
     <div className="space-y-4 border-t pt-8">
-      <h2 className="text-2xl font-bold">Inventory</h2>
+      <h2 className="text-2xl font-bold">{t('app.paas.dashboard.products.inventory.title')}</h2>
       <div className="grid gap-4">
         {inventory.length === 0 ? (
-          <p className="text-muted-foreground">No inventory records found.</p>
+          <p className="text-muted-foreground">{t('app.paas.dashboard.products.inventory.no_data')}</p>
         ) : (
           inventory.map((item) => (
             <div
@@ -295,7 +290,7 @@ function InventoryManager({ itemCode }: { itemCode: string }) {
               <div>
                 <p className="font-medium">{item.warehouse}</p>
                 <p className="text-sm text-muted-foreground">
-                  Current Stock: {item.actual_qty}
+                  {t('app.paas.dashboard.products.inventory.current_stock')}: {item.actual_qty}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -308,7 +303,7 @@ function InventoryManager({ itemCode }: { itemCode: string }) {
                   }
                   disabled={updating}
                 />
-                <span className="text-sm text-muted-foreground">Qty</span>
+                <span className="text-sm text-muted-foreground">{t('app.paas.dashboard.products.inventory.label_qty')}</span>
               </div>
             </div>
           ))

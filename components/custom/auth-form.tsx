@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { PLATFORM_NAME, VOUCHER_OFFSET_Y } from "@/app/config/constants";
 import { Ticket, Globe } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import t from "@/app/lib/i18n";
 import {
   Select,
   SelectContent,
@@ -47,31 +48,31 @@ export function AuthForm({
           onClick={() => setShowVoucher(true)}
           className={`absolute top-0 right-0 -mt-8 -mr-8 px-3 py-1.5 bg-yellow-400 hover:bg-yellow-500 text-yellow-950 text-[10px] font-bold uppercase tracking-wider rounded-tr-md transition-colors flex items-center z-10`}
         >
-          Use Voucher
+          {t('auth.use_voucher')}
         </button>
       )}
 
       {mode === "signup" && showVoucher && (
         <div className="flex justify-end -mb-2">
-          <button
-            type="button"
-            onClick={() => setShowVoucher(false)}
-            className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-400 flex items-center gap-1 transition-colors"
-          >
-            Cancel Voucher
-          </button>
+            <button
+              type="button"
+              onClick={() => setShowVoucher(false)}
+              className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-400 flex items-center gap-1 transition-colors"
+            >
+              {t('auth.cancel_voucher')}
+            </button>
         </div>
       )}
 
       <div className="flex flex-col gap-2">
         {mode === "signup" && plans && plans.length > 0 && (
           <div className="flex flex-col gap-2 pb-2">
-            <Label
-              htmlFor="plan"
-              className="text-zinc-600 font-normal dark:text-zinc-400"
-            >
-              Selected Plan
-            </Label>
+                <Label
+                  htmlFor="plan"
+                  className="text-zinc-600 font-normal dark:text-zinc-400"
+                >
+                  {t('auth.selected_plan')}
+                </Label>
             <Select
               name="plan"
               value={activePlan}
@@ -81,12 +82,12 @@ export function AuthForm({
                 id="plan"
                 className="bg-muted text-md md:text-sm border-none"
               >
-                <SelectValue placeholder="Select Plan" />
+                <SelectValue placeholder={t('auth.ph_select_plan')} />
               </SelectTrigger>
               <SelectContent>
                 {plans.map((p) => (
                   <SelectItem key={p.id || p.plan_name} value={p.plan_name}>
-                    {p.plan_name} Plan
+                    {t('auth.plan_suffix', { plan: p.plan_name })}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -97,36 +98,36 @@ export function AuthForm({
         {mode === "signup" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="first_name"
-                className="text-zinc-600 font-normal dark:text-zinc-400"
-              >
-                First Name
-              </Label>
-              <Input
-                id="first_name"
-                name="first_name"
-                className="bg-muted text-md md:text-sm border-none"
-                type="text"
-                placeholder="John"
-                required
-              />
+                <Label
+                  htmlFor="first_name"
+                  className="text-zinc-600 font-normal dark:text-zinc-400"
+                >
+                  {t('auth.label_first_name')}
+                </Label>
+                <Input
+                  id="first_name"
+                  name="first_name"
+                  className="bg-muted text-md md:text-sm border-none"
+                  type="text"
+                  placeholder={t('auth.ph_first_name')}
+                  required
+                />
             </div>
             <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="last_name"
-                className="text-zinc-600 font-normal dark:text-zinc-400"
-              >
-                Last Name
-              </Label>
-              <Input
-                id="last_name"
-                name="last_name"
-                className="bg-muted text-md md:text-sm border-none"
-                type="text"
-                placeholder="Doe"
-                required
-              />
+                <Label
+                  htmlFor="last_name"
+                  className="text-zinc-600 font-normal dark:text-zinc-400"
+                >
+                  {t('auth.label_last_name')}
+                </Label>
+                <Input
+                  id="last_name"
+                  name="last_name"
+                  className="bg-muted text-md md:text-sm border-none"
+                  type="text"
+                  placeholder={t('auth.ph_last_name')}
+                  required
+                />
             </div>
           </div>
         )}
@@ -144,14 +145,14 @@ export function AuthForm({
               htmlFor="email"
               className="text-zinc-600 font-normal dark:text-zinc-400"
             >
-              Email
+              {t('auth.label_email')}
             </Label>
             <Input
               id="email"
               name="email"
               className="bg-muted text-md md:text-sm border-none"
               type={mode === "signup" ? "email" : "text"}
-              placeholder="user@acme.com"
+              placeholder={t('auth.ph_email')}
               autoComplete="email"
               required
               defaultValue={defaultEmail}
@@ -160,27 +161,27 @@ export function AuthForm({
 
           {mode === "signup" && (
             <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="industry"
-                className="text-zinc-600 font-normal dark:text-zinc-400"
-              >
-                Industry
-              </Label>
-              <Select name="industry" required>
-                <SelectTrigger
-                  id="industry"
-                  className="bg-muted text-md md:text-sm border-none"
-                >
-                  <SelectValue placeholder="Select Industry" />
-                </SelectTrigger>
-                <SelectContent>
-                  {industries?.map((ind) => (
-                    <SelectItem key={ind} value={ind}>
-                      {ind}
-                    </SelectItem>
-                  )) || <SelectItem value="Other">Other</SelectItem>}
-                </SelectContent>
-              </Select>
+               <Label
+                 htmlFor="industry"
+                 className="text-zinc-600 font-normal dark:text-zinc-400"
+               >
+                 {t('auth.label_industry')}
+               </Label>
+               <Select name="industry" required>
+                 <SelectTrigger
+                   id="industry"
+                   className="bg-muted text-md md:text-sm border-none"
+                 >
+                   <SelectValue placeholder={t('auth.ph_select_industry')} />
+                 </SelectTrigger>
+                 <SelectContent>
+                   {industries?.map((ind) => (
+                     <SelectItem key={ind} value={ind}>
+                       {ind}
+                     </SelectItem>
+                   )) || <SelectItem value="Other">{t('auth.industry_other')}</SelectItem>}
+                 </SelectContent>
+               </Select>
             </div>
           )}
         </div>
@@ -194,12 +195,12 @@ export function AuthForm({
           }
         >
           <div className="flex flex-col gap-2">
-            <Label
-              htmlFor="password"
-              className="text-zinc-600 font-normal dark:text-zinc-400"
-            >
-              Password
-            </Label>
+                                <Label
+                                  htmlFor="password"
+                                  className="text-zinc-600 font-normal dark:text-zinc-400"
+                                >
+                                  {t('auth.label_password')}
+                                </Label>
             <Input
               id="password"
               name="password"
@@ -211,20 +212,20 @@ export function AuthForm({
 
           {mode === "signup" && (
             <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="company_name"
-                className="text-zinc-600 font-normal dark:text-zinc-400"
-              >
-                Company Name
-              </Label>
-              <Input
-                id="company_name"
-                name="company_name"
-                className="bg-muted text-md md:text-sm border-none"
-                type="text"
-                placeholder="Acme Inc."
-                required
-              />
+               <Label
+                 htmlFor="company_name"
+                 className="text-zinc-600 font-normal dark:text-zinc-400"
+               >
+                 {t('auth.label_company_name')}
+               </Label>
+               <Input
+                 id="company_name"
+                 name="company_name"
+                 className="bg-muted text-md md:text-sm border-none"
+                 type="text"
+                 placeholder={t('auth.ph_company_name')}
+                 required
+               />
             </div>
           )}
         </div>
@@ -233,40 +234,40 @@ export function AuthForm({
         {mode === "signup" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="country"
-                className="text-zinc-600 font-normal dark:text-zinc-400"
-              >
-                Country
-              </Label>
-              <Input
-                id="country"
-                name="country"
-                className="bg-muted text-md md:text-sm border-none"
-                type="text"
-                placeholder="United States"
-                defaultValue={defaultCountry || ""}
-                required
-              />
+               <Label
+                 htmlFor="country"
+                 className="text-zinc-600 font-normal dark:text-zinc-400"
+               >
+                 {t('auth.label_country')}
+               </Label>
+               <Input
+                 id="country"
+                 name="country"
+                 className="bg-muted text-md md:text-sm border-none"
+                 type="text"
+                 placeholder={t('auth.ph_country')}
+                 defaultValue={defaultCountry || ""}
+                 required
+               />
             </div>
 
             {showVoucher && (
               <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-right-1">
-                <Label
-                  htmlFor="voucher_code"
-                  className="text-indigo-600 font-medium dark:text-indigo-400 flex items-center gap-1"
-                >
-                  <Ticket className="w-3 h-3" />
-                  Voucher Code
-                </Label>
-                <Input
-                  id="voucher_code"
-                  name="voucher_code"
-                  className="bg-muted text-md md:text-sm border-indigo-500/20 border ring-indigo-500/10 focus-visible:ring-indigo-500 shadow-sm"
-                  type="text"
-                  placeholder="ENTER-CODE"
-                  autoFocus
-                />
+                 <Label
+                   htmlFor="voucher_code"
+                   className="text-indigo-600 font-medium dark:text-indigo-400 flex items-center gap-1"
+                 >
+                   <Ticket className="w-3 h-3" />
+                   {t('auth.label_voucher_code')}
+                 </Label>
+                 <Input
+                   id="voucher_code"
+                   name="voucher_code"
+                   className="bg-muted text-md md:text-sm border-indigo-500/20 border ring-indigo-500/10 focus-visible:ring-indigo-500 shadow-sm"
+                   type="text"
+                   placeholder={t('auth.ph_voucher_code')}
+                   autoFocus
+                 />
               </div>
             )}
           </div>
@@ -284,20 +285,20 @@ export function AuthForm({
               activePlan?.toLowerCase().includes("hosting")) && (
               <div className="flex flex-col gap-2 pt-2 animate-in fade-in slide-in-from-top-1">
                 <input type="hidden" name="is_service_plan" value="true" />
-                <Label
-                  htmlFor="domain"
-                  className="text-zinc-600 font-normal dark:text-zinc-400 flex items-center gap-1"
-                >
-                  <Globe className="w-3 h-3" />
-                  Domain (Optional)
-                </Label>
-                <Input
-                  id="domain"
-                  name="domain"
-                  className="bg-muted text-md md:text-sm border-none"
-                  type="text"
-                  placeholder="example.com"
-                />
+                 <Label
+                   htmlFor="domain"
+                   className="text-zinc-600 font-normal dark:text-zinc-400 flex items-center gap-1"
+                 >
+                   <Globe className="w-3 h-3" />
+                   {t('auth.label_domain')}
+                 </Label>
+                 <Input
+                   id="domain"
+                   name="domain"
+                   className="bg-muted text-md md:text-sm border-none"
+                   type="text"
+                   placeholder={t('auth.ph_domain')}
+                 />
               </div>
             )}
           </>

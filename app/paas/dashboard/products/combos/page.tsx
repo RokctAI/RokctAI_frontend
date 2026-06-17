@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import t from "@/app/lib/i18n";
 
 export default function CombosPage() {
   const [combos, setCombos] = useState<any[]>([]);
@@ -88,26 +89,25 @@ export default function CombosPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Combos</h1>
-          <p className="text-muted-foreground">
-            Manage product combos and deals.
-          </p>
-        </div>
-        <Button onClick={() => setIsDialogOpen(true)}>
-          <Plus className="mr-2 size-4" />
-          Add Combo
-        </Button>
+         <div>
+           <h1 className="text-3xl font-bold">{t('app.paas.dashboard.products.combos.title')}</h1>
+           <p className="text-muted-foreground">
+             {t('app.paas.dashboard.products.combos.desc')}
+           </p>
+         </div>
+         <Button onClick={() => setIsDialogOpen(true)}>
+           <Plus className="mr-2 size-4" /> {t('app.paas.dashboard.products.combos.btn_add')}
+         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {combos.length === 0 ? (
-          <Card className="col-span-full">
-            <CardContent className="py-12 text-center text-muted-foreground">
-              No combos found. Create one to get started.
-            </CardContent>
-          </Card>
-        ) : (
+         {combos.length === 0 ? (
+           <Card className="col-span-full">
+             <CardContent className="py-12 text-center text-muted-foreground">
+               {t('app.paas.dashboard.products.combos.no_data')}
+             </CardContent>
+           </Card>
+         ) : (
           combos.map((combo) => (
             <Card key={combo.name}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -136,45 +136,45 @@ export default function CombosPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Combo</DialogTitle>
-          </DialogHeader>
+           <DialogHeader>
+             <DialogTitle>{t('app.paas.dashboard.products.combos.dialog_title')}</DialogTitle>
+           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Combo Name</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, name: e.target.value }))
-                }
-                placeholder="e.g. Lunch Deal"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="price">Price</Label>
-              <Input
-                id="price"
-                type="number"
-                value={formData.price}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    price: parseFloat(e.target.value),
-                  }))
-                }
-                placeholder="0.00"
-              />
-            </div>
+             <div className="grid gap-2">
+               <Label htmlFor="name">{t('app.paas.dashboard.products.combos.label_name')}</Label>
+               <Input
+                 id="name"
+                 value={formData.name}
+                 onChange={(e) =>
+                   setFormData((prev) => ({ ...prev, name: e.target.value }))
+                 }
+                 placeholder={t('app.paas.dashboard.products.combos.ph_name')}
+               />
+             </div>
+             <div className="grid gap-2">
+               <Label htmlFor="price">{t('app.paas.dashboard.products.combos.label_price')}</Label>
+               <Input
+                 id="price"
+                 type="number"
+                 value={formData.price}
+                 onChange={(e) =>
+                   setFormData((prev) => ({
+                     ...prev,
+                     price: parseFloat(e.target.value),
+                   }))
+                 }
+                 placeholder="0.00"
+               />
+             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleSubmit} disabled={processing}>
-              {processing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                "Create Combo"
-              )}
-            </Button>
+             <Button onClick={handleSubmit} disabled={processing}>
+               {processing ? (
+                 <Loader2 className="size-4 animate-spin" />
+               ) : (
+                 t('common.create')
+               )}
+             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

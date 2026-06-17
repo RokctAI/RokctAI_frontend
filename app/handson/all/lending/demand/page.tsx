@@ -7,6 +7,7 @@ import { createLoanDemand } from "@/app/actions/handson/all/lending/demand";
 import { toast } from "sonner";
 import { ChevronLeft, Gavel } from "lucide-react";
 import Link from "next/link";
+import t from "@/app/lib/i18n";
 
 export default function DemandPage() {
   const router = useRouter();
@@ -45,76 +46,76 @@ export default function DemandPage() {
     });
 
     if (res.success) {
-      toast.success("Demand Raised Successfully");
+      toast.success(t('common.success') || "Demand Raised Successfully");
       router.push(`/handson/all/lending/loan/${loan.name}`);
     } else {
-      toast.error(res.error || "Failed to Raise Demand");
+      toast.error(res.error || t('common.failed') || "Failed to Raise Demand");
     }
     setIsSubmitting(false);
   };
 
   if (isLoading)
-    return <div className="p-12 text-center text-gray-500">Loading...</div>;
+    return <div className="p-12 text-center text-gray-500">{t('common.loading')}</div>;
   if (!loan)
-    return <div className="p-12 text-center text-red-500">Loan not found</div>;
+    return <div className="p-12 text-center text-red-500">{t('common.not_found')}</div>;
 
   return (
     <div className="max-w-xl mx-auto py-12">
-      <Link
-        href={`/handson/all/lending/loan/${loan.name}`}
-        className="flex items-center text-gray-500 hover:text-gray-900 mb-6 transition-colors"
-      >
-        <ChevronLeft className="w-4 h-4 mr-1" />
-        Back to Loan
-      </Link>
+        <Link
+          href={`/handson/all/lending/loan/${loan.name}`}
+          className="flex items-center text-gray-500 hover:text-gray-900 mb-6 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4 mr-1" />
+          {t('common.back')}
+        </Link>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-6 border-b border-gray-100 flex items-center space-x-4">
           <div className="p-3 bg-indigo-50 rounded-lg">
             <Gavel className="w-6 h-6 text-indigo-600" />
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">
-              Raise Demand / Charge
-            </h1>
-            <p className="text-gray-500 text-sm">
-              Apply penalty or ad-hoc charge to Loan #{loan.name}
-            </p>
-          </div>
+           <div>
+             <h1 className="text-xl font-bold text-gray-900">
+               {t('app.lending.raise_demand_title')}
+             </h1>
+             <p className="text-gray-500 text-sm">
+               {t('app.lending.raise_demand_desc', { loan: loan.name })}
+             </p>
+           </div>
         </div>
 
         <div className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Type Toggle */}
             <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl">
-              <button
-                type="button"
-                onClick={() => setType("Penalty")}
-                className={`py-2 text-sm font-medium rounded-lg transition-all ${
-                  type === "Penalty"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-900"
-                }`}
-              >
-                Penalty
-              </button>
-              <button
-                type="button"
-                onClick={() => setType("Charges")}
-                className={`py-2 text-sm font-medium rounded-lg transition-all ${
-                  type === "Charges"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-900"
-                }`}
-              >
-                Ad-Hoc Charge
-              </button>
+               <button
+                 type="button"
+                 onClick={() => setType("Penalty")}
+                 className={`py-2 text-sm font-medium rounded-lg transition-all ${
+                   type === "Penalty"
+                     ? "bg-white text-gray-900 shadow-sm"
+                     : "text-gray-500 hover:text-gray-900"
+                 }`}
+               >
+                 {t('app.lending.demand_type_penalty')}
+               </button>
+               <button
+                 type="button"
+                 onClick={() => setType("Charges")}
+                 className={`py-2 text-sm font-medium rounded-lg transition-all ${
+                   type === "Charges"
+                     ? "bg-white text-gray-900 shadow-sm"
+                     : "text-gray-500 hover:text-gray-900"
+                 }`}
+               >
+                 {t('app.lending.demand_type_charge')}
+               </button>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Amount
-              </label>
+               <label className="block text-sm font-medium text-gray-700 mb-1">
+                 {t('common.amount')}
+               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                   $
@@ -131,9 +132,9 @@ export default function DemandPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Demand Date
-              </label>
+               <label className="block text-sm font-medium text-gray-700 mb-1">
+                 {t('app.lending.demand_date')}
+               </label>
               <input
                 type="date"
                 required
@@ -143,13 +144,13 @@ export default function DemandPage() {
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-xl shadow-sm transition-colors"
-            >
-              {isSubmitting ? "Processing..." : "Submit Demand"}
-            </button>
+             <button
+               type="submit"
+               disabled={isSubmitting}
+               className="w-full py-3 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-xl shadow-sm transition-colors"
+             >
+               {isSubmitting ? t('common.processing') : t('app.lending.submit_demand')}
+             </button>
           </form>
         </div>
       </div>

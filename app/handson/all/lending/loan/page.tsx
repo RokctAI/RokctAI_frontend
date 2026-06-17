@@ -9,6 +9,7 @@ import {
   Building2,
   ArrowRightLeft,
 } from "lucide-react";
+import t from "@/app/lib/i18n";
 
 import { getLoans } from "@/app/actions/handson/all/lending/loan";
 import { getBranches } from "@/app/actions/handson/all/lending/transfer";
@@ -89,9 +90,9 @@ export default function LoanList() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Active Loans</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t('app.lending.active_loans_title')}</h1>
           <p className="text-gray-500 mt-1">
-            Manage sanctioned and disbursed loans.
+            {t('app.lending.active_loans_desc')}
           </p>
         </div>
 
@@ -103,7 +104,7 @@ export default function LoanList() {
               onChange={(e) => handleFilterChange(e.target.value)}
               className="pl-10 pr-8 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 outline-none w-full md:w-48 appearance-none bg-white"
             >
-              <option value="">All Branches</option>
+               <option value="">{t('app.lending.all_branches')}</option>
               {branches.map((b) => (
                 <option key={b.name} value={b.name}>
                   {b.name}
@@ -114,38 +115,38 @@ export default function LoanList() {
 
           <div className="relative flex-1 md:flex-none">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search applicant..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 outline-none w-full md:w-64"
-            />
+             <input
+               type="text"
+               placeholder={t('app.lending.search_applicant')}
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-100 outline-none w-full md:w-64"
+             />
           </div>
 
-          <Link
-            href="/handson/all/lending/transfer"
-            className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-            title="Transfer Loans"
-          >
-            <ArrowRightLeft className="w-5 h-5" />
-          </Link>
+           <Link
+             href="/handson/all/lending/transfer"
+             className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+             title={t('app.lending.transfer_loans')}
+           >
+             <ArrowRightLeft className="w-5 h-5" />
+           </Link>
         </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         {filteredLoans.length === 0 ? (
-          <div className="p-16 flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-              <CreditCard className="w-8 h-8 text-gray-300" />
+            <div className="p-16 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                <CreditCard className="w-8 h-8 text-gray-300" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">
+                {t('app.lending.no_loans')}
+              </h3>
+              <p className="text-gray-500 max-w-sm mx-auto">
+                {t('app.lending.no_loans_desc')}
+              </p>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">
-              No loans found
-            </h3>
-            <p className="text-gray-500 max-w-sm mx-auto">
-              Try adjusting your filters or search terms.
-            </p>
-          </div>
         ) : (
           <div className="divide-y divide-gray-100">
             {filteredLoans.map((loan) => (
@@ -181,22 +182,22 @@ export default function LoanList() {
                   </div>
 
                   <div className="flex items-center space-x-8 text-sm">
-                    <div className="hidden sm:block">
-                      <span className="block text-gray-500 text-xs text-right">
-                        Sanctioned
-                      </span>
-                      <span className="font-semibold text-gray-900">
-                        {formatCurrency(loan.loan_amount)}
-                      </span>
-                    </div>
-                    <div className="hidden sm:block">
-                      <span className="block text-gray-500 text-xs text-right">
-                        Repaid
-                      </span>
-                      <span className="font-semibold text-gray-900">
-                        {formatCurrency(loan.total_amount_paid)}
-                      </span>
-                    </div>
+                     <div className="hidden sm:block">
+                       <span className="block text-gray-500 text-xs text-right">
+                         {t('app.lending.sanctioned')}
+                       </span>
+                       <span className="font-semibold text-gray-900">
+                         {formatCurrency(loan.loan_amount)}
+                       </span>
+                     </div>
+                     <div className="hidden sm:block">
+                       <span className="block text-gray-500 text-xs text-right">
+                         {t('app.lending.repaid')}
+                       </span>
+                       <span className="font-semibold text-gray-900">
+                         {formatCurrency(loan.total_amount_paid)}
+                       </span>
+                     </div>
                     <span
                       className={`
                                             px-2 py-1 rounded text-xs font-medium

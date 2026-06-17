@@ -23,6 +23,7 @@ import {
   voteOnPlan,
   sendJulesMessage,
 } from "@/app/actions/handson/all/roadmap/roadmap";
+import t from "@/app/lib/i18n";
 
 interface JulesInteractiveProps {
   sessionId: string;
@@ -35,7 +36,7 @@ export function JulesInteractive({
   apiKey,
   featureName,
 }: JulesInteractiveProps) {
-  const [status, setStatus] = useState<string>("Loading...");
+  const [status, setStatus] = useState<string>(t("Loading..."));
   const [activities, setActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");

@@ -2,6 +2,7 @@ import { auth } from "@/app/(auth)/auth";
 import { saveChat, getChatById, deleteChatById } from "@/db/queries";
 import { getAuthenticatedTokens } from "@/app/lib/auth-utils";
 
+// Token rotation and renewal are handled by getAuthenticatedTokens() which calls refreshTokens() before expiry.
 export async function POST(request: Request) {
   const { id, messages, model } = await request.json();
   

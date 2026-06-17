@@ -3,6 +3,7 @@
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 
 import {
   getVehicleTypes,
@@ -52,23 +53,23 @@ export default function AdminVehicleTypesPage() {
   const handleCreate = async () => {
     try {
       await createVehicleType({ name: newType });
-      toast.success("Vehicle type created");
+      toast.success(t('paas.admin.logistics.vehicles.toast_create_success'));
       setNewType("");
       setIsDialogOpen(false);
       fetchTypes();
     } catch (error) {
-      toast.error("Failed to create vehicle type");
+      toast.error(t('paas.admin.logistics.vehicles.toast_create_fail'));
     }
   };
-
+ 
   const handleDelete = async (name: string) => {
-    if (!confirm("Delete this vehicle type?")) return;
+    if (!confirm(t('paas.admin.logistics.vehicles.confirm_delete'))) return;
     try {
       await deleteVehicleType(name);
-      toast.success("Vehicle type deleted");
+      toast.success(t('paas.admin.logistics.vehicles.toast_delete_success'));
       fetchTypes();
     } catch (error) {
-      toast.error("Failed to delete vehicle type");
+      toast.error(t('paas.admin.logistics.vehicles.toast_delete_fail'));
     }
   };
 
@@ -83,45 +84,45 @@ export default function AdminVehicleTypesPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Vehicle Types</h1>
+        <h1 className="text-3xl font-bold">{t('paas.admin.logistics.vehicles.title')}</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 size-4" />
-              Add Type
+              {t('paas.admin.logistics.vehicles.btn_add')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Vehicle Type</DialogTitle>
+              <DialogTitle>{t('paas.admin.logistics.vehicles.dialog_title')}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <Input
-                placeholder="Vehicle Type Name (e.g., Bike, Car)"
+                placeholder={t('paas.admin.logistics.vehicles.ph_name')}
                 value={newType}
                 onChange={(e) => setNewType(e.target.value)}
               />
               <Button onClick={handleCreate} className="w-full">
-                Create
+                {t('paas.admin.logistics.vehicles.btn_create')}
               </Button>
             </div>
           </DialogContent>
         </Dialog>
       </div>
-
+ 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('paas.admin.logistics.vehicles.col_name')}</TableHead>
+              <TableHead className="text-right">{t('paas.admin.logistics.vehicles.col_actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {types.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={2} className="text-center h-24">
-                  No vehicle types found.
+                  {t('paas.admin.logistics.vehicles.no_vehicles')}
                 </TableCell>
               </TableRow>
             ) : (

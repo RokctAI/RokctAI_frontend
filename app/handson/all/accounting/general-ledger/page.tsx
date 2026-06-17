@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import t from "@/app/lib/i18n";
 import { getJournalEntries as getGLEntries } from "@/app/actions/handson/all/accounting/journals/getJournalEntries";
 import { getSessionCurrency } from "@/app/actions/currency";
 
@@ -60,20 +61,20 @@ export default function GeneralLedgerPage() {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">General Ledger</h1>
-          <p className="text-muted-foreground">
-            Detailed transaction logs (GL Entries) for all accounts.
-          </p>
-        </div>
+         <div>
+           <h1 className="text-3xl font-bold">{t('app.accounting.general_ledger')}</h1>
+           <p className="text-muted-foreground">
+             {t('app.accounting.general_ledger_desc')}
+           </p>
+         </div>
       </div>
 
       <div className="flex items-center justify-between">
         <div className="relative w-96">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search Account, Party, or Voucher No..."
-            className="pl-8"
+           <Input
+             placeholder={t('app.accounting.search_account')}
+             className="pl-8"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -84,30 +85,30 @@ export default function GeneralLedgerPage() {
       <div className="border rounded-md bg-white">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Posting Date</TableHead>
-              <TableHead>Account</TableHead>
-              <TableHead>Party</TableHead>
-              <TableHead className="text-right">Debit</TableHead>
-              <TableHead className="text-right">Credit</TableHead>
-              <TableHead>Voucher</TableHead>
-            </TableRow>
+             <TableRow>
+               <TableHead>{t('app.accounting.posting_date')}</TableHead>
+               <TableHead>{t('app.accounting.account')}</TableHead>
+               <TableHead>{t('app.accounting.party')}</TableHead>
+               <TableHead className="text-right">{t('app.accounting.debit')}</TableHead>
+               <TableHead className="text-right">{t('app.accounting.credit')}</TableHead>
+               <TableHead>{t('app.accounting.voucher')}</TableHead>
+             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-8">
-                  Loading transactions...
-                </TableCell>
-              </TableRow>
+               <TableRow>
+                 <TableCell colSpan={6} className="text-center py-8">
+                   {t('app.accounting.loading_transactions')}
+                 </TableCell>
+               </TableRow>
             ) : filteredEntries.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className="text-center py-8 text-muted-foreground"
-                >
-                  No transactions found.
-                </TableCell>
+                 <TableCell
+                   colSpan={6}
+                   className="text-center py-8 text-muted-foreground"
+                 >
+                   {t('app.accounting.no_transactions')}
+                 </TableCell>
               </TableRow>
             ) : (
               filteredEntries.map((entry) => (

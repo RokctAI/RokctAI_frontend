@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSend, FiLoader, FiExternalLink, FiX, FiFilter, FiChevronDown, FiArrowRight, FiArrowUpRight } from "react-icons/fi";
+import t from "@/app/lib/i18n";
 import { OpportunityPublicService, Opportunity } from "@/app/services/public/opportunities";
 import { Badge } from "@/components/ui/badge";
 import { BrandLogo } from "./brand-logo";
@@ -419,7 +420,7 @@ export function Hero({
                   <button
                     onClick={clearResults}
                     className="absolute top-4 right-4 p-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors z-20"
-                    aria-label="Close results"
+                    aria-label={t('common.close_results')}
                   >
                     <FiX size={18} />
                   </button>

@@ -46,6 +46,7 @@ import {
   disconnectIntegration,
 } from "@/app/actions/handson/tenant/settings/integrations";
 import WhatsAppLinkCard from "@/components/custom/WhatsAppLinkCard";
+import t from "@/app/lib/i18n";
 
 // Map icon strings to components
 const iconMap: Record<string, any> = {
@@ -97,17 +98,18 @@ export default function IntegrationsPage() {
       const data = await getIntegrations();
       setServices(data);
     } catch (e) {
-      toast.error("Failed to load integrations");
+      toast.error(t('app.integrations.toast_load_fail'));
     } finally {
       setLoading(false);
     }
+  }
   }
 
   async function handleConnect() {
     if (!selectedService) return;
     try {
       await connectIntegration(selectedService.name, { apiKey });
-      toast.success(`Connected to ${selectedService.label}`);
+      toast.success(t('app.integrations.toast_connect_success', { service: selectedService.label }));
       setSelectedService(null);
       setApiKey("");
       // Optimistic update or reload
@@ -117,33 +119,33 @@ export default function IntegrationsPage() {
         ),
       );
     } catch (e) {
-      toast.error("Connection failed");
+      toast.error(t('app.integrations.toast_connect_fail'));
     }
   }
 
   async function handleDisconnect(service: IntegrationService) {
-    if (!confirm(`Disconnect ${service.label}?`)) return;
+    if (!confirm(t('app.integrations.confirm_disconnect', { service: service.label }))) return;
     try {
       await disconnectIntegration(service.name);
-      toast.success(`Disconnected ${service.label}`);
+      toast.success(t('app.integrations.toast_disconnect_success', { service: service.label }));
       setServices((prev) =>
         prev.map((s) =>
           s.name === service.name ? { ...s, is_connected: false } : s,
         ),
       );
     } catch (e) {
-      toast.error("Disconnection failed");
+      toast.error(t('app.integrations.toast_disconnect_fail'));
     }
   }
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Workspace Integrations</h1>
-        <p className="text-muted-foreground mt-1">
-          Connect your workspace with third-party networks and strategic messaging interfaces.
-        </p>
-      </div>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t('app.integrations.title')}</h1>
+          <p className="text-muted-foreground mt-1">
+            {t('app.integrations.desc')}
+          </p>
+        </div>
 
       {loading ? (
         <div className="flex h-48 items-center justify-center">
@@ -167,41 +169,41 @@ export default function IntegrationsPage() {
                     {service.description}
                   </CardDescription>
                   <div className="flex items-center gap-2">
-                    {service.is_connected ? (
-                      <Badge
-                        variant="default"
-                        className="bg-green-600 hover:bg-green-700"
-                      >
-                        <CheckCircle2 className="mr-1 h-3 w-3" /> Connected
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-muted-foreground">
-                        <XCircle className="mr-1 h-3 w-3" /> Disconnected
-                      </Badge>
-                    )}
+                     {service.is_connected ? (
+                       <Badge
+                         variant="default"
+                         className="bg-green-600 hover:bg-green-700"
+                       >
+                         <CheckCircle2 className="mr-1 h-3 w-3" /> {t('app.integrations.status_connected')}
+                       </Badge>
+                     ) : (
+                       <Badge variant="outline" className="text-muted-foreground">
+                         <XCircle className="mr-1 h-3 w-3" /> {t('app.integrations.status_disconnected')}
+                       </Badge>
+                     )}
                   </div>
                 </CardContent>
                 <CardFooter className="pt-4 border-t border-muted/20">
                   {service.is_connected ? (
-                    <div className="flex gap-2 w-full">
-                      <Button variant="outline" className="flex-1">
-                        Configure
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        onClick={() => handleDisconnect(service)}
-                      >
-                        <XCircle className="h-4 w-4" />
-                      </Button>
-                    </div>
+                     <div className="flex gap-2 w-full">
+                       <Button variant="outline" className="flex-1">
+                         {t('app.integrations.btn_configure')}
+                       </Button>
+                       <Button
+                         variant="destructive"
+                         size="icon"
+                         onClick={() => handleDisconnect(service)}
+                       >
+                         <XCircle className="h-4 w-4" />
+                       </Button>
+                     </div>
                   ) : (
-                    <Button
-                      className="w-full"
-                      onClick={() => setSelectedService(service)}
-                    >
-                      Connect
-                    </Button>
+                     <Button
+                       className="w-full"
+                       onClick={() => setSelectedService(service)}
+                     >
+                       {t('app.integrations.btn_connect')}
+                     </Button>
                   )}
                 </CardFooter>
               </Card>
@@ -211,74 +213,74 @@ export default function IntegrationsPage() {
           {/* Premium WhatsApp Native Integration Card */}
           <Card className="flex flex-col border border-primary/20 bg-gradient-to-br from-background/80 via-background/40 to-background/20 relative overflow-hidden shadow-md">
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-600">
-                WhatsApp Link
-              </CardTitle>
-              <Smartphone className="h-6 w-6 text-primary animate-pulse" />
-            </CardHeader>
-            <CardContent className="flex-1 pt-4">
-              <CardDescription className="text-sm text-muted-foreground mb-4">
-                Connect your business natively to our host-level WhatsApp bridge to receive agent instructions.
-              </CardDescription>
-              <div className="flex items-center gap-2">
-                {wsConnected ? (
-                  <Badge
-                    variant="default"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
-                  >
-                    <CheckCircle2 className="mr-1 h-3 w-3" /> Connected
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="text-muted-foreground font-medium">
-                    <XCircle className="mr-1 h-3 w-3" /> Disconnected
-                  </Badge>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter className="pt-4 border-t border-muted/20">
-              <Button
-                className="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/95 hover:to-indigo-600/95 text-white font-medium shadow-sm"
-                onClick={() => setShowWhatsAppModal(true)}
-              >
-                {wsConnected ? "Configure Channel" : "Link Channel"}
-              </Button>
-            </CardFooter>
+             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+               <CardTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-600">
+                 {t('app.integrations.whatsapp_title')}
+               </CardTitle>
+               <Smartphone className="h-6 w-6 text-primary animate-pulse" />
+             </CardHeader>
+             <CardContent className="flex-1 pt-4">
+               <CardDescription className="text-sm text-muted-foreground mb-4">
+                 {t('app.integrations.whatsapp_desc')}
+               </CardDescription>
+               <div className="flex items-center gap-2">
+                 {wsConnected ? (
+                   <Badge
+                     variant="default"
+                     className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+                   >
+                     <CheckCircle2 className="mr-1 h-3 w-3" /> {t('app.integrations.status_connected')}
+                   </Badge>
+                 ) : (
+                   <Badge variant="outline" className="text-muted-foreground font-medium">
+                     <XCircle className="mr-1 h-3 w-3" /> {t('app.integrations.status_disconnected')}
+                   </Badge>
+                 )}
+               </div>
+             </CardContent>
+             <CardFooter className="pt-4 border-t border-muted/20">
+               <Button
+                 className="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/95 hover:to-indigo-600/95 text-white font-medium shadow-sm"
+                 onClick={() => setShowWhatsAppModal(true)}
+               >
+                 {wsConnected ? t('app.integrations.whatsapp_btn_config') : t('app.integrations.whatsapp_btn_link')}
+               </Button>
+             </CardFooter>
           </Card>
         </div>
       )}
 
       {/* Slack/Calendar Connection Dialog */}
-      <Dialog
-        open={!!selectedService}
-        onOpenChange={(open) => !open && setSelectedService(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Connect {selectedService?.label}</DialogTitle>
-            <DialogDescription>
-              Enter your API Key or Client Secret to enable this integration.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label>API Key / Token</Label>
-              <Input
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                placeholder="sk_live_..."
-                type="password"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedService(null)}>
-              Cancel
-            </Button>
-            <Button onClick={handleConnect}>Save & Connect</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+       <Dialog
+         open={!!selectedService}
+         onOpenChange={(open) => !open && setSelectedService(null)}
+       >
+         <DialogContent>
+           <DialogHeader>
+             <DialogTitle>{t('app.integrations.dialog_title', { service: selectedService?.label })}</DialogTitle>
+             <DialogDescription>
+               {t('app.integrations.dialog_desc')}
+             </DialogDescription>
+           </DialogHeader>
+           <div className="grid gap-4 py-4">
+             <div className="space-y-2">
+               <Label>{t('app.integrations.label_api_key')}</Label>
+               <Input
+                 value={apiKey}
+                 onChange={(e) => setApiKey(e.target.value)}
+                 placeholder={t('app.integrations.ph_api_key')}
+                 type="password"
+               />
+             </div>
+           </div>
+           <DialogFooter>
+             <Button variant="outline" onClick={() => setSelectedService(null)}>
+               {t('common.cancel')}
+             </Button>
+             <Button onClick={handleConnect}>{t('app.integrations.btn_save_connect')}</Button>
+           </DialogFooter>
+         </DialogContent>
+       </Dialog>
 
       {/* Premium WhatsApp Native Pairing Dialog */}
       <Dialog

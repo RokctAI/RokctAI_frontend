@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import t from "@/app/lib/i18n";
 import {
   Table,
   TableBody,
@@ -86,12 +87,12 @@ export default function TranslationsPage() {
             <CardTitle>All Translations</CardTitle>
             <div className="relative w-72">
               <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
-              <Input
-                placeholder="Search keys or values..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-8"
-              />
+               <Input
+                 placeholder={t('app.paas.admin.system.translations.ph_search')}
+                 value={search}
+                 onChange={(e) => setSearch(e.target.value)}
+                 className="pl-8"
+               />
             </div>
           </div>
         </CardHeader>
@@ -112,7 +113,7 @@ export default function TranslationsPage() {
                   <TableCell>
                     <Badge variant="outline">{t.group}</Badge>
                   </TableCell>
-                  <TableCell className="font-medium">{t.key}</TableCell>
+                    <TableCell className="font-medium">{t.identifier || t.key}</TableCell> // placeholder
                   <TableCell>{t.locale}</TableCell>
                   <TableCell>
                     {editingId === t.name ? (

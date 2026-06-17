@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import t from "@/app/lib/i18n";
 
 import {
   getLoan,
@@ -220,27 +221,27 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
   if (isLoading)
     return (
       <div className="p-8 text-center text-gray-500">
-        Loading loan details...
+        {t('common.loading_details')}
       </div>
     );
   if (!loan)
-    return <div className="p-8 text-center text-red-500">Loan not found</div>;
+    return <div className="p-8 text-center text-red-500">{t('common.not_found')}</div>;
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 relative pb-12">
       {showRepaymentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
-            <h3 className="text-xl font-bold text-gray-900">Make Repayment</h3>
-            <p className="text-gray-500 text-sm">
-              Enter the amount to repay for Loan #{loan.name}.
-            </p>
+             <h3 className="text-xl font-bold text-gray-900">Make Repayment</h3>
+             <p className="text-gray-500 text-sm">
+               {t('app.lending.repayment_prompt', { loan: loan.name })}
+             </p>
 
             <form onSubmit={handleRepaymentSubmit} className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-700">
-                  Amount
-                </label>
+                 <label className="text-sm font-medium text-gray-700">
+                   {t('common.amount')}
+                 </label>
                 <div className="relative mt-1">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                     $
@@ -265,13 +266,13 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={isPaying}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors shadow-sm"
-                >
-                  {isPaying ? "Processing..." : "Confirm Payment"}
-                </button>
+                   <button
+                     type="submit"
+                     disabled={isPaying}
+                     className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors shadow-sm"
+                   >
+                     {isPaying ? t('common.processing') : t('app.lending.confirm_payment')}
+                   </button>
               </div>
             </form>
           </div>
@@ -281,29 +282,28 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
       {showAssetModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center space-x-3 text-amber-600 mb-2">
-              <Package className="w-6 h-6" />
-              <h3 className="text-xl font-bold text-gray-900">
-                Realise Pledged Asset
-              </h3>
-            </div>
-            <p className="text-gray-500 text-sm">
-              This will seize the collateral and mark the loan as settled.
-              Please select the inventory account to book the asset value into.
-            </p>
+             <div className="flex items-center space-x-3 text-amber-600 mb-2">
+               <Package className="w-6 h-6" />
+               <h3 className="text-xl font-bold text-gray-900">
+                 {t('app.lending.realise_asset')}
+               </h3>
+             </div>
+             <p className="text-gray-500 text-sm">
+               {t('app.lending.realise_asset_desc')}
+             </p>
 
             <form onSubmit={handleAssetRealisation} className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-700">
-                  Asset Inventory Account
-                </label>
+                 <label className="text-sm font-medium text-gray-700">
+                   {t('app.lending.asset_inventory_account')}
+                 </label>
                 <select
                   className="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-100 outline-none"
                   value={selectedAssetAccount}
                   onChange={(e) => setSelectedAssetAccount(e.target.value)}
                   required
                 >
-                  <option value="">Select Account...</option>
+                   <option value="">{t('app.lending.select_account')}</option>
                   {assetAccounts.map((acc) => (
                     <option key={acc.name} value={acc.name}>
                       {acc.account_name} ({acc.name})
@@ -320,13 +320,13 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={isRealising}
-                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors shadow-sm"
-                >
-                  {isRealising ? "Processing..." : "Seize & Close Loan"}
-                </button>
+                 <button
+                   type="submit"
+                   disabled={isRealising}
+                   className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-colors shadow-sm"
+                 >
+                   {isRealising ? t('common.processing') : t('app.lending.seize_and_close')}
+                 </button>
               </div>
             </form>
           </div>
@@ -367,7 +367,9 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
                 </span>
               )}
             </div>
-            <p className="text-gray-500 text-sm">For {loan.applicant}</p>
+               <p className="text-gray-500 text-sm">
+                 {t('common.for')} {loan.applicant}
+               </p>
           </div>
         </div>
         <div className="flex space-x-3 items-center">
@@ -410,12 +412,12 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
             )}
           </div>
 
-          <Link
-            href={`/handson/all/lending/repayment?loan=${loan.name}`}
-            className="px-4 py-2 border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl font-medium transition-colors"
-          >
-            View History
-          </Link>
+                 <Link
+                   href={`/handson/all/lending/repayment?loan=${loan.name}`}
+                   className="px-4 py-2 border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl font-medium transition-colors"
+                 >
+                   {t('app.lending.view_history')}
+                 </Link>
 
           {/* REFUND BUTTON - If Excess > 0 */}
           {loan.excess_amount_paid > 0 && (
@@ -431,26 +433,26 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
 
           {/* DISBURSE BUTTON - Only for Sanctioned */}
           {loan.status === "Sanctioned" && (
-            <button
-              onClick={handleDisburse}
-              disabled={isDisbursing}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors shadow-sm"
-            >
-              {isDisbursing ? "Disbursing..." : "Disburse Loan"}
-            </button>
+             <button
+               onClick={handleDisburse}
+               disabled={isDisbursing}
+               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors shadow-sm"
+             >
+               {isDisbursing ? t('common.processing') : t('app.lending.disburse_loan')}
+             </button>
           )}
 
           {/* RELEASE SECURITY BUTTON - For Paid/Closure Requested */}
           {loan.is_secured_loan &&
             (loan.status === "Paid" ||
               loan.status === "Loan Closure Requested") && (
-              <button
-                onClick={handleRelease}
-                disabled={isReleasing}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors shadow-sm"
-              >
-                {isReleasing ? "Releasing..." : "Release Security"}
-              </button>
+             <button
+               onClick={handleRelease}
+               disabled={isReleasing}
+               className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors shadow-sm"
+             >
+               {isReleasing ? t('common.processing') : t('app.lending.release_security')}
+             </button>
             )}
 
           {/* ASSET REALISATION BUTTON (Only for Secured Loans in Disbursement/Default) */}
@@ -470,26 +472,28 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
           {["Disbursed", "Partially Disbursed", "Default", "Overdue"].includes(
             loan.status,
           ) && (
-            <button
-              onClick={() => setShowRepaymentModal(true)}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium transition-colors shadow-sm"
-            >
-              Make Repayment
-            </button>
+             <button
+               onClick={() => setShowRepaymentModal(true)}
+               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium transition-colors shadow-sm"
+             >
+               {t('app.lending.make_repayment')}
+             </button>
           )}
         </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <span className="text-sm font-medium text-gray-500">
-            Total Sanctioned
-          </span>
-          <p className="text-2xl font-bold text-gray-900 mt-2">
-            {formatCurrency(loan.loan_amount)}
-          </p>
-        </div>
+         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+           <span className="text-sm font-medium text-gray-500">
+             {t('common.outstanding')}
+           </span>
+           <p className="text-2xl font-bold text-amber-600 mt-2">
+             {formatCurrency(
+               (loan.loan_amount || 0) - (loan.total_principal_paid || 0),
+             )}
+           </p>
+         </div>
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
           <span className="text-sm font-medium text-gray-500">Total Paid</span>
           <p className="text-2xl font-bold text-emerald-600 mt-2">
@@ -508,28 +512,28 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
 
       {/* Repayment Schedule */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="font-bold text-gray-900 flex items-center">
-            <Calendar className="w-5 h-5 mr-2 text-gray-400" />
-            Repayment Schedule
-          </h3>
-        </div>
-        {schedule.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 italic">
-            No schedule generated yet.
-          </div>
-        ) : (
+         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+           <h3 className="font-bold text-gray-900 flex items-center">
+             <Calendar className="w-5 h-5 mr-2 text-gray-400" />
+             {t('app.lending.repayment_schedule')}
+           </h3>
+         </div>
+         {schedule.length === 0 ? (
+           <div className="p-8 text-center text-gray-400 italic">
+             {t('common.no_data')}
+           </div>
+         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-gray-500 font-medium border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Principal</th>
-                  <th className="px-6 py-3">Interest</th>
-                  <th className="px-6 py-3">Total</th>
-                  <th className="px-6 py-3">Status</th>
-                </tr>
-              </thead>
+               <thead className="bg-gray-50 text-gray-500 font-medium border-b border-gray-200">
+                 <tr>
+                   <th className="px-6 py-3">{t('common.date')}</th>
+                   <th className="px-6 py-3">{t('common.principal')}</th>
+                   <th className="px-6 py-3">{t('common.interest')}</th>
+                   <th className="px-6 py-3">{t('common.total')}</th>
+                   <th className="px-6 py-3">{t('common.status')}</th>
+                 </tr>
+               </thead>
               <tbody className="divide-y divide-gray-100">
                 {schedule.map((row: any, i: number) => (
                   <tr key={i} className="hover:bg-gray-50">
@@ -547,13 +551,13 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
                     </td>
                     <td className="px-6 py-3">
                       {/* Basic status inference if field missing */}
-                      {row.paid ? (
-                        <span className="text-green-600 font-medium">Paid</span>
-                      ) : (
-                        <span className="text-amber-600 font-medium">
-                          Pending
-                        </span>
-                      )}
+                         {row.paid ? (
+                           <span className="text-green-600 font-medium">{t('common.paid')}</span>
+                         ) : (
+                           <span className="text-amber-600 font-medium">
+                             {t('common.pending')}
+                           </span>
+                         )}
                     </td>
                   </tr>
                 ))}
@@ -565,17 +569,17 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
 
       {/* AUDIT LOG TIMELINE */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="font-bold text-gray-900 flex items-center">
-            <Clock className="w-5 h-5 mr-2 text-gray-400" />
-            Audit Trail
-          </h3>
-        </div>
-        {timeline.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 italic">
-            No activity recorded yet.
-          </div>
-        ) : (
+         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+           <h3 className="font-bold text-gray-900 flex items-center">
+             <Clock className="w-5 h-5 mr-2 text-gray-400" />
+             {t('common.audit_trail')}
+           </h3>
+         </div>
+         {timeline.length === 0 ? (
+           <div className="p-8 text-center text-gray-400 italic">
+             {t('common.no_activity')}
+           </div>
+         ) : (
           <div className="p-6">
             <div className="relative border-l border-gray-200 ml-3 space-y-6">
               {timeline.map((event: any, i: number) => (

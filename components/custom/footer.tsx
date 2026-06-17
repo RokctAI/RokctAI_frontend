@@ -7,6 +7,7 @@ import { BrandLogo } from "./brand-logo";
 import { Branding } from "./branding";
 import { RoadmapPublicService } from "@/app/services/public/roadmap";
 import { Twitter, Youtube, Linkedin, Instagram, ChevronDown } from "lucide-react";
+import t from "@/app/lib/i18n";
 import { Button } from "@/components/ui/button";
 import versionData from "@/version.json";
 
@@ -20,7 +21,7 @@ async function PublicRoadmapLink() {
           href="/public/roadmap"
           className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
         >
-          Roadmap
+          {t('footer.roadmap')}
         </Link>
       );
     }
@@ -66,7 +67,7 @@ export async function Footer() {
     if (label === "soon") {
       return (
         <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
-          Soon
+          {t('common.soon')}
         </span>
       );
     }
@@ -74,7 +75,7 @@ export async function Footer() {
     if (label === "new") {
       return (
         <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
-          New
+          {t('common.new')}
         </span>
       );
     }
@@ -90,7 +91,7 @@ export async function Footer() {
     if (feature.label === "soon") {
       return (
         <span className="text-base text-gray-400 dark:text-zinc-600 cursor-not-allowed flex items-center gap-2">
-          {feature.name} {renderBadge(id)}
+          {t(feature.name)} {renderBadge(id)}
         </span>
       );
     }
@@ -100,7 +101,7 @@ export async function Footer() {
         href={feature.href}
         className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors flex items-center gap-2"
       >
-        {feature.name} {renderBadge(id)}
+        {t(feature.name)} {renderBadge(id)}
       </Link>
     );
   };
@@ -119,12 +120,12 @@ export async function Footer() {
                 <Branding showBadge={false} className="text-[88px] tracking-tighter leading-none" />
               </div>
             </div>
-            <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-[240px]">
-              All-in-One AI extension to Write, Summarize, Code & Play
-            </p>
-            <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-6 rounded-lg text-lg">
-              Contact us
-            </Button>
+             <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-[240px]">
+               {t('footer.tagline')}
+             </p>
+             <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-6 rounded-lg text-lg">
+               {t('footer.contact_us')}
+             </Button>
             <div className="flex gap-6 mt-2">
               <Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"><Twitter className="w-6 h-6" /></Link>
               <Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"><Youtube className="w-6 h-6" /></Link>
@@ -138,7 +139,7 @@ export async function Footer() {
             <div className="flex flex-col gap-12">
               {(PLATFORM_FEATURES[5]?.active || PLATFORM_FEATURES[6]?.active || PLATFORM_FEATURES[7]?.active) && (
                 <div className="flex flex-col gap-6">
-                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Productivity</h4>
+                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">{t('header.productivity')}</h4>
                   <div className="flex flex-col gap-4">
                     {renderFooterLink(5)}
                     {renderFooterLink(6)}
@@ -162,23 +163,23 @@ export async function Footer() {
           <div className="flex flex-col gap-12">
             {PLATFORM_FEATURES[4]?.active && (
               <div className="flex flex-col gap-6">
-                <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">AI chat</h4>
+                 <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">{t('header.ai_chat')}</h4>
                 <div className="flex flex-col gap-4">
                   {renderFooterLink(4)}
                 </div>
               </div>
             )}
             <div className="flex flex-col gap-6">
-              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Company</h4>
+               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">{t('footer.company')}</h4>
               <div className="flex flex-col gap-4">
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Team</Link>
-                <Link href={getTermLink("Privacy")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Privacy Policy</Link>
-                <Link href={getTermLink("Legal")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Legal</Link>
-                <Link href={getTermLink("Cookie")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Cookie Policy</Link>
-                <Link href={getTermLink("Terms and Conditions")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Terms and Conditions</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Data Protection</Link>
-                {hasCareers && <Link href="/careers" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Careers</Link>}
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Refund Policy</Link>
+                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.team')}</Link>
+                 <Link href={getTermLink("Privacy")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.privacy_policy')}</Link>
+                 <Link href={getTermLink("Legal")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.legal')}</Link>
+                 <Link href={getTermLink("Cookie")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.cookie_policy')}</Link>
+                 <Link href={getTermLink("Terms and Conditions")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.terms')}</Link>
+                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.data_protection')}</Link>
+                 {hasCareers && <Link href="/careers" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.careers')}</Link>}
+                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.refund_policy')}</Link>
               </div>
             </div>
           </div>
@@ -187,7 +188,7 @@ export async function Footer() {
           <div className="flex flex-col gap-12">
             {(PLATFORM_FEATURES[8]?.active || PLATFORM_FEATURES[9]?.active || PLATFORM_FEATURES[10]?.active || PLATFORM_FEATURES[11]?.active) && (
               <div className="flex flex-col gap-6">
-                <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Tools</h4>
+                 <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">{t('header.tools')}</h4>
                 <div className="flex flex-col gap-4">
                   {renderFooterLink(8)}
                   {renderFooterLink(9)}
@@ -197,12 +198,12 @@ export async function Footer() {
               </div>
             )}
             <div className="flex flex-col gap-6">
-              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">Resources</h4>
+               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">{t('footer.resources')}</h4>
               <div className="flex flex-col gap-4">
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Product Wiki</Link>
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">How It Works</Link>
+                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.product_wiki')}</Link>
+                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.how_it_works')}</Link>
                 <PublicRoadmapLink />
-                <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">Feature Request</Link>
+                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.feature_request')}</Link>
               </div>
             </div>
           </div>
@@ -214,11 +215,11 @@ export async function Footer() {
             © Copyright {new Date().getFullYear()} - {LEGAL_COMPANY_NAME}
           </p>
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10">
-              <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'}`} />
-              <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">System {isOnline ? 'Online' : 'Offline'}</span>
-            </div>
-            <span className="text-xs font-mono font-bold text-gray-700 uppercase">Version {version}</span>
+               <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10">
+                 <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'}`} />
+                 <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">{t('system.status_prefix')} {isOnline ? t('system.online') : t('system.offline')}</span>
+               </div>
+             <span className="text-xs font-mono font-bold text-gray-700 uppercase">{t('system.version')} {version}</span>
           </div>
         </div>
       </div>

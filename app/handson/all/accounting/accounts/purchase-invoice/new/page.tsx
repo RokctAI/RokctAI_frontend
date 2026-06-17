@@ -35,6 +35,7 @@ import { getSuppliers } from "@/app/actions/handson/all/accounting/buying/suppli
 import { getItems } from "@/app/actions/handson/all/accounting/inventory/item";
 import { getPurchaseOrder } from "@/app/actions/handson/all/accounting/buying/order";
 import { Loader2, Plus, Trash2 } from "lucide-react";
+import t from "@/app/lib/i18n";
 import {
   Table,
   TableBody,
@@ -135,10 +136,10 @@ function NewPurchaseInvoiceContent() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>New Purchase Invoice</CardTitle>
-        <CardDescription>Record a new bill from a supplier.</CardDescription>
-      </CardHeader>
+          <CardHeader>
+            <CardTitle>{t('app.accounting.new_purchase_invoice')}</CardTitle>
+            <CardDescription>{t('app.accounting.new_purchase_invoice_desc')}</CardDescription>
+          </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -147,15 +148,15 @@ function NewPurchaseInvoiceContent() {
                 control={form.control}
                 name="supplier"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Supplier</FormLabel>
-                    <Select
+                   <FormItem>
+                     <FormLabel>{t('app.accounting.supplier')}</FormLabel>
+                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select Supplier" />
+                                                       <SelectValue placeholder={t('app.accounting.select_supplier')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -174,9 +175,9 @@ function NewPurchaseInvoiceContent() {
                 control={form.control}
                 name="posting_date"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Date</FormLabel>
-                    <FormControl>
+                   <FormItem>
+                     <FormLabel>{t('app.accounting.date')}</FormLabel>
+                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
                     <FormMessage />
@@ -187,27 +188,27 @@ function NewPurchaseInvoiceContent() {
 
             <Card className="border-dashed">
               <CardHeader className="pb-2">
-                <div className="flex justify-between items-center">
-                  <CardTitle className="text-base">Items</CardTitle>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => append({ item_code: "", qty: 1, rate: 0 })}
-                  >
-                    <Plus className="mr-2 h-4 w-4" /> Add Item
-                  </Button>
+                 <div className="flex justify-between items-center">
+                   <CardTitle className="text-base">{t('app.accounting.items')}</CardTitle>
+                     <Button
+                       type="button"
+                       variant="outline"
+                       size="sm"
+                       onClick={() => append({ item_code: "", qty: 1, rate: 0 })}
+                     >
+                       <Plus className="mr-2 h-4 w-4" /> {t('app.accounting.add_item')}
+                     </Button>
                 </div>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Item</TableHead>
-                      <TableHead className="w-[100px]">Qty</TableHead>
-                      <TableHead className="w-[150px]">Rate</TableHead>
-                      <TableHead className="w-[50px]"></TableHead>
-                    </TableRow>
+                     <TableRow>
+                       <TableHead>{t('app.accounting.item')}</TableHead>
+                       <TableHead className="w-[100px]">{t('app.accounting.qty')}</TableHead>
+                       <TableHead className="w-[150px]">{t('app.accounting.rate')}</TableHead>
+                       <TableHead className="w-[50px]"></TableHead>
+                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {fields.map((field, index) => (
@@ -227,7 +228,7 @@ function NewPurchaseInvoiceContent() {
                                 >
                                   <FormControl>
                                     <SelectTrigger>
-                                      <SelectValue placeholder="Select Item" />
+                                       <SelectValue placeholder={t('app.accounting.select_item')} />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
@@ -298,17 +299,17 @@ function NewPurchaseInvoiceContent() {
             </Card>
 
             <div className="flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                create Invoice
-              </Button>
+               <Button
+                 type="button"
+                 variant="outline"
+                 onClick={() => router.back()}
+               >
+                 {t('common.cancel')}
+               </Button>
+               <Button type="submit" disabled={loading}>
+                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                 {t('app.accounting.create_invoice')}
+               </Button>
             </div>
           </form>
         </Form>
@@ -320,7 +321,7 @@ function NewPurchaseInvoiceContent() {
 export default function NewPurchaseInvoicePage() {
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>{t('common.loading') || 'Loading...'}</div>}>
         <NewPurchaseInvoiceContent />
       </Suspense>
     </div>

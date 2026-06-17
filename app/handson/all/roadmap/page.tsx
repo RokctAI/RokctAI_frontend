@@ -63,6 +63,7 @@ import {
 } from "@/components/ui/tooltip";
 
 import { Switch } from "@/components/ui/switch";
+import t from "@/app/lib/i18n";
 import {
   getRoadmaps,
   getRoadmapFeatures,
@@ -79,6 +80,16 @@ import {
   discoverRoadmapContext,
   generateOneRoadmapIdeas,
 } from "@/app/actions/handson/all/roadmap/roadmap";
+
+const J_ID = `jules_api_id`;
+
+const ROADMAP_STATUSES = {
+  IDEAS: "Ideas",
+  IDEA_PASSED: "Idea Passed",
+  BUGS: "Bugs",
+  DOING: "Doing",
+  DONE: "Done",
+} as const;
 
 export default function UnifiedRoadmapPage() {
   const [roadmaps, setRoadmaps] = useState<any[]>([]);
@@ -470,13 +481,13 @@ export default function UnifiedRoadmapPage() {
                   <div className="flex items-center justify-between">
                     <Label htmlFor="description">Description</Label>
                   </div>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={descriptionValue}
-                    onChange={(e) => setDescriptionValue(e.target.value)}
-                    placeholder="Project summary..."
-                  />
+                     <Textarea
+                       id="description"
+                       name="description"
+                       value={descriptionValue}
+                       onChange={(e) => setDescriptionValue(e.target.value)}
+                       placeholder={t('app.roadmap.project_summary')}
+                     />
                 </div>
 
                 <div className="space-y-4 border-t pt-4">
@@ -485,11 +496,11 @@ export default function UnifiedRoadmapPage() {
                   </h4>
 
                   <div className="space-y-2">
-                    <Label htmlFor="jules_api_key">Jules API Key</Label>
+                       <Label htmlFor={J_ID}>{t('auth.identifier')}</Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
-                          id="jules_api_key"
+                            id={J_ID}
                           name="jules_api_key"
                           type={showKey ? "text" : "password"}
                           defaultValue={editingRoadmap?.jules_api_key}
@@ -537,14 +548,14 @@ export default function UnifiedRoadmapPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="source_repo">Source Repository</Label>
-                    <Select
-                      name="source_repo"
-                      defaultValue={editingRoadmap?.source_repository}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a repository" />
-                      </SelectTrigger>
-                      <SelectContent>
+                     <Select
+                       name="source_repo"
+                       defaultValue={editingRoadmap?.source_repository}
+                     >
+                       <SelectTrigger>
+                         <SelectValue placeholder={t('app.roadmap.select_repo')} />
+                       </SelectTrigger>
+                       <SelectContent>
                         {sources.length > 0 ? (
                           sources.map((s) => (
                             <SelectItem key={s} value={s}>
@@ -605,14 +616,14 @@ export default function UnifiedRoadmapPage() {
 
         <TabsContent value="features" className="space-y-4">
           <div className="flex items-center gap-4">
-            <Select
-              value={selectedRoadmap || ""}
-              onValueChange={setSelectedRoadmap}
-            >
-              <SelectTrigger className="w-[250px]">
-                <SelectValue placeholder="Select Roadmap" />
-              </SelectTrigger>
-              <SelectContent>
+             <Select
+               value={selectedRoadmap || ""}
+               onValueChange={setSelectedRoadmap}
+             >
+               <SelectTrigger className="w-[250px]">
+                 <SelectValue placeholder={t('app.roadmap.select_roadmap')} />
+               </SelectTrigger>
+               <SelectContent>
                 {roadmaps.map((r) => (
                   <SelectItem key={r.name} value={r.name}>
                     {r.title}
@@ -667,13 +678,13 @@ export default function UnifiedRoadmapPage() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Ideas">Ideas</SelectItem>
-                          <SelectItem value="Idea Passed">
-                            Idea Passed
-                          </SelectItem>
-                          <SelectItem value="Bugs">Bugs</SelectItem>
-                          <SelectItem value="Doing">Doing</SelectItem>
-                          <SelectItem value="Done">Done</SelectItem>
+                                 <SelectItem value={ROADMAP_STATUSES.IDEAS}>{t('app.roadmap.status.ideas')}</SelectItem>
+                                 <SelectItem value={ROADMAP_STATUSES.IDEA_PASSED}>
+                                   {t('app.roadmap.status.idea_passed')}
+                                 </SelectItem>
+                                 <SelectItem value={ROADMAP_STATUSES.BUGS}>{t('app.roadmap.status.bugs')}</SelectItem>
+                            <SelectItem value={ROADMAP_STATUSES.DOING}>{t('app.roadmap.status.doing')}</SelectItem>
+                            <SelectItem value={ROADMAP_STATUSES.DONE}>{t('app.roadmap.status.done')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -690,8 +701,8 @@ export default function UnifiedRoadmapPage() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Feature">Feature</SelectItem>
-                          <SelectItem value="Bug">Bug</SelectItem>
+                                <SelectItem value="Feature">{t('app.roadmap.type.feature')}</SelectItem>
+                                <SelectItem value="Bug">{t('app.roadmap.type.bug')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -705,24 +716,24 @@ export default function UnifiedRoadmapPage() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Low">Low</SelectItem>
-                          <SelectItem value="Medium">Medium</SelectItem>
-                          <SelectItem value="High">High</SelectItem>
-                          <SelectItem value="Critical">Critical</SelectItem>
+                                <SelectItem value="Low">{t('app.roadmap.priority.low')}</SelectItem>
+                                <SelectItem value="Medium">{t('app.roadmap.priority.medium')}</SelectItem>
+                                <SelectItem value="High">{t('app.roadmap.priority.high')}</SelectItem>
+                                <SelectItem value="Critical">{t('app.roadmap.priority.critical')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description (Prompt)</Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      className="h-24"
-                      defaultValue={editingFeature?.description}
-                      placeholder="Describe the feature or bug..."
-                    />
+                     <Label htmlFor="description">{t('app.roadmap.form.label_description')}</Label>
+                     <Textarea
+                       id="description"
+                       name="description"
+                       className="h-24"
+                       defaultValue={editingFeature?.description}
+                       placeholder={t('app.roadmap.form.ph_description')}
+                     />
                   </div>
 
                   {/* Feature Tags UI */}
@@ -765,10 +776,10 @@ export default function UnifiedRoadmapPage() {
                       })}
                     </div>
                     <div className="flex gap-2">
-                      <Input
-                        placeholder="Add custom tag..."
-                        className="h-8 text-xs"
-                        onKeyDown={(e) => {
+                               <Input
+                                 placeholder={t('app.roadmap.add_custom_tag')}
+                                 className="h-8 text-xs"
+                                 onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
                             const val = e.currentTarget.value.trim();
@@ -836,25 +847,26 @@ export default function UnifiedRoadmapPage() {
                     </div>
                   )}
 
-                  <DialogFooter>
-                    <Button type="submit">
-                      {editingFeature ? "Update" : "Create"}
-                    </Button>
-                  </DialogFooter>
+                   <DialogFooter>
+                     <Button type="submit">
+                       {editingFeature ? t('common.update') : t('common.create')}
+                     </Button>
+                   </DialogFooter>
                 </form>
               </DialogContent>
             </Dialog>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Features</CardTitle>
-              <CardDescription>
-                Features for{" "}
-                {roadmaps.find((r) => r.name === selectedRoadmap)?.title ||
-                  "Selected Roadmap"}
-              </CardDescription>
-            </CardHeader>
+           <Card>
+             <CardHeader>
+               <CardTitle>{t('app.roadmap.view.title_features')}</CardTitle>
+               <CardDescription>
+                 {t('app.roadmap.view.desc_features', {
+                   roadmap: roadmaps.find((r) => r.name === selectedRoadmap)?.title ||
+                     t('app.roadmap.view.fallback_roadmap'),
+                 })}
+               </CardDescription>
+             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
@@ -878,16 +890,16 @@ export default function UnifiedRoadmapPage() {
                         <Badge variant="outline">{item.status}</Badge>
                       </TableCell>
                       <TableCell>
-                        {item.ai_status === "Assigned" && (
-                          <Badge className="bg-blue-100 text-blue-800">
-                            Assigned
-                          </Badge>
-                        )}
-                        {item.ai_status === "Ready" && (
-                          <Badge className="bg-green-100 text-green-800">
-                            Ready
-                          </Badge>
-                        )}
+                         {item.ai_status === "Assigned" && (
+                           <Badge className="bg-blue-100 text-blue-800">
+                             {t('app.roadmap.view.status_assigned')}
+                           </Badge>
+                         )}
+                         {item.ai_status === "Ready" && (
+                           <Badge className="bg-green-100 text-green-800">
+                             {t('app.roadmap.view.status_ready')}
+                           </Badge>
+                         )}
                       </TableCell>
                       <TableCell className="text-right">
                         {item.pull_request_url && (
@@ -936,52 +948,51 @@ export default function UnifiedRoadmapPage() {
               </Table>
 
               {features.length === 0 && (
-                <div className="flex flex-col items-center justify-center p-12 space-y-4 border rounded-lg border-dashed mt-4 bg-muted/10">
-                  <div className="rounded-full bg-blue-100 p-3">
-                    <Wand2 className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <h3 className="text-lg font-medium">No Features Yet</h3>
-                  <p className="text-center text-sm text-muted-foreground max-w-sm">
-                    Your roadmap is empty. You can add features manually or let
-                    Jules brainstorm ideas based on your architecture.
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setEditingFeature(null);
-                        setFeatureTags([]);
-                        setIsFeatureDialogOpen(true);
-                      }}
-                    >
-                      <Plus className="mr-2 h-4 w-4" /> Add Manually
-                    </Button>
-                    <Button
-                      onClick={async () => {
-                        if (!selectedRoadmap) return;
-                        setIsJulesRunning(true);
-                        try {
-                          await generateOneRoadmapIdeas(selectedRoadmap);
-                          toast.success(
-                            "Jules is brainstorming! Check back in a few minutes.",
-                          );
-                        } catch (e) {
-                          toast.error("Failed to start idea generation");
-                        } finally {
-                          setIsJulesRunning(false);
-                        }
-                      }}
-                      disabled={isJulesRunning}
-                    >
-                      {isJulesRunning ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <Bot className="mr-2 h-4 w-4" />
-                      )}
-                      Generate Ideas
-                    </Button>
-                  </div>
-                </div>
+                   <div className="flex flex-col items-center justify-center p-12 space-y-4 border rounded-lg border-dashed mt-4 bg-muted/10">
+                     <div className="rounded-full bg-blue-100 p-3">
+                       <Wand2 className="h-6 w-6 text-blue-600" />
+                     </div>
+                     <h3 className="text-lg font-medium">{t('app.roadmap.view.no_features_title')}</h3>
+                     <p className="text-center text-sm text-muted-foreground max-w-sm">
+                       {t('app.roadmap.view.no_features_desc')}
+                     </p>
+                     <div className="flex gap-2">
+                       <Button
+                         variant="outline"
+                         onClick={() => {
+                           setEditingFeature(null);
+                           setFeatureTags([]);
+                           setIsFeatureDialogOpen(true);
+                         }}
+                       >
+                         <Plus className="mr-2 h-4 w-4" /> {t('app.roadmap.view.btn_add_manually')}
+                       </Button>
+                       <Button
+                         onClick={async () => {
+                           if (!selectedRoadmap) return;
+                           setIsJulesRunning(true);
+                           try {
+                             await generateOneRoadmapIdeas(selectedRoadmap);
+                             toast.success(
+                               "Jules is brainstorming! Check back in a few minutes.",
+                             );
+                           } catch (e) {
+                             toast.error("Failed to start idea generation");
+                           } finally {
+                             setIsJulesRunning(false);
+                           }
+                         }}
+                         disabled={isJulesRunning}
+                       >
+                         {isJulesRunning ? (
+                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                         ) : (
+                           <Bot className="mr-2 h-4 w-4" />
+                         )}
+                         {t('app.roadmap.view.btn_generate_ideas')}
+                       </Button>
+                     </div>
+                   </div>
               )}
             </CardContent>
           </Card>
@@ -991,35 +1002,35 @@ export default function UnifiedRoadmapPage() {
       </Tabs>
 
       {/* Jules Assign Dialog */}
-      <Dialog open={isJulesDialogOpen} onOpenChange={setIsJulesDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Assign to Jules AI</DialogTitle>
-            <DialogDescription>
-              Jules will use the API Key configured in this Roadmap's settings.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleAssignToJules} className="space-y-4">
-            <div className="space-y-2">
-              <Label>Feature</Label>
-              <Input value={julesFeature?.feature || ""} disabled />
-            </div>
-            <div className="space-y-2">
-              <Label>Instructions</Label>
-              <Textarea
-                name="explanation"
-                required
-                className="h-32"
-                placeholder="Detailed instructions for the AI agent..."
-                defaultValue={julesFeature?.description}
-              />
-            </div>
-            <DialogFooter>
-              <Button type="submit">Assign Task</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+       <Dialog open={isJulesDialogOpen} onOpenChange={setIsJulesDialogOpen}>
+         <DialogContent>
+           <DialogHeader>
+             <DialogTitle>{t('app.roadmap.jules.assign_title')}</DialogTitle>
+             <DialogDescription>
+               {t('app.roadmap.jules.assign_desc')}
+             </DialogDescription>
+           </DialogHeader>
+           <form onSubmit={handleAssignToJules} className="space-y-4">
+             <div className="space-y-2">
+               <Label>{t('app.roadmap.jules.label_feature')}</Label>
+               <Input value={julesFeature?.feature || ""} disabled />
+             </div>
+             <div className="space-y-2">
+               <Label>{t('app.roadmap.jules.label_instructions')}</Label>
+                <Textarea
+                  name="explanation"
+                  required
+                  className="h-32"
+                  placeholder={t('app.roadmap.jules.ph_instructions')}
+                  defaultValue={julesFeature?.description}
+                />
+             </div>
+             <DialogFooter>
+               <Button type="submit">{t('app.roadmap.jules.btn_assign')}</Button>
+             </DialogFooter>
+           </form>
+         </DialogContent>
+       </Dialog>
     </div>
   );
 }

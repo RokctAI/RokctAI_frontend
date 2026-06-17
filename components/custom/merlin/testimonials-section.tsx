@@ -2,7 +2,8 @@
 
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
-
+import t from "@/app/lib/i18n";
+ 
 const TESTIMONIALS = [
   {
     title: "The Swiss Army Knife for research and writing",
@@ -109,23 +110,23 @@ export function TestimonialsSection({ id }: { id?: string }) {
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-zinc-50 dark:bg-zinc-900 shadow-sm border border-zinc-100 dark:border-zinc-800">
-            <Image src="https://cdn.getmerlin.in/cms/playstore_88d0ae5df1.svg" alt="Play Store" width={32} height={32} />
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="text-2xl font-black">4.3</span>
-            <span className="text-sm font-medium text-zinc-500">Play Store</span>
-          </div>
+           <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-zinc-50 dark:bg-zinc-900 shadow-sm border border-zinc-100 dark:border-zinc-800">
+             <Image src="https://cdn.getmerlin.in/cms/playstore_88d0ae5df1.svg" alt={t('common.play_store')} width={32} height={32} />
+           </div>
+           <div className="flex flex-col items-center">
+             <span className="text-2xl font-black">4.3</span>
+             <span className="text-sm font-medium text-zinc-500">{t('common.play_store')}</span>
+           </div>
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-zinc-50 dark:bg-zinc-900 shadow-sm border border-zinc-100 dark:border-zinc-800">
-            <Image src="https://cdn.getmerlin.in/cms/apple_767823d8d1.svg" alt="App Store" width={32} height={32} />
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="text-2xl font-black">4.7</span>
-            <span className="text-sm font-medium text-zinc-500">App Store</span>
-          </div>
+           <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-zinc-50 dark:bg-zinc-900 shadow-sm border border-zinc-100 dark:border-zinc-800">
+             <Image src="https://cdn.getmerlin.in/cms/apple_767823d8d1.svg" alt={t('common.app_store')} width={32} height={32} />
+           </div>
+           <div className="flex flex-col items-center">
+             <span className="text-2xl font-black">4.7</span>
+             <span className="text-sm font-medium text-zinc-500">{t('common.app_store')}</span>
+           </div>
         </div>
       </div>
 

@@ -12,6 +12,7 @@ import {
   updateFlutterBuildSettings,
   getAvailableSourceProjects,
 } from "@/app/actions/paas/admin/settings";
+import t from "@/app/lib/i18n";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -102,7 +103,7 @@ export default function FlutterSettingsPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
-          Flutter App Settings
+          {t('app.paas.admin.settings.flutter.title')}
         </h2>
         <p className="text-muted-foreground">
           Manage your Flutter application configuration and build settings.
@@ -173,21 +174,21 @@ export default function FlutterSettingsPage() {
                       setAppConfig({ ...appConfig, source_project: val })
                     }
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a source project" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sourceProjects.map((project: any) => (
-                        <SelectItem key={project.value} value={project.value}>
-                          {project.label}
-                        </SelectItem>
-                      ))}
-                      {sourceProjects.length === 0 && (
-                        <SelectItem value="none" disabled>
-                          No source projects found
-                        </SelectItem>
-                      )}
-                    </SelectContent>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('app.paas.admin.settings.flutter.ph_source_project')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sourceProjects.map((project: any) => (
+                          <SelectItem key={project.value} value={project.value}>
+                            {project.label}
+                          </SelectItem>
+                        ))}
+                        {sourceProjects.length === 0 && (
+                          <SelectItem value="none" disabled>
+                            {t('app.paas.admin.settings.flutter.no_projects')}
+                          </SelectItem>
+                        )}
+                      </SelectContent>
                   </Select>
                 </div>
               </div>

@@ -23,6 +23,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Loader2, Plus, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 import { getAssetCapitalizations } from "@/app/actions/handson/all/accounting/assets/capitalization/getAssetCapitalizations";
 import { createAssetCapitalization } from "@/app/actions/handson/all/accounting/assets/capitalization/createAssetCapitalization";
 import { getAssetRepairs } from "@/app/actions/handson/all/accounting/assets/repair/getAssetRepairs";
@@ -259,9 +260,9 @@ export function AssetRepairForm() {
               value={formData.asset}
               onValueChange={(v) => setFormData({ ...formData, asset: v })}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Asset" />
-              </SelectTrigger>
+               <SelectTrigger>
+                 <SelectValue placeholder={t('common.select_asset')} />
+               </SelectTrigger>
               <SelectContent>
                 {assets.map((a) => (
                   <SelectItem key={a.name} value={a.name}>
@@ -421,9 +422,9 @@ export function AssetMovementForm() {
                 })
               }
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Asset" />
-              </SelectTrigger>
+               <SelectTrigger>
+                 <SelectValue placeholder={t('common.select_asset')} />
+               </SelectTrigger>
               <SelectContent>
                 {assets.map((a) => (
                   <SelectItem key={a.name} value={a.name}>
@@ -435,9 +436,9 @@ export function AssetMovementForm() {
           </div>
           <div className="space-y-2">
             <Label>Target Location</Label>
-            <Input
-              placeholder="e.g. Warehouse A"
-              value={formData.assets[0].target_location}
+             <Input
+               placeholder={t('common.ph_warehouse')}
+               value={formData.assets[0].target_location}
               onChange={(e) =>
                 setFormData({
                   ...formData,

@@ -42,6 +42,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import t from "@/app/lib/i18n";
 
 export default function TablesPage() {
   const [sections, setSections] = useState<any[]>([]);
@@ -225,9 +226,9 @@ export default function TablesPage() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Tables & Zones</h1>
+          <h1 className="text-3xl font-bold">{t('app.paas.dashboard.booking.tables.title')}</h1>
           <p className="text-muted-foreground">
-            Manage your shop's seating layout.
+            {t('app.paas.dashboard.booking.tables.desc')}
           </p>
         </div>
       </div>
@@ -235,16 +236,16 @@ export default function TablesPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Zones Sidebar */}
         <Card className="md:col-span-1 h-fit">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-medium">Zones</CardTitle>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => handleOpenSectionDialog()}
-            >
-              <Plus className="size-4" />
-            </Button>
-          </CardHeader>
+             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+               <CardTitle className="text-lg font-medium">{t('app.paas.dashboard.booking.tables.zones_title')}</CardTitle>
+               <Button
+                 size="sm"
+                 variant="ghost"
+                 onClick={() => handleOpenSectionDialog()}
+               >
+                 <Plus className="size-4" />
+               </Button>
+             </CardHeader>
           <CardContent className="pt-4">
             <div className="space-y-2">
               {sections.map((section) => (
@@ -280,11 +281,11 @@ export default function TablesPage() {
                   </div>
                 </div>
               ))}
-              {sections.length === 0 && (
-                <div className="text-sm text-muted-foreground text-center py-4">
-                  No zones created.
-                </div>
-              )}
+               {sections.length === 0 && (
+                 <div className="text-sm text-muted-foreground text-center py-4">
+                   {t('app.paas.dashboard.booking.tables.no_zones')}
+                 </div>
+               )}
             </div>
           </CardContent>
         </Card>
@@ -293,26 +294,26 @@ export default function TablesPage() {
         <Card className="md:col-span-3">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Tables</CardTitle>
-              <CardDescription>
-                {selectedSection
-                  ? `Managing tables in ${sections.find((s) => s.name === selectedSection)?.section_name}`
-                  : "Select a zone to view tables"}
-              </CardDescription>
+               <CardTitle>{t('app.paas.dashboard.booking.tables.tables_title')}</CardTitle>
+               <CardDescription>
+                 {selectedSection
+                   ? t('app.paas.dashboard.booking.tables.managing_tables', { zone: sections.find((s) => s.name === selectedSection)?.section_name })
+                   : t('app.paas.dashboard.booking.tables.select_zone')}
+               </CardDescription>
             </div>
             {selectedSection && (
-              <Button onClick={() => handleOpenTableDialog()}>
-                <Plus className="mr-2 size-4" />
-                Add Table
-              </Button>
+               <Button onClick={() => handleOpenTableDialog()}>
+                 <Plus className="mr-2 size-4" />
+                 {t('app.paas.dashboard.booking.tables.btn_add_table')}
+               </Button>
             )}
           </CardHeader>
           <CardContent>
             {!selectedSection ? (
-              <div className="flex flex-col items-center justify-center h-48 text-muted-foreground">
-                <Armchair className="size-12 mb-4 opacity-20" />
-                <p>Select a zone to manage tables</p>
-              </div>
+             <div className="flex flex-col items-center justify-center h-48 text-muted-foreground">
+               <Armchair className="size-12 mb-4 opacity-20" />
+               <p>{t('app.paas.dashboard.booking.tables.select_zone_placeholder')}</p>
+             </div>
             ) : (
               <Table>
                 <TableHeader>
@@ -325,12 +326,12 @@ export default function TablesPage() {
                 <TableBody>
                   {tables.length === 0 ? (
                     <TableRow>
-                      <TableCell
-                        colSpan={3}
-                        className="text-center h-24 text-muted-foreground"
-                      >
-                        No tables found in this zone.
-                      </TableCell>
+                       <TableCell
+                         colSpan={3}
+                         className="text-center h-24 text-muted-foreground"
+                       >
+                         {t('app.paas.dashboard.booking.tables.no_tables')}
+                       </TableCell>
                     </TableRow>
                   ) : (
                     tables.map((table) => (
@@ -338,7 +339,7 @@ export default function TablesPage() {
                         <TableCell className="font-medium">
                           {table.table_number}
                         </TableCell>
-                        <TableCell>{table.capacity} Guests</TableCell>
+                         <TableCell>{table.capacity} {t('app.paas.dashboard.booking.tables.guests')}</TableCell>
                         <TableCell className="text-right">
                           <Button
                             variant="ghost"
@@ -369,38 +370,38 @@ export default function TablesPage() {
       {/* Zone Dialog */}
       <Dialog open={isSectionDialogOpen} onOpenChange={setIsSectionDialogOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editingSection ? "Edit Zone" : "Create Zone"}
-            </DialogTitle>
-            <DialogDescription>
-              Create a new zone (e.g., "Main Hall", "Patio") for your shop.
-            </DialogDescription>
-          </DialogHeader>
+           <DialogHeader>
+             <DialogTitle>
+               {editingSection ? t('app.paas.dashboard.booking.tables.dialog_edit_zone') : t('app.paas.dashboard.booking.tables.dialog_create_zone')}
+             </DialogTitle>
+             <DialogDescription>
+               {t('app.paas.dashboard.booking.tables.dialog_zone_desc')}
+             </DialogDescription>
+           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="sectionName" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="sectionName"
-                value={sectionName}
-                onChange={(e) => setSectionName(e.target.value)}
-                className="col-span-3"
-                placeholder="Main Hall"
-              />
+               <Label htmlFor="sectionName" className="text-right">
+                 {t('app.paas.dashboard.booking.tables.label_name')}
+               </Label>
+               <Input
+                 id="sectionName"
+                 value={sectionName}
+                 onChange={(e) => setSectionName(e.target.value)}
+                 className="col-span-3"
+                 placeholder={t('app.paas.dashboard.booking.tables.ph_zone_name')}
+               />
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleSectionSubmit} disabled={processing}>
-              {processing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : editingSection ? (
-                "Update Zone"
-              ) : (
-                "Create Zone"
-              )}
-            </Button>
+             <Button onClick={handleSectionSubmit} disabled={processing}>
+               {processing ? (
+                 <Loader2 className="size-4 animate-spin" />
+               ) : editingSection ? (
+                 t('app.paas.dashboard.booking.tables.btn_update_zone')
+               ) : (
+                 t('app.paas.dashboard.booking.tables.btn_create_zone')
+               )}
+             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -408,51 +409,51 @@ export default function TablesPage() {
       {/* Table Dialog */}
       <Dialog open={isTableDialogOpen} onOpenChange={setIsTableDialogOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editingTable ? "Edit Table" : "Add Table"}
-            </DialogTitle>
-            <DialogDescription>
-              Add a new table to the selected zone.
-            </DialogDescription>
-          </DialogHeader>
+           <DialogHeader>
+             <DialogTitle>
+               {editingTable ? t('app.paas.dashboard.booking.tables.dialog_edit_table') : t('app.paas.dashboard.booking.tables.dialog_add_table')}
+             </DialogTitle>
+             <DialogDescription>
+               {t('app.paas.dashboard.booking.tables.dialog_table_desc')}
+             </DialogDescription>
+           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="tableName" className="text-right">
-                Number/Name
-              </Label>
-              <Input
-                id="tableName"
-                value={tableName}
-                onChange={(e) => setTableName(e.target.value)}
-                className="col-span-3"
-                placeholder="T-01"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="tableCapacity" className="text-right">
-                Capacity
-              </Label>
-              <Input
-                id="tableCapacity"
-                type="number"
-                value={tableCapacity}
-                onChange={(e) => setTableCapacity(e.target.value)}
-                className="col-span-3"
-                placeholder="4"
-              />
-            </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+               <Label htmlFor="tableName" className="text-right">
+                 {t('app.paas.dashboard.booking.tables.label_table_number')}
+               </Label>
+               <Input
+                 id="tableName"
+                 value={tableName}
+                 onChange={(e) => setTableName(e.target.value)}
+                 className="col-span-3"
+                 placeholder={t('app.paas.dashboard.booking.tables.ph_table_number')}
+               />
+             </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+               <Label htmlFor="tableCapacity" className="text-right">
+                 {t('app.paas.dashboard.booking.tables.label_capacity')}
+               </Label>
+               <Input
+                 id="tableCapacity"
+                 type="number"
+                 value={tableCapacity}
+                 onChange={(e) => setTableCapacity(e.target.value)}
+                 className="col-span-3"
+                 placeholder={t('app.paas.dashboard.booking.tables.ph_capacity')}
+               />
+             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleTableSubmit} disabled={processing}>
-              {processing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : editingTable ? (
-                "Update Table"
-              ) : (
-                "Add Table"
-              )}
-            </Button>
+             <Button onClick={handleTableSubmit} disabled={processing}>
+               {processing ? (
+                 <Loader2 className="size-4 animate-spin" />
+               ) : editingTable ? (
+                 t('app.paas.dashboard.booking.tables.btn_update_table')
+               ) : (
+                 t('app.paas.dashboard.booking.tables.btn_add_table')
+               )}
+             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
