@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { auth } from "@/app/(auth)/auth";
 import { getPaaSClient } from "@/app/lib/client";
 
 export async function getWhatsAppConfig() {

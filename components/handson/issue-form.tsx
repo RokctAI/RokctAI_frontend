@@ -13,6 +13,7 @@ import {
   IssueData,
 } from "@/app/actions/handson/all/crm/support/issue";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 import Link from "next/link";
 import {
   Select,
@@ -130,11 +131,11 @@ export function IssueForm({
           <CardContent className="space-y-4">
             <div>
               <Label>Subject</Label>
-              <Input
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder="Brief summary of the issue..."
-              />
+               <Input
+                 value={subject}
+                 onChange={(e) => setSubject(e.target.value)}
+                 placeholder={t('common.ph_issue_summary')}
+               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -176,12 +177,12 @@ export function IssueForm({
             </div>
             <div>
               <Label>Description</Label>
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={3}
-                placeholder="Detailed explanation..."
-              />
+               <Textarea
+                 value={description}
+                 onChange={(e) => setDescription(e.target.value)}
+                 rows={3}
+                 placeholder={t('common.ph_issue_details')}
+               />
             </div>
           </CardContent>
         </Card>
@@ -228,12 +229,12 @@ export function IssueForm({
 
             {/* Reply Box */}
             <div className="flex gap-4 items-start pt-4 border-t">
-              <Textarea
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Type your reply here..."
-                className="min-h-[80px] bg-white"
-              />
+               <Textarea
+                 value={newComment}
+                 onChange={(e) => setNewComment(e.target.value)}
+                 placeholder={t('common.ph_issue_reply')}
+                 className="min-h-[80px] bg-white"
+               />
               <Button
                 onClick={handleSendComment}
                 disabled={chatLoading || !newComment.trim()}

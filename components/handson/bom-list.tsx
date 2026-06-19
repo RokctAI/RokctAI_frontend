@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { deleteBOM } from "@/app/actions/handson/all/accounting/manufacturing/bom";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 import { Badge } from "@/components/ui/badge";
 
 interface BOMListProps {
@@ -54,9 +55,9 @@ export function BOMList({ boms }: BOMListProps) {
         <div className="flex gap-4">
           <div className="relative w-64">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search BOMs..."
-              value={searchTerm}
+             <Input
+               placeholder={t('common.ph_search_bom')}
+               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
             />

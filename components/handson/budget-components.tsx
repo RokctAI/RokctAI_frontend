@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { createBudget } from "@/app/actions/handson/all/accounting/budgets/createBudget";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
@@ -97,23 +98,23 @@ export function BudgetForm() {
           </div>
           <div>
             <Label>Cost Center</Label>
-            <Input
-              value={center}
-              onChange={(e) => setCenter(e.target.value)}
-              placeholder="e.g. Main - JVO"
-            />
+               <Input
+                 value={center}
+                 onChange={(e) => setCenter(e.target.value)}
+                 placeholder={t('common.ph_cost_center')}
+               />
           </div>
 
           <div className="p-4 border rounded bg-muted/20">
             <Label className="font-bold mb-2 block">Limit</Label>
             <div>
               <Label>Account</Label>
-              <Input
-                value={account}
-                onChange={(e) => setAccount(e.target.value)}
-                placeholder="e.g. Expenses"
-                className="mb-2"
-              />
+               <Input
+                 value={account}
+                 onChange={(e) => setAccount(e.target.value)}
+                 placeholder={t('common.ph_expenses')}
+                 className="mb-2"
+               />
             </div>
             <div>
               <Label>Max Amount</Label>

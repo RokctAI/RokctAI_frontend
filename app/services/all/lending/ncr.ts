@@ -1,5 +1,5 @@
 import { BaseService, ServiceOptions } from "@/app/services/common/base";
-import { auth } from "@/auth";
+import { auth } from "@/app/(auth)/auth";
 import { ReportService } from "./reports";
 
 // Type definitions kept here for now or shared type file

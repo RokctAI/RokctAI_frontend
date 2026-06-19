@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { createCostCenter } from "@/app/actions/handson/all/accounting/cost_centers/createCostCenter";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
@@ -84,11 +85,11 @@ export function CostCenterForm() {
           </div>
           <div>
             <Label>Parent Cost Center</Label>
-            <Input
-              value={parent}
-              onChange={(e) => setParent(e.target.value)}
-              placeholder="e.g. Main - JVO"
-            />
+               <Input
+                 value={parent}
+                 onChange={(e) => setParent(e.target.value)}
+                 placeholder={t('common.ph_cost_center')}
+               />
           </div>
           <Button onClick={handleSubmit}>Save</Button>
         </CardContent>

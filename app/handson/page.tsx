@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "@/app/(auth)/auth";
 import Link from "next/link";
 import { RedirectType, redirect } from "next/navigation";
 

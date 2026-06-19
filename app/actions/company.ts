@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { auth } from "@/app/(auth)/auth";
 
 export async function getSessionCompanyContext() {
   const session = await auth();

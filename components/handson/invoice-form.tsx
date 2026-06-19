@@ -22,6 +22,7 @@ import {
   InvoiceItem,
 } from "@/app/actions/handson/all/accounting/invoices/types";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 import Link from "next/link";
 
 interface InvoiceFormProps {
@@ -151,10 +152,10 @@ export function InvoiceForm({ initialData, isEdit = false }: InvoiceFormProps) {
         <CardContent className="grid md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="customer">Customer</Label>
-            <Input
-              id="customer"
-              placeholder="e.g. Test Customer"
-              value={customer}
+             <Input
+               id="customer"
+               placeholder={t('common.ph_test_customer')}
+               value={customer}
               onChange={(e) => setCustomer(e.target.value)}
             />
             <p className="text-xs text-muted-foreground">

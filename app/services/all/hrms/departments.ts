@@ -1,5 +1,5 @@
 import { BaseService, ServiceOptions } from "@/app/services/common/base";
-import { auth } from "@/auth";
+import { auth } from "@/app/(auth)/auth";
 import { getSystemControlClient, getClient } from "@/app/lib/client";
 
 export interface DepartmentData {

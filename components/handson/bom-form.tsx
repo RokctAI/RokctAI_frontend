@@ -14,6 +14,7 @@ import {
 } from "@/app/actions/handson/all/accounting/manufacturing/bom";
 import { getCompanies } from "@/app/actions/handson/all/hrms/companies";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 import Link from "next/link";
 import {
   Select,
@@ -150,10 +151,10 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
         <CardContent className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="item">Item to Manufacture</Label>
-            <Input
-              id="item"
-              placeholder="e.g. Finished Product X"
-              value={item}
+             <Input
+               id="item"
+               placeholder={t('common.ph_finished_product')}
+               value={item}
               onChange={(e) => setItem(e.target.value)}
               readOnly={isEdit}
             />
@@ -175,9 +176,9 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
               onValueChange={setCompany}
               disabled={isEdit}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Company" />
-              </SelectTrigger>
+               <SelectTrigger>
+                 <SelectValue placeholder={t('common.select_company')} />
+               </SelectTrigger>
               <SelectContent>
                 {companies.map((c) => (
                   <SelectItem key={c.name} value={c.name}>

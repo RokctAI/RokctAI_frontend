@@ -107,8 +107,7 @@ export default function WorkflowsPage() {
       setLoading(false);
     }
   }
-  }
-
+ 
   async function handleSeed() {
     setLoading(true);
     await seedWorkflows();

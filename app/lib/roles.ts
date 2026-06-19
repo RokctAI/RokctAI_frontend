@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { auth } from "@/app/(auth)/auth";
 import { getClient } from "@/app/lib/client";
 
 /**

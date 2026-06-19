@@ -23,6 +23,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Loader2, Plus, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 import {
   getBlanketOrders,
   createBlanketOrder,
@@ -161,7 +162,7 @@ export function BlanketOrderForm() {
                 onValueChange={(v) => setFormData({ ...formData, supplier: v })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Supplier" />
+                                <SelectValue placeholder={t('common.select_supplier')} />
                 </SelectTrigger>
                 <SelectContent>
                   {suppliers.map((s) => (

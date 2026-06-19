@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { deleteInvoice } from "@/app/actions/handson/all/accounting/invoices/deleteInvoice";
 import { toast } from "sonner";
+import t from "@/app/lib/i18n";
 
 interface InvoiceListProps {
   invoices: any[];
@@ -53,9 +54,9 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
         <div className="flex gap-4">
           <div className="relative w-64">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search..."
-              value={searchTerm}
+             <Input
+               placeholder={t('common.ph_search')}
+               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
             />

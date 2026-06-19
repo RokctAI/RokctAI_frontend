@@ -103,8 +103,7 @@ export default function IntegrationsPage() {
       setLoading(false);
     }
   }
-  }
-
+ 
   async function handleConnect() {
     if (!selectedService) return;
     try {

@@ -1,7 +1,7 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
-import { auth } from "@/auth";
+import { auth } from "@/app/(auth)/auth";
 
 /**
  * Creates a system notification for a specific user.

@@ -4,7 +4,7 @@ import {
   FinancialReportService,
   AccountData,
 } from "@/app/services/all/reports/financial";
-import { auth } from "@/auth";
+import { auth } from "@/app/(auth)/auth";
 
 export async function getAccountBalances(company: string) {
   const response = await FinancialReportService.getAccountBalances(company);

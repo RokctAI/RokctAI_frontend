@@ -1,7 +1,7 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
-import { auth } from "@/auth"; // Assuming auth helper exists
+import { auth } from "@/app/(auth)/auth"; // Assuming auth helper exists
 import { revalidatePath } from "next/cache";
 
 export async function getMyTasks() {

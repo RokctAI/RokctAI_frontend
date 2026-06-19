@@ -2,7 +2,7 @@
 
 import { getClient } from "@/app/lib/client";
 import { getDepartments } from "@/app/actions/handson/all/hrms/departments";
-import { auth } from "@/auth";
+import { auth } from "@/app/(auth)/auth";
 
 export interface HolidayWorkInput {
   holiday: string; // Name of the holiday

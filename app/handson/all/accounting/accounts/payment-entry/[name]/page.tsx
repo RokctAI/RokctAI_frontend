@@ -11,7 +11,7 @@ import {
   CheckCircle,
   AlertOctagon,
 } from "lucide-react";
-import { auth } from "@/auth";
+import { auth } from "@/app/(auth)/auth";
 import { getSessionCurrency } from "@/app/actions/currency"; // New import
 import { Button } from "@/components/ui/button";
 import {

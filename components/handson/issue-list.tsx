@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import t from "@/app/lib/i18n";
 import Link from "next/link";
 import { Plus, Search, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,9 +49,9 @@ export function IssueList({ issues }: { issues: any[] }) {
         <div className="flex gap-4">
           <div className="relative w-64">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search Issues..."
-              value={searchTerm}
+             <Input
+               placeholder={t('common.ph_search_issues')}
+               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
             />
