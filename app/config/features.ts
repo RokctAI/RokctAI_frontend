@@ -1,3 +1,4 @@
+import t from "@/app/lib/i18n";
 // Centralized configuration registry for platform and Mega Menu features.
 // Driving visibility (active), names, hrefs, and badges (label) dynamically via numeric IDs
 // so that changing a name does not leave old lingering terms in code IDs.
