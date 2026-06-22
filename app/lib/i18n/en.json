@@ -66,6 +66,24 @@
     "label_domain": "Domain (Optional)",
     "ph_domain": "example.com"
   },
+  "features": {
+    "browser_extension": "Browser Extension",
+    "web_app": "Web App",
+    "mobile_apps": "Mobile Apps",
+    "chat_rokct": "Rokct AI Chat",
+    "ai_erp": "AI ERP",
+    "tender_assist": "Tender Assist",
+    "telephony": "Telephony",
+    "fraud_detector": "Fraud Detector",
+    "loan_man": "Loan Management",
+    "tenders": "Tenders",
+    "funding": "Funding",
+    "yt_summarizer": "YouTube Summarizer",
+    "article_summarizer": "Article Summarizer",
+    "pricing": "Pricing",
+    "affiliate": "Affiliate",
+    "teams": "Teams"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
