@@ -339,7 +339,8 @@ export default function VouchersPage() {
          </CardContent>
        </Card>
 
-         <DialogContent className="max-w-md">
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-md">
            <DialogHeader>
              <DialogTitle>
                {editingVoucher ? t('app.control.vouchers.dialog_edit') : t('app.control.vouchers.dialog_new')}
@@ -631,20 +632,18 @@ export default function VouchersPage() {
                    )}
                  />
                </div>
+               <DialogFooter className="pt-4">
+                 <Button
+                   type="submit"
+                   className="w-full bg-indigo-600 hover:bg-indigo-700"
+                 >
+                   {editingVoucher ? t('common.update') : t('app.control.vouchers.btn_create_voucher')}
+                 </Button>
+               </DialogFooter>
               </form>
-              <DialogFooter className="pt-4">
-                <Button
-                  type="submit"
-                  onClick={form.handleSubmit(onSubmit)}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700"
-                >
-                  {editingVoucher ? t('common.update') : t('app.control.vouchers.btn_create_voucher')}
-                </Button>
-              </DialogFooter>
             </Form>
-         </DialogContent>
+          </DialogContent>
         </Dialog>
     </div>
-  </div>
   );
 }

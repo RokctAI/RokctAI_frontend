@@ -446,6 +446,7 @@ function ChecklistItem({
           {desc}
         </div>
       </div>
+    </div>
   );
 }
 
