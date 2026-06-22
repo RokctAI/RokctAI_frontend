@@ -397,7 +397,6 @@ export default function NCRForm40Page() {
          {t('app.lending.generated_by', { date: new Date().toLocaleDateString() })}
        </div>
      </div>
-   </div>
   );
 }
 
