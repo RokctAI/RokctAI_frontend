@@ -104,6 +104,7 @@ export const History = ({ user }: { user: User | undefined }) => {
   };
 
   return (
+    <>
       <Sheet
         open={isHistoryVisible}
         onOpenChange={(state) => {

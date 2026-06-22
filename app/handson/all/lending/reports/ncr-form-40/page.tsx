@@ -391,13 +391,13 @@ export default function NCRForm40Page() {
              />
            </div>
          </div>
-        </div>
+       </div>
 
-         <div className="bg-gray-50 px-8 py-4 border-t border-gray-200 text-xs text-gray-400 text-center print:hidden">
-           {t('app.lending.generated_by', { date: new Date().toLocaleDateString() })}
-         </div>
-      </div>
-    </div>
+       <div className="bg-gray-50 px-8 py-4 border-t border-gray-200 text-xs text-gray-400 text-center print:hidden">
+         {t('app.lending.generated_by', { date: new Date().toLocaleDateString() })}
+       </div>
+     </div>
+   </div>
   );
 }
 

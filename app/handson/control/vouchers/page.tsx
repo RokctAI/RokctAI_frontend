@@ -631,16 +631,17 @@ export default function VouchersPage() {
                    )}
                  />
                </div>
-               <DialogFooter className="pt-4">
-                 <Button
-                   type="submit"
-                   className="w-full bg-indigo-600 hover:bg-indigo-700"
-                 >
-                   {editingVoucher ? t('common.update') : t('app.control.vouchers.btn_create_voucher')}
-                 </Button>
-               </DialogFooter>
-             </form>
-           </Form>
+              </form>
+              <DialogFooter className="pt-4">
+                <Button
+                  type="submit"
+                  onClick={form.handleSubmit(onSubmit)}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700"
+                >
+                  {editingVoucher ? t('common.update') : t('app.control.vouchers.btn_create_voucher')}
+                </Button>
+              </DialogFooter>
+            </Form>
          </DialogContent>
        </Dialog>
     </div>

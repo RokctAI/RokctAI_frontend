@@ -994,26 +994,7 @@ export default function ComplianceReportPage() {
              </div>
            </div>
          </div>
-            <div>
-              <div className="border-b border-black mb-1 p-1"></div>
-              <p className="text-sm">
-                Designation (CEO / Authorised Signatory)
-              </p>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-16 mt-12">
-            <div>
-              <div className="border-b border-black mb-1 p-1"></div>
-              <p className="text-sm">Signature</p>
-            </div>
-            <div>
-              <div className="border-b border-black mb-1 p-1"></div>
-              <p className="text-sm">Date</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
