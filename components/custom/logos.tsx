@@ -41,20 +41,21 @@ export function Logos() {
           </p>
 
           <div className="w-full relative">
-            <div className="flex items-center justify-between gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 flex-wrap justify-center">
+            <div className="flex items-center justify-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 flex-wrap">
               {LOGOS.map((logo) => (
                 <motion.div
                   key={logo.name}
                   whileHover={{ scale: 1.1, opacity: 1 }}
                   className="relative h-8 w-24 md:h-12 md:w-40 flex items-center justify-center"
                 >
-                  <Image
-                    src={logo.url}
-                    alt={logo.name}
-                    fill
-                    className="object-contain"
-                    unoptimized // Try unoptimized if Next.js Image optimization fails on these URLs
-                  />
+                    <Image
+                      src={logo.url}
+                      alt={logo.name}
+                      width={160}
+                      height={48}
+                      className="object-contain w-full h-full"
+                      unoptimized
+                    />
                 </motion.div>
               ))}
             </div>
