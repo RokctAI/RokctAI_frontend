@@ -349,7 +349,7 @@ export default function VouchersPage() {
              </DialogDescription>
            </DialogHeader>
            <Form {...form}>
-             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+             <div className="space-y-4">
                <FormField
                  control={form.control}
                  name="voucher_code"
@@ -631,7 +631,7 @@ export default function VouchersPage() {
                    )}
                  />
                </div>
-              </form>
+              </div>
               <DialogFooter className="pt-4">
                 <Button
                   type="submit"
