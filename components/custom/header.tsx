@@ -438,7 +438,7 @@ export function Header({
                   width={16}
                   height={16}
                 />
-                 Add {t('header.add_extension', { platform: PLATFORM_NAME.toUpperCase() })}
+                 {t('header.add_extension', { platform: PLATFORM_NAME.toUpperCase() })}
                </Link>
             )}
             <ThemeToggle className="text-zinc-500 hover:text-black dark:hover:text-white" />
