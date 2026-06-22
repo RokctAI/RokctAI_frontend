@@ -149,7 +149,7 @@ export async function Footer() {
               )}
               {(PLATFORM_FEATURES[12]?.active || PLATFORM_FEATURES[13]?.active) && (
                 <div className="flex flex-col gap-6">
-                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">Summary</h4>
+                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">{t('header.summary')}</h4>
                   <div className="flex flex-col gap-4">
                     {renderFooterLink(12)}
                     {renderFooterLink(13)}
