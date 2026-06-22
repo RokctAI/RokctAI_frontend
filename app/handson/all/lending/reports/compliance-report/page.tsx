@@ -994,7 +994,7 @@ export default function ComplianceReportPage() {
              </div>
            </div>
          </div>
-
+        </div>
     </div>
   );
 }

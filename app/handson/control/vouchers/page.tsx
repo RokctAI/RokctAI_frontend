@@ -643,7 +643,8 @@ export default function VouchersPage() {
               </DialogFooter>
             </Form>
          </DialogContent>
-       </Dialog>
+        </Dialog>
     </div>
+  </div>
   );
 }
