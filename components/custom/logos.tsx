@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { motion } from "framer-motion";
 
 const LOGOS = [
@@ -48,13 +47,10 @@ export function Logos() {
                   whileHover={{ scale: 1.1, opacity: 1 }}
                   className="relative h-8 w-24 md:h-12 md:w-40 flex items-center justify-center"
                 >
-                    <Image
+                    <img
                       src={logo.url}
                       alt={logo.name}
-                      width={160}
-                      height={48}
-                      className="object-contain w-full h-full"
-                      unoptimized
+                      className="h-full w-full object-contain"
                     />
                 </motion.div>
               ))}
