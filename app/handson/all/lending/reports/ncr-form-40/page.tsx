@@ -45,30 +45,7 @@ export default function NCRForm40Page() {
   };
 
   if (loading) {
-    const reg63Desc = (
-    <span className="flex items-center">
-      {t('app.lending.ncr_form_40.checklist_reg_63')}
-      <Link
-        href="/handson/all/lending/reports/compliance-report"
-        className="ml-2 underline text-blue-600 hover:text-blue-800 font-semibold"
-      >
-        {t('app.lending.fill_report')}
-      </Link>
-    </span>
-  );
-  const assuranceDesc = (
-    <span className="flex items-center">
-      {t('app.lending.ncr_form_40.checklist_assurance_desc')}
-      <Link
-        href="/handson/all/lending/reports/assurance-report"
-        className="ml-2 underline text-blue-600 hover:text-blue-800 font-semibold"
-      >
-        {t('app.lending.generate_draft')}
-      </Link>
-    </span>
-  );
-
-  return (
+    return (
       <div className="flex h-96 items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
@@ -384,12 +361,32 @@ export default function NCRForm40Page() {
              />
              <ChecklistItem
                label={t('app.lending.ncr_form_40.checklist_reg_63')}
-               desc={reg63Desc}
+               desc={
+                 <span className="flex items-center">
+                   {t('app.lending.ncr_form_40.checklist_reg_63')}
+                   <Link
+                     href="/handson/all/lending/reports/compliance-report"
+                     className="ml-2 underline text-blue-600 hover:text-blue-800 font-semibold"
+                   >
+                     {t('app.lending.fill_report')}
+                   </Link>
+                 </span>
+               }
                completed={false}
              />
              <ChecklistItem
                label={t('app.lending.ncr_form_40.checklist_assurance')}
-               desc={assuranceDesc}
+               desc={
+                 <span className="flex items-center">
+                   {t('app.lending.ncr_form_40.checklist_assurance_desc')}
+                   <Link
+                     href="/handson/all/lending/reports/assurance-report"
+                     className="ml-2 underline text-blue-600 hover:text-blue-800 font-semibold"
+                   >
+                     {t('app.lending.generate_draft')}
+                   </Link>
+                 </span>
+               }
                completed={false}
              />
            </div>
@@ -400,6 +397,7 @@ export default function NCRForm40Page() {
          {t('app.lending.generated_by', { date: new Date().toLocaleDateString() })}
        </div>
      </div>
+   </div>
   );
 }
 
