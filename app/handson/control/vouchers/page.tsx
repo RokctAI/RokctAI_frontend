@@ -400,7 +400,8 @@ export default function VouchersPage() {
                      </FormItem>
                    )}
                  />
-               <div className="grid grid-cols-2 gap-4">
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                  <FormField
                    control={form.control}
                    name="is_active"
@@ -632,15 +633,16 @@ export default function VouchersPage() {
                    )}
                  />
                </div>
-               <DialogFooter className="pt-4">
-                 <Button
-                   type="submit"
-                   className="w-full bg-indigo-600 hover:bg-indigo-700"
-                 >
-                   {editingVoucher ? t('common.update') : t('app.control.vouchers.btn_create_voucher')}
-                 </Button>
-               </DialogFooter>
               </form>
+              <DialogFooter className="pt-4">
+                <Button
+                  type="submit"
+                  onClick={form.handleSubmit(onSubmit)}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700"
+                >
+                  {editingVoucher ? t('common.update') : t('app.control.vouchers.btn_create_voucher')}
+                </Button>
+              </DialogFooter>
             </Form>
           </DialogContent>
         </Dialog>
