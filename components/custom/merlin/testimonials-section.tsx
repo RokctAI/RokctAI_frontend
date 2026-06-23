@@ -91,7 +91,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
       <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 mt-8">
         <div className="flex flex-col items-center gap-2">
           <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-zinc-50 dark:bg-zinc-900 shadow-sm border border-zinc-100 dark:border-zinc-800">
-            <Image src="https://cdn.getmerlin.in/cms/image_142_7e8952954b.svg" alt="Chrome" width={32} height={32} />
+            <Image unoptimized src="https://cdn.getmerlin.in/cms/image_142_7e8952954b.svg" alt="Chrome" width={32} height={32} />
           </div>
           <div className="flex flex-col items-center">
             <span className="text-2xl font-black">4.8</span>
@@ -101,7 +101,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
 
         <div className="flex flex-col items-center gap-2">
           <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-zinc-50 dark:bg-zinc-900 shadow-sm border border-zinc-100 dark:border-zinc-800">
-            <Image src="https://cdn.getmerlin.in/cms/Frame_1321318037_dfa4226ae5.svg" alt="AppSumo" width={32} height={32} />
+            <Image unoptimized src="https://cdn.getmerlin.in/cms/Frame_1321318037_dfa4226ae5.svg" alt="AppSumo" width={32} height={32} />
           </div>
           <div className="flex flex-col items-center">
             <span className="text-2xl font-black">4.3</span>
@@ -111,7 +111,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
 
         <div className="flex flex-col items-center gap-2">
            <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-zinc-50 dark:bg-zinc-900 shadow-sm border border-zinc-100 dark:border-zinc-800">
-             <Image src="https://cdn.getmerlin.in/cms/playstore_88d0ae5df1.svg" alt={t('common.play_store')} width={32} height={32} />
+             <Image unoptimized src="https://cdn.getmerlin.in/cms/playstore_88d0ae5df1.svg" alt={t('common.play_store')} width={32} height={32} />
            </div>
            <div className="flex flex-col items-center">
              <span className="text-2xl font-black">4.3</span>
@@ -121,7 +121,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
 
         <div className="flex flex-col items-center gap-2">
            <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-zinc-50 dark:bg-zinc-900 shadow-sm border border-zinc-100 dark:border-zinc-800">
-             <Image src="https://cdn.getmerlin.in/cms/apple_767823d8d1.svg" alt={t('common.app_store')} width={32} height={32} />
+             <Image unoptimized src="https://cdn.getmerlin.in/cms/apple_767823d8d1.svg" alt={t('common.app_store')} width={32} height={32} />
            </div>
            <div className="flex flex-col items-center">
              <span className="text-2xl font-black">4.7</span>
@@ -141,7 +141,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
                </div>
                <div className="flex items-center gap-4 mt-4">
                  <div className="h-12 w-12 rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                   <Image src={t.avatar} alt={t.author} width={48} height={48} className="object-cover" />
+                   <Image unoptimized src={t.avatar} alt={t.author} width={48} height={48} className="object-cover" />
                  </div>
                  <div className="flex flex-col">
                    <span className="font-bold text-zinc-900 dark:text-white">{t.author}</span>
@@ -162,7 +162,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
                </div>
                <div className="flex items-center gap-4 mt-4">
                  <div className="h-12 w-12 rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                   <Image src={t.avatar} alt={t.author} width={48} height={48} className="object-cover" />
+                   <Image unoptimized src={t.avatar} alt={t.author} width={48} height={48} className="object-cover" />
                  </div>
                  <div className="flex flex-col">
                    <span className="font-bold text-zinc-900 dark:text-white">{t.author}</span>
