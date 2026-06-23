@@ -2,31 +2,40 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const LOGOS = [
   {
     name: "Walmart",
-    url: "https://cdn.getmerlin.in/cms/Walmart_logo_transparent_png_1_726d95398d.png",
+    url: "https://cdn.getmerlin.in/cms/Walmart_1_0cd05c542e.png",
   },
   {
     name: "Cisco",
-    url: "https://cdn.getmerlin.in/cms/Cisco_logo_transparent_png_1_6893663a8e.png",
+    url: "https://cdn.getmerlin.in/cms/Cisco_1_ab0ee6173d.png",
   },
   {
-    name: "Adobe",
-    url: "https://cdn.getmerlin.in/cms/Adobe_logo_transparent_png_1_7474a8a5f3.png",
+    name: "Netflix",
+    url: "https://cdn.getmerlin.in/cms/Netflix_1_dabb0f82d5.png",
   },
   {
-    name: "Amazon",
-    url: "https://cdn.getmerlin.in/cms/Amazon_logo_transparent_png_1_8657662862.png",
+    name: "Pinterest",
+    url: "https://cdn.getmerlin.in/cms/Pinterest_1_25eeb74ab0.png",
   },
   {
-    name: "Google",
-    url: "https://cdn.getmerlin.in/cms/Google_logo_transparent_png_1_5942472714.png",
+    name: "Zoom",
+    url: "https://cdn.getmerlin.in/cms/Zoom_1_b5d03a6d69.png",
   },
   {
-    name: "Microsoft",
-    url: "https://cdn.getmerlin.in/cms/Microsoft_logo_transparent_png_1_9628373322.png",
+    name: "Sony",
+    url: "https://cdn.getmerlin.in/cms/Sony_1_e475b6ed27.png",
+  },
+  {
+    name: "Ebay",
+    url: "https://cdn.getmerlin.in/cms/Ebay_1_dbfa7af44d.png",
+  },
+  {
+    name: "Uber",
+    url: "https://cdn.getmerlin.in/cms/Uber_1_338311f3dc.png",
   },
 ];
 
@@ -47,10 +56,12 @@ export function Logos() {
                   whileHover={{ scale: 1.1, opacity: 1 }}
                   className="relative h-8 w-24 md:h-12 md:w-40 flex items-center justify-center"
                 >
-                    <img
+                    <Image
                       src={logo.url}
                       alt={logo.name}
-                      className="h-full w-full object-contain"
+                      fill
+                      className="object-contain"
+                      unoptimized
                     />
                 </motion.div>
               ))}
