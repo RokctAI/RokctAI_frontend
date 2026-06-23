@@ -465,7 +465,7 @@ export function Hero({
                           </span>
                         </div>
                         <Link
-                          href={`/opportunities/${getOpportunityPath(result.type)}/${result.slug}`}
+                           href={`/opportunities/${getOpportunityPath(result.type)}/${encodeURIComponent(result.slug)}`}
                           className="text-xl text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center gap-2"
                         >
                           {result.title}
