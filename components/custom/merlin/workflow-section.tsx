@@ -11,9 +11,9 @@ const WORKFLOWS = [
     title: "Students",
     question: "How do I nail my research assignments, ace my exams and learn effectively?",
     points: [
-      "Summarize long lecture documents and videos into powerful learning aids with Merlin Extension",
-      "Create course bots for homework help and research with perfect citations using Merlin Projects",
-      "Use Merlin Tools for AI detection and humanising your submissions"
+      "Summarize long lecture documents and videos into powerful learning aids with {{platformname}} Extension",
+      "Create course bots for homework help and research with perfect citations using {{platformname}} Projects",
+      "Use {{platformname}} Tools for AI detection and humanising your submissions"
     ]
   },
   {
@@ -21,9 +21,9 @@ const WORKFLOWS = [
     title: "Marketers and creators",
     question: "How do I generate creative, SEO-friendly collateral suited to my brand voice over-and-over, effortlessly?",
     points: [
-      "Use Merlin Projects to create knowledge bases that can be used for brand voice and content generation",
+      "Use {{platformname}} Projects to create knowledge bases that can be used for brand voice and content generation",
       "Repurpose any kind of content on the web into SEO-friendly blogs, articles and copywriting",
-      "Write contextualised cold outreach mails and messages on X, LinkedIn and Gmail using Merlin Extension"
+      "Write contextualised cold outreach mails and messages on X, LinkedIn and Gmail using {{platformname}} Extension"
     ]
   },
   {
@@ -32,8 +32,8 @@ const WORKFLOWS = [
     question: "How do I brainstorm ideas effectively, communicate like a boss and 10x my productivity at work?",
     points: [
       "Maintain your flow state on the web by avoiding switching tabs for AI",
-      "Use Merlin Crafts to create mindmaps, graphs and 20+ diagrams to brainstorm like a pro",
-      "Get on top of communication and outreach woes with Merlin on Gmail, X and LinkedIn"
+      "Use {{platformname}} Crafts to create mindmaps, graphs and 20+ diagrams to brainstorm like a pro",
+      "Get on top of communication and outreach woes with {{platformname}} on Gmail, X and LinkedIn"
     ]
   },
   {
@@ -41,9 +41,9 @@ const WORKFLOWS = [
     title: "Developers",
     question: "How do I iterate on code effectively, debug with context and save time on creating boilerplate code components?",
     points: [
-      "Use Merlin Projects to add your codebase documentation to Merlin's knowledge",
-      "Use Merlin Crafts to create web components, write and debug code with just a prompt",
-      "Select anything on the web and summon Merlin for added context on-the-fly"
+      "Use {{platformname}} Projects to add your codebase documentation to {{platformname}}'s knowledge",
+      "Use {{platformname}} Crafts to create web components, write and debug code with just a prompt",
+      "Select anything on the web and summon {{platformname}} for added context on-the-fly"
     ]
   },
   {
@@ -52,8 +52,8 @@ const WORKFLOWS = [
     question: "How do I research in real-time, organise my research and visualise it effectively for presentations?",
     points: [
       "Use Live Search in tandem with websites and document sources to write precise, up-to-date reports",
-      "Create Merlin Projects with your research resources and chat with it for quick retrieval of information",
-      "Visualise with 20+ diagram types with just a prompt using Merlin Crafts"
+      "Create {{platformname}} Projects with your research resources and chat with it for quick retrieval of information",
+      "Visualise with 20+ diagram types with just a prompt using {{platformname}} Crafts"
     ]
   },
   {
@@ -61,9 +61,9 @@ const WORKFLOWS = [
     title: "Analysts",
     question: "How do I write accurate queries faster, analyse data without having to build dashboards and present my insights better?",
     points: [
-      "Use Merlin Extension on Google Sheets or your DB client to write queries on-the-fly",
-      "Upload XLS/CSV files into Merlin and ask for quick insights from the data",
-      "Use data as context and visualise with 20+ diagram types using Merlin Crafts"
+      "Use {{platformname}} Extension on Google Sheets or your DB client to write queries on-the-fly",
+      "Upload XLS/CSV files into {{platformname}} and ask for quick insights from the data",
+      "Use data as context and visualise with 20+ diagram types using {{platformname}} Crafts"
     ]
   }
 ];
@@ -78,10 +78,10 @@ export function WorkflowSection({ id }: { id?: string }) {
             Your workflow, our magic
          </h2>
          <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 max-w-2xl">
-            Whether you're a student, marketer, tech pro or even a founder, Merlin can make your life much easier at work.
+            Whether you're a student, marketer, tech pro or even a founder, {{platformname}} can make your life much easier at work.
          </p>
          <Link href="/chat" className="text-[#4F46E5] font-bold hover:underline">
-            See how Merlin fits your workflow &gt;
+            See how {{platformname}} fits your workflow &gt;
          </Link>
       </div>
 
@@ -129,7 +129,7 @@ export function WorkflowSection({ id }: { id?: string }) {
                      <div className="w-full md:w-1/2 flex flex-col gap-6 bg-white dark:bg-black p-8 rounded-3xl shadow-xl border border-zinc-100 dark:border-zinc-800">
                         <div className="flex items-center gap-3 border-b border-zinc-100 dark:border-zinc-800 pb-4">
                            <span className="text-xl">✨</span>
-                           <span className="font-bold text-zinc-900 dark:text-white">Hover to see how Merlin solves this</span>
+                           <span className="font-bold text-zinc-900 dark:text-white">Hover to see how {{platformname}} solves this</span>
                         </div>
                         <ul className="flex flex-col gap-4 mt-2">
                            {workflow.points.map((point, idx) => (

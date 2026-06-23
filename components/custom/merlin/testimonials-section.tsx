@@ -7,7 +7,7 @@ import t from "@/app/lib/i18n";
 const TESTIMONIALS = [
   {
     title: "The Swiss Army Knife for research and writing",
-    text: "Merlin is a welcome addition to anyone looking to simplify their research and writing process. I found the tool to be very user-friendly, fast, and reliable.",
+    text: "{{platformname}} is a welcome addition to anyone looking to simplify their research and writing process. I found the tool to be very user-friendly, fast, and reliable.",
     author: "PetePlus",
     role: "AppSumo user",
     avatar: "https://cdn.getmerlin.in/cms/Avatar_9274fb1b87.svg"
@@ -16,12 +16,12 @@ const TESTIMONIALS = [
     title: "Highly recommended for educators, marketers, and small businesses",
     text: "This tool is there for you whenever and wherever you need it. Inside Gmail? Yep. Inside YouTube? Yep. It even timestamps the video summaries. On websites? Yep.",
     author: "Paige Battcher",
-    role: "Merlin Pro user",
+    role: "{{platformname}} Pro user",
     avatar: "https://cdn.getmerlin.in/cms/Avatar_1_6e26bd801c.svg"
   },
   {
     title: "5 STAR Product.",
-    text: "The team is VERY responsive. Any new ideas or bugs get talked about. They want to make Merlin genuinely really good. You can just tell by how engaged they are, and how they make changes based on feedback.",
+    text: "The team is VERY responsive. Any new ideas or bugs get talked about. They want to make {{platformname}} genuinely really good. You can just tell by how engaged they are, and how they make changes based on feedback.",
     author: "gkc",
     role: "AppSumo user",
     avatar: "https://cdn.getmerlin.in/cms/Avatar_2_aa8dbc93fb.svg"
@@ -35,35 +35,35 @@ const TESTIMONIALS = [
   },
   {
     title: "An indispensable part of my academic toolkit.",
-    text: "As a student, Merlin AI has been invaluable for my academic work. The tool's automatic summarization and advanced text analysis features have significantly boosted my productivity and understanding.",
+    text: "As a student, {{platformname}} AI has been invaluable for my academic work. The tool's automatic summarization and advanced text analysis features have significantly boosted my productivity and understanding.",
     author: "Preston Bailey",
     role: "Extension user",
     avatar: "https://cdn.getmerlin.in/cms/Avatar_3_7588002be1.svg"
   },
   {
     title: "Amazing support.",
-    text: "The reason for gaining trust in Merlin lies in their communication approach. They are more honest in their communication than expected, and while they can't accommodate everything, they provide satisfaction with quick responses to users' demands. I give it 10/10!!",
+    text: "The reason for gaining trust in {{platformname}} lies in their communication approach. They are more honest in their communication than expected, and while they can't accommodate everything, they provide satisfaction with quick responses to users' demands. I give it 10/10!!",
     author: "107541488344860181963",
     role: "AppSumo user",
     avatar: "https://cdn.getmerlin.in/cms/Avatar_5_d4cf2b13d4.svg"
   },
   {
     title: "Get straight A+s in uni.",
-    text: "My Lil brother had an assignment for UNI, to use an AI to summarize a doc and display the key points using charts, Powerbi, etc.. Everyone used ChatGPT, Gemini, nothing fancy. Lil bro used Merlin per my advise. He got an A+ and doesn't need to attend the finals from this project. I guess the professor thought he's an AI genius. Thanks Merlin 😂🦾",
+    text: "My Lil brother had an assignment for UNI, to use an AI to summarize a doc and display the key points using charts, Powerbi, etc.. Everyone used ChatGPT, Gemini, nothing fancy. Lil bro used {{platformname}} per my advise. He got an A+ and doesn't need to attend the finals from this project. I guess the professor thought he's an AI genius. Thanks {{platformname}} 😂🦾",
     author: "Omar Alsharif",
     role: "Extension user",
     avatar: "https://cdn.getmerlin.in/cms/Avatar_7_e4d61dcb33.png"
   },
   {
     title: "Eliminates the frustration of switching between apps.",
-    text: "Merlin's user-friendly interface makes research effortless. By centralizing all my sources, it eliminates the frustration of switching between apps and losing track of valuable information.",
+    text: "{{platformname}}'s user-friendly interface makes research effortless. By centralizing all my sources, it eliminates the frustration of switching between apps and losing track of valuable information.",
     author: "Ralphiesworld000",
     role: "Apple App user",
     avatar: "https://cdn.getmerlin.in/cms/Avatar_6_a69724eeab.svg"
   },
   {
     title: "Keyboard friendliness.",
-    text: "One of the best looking apps I've seen so far in the AI space. Integrates directly with my browser at the top toolbar. The coolest part is the Cmd + M keyboard friendliness. I've spoken to the developers and can assure that Merlin will only get better with time.",
+    text: "One of the best looking apps I've seen so far in the AI space. Integrates directly with my browser at the top toolbar. The coolest part is the Cmd + M keyboard friendliness. I've spoken to the developers and can assure that {{platformname}} will only get better with time.",
     author: "Scorphx",
     role: "Extension user",
     avatar: "https://cdn.getmerlin.in/cms/Avatar_7_430a7c6f7b.svg"
@@ -81,7 +81,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
             1M+ and counting
          </h2>
          <p className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[56px] md:leading-[1.1] text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 pb-2">
-            Love for Merlin is only growing multifold!
+            Love for {{platformname}} is only growing multifold!
          </p>
          <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 max-w-2xl mt-4">
             What makes us your perfect AI partner? We function on high intelligence, integrity, and energy.
