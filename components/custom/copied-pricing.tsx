@@ -27,7 +27,7 @@ export function CopiedPricing({ id }: { id?: string }) {
             <div className="flex items-center gap-4 mb-8">
                <div className="flex -space-x-4">
                   <div className="h-12 w-12 rounded-full border-2 border-white dark:border-black overflow-hidden bg-white">
-                     <Image unoptimized src="https://cdn.getmerlin.in/cms/Avatar_2_eee035b8d3.png" alt="icon" width={48} height={48} className="object-cover" />
+                     <Image unoptimized src="https://cdn.getmerlin.in/cms/gemini_860192f244.svg" alt="icon" width={48} height={48} className="object-cover" />
                   </div>
                   <div className="h-12 w-12 rounded-full border-2 border-white dark:border-black overflow-hidden bg-white">
                      <Image unoptimized src="https://cdn.getmerlin.in/cms/claude_7fd6ca1b3a.svg" alt="icon" width={48} height={48} className="object-cover" />

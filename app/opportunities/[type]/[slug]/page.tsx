@@ -20,7 +20,10 @@ async function getOpportunity(type: string, slug: string) {
   if (!res.ok) return null;
 
   const list: any[] = await res.json();
-  return list.find((o) => o.slug === slug) ?? null;
+  return list.find((o) => {
+    const itemSlug = o.slug ?? o.title?.toLowerCase().replace(/\s+/g, "-");
+    return itemSlug === slug;
+  }) ?? null;
 }
 
 function Field({ label, value }: { label: string; value?: string | null }) {
