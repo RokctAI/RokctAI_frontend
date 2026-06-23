@@ -5,9 +5,17 @@ import { Header } from "@/components/custom/header";
 import { Hero } from "@/components/custom/hero";
 import { Logos } from "@/components/custom/logos";
 import { Pricing } from "@/components/custom/pricing";
+import { CopiedPricing } from "@/components/custom/copied-pricing";
 import { Features } from "@/components/custom/features";
 import { AIModels } from "@/components/custom/ai-models";
 import { FloatingNav } from "@/components/custom/floating-nav";
+import { ExtensionSection } from "@/components/custom/merlin/extension-section";
+import { ChatSection } from "@/components/custom/merlin/chat-section";
+import { SocialSection } from "@/components/custom/merlin/social-section";
+import { SecuritySection } from "@/components/custom/merlin/security-section";
+import { DevicesSection } from "@/components/custom/merlin/devices-section";
+import { WorkflowSection } from "@/components/custom/merlin/workflow-section";
+import { FaqSection } from "@/components/custom/merlin/faq-section";
 import { useState } from "react";
 
 export function LandingContent({ plans, session }: { plans: any[], session?: any }) {
@@ -22,33 +30,38 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
         <Hero id="hero" signupUrl="/register" />
         <Logos />
 
-        {/* Placeholder Sections for Navigation */}
-        <div id="extension" className="h-[20vh] border-t border-transparent" />
-        <div id="chat" className="h-[20vh] border-t border-transparent" />
-        <div id="projects" className="h-[20vh] border-t border-transparent" />
-        <div id="crafts" className="h-[20vh] border-t border-transparent" />
-        <div id="research" className="h-[20vh] border-t border-transparent" />
-        <div id="social" className="h-[20vh] border-t border-transparent" />
+        {/* Sections replacing placeholders */}
+        <ExtensionSection id="extension" />
+        
+        <ChatSection id="chat" />
+        {/* Empty anchor divs for FloatingNav sections contained within ChatSection */}
+        <div id="projects" />
+        <div id="crafts" />
+        <div id="research" />
+
+        <SocialSection id="social" />
 
         <Features id="features" />
 
-        <div id="security" className="h-[20vh] border-t border-transparent" />
-        <div id="devices" className="h-[20vh] border-t border-transparent" />
-        <div id="workflow" className="h-[20vh] border-t border-transparent" />
+        <SecuritySection id="security" />
+        
+        <DevicesSection id="devices" />
+        
+        <WorkflowSection id="workflow" />
 
         <AIModels id="ai-models" />
 
         <Pricing
-          id="pricing"
+          id="pricing-original"
           signupUrl={(plan) => (plan ? `/register?plan=${plan}` : "/register")}
           category={category}
           onCategoryChange={setCategory}
           initialPlans={plans}
         />
+        
+        <CopiedPricing id="pricing" />
 
-        <div id="faq" className="h-[50vh] flex items-center justify-center bg-zinc-50 dark:bg-zinc-900/50">
-           <h2 className="text-2xl font-bold opacity-50">FAQ Section Placeholder</h2>
-        </div>
+        <FaqSection id="faq" />
 
         <div id="footer" />
       </main>
