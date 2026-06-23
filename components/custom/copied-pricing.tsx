@@ -27,10 +27,10 @@ export function CopiedPricing({ id }: { id?: string }) {
             <div className="flex items-center gap-4 mb-8">
                <div className="flex -space-x-4">
                   <div className="h-12 w-12 rounded-full border-2 border-white dark:border-black overflow-hidden bg-white">
-                     <Image src="https://cdn.getmerlin.in/cms/Avatar_2_eee035b8d3.png" alt="icon" width={48} height={48} className="object-cover" />
+                     <Image unoptimized src="https://cdn.getmerlin.in/cms/Avatar_2_eee035b8d3.png" alt="icon" width={48} height={48} className="object-cover" />
                   </div>
                   <div className="h-12 w-12 rounded-full border-2 border-white dark:border-black overflow-hidden bg-white">
-                     <Image src="https://cdn.getmerlin.in/cms/claude_7fd6ca1b3a.svg" alt="icon" width={48} height={48} className="object-cover" />
+                     <Image unoptimized src="https://cdn.getmerlin.in/cms/claude_7fd6ca1b3a.svg" alt="icon" width={48} height={48} className="object-cover" />
                   </div>
                   <div className="h-12 w-12 rounded-full border-2 border-white dark:border-black overflow-hidden bg-white flex items-center justify-center">
                      <span className="text-xs font-bold text-black">+4</span>
@@ -51,7 +51,7 @@ export function CopiedPricing({ id }: { id?: string }) {
 
                <div className="flex items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-800">
                   <div className="flex items-center gap-3">
-                     <Image src="https://cdn.getmerlin.in/cms/claude_7fd6ca1b3a.svg" alt="Claude" width={24} height={24} />
+                     <Image unoptimized src="https://cdn.getmerlin.in/cms/claude_7fd6ca1b3a.svg" alt="Claude" width={24} height={24} />
                      <span className="font-medium text-zinc-900 dark:text-white">Claude AI</span>
                   </div>
                   <span className="font-bold text-zinc-900 dark:text-white">$30/m</span>
@@ -69,7 +69,7 @@ export function CopiedPricing({ id }: { id?: string }) {
 
                <div className="flex items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-800">
                   <div className="flex items-center gap-3">
-                     <Image src="https://cdn.getmerlin.in/cms/gemini_860192f244.svg" alt="Gemini" width={24} height={24} />
+                     <Image unoptimized src="https://cdn.getmerlin.in/cms/gemini_860192f244.svg" alt="Gemini" width={24} height={24} />
                      <span className="font-medium text-zinc-900 dark:text-white">Gemini Advanced</span>
                   </div>
                   <span className="font-bold text-zinc-900 dark:text-white">$20/m</span>
@@ -77,7 +77,7 @@ export function CopiedPricing({ id }: { id?: string }) {
 
                <div className="flex items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-800">
                   <div className="flex items-center gap-3">
-                     <Image src="https://cdn.getmerlin.in/cms/mistral_997ea81364.svg" alt="Mistral" width={24} height={24} />
+                     <Image unoptimized src="https://cdn.getmerlin.in/cms/mistral_997ea81364.svg" alt="Mistral" width={24} height={24} />
                      <span className="font-medium text-zinc-900 dark:text-white">Mistral AI</span>
                   </div>
                   <span className="font-bold text-zinc-900 dark:text-white">$20/m</span>
@@ -85,7 +85,7 @@ export function CopiedPricing({ id }: { id?: string }) {
 
                <div className="flex items-center justify-between py-4">
                   <div className="flex items-center gap-3">
-                     <Image src="https://cdn.getmerlin.in/cms/meta_0e8914c0f0.svg" alt="Meta" width={24} height={24} />
+                     <Image unoptimized src="https://cdn.getmerlin.in/cms/meta_0e8914c0f0.svg" alt="Meta" width={24} height={24} />
                      <span className="font-medium text-zinc-900 dark:text-white">Open source model hosting</span>
                   </div>
                   <span className="font-bold text-zinc-900 dark:text-white">$40/m</span>
@@ -101,7 +101,7 @@ export function CopiedPricing({ id }: { id?: string }) {
             <div className="flex items-center gap-4 mb-8">
                <div className="flex -space-x-4">
                   <div className="h-12 w-12 rounded-full border-2 border-zinc-900 dark:border-white overflow-hidden bg-white flex items-center justify-center">
-                     <Image src="https://cdn.getmerlin.in/cms/Group_2_b0e06c28f9.svg" alt="icon" width={32} height={32} />
+                     <Image unoptimized src="https://cdn.getmerlin.in/cms/Group_2_b0e06c28f9.svg" alt="icon" width={32} height={32} />
                   </div>
                </div>
                <span className="text-2xl font-bold">Merlin</span>
