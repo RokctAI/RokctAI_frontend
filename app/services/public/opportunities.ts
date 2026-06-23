@@ -8,6 +8,7 @@ export interface Opportunity {
   closing_date?: string;
   deadline?: string;
   category?: string;
+  type?: string;
   tasks?: any[];
 }
 
@@ -15,6 +16,7 @@ export class OpportunityPublicService {
   static async search(query: string) {
     const types = ["tenders", "grants", "equity"];
 
+    // ── 1. Original backend fetch (unchanged) ──────────────────────────────
     const results = await Promise.all(
       types.map(type =>
         callPublicApi("rokct.platform.api.control", {
@@ -27,11 +29,38 @@ export class OpportunityPublicService {
       )
     );
 
-    // rcore gateway wraps response in { status, data } — unwrap it
-    return {
-      tenders: ((results[0]?.data) ?? results[0] ?? []) as Opportunity[],
-      grants:  ((results[1]?.data) ?? results[1] ?? []) as Opportunity[],
-      equity:  ((results[2]?.data) ?? results[2] ?? []) as Opportunity[],
-    };
+    const tenders = ((results[0]?.data) ?? results[0] ?? []) as Opportunity[];
+    const grants  = ((results[1]?.data) ?? results[1] ?? []) as Opportunity[];
+    const equity  = ((results[2]?.data) ?? results[2] ?? []) as Opportunity[];
+
+    // ── 2. If backend returned data, use it ────────────────────────────────
+    const hasData = tenders.length > 0 || grants.length > 0 || equity.length > 0;
+    if (hasData) {
+      return { tenders, grants, equity };
+    }
+
+    // ── 3. Backend unavailable / empty — fall back to GitHub-cached data ───
+    try {
+      const base =
+        typeof window !== "undefined"
+          ? ""
+          : process.env.VERCEL_URL
+            ? `https://${process.env.VERCEL_URL}`
+            : `http://localhost:${process.env.PORT ?? 3000}`;
+
+      const res = await fetch(
+        `${base}/api/opportunities/search?q=${encodeURIComponent(query)}`,
+        { cache: "no-store" },
+      );
+      if (!res.ok) throw new Error("fallback failed");
+      const data = await res.json();
+      return {
+        tenders: (data.tenders ?? []) as Opportunity[],
+        grants:  (data.grants  ?? []) as Opportunity[],
+        equity:  (data.equity  ?? []) as Opportunity[],
+      };
+    } catch {
+      return { tenders: [], grants: [], equity: [] };
+    }
   }
 }
