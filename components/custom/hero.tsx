@@ -41,6 +41,25 @@ interface SearchResults {
 
 type FilterType = "All" | "Tenders" | "Grants" | "Equity" | "Chat";
 
+// Filter out expired / closed opportunities
+function isExpired(item: Opportunity & { status?: string }): boolean {
+  // Status-based: closed/expired regardless of date
+  const s = (item.status ?? "").toLowerCase();
+  if (s === "closed" || s === "expired" || s === "inactive" || s === "cancelled") return true;
+
+  const raw = item.closing_date || item.deadline;
+  if (!raw) return false;
+
+  try {
+    // Handles: "2025-06-30", "30 June 2025", "June 30, 2025", "30/06/2025", etc.
+    const d = new Date(raw);
+    if (!isNaN(d.getTime())) return d < new Date();
+  } catch {
+    // ignore parse errors
+  }
+  return false;
+}
+
 function TypewriterPlaceholder({
   placeholders,
   isSearching,
@@ -116,9 +135,11 @@ function TypewriterPlaceholder({
 export function Hero({
   signupUrl = "/register",
   id,
+  onResultsChange,
 }: {
   signupUrl?: string;
   id?: string;
+  onResultsChange?: (hasResults: boolean) => void;
 }) {
   const [index, setIndex] = useState(0);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -133,6 +154,9 @@ export function Hero({
   const [visiblePlaceholder, setVisiblePlaceholder] = useState("");
   const [isFading, setIsFading] = useState(false);
   const [frozenIcon, setFrozenIcon] = useState<"logo" | "search" | null>(null);
+
+  // Notify parent when results appear/disappear
+  useEffect(() => { onResultsChange?.(hasSearched); }, [hasSearched, onResultsChange]);
 
   useEffect(() => {
     setMounted(true);
@@ -210,9 +234,9 @@ export function Hero({
     if (!results || activeFilter === "Chat") return [];
 
     const all = [
-      ...results.tenders.map(t => ({ ...t, type: 'Tender' })),
-      ...results.grants.map(g => ({ ...g, type: 'Grant' })),
-      ...results.equity.map(e => ({ ...e, type: 'Equity' }))
+      ...results.tenders.filter(t => !isExpired(t)).map(t => ({ ...t, type: 'Tender' })),
+      ...results.grants.filter(g => !isExpired(g)).map(g => ({ ...g, type: 'Grant' })),
+      ...results.equity.filter(e => !isExpired(e)).map(e => ({ ...e, type: 'Equity' }))
     ];
 
     if (activeFilter === "All") return all;
@@ -457,21 +481,20 @@ export function Hero({
                           <Badge variant="outline" className="bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800">
                             {result.type}
                           </Badge>
-                          {result.institution && (
+                          {(result.institution || result.organization) && (
                             <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                              {result.institution}
+                              {result.institution || result.organization}
                             </span>
                           )}
                           {(result.closing_date || result.deadline) && (
                             <span className="text-sm text-zinc-500 dark:text-zinc-500 flex items-center gap-1">
-                              • Ends: {result.closing_date || result.deadline}
+                              • Closes: {result.closing_date || result.deadline}
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2 mt-1">
-                          Explore this {result.type.toLowerCase()} opportunity from {result.institution || 'the organization'}.
-                          {result.category ? ` Category: ${result.category}.` : ''}
-                        </p>
+                        {result.category && (
+                          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">{result.category}</p>
+                        )}
                       </motion.div>
                     ))
                   ) : (
