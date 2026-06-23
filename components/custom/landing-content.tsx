@@ -21,13 +21,15 @@ import { useState } from "react";
 export function LandingContent({ plans, session }: { plans: any[], session?: any }) {
   const router = useRouter();
   const [category, setCategory] = useState("rokct");
+  const [searchActive, setSearchActive] = useState(false);
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black">
       <Header loginUrl="/login" signupUrl="/register" session={session} />
       <main className="flex-1">
         <FloatingNav />
-        <Hero id="hero" signupUrl="/register" />
+        <Hero id="hero" signupUrl="/register" onResultsChange={setSearchActive} />
+        <div style={{ display: searchActive ? "none" : undefined }}>
         <Logos />
 
         {/* Sections replacing placeholders */}
@@ -63,6 +65,7 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
 
         <FaqSection id="faq" />
 
+        </div>
         <div id="footer" />
       </main>
     </div>
