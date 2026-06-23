@@ -41,21 +41,15 @@ interface SearchResults {
 
 type FilterType = "All" | "Tenders" | "Grants" | "Equity" | "Chat";
 
-// Filter out expired / closed opportunities
-function isExpired(item: Opportunity & { status?: string }): boolean {
-  // Status-based: closed/expired regardless of date
-  const s = (item.status ?? "").toLowerCase();
-  if (s === "closed" || s === "expired" || s === "inactive" || s === "cancelled") return true;
-
+// Filter out opportunities whose closing date / deadline has passed
+function isExpired(item: Opportunity): boolean {
   const raw = item.closing_date || item.deadline;
   if (!raw) return false;
-
   try {
-    // Handles: "2025-06-30", "30 June 2025", "June 30, 2025", "30/06/2025", etc.
     const d = new Date(raw);
     if (!isNaN(d.getTime())) return d < new Date();
   } catch {
-    // ignore parse errors
+    // ignore unparseable dates
   }
   return false;
 }
