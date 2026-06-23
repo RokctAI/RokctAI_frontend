@@ -81,7 +81,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
             1M+ and counting
          </h2>
          <p className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[56px] md:leading-[1.1] text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 pb-2">
-            Love for {"{{platform}}" } is only growing multifold!
+            Love for {PLATFORM_NAME} is only growing multifold!
          </p>
          <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 max-w-2xl mt-4">
             What makes us your perfect AI partner? We function on high intelligence, integrity, and energy.
