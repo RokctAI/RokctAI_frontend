@@ -93,7 +93,7 @@ export function CopiedPricing({ id }: { id?: string }) {
             </div>
          </div>
 
-         {/* {{platformname}} Card */}
+         {/* {"{{platform}}"} Card */}
          <div className="flex w-full md:w-1/2 flex-col rounded-[32px] bg-zinc-900 dark:bg-white text-white dark:text-black p-8 md:p-12 relative overflow-hidden shadow-2xl">
             {/* Background decorative gradient */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-indigo-500/20 to-purple-500/20 blur-3xl -z-10 rounded-full translate-x-1/3 -translate-y-1/3"></div>
@@ -104,7 +104,7 @@ export function CopiedPricing({ id }: { id?: string }) {
                      <Image unoptimized referrerPolicy="no-referrer" src="https://cdn.getmerlin.in/cms/Group_2_b0e06c28f9.svg" alt="icon" width={32} height={32} />
                   </div>
                </div>
-               <span className="text-2xl font-bold">{{platformname}}</span>
+               <span className="text-2xl font-bold">{"{{platform}}"}</span>
             </div>
 
             <div className="flex flex-col gap-2 mb-12">

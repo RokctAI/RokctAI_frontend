@@ -39,10 +39,10 @@ function Field({ label, value }: { label: string; value?: string | null }) {
 export default async function OpportunityDetailPage({
   params,
 }: {
-  params: { type: string; slug: string };
+  params: Promise<{ type: string; slug: string }>;
 }) {
   const session = await auth();
-  const { type, slug } = params;
+  const { type, slug } = await params;
   const opp = await getOpportunity(type, slug);
 
   if (!opp) notFound();

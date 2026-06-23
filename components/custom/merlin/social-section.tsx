@@ -10,12 +10,12 @@ export function SocialSection({ id }: { id?: string }) {
     <section id={id} className="container flex w-full flex-col gap-12 py-24 bg-white dark:bg-black mx-auto">
       <div className="flex w-full max-w-7xl flex-col justify-between gap-8 px-4 md:flex-row md:items-end xl:px-0 mx-auto">
         <div className="flex flex-col gap-4">
-          <p className="font-semibold text-[#4F46E5]">{{platformname}} Chrome Extension</p>
+          <p className="font-semibold text-[#4F46E5]">{"{{platform}}"} Chrome Extension</p>
           <h2 className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[56px] md:leading-[1.1] max-w-2xl">
             Stay social, not drained
           </h2>
           <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 max-w-xl">
-            With {{platformname}}'s Chrome Extension, be digitally present effortlessly. Engage, reach out and express better with the world.
+            With {"{{platform}}"}'s Chrome Extension, be digitally present effortlessly. Engage, reach out and express better with the world.
           </p>
         </div>
         <Link
