@@ -39,7 +39,7 @@ export function DevicesSection({ id }: { id?: string }) {
 
                 <Link href="https://chromewebstore.google.com/detail/merlin-1-click-access-to/camppjleccjaphfdbohjdohecfnoikec" target="_blank" className="flex items-center gap-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-all hover:bg-zinc-50 dark:hover:bg-zinc-800">
                    <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-zinc-100 dark:bg-zinc-800">
-                       <Image src="https://cdn.getmerlin.in/cms/chrome_store_e2f9f97722.svg" alt={t('common.chrome_extension')} width={24} height={24} />
+                       <Image unoptimized src="https://cdn.getmerlin.in/cms/chrome_store_e2f9f97722.svg" alt={t('common.chrome_extension')} width={24} height={24} />
                     </div>
                     <span className="text-xl font-bold text-zinc-900 dark:text-white">{t('common.chrome_extension')}</span>
                 </Link>
@@ -55,7 +55,7 @@ export function DevicesSection({ id }: { id?: string }) {
 
                 <Link href="https://play.google.com/store/apps/details?id=com.foyer.merlin" target="_blank" className="flex items-center gap-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-all hover:bg-zinc-50 dark:hover:bg-zinc-800">
                    <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-zinc-100 dark:bg-zinc-800">
-                       <Image src="https://cdn.getmerlin.in/cms/playstore_88d0ae5df1.svg" alt={t('common.android_app')} width={24} height={24} />
+                       <Image unoptimized src="https://cdn.getmerlin.in/cms/playstore_88d0ae5df1.svg" alt={t('common.android_app')} width={24} height={24} />
                     </div>
                     <span className="text-xl font-bold text-zinc-900 dark:text-white">{t('common.android_app')}</span>
                 </Link>
