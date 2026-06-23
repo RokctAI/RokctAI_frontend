@@ -41,21 +41,23 @@ const LOGOS = [
 
 export function Logos() {
   return (
-    <section className="w-full bg-white dark:bg-[#0a0a0a] py-12 border-y border-zinc-100 dark:border-zinc-900">
+    <section className="w-full bg-white dark:bg-[#0a0a0a] py-12 border-y border-zinc-100 dark:border-zinc-900 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center gap-8">
           <p className="text-sm font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
             Trusted by professionals at
           </p>
 
-          <div className="w-full relative overflow-hidden">
-            <div className="flex items-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 overflow-x-auto whitespace-nowrap scrollbar-hide w-full max-w-full">
-
-              {LOGOS.map((logo) => (
-                <motion.div
-                  key={logo.name}
-                  whileHover={{ scale: 1.1, opacity: 1 }}
-                  className="relative h-8 w-24 md:h-12 md:w-40 flex items-center justify-center"
+          <div className="w-full relative flex overflow-hidden mask-image-linear-gradient">
+            <motion.div 
+              className="flex items-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 whitespace-nowrap"
+              animate={{ x: [0, -1035] }}
+              transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+            >
+              {[...LOGOS, ...LOGOS, ...LOGOS, ...LOGOS].map((logo, idx) => (
+                <div
+                  key={`${logo.name}-${idx}`}
+                  className="relative flex-shrink-0 h-8 w-24 md:h-12 md:w-40 flex items-center justify-center"
                 >
                     <Image
                       src={logo.url}
@@ -64,9 +66,9 @@ export function Logos() {
                       className="object-contain"
                       unoptimized
                     />
-                </motion.div>
+                </div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
