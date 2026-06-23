@@ -38,6 +38,15 @@ const fetchFromGitHub = unstable_cache(
 );
 
 // ─── Case-insensitive in-memory search ───────────────────────────────────────
+function filterExpired(items: Opportunity[]): Opportunity[] {
+  const now = new Date();
+  return items.filter((o) => {
+    const dateStr = o.deadline || o.closing_date;
+    if (!dateStr) return true;
+    return new Date(dateStr) >= now;
+  });
+}
+
 function filterByQuery(items: Opportunity[], query: string): Opportunity[] {
   if (!query.trim()) return items.slice(0, 20);
   const q = query.toLowerCase();
@@ -95,8 +104,8 @@ export async function GET(request: Request) {
 
   return Response.json({
     source: "github",
-    tenders: filterByQuery(tenders, query),
-    grants:  filterByQuery(grants,  query),
-    equity:  filterByQuery(equity,  query),
+    tenders: filterByQuery(filterExpired(tenders), query),
+    grants:  filterByQuery(filterExpired(grants),  query),
+    equity:  filterByQuery(filterExpired(equity),  query),
   });
 }
