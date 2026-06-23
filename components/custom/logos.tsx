@@ -48,8 +48,9 @@ export function Logos() {
             Trusted by professionals at
           </p>
 
-          <div className="w-full relative">
-            <div className="flex items-center justify-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 flex-wrap">
+          <div className="w-full relative overflow-hidden">
+            <div className="flex items-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 overflow-x-auto whitespace-nowrap scrollbar-hide w-full max-w-full">
+
               {LOGOS.map((logo) => (
                 <motion.div
                   key={logo.name}
