@@ -9,7 +9,7 @@ const features = [
     title: "One-click answers in realtime",
     description: "Get context from wherever you are, and just ask with one click.",
     image: "https://cdn.getmerlin.in/cms/Webpage_b52be8433e.webp",
-    tag: "Merlin Chrome Extension"
+    tag: "{{platform}} Chrome Extension"
   },
   {
     title: "Don’t switch tabs. Just ask",
@@ -25,7 +25,7 @@ const features = [
   },
   {
     title: "Add context with...anything",
-    description: "Writing a contract or making a quiz? Just upload guidebooks or lecture PDFs, let Merlin learn from them and respond.",
+    description: "Writing a contract or making a quiz? Just upload guidebooks or lecture PDFs, let {{platform}} learn from them and respond.",
     image: "https://cdn.getmerlin.in/cms/image_7_f6eefa4244.webp",
     tag: "Knowledge Base"
   },

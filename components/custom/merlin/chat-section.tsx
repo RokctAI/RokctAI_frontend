@@ -10,7 +10,7 @@ export function ChatSection({ id }: { id?: string }) {
     <section id={id} className="container flex w-full flex-col gap-12 py-24 bg-white dark:bg-black mx-auto">
       <div className="flex w-full max-w-7xl flex-col justify-between gap-8 px-4 md:flex-row md:items-end xl:px-0 mx-auto">
         <div className="flex flex-col gap-4">
-          <p className="font-semibold text-[#4F46E5]">NEW · Merlin Chat</p>
+          <p className="font-semibold text-[#4F46E5]">NEW · {"{{platform}}" } Chat</p>
           <h2 className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[56px] md:leading-[1.1] max-w-2xl">
             For those who build
           </h2>

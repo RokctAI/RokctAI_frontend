@@ -14,44 +14,44 @@ const MinusIcon = ({ className }: { className?: string }) => (
 
 const FAQS = [
   {
-    question: "What is Merlin AI?",
-    answer: "Merlin is an AI Chrome Extension and web app that works as your AI-powered assistant, saving you time and money. It provides top AI models such as ChatGPT, GPT 4 , Claude, Deepseek V3, Opus, Llama, Mistral etc. to generate AI responses on Google Search, summaries for YouTube videos, blogs, documents (PDF or PPT), social media posts and replies to comments on LinkedIn, Twitter and Gmail. Merlin also translates into more than twenty-five languages."
+    question: "What is {{platform}} AI?",
+    answer: "{{platform}} is an AI Chrome Extension and web app that works as your AI-powered assistant, saving you time and money. It provides top AI models such as ChatGPT, GPT 4 , Claude, Deepseek V3, Opus, Llama, Mistral etc. to generate AI responses on Google Search, summaries for YouTube videos, blogs, documents (PDF or PPT), social media posts and replies to comments on LinkedIn, Twitter and Gmail. {{platform}} also translates into more than twenty-five languages."
   },
   {
-    question: "How does Merlin AI Chrome Extension work?",
-    answer: "Once installed as a Chrome Extension on the browser, you can open Merlin AI Chatbot on any website using the shortcut: Ctrl/⌘+M. On specific websites such as Twitter (now X), LinkedIn, YouTube and Gmail, you would find Merlin buttons for easy access."
+    question: "How does {{platform}} AI Chrome Extension work?",
+    answer: "Once installed as a Chrome Extension on the browser, you can open {{platform}} AI Chatbot on any website using the shortcut: Ctrl/⌘+M. On specific websites such as Twitter (now X), LinkedIn, YouTube and Gmail, you would find {{platform}} buttons for easy access."
   },
   {
-    question: "What is the difference between Merlin Teams and Merlin Pro plans?",
-    answer: "On Merlin Teams, you can buy a plan for your team of 5 or above and pay per team member. This means teams can save costs by distributing costs across users. Whereas Merlin Pro plans are ideal for individual users who prefer unlimited queries and don’t want to be limited in their daily use."
+    question: "What is the difference between {{platform}} Teams and {{platform}} Pro plans?",
+    answer: "On {{platform}} Teams, you can buy a plan for your team of 5 or above and pay per team member. This means teams can save costs by distributing costs across users. Whereas {{platform}} Pro plans are ideal for individual users who prefer unlimited queries and don’t want to be limited in their daily use."
   },
   {
-    question: "Is Merlin AI free to use?",
-    answer: "Yes, Merlin AI is FREE and safe to use. All free users get 102 free queries credited to their account everyday. These queries can be used by the user to run multiple AI models such as GPT 3.5, GPT 4, Claude , Opus, Mistral, Gemini etc. Merlin consume 30 queries when user ask Merlin anything using GPT 4, Gemini 1.5, Mistral large model whereas GPT 3.5, Gemini, Claude 3 Haiku etc. model consume only 1 query."
+    question: "Is {{platform}} AI free to use?",
+    answer: "Yes, {{platform}} AI is FREE and safe to use. All free users get 102 free queries credited to their account everyday. These queries can be used by the user to run multiple AI models such as GPT 3.5, GPT 4, Claude , Opus, Mistral, Gemini etc. {{platform}} consume 30 queries when user ask {{platform}} anything using GPT 4, Gemini 1.5, Mistral large model whereas GPT 3.5, Gemini, Claude 3 Haiku etc. model consume only 1 query."
   },
   {
     question: "Do I need ChatGPT or Claude or Gemini or Llama account?",
-    answer: "No, you will not need separate accounts to use top AI models such as ChatGPT or Claude or Mistral or Llama. You can create a free account at getmerlin.in and get access to all top models through a single account."
+    answer: "No, you will not need separate accounts to use top AI models such as ChatGPT or Claude or Mistral or Llama. You can create a free account at get{{platform}}.in and get access to all top models through a single account."
   },
   {
-    question: "Which search engine is supported by Merlin?",
-    answer: "Merlin currently supports Google, Baidu, Bing, DuckDuckGo, Yahoo, and Yandex."
+    question: "Which search engine is supported by {{platform}}?",
+    answer: "{{platform}} currently supports Google, Baidu, Bing, DuckDuckGo, Yahoo, and Yandex."
   },
   {
-    question: "How do I install Merlin in my browser?",
-    answer: "To install Merlin on your browser, you will need to follow these steps: 1. In your browser open the browser's app store or Google Chrome store 2. Search for the Merlin extension in the chrome store 3. Click on the 'Add to Browser' or 'Install' button to begin the installation process. 4. Once the installation is complete, you will be redirected to our onboarding page 5. That’s it! viola! You are done :) . Please pin the extension for easy access."
+    question: "How do I install {{platform}} in my browser?",
+    answer: "To install {{platform}} on your browser, you will need to follow these steps: 1. In your browser open the browser's app store or Google Chrome store 2. Search for the {{platform}} extension in the chrome store 3. Click on the 'Add to Browser' or 'Install' button to begin the installation process. 4. Once the installation is complete, you will be redirected to our onboarding page 5. That’s it! viola! You are done :) . Please pin the extension for easy access."
   },
   {
-    question: "What counts as a query in Merlin search?",
-    answer: "When you ask Merlin anything and click enter that's called one query. If you are on the search engine like Google, Merlin gives response automatically and that does not count as a query, Merlin provides FREE searches on Google."
+    question: "What counts as a query in {{platform}} search?",
+    answer: "When you ask {{platform}} anything and click enter that's called one query. If you are on the search engine like Google, {{platform}} gives response automatically and that does not count as a query, {{platform}} provides FREE searches on Google."
   },
   {
     question: "How do I keep a track of my free queries?",
-    answer: "When you open Merlin using Ctrl/⌘+M, you will see your count of queries on the top left corner."
+    answer: "When you open {{platform}} using Ctrl/⌘+M, you will see your count of queries on the top left corner."
   },
   {
-    question: "Why Merlin is not opening after installation?",
-    answer: "Refresh only the tabs that were already open before installing merlin. But for the new tabs that you open here after installing of Merlin there no need to refresh. But as a good practice please do refresh if merlin doesn't come up or certain things are amiss!"
+    question: "Why {{platform}} is not opening after installation?",
+    answer: "Refresh only the tabs that were already open before installing {{platform}}. But for the new tabs that you open here after installing of {{platform}} there no need to refresh. But as a good practice please do refresh if {{platform}} doesn't come up or certain things are amiss!"
   }
 ];
 

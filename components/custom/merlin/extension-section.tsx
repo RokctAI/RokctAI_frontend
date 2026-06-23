@@ -10,7 +10,7 @@ export function ExtensionSection({ id }: { id?: string }) {
     <section id={id} className="container flex w-full flex-col gap-16 py-24 bg-white dark:bg-black">
       <div className="flex w-full max-w-7xl flex-col justify-between gap-12 px-4 md:flex-row md:items-end xl:px-0 mx-auto">
         <div className="flex flex-col gap-4">
-          <p className="font-semibold text-[#4F46E5]">Merlin Chrome Extension</p>
+          <p className="font-semibold text-[#4F46E5]">{"{{platform}}" } Chrome Extension</p>
           <h2 className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[56px] md:leading-[1.1] max-w-2xl">
             One-click answers in realtime
           </h2>
@@ -94,7 +94,7 @@ export function ExtensionSection({ id }: { id?: string }) {
                 Add context with...anything
               </h3>
               <p className="text-lg text-zinc-600 dark:text-zinc-400">
-                Writing a contract or making a quiz? Just upload guidebooks or lecture PDFs, let Merlin learn from them and respond.
+                Writing a contract or making a quiz? Just upload guidebooks or lecture PDFs, let {"{{platform}}" } learn from them and respond.
               </p>
             </div>
             <div className="relative mt-8 h-[200px] w-full md:h-[250px]">
