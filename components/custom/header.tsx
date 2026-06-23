@@ -127,6 +127,28 @@ export function Header({
             </span>
           </div>
 
+          {/* Platform name — types in when nav hides, disappears instantly when nav shows */}
+          {!navVisible && (
+            <span
+              key="platform-name"
+              className="ml-2 text-[11px] font-bold tracking-[0.2em] uppercase text-zinc-700 dark:text-zinc-300 select-none overflow-hidden whitespace-nowrap"
+              style={{
+                display: 'inline-block',
+                animation: 'platformTypeIn 0.5s steps(12, end) forwards',
+                height: '44px',
+                lineHeight: '44px',
+              }}
+            >
+              {PLATFORM_NAME}
+            </span>
+          )}
+          <style>{`
+            @keyframes platformTypeIn {
+              from { width: 0; opacity: 0; }
+              to   { width: 160px; opacity: 1; }
+            }
+          `}</style>
+
           {/* Desktop Nav — fades when collapsed, reappears on hover/scroll */}
           <nav
             className="hidden lg:flex items-center gap-1 h-full transition-all duration-500"
