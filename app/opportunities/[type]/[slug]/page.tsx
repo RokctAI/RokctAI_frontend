@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Header } from "@/components/custom/header";
 import { Badge } from "@/components/ui/badge";
 import { auth } from "@/app/(auth)/auth";
+import { FiExternalLink } from "react-icons/fi";
 
 const GITHUB_RAW = "https://raw.githubusercontent.com/RokctAI/opportunities/main/published/api";
 
@@ -125,6 +126,48 @@ export default async function OpportunityDetailPage({
           {verified    && <Field label="Last Verified"     value={verified} />}
         </div>
 
+        {/* Documents & Links */}
+        {(() => {
+          const links: { label: string; url: string }[] = [];
+          
+          if (type !== "equity") {
+            if (opp.links && Array.isArray(opp.links)) {
+              opp.links.forEach((l: any) => {
+                if (l.url) links.push({ label: l.title || "Document", url: l.url });
+              });
+            }
+            if (opp.direct_link) links.push({ label: "Direct Link", url: opp.direct_link });
+            if (opp.applying_link) links.push({ label: "Applying Link", url: opp.applying_link });
+            if (opp.website) links.push({ label: "Website", url: opp.website });
+          } else {
+            // For equity, prioritize website/linkedin and avoid source links
+            if (opp.website) links.push({ label: "Website", url: opp.website });
+            if (opp.linkedin) links.push({ label: "LinkedIn", url: opp.linkedin });
+          }
+
+          if (links.length === 0) return null;
+
+          return (
+            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-5 mb-8">
+              <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-3">Document Links</h2>
+              <div className="flex flex-col gap-2">
+                {links.map((link, i) => (
+                  <a
+                    key={i}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1.5"
+                  >
+                    <FiExternalLink className="w-3 h-3" />
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Briefing session */}
         {(briefing || briefingVenue) && (
           <div className="rounded-xl border border-blue-200 dark:border-blue-900/40 bg-blue-50 dark:bg-blue-900/10 p-5 mb-8">
@@ -144,18 +187,6 @@ export default async function OpportunityDetailPage({
             <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-2">Notes</h2>
             <p className="text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-line">{notes}</p>
           </div>
-        )}
-
-        {/* CTA */}
-        {website && (
-          <a
-            href={website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-xl transition-colors"
-          >
-            View Official Source ↗
-          </a>
         )}
       </main>
     </div>
