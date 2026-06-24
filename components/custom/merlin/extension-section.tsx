@@ -1,10 +1,10 @@
 ﻿"use client";
 
-import { PLATFORM_NAME } from "@/app/config/platform";
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { PLATFORM_NAME } from "@/app/config/platform";
 
 export function ExtensionSection({ id }: { id?: string }) {
   return (
@@ -138,4 +138,3 @@ export function ExtensionSection({ id }: { id?: string }) {
     </section>
   );
 }
-
