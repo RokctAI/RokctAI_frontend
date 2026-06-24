@@ -35,7 +35,7 @@ export function CopiedPricing({ id }: { id?: string }) {
           </p>
         </div>
 
-        <div className="relative min-h-[600px] max-w-6xl mx-auto flex">
+        <div className="relative min-h-[600px] max-w-3xl mx-auto flex">
           
           {/* Deck of Cards Container */}
           <div className="flex-1 relative h-[650px] lg:h-[600px] w-full">
@@ -46,7 +46,7 @@ export function CopiedPricing({ id }: { id?: string }) {
               className="absolute top-0 bottom-0 cursor-pointer outline-none flex items-stretch"
               animate={{
                 zIndex: activeCardIndex === 1 ? 20 : 10,
-                left: activeCardIndex === 1 ? "10%" : "0%", right: activeCardIndex === 1 ? "0%" : "10%",
+                left: activeCardIndex === 1 ? "0%" : "0%", x: activeCardIndex === 1 ? "5%" : "0%",
                 scale: activeCardIndex === 1 ? 1 : 0.95,
                 opacity: activeCardIndex === 1 ? 1 : 0.6,
                 filter: activeCardIndex === 1 ? "brightness(1)" : "brightness(0.7)",
@@ -57,9 +57,9 @@ export function CopiedPricing({ id }: { id?: string }) {
               style={{ perspective: 1000 }}
             >
               {/* File Divider Ear */}
-              <div className="absolute -left-[140px] top-[140px] z-0 hidden lg:flex">
-                <div className={`border border-r-0 border-zinc-200 dark:border-zinc-800 rounded-l-xl px-5 py-3 shadow-[-10px_0_15px_-3px_rgba(0,0,0,0.1)] w-[160px] transition-colors duration-300 ${activeCardIndex === 1 ? 'bg-white dark:bg-[#111]' : 'bg-zinc-100 dark:bg-zinc-800 cursor-pointer'}`}>
-                  <span className={`font-bold text-sm ${activeCardIndex === 1 ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'}`}>Other Tools</span>
+              <div className="absolute -left-12 top-[180px] hidden lg:flex">
+                <div onClick={() => setActiveCardIndex(1)} className={`border border-r-0 border-zinc-200 dark:border-zinc-800 rounded-l-xl py-8 w-12 shadow-[-10px_0_15px_-3px_rgba(0,0,0,0.1)] transition-colors duration-300 flex items-center justify-center ${activeCardIndex === 1 ? 'bg-white dark:bg-[#111] z-20' : 'bg-zinc-100 dark:bg-zinc-800 cursor-pointer z-0'}`}>
+                  <span className={`font-bold text-sm -rotate-90 whitespace-nowrap tracking-widest ${activeCardIndex === 1 ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'}`}>Other Tools</span>
                 </div>
               </div>
               <div className="w-full flex flex-col rounded-[2rem] bg-white dark:bg-[#111] border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 md:px-12 shadow-2xl transition-colors duration-300 relative overflow-hidden h-full hover:border-zinc-300 dark:hover:border-zinc-700 z-10">
@@ -141,7 +141,7 @@ export function CopiedPricing({ id }: { id?: string }) {
               className="absolute top-0 bottom-0 cursor-pointer outline-none flex items-stretch"
               animate={{
                 zIndex: activeCardIndex === 0 ? 20 : 10,
-                left: activeCardIndex === 0 ? "10%" : "0%", right: activeCardIndex === 0 ? "0%" : "10%",
+                left: activeCardIndex === 0 ? "0%" : "0%", x: activeCardIndex === 0 ? "5%" : "0%",
                 scale: activeCardIndex === 0 ? 1 : 0.95,
                 opacity: activeCardIndex === 0 ? 1 : 0.6,
                 filter: activeCardIndex === 0 ? "brightness(1)" : "brightness(0.7)",
@@ -152,9 +152,9 @@ export function CopiedPricing({ id }: { id?: string }) {
               style={{ perspective: 1000 }}
             >
               {/* File Divider Ear */}
-              <div className="absolute -left-[140px] top-16 z-0 hidden lg:flex">
-                <div className={`border border-r-0 border-zinc-800 dark:border-zinc-200 rounded-l-xl px-5 py-3 shadow-[-10px_0_15px_-3px_rgba(0,0,0,0.3)] w-[160px] transition-colors duration-300 ${activeCardIndex === 0 ? 'bg-zinc-900 dark:bg-white' : 'bg-zinc-800 dark:bg-zinc-100 cursor-pointer'}`}>
-                  <span className={`font-bold text-sm ${activeCardIndex === 0 ? 'text-white dark:text-zinc-900' : 'text-zinc-400 dark:text-zinc-600'}`}>AI Subscriptions</span>
+              <div className="absolute -left-12 top-16 hidden lg:flex">
+                <div onClick={() => setActiveCardIndex(0)} className={`border border-r-0 border-zinc-800 dark:border-zinc-200 rounded-l-xl py-8 w-12 shadow-[-10px_0_15px_-3px_rgba(0,0,0,0.3)] transition-colors duration-300 flex items-center justify-center ${activeCardIndex === 0 ? 'bg-zinc-900 dark:bg-white z-20' : 'bg-zinc-800 dark:bg-zinc-100 cursor-pointer z-0'}`}>
+                  <span className={`font-bold text-sm -rotate-90 whitespace-nowrap tracking-widest ${activeCardIndex === 0 ? 'text-white dark:text-zinc-900' : 'text-zinc-400 dark:text-zinc-600'}`}>AI Subscriptions</span>
                 </div>
               </div>
               <div className="w-full flex flex-col rounded-[2rem] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 p-6 md:p-8 md:px-12 relative overflow-hidden shadow-2xl border border-zinc-800 dark:border-zinc-200 h-full hover:border-zinc-700 dark:hover:border-zinc-300 transition-colors duration-300 z-10">
