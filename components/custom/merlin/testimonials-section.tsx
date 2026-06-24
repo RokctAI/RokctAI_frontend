@@ -1,9 +1,10 @@
 "use client";
-import { PLATFORM_NAME } from "@/app/config/platform";
-import React, { useRef, useEffect } from "react";
+
+import React from "react";
 import Image from "next/image";
 import t from "@/app/lib/i18n";
- 
+import { PLATFORM_NAME } from "@/app/config/platform";
+
 const TESTIMONIALS = [
   {
     title: "The Swiss Army Knife for research and writing",
@@ -130,43 +131,26 @@ export function TestimonialsSection({ id }: { id?: string }) {
         </div>
       </div>
 
-      <div className="relative flex w-full flex-col gap-5 overflow-hidden py-4 -rotate-2 scale-[1.02] md:scale-105 max-w-[100vw]">
+      <div className="relative flex w-full overflow-hidden py-4">
         {/* Gradient fades for edges */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-1/6 sm:w-[15%] bg-gradient-to-r from-[#fafafa] to-transparent dark:from-black z-20"></div>
         <div className="pointer-events-none absolute inset-y-0 right-0 w-1/6 sm:w-[15%] bg-gradient-to-l from-[#fafafa] to-transparent dark:from-black z-20"></div>
 
-        {/* Row 1 - Left to Right */}
-        <div className="flex w-max animate-marquee gap-5 hover:[animation-play-state:paused] py-1">
-          {repeatedTestimonials.slice(0, 10).map((t, i) => (
-            <div key={`row1-${i}`} className="flex w-[350px] flex-col justify-between gap-5 rounded-[1.5rem] border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-[#111] p-6 shadow-sm hover:shadow-md transition-shadow">
+        {/* Single Row - Left to Right scrolling */}
+        <div className="flex w-max animate-marquee gap-5 hover:[animation-play-state:paused] py-1 items-center">
+          {repeatedTestimonials.map((t, i) => (
+            <div key={`testimonial-${i}`} className="flex w-[350px] flex-col justify-between gap-5 rounded-[1.5rem] border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-[#111] p-6 shadow-sm hover:shadow-md transition-shadow h-full">
                <div className="flex flex-col gap-3">
                  <h4 className="text-base font-bold text-zinc-900 dark:text-white leading-tight">{t.title}</h4>
                  <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-4">{t.text}</p>
                </div>
-               <div className="flex items-center gap-3 mt-2 border-t border-zinc-100 dark:border-zinc-800/50 pt-4">
-                 <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                   <Image unoptimized referrerPolicy="no-referrer" src={t.avatar} alt={t.author} width={40} height={40} className="object-cover w-full h-full" />
-                 </div>
-                 <div className="flex flex-col">
-                   <span className="text-sm font-bold text-zinc-900 dark:text-white truncate max-w-[200px]">{t.author}</span>
-                   <span className="text-xs font-medium text-zinc-500">{t.role}</span>
-                 </div>
-               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Row 2 - Right to Left */}
-        <div className="flex w-max animate-marquee-reverse gap-5 hover:[animation-play-state:paused] py-1">
-          {repeatedTestimonials.slice(5, 15).map((t, i) => (
-            <div key={`row2-${i}`} className="flex w-[350px] flex-col justify-between gap-5 rounded-[1.5rem] border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-[#111] p-6 shadow-sm hover:shadow-md transition-shadow">
-               <div className="flex flex-col gap-3">
-                 <h4 className="text-base font-bold text-zinc-900 dark:text-white leading-tight">{t.title}</h4>
-                 <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-4">{t.text}</p>
-               </div>
-               <div className="flex items-center gap-3 mt-2 border-t border-zinc-100 dark:border-zinc-800/50 pt-4">
-                 <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                   <Image unoptimized referrerPolicy="no-referrer" src={t.avatar} alt={t.author} width={40} height={40} className="object-cover w-full h-full" />
+               <div className="flex items-center gap-3 mt-auto border-t border-zinc-100 dark:border-zinc-800/50 pt-4">
+                 <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center">
+                   {t.avatar ? (
+                     <Image unoptimized referrerPolicy="no-referrer" src={t.avatar} alt={t.author} width={40} height={40} className="object-cover w-full h-full" />
+                   ) : (
+                     <span className="text-zinc-400 font-bold uppercase">{t.author.charAt(0)}</span>
+                   )}
                  </div>
                  <div className="flex flex-col">
                    <span className="text-sm font-bold text-zinc-900 dark:text-white truncate max-w-[200px]">{t.author}</span>
