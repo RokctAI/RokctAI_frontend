@@ -1,6 +1,8 @@
-"use client";
-
+﻿"use client";
+ 
+import { PLATFORM_NAME } from "@/app/config/platform";
 import React from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Check } from "lucide-react";
@@ -89,7 +91,7 @@ export function CopiedPricing({ id }: { id?: string }) {
             </div>
           </div>
 
-          {/* Merlin Card */}
+          {/* {PLATFORM_NAME} Card */}
           <div className="flex flex-col rounded-[2.5rem] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 p-8 md:p-10 relative overflow-hidden shadow-2xl z-20 md:-ml-4 border border-zinc-800 dark:border-zinc-200">
             {/* Background Gradient Effect */}
             <div className="absolute -top-32 -right-32 w-96 h-96 bg-indigo-500/30 dark:bg-indigo-400/20 blur-[100px] rounded-full pointer-events-none"></div>
@@ -98,9 +100,9 @@ export function CopiedPricing({ id }: { id?: string }) {
             <div className="relative z-10 flex flex-col h-full">
               <div className="flex items-center gap-4 mb-6">
                 <div className="h-10 w-10 rounded-full border-2 border-zinc-900 dark:border-white overflow-hidden bg-white flex items-center justify-center">
-                  <Image unoptimized referrerPolicy="no-referrer" src="https://cdn.getmerlin.in/cms/Group_2_b0e06c28f9.svg" alt="Merlin icon" width={28} height={28} className="object-contain" />
+                  <Image unoptimized referrerPolicy="no-referrer" src="https://cdn.getmerlin.in/cms/Group_2_b0e06c28f9.svg" alt="{PLATFORM_NAME} icon" width={28} height={28} className="object-contain" />
                 </div>
-                <span className="text-xl font-bold">Merlin</span>
+                <span className="text-xl font-bold">{PLATFORM_NAME}</span>
               </div>
 
               <div className="mb-10">
@@ -154,3 +156,4 @@ export function CopiedPricing({ id }: { id?: string }) {
     </section>
   );
 }
+
