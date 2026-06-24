@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import t from "@/app/lib/i18n";
 import { PLATFORM_NAME } from "@/app/config/platform";
+import { motion } from "framer-motion";
 
 const TESTIMONIALS = [
   {
@@ -74,6 +75,7 @@ const TESTIMONIALS = [
 export function TestimonialsSection({ id }: { id?: string }) {
   // Duplicate for infinite scroll effect
   const repeatedTestimonials = [...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS];
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <section id={id} className="w-full bg-[#fafafa] dark:bg-black py-16 md:py-24 overflow-hidden relative border-t border-zinc-200 dark:border-zinc-900 mt-12 md:mt-24">
@@ -136,10 +138,20 @@ export function TestimonialsSection({ id }: { id?: string }) {
         <div className="pointer-events-none absolute inset-y-0 left-0 w-1/6 sm:w-[15%] bg-gradient-to-r from-[#fafafa] to-transparent dark:from-black z-20"></div>
         <div className="pointer-events-none absolute inset-y-0 right-0 w-1/6 sm:w-[15%] bg-gradient-to-l from-[#fafafa] to-transparent dark:from-black z-20"></div>
 
-        {/* Single Row - Left to Right scrolling */}
-        <div className="flex w-max animate-marquee gap-5 hover:[animation-play-state:paused] py-1 items-center">
+        {/* Single Row - Left to Right scrolling via Framer Motion */}
+        <motion.div 
+          className="flex w-max gap-5 py-1 items-center"
+          animate={{ x: isHovered ? undefined : ["0%", "-33.33%"] }}
+          transition={{
+            repeat: Infinity,
+            ease: "linear",
+            duration: 60,
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
           {repeatedTestimonials.map((t, i) => (
-            <div key={`testimonial-${i}`} className="flex w-[350px] flex-col justify-between gap-5 rounded-[1.5rem] border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-[#111] p-6 shadow-sm hover:shadow-md transition-shadow h-full">
+            <div key={`testimonial-${i}`} className="flex w-[350px] shrink-0 flex-col justify-between gap-5 rounded-[1.5rem] border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-[#111] p-6 shadow-sm hover:shadow-md transition-shadow h-full">
                <div className="flex flex-col gap-3">
                  <h4 className="text-base font-bold text-zinc-900 dark:text-white leading-tight">{t.title}</h4>
                  <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-4">{t.text}</p>
@@ -159,7 +171,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
                </div>
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
