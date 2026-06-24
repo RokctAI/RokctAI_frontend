@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import Image from "next/image";
+import t from "@/app/lib/i18n";
 import { PLATFORM_NAME } from "@/app/config/platform";
 
 const TESTIMONIALS = [
