@@ -7,7 +7,6 @@ import { Logos } from "@/components/custom/logos";
 import { Pricing } from "@/components/custom/pricing";
 import { CopiedPricing } from "@/components/custom/copied-pricing";
 import { Features } from "@/components/custom/features";
-import { AIModels } from "@/components/custom/ai-models";
 import { FloatingNav } from "@/components/custom/floating-nav";
 import { ExtensionSection } from "@/components/custom/merlin/extension-section";
 import { ChatSection } from "@/components/custom/merlin/chat-section";
@@ -62,9 +61,9 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
         
         <CopiedPricing id="pricing" />
 
-        <TestimonialsSection id="testimonials" />
-
         <FaqSection id="faq" />
+
+        <TestimonialsSection id="testimonials" />
 
         </div>
         <div id="footer" />
