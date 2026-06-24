@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
-import t from "@/app/lib/i18n";
 import { PLATFORM_NAME } from "@/app/config/platform";
-import { motion } from "framer-motion";
 
 const TESTIMONIALS = [
   {
@@ -75,81 +73,17 @@ const TESTIMONIALS = [
 export function TestimonialsSection({ id }: { id?: string }) {
   // Duplicate for infinite scroll effect
   const repeatedTestimonials = [...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS];
-  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <section id={id} className="w-full bg-[#fafafa] dark:bg-black py-16 md:py-24 overflow-hidden relative border-t border-zinc-200 dark:border-zinc-900 mt-12 md:mt-24">
-      <div className="container mx-auto max-w-6xl flex w-full flex-col items-center justify-center gap-4 px-4 text-center">
-         <h2 className="text-3xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-zinc-900 dark:text-white">
-            1M+ and counting
-         </h2>
-         <p className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400 pb-1">
-            Love for {PLATFORM_NAME} is only growing multifold!
-         </p>
-         <p className="text-base md:text-lg font-medium text-zinc-600 dark:text-zinc-400 max-w-2xl mt-4">
-            What makes us your perfect AI partner? We function on high intelligence, integrity, and energy.
-         </p>
-      </div>
 
-      <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-12 mt-12 mb-16 max-w-4xl mx-auto px-4">
-        <div className="flex flex-col items-center gap-2 group">
-          <div className="flex items-center justify-center h-14 w-14 rounded-2xl bg-white dark:bg-[#111] shadow-sm border border-zinc-200 dark:border-zinc-800 transition-transform group-hover:scale-105 group-hover:border-blue-500/50">
-            <Image unoptimized referrerPolicy="no-referrer" src="https://cdn.getmerlin.in/cms/image_142_7e8952954b.svg" alt="Chrome" width={24} height={24} />
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="text-xl font-black text-zinc-900 dark:text-white">4.8</span>
-            <span className="text-[11px] font-bold tracking-wider uppercase text-zinc-500 dark:text-zinc-400">Chrome Store</span>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-2 group">
-          <div className="flex items-center justify-center h-14 w-14 rounded-2xl bg-white dark:bg-[#111] shadow-sm border border-zinc-200 dark:border-zinc-800 transition-transform group-hover:scale-105 group-hover:border-purple-500/50">
-            <Image unoptimized referrerPolicy="no-referrer" src="https://cdn.getmerlin.in/cms/Frame_1321318037_dfa4226ae5.svg" alt="AppSumo" width={24} height={24} />
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="text-xl font-black text-zinc-900 dark:text-white">4.3</span>
-            <span className="text-[11px] font-bold tracking-wider uppercase text-zinc-500 dark:text-zinc-400">AppSumo</span>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-2 group">
-           <div className="flex items-center justify-center h-14 w-14 rounded-2xl bg-white dark:bg-[#111] shadow-sm border border-zinc-200 dark:border-zinc-800 transition-transform group-hover:scale-105 group-hover:border-green-500/50">
-             <Image unoptimized referrerPolicy="no-referrer" src="https://cdn.getmerlin.in/cms/playstore_88d0ae5df1.svg" alt={t('common.play_store')} width={24} height={24} />
-           </div>
-           <div className="flex flex-col items-center">
-             <span className="text-xl font-black text-zinc-900 dark:text-white">4.3</span>
-             <span className="text-[11px] font-bold tracking-wider uppercase text-zinc-500 dark:text-zinc-400">{t('common.play_store')}</span>
-           </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-2 group">
-           <div className="flex items-center justify-center h-14 w-14 rounded-2xl bg-white dark:bg-[#111] shadow-sm border border-zinc-200 dark:border-zinc-800 transition-transform group-hover:scale-105 group-hover:border-blue-400/50">
-             <Image unoptimized referrerPolicy="no-referrer" src="https://cdn.getmerlin.in/cms/apple_767823d8d1.svg" alt={t('common.app_store')} width={24} height={24} />
-           </div>
-           <div className="flex flex-col items-center">
-             <span className="text-xl font-black text-zinc-900 dark:text-white">4.7</span>
-             <span className="text-[11px] font-bold tracking-wider uppercase text-zinc-500 dark:text-zinc-400">{t('common.app_store')}</span>
-           </div>
-        </div>
-      </div>
-
-      <div className="relative flex w-full overflow-hidden py-4">
+      <div className="relative flex w-full overflow-hidden py-4 group">
         {/* Gradient fades for edges */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-1/6 sm:w-[15%] bg-gradient-to-r from-[#fafafa] to-transparent dark:from-black z-20"></div>
         <div className="pointer-events-none absolute inset-y-0 right-0 w-1/6 sm:w-[15%] bg-gradient-to-l from-[#fafafa] to-transparent dark:from-black z-20"></div>
 
-        {/* Single Row - Left to Right scrolling via Framer Motion */}
-        <motion.div 
-          className="flex w-max gap-5 py-1 items-center"
-          animate={{ x: isHovered ? undefined : ["0%", "-33.33%"] }}
-          transition={{
-            repeat: Infinity,
-            ease: "linear",
-            duration: 60,
-          }}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
+        {/* Single Row - CSS based continuous scroll that pauses on hover */}
+        <div className="flex w-max animate-marquee gap-5 py-1 items-center group-hover:[animation-play-state:paused]">
           {repeatedTestimonials.map((t, i) => (
             <div key={`testimonial-${i}`} className="flex w-[350px] shrink-0 flex-col justify-between gap-5 rounded-[1.5rem] border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-[#111] p-6 shadow-sm hover:shadow-md transition-shadow h-full">
                <div className="flex flex-col gap-3">
@@ -171,7 +105,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
                </div>
             </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
