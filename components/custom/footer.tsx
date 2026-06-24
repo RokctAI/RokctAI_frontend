@@ -210,16 +210,19 @@ export async function Footer() {
         </div>
 
         {/* Footer Bottom */}
-        <div className="flex flex-col md:flex-row justify-between items-center pt-12 border-t border-gray-200 dark:border-white/5 gap-6">
+        <div className="flex flex-row justify-between items-center pt-12 border-t border-gray-200 dark:border-white/5 gap-6">
           <p className="text-sm text-gray-500">
             © Copyright {new Date().getFullYear()} - {LEGAL_COMPANY_NAME}
           </p>
           <div className="flex items-center gap-6">
-               <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10">
+                <div className="flex items-center gap-2 px-2 py-1 md:px-3 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10">
                  <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'}`} />
-                 <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">{t('system.status_prefix')} {isOnline ? t('system.online') : t('system.offline')}</span>
+                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">
+                    <span className="hidden md:inline">{t('system.status_prefix')} </span>
+                    {isOnline ? t('system.online') : t('system.offline')}
+                  </span>
                </div>
-             <span className="text-xs font-mono font-bold text-gray-700 uppercase">{t('system.version')} {version}</span>
+              <span className="hidden md:inline text-xs font-mono font-bold text-gray-700 uppercase">{t('system.version')} {version}</span>
           </div>
         </div>
       </div>
