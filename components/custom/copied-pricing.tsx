@@ -46,7 +46,7 @@ export function CopiedPricing({ id }: { id?: string }) {
               className="absolute top-0 bottom-0 cursor-pointer outline-none flex items-stretch"
               animate={{
                 zIndex: activeCardIndex === 1 ? 20 : 10,
-                left: activeCardIndex === 1 ? "0%" : "0%", x: activeCardIndex === 1 ? "0%" : "5%",
+                left: activeCardIndex === 1 ? "0%" : "0%", x: activeCardIndex === 1 ? "0%" : "-15%",
                 scale: activeCardIndex === 1 ? 1 : 0.95,
                 opacity: activeCardIndex === 1 ? 1 : 0.6,
                 filter: activeCardIndex === 1 ? "brightness(1)" : "brightness(0.7)",
@@ -174,7 +174,7 @@ export function CopiedPricing({ id }: { id?: string }) {
                   </p>
                 </div>
 
-                <div className="mt-auto space-y-4 relative z-40 opacity-50 blur-[2px]">
+                <div className="mt-auto space-y-4 relative z-40 ">
                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Purchased individually</h4>
                    <div className="space-y-0">
                       <div className="flex items-center justify-between py-3 border-b border-zinc-100 dark:border-zinc-800/50">
@@ -197,7 +197,7 @@ export function CopiedPricing({ id }: { id?: string }) {
               className="absolute top-0 bottom-0 cursor-pointer outline-none flex items-stretch"
               animate={{
                 zIndex: activeCardIndex === 0 ? 20 : 10,
-                left: activeCardIndex === 0 ? "0%" : "0%", x: activeCardIndex === 0 ? "0%" : "5%",
+                left: activeCardIndex === 0 ? "0%" : "0%", x: activeCardIndex === 0 ? "0%" : "-15%",
                 scale: activeCardIndex === 0 ? 1 : 0.95,
                 opacity: activeCardIndex === 0 ? 1 : 0.6,
                 filter: activeCardIndex === 0 ? "brightness(1)" : "brightness(0.7)",
