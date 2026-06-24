@@ -12,6 +12,10 @@ export interface Opportunity {
   tasks?: any[];
 }
 
+function cleanTitle(title: string): string {
+  return title.replace(/^Tender Opportunity:\s*/i, "Tender: ").replace(/^Grant Opportunity:\s*/i, "Grant: ").replace(/^Equity Opportunity:\s*/i, "Equity: ");
+}
+
 export class OpportunityPublicService {
   static async search(query: string) {
     const types = ["tenders", "grants", "equity"];
@@ -33,10 +37,16 @@ export class OpportunityPublicService {
     const grants  = ((results[1]?.data) ?? results[1] ?? []) as Opportunity[];
     const equity  = ((results[2]?.data) ?? results[2] ?? []) as Opportunity[];
 
+    const clean = (opps: Opportunity[]) => opps.map(o => ({ ...o, title: cleanTitle(o.title) }));
+
     // ── 2. If backend returned data, use it ────────────────────────────────
     const hasData = tenders.length > 0 || grants.length > 0 || equity.length > 0;
     if (hasData) {
-      return { tenders, grants, equity };
+      return { 
+        tenders: clean(tenders), 
+        grants: clean(grants), 
+        equity: clean(equity) 
+      };
     }
 
     // ── 3. Backend unavailable / empty — fall back to GitHub-cached data ───
@@ -55,9 +65,9 @@ export class OpportunityPublicService {
       if (!res.ok) throw new Error("fallback failed");
       const data = await res.json();
       return {
-        tenders: (data.tenders ?? []) as Opportunity[],
-        grants:  (data.grants  ?? []) as Opportunity[],
-        equity:  (data.equity  ?? []) as Opportunity[],
+        tenders: clean((data.tenders ?? []) as Opportunity[]),
+        grants:  clean((data.grants  ?? []) as Opportunity[]),
+        equity:  clean((data.equity  ?? []) as Opportunity[]),
       };
     } catch {
       return { tenders: [], grants: [], equity: [] };
