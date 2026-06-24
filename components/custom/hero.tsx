@@ -45,13 +45,21 @@ type FilterType = "All" | "Tenders" | "Grants" | "Equity" | "Chat";
 function isExpired(item: Opportunity): boolean {
   const raw = item.closing_date || item.deadline;
   if (!raw) return false;
-  try {
-    const d = new Date(raw);
-    if (!isNaN(d.getTime())) return d < new Date();
-  } catch {
-    // ignore unparseable dates
+  
+  let d: Date | null = null;
+  const dmyRegex = /^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/;
+  const match = raw.match(dmyRegex);
+  
+  if (match) {
+    const [_, day, month, year] = match;
+    d = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  } else {
+    const parsed = new Date(raw);
+    if (!isNaN(parsed.getTime())) d = parsed;
   }
-  return false;
+
+  if (!d) return false;
+  return d < new Date();
 }
 
 function TypewriterPlaceholder({
