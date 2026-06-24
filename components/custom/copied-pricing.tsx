@@ -140,7 +140,8 @@ export function CopiedPricing({ id }: { id?: string }) {
               className="absolute top-0 bottom-0 cursor-pointer outline-none flex items-stretch hidden md:flex"
               animate={{
                 zIndex: activeCardIndex === 1 ? 19 : 9,
-                left: activeCardIndex === 1 ? "100%" : "0%", x: activeCardIndex === 1 ? "20px" : "5%",
+                left: "0%", 
+                x: activeCardIndex === 1 ? "105%" : "10%",
                 scale: activeCardIndex === 1 ? 1 : 0.9,
                 opacity: activeCardIndex === 1 ? 1 : 0,
                 filter: activeCardIndex === 1 ? "brightness(0.9)" : "brightness(0.7)",
