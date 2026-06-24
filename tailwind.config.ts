@@ -75,6 +75,15 @@ const config: Config = {
           "950": "#052e16",
         },
       },
+      animation: {
+        marquee: "marquee 60s linear infinite",
+      },
+      keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-33.33%)" },
+        },
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
