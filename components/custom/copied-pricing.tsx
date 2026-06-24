@@ -35,7 +35,7 @@ export function CopiedPricing({ id }: { id?: string }) {
           </p>
         </div>
 
-        <div className="relative min-h-[600px] max-w-3xl mx-auto flex">
+        <div className="relative min-h-[600px] max-w-4xl mx-auto flex">
           
           {/* Deck of Cards Container */}
           <div className="flex-1 relative h-[650px] lg:h-[600px] w-full">
@@ -46,7 +46,7 @@ export function CopiedPricing({ id }: { id?: string }) {
               className="absolute top-0 bottom-0 cursor-pointer outline-none flex items-stretch"
               animate={{
                 zIndex: activeCardIndex === 1 ? 20 : 10,
-                left: activeCardIndex === 1 ? "0%" : "0%", x: activeCardIndex === 1 ? "5%" : "0%",
+                left: activeCardIndex === 1 ? "0%" : "0%", x: activeCardIndex === 1 ? "0%" : "5%",
                 scale: activeCardIndex === 1 ? 1 : 0.95,
                 opacity: activeCardIndex === 1 ? 1 : 0.6,
                 filter: activeCardIndex === 1 ? "brightness(1)" : "brightness(0.7)",
@@ -59,10 +59,10 @@ export function CopiedPricing({ id }: { id?: string }) {
               {/* File Divider Ear */}
               <div className="absolute -left-12 top-[180px] hidden lg:flex">
                 <div onClick={() => setActiveCardIndex(1)} className={`border border-r-0 border-zinc-200 dark:border-zinc-800 rounded-l-xl py-8 w-12 shadow-[-10px_0_15px_-3px_rgba(0,0,0,0.1)] transition-colors duration-300 flex items-center justify-center ${activeCardIndex === 1 ? 'bg-white dark:bg-[#111] z-20' : 'bg-zinc-100 dark:bg-zinc-800 cursor-pointer z-0'}`}>
-                  <span className={`font-bold text-sm -rotate-90 whitespace-nowrap tracking-widest ${activeCardIndex === 1 ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'}`}>Other Tools</span>
+                  <span className={`font-bold text-sm -rotate-90 whitespace-nowrap tracking-widest ${activeCardIndex === 1 ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'}`}>Others</span>
                 </div>
               </div>
-              <div className="w-full flex flex-col rounded-[2rem] bg-white dark:bg-[#111] border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 md:px-12 shadow-2xl transition-colors duration-300 relative overflow-hidden h-full hover:border-zinc-300 dark:hover:border-zinc-700 z-10">
+              <div className="w-[320px] md:w-[380px] flex flex-col rounded-[2rem] bg-white dark:bg-[#111] border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 md:px-12 shadow-2xl transition-colors duration-300 relative overflow-hidden h-full hover:border-zinc-300 dark:hover:border-zinc-700 z-10">
                 {activeCardIndex !== 1 && (
                   <div className="absolute inset-0 bg-white/40 dark:bg-black/40 z-50 rounded-[2rem] pointer-events-none" />
                 )}
@@ -134,6 +134,61 @@ export function CopiedPricing({ id }: { id?: string }) {
                 </div>
               </div>
             </motion.div>
+            {/* DUPLICATE OTHERS CARD (Card 2) */}
+            <motion.div 
+              onClick={() => setActiveCardIndex(1)}
+              className="absolute top-0 bottom-0 cursor-pointer outline-none flex items-stretch hidden md:flex"
+              animate={{
+                zIndex: activeCardIndex === 1 ? 19 : 9,
+                left: activeCardIndex === 1 ? "100%" : "0%", x: activeCardIndex === 1 ? "20px" : "5%",
+                scale: activeCardIndex === 1 ? 1 : 0.9,
+                opacity: activeCardIndex === 1 ? 1 : 0,
+                filter: activeCardIndex === 1 ? "brightness(0.9)" : "brightness(0.7)",
+                rotateY: activeCardIndex === 1 ? 0 : 5,
+                originX: 0
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              style={{ perspective: 1000 }}
+            >
+              <div className="w-[320px] md:w-[380px] flex flex-col rounded-[2rem] bg-zinc-50 dark:bg-[#1a1a1a] border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 md:px-12 shadow-xl transition-colors duration-300 relative overflow-hidden h-full z-10">
+                {activeCardIndex !== 1 && (
+                  <div className="absolute inset-0 bg-white/40 dark:bg-black/40 z-50 rounded-[2rem] pointer-events-none" />
+                )}
+                
+                <div className="flex items-center gap-3 mb-5 relative z-40">
+                  <div className="flex -space-x-2">
+                    <div className="h-8 w-8 rounded-full border-2 border-zinc-200 dark:border-zinc-700 overflow-hidden bg-white">
+                      <Image unoptimized referrerPolicy="no-referrer" src="https://cdn.getmerlin.in/cms/Avatar_4_36664caa88.svg" alt="icon" width={32} height={32} className="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                  <span className="text-lg font-bold text-zinc-500 dark:text-zinc-400">Other Pro</span>
+                </div>
+
+                <div className="mb-8 relative z-40">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-5xl md:text-6xl font-black text-zinc-900 dark:text-white">$200</span>
+                  </div>
+                  <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1.5 font-medium leading-tight">
+                    per month<br/>for enterprise tools
+                  </p>
+                </div>
+
+                <div className="mt-auto space-y-4 relative z-40 opacity-50 blur-[2px]">
+                   <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Purchased individually</h4>
+                   <div className="space-y-0">
+                      <div className="flex items-center justify-between py-3 border-b border-zinc-100 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-200">Enterprise AI</span>
+                        <span className="text-sm font-bold text-zinc-500 dark:text-zinc-400">$100/m</span>
+                      </div>
+                      <div className="flex items-center justify-between py-3 border-b border-zinc-100 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-200">Team Seats</span>
+                        <span className="text-sm font-bold text-zinc-500 dark:text-zinc-400">$100/m</span>
+                      </div>
+                   </div>
+                </div>
+              </div>
+            </motion.div>
+
 
             {/* PLATFORM CARD */}
             <motion.div 
@@ -141,7 +196,7 @@ export function CopiedPricing({ id }: { id?: string }) {
               className="absolute top-0 bottom-0 cursor-pointer outline-none flex items-stretch"
               animate={{
                 zIndex: activeCardIndex === 0 ? 20 : 10,
-                left: activeCardIndex === 0 ? "0%" : "0%", x: activeCardIndex === 0 ? "5%" : "0%",
+                left: activeCardIndex === 0 ? "0%" : "0%", x: activeCardIndex === 0 ? "0%" : "5%",
                 scale: activeCardIndex === 0 ? 1 : 0.95,
                 opacity: activeCardIndex === 0 ? 1 : 0.6,
                 filter: activeCardIndex === 0 ? "brightness(1)" : "brightness(0.7)",
@@ -154,10 +209,10 @@ export function CopiedPricing({ id }: { id?: string }) {
               {/* File Divider Ear */}
               <div className="absolute -left-12 top-16 hidden lg:flex">
                 <div onClick={() => setActiveCardIndex(0)} className={`border border-r-0 border-zinc-800 dark:border-zinc-200 rounded-l-xl py-8 w-12 shadow-[-10px_0_15px_-3px_rgba(0,0,0,0.3)] transition-colors duration-300 flex items-center justify-center ${activeCardIndex === 0 ? 'bg-zinc-900 dark:bg-white z-20' : 'bg-zinc-800 dark:bg-zinc-100 cursor-pointer z-0'}`}>
-                  <span className={`font-bold text-sm -rotate-90 whitespace-nowrap tracking-widest ${activeCardIndex === 0 ? 'text-white dark:text-zinc-900' : 'text-zinc-400 dark:text-zinc-600'}`}>AI Subscriptions</span>
+                  <span className={`font-bold text-sm -rotate-90 whitespace-nowrap tracking-widest ${activeCardIndex === 0 ? 'text-white dark:text-zinc-900' : 'text-zinc-400 dark:text-zinc-600'}`}>AI</span>
                 </div>
               </div>
-              <div className="w-full flex flex-col rounded-[2rem] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 p-6 md:p-8 md:px-12 relative overflow-hidden shadow-2xl border border-zinc-800 dark:border-zinc-200 h-full hover:border-zinc-700 dark:hover:border-zinc-300 transition-colors duration-300 z-10">
+              <div className="w-[320px] md:w-[380px] flex flex-col rounded-[2rem] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 p-6 md:p-8 md:px-12 relative overflow-hidden shadow-2xl border border-zinc-800 dark:border-zinc-200 h-full hover:border-zinc-700 dark:hover:border-zinc-300 transition-colors duration-300 z-10">
                 {activeCardIndex !== 0 && (
                   <div className="absolute inset-0 bg-black/40 dark:bg-white/40 z-50 rounded-[2rem] pointer-events-none" />
                 )}
