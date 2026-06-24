@@ -1,5 +1,6 @@
-"use client";
+﻿"use client";
 
+import { PLATFORM_NAME } from "@/app/config/platform";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -11,7 +12,7 @@ interface Section {
 const SECTIONS: Section[] = [
   { id: "hero", label: "Hero" },
   { id: "extension", label: "Chrome Extension" },
-  { id: "chat", label: "{{platform}} Chat" },
+  { id: `chat", label: "${PLATFORM_NAME} Chat` },
   { id: "projects", label: "Projects" },
   { id: "crafts", label: "Crafts" },
   { id: "research", label: "Research Machine" },
@@ -94,3 +95,4 @@ export function FloatingNav() {
     </div>
   );
 }
+
