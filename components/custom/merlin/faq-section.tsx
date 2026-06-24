@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
+import { PLATFORM_NAME } from "@/app/config/platform";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Simple custom icons instead of missing lucide-react ones
@@ -14,44 +15,44 @@ const MinusIcon = ({ className }: { className?: string }) => (
 
 const FAQS = [
   {
-    question: "What is {{platform}} AI?",
-    answer: "{{platform}} is an AI Chrome Extension and web app that works as your AI-powered assistant, saving you time and money. It provides top AI models such as ChatGPT, GPT 4 , Claude, Deepseek V3, Opus, Llama, Mistral etc. to generate AI responses on Google Search, summaries for YouTube videos, blogs, documents (PDF or PPT), social media posts and replies to comments on LinkedIn, Twitter and Gmail. {{platform}} also translates into more than twenty-five languages."
+    question: `What is ${PLATFORM_NAME} AI?`,
+    answer: `${PLATFORM_NAME} is an AI Chrome Extension and web app that works as your AI-powered assistant, saving you time and money. It provides top AI models such as ChatGPT, GPT 4 , Claude, Deepseek V3, Opus, Llama, Mistral etc. to generate AI responses on Google Search, summaries for YouTube videos, blogs, documents (PDF or PPT), social media posts and replies to comments on LinkedIn, Twitter and Gmail. ${PLATFORM_NAME} also translates into more than twenty-five languages.`
   },
   {
-    question: "How does {{platform}} AI Chrome Extension work?",
-    answer: "Once installed as a Chrome Extension on the browser, you can open {{platform}} AI Chatbot on any website using the shortcut: Ctrl/⌘+M. On specific websites such as Twitter (now X), LinkedIn, YouTube and Gmail, you would find {{platform}} buttons for easy access."
+    question: `How does ${PLATFORM_NAME} AI Chrome Extension work?`,
+    answer: `Once installed as a Chrome Extension on the browser, you can open ${PLATFORM_NAME} AI Chatbot on any website using the shortcut: Ctrl/âŒ˜+M. On specific websites such as Twitter (now X), LinkedIn, YouTube and Gmail, you would find ${PLATFORM_NAME} buttons for easy access.`
   },
   {
-    question: "What is the difference between {{platform}} Teams and {{platform}} Pro plans?",
-    answer: "On {{platform}} Teams, you can buy a plan for your team of 5 or above and pay per team member. This means teams can save costs by distributing costs across users. Whereas {{platform}} Pro plans are ideal for individual users who prefer unlimited queries and don’t want to be limited in their daily use."
+    question: `What is the difference between ${PLATFORM_NAME} Teams and ${PLATFORM_NAME} Pro plans?`,
+    answer: `On ${PLATFORM_NAME} Teams, you can buy a plan for your team of 5 or above and pay per team member. This means teams can save costs by distributing costs across users. Whereas ${PLATFORM_NAME} Pro plans are ideal for individual users who prefer unlimited queries and donâ€™t want to be limited in their daily use.`
   },
   {
-    question: "Is {{platform}} AI free to use?",
-    answer: "Yes, {{platform}} AI is FREE and safe to use. All free users get 102 free queries credited to their account everyday. These queries can be used by the user to run multiple AI models such as GPT 3.5, GPT 4, Claude , Opus, Mistral, Gemini etc. {{platform}} consume 30 queries when user ask {{platform}} anything using GPT 4, Gemini 1.5, Mistral large model whereas GPT 3.5, Gemini, Claude 3 Haiku etc. model consume only 1 query."
+    question: `Is ${PLATFORM_NAME} AI free to use?`,
+    answer: `Yes, ${PLATFORM_NAME} AI is FREE and safe to use. All free users get 102 free queries credited to their account everyday. These queries can be used by the user to run multiple AI models such as GPT 3.5, GPT 4, Claude , Opus, Mistral, Gemini etc. ${PLATFORM_NAME} consume 30 queries when user ask ${PLATFORM_NAME} anything using GPT 4, Gemini 1.5, Mistral large model whereas GPT 3.5, Gemini, Claude 3 Haiku etc. model consume only 1 query.`
   },
   {
     question: "Do I need ChatGPT or Claude or Gemini or Llama account?",
-    answer: "No, you will not need separate accounts to use top AI models such as ChatGPT or Claude or Mistral or Llama. You can create a free account at get{{platform}}.in and get access to all top models through a single account."
+    answer: `No, you will not need separate accounts to use top AI models such as ChatGPT or Claude or Mistral or Llama. You can create a free account at get${PLATFORM_NAME}.in and get access to all top models through a single account.`
   },
   {
-    question: "Which search engine is supported by {{platform}}?",
-    answer: "{{platform}} currently supports Google, Baidu, Bing, DuckDuckGo, Yahoo, and Yandex."
+    question: `Which search engine is supported by ${PLATFORM_NAME}?`,
+    answer: `${PLATFORM_NAME} currently supports Google, Baidu, Bing, DuckDuckGo, Yahoo, and Yandex.`
   },
   {
-    question: "How do I install {{platform}} in my browser?",
-    answer: "To install {{platform}} on your browser, you will need to follow these steps: 1. In your browser open the browser's app store or Google Chrome store 2. Search for the {{platform}} extension in the chrome store 3. Click on the 'Add to Browser' or 'Install' button to begin the installation process. 4. Once the installation is complete, you will be redirected to our onboarding page 5. That’s it! viola! You are done :) . Please pin the extension for easy access."
+    question: `How do I install ${PLATFORM_NAME} in my browser?`,
+    answer: `To install ${PLATFORM_NAME} on your browser, you will need to follow these steps: 1. In your browser open the browser's app store or Google Chrome store 2. Search for the ${PLATFORM_NAME} extension in the chrome store 3. Click on the 'Add to Browser' or 'Install' button to begin the installation process. 4. Once the installation is complete, you will be redirected to our onboarding page 5. Thatâ€™s it! viola! You are done :) . Please pin the extension for easy access.`
   },
   {
-    question: "What counts as a query in {{platform}} search?",
-    answer: "When you ask {{platform}} anything and click enter that's called one query. If you are on the search engine like Google, {{platform}} gives response automatically and that does not count as a query, {{platform}} provides FREE searches on Google."
+    question: `What counts as a query in ${PLATFORM_NAME} search?`,
+    answer: `When you ask ${PLATFORM_NAME} anything and click enter that's called one query. If you are on the search engine like Google, ${PLATFORM_NAME} gives response automatically and that does not count as a query, ${PLATFORM_NAME} provides FREE searches on Google.`
   },
   {
     question: "How do I keep a track of my free queries?",
-    answer: "When you open {{platform}} using Ctrl/⌘+M, you will see your count of queries on the top left corner."
+    answer: `When you open ${PLATFORM_NAME} using Ctrl/âŒ˜+M, you will see your count of queries on the top left corner.`
   },
   {
-    question: "Why {{platform}} is not opening after installation?",
-    answer: "Refresh only the tabs that were already open before installing {{platform}}. But for the new tabs that you open here after installing of {{platform}} there no need to refresh. But as a good practice please do refresh if {{platform}} doesn't come up or certain things are amiss!"
+    question: `Why ${PLATFORM_NAME} is not opening after installation?`,
+    answer: `Refresh only the tabs that were already open before installing ${PLATFORM_NAME}. But for the new tabs that you open here after installing of ${PLATFORM_NAME} there no need to refresh. But as a good practice please do refresh if ${PLATFORM_NAME} doesn't come up or certain things are amiss!`
   }
 ];
 
@@ -68,9 +69,9 @@ export function FaqSection({ id }: { id?: string }) {
          <h2 className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[56px] md:leading-[1.1]">
             Want to know more?
          </h2>
-         <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 max-w-2xl">
-            Here’s a list of FAQs to help you get started!
-         </p>
+          <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 max-w-2xl">
+             Here’s a list of FAQs to help you get started!
+          </p>
       </div>
 
       <div className="mx-auto w-full max-w-4xl px-4 xl:px-0 mt-8">
@@ -116,3 +117,4 @@ export function FaqSection({ id }: { id?: string }) {
     </section>
   );
 }
+
