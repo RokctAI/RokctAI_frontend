@@ -529,7 +529,7 @@ export function Hero({
               {PLATFORM_FEATURES[1]?.active && (
                 <Link
                   href="#"
-                  className="flex items-center gap-3 bg-white dark:bg-zinc-900 text-black dark:text-white px-6 py-3 rounded-xl hover:scale-105 transition-all shadow-md border border-zinc-100 dark:border-zinc-800 active:scale-95"
+                  className="flex items-center gap-0 md:gap-3 bg-white dark:bg-zinc-900 text-black dark:text-white px-3 py-3 md:px-6 rounded-xl hover:scale-105 transition-all shadow-md border border-zinc-100 dark:border-zinc-800 active:scale-95"
                 >
                   <Image
                     src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
@@ -537,7 +537,7 @@ export function Hero({
                     width={24}
                     height={24}
                   />
-                  <div className="flex flex-col items-start leading-none">
+                  <div className="hidden md:flex flex-col items-start leading-none">
                     <span className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Available in the</span>
                     <span className="text-base font-bold">Chrome Web Store</span>
                   </div>
@@ -546,34 +546,34 @@ export function Hero({
 
               {PLATFORM_FEATURES[3]?.active && (
                 <>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-3 bg-white dark:bg-zinc-900 text-black dark:text-white px-6 py-3 rounded-xl hover:scale-105 transition-all shadow-md border border-zinc-100 dark:border-zinc-800 active:scale-95"
-                  >
-                    <Image
-                      src="https://cdn.getmerlin.in/cms/Google_Play_logo_64f9907f74.svg"
-                      alt="Google Play"
-                      width={24}
-                      height={24}
-                    />
-                    <div className="flex flex-col items-start leading-none">
-                      <span className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">GET IT ON</span>
-                      <span className="text-base font-bold">Google Play</span>
-                    </div>
-                  </Link>
+                   <Link
+                     href="#"
+                     className="flex items-center gap-0 md:gap-3 bg-white dark:bg-zinc-900 text-black dark:text-white px-3 py-3 md:px-6 rounded-xl hover:scale-105 transition-all shadow-md border border-zinc-100 dark:border-zinc-800 active:scale-95"
+                   >
+                     <Image
+                       src="https://cdn.getmerlin.in/cms/Google_Play_logo_64f9907f74.svg"
+                       alt="Google Play"
+                       width={24}
+                       height={24}
+                     />
+                     <div className="hidden md:flex flex-col items-start leading-none">
+                       <span className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">GET IT ON</span>
+                       <span className="text-base font-bold">Google Play</span>
+                     </div>
+                   </Link>
 
-                  <Link
-                    href="#"
-                    className="flex items-center gap-3 bg-white dark:bg-zinc-900 text-black dark:text-white px-6 py-3 rounded-xl hover:scale-105 transition-all shadow-md border border-zinc-100 dark:border-zinc-800 active:scale-95"
-                  >
-                    <svg viewBox="0 0 384 512" fill="currentColor" className="w-7 h-7">
-                      <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-31.4-73.3-114.8-1.7-152zM219 114.4c15.7-20 26.2-47.6 23.3-75.1-23.3 1-51.2 15.5-67.9 35.1-14.9 17.5-27.1 46-24.2 72.3 25.4 2 51.1-12.3 68.8-32.3z" />
-                    </svg>
-                    <div className="flex flex-col items-start leading-none">
-                      <span className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Download on the</span>
-                      <span className="text-base font-bold">App Store</span>
-                    </div>
-                  </Link>
+                   <Link
+                     href="#"
+                     className="flex items-center gap-0 md:gap-3 bg-white dark:bg-zinc-900 text-black dark:text-white px-3 py-3 md:px-6 rounded-xl hover:scale-105 transition-all shadow-md border border-zinc-100 dark:border-zinc-800 active:scale-95"
+                   >
+                     <svg viewBox="0 0 384 512" fill="currentColor" className="w-7 h-7">
+                       <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-31.4-73.3-114.8-1.7-152zM219 114.4c15.7-20 26.2-47.6 23.3-75.1-23.3 1-51.2 15.5-67.9 35.1-14.9 17.5-27.1 46-24.2 72.3 25.4 2 51.1-12.3 68.8-32.3z" />
+                     </svg>
+                     <div className="hidden md:flex flex-col items-start leading-none">
+                       <span className="text-[10px] uppercase font-bold text-gray-500 mb-0.5">Download on the</span>
+                       <span className="text-base font-bold">App Store</span>
+                     </div>
+                   </Link>
                 </>
               )}
             </div>
