@@ -7,6 +7,7 @@ import { Logos } from "@/components/custom/logos";
 import { Pricing } from "@/components/custom/pricing";
 import { CopiedPricing } from "@/components/custom/copied-pricing";
 import { Features } from "@/components/custom/features";
+import { AIModels } from "@/components/custom/ai-models";
 import { FloatingNav } from "@/components/custom/floating-nav";
 import { ExtensionSection } from "@/components/custom/merlin/extension-section";
 import { ChatSection } from "@/components/custom/merlin/chat-section";
@@ -15,6 +16,7 @@ import { SecuritySection } from "@/components/custom/merlin/security-section";
 import { DevicesSection } from "@/components/custom/merlin/devices-section";
 import { WorkflowSection } from "@/components/custom/merlin/workflow-section";
 import { FaqSection } from "@/components/custom/merlin/faq-section";
+import { TestimonialsSection } from "@/components/custom/merlin/testimonials-section";
 import { useState } from "react";
 
 export function LandingContent({ plans, session }: { plans: any[], session?: any }) {
@@ -59,6 +61,8 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
         />
         
         <CopiedPricing id="pricing" />
+
+        <TestimonialsSection id="testimonials" />
 
         <FaqSection id="faq" />
 
