@@ -20,7 +20,7 @@ const fetchFromGitHub = unstable_cache(
       const raw = await res.json();
       const list: any[] = Array.isArray(raw) ? raw : (raw.data ?? []);
       return list.map((item: any) => ({
-        title:        item.title        ?? "",
+        title:        cleanTitle(item.title        ?? ""),
         slug:         item.slug         ?? item.title?.toLowerCase().replace(/\s+/g, "-") ?? "",
         institution:  item.institution  ?? item.organization ?? "",
         organization: item.organization ?? item.institution  ?? "",
@@ -37,13 +37,33 @@ const fetchFromGitHub = unstable_cache(
   { revalidate: 86400, tags: ["opportunities"] },
 );
 
+function cleanTitle(title: string): string {
+  return title.replace(/^Tender Opportunity:\s*/i, "Tender: ").replace(/^Grant Opportunity:\s*/i, "Grant: ").replace(/^Equity Opportunity:\s*/i, "Equity: ");
+}
+
 // ─── Case-insensitive in-memory search ───────────────────────────────────────
+function parseDate(dateStr: string): Date | null {
+  if (!dateStr) return null;
+  
+  // Handle DD-MM-YYYY or DD/MM/YYYY
+  const dmyRegex = /^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/;
+  const match = dateStr.match(dmyRegex);
+  if (match) {
+    const [_, day, month, year] = match;
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  }
+  
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 function filterExpired(items: Opportunity[]): Opportunity[] {
   const now = new Date();
   return items.filter((o) => {
     const dateStr = o.deadline || o.closing_date;
-    if (!dateStr) return true;
-    return new Date(dateStr) >= now;
+    const date = parseDate(dateStr);
+    if (!date) return true;
+    return date >= now;
   });
 }
 
