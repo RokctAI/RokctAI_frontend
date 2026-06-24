@@ -23,6 +23,7 @@ const SECTIONS: Section[] = [
   { id: "workflow", label: "Workflow" },
   { id: "ai-models", label: "AI Models" },
   { id: "pricing", label: "Pricing" },
+  { id: "testimonials", label: "Testimonials" },
   { id: "faq", label: "FAQ" },
   { id: "footer", label: "Footer" },
 ];
@@ -95,4 +96,3 @@ export function FloatingNav() {
     </div>
   );
 }
-
