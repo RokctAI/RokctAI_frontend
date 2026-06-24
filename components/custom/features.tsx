@@ -1,5 +1,6 @@
-"use client";
+﻿"use client";
 
+import { PLATFORM_NAME } from "@/app/config/platform";
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -9,10 +10,10 @@ const features = [
     title: "One-click answers in realtime",
     description: "Get context from wherever you are, and just ask with one click.",
     image: "https://cdn.getmerlin.in/cms/Webpage_b52be8433e.webp",
-    tag: "{{platform}} Chrome Extension"
+    tag: `${PLATFORM_NAME} Chrome Extension`
   },
   {
-    title: "Don’t switch tabs. Just ask",
+    title: "Donâ€™t switch tabs. Just ask",
     description: "Summarize, search, repurpose and create content out of any website you visit.",
     image: "https://cdn.getmerlin.in/cms/image_5_a028a37070.webp",
     tag: "Efficiency"
@@ -25,7 +26,7 @@ const features = [
   },
   {
     title: "Add context with...anything",
-    description: "Writing a contract or making a quiz? Just upload guidebooks or lecture PDFs, let {{platform}} learn from them and respond.",
+    description: `Writing a contract or making a quiz? Just upload guidebooks or lecture PDFs, let ${PLATFORM_NAME} learn from them and respond.`,
     image: "https://cdn.getmerlin.in/cms/image_7_f6eefa4244.webp",
     tag: "Knowledge Base"
   },
@@ -66,7 +67,7 @@ export function Features({ id }: { id?: string }) {
                 <div className="pt-4">
                   <button className="text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-2 group">
                     Learn more
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                    <span className="group-hover:translate-x-1 transition-transform">â†’</span>
                   </button>
                 </div>
               </div>
@@ -90,3 +91,4 @@ export function Features({ id }: { id?: string }) {
     </section>
   );
 }
+
