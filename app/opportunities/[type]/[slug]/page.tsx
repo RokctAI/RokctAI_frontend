@@ -36,6 +36,16 @@ function Field({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
+function isValidPhone(phone: string | null | undefined): boolean {
+  if (!phone) return false;
+  const trimmed = phone.trim();
+  if (!trimmed) return false;
+  if (trimmed.includes("## Source")) return false;
+  // Check if it's just zeros
+  if (/^0+$/.test(trimmed.replace(/[\s\-\(\)]/g, ""))) return false;
+  return true;
+}
+
 export default async function OpportunityDetailPage({
   params,
 }: {
@@ -55,7 +65,7 @@ export default async function OpportunityDetailPage({
   const province    = opp.province ?? opp.territory ?? opp.country ?? null;
   const contact     = opp.contact_person ?? null;
   const email       = opp.email ?? null;
-  const phone       = opp.phone ?? opp.telephone ?? null;
+  const phone       = isValidPhone(opp.phone ?? opp.telephone) ? (opp.phone ?? opp.telephone) : null;
   const website     = opp.website ?? opp.applying_link ?? opp.direct_link ?? null;
   const notes       = opp.notes ?? null;
   const status      = opp.status ?? null;
