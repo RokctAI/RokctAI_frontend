@@ -47,7 +47,8 @@ export function ChatSection({ id }: { id?: string }) {
             <div className="flex w-[326px] flex-col gap-4">
               <div className="relative h-[366px] w-full overflow-hidden rounded-lg">
                 <Image
-                  src="https://cdn.getmerlin.in/cms/projects_33be20ddec.webp"
+                  unoptimized
+                  src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=600&auto=format&fit=crop"
                   alt="Projects"
                   fill
                   className="rounded-lg object-cover transition-opacity duration-300 ease-in-out opacity-100 group-hover:opacity-90"
@@ -76,7 +77,8 @@ export function ChatSection({ id }: { id?: string }) {
             <div className="flex w-[326px] flex-col gap-4">
               <div className="relative h-[366px] w-full overflow-hidden rounded-lg">
                 <Image
-                  src="https://cdn.getmerlin.in/cms/infog_a09cbff947.webp"
+                  unoptimized
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&auto=format&fit=crop"
                   alt="Infographics"
                   fill
                   className="rounded-lg object-cover transition-opacity duration-300 ease-in-out opacity-100 group-hover:opacity-90"
@@ -105,7 +107,8 @@ export function ChatSection({ id }: { id?: string }) {
             <div className="flex w-[326px] flex-col gap-4">
               <div className="relative h-[366px] w-full overflow-hidden rounded-lg">
                 <Image
-                  src="https://cdn.getmerlin.in/cms/appsnip_0edfd396f9.webp"
+                  unoptimized
+                  src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop"
                   alt="App snippets"
                   fill
                   className="rounded-lg object-cover transition-opacity duration-300 ease-in-out opacity-100 group-hover:opacity-90"
@@ -134,7 +137,8 @@ export function ChatSection({ id }: { id?: string }) {
             <div className="flex w-[326px] flex-col gap-4">
               <div className="relative h-[366px] w-full overflow-hidden rounded-lg">
                 <Image
-                  src="https://cdn.getmerlin.in/cms/o1_cfad888c7c.webp"
+                  unoptimized
+                  src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=600&auto=format&fit=crop"
                   alt="o1 model"
                   fill
                   className="rounded-lg object-cover transition-opacity duration-300 ease-in-out opacity-100 group-hover:opacity-90"
