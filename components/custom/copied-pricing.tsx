@@ -35,10 +35,10 @@ export function CopiedPricing({ id }: { id?: string }) {
           </p>
         </div>
 
-        <div className="relative min-h-[600px] max-w-4xl mx-auto flex">
+        <div className="relative min-h-[500px] max-w-4xl mx-auto flex">
           
           {/* Deck of Cards Container */}
-          <div className="flex-1 relative h-[650px] lg:h-[600px] w-full">
+           <div className="flex-1 relative h-[550px] lg:h-[500px] w-full">
             
             {/* OTHER TOOLS CARD */}
             <motion.div 
@@ -62,7 +62,7 @@ export function CopiedPricing({ id }: { id?: string }) {
                   <span className={`font-bold text-sm -rotate-90 whitespace-nowrap tracking-widest ${activeCardIndex === 1 ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'}`}>Others</span>
                 </div>
               </div>
-              <div className="w-[320px] md:w-[380px] flex flex-col rounded-[2rem] bg-white dark:bg-[#111] border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 md:px-12 shadow-2xl transition-colors duration-300 relative overflow-hidden h-full hover:border-zinc-300 dark:hover:border-zinc-700 z-10">
+               <div className="w-[280px] md:w-[340px] flex flex-col rounded-[2rem] bg-white dark:bg-[#111] border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 md:px-12 shadow-2xl transition-colors duration-300 relative overflow-hidden h-full hover:border-zinc-300 dark:hover:border-zinc-700 z-10">
                 {activeCardIndex !== 1 && (
                   <div className="absolute inset-0 bg-white/40 dark:bg-black/40 z-50 rounded-[2rem] pointer-events-none" />
                 )}
@@ -151,7 +151,7 @@ export function CopiedPricing({ id }: { id?: string }) {
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               style={{ perspective: 1000 }}
             >
-              <div className="w-[320px] md:w-[380px] flex flex-col rounded-[2rem] bg-zinc-50 dark:bg-[#1a1a1a] border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 md:px-12 shadow-xl transition-colors duration-300 relative overflow-hidden h-full z-10">
+               <div className="w-[280px] md:w-[340px] flex flex-col rounded-[2rem] bg-zinc-50 dark:bg-[#1a1a1a] border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 md:px-12 shadow-xl transition-colors duration-300 relative overflow-hidden h-full z-10">
                 {activeCardIndex !== 1 && (
                   <div className="absolute inset-0 bg-white/40 dark:bg-black/40 z-50 rounded-[2rem] pointer-events-none" />
                 )}
@@ -213,7 +213,7 @@ export function CopiedPricing({ id }: { id?: string }) {
                   <span className={`font-bold text-sm -rotate-90 whitespace-nowrap tracking-widest ${activeCardIndex === 0 ? 'text-white dark:text-zinc-900' : 'text-zinc-400 dark:text-zinc-600'}`}>AI</span>
                 </div>
               </div>
-              <div className="w-[320px] md:w-[380px] flex flex-col rounded-[2rem] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 p-6 md:p-8 md:px-12 relative overflow-hidden shadow-2xl border border-zinc-800 dark:border-zinc-200 h-full hover:border-zinc-700 dark:hover:border-zinc-300 transition-colors duration-300 z-10">
+               <div className="w-[280px] md:w-[340px] flex flex-col rounded-[2rem] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 p-6 md:p-8 md:px-12 relative overflow-hidden shadow-2xl border border-zinc-800 dark:border-zinc-200 h-full hover:border-zinc-700 dark:hover:border-zinc-300 transition-colors duration-300 z-10">
                 {activeCardIndex !== 0 && (
                   <div className="absolute inset-0 bg-black/40 dark:bg-white/40 z-50 rounded-[2rem] pointer-events-none" />
                 )}
