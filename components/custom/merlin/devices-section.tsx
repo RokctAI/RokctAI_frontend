@@ -8,7 +8,7 @@ import t from "@/app/lib/i18n";
  
 export function DevicesSection({ id }: { id?: string }) {
   return (
-    <section id={id} className="container flex w-full flex-col gap-12 py-24 bg-white dark:bg-black mx-auto overflow-hidden">
+    <section id={id} className="container flex w-full flex-col gap-12 py-12 md:py-20 bg-white dark:bg-black mx-auto overflow-hidden">
       <div className="flex w-full max-w-7xl flex-col items-center gap-12 px-4 xl:px-0 mx-auto md:flex-row md:justify-between">
         <div className="relative w-full md:w-1/2 aspect-[4/3] max-w-xl">
             <Image
