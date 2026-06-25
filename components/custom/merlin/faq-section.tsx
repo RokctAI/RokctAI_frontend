@@ -83,17 +83,17 @@ export function FaqSection({ id }: { id?: string }) {
                   openIndex === index ? 'bg-zinc-50 dark:bg-zinc-900' : 'bg-transparent'
                }`}
             >
-              <button
-                onClick={() => toggleFaq(index)}
-                className="flex w-full items-center justify-between p-6 text-left"
-              >
-                <span className="text-xl font-bold text-zinc-900 dark:text-white pr-8">
-                  {faq.question}
-                </span>
-                <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
-                  {openIndex === index ? <MinusIcon className="w-5 h-5" /> : <PlusIcon className="w-5 h-5" />}
-                </span>
-              </button>
+               <button
+                 onClick={() => toggleFaq(index)}
+                 className="flex w-full items-center justify-between p-4 md:p-6 text-left"
+               >
+                 <span className="text-lg md:text-xl font-bold text-zinc-900 dark:text-white pr-8">
+                   {faq.question}
+                 </span>
+                 <span className="flex-shrink-0 flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
+                   {openIndex === index ? <MinusIcon className="w-4 h-4 md:w-5 md:h-5" /> : <PlusIcon className="w-4 h-4 md:w-5 md:h-5" />}
+                 </span>
+               </button>
 
               <AnimatePresence>
                 {openIndex === index && (
