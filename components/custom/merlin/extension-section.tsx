@@ -46,12 +46,14 @@ export function ExtensionSection({ id }: { id?: string }) {
               </p>
             </div>
             <div className="relative mt-8 h-[200px] w-full md:h-[300px]">
-              <Image
-                src="https://cdn.getmerlin.in/cms/Webpage_b52be8433e.webp"
-                alt="Don't switch tabs"
-                fill
-                className="object-cover object-left-top rounded-tl-xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]"
-              />
+                <Image
+                  unoptimized
+                  referrerPolicy="no-referrer"
+                  src="https://cdn.getmerlin.in/cms/Webpage_b52be8433e.webp"
+                  alt="Don't switch tabs"
+                  fill
+                  className="object-cover object-left-top rounded-tl-xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]"
+                />
             </div>
           </motion.div>
 
@@ -73,11 +75,13 @@ export function ExtensionSection({ id }: { id?: string }) {
             </div>
             <div className="relative mt-8 h-[200px] w-full md:h-[250px]">
                <Image
-                src="https://cdn.getmerlin.in/cms/image_5_a028a37070.webp"
-                alt="Search better"
-                fill
-                className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.05]"
-              />
+                 unoptimized
+                 referrerPolicy="no-referrer"
+                 src="https://cdn.getmerlin.in/cms/image_5_a028a37070.webp"
+                 alt="Search better"
+                 fill
+                 className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.05]"
+               />
             </div>
           </motion.div>
         </div>
@@ -100,11 +104,13 @@ export function ExtensionSection({ id }: { id?: string }) {
             </div>
             <div className="relative mt-8 h-[200px] w-full md:h-[250px]">
                <Image
-                src="https://cdn.getmerlin.in/cms/image_7_f6eefa4244.webp"
-                alt="Add context"
-                fill
-                className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.05]"
-              />
+                 unoptimized
+                 referrerPolicy="no-referrer"
+                 src="https://cdn.getmerlin.in/cms/image_7_f6eefa4244.webp"
+                 alt="Add context"
+                 fill
+                 className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.05]"
+               />
             </div>
           </motion.div>
 
@@ -126,11 +132,13 @@ export function ExtensionSection({ id }: { id?: string }) {
             </div>
             <div className="relative mt-8 h-[200px] w-full md:h-[250px] flex justify-end">
                <Image
-                src="https://cdn.getmerlin.in/cms/image_8_eb258bba3b.webp"
-                alt="Learn smart"
-                fill
-                className="object-contain object-right-bottom transition-transform duration-500 group-hover:scale-[1.05]"
-              />
+                 unoptimized
+                 referrerPolicy="no-referrer"
+                 src="https://cdn.getmerlin.in/cms/image_8_eb258bba3b.webp"
+                 alt="Learn smart"
+                 fill
+                 className="object-contain object-right-bottom transition-transform duration-500 group-hover:scale-[1.05]"
+               />
             </div>
           </motion.div>
         </div>
