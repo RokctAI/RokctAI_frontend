@@ -38,12 +38,14 @@ export function SocialSection({ id }: { id?: string }) {
             className="group relative flex w-full flex-col justify-between overflow-hidden rounded-[24px] bg-[#F3F4F6] dark:bg-zinc-900 md:w-3/5 p-8 md:p-12 min-h-[400px]"
           >
              <div className="relative mb-8 h-[200px] w-full md:h-[250px]">
-              <Image
-                src="https://cdn.getmerlin.in/cms/gmail_ecea349519.webp"
-                alt="Write mails effortlessly"
-                fill
-                className="object-contain object-left-bottom transition-transform duration-500 group-hover:scale-[1.02]"
-              />
+               <Image
+                 unoptimized
+                 referrerPolicy="no-referrer"
+                 src="https://cdn.getmerlin.in/cms/gmail_ecea349519.webp"
+                 alt="Write mails effortlessly"
+                 fill
+                 className="object-contain object-left-bottom transition-transform duration-500 group-hover:scale-[1.02]"
+               />
             </div>
             <div className="flex flex-col gap-4 z-10 max-w-md">
               <h3 className="text-2xl font-bold text-zinc-900 dark:text-white md:text-[32px] leading-tight">
@@ -64,12 +66,14 @@ export function SocialSection({ id }: { id?: string }) {
             className="group relative flex w-full flex-col justify-between overflow-hidden rounded-[24px] bg-[#EFF6FF] dark:bg-blue-950/20 md:w-2/5 p-8 md:p-12 min-h-[400px]"
           >
             <div className="relative mb-8 h-[200px] w-full md:h-[250px]">
-               <Image
-                src="https://cdn.getmerlin.in/cms/social_media_a521fbf4cc.webp"
-                alt="Draft posts"
-                fill
-                className="object-contain object-center transition-transform duration-500 group-hover:scale-[1.05]"
-              />
+                <Image
+                  unoptimized
+                  referrerPolicy="no-referrer"
+                  src="https://cdn.getmerlin.in/cms/social_media_a521fbf4cc.webp"
+                  alt="Draft posts"
+                  fill
+                  className="object-contain object-center transition-transform duration-500 group-hover:scale-[1.05]"
+                />
             </div>
             <div className="flex flex-col gap-4 z-10">
               <h3 className="text-2xl font-bold text-zinc-900 dark:text-white md:text-[32px] leading-tight">
@@ -91,12 +95,14 @@ export function SocialSection({ id }: { id?: string }) {
             className="group relative flex w-full flex-col justify-between overflow-hidden rounded-[24px] bg-[#FEF2F2] dark:bg-red-950/20 md:w-2/5 p-8 md:p-12 min-h-[400px]"
           >
             <div className="relative mb-8 h-[200px] w-full md:h-[250px]">
-               <Image
-                src="https://cdn.getmerlin.in/cms/content_from_vid_336ec65ad8.webp"
-                alt="Create content from videos"
-                fill
-                className="object-contain object-center transition-transform duration-500 group-hover:scale-[1.05]"
-              />
+                <Image
+                  unoptimized
+                  referrerPolicy="no-referrer"
+                  src="https://cdn.getmerlin.in/cms/content_from_vid_336ec65ad8.webp"
+                  alt="Create content from videos"
+                  fill
+                  className="object-contain object-center transition-transform duration-500 group-hover:scale-[1.05]"
+                />
             </div>
              <div className="flex flex-col gap-4 z-10">
               <h3 className="text-2xl font-bold text-zinc-900 dark:text-white md:text-[32px] leading-tight">
@@ -117,12 +123,14 @@ export function SocialSection({ id }: { id?: string }) {
             className="group relative flex w-full flex-col justify-between overflow-hidden rounded-[24px] bg-[#FAF5FF] dark:bg-fuchsia-950/20 md:w-3/5 p-8 md:p-12 min-h-[400px]"
           >
             <div className="relative mb-8 h-[200px] w-full md:h-[250px] flex justify-end">
-               <Image
-                src="https://cdn.getmerlin.in/cms/image_gen_21ee18a2ef.webp"
-                alt="Get the perfect poster image"
-                fill
-                className="object-contain object-right-bottom transition-transform duration-500 group-hover:scale-[1.05]"
-              />
+                <Image
+                  unoptimized
+                  referrerPolicy="no-referrer"
+                  src="https://cdn.getmerlin.in/cms/image_gen_21ee18a2ef.webp"
+                  alt="Get the perfect poster image"
+                  fill
+                  className="object-contain object-right-bottom transition-transform duration-500 group-hover:scale-[1.05]"
+                />
             </div>
              <div className="flex flex-col gap-4 z-10 max-w-md">
               <h3 className="text-2xl font-bold text-zinc-900 dark:text-white md:text-[32px] leading-tight">
