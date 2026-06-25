@@ -71,12 +71,14 @@ export function AllFeaturesSection({ id }: { id?: string }) {
                   className="group relative flex h-[200px] w-full flex-col justify-end overflow-hidden rounded-3xl bg-zinc-100 dark:bg-zinc-900 shadow-sm transition-all hover:shadow-lg"
                >
                   <div className="absolute inset-0 z-0">
-                     <Image
-                        src={feature.image}
-                        alt={feature.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                     />
+                      <Image
+                         unoptimized
+                         referrerPolicy="no-referrer"
+                         src={feature.image}
+                         alt={feature.title}
+                         fill
+                         className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                   </div>
                   <div className="relative z-10 flex w-full items-end justify-between p-6">
