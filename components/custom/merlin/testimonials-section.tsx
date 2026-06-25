@@ -76,7 +76,7 @@ export function TestimonialsSection({ id }: { id?: string }) {
   const repeatedTestimonials = [...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS];
 
   return (
-    <section id={id} className="w-full bg-[#fafafa] dark:bg-black py-16 md:py-24 overflow-hidden relative border-t border-zinc-200 dark:border-zinc-900 mt-12 md:mt-24">
+    <section id={id} className="w-full bg-[#fafafa] dark:bg-black py-12 md:py-20 overflow-hidden relative border-t border-zinc-200 dark:border-zinc-900 mt-12 md:mt-24">
 
       <div className="relative flex w-full overflow-hidden py-4 group">
         {/* Gradient fades for edges */}
