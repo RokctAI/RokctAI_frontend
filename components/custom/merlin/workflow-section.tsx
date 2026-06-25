@@ -74,7 +74,7 @@ export function WorkflowSection({ id }: { id?: string }) {
   const [activeTab, setActiveTab] = useState(WORKFLOWS[0].id);
 
   return (
-    <section id={id} className="container flex w-full flex-col gap-12 py-24 bg-white dark:bg-black mx-auto">
+    <section id={id} className="container flex w-full flex-col gap-12 py-12 md:py-20 bg-white dark:bg-black mx-auto">
       <div className="flex w-full flex-col items-center justify-center gap-6 px-4 text-center">
          <h2 className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[56px] md:leading-[1.1]">
             Your workflow, our magic
