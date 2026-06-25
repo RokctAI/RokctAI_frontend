@@ -36,13 +36,13 @@ export function ChatSection({ id }: { id?: string }) {
       </div>
 
       <div className="relative flex items-center justify-center w-full max-w-[1400px] mt-8 px-4 xl:px-0">
-        <div className="flex w-full flex-wrap justify-center gap-8 lg:gap-6 xl:gap-8">
+        <div className="flex w-full flex-nowrap overflow-x-auto justify-start md:justify-center gap-8 lg:gap-6 xl:gap-8 pb-6 scrollbar-hide">
           {/* Card 1 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="min-w-0 shrink-0 grow-0 basis-full md:basis-[45%] lg:basis-[28%] flex justify-center p-0"
+            className="shrink-0 w-[280px] flex justify-center p-0"
           >
             <div className="flex w-[280px] flex-col gap-4">
               <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
@@ -72,7 +72,7 @@ export function ChatSection({ id }: { id?: string }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="min-w-0 shrink-0 grow-0 basis-full md:basis-[45%] lg:basis-[28%] flex justify-center p-0"
+            className="shrink-0 w-[280px] flex justify-center p-0"
           >
             <div className="flex w-[280px] flex-col gap-4">
               <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
@@ -102,7 +102,7 @@ export function ChatSection({ id }: { id?: string }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="min-w-0 shrink-0 grow-0 basis-full md:basis-[45%] lg:basis-[28%] flex justify-center p-0"
+            className="shrink-0 w-[280px] flex justify-center p-0"
           >
             <div className="flex w-[280px] flex-col gap-4">
               <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
@@ -132,7 +132,7 @@ export function ChatSection({ id }: { id?: string }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="min-w-0 shrink-0 grow-0 basis-full md:basis-[45%] lg:basis-[28%] flex justify-center p-0"
+            className="shrink-0 w-[280px] flex justify-center p-0"
           >
             <div className="flex w-[280px] flex-col gap-4">
               <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
