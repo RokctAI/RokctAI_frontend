@@ -11,12 +11,14 @@ export function DevicesSection({ id }: { id?: string }) {
     <section id={id} className="container flex w-full flex-col gap-12 py-24 bg-white dark:bg-black mx-auto overflow-hidden">
       <div className="flex w-full max-w-7xl flex-col items-center gap-12 px-4 xl:px-0 mx-auto md:flex-row md:justify-between">
         <div className="relative w-full md:w-1/2 aspect-[4/3] max-w-xl">
-           <Image
-              src="https://cdn.getmerlin.in/cms/image_ce68ee704e.webp"
-              alt="floating macbook"
-              fill
-              className="object-contain"
-           />
+            <Image
+               unoptimized
+               referrerPolicy="no-referrer"
+               src="https://cdn.getmerlin.in/cms/image_ce68ee704e.webp"
+               alt="floating macbook"
+               fill
+               className="object-contain"
+            />
         </div>
 
         <div className="flex w-full md:w-1/2 flex-col gap-8 md:pl-12">
