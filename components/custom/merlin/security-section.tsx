@@ -90,12 +90,14 @@ export function SecuritySection({ id }: { id?: string }) {
               </p>
             </div>
             <div className="relative mt-8 md:mt-0 h-[250px] md:h-[300px] w-full md:w-1/2">
-              <Image
-                src="https://cdn.getmerlin.in/cms/Frame_1321318025_1_81fb6cae7e.png"
-                alt="Custom bots"
-                fill
-                className="object-contain object-right-bottom transition-transform duration-500 group-hover:scale-[1.02]"
-              />
+               <Image
+                 src="https://cdn.getmerlin.in/cms/Frame_1321318025_1_81fb6cae7e.png"
+                 alt="Custom bots"
+                 unoptimized
+                 referrerPolicy="no-referrer"
+                 fill
+                 className="object-contain object-right-bottom transition-transform duration-500 group-hover:scale-[1.02]"
+               />
             </div>
         </motion.div>
       </div>
