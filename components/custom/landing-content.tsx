@@ -6,16 +6,16 @@ import { Hero } from "@/components/custom/hero";
 import { Logos } from "@/components/custom/logos";
 import { Pricing } from "@/components/custom/pricing";
 import { CopiedPricing } from "@/components/custom/copied-pricing";
-import { Features } from "@/components/custom/merlin/features";
+import { Features } from "@/components/custom/features";
 import { FloatingNav } from "@/components/custom/floating-nav";
-import { ExtensionSection } from "@/components/custom/merlin/extension-section";
-import { ChatSection } from "@/components/custom/merlin/chat-section";
-import { SocialSection } from "@/components/custom/merlin/social-section";
-import { SecuritySection } from "@/components/custom/merlin/security-section";
-import { DevicesSection } from "@/components/custom/merlin/devices-section";
-import { WorkflowSection } from "@/components/custom/merlin/workflow-section";
-import { FaqSection } from "@/components/custom/merlin/faq-section";
-import { TestimonialsSection } from "@/components/custom/merlin/testimonials-section";
+import { ExtensionSection } from "@/components/custom/extension-section";
+import { ChatSection } from "@/components/custom/chat-section";
+import { SocialSection } from "@/components/custom/social-section";
+import { SecuritySection } from "@/components/custom/security-section";
+import { DevicesSection } from "@/components/custom/devices-section";
+import { WorkflowSection } from "@/components/custom/workflow-section";
+import { FaqSection } from "@/components/custom/faq-section";
+import { TestimonialsSection } from "@/components/custom/testimonials-section";
 import { useState } from "react";
 
 export function LandingContent({ plans, session }: { plans: any[], session?: any }) {
