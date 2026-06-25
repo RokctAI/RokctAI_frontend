@@ -34,12 +34,14 @@ export function SecuritySection({ id }: { id?: string }) {
               </p>
             </div>
             <div className="relative mt-8 h-[250px] w-full">
-              <Image
-                src="https://cdn.getmerlin.in/cms/Frame_1321318025_5_0a00fc2b21.png"
-                alt="Data security"
-                fill
-                className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.02]"
-              />
+               <Image
+                 unoptimized
+                 referrerPolicy="no-referrer"
+                 src="https://cdn.getmerlin.in/cms/Frame_1321318025_5_0a00fc2b21.png"
+                 alt="Data security"
+                 fill
+                 className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.02]"
+               />
             </div>
           </motion.div>
 
@@ -60,12 +62,14 @@ export function SecuritySection({ id }: { id?: string }) {
               </p>
             </div>
             <div className="relative mt-8 h-[250px] w-full">
-              <Image
-                src="https://cdn.getmerlin.in/cms/Frame_1321318025_8_db66981d2c.png"
-                alt="Prompt library"
-                fill
-                className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.02]"
-              />
+               <Image
+                 unoptimized
+                 referrerPolicy="no-referrer"
+                 src="https://cdn.getmerlin.in/cms/Frame_1321318025_8_db66981d2c.png"
+                 alt="Prompt library"
+                 fill
+                 className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.02]"
+               />
             </div>
           </motion.div>
         </div>
