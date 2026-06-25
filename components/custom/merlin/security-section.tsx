@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export function SecuritySection({ id }: { id?: string }) {
   return (
-    <section id={id} className="container flex w-full flex-col gap-12 py-24 bg-white dark:bg-black mx-auto items-center">
+    <section id={id} className="container flex w-full flex-col gap-12 py-12 md:py-20 bg-white dark:bg-black mx-auto items-center">
       <div className="flex w-full max-w-5xl flex-col items-center gap-6 px-4 xl:px-0 text-center">
         <h2 className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[56px] md:leading-[1.1]">
           Secure and customizable
