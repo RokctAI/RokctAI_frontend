@@ -24,7 +24,7 @@ export function CopiedPricing({ id }: { id?: string }) {
   ];
 
   return (
-    <section id={id} className="w-full bg-[#fafafa] dark:bg-black py-16 md:py-24">
+    <section id={id} className="w-full bg-[#fafafa] dark:bg-black py-12 md:py-20">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white max-w-2xl leading-[1.1]">
