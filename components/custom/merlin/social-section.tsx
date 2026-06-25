@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export function SocialSection({ id }: { id?: string }) {
   return (
-    <section id={id} className="container flex w-full flex-col gap-12 py-24 bg-white dark:bg-black mx-auto">
+    <section id={id} className="container flex w-full flex-col gap-12 py-12 md:py-20 bg-white dark:bg-black mx-auto">
       <div className="flex w-full max-w-7xl flex-col justify-between gap-8 px-4 md:flex-row md:items-end xl:px-0 mx-auto">
         <div className="flex flex-col gap-4">
           <p className="font-semibold text-[#4F46E5]">{PLATFORM_NAME} Chrome Extension</p>
