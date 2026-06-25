@@ -8,7 +8,7 @@ import { PLATFORM_NAME } from "@/app/config/platform";
 
 export function ExtensionSection({ id }: { id?: string }) {
   return (
-    <section id={id} className="container flex w-full flex-col gap-16 py-24 bg-white dark:bg-black">
+    <section id={id} className="container flex w-full flex-col gap-16 py-12 md:py-20 bg-white dark:bg-black">
       <div className="flex w-full max-w-7xl flex-col justify-between gap-12 px-4 md:flex-row md:items-end xl:px-0 mx-auto">
         <div className="flex flex-col gap-4">
           <p className="font-semibold text-[#4F46E5]">{PLATFORM_NAME} Chrome Extension</p>
