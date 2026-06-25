@@ -6,7 +6,7 @@ import { Hero } from "@/components/custom/hero";
 import { Logos } from "@/components/custom/logos";
 import { Pricing } from "@/components/custom/pricing";
 import { CopiedPricing } from "@/components/custom/copied-pricing";
-import { Features } from "@/components/custom/features";
+import { Features } from "@/components/custom/merlin/features";
 import { FloatingNav } from "@/components/custom/floating-nav";
 import { ExtensionSection } from "@/components/custom/merlin/extension-section";
 import { ChatSection } from "@/components/custom/merlin/chat-section";
