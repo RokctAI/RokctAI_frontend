@@ -71,13 +71,14 @@ export function Features({ id }: { id?: string }) {
                   {feature.description}
                 </p>
                 <div className="mt-auto relative rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-lg bg-white dark:bg-black">
-                  <Image
-                    src={feature.image}
-                    alt={feature.title}
-                    width={800}
-                    height={600}
-                    className="w-full h-auto transform group-hover:scale-105 transition-transform duration-500"
-                  />
+                    <Image
+                      src={feature.image}
+                      alt={feature.title}
+                      width={800}
+                      height={600}
+                      unoptimized
+                      className="w-full h-auto transform group-hover:scale-105 transition-transform duration-500"
+                    />
                 </div>
               </div>
             </motion.div>
