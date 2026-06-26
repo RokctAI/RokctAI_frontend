@@ -87,6 +87,5 @@ export function Features({ id }: { id?: string }) {
     </section>
   );
 }
-};
 
 
