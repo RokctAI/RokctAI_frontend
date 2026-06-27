@@ -6,7 +6,6 @@ import { Hero } from "@/components/custom/hero";
 import { Logos } from "@/components/custom/logos";
 import { Pricing } from "@/components/custom/pricing";
 import { CopiedPricing } from "@/components/custom/copied-pricing";
-import { Features } from "@/components/custom/features";
 import { FloatingNav } from "@/components/custom/floating-nav";
 import { ExtensionSection } from "@/components/custom/extension-section";
 import { ChatSection } from "@/components/custom/chat-section";
@@ -14,6 +13,7 @@ import { SocialSection } from "@/components/custom/social-section";
 import { SecuritySection } from "@/components/custom/security-section";
 import { DevicesSection } from "@/components/custom/devices-section";
 import { WorkflowSection } from "@/components/custom/workflow-section";
+import { AllFeaturesSection } from "@/components/custom/all-features-section";
 import { FaqSection } from "@/components/custom/faq-section";
 import { TestimonialsSection } from "@/components/custom/testimonials-section";
 import { useState } from "react";
@@ -32,7 +32,6 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
         <div style={{ display: searchActive ? "none" : undefined }}>
         <Logos />
 
-        {/* Sections replacing placeholders */}
         <ExtensionSection id="extension" />
         
         <ChatSection id="chat" />
@@ -43,7 +42,7 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
 
         <SocialSection id="social" />
 
-        <Features id="features" />
+        <AllFeaturesSection id="features" />
 
         <SecuritySection id="security" />
         

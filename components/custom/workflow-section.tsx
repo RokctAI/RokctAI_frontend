@@ -8,6 +8,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
 } from "@/components/ui/carousel";
 
 const WORKFLOWS = [
@@ -121,7 +123,7 @@ export function WorkflowSection({ id }: { id?: string }) {
                 return (
                   <CarouselItem key={index} className="min-w-0 shrink-0 grow-0 basis-full flex justify-center p-0 md:basis-1/2 lg:basis-[28%] pl-4">
                     <div className="group rounded-xl border bg-card text-card-foreground relative h-[441px] w-full max-w-[335px] overflow-hidden transition-all duration-300 ease-in-out shadow hover:shadow-lg">
-
+                      
                       <div className="space-y-1.5 p-6 absolute top-0 z-[1] flex w-full flex-row items-center gap-2 bg-card transition-all duration-500 ease-in-out">
                         <div className={`${workflow.bgColor} flex items-center justify-center rounded-full p-2 transition-transform duration-300 ease-in-out`}>
                           <Icon className="size-5 text-white" aria-hidden="true" />
@@ -155,6 +157,8 @@ export function WorkflowSection({ id }: { id?: string }) {
                 );
               })}
             </CarouselContent>
+            <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 size-12 shadow hover:bg-accent hover:text-accent-foreground hidden lg:flex" />
+            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 size-12 shadow hover:bg-accent hover:text-accent-foreground hidden lg:flex" />
           </Carousel>
         </div>
       </div>

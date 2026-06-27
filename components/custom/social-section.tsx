@@ -1,57 +1,57 @@
-﻿"use client";
+"use client";
 
-import { PLATFORM_NAME } from "@/app/config/platform";
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { PLATFORM_NAME } from "@/app/config/platform";
 
 export function SocialSection({ id }: { id?: string }) {
   return (
-    <section id={id} className="container flex w-full flex-col gap-12 py-12 md:py-20 bg-white dark:bg-black mx-auto">
-      <div className="flex w-full max-w-7xl flex-col justify-between gap-8 px-4 md:flex-row md:items-end xl:px-0 mx-auto">
-        <div className="flex flex-col gap-4">
-          <p className="font-semibold text-[#4F46E5]">{PLATFORM_NAME} Chrome Extension</p>
-          <h2 className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[56px] md:leading-[1.1] max-w-2xl">
-            Stay social, not drained
-          </h2>
-          <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 max-w-xl">
-            With {PLATFORM_NAME}'s Chrome Extension, be digitally present effortlessly. Engage, reach out and express better with the world.
-          </p>
-        </div>
+    <section id={id} className="container flex w-full flex-col gap-12 py-16 mx-auto bg-white dark:bg-black">
+      <div className="flex w-full flex-col items-center justify-center gap-6 px-4 text-center max-w-4xl mx-auto">
+        <span className="inline-flex items-center rounded-md bg-zinc-100 dark:bg-zinc-900 px-3 py-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          {PLATFORM_NAME} Chrome Extension
+        </span>
+        <h2 className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[64px] md:leading-[1.1] tracking-tighter">
+          Stay social, not drained
+        </h2>
+        <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 max-w-3xl leading-relaxed">
+          With {PLATFORM_NAME}'s Chrome Extension, be digitally present effortlessly. Engage, reach out and express better with the world.
+        </p>
         <Link
           href="https://chromewebstore.google.com/detail/merlin-1-click-access-to/camppjleccjaphfdbohjdohecfnoikec"
           target="_blank"
-          className="flex h-fit w-fit items-center justify-center gap-2 rounded-full bg-[#4F46E5] px-6 py-3 text-base font-bold text-white transition-transform hover:scale-105"
+          className="flex h-fit w-fit items-center justify-center gap-2 rounded-full bg-[#4F46E5] px-6 py-3 text-base font-bold text-white transition-transform hover:scale-105 mt-4"
         >
           Start creating for free!
         </Link>
       </div>
 
-      <div className="flex w-full flex-col gap-6 md:gap-8 mx-auto max-w-7xl px-4 xl:px-0">
-        <div className="flex w-full flex-col gap-6 md:flex-row md:gap-8">
+      <div className="mx-auto w-full max-w-7xl px-4 xl:px-0 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Card 1 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="group relative flex w-full flex-col justify-between overflow-hidden rounded-[24px] bg-[#F3F4F6] dark:bg-zinc-900 md:w-3/5 p-8 md:p-12 min-h-[400px]"
+            className="flex flex-col overflow-hidden group"
           >
-             <div className="relative mb-8 h-[200px] w-full md:h-[250px]">
+            <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-[24px] bg-zinc-100 dark:bg-zinc-900">
                <Image
                  unoptimized
                  referrerPolicy="no-referrer"
                  src="https://cdn.getmerlin.in/cms/gmail_ecea349519.webp"
                  alt="Write mails effortlessly"
                  fill
-                 className="object-contain object-left-bottom transition-transform duration-500 group-hover:scale-[1.02]"
+                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                />
             </div>
-            <div className="flex flex-col gap-4 z-10 max-w-md">
-              <h3 className="text-2xl font-bold text-zinc-900 dark:text-white md:text-[32px] leading-tight">
+            <div className="flex flex-col gap-3 pt-6 px-2">
+              <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
                 Write mails effortlessly
               </h3>
-              <p className="text-lg text-zinc-500 dark:text-zinc-400">
+              <p className="text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
                 Compose mails with AI and generate replies in the context of the previous mail.
               </p>
             </div>
@@ -63,52 +63,51 @@ export function SocialSection({ id }: { id?: string }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="group relative flex w-full flex-col justify-between overflow-hidden rounded-[24px] bg-[#EFF6FF] dark:bg-blue-950/20 md:w-2/5 p-8 md:p-12 min-h-[400px]"
+            className="flex flex-col overflow-hidden group"
           >
-            <div className="relative mb-8 h-[200px] w-full md:h-[250px]">
-                <Image
-                  unoptimized
-                  referrerPolicy="no-referrer"
-                  src="https://cdn.getmerlin.in/cms/social_media_a521fbf4cc.webp"
-                  alt="Draft posts"
-                  fill
-                  className="object-contain object-center transition-transform duration-500 group-hover:scale-[1.05]"
-                />
+            <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-[24px] bg-zinc-100 dark:bg-zinc-900">
+               <Image
+                 unoptimized
+                 referrerPolicy="no-referrer"
+                 src="https://cdn.getmerlin.in/cms/social_media_a521fbf4cc.webp"
+                 alt="Draft posts and replies on social media"
+                 fill
+                 className="object-cover transition-transform duration-500 group-hover:scale-105"
+               />
             </div>
-            <div className="flex flex-col gap-4 z-10">
-              <h3 className="text-2xl font-bold text-zinc-900 dark:text-white md:text-[32px] leading-tight">
+            <div className="flex flex-col gap-3 pt-6 px-2">
+              <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
                 Draft posts and replies on social media
               </h3>
-              <p className="text-lg text-zinc-500 dark:text-zinc-400">
+              <p className="text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
                 Generate with prompts and save them for repeated use. Engagement on top.
               </p>
             </div>
           </motion.div>
-        </div>
 
-        <div className="flex w-full flex-col gap-6 md:flex-row md:gap-8">
           {/* Card 3 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="group relative flex w-full flex-col justify-between overflow-hidden rounded-[24px] bg-[#FEF2F2] dark:bg-red-950/20 md:w-2/5 p-8 md:p-12 min-h-[400px]"
+            transition={{ delay: 0.2 }}
+            className="flex flex-col overflow-hidden group"
           >
-            <div className="relative mb-8 h-[200px] w-full md:h-[250px]">
-                <Image
-                  unoptimized
-                  referrerPolicy="no-referrer"
-                  src="https://cdn.getmerlin.in/cms/content_from_vid_336ec65ad8.webp"
-                  alt="Create content from videos"
-                  fill
-                  className="object-contain object-center transition-transform duration-500 group-hover:scale-[1.05]"
-                />
+            <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-[24px] bg-zinc-100 dark:bg-zinc-900">
+               <Image
+                 unoptimized
+                 referrerPolicy="no-referrer"
+                 src="https://cdn.getmerlin.in/cms/content_from_vid_336ec65ad8.webp"
+                 alt="Create content from videos"
+                 fill
+                 className="object-cover transition-transform duration-500 group-hover:scale-105"
+               />
             </div>
-             <div className="flex flex-col gap-4 z-10">
-              <h3 className="text-2xl font-bold text-zinc-900 dark:text-white md:text-[32px] leading-tight">
+            <div className="flex flex-col gap-3 pt-6 px-2">
+              <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
                 Create content from videos
               </h3>
-              <p className="text-lg text-zinc-500 dark:text-zinc-400">
+              <p className="text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
                 Blogs, X posts, articles - you name it, from any YouTube video.
               </p>
             </div>
@@ -119,24 +118,24 @@ export function SocialSection({ id }: { id?: string }) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="group relative flex w-full flex-col justify-between overflow-hidden rounded-[24px] bg-[#FAF5FF] dark:bg-fuchsia-950/20 md:w-3/5 p-8 md:p-12 min-h-[400px]"
+            transition={{ delay: 0.3 }}
+            className="flex flex-col overflow-hidden group"
           >
-            <div className="relative mb-8 h-[200px] w-full md:h-[250px] flex justify-end">
-                <Image
-                  unoptimized
-                  referrerPolicy="no-referrer"
-                  src="https://cdn.getmerlin.in/cms/image_gen_21ee18a2ef.webp"
-                  alt="Get the perfect poster image"
-                  fill
-                  className="object-contain object-right-bottom transition-transform duration-500 group-hover:scale-[1.05]"
-                />
+            <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-[24px] bg-zinc-100 dark:bg-zinc-900">
+               <Image
+                 unoptimized
+                 referrerPolicy="no-referrer"
+                 src="https://cdn.getmerlin.in/cms/image_gen_21ee18a2ef.webp"
+                 alt="Get the perfect poster image"
+                 fill
+                 className="object-cover transition-transform duration-500 group-hover:scale-105"
+               />
             </div>
-             <div className="flex flex-col gap-4 z-10 max-w-md">
-              <h3 className="text-2xl font-bold text-zinc-900 dark:text-white md:text-[32px] leading-tight">
+            <div className="flex flex-col gap-3 pt-6 px-2">
+              <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
                 Get the perfect poster image
               </h3>
-              <p className="text-lg text-zinc-500 dark:text-zinc-400">
+              <p className="text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
                 Generate images with 20+ image models and aspect ratios for web and social media.
               </p>
             </div>
@@ -146,4 +145,3 @@ export function SocialSection({ id }: { id?: string }) {
     </section>
   );
 }
-
