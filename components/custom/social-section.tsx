@@ -36,7 +36,7 @@ export function SocialSection({ id }: { id?: string }) {
         </Link>
       </div>
 
-
+      
       <div className="mx-auto w-full max-w-7xl px-4 xl:px-0 mt-8 relative flex items-center justify-center">
         <Carousel
           opts={{
