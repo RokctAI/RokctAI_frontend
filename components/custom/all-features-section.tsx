@@ -7,7 +7,7 @@ import Link from "next/link";
 import { PLATFORM_NAME } from "@/app/config/platform";
 
 export function AllFeaturesSection({ id }: { id?: string }) {
-
+  
 
   const features = [
     { name: "Brand voice content with custom knowledge bases", img: "https://cdn.getmerlin.in/cms/brand_voice_hover_image_1_9441c286c4.webp" },
@@ -24,7 +24,7 @@ export function AllFeaturesSection({ id }: { id?: string }) {
 
   return (
     <section id={id} className="w-full bg-white dark:bg-black py-20 flex flex-col gap-32">
-
+      
       {/* All that and more Section */}
       <div className="container mx-auto px-4 xl:px-0">
          <div className="flex flex-col items-center text-center gap-6 mb-16">
@@ -40,12 +40,12 @@ export function AllFeaturesSection({ id }: { id?: string }) {
             {features.map((feature, idx) => (
                <div key={idx} className="group flex flex-col gap-4 bg-zinc-50 dark:bg-zinc-900/40 rounded-[24px] p-4 border border-zinc-200 dark:border-zinc-800 hover:bg-white dark:hover:bg-zinc-900 transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden relative">
                   <div className="relative h-[120px] w-full rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-800">
-                     <Image
-                        unoptimized
-                        src={feature.img}
-                        alt={feature.name}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                     <Image 
+                        unoptimized 
+                        src={feature.img} 
+                        alt={feature.name} 
+                        fill 
+                        className="object-cover transition-transform duration-500 group-hover:scale-110" 
                      />
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>

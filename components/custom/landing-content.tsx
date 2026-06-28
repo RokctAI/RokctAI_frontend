@@ -33,7 +33,7 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
         <div style={{ display: searchActive ? "none" : undefined }}>
         <Logos />
 
-
+        
         
         <ChatSection id="chat" />
         {/* Empty anchor divs for FloatingNav sections contained within ChatSection */}
@@ -44,11 +44,11 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
         <SocialSection id="social" />
         <AllFeaturesSection id="features" />
 
-
-
         
 
-
+        
+        
+        
         
         <WorkflowSection id="workflow" />
 
