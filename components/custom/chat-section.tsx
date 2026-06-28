@@ -6,6 +6,14 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { PLATFORM_NAME } from "@/app/config/platform";
 import { MoveRight } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
+
 
 export function ChatSection({ id }: { id?: string }) {
   return (
@@ -31,13 +39,21 @@ export function ChatSection({ id }: { id?: string }) {
           >
             Explore now
             <MoveRight className="ml-2 size-4" />
-          </Link>
-        </div>
+        </Carousel>
       </div>
 
       <div className="relative flex items-center justify-center w-full max-w-[1400px] mt-8 px-4 xl:px-0">
-        <div className="flex w-full flex-nowrap overflow-x-auto justify-start md:justify-center gap-8 lg:gap-6 xl:gap-8 pb-6 scrollbar-hide">
+        <Carousel
+          opts={{
+            align: "center",
+            loop: false,
+            dragFree: true
+          }}
+          className="w-full relative"
+        >
+          <CarouselContent className="-ml-4 !-ml-0 md:justify-center pb-6">
           {/* Card 1 */}
+          <CarouselItem className="min-w-0 shrink-0 grow-0 basis-auto flex justify-center p-0 pl-4 lg:pl-6 xl:pl-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -65,8 +81,10 @@ export function ChatSection({ id }: { id?: string }) {
               </div>
             </div>
           </motion.div>
+          </CarouselItem>
 
           {/* Card 2 */}
+          <CarouselItem className="min-w-0 shrink-0 grow-0 basis-auto flex justify-center p-0 pl-4 lg:pl-6 xl:pl-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -95,8 +113,10 @@ export function ChatSection({ id }: { id?: string }) {
               </div>
             </div>
           </motion.div>
+          </CarouselItem>
 
           {/* Card 3 */}
+          <CarouselItem className="min-w-0 shrink-0 grow-0 basis-auto flex justify-center p-0 pl-4 lg:pl-6 xl:pl-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -125,8 +145,10 @@ export function ChatSection({ id }: { id?: string }) {
               </div>
             </div>
           </motion.div>
+          </CarouselItem>
 
           {/* Card 4 */}
+          <CarouselItem className="min-w-0 shrink-0 grow-0 basis-auto flex justify-center p-0 pl-4 lg:pl-6 xl:pl-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -155,7 +177,11 @@ export function ChatSection({ id }: { id?: string }) {
               </div>
             </div>
           </motion.div>
-        </div>
+          </CarouselItem>
+          </CarouselContent>
+          <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 size-12 shadow hover:bg-accent hover:text-accent-foreground hidden lg:flex" />
+          <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 size-12 shadow hover:bg-accent hover:text-accent-foreground hidden lg:flex" />
+        </Carousel>
       </div>
     </section>
   );

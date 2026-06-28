@@ -8,7 +8,7 @@ import { Pricing } from "@/components/custom/pricing";
 import { CopiedPricing } from "@/components/custom/copied-pricing";
 import { FloatingNav } from "@/components/custom/floating-nav";
 
-import { Features } from "@/components/custom/features";
+import { AllFeaturesSection } from "@/components/custom/all-features-section";
 import { ChatSection } from "@/components/custom/chat-section";
 import { SocialSection } from "@/components/custom/social-section";
 
@@ -42,7 +42,7 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
         <div id="research" />
 
         <SocialSection id="social" />
-        <Features id="features" />
+        <AllFeaturesSection id="features" />
 
         
 

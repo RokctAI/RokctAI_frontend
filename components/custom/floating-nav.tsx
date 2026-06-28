@@ -11,15 +11,12 @@ interface Section {
 
 const SECTIONS: Section[] = [
   { id: "hero", label: "Hero" },
-  { id: "extension", label: "Chrome Extension" },
   { id: "chat", label: `${PLATFORM_NAME} Chat` },
   { id: "projects", label: "Projects" },
   { id: "crafts", label: "Crafts" },
   { id: "research", label: "Research Machine" },
   { id: "social", label: "Social Media" },
   { id: "features", label: "Features" },
-  { id: "security", label: "Data Security" },
-  { id: "devices", label: "Devices" },
   { id: "workflow", label: "Workflow" },
   { id: "pricing", label: "Pricing" },
   { id: "faq", label: "FAQ" },
