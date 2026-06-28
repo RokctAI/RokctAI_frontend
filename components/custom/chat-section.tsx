@@ -40,7 +40,8 @@ export function ChatSection({ id }: { id?: string }) {
             Explore now
             <MoveRight className="ml-2 size-4" />
             </Link>
-      </div>
+          </div>
+        </div>
 
       <div className="relative flex items-center justify-center w-full max-w-[1400px] mt-8 px-4 xl:px-0">
         <Carousel
