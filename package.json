@@ -75,6 +75,7 @@
     "react-player": "^3.4.0",
     "recharts": "^2.15.4",
     "server-only": "^0.0.1",
+    "sharp": "^0.35.3",
     "sonner": "^2.0.7",
     "streamdown": "^1.6.7",
     "swr": "^2.3.8",
