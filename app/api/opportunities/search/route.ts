@@ -1,6 +1,8 @@
 import { unstable_cache } from "next/cache";
 import { callPublicApi } from "@/app/services/common/api";
 import type { Opportunity } from "@/app/services/public/opportunities";
+import { serverSemanticSearch } from "@/app/services/server/semantic-search";
+import { analyzeIntent } from "@/app/lib/intent-engine";
 
 // ─── GitHub raw CDN URLs ────────────────────────────────────────────────────
 const GITHUB_RAW = "https://raw.githubusercontent.com/RokctAI/opportunities/main/published/api";
@@ -69,14 +71,24 @@ function filterExpired(items: Opportunity[]): Opportunity[] {
 
 function filterByQuery(items: Opportunity[], query: string): Opportunity[] {
   if (!query.trim()) return items.slice(0, 20);
-  const q = query.toLowerCase();
-  return items.filter(
-    (o) =>
-      o.title?.toLowerCase().includes(q) ||
-      (o.institution ?? "").toLowerCase().includes(q) ||
-      (o.organization ?? "").toLowerCase().includes(q) ||
-      (o.category ?? "").toLowerCase().includes(q),
-  );
+  
+  const keywords = query.toLowerCase().split(/\s+/).filter(k => k.length > 2);
+  if (keywords.length === 0) {
+    // Fallback to basic search if no significant keywords found
+    const q = query.toLowerCase();
+    return items.filter(
+      (o) =>
+        o.title?.toLowerCase().includes(q) ||
+        (o.institution ?? "").toLowerCase().includes(q) ||
+        (o.organization ?? "").toLowerCase().includes(q) ||
+        (o.category ?? "").toLowerCase().includes(q),
+    );
+  }
+
+  return items.filter((o) => {
+    const content = `${o.title} ${o.institution} ${o.organization} ${o.category}`.toLowerCase();
+    return keywords.some(kw => content.includes(kw));
+  });
 }
 
 // ─── Main handler ─────────────────────────────────────────────────────────────
@@ -122,10 +134,62 @@ export async function GET(request: Request) {
     types.map((t) => fetchFromGitHub(t)),
   );
 
+  const { type: intentType, opportunityType, cleaned } = analyzeIntent(query);
+
+  // If it's a specific type match (e.g., "funding" -> grants), 
+  // prioritize showing those and ignore strict keyword matching if needed.
+  if (intentType === "type_match" && opportunityType) {
+    const results = {
+      tenders: opportunityType === "tenders" ? filterExpired(tenders) : [],
+      grants:  opportunityType === "grants" ? filterExpired(grants) : [],
+      equity:  opportunityType === "equity" ? filterExpired(equity) : [],
+    };
+
+    // We still rank them semantically if the user provided extra context in the query
+    if (cleaned.trim()) {
+      const [rankedTenders, rankedGrants, rankedEquity] = await Promise.all([
+        serverSemanticSearch.rankResults(cleaned, results.tenders),
+        serverSemanticSearch.rankResults(cleaned, results.grants),
+        serverSemanticSearch.rankResults(cleaned, results.equity),
+      ]);
+      return Response.json({
+        source: "github",
+        tenders: rankedTenders,
+        grants:  rankedGrants,
+        equity:  rankedEquity,
+      });
+    }
+
+    return Response.json({
+      source: "github",
+      ...results,
+    });
+  }
+
+  const filteredTenders = filterByQuery(filterExpired(tenders), query);
+  const filteredGrants = filterByQuery(filterExpired(grants), query);
+  const filteredEquity = filterByQuery(filterExpired(equity), query);
+
+  // Apply semantic ranking if a query exists
+  if (query.trim()) {
+    const [rankedTenders, rankedGrants, rankedEquity] = await Promise.all([
+      serverSemanticSearch.rankResults(query, filteredTenders),
+      serverSemanticSearch.rankResults(query, filteredGrants),
+      serverSemanticSearch.rankResults(query, filteredEquity),
+    ]);
+
+    return Response.json({
+      source: "github",
+      tenders: rankedTenders,
+      grants:  rankedGrants,
+      equity:  rankedEquity,
+    });
+  }
+
   return Response.json({
     source: "github",
-    tenders: filterByQuery(filterExpired(tenders), query),
-    grants:  filterByQuery(filterExpired(grants),  query),
-    equity:  filterByQuery(filterExpired(equity),  query),
+    tenders: filteredTenders,
+    grants:  filteredGrants,
+    equity:  filteredEquity,
   });
 }

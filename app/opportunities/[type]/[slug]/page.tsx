@@ -85,7 +85,7 @@ export default async function OpportunityDetailPage({
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-28 pb-20">
         {/* Back */}
         <Link
-          href="/"
+          href={`/opportunities/${type}`}
           className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-8 transition-colors"
         >
           ← Back to {backLabel}

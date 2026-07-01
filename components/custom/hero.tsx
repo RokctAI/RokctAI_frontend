@@ -12,6 +12,7 @@ import { BrandLogo } from "./brand-logo";
 import { Branding } from "./branding";
 import { PLATFORM_NAME } from "@/app/config/platform";
 import { PLATFORM_FEATURES } from "@/app/config/features";
+import { analyzeIntent } from "@/app/lib/intent-engine";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -151,6 +152,8 @@ export function Hero({
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [hasSearched, setHasSearched] = useState(false);
+  const [greetingMode, setGreetingMode] = useState(false);
+  const [unrelatedMode, setUnrelatedMode] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
   const [isFocused, setIsFocused] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -221,11 +224,42 @@ export function Hero({
     if (e) e.preventDefault();
     if (!searchQuery.trim()) return;
 
+    const { type, cleaned } = analyzeIntent(searchQuery);
+
+    if (type === "greeting") {
+      setGreetingMode(true);
+      setUnrelatedMode(false);
+      setHasSearched(true);
+      setResults({ tenders: [], grants: [], equity: [] });
+      setLastSearchedQuery(searchQuery);
+      return;
+    }
+
+    if (type === "unrelated") {
+      setUnrelatedMode(true);
+      setGreetingMode(false);
+      setHasSearched(true);
+      setResults({ tenders: [], grants: [], equity: [] });
+      setLastSearchedQuery(searchQuery);
+      return;
+    }
+
+    if (type === "vague") {
+      setGreetingMode(false);
+      setUnrelatedMode(false);
+      setResults({ tenders: [], grants: [], equity: [] });
+      setHasSearched(true);
+      setLastSearchedQuery(searchQuery);
+      return;
+    }
+
     setLoading(true);
+    setGreetingMode(false);
+    setUnrelatedMode(false);
     setHasSearched(true);
-    setLastSearchedQuery(searchQuery);
+    setLastSearchedQuery(cleaned);
     try {
-      const data = await OpportunityPublicService.search(searchQuery);
+      const data = await OpportunityPublicService.search(cleaned);
       setResults(data);
     } catch (error) {
       console.error("Search failed:", error);
@@ -522,8 +556,16 @@ export function Hero({
                     ))
                   ) : (
                     <div className="py-10 text-center pr-8">
-                      <p className="text-zinc-500 dark:text-zinc-400">No {activeFilter !== "All" ? activeFilter.toLowerCase() : ""} results found for &quot;{lastSearchedQuery}&quot;</p>
-                      <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-1">Try searching for something else like &quot;solar&quot; or &quot;education&quot;</p>
+                      {unrelatedMode ? (
+                        <p className="text-zinc-500 dark:text-zinc-400 font-medium">
+                          ROK is available when you are logged in
+                        </p>
+                      ) : (
+                        <>
+                          <p className="text-zinc-500 dark:text-zinc-400">No {activeFilter !== "All" ? activeFilter.toLowerCase() : ""} results found for &quot;{lastSearchedQuery}&quot;</p>
+                          <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-1">Try searching for something else like &quot;solar&quot; or &quot;education&quot;</p>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
