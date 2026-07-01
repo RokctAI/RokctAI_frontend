@@ -136,32 +136,10 @@ export function MultimodalInput({
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
-    // Skip if worker is disabled (e.g. Landing Page)
+    // Skip if worker/AI classification is disabled
     if (useWorker === false) return;
 
-    // Initialize Worker
-    if (!workerRef.current) {
-      workerRef.current = new Worker("/workers/ai-worker.js", {
-        type: "module",
-      });
-
-      workerRef.current.onmessage = (e) => {
-        const { status, intent: newIntent, details: newDetails } = e.data;
-        if (status === "success") {
-          setIntent(newIntent);
-          if (newDetails) {
-            setDetails(newDetails);
-          }
-        }
-      };
-
-      // Trigger Eager Loading (Download model immediately)
-      workerRef.current.postMessage({ task: "init" });
-    }
-
-    return () => {
-      workerRef.current?.terminate();
-    };
+    // No longer initializing Worker here - handled via API
   }, [useWorker]);
 
   // --- SMART PIN CONTEXT ---
@@ -239,28 +217,42 @@ export function MultimodalInput({
     // Logic: Competitor = Context Mode, Others = Text Pre-fill
     if (selectedOption === "Add a competitor here") {
       setActivePinContext("competitor");
-      // Don't auto-fill text for context mode, let user type action
-      // But maybe clear input if it was a pre-fill command?
       if (input === "Check In" || input === "Check Out") setInput("");
 
-      // Trigger generic classification with new context
-      setTimeout(() => {
-        workerRef.current?.postMessage({
-          task: "classify_intent",
-          text: input || " ", // Trigger with current input (or space to wake up worker)
+      // Trigger classification via API
+      fetch("/api/ai/classify-intent", {
+        method: "POST",
+        body: JSON.stringify({
+          text: input || " ",
           context: { entity: "competitor" },
-        });
-      }, 0);
+        }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          setIntent(data.intent);
+          setDetails(data.details);
+        }
+      });
     } else {
       // Standard Command (Check In / Out)
-      setActivePinContext(null); // Clear context
+      setActivePinContext(null);
       setInput(selectedOption);
       setTimeout(() => {
         adjustHeight();
-        workerRef.current?.postMessage({
-          task: "classify_intent",
-          text: selectedOption,
-          context: null,
+        fetch("/api/ai/classify-intent", {
+          method: "POST",
+          body: JSON.stringify({
+            text: selectedOption,
+            context: null,
+          }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            setIntent(data.intent);
+            setDetails(data.details);
+          }
         });
       }, 0);
     }
@@ -292,10 +284,19 @@ export function MultimodalInput({
     // Extract Date locally
     const dateResult = chrono.parseDate(newValue);
 
-    workerRef.current?.postMessage({
-      task: "classify_intent",
-      text: newValue,
-      context: { entity: activePinContext },
+    fetch("/api/ai/classify-intent", {
+      method: "POST",
+      body: JSON.stringify({
+        text: newValue,
+        context: { entity: activePinContext },
+      }),
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        setIntent(data.intent);
+        setDetails(data.details);
+      }
     });
 
     // Optimistic Update for Date

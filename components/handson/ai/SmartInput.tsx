@@ -23,49 +23,10 @@ export function SmartInput({
 }: SmartInputProps) {
   const [intent, setIntent] = useState<"Task" | "Note" | "Unknown">("Unknown");
   const [isThinking, setIsThinking] = useState(false);
-  const workerRef = useRef<Worker | null>(null);
-
-  useEffect(() => {
-    // Initialize Worker
-    if (!workerRef.current) {
-      workerRef.current = new Worker("/workers/ai-worker.js", {
-        type: "module",
-      });
-
-      workerRef.current.onmessage = (e) => {
-        const { status, intent: newIntent } = e.data;
-        if (status === "success") {
-          setIntent(newIntent);
-          if (onIntentChange) onIntentChange(newIntent);
-          setIsThinking(false);
-        }
-      };
-    }
-
-    return () => {
-      workerRef.current?.terminate();
-    };
-  }, [onIntentChange]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value;
-    onChange(newValue);
-
-    if (!newValue.trim()) {
-      setIntent("Unknown");
-      return;
-    }
-
-    // Debounce slightly or just fire? Worker is non-blocking, so fire away.
-    setIsThinking(true);
-    workerRef.current?.postMessage({
-      task: "classify_intent",
-      text: newValue,
-    });
-  };
 
   return (
     <div className={cn("relative group", className)}>
+
       <Textarea
         value={value}
         onChange={handleChange}
