@@ -149,6 +149,7 @@ export function Hero({
   const [lastSearchedQuery, setLastSearchedQuery] = useState("");
   const [results, setResults] = useState<SearchResults | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
   const [hasSearched, setHasSearched] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
   const [isFocused, setIsFocused] = useState(false);
@@ -156,6 +157,24 @@ export function Hero({
   const [visiblePlaceholder, setVisiblePlaceholder] = useState("");
   const [isFading, setIsFading] = useState(false);
   const [frozenIcon, setFrozenIcon] = useState<"logo" | "search" | null>(null);
+
+  const loadingMessages = [
+    "Analyzing your request...",
+    "Scanning opportunities...",
+    "Applying AI filters...",
+    "Finding best matches..."
+  ];
+
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setLoadingStep((prev) => (prev + 1) % loadingMessages.length);
+      }, 1500);
+      return () => clearInterval(interval);
+    } else {
+      setLoadingStep(0);
+    }
+  }, [loading]);
 
   // Notify parent when results appear/disappear
   useEffect(() => { onResultsChange?.(hasSearched); }, [hasSearched, onResultsChange]);
@@ -456,7 +475,9 @@ export function Hero({
                   {loading ? (
                     <div className="flex flex-col items-center justify-center py-10 space-y-4">
                       <FiLoader className="w-8 h-8 animate-spin text-purple-500" />
-                      <p className="text-zinc-500 dark:text-zinc-400 animate-pulse">Searching for opportunities...</p>
+                      <p className="text-zinc-500 dark:text-zinc-400 animate-pulse">
+                        {loadingMessages[loadingStep]}
+                      </p>
                     </div>
                   ) : filteredResults.length > 0 ? (
                     filteredResults.map((result, idx) => (
