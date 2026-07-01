@@ -4,6 +4,8 @@ import type { Opportunity } from "@/app/services/public/opportunities";
 import { serverSemanticSearch } from "@/app/services/server/semantic-search";
 import { analyzeIntent } from "@/app/lib/intent-engine";
 
+export const dynamic = 'force-dynamic';
+
 // ─── GitHub raw CDN URLs ────────────────────────────────────────────────────
 const GITHUB_RAW = "https://raw.githubusercontent.com/RokctAI/opportunities/main/published/api";
 
