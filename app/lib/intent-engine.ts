@@ -64,32 +64,3 @@ export function analyzeIntent(query: string) {
   // it's a general search across all types.
   return { type: 'search', cleaned };
 }
-
-  
-  let cleaned = lowerQuery;
-  INTENT_RULES.fillers.forEach(filler => {
-    cleaned = cleaned.replace(filler, '');
-  });
-  
-  cleaned = cleaned.trim();
-  
-  if (!cleaned) {
-    return { type: 'vague', cleaned: lowerQuery };
-  }
-
-  // 1. Check for specific type match
-  for (const [type, keywords] of Object.entries(INTENT_RULES.types)) {
-    if (keywords.some(kw => cleaned.includes(kw))) {
-      return { type: 'type_match', opportunityType: type, cleaned };
-    }
-  }
-
-  // 2. Check if it's related to the domain at all
-  const isDomainRelated = INTENT_RULES.domain_keywords.some(kw => cleaned.includes(kw));
-  
-  if (!isDomainRelated) {
-    return { type: 'unrelated', cleaned };
-  }
-  
-  return { type: 'search', cleaned };
-}
