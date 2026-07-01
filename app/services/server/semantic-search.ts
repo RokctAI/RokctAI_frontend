@@ -1,10 +1,10 @@
-import { pipeline } from "@xenova/transformers";
-
 class ServerSemanticSearch {
   private static instance: any = null;
 
   private async getPipeline() {
     if (!ServerSemanticSearch.instance) {
+      // Dynamic import to avoid build-time loading issues with @xenova/transformers/sharp
+      const { pipeline } = await import("@xenova/transformers");
       ServerSemanticSearch.instance = await pipeline(
         "feature-extraction",
         "Xenova/all-MiniLM-L6-v2"
