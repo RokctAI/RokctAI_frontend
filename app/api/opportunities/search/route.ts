@@ -147,7 +147,6 @@ export async function GET(request: Request) {
       equity:  opportunityType === "equity" ? filterExpired(equity) : [],
     };
 
-    // We still rank them semantically if the user provided extra context in the query
     if (cleaned.trim()) {
       const [rankedTenders, rankedGrants, rankedEquity] = await Promise.all([
         serverSemanticSearch.rankResults(cleaned, results.tenders),
@@ -168,11 +167,32 @@ export async function GET(request: Request) {
     });
   }
 
-  const filteredTenders = filterByQuery(filterExpired(tenders), query);
-  const filteredGrants = filterByQuery(filterExpired(grants), query);
-  const filteredEquity = filterByQuery(filterExpired(equity), query);
+  const expiredTenders = filterExpired(tenders);
+  const expiredGrants = filterExpired(grants);
+  const expiredEquity = filterExpired(equity);
 
-  // Apply semantic ranking if a query exists
+  let filteredTenders = filterByQuery(expiredTenders, query);
+  let filteredGrants = filterByQuery(expiredGrants, query);
+  let filteredEquity = filterByQuery(expiredEquity, query);
+
+  // SEMANTIC FALLBACK: If keyword search found nothing, use semantic search on the full set
+  if (query.trim() && (filteredTenders.length === 0 && filteredGrants.length === 0 && filteredEquity.length === 0)) {
+    const [rankedTenders, rankedGrants, rankedEquity] = await Promise.all([
+      serverSemanticSearch.rankResults(query, expiredTenders),
+      serverSemanticSearch.rankResults(query, expiredGrants),
+      serverSemanticSearch.rankResults(query, expiredEquity),
+    ]);
+    
+    // Take top 20 from each to avoid huge response
+    return Response.json({
+      source: "github",
+      tenders: rankedTenders.slice(0, 20),
+      grants:  rankedGrants.slice(0, 20),
+      equity:  rankedEquity.slice(0, 20),
+    });
+  }
+
+  // Apply semantic ranking to the keyword-filtered results
   if (query.trim()) {
     const [rankedTenders, rankedGrants, rankedEquity] = await Promise.all([
       serverSemanticSearch.rankResults(query, filteredTenders),
