@@ -1,15 +1,4 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-
-# Virtual environments
-venv/
-env/
-ENV/
-
+# Next.js Project
 # IDE
 .vscode/
 .idea/
@@ -25,37 +14,8 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Frappe specific
-*.compiled
-node_modules/
-.build/
-sites/*/private/backups/
-sites/*/private/files/
-sites/*/locks/
-sites/*/task-logs/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-/build/
-/coverage/
-pubspec.lock
-app.*.symbols
-app.*.map.json
-/android/app/debug
-/android/app/profile
-/android/app/release
-*.freezed.dart
-*.g.dart
-*.gr.dart
-
 # Next.js/Node
+node_modules/
 .pnp
 .pnp.js
 .next/
@@ -69,16 +29,10 @@ out/
 .env*.local
 *.pem
 
-# Logs
-*.log
-logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-
-# Private Modules
-paas/whatsapp/
 
 # Miscellaneous
 *.class
