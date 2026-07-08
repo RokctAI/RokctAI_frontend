@@ -1,38 +1,89 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 
-# dependencies
-node_modules
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.iml
+*.ipr
+*.iws
+.atom/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Frappe specific
+*.compiled
+node_modules/
+.build/
+sites/*/private/backups/
+sites/*/private/files/
+sites/*/locks/
+sites/*/task-logs/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+/coverage/
+pubspec.lock
+app.*.symbols
+app.*.map.json
+/android/app/debug
+/android/app/profile
+/android/app/release
+*.freezed.dart
+*.g.dart
+*.gr.dart
+
+# Next.js/Node
 .pnp
 .pnp.js
-
-# testing
-coverage
-
-# next.js
 .next/
 out/
-build
-
-# misc
-.DS_Store
+.turbo
+.vercel
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
 *.pem
 
-# debug
+# Logs
+*.log
+logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Private Modules
+paas/whatsapp/
 
-# turbo
-.turbo
-
-#.env
-.vercel
-.vscode
-.env*.local
+# Miscellaneous
+*.class
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
