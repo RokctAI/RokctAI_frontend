@@ -62,6 +62,13 @@ export class LoanService {
   }
 
   static async getRepaymentSchedule(loanId: string, options?: ServiceOptions) {
+    // Pre-existing bug, unrelated to this fork: `Loan.repayment_schedule` has
+    // never existed as a field - not on the real upstream Loan doctype, not
+    // on this fork's. Real repayment schedules live in a separate
+    // `Repayment Schedule` child table under `Loan Repayment Schedule`, which
+    // this fork never built (nothing reads generated schedule rows anywhere
+    // in this codebase - see Phase 2's notes). This has likely always
+    // returned an empty array.
     const response = await BaseService.call(
       "frappe.client.get",
       {
@@ -74,6 +81,15 @@ export class LoanService {
   }
 
   static async getAssetAccounts(company: string, options?: ServiceOptions) {
+    // Mismatch introduced by this fork: queries ERPNext's "Account" (chart
+    // of accounts) doctype to populate an asset-account picker, presumably
+    // feeding realisePawnAsset()'s asset_account param / Loan Write Off's
+    // write_off_account. Per the Phase 0 GL decision, this fork's
+    // Loan Write Off.write_off_account is a plain free-text field, not a
+    // Link to Account - and "Account" itself is an ERPNext doctype this fork
+    // deliberately doesn't depend on. This call will fail once erpnext is
+    // uninstalled, and even if it succeeds today the values it returns no
+    // longer match the field they'd feed into.
     const response = await BaseService.call(
       "frappe.client.get_list",
       {
@@ -128,7 +144,15 @@ export class LoanService {
   }
 
   static async releaseSecurity(loanId: string, options?: ServiceOptions) {
-    // Standard Lending App Function
+    // NOT REPOINTED (Phase 6): this still calls the external `lending` app's
+    // Loan.unpledge_security, which depends on Loan Security/Loan Security
+    // Assignment/Loan Security Price - the pledged-collateral subsystem this
+    // fork deliberately never built (see loan_security_shortfall.py's
+    // docstring - Polaris's "secured loan" concept is a single ad hoc
+    // pawned-asset value, not a formally valued securities portfolio, so
+    // there's no fork target to point this at). This call WILL fail once
+    // `lending` is uninstalled - flagged here rather than papered over with
+    // an invented implementation.
     const response = await BaseService.call(
       "lending.loan_management.doctype.loan.loan.unpledge_security",
       {

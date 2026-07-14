@@ -2,11 +2,14 @@ import { BaseService, ServiceOptions } from "@/app/services/common/base";
 
 export class OperationsService {
   static async runInterestAccrual(options?: any) {
+    // Repointed from the external `lending` app to rlending's own forked
+    // Process Loan Interest Accrual (see fork-lending-full-backend-plan.md
+    // Phase 6). The old call also passed a `term_loan` kwarg that matched no
+    // parameter on either the real upstream function or this one - it would
+    // have raised a TypeError against both; dropped as part of this repoint.
     const response = await BaseService.call(
-      "lending.loan_management.doctype.process_loan_interest_accrual.process_loan_interest_accrual.process_loan_interest_accrual_for_loans",
-      {
-        term_loan: 0, // Optional filter
-      },
+      "core.polaris.doctype.process_loan_interest_accrual.process_loan_interest_accrual.process_loan_interest_accrual_for_loans",
+      {},
       options,
     );
     return response;
@@ -14,7 +17,7 @@ export class OperationsService {
 
   static async runSecurityShortfallCheck(options?: any) {
     await BaseService.call(
-      "lending.loan_management.doctype.process_loan_security_shortfall.process_loan_security_shortfall.create_process_loan_security_shortfall",
+      "core.polaris.doctype.process_loan_security_shortfall.process_loan_security_shortfall.create_process_loan_security_shortfall",
       {},
       options,
     );
@@ -22,7 +25,7 @@ export class OperationsService {
 
   static async runLoanClassification(options?: any) {
     await BaseService.call(
-      "lending.loan_management.doctype.process_loan_classification.process_loan_classification.create_process_loan_classification",
+      "core.polaris.doctype.process_loan_classification.process_loan_classification.create_process_loan_classification",
       {},
       options,
     );
