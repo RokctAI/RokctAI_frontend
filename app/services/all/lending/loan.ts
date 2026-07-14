@@ -80,32 +80,15 @@ export class LoanService {
     return response?.message?.repayment_schedule || [];
   }
 
-  static async getAssetAccounts(company: string, options?: ServiceOptions) {
-    // Mismatch introduced by this fork: queries ERPNext's "Account" (chart
-    // of accounts) doctype to populate an asset-account picker, presumably
-    // feeding realisePawnAsset()'s asset_account param / Loan Write Off's
-    // write_off_account. Per the Phase 0 GL decision, this fork's
-    // Loan Write Off.write_off_account is a plain free-text field, not a
-    // Link to Account - and "Account" itself is an ERPNext doctype this fork
-    // deliberately doesn't depend on. This call will fail once erpnext is
-    // uninstalled, and even if it succeeds today the values it returns no
-    // longer match the field they'd feed into.
-    const response = await BaseService.call(
-      "frappe.client.get_list",
-      {
-        doctype: "Account",
-        filters: {
-          company: company,
-          root_type: "Asset",
-          is_group: 0,
-        },
-        fields: ["name", "account_name"],
-        limit_page_length: 50,
-      },
-      options,
-    );
-    return response?.message || [];
-  }
+  // getAssetAccounts() removed: queried ERPNext's "Account" doctype to
+  // populate an asset-account picker feeding realisePawnAsset()'s
+  // asset_account param. Per the ERPNext/HRMS dependency audit
+  // (erpnext-hrms-dependency-audit-brief.md) and the Phase 0 GL decision,
+  // Loan Write Off.write_off_account is a plain free-text field on the
+  // forked backend, not a Link to Account, and "Account" is an ERPNext
+  // doctype this fork deliberately doesn't depend on - the picker never
+  // matched what the field actually stores. The Loan Detail page now uses a
+  // plain text input instead.
 
   static async realisePawnAsset(
     loan: string,

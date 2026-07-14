@@ -56,16 +56,9 @@ export async function getLoanRepaymentSchedule(loanId: string) {
   }
 }
 
-export async function getAssetAccounts(company: string) {
-  if (!(await verifyLendingRole())) return [];
-
-  try {
-    return await LoanService.getAssetAccounts(company);
-  } catch (e) {
-    console.error("Failed to fetch Asset Accounts", e);
-    return [];
-  }
-}
+// getAssetAccounts() removed - see the matching comment in
+// app/services/all/lending/loan.ts for why (ERPNext Account dependency,
+// resolved by switching the asset-realisation picker to free text).
 
 export async function realisePawnAsset({
   loan,

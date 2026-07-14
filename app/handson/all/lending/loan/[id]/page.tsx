@@ -6,7 +6,6 @@ import t from "@/app/lib/i18n";
 import {
   getLoan,
   getLoanRepaymentSchedule,
-  getAssetAccounts,
   realisePawnAsset,
   disburseLoan,
   releaseSecurity,
@@ -74,7 +73,6 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
 
   // Asset Realisation Modal State
   const [showAssetModal, setShowAssetModal] = useState(false);
-  const [assetAccounts, setAssetAccounts] = useState<any[]>([]);
   const [selectedAssetAccount, setSelectedAssetAccount] = useState("");
   const [isRealising, setIsRealising] = useState(false);
 
@@ -96,12 +94,6 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
       }
     });
   }, [params.id]);
-
-  useEffect(() => {
-    if (loan?.company && showAssetModal) {
-      getAssetAccounts(loan.company).then(setAssetAccounts);
-    }
-  }, [loan?.company, showAssetModal]);
 
   useEffect(() => {
     getSessionCurrency().then((c) => setCurrency(c));
@@ -297,19 +289,25 @@ export default function LoanDetails({ params }: { params: { id: string } }) {
                  <label className="text-sm font-medium text-gray-700">
                    {t('app.lending.asset_inventory_account')}
                  </label>
-                <select
+                 {/*
+                   Was an ERPNext "Account" (chart-of-accounts) picker, backed by
+                   getAssetAccounts(). Removed as part of the Lending-app fork's
+                   ERPNext dependency audit: Loan Write Off's write_off_account is
+                   a plain free-text field on the forked backend (Phase 3), not a
+                   Link to Account, and Polaris has no chart-of-accounts concept
+                   (Phase 0 GL decision) - a dropdown of ERPNext accounts never
+                   matched what this field actually stores. Free text lets an
+                   admin record a reference (e.g. "Repossessed Inventory") without
+                   requiring ERPNext to be installed.
+                 */}
+                <input
+                  type="text"
                   className="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-100 outline-none"
                   value={selectedAssetAccount}
                   onChange={(e) => setSelectedAssetAccount(e.target.value)}
+                  placeholder={t('app.lending.select_account')}
                   required
-                >
-                   <option value="">{t('app.lending.select_account')}</option>
-                  {assetAccounts.map((acc) => (
-                    <option key={acc.name} value={acc.name}>
-                      {acc.account_name} ({acc.name})
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
 
               <div className="flex justify-end space-x-3 pt-2">
