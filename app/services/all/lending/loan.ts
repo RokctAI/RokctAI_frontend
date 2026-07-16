@@ -127,39 +127,18 @@ export class LoanService {
   }
 
   static async releaseSecurity(loanId: string, options?: ServiceOptions) {
-    // NOT REPOINTED (Phase 6): this still calls the external `lending` app's
-    // Loan.unpledge_security, which depends on Loan Security/Loan Security
-    // Assignment/Loan Security Price - the pledged-collateral subsystem this
-    // fork deliberately never built (see loan_security_shortfall.py's
-    // docstring - Polaris's "secured loan" concept is a single ad hoc
-    // pawned-asset value, not a formally valued securities portfolio, so
-    // there's no fork target to point this at). This call WILL fail once
-    // `lending` is uninstalled - flagged here rather than papered over with
-    // an invented implementation.
+    // Repointed (secured-lending-brief.md): now calls rlending's own
+    // release_security(), which releases this loan's single Pledged Asset
+    // (Polaris's actual single-asset repossession model) once the loan is
+    // confirmed fully paid off server-side - not the external `lending`
+    // app's multi-asset Loan.unpledge_security, which this fork never
+    // built a target for.
     const response = await BaseService.call(
-      "lending.loan_management.doctype.loan.loan.unpledge_security",
-      {
-        loan: loanId,
-        as_dict: 1,
-      },
+      "core.polaris.rlending.asset_realisation.release_security",
+      { loan: loanId },
       options,
     );
-
-    if (response?.message) {
-      const newDoc = await BaseService.call(
-        "frappe.client.insert",
-        { doc: response.message },
-        options,
-      );
-      if (newDoc?.message) {
-        await BaseService.call(
-          "frappe.client.submit",
-          { doc: newDoc.message },
-          options,
-        );
-      }
-    }
-    return "Security Released Successfully";
+    return response?.message || "Security Released Successfully";
   }
 
   static async getTimeline(loanId: string, options?: ServiceOptions) {
