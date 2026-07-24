@@ -1,13 +1,21 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  getLoanApplication,
-  updateLoanApplicationStatus,
-} from "@/app/actions/handson/all/lending/application";
 // import { uploadFile } from "@/app/actions/system"; // We would implement this
 import { Loader2, Camera, CheckCircle, Smartphone } from "lucide-react";
 import { toast } from "sonner";
+
+// STUB: `getLoanApplication`/`updateLoanApplicationStatus` used to come from
+// `@/app/actions/handson/all/lending/application`, which was extracted into
+// `polaris_sdk` (corporate/polaris/nextjs/). This page lives outside
+// app/handson/all/lending/ so it wasn't part of that fork's file set and was
+// missed. It needs the Polaris SDK installed (or this page moved into the
+// SDK) before quote acceptance works again - see PR/report for details.
+async function getLoanApplication(_id: string): Promise<{ data: any }> {
+  throw new Error(
+    "getLoanApplication is unavailable: lending actions were extracted to polaris_sdk and not yet reintegrated here."
+  );
+}
 
 export default function QuoteAcceptancePage({
   params,

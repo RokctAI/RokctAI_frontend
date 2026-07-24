@@ -4,7 +4,6 @@ import {
   HR_ROLES,
   CRM_ROLES,
   FINANCE_ROLES,
-  LENDING_ROLES,
   SUPPLY_CHAIN_ROLES,
   SYSTEM_ROLES,
   EMPLOYEE_ROLES,
@@ -40,7 +39,6 @@ import {
   Calculator,
   Briefcase,
   LifeBuoy,
-  Landmark,
   UserCog,
   PieChart,
   CalendarCheck,
@@ -354,15 +352,6 @@ const commonItems = [
     href: "/handson/all/hrms/me/employees",
     icon: UserCheck,
     roles: EMPLOYEE_ROLES,
-  },
-
-  // --- Lending ---
-  {
-    title: "Lending",
-    href: "/handson/all/lending",
-    icon: Landmark,
-    roles: LENDING_ROLES,
-    module: "Lending",
   },
 
   // --- LMS ---
