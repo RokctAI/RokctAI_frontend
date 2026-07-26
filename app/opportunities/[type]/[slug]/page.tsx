@@ -3,7 +3,9 @@ import Link from "next/link";
 import { Header } from "@/components/custom/header";
 import { Badge } from "@/components/ui/badge";
 import { auth } from "@/app/(auth)/auth";
-import { FiExternalLink } from "react-icons/fi";
+import { FiExternalLink, FiLock } from "react-icons/fi";
+import { TenderBidService } from "@/app/services/control/bids";
+import { TenderChecklist, DeadlineChip } from "@/components/custom/tender-checklist";
 
 const GITHUB_RAW = "https://raw.githubusercontent.com/RokctAI/opportunities/main/published/api";
 
@@ -33,6 +35,107 @@ function Field({ label, value }: { label: string; value?: string | null }) {
     <div className="flex flex-col gap-1">
       <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">{label}</span>
       <span className="text-base text-zinc-800 dark:text-zinc-200">{value}</span>
+    </div>
+  );
+}
+
+// Teaser data comes from the same published meta.json the catalog uses. Only
+// the COUNT of advanced tasks is ever passed on for non-entitled viewers —
+// never the task content.
+async function getTeaserInfo(slug: string) {
+  try {
+    const res = await fetch(`${GITHUB_RAW}/meta.json`, { next: { revalidate: 86400 } });
+    if (!res.ok) return { teaserTasks: DEFAULT_TEASER_TASKS, advancedCount: 0 };
+    const meta = await res.json();
+    const entry = meta?.advanced_enrichment?.[slug];
+    const teaserTasks = Array.isArray(meta?.global_defaults)
+      ? meta.global_defaults.map((t: string) => t.split("|")[0].trim())
+      : DEFAULT_TEASER_TASKS;
+    return { teaserTasks, advancedCount: entry?.tasks?.length ?? 0 };
+  } catch {
+    return { teaserTasks: DEFAULT_TEASER_TASKS, advancedCount: 0 };
+  }
+}
+
+const DEFAULT_TEASER_TASKS = ["Review Tender Documents", "Prepare Initial Response"];
+
+async function TenderTasksSection({
+  slug,
+  closingDate,
+  loggedIn,
+}: {
+  slug: string;
+  closingDate?: string | null;
+  loggedIn: boolean;
+}) {
+  // Entitlement is decided server-side by the control plane; a failed call
+  // (no session, no API keys, plan without tenders) degrades to the teaser.
+  // Reads go through the service directly — the server actions revalidate
+  // paths, which is not allowed during render.
+  let detail: any = null;
+  if (loggedIn) {
+    try {
+      detail = await TenderBidService.getTenderDetail(slug);
+    } catch {
+      detail = null;
+    }
+  }
+
+  if (detail?.entitled) {
+    // claim_tender is idempotent: with an existing bid it just returns the
+    // full doc including checklist rows. Without one, the client component
+    // shows the "Track this tender" button instead.
+    let fullBid: any = null;
+    if (detail.bid) {
+      try {
+        fullBid = await TenderBidService.claimTender(slug);
+      } catch {
+        fullBid = null;
+      }
+    }
+    return <TenderChecklist slug={slug} closingDate={closingDate} initialBid={fullBid} />;
+  }
+
+  const { teaserTasks, advancedCount } = await getTeaserInfo(slug);
+  const tasks: string[] =
+    detail?.tasks?.map((t: any) => t.task_text) ?? teaserTasks;
+
+  return (
+    <div className="rounded-xl border border-purple-200 dark:border-purple-900/40 bg-purple-50 dark:bg-purple-900/10 p-5 mb-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <h2 className="text-sm font-semibold text-purple-700 dark:text-purple-300 uppercase tracking-wide">
+          Response Checklist
+        </h2>
+        <DeadlineChip closingDate={closingDate} />
+      </div>
+
+      <ul className="flex flex-col gap-2 mb-4">
+        {tasks.map((task, i) => (
+          <li key={i} className="flex items-start gap-3 text-sm text-zinc-600 dark:text-zinc-400">
+            <span className="mt-0.5 h-4 w-4 shrink-0 rounded border border-zinc-300 dark:border-zinc-600" />
+            {task}
+          </li>
+        ))}
+        {advancedCount > 0 && (
+          <li className="flex items-start gap-3 text-sm text-zinc-400 dark:text-zinc-500 italic">
+            <FiLock className="mt-0.5 h-4 w-4 shrink-0" />
+            {advancedCount} tender-specific compliance tasks (SBD/MBD forms, evaluation criteria,
+            required certificates) — prepared for subscribers
+          </li>
+        )}
+      </ul>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <Link
+          href={loggedIn ? "/landing#pricing" : "/login"}
+          className="rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium px-4 py-2 transition-colors"
+        >
+          {loggedIn ? "Upgrade to unlock the full checklist" : "Sign in to unlock the full checklist"}
+        </Link>
+        <span className="text-xs text-zinc-500 dark:text-zinc-400">
+          Track bids, tick off compliance tasks, and never miss a closing date.
+        </span>
+      </div>
     </div>
   );
 }
@@ -125,6 +228,15 @@ export default async function OpportunityDetailPage({
           {phone       && <Field label="Phone"             value={phone} />}
           {verified    && <Field label="Last Verified"     value={verified} />}
         </div>
+
+        {/* Response checklist (tenders only): teaser for free users, interactive for subscribers */}
+        {type === "tenders" && (
+          <TenderTasksSection
+            slug={slug}
+            closingDate={deadline}
+            loggedIn={!!session?.user}
+          />
+        )}
 
         {/* Documents & Links */}
         {(() => {
