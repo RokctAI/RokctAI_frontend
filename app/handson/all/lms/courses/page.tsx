@@ -15,12 +15,12 @@ export default async function CoursesPage() {
 
   return (
     <div className="container mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold mb-8">All Courses</h1>
+      <h1 className="text-3xl font-bold mb-8">Subjects</h1>
 
       {courses.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-lg">
           <p className="text-xl text-gray-500">
-            No courses available at the moment.
+            No subjects published yet.
           </p>
         </div>
       ) : (
@@ -68,7 +68,7 @@ export default async function CoursesPage() {
                   <Link
                     href={`/handson/all/lms/courses/${encodeURIComponent(course.name)}`}
                   >
-                    View Course
+                    View Subject
                   </Link>
                 </Button>
               </CardFooter>
