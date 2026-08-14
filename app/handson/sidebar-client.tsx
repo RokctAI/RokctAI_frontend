@@ -2,13 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, Package } from "lucide-react";
 
 interface MenuItem {
   title: string;
   href: string;
   icon: LucideIcon;
 }
+
+// Entries below are appended by the Rokct SDK installer
+// (sdk_installer_base.py update_integrations()). Each installed SDK's
+// manifest declares a `{ href, label }` line that is inserted on a new
+// line immediately after the marker comment. Do not remove or reformat
+// the marker on the next line inside the array.
+const sdkNavItems: { href: string; label: string }[] = [
+  // @rokct-sdk-nav-start
+  // @rokct-sdk-nav-end
+];
 
 export function HandsOnSidebarClient({
   items,
@@ -19,21 +29,31 @@ export function HandsOnSidebarClient({
 }) {
   const pathname = usePathname();
 
+  // SDK-injected entries, skipping any route the host already renders.
+  const injectedItems = sdkNavItems.filter(
+    (sdkItem) => !items.some((item) => item.href === sdkItem.href),
+  );
+
+  const linkClassName = (href: string) =>
+    `flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+      pathname === href ||
+      (href !== "/handson" && pathname.startsWith(href))
+        ? "bg-muted text-primary"
+        : "text-muted-foreground"
+    } ${mobile ? "px-2.5 gap-4 text-foreground" : ""}`;
+
   return (
     <>
       {items.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
-            pathname === item.href ||
-            (item.href !== "/handson" && pathname.startsWith(item.href))
-              ? "bg-muted text-primary"
-              : "text-muted-foreground"
-          } ${mobile ? "px-2.5 gap-4 text-foreground" : ""}`}
-        >
+        <Link key={item.href} href={item.href} className={linkClassName(item.href)}>
           <item.icon className={`h-4 w-4 ${mobile ? "h-5 w-5" : ""}`} />
           {item.title}
+        </Link>
+      ))}
+      {injectedItems.map((item) => (
+        <Link key={item.href} href={item.href} className={linkClassName(item.href)}>
+          <Package className={`h-4 w-4 ${mobile ? "h-5 w-5" : ""}`} />
+          {item.label}
         </Link>
       ))}
     </>
