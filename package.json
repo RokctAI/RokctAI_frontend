@@ -7,6 +7,7 @@
     "build": "tsx -r dotenv/config db/migrate && next build",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "migrate:generate": "drizzle-kit generate"
   },
   "dependencies": {

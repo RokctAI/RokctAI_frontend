@@ -2,9 +2,7 @@ import { auth, signOut } from "@/app/(auth)/auth";
 import { PLATFORM_NAME, getGuestBranding } from "@/app/config/platform";
 import {
   HR_ROLES,
-  CRM_ROLES,
   FINANCE_ROLES,
-  SUPPLY_CHAIN_ROLES,
   SYSTEM_ROLES,
   EMPLOYEE_ROLES,
   HOSTING_ROLES,
@@ -22,7 +20,6 @@ import {
   Code,
   Menu,
   Users,
-  Truck,
   Mail,
   Search,
   BrainCircuit,
@@ -33,7 +30,6 @@ import {
   Target,
   Megaphone,
   Lightbulb,
-  Building2,
   Bell,
   Map,
   Calculator,
@@ -219,85 +215,6 @@ const tenantItems = [
 
 // Items visible to everyone (Shared Modules)
 const commonItems = [
-  // --- CRM ---
-  {
-    title: "CRM Dashboard",
-    href: "/handson/all/crm/dashboard",
-    icon: LayoutDashboard,
-    roles: CRM_ROLES,
-    module: "CRM",
-  },
-  {
-    title: "Leads",
-    href: "/handson/all/crm/leads",
-    icon: Users,
-    roles: CRM_ROLES,
-    module: "CRM",
-  },
-  {
-    title: "Deals",
-    href: "/handson/all/crm/deals",
-    icon: Target,
-    roles: CRM_ROLES,
-    module: "CRM",
-  },
-  {
-    title: "Contacts",
-    href: "/handson/all/crm/contacts",
-    icon: Users,
-    roles: CRM_ROLES,
-    module: "CRM",
-  },
-  {
-    title: "Organizations",
-    href: "/handson/all/crm/organizations",
-    icon: Building2,
-    roles: CRM_ROLES,
-    module: "CRM",
-  },
-  {
-    title: "Competitor",
-    href: "/handson/all/crm/competitor",
-    icon: Users,
-    roles: CRM_ROLES,
-    module: "CRM",
-  },
-  {
-    title: "Contracts",
-    href: "/handson/all/crm/contracts",
-    icon: FileText,
-    roles: CRM_ROLES,
-    module: "CRM",
-  },
-  {
-    title: "Prospects",
-    href: "/handson/all/crm/prospects",
-    icon: Target,
-    roles: CRM_ROLES,
-    module: "CRM",
-  },
-  {
-    title: "Email Campaigns",
-    href: "/handson/all/crm/campaigns",
-    icon: Mail,
-    roles: CRM_ROLES,
-    module: "CRM",
-  },
-  {
-    title: "Logistics",
-    href: "/handson/all/crm/logistics",
-    icon: Truck,
-    roles: SUPPLY_CHAIN_ROLES,
-    module: "CRM",
-  },
-  {
-    title: "CRM Settings",
-    href: "/handson/all/crm/settings",
-    icon: Settings,
-    roles: CRM_ROLES,
-    module: "CRM",
-  },
-
   // --- Accounting ---
   {
     title: "Accounting",
