@@ -18,7 +18,7 @@ export function MyCourses({ courses }: MyCoursesProps) {
     <section>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-gray-900">
-          {courses.length > 0 ? "My Courses" : "Our Popular Courses"}
+          {courses.length > 0 ? "My Subjects" : "Our Popular Subjects"}
         </h2>
         <Link
           href="/handson/all/lms/courses"
@@ -67,10 +67,10 @@ export function MyCourses({ courses }: MyCoursesProps) {
         </div>
       ) : (
         <div className="bg-gray-50 rounded-lg p-8 text-center text-gray-500">
-          You are not enrolled in any courses yet.
+          You are not enrolled in any subjects yet.
           <div className="mt-4">
             <Button asChild>
-              <Link href="/handson/all/lms/courses">Browse Catalog</Link>
+              <Link href="/handson/all/lms/courses">Browse your subjects</Link>
             </Button>
           </div>
         </div>

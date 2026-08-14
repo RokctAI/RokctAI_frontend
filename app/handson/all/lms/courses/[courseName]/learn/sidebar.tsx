@@ -44,7 +44,7 @@ export function LearningSidebar({ course, className }: SidebarProps) {
           href={`/handson/all/lms/courses/${params.courseName}`}
           className="text-sm font-medium hover:underline text-muted-foreground block mb-2"
         >
-          &larr; Back to Course Home
+          &larr; Back to Subject Home
         </Link>
         <h2 className="font-semibold line-clamp-2 leading-tight">
           {course.title}

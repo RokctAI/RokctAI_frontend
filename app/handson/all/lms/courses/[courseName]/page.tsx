@@ -30,7 +30,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
           href="/handson/all/lms/courses"
           className="text-sm text-muted-foreground hover:underline mb-4 inline-block"
         >
-          &larr; Back to Courses
+          &larr; Back to Subjects
         </Link>
         <div className="flex flex-col md:flex-row gap-8 items-start">
           {course.image && (
@@ -62,7 +62,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
           <section>
-            <h2 className="text-2xl font-semibold mb-4">About this Course</h2>
+            <h2 className="text-2xl font-semibold mb-4">About this Subject</h2>
             <div
               className="prose max-w-none text-gray-700"
               dangerouslySetInnerHTML={{ __html: course.description }}
@@ -110,7 +110,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
         <div className="space-y-6">
           <div className="bg-gray-50 p-6 rounded-lg border">
-            <h3 className="font-semibold text-lg mb-4">Course Features</h3>
+            <h3 className="font-semibold text-lg mb-4">Subject Features</h3>
             <ul className="space-y-2 text-sm">
               <li className="flex justify-between">
                 <span className="text-gray-600">Duration</span>
