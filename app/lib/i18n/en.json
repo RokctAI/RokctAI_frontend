@@ -1809,8 +1809,6 @@
             "btn_add": "Add Zone",
             "no_data": "No delivery zones found."
           }
-        }
-      }
         },
         "products": {
           "categories": {
@@ -1915,8 +1913,6 @@
           "btn_create_table": "Create Table",
           "no_tables": "No tables in this zone."
         }
-      }
-      }
     },
     "restaurant": {
       "branches": {
@@ -2097,22 +2093,6 @@
         "earnings": "Earnings",
         "profile": "Profile"
       },
-          "ph_zone_name": "e.g. Main Hall",
-          "btn_create_zone": "Create Zone",
-          "no_zones": "No zones created yet.",
-          "tables_title": "Tables",
-          "btn_add_table": "Add Table",
-          "dialog_table_title": "Add New Table",
-          "dialog_table_desc": "Add a table to this zone.",
-          "label_table_name": "Table Name/Number",
-          "ph_table_name": "e.g. T1",
-          "label_seats": "Seats",
-          "btn_create_table": "Create Table",
-          "no_tables": "No tables in this zone."
-        }
-      }
-      }
-    },
     "restaurant": {
       "branches": {
         "title": "Branch Management",
