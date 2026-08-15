@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { callPublicApi } from "@/app/services/common/api";
+import { platformCall } from "@/app/services/base/platform-gateway";
 import type { Opportunity } from "@/app/services/public/opportunities";
 import { serverSemanticSearch } from "@/app/services/server/semantic-search";
 import { analyzeIntent } from "@/app/lib/intent-engine";
@@ -104,16 +104,17 @@ export async function GET(request: Request) {
   try {
     const backendResults = await Promise.all(
       types.map((type) =>
-        callPublicApi(
-          "rokct.platform.api.control",
+        platformCall<any>(
+          "control:get_public_opportunities",
+          JSON.stringify({
+            opportunity_type: type,
+            filters: JSON.stringify({ title: ["like", `%${query}%`] }),
+          }),
           {
-            cmd: "control:get_public_opportunities",
-            payload: JSON.stringify({
-              opportunity_type: type,
-              filters: JSON.stringify({ title: ["like", `%${query}%`] }),
-            }),
+            method: "GET",
+            timeout: 8000,
+            fetchOptions: { next: { revalidate: 60 } },
           },
-          { timeout: 8000 },
         ),
       ),
     );
