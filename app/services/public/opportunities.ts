@@ -1,4 +1,4 @@
-import { callPublicApi } from "../common/api";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
 export interface Opportunity {
   title: string;
@@ -23,13 +23,14 @@ export class OpportunityPublicService {
     // ── 1. Original backend fetch (unchanged) ──────────────────────────────
     const results = await Promise.all(
       types.map(type =>
-        callPublicApi("rokct.platform.api.control", {
-          cmd: "control:get_public_opportunities",
-          payload: JSON.stringify({
+        platformCall<any>(
+          "control:get_public_opportunities",
+          JSON.stringify({
             opportunity_type: type,
             filters: JSON.stringify({ title: ["like", `%${query}%`] })
-          })
-        })
+          }),
+          { method: "GET", fetchOptions: { next: { revalidate: 60 } } }
+        )
       )
     );
 
