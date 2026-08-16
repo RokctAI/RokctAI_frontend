@@ -3,6 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifySystemManager } from "@/app/lib/roles";
+import { frappeRpc } from "@/app/lib/frappe-rpc";
 
 // Platform Level Control Actions
 
@@ -17,9 +18,7 @@ export async function broadcastAnnouncement(data: {
   const client = await getClient();
 
   try {
-    const response = await client.call({
-      method: "frappe.client.insert",
-      args: {
+    const response = await frappeRpc(client, "frappe.client.insert", {
         doc: {
           doctype: "Announcement",
           subject: data.subject,
@@ -27,8 +26,7 @@ export async function broadcastAnnouncement(data: {
           starts_on: new Date().toISOString().split("T")[0],
           is_public: 1,
         },
-      },
-    });
+      });
     return { success: true, message: "Announcement broadcasted successfully." };
   } catch (e: any) {
     return { success: false, error: e?.message };

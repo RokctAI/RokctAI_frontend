@@ -1,4 +1,5 @@
 import { getClient } from "@/app/lib/client";
+import { frappeRpc } from "@/app/lib/frappe-rpc";
 
 export interface ServiceOptions {
   headers?: Record<string, string>;
@@ -6,7 +7,9 @@ export interface ServiceOptions {
 
 export class BaseService {
   /**
-   * Helper to get the Frappe client and execute a call with optional headers.
+   * Executes a whitelisted dotted method against the PaaS site as a real
+   * HTTP POST. Returns the full response body (Frappe `message` envelope
+   * preserved) so `response?.message` consumers keep working.
    */
   public static async call(
     method: string,
@@ -14,11 +17,7 @@ export class BaseService {
     options: ServiceOptions = {},
   ) {
     const client = await getClient();
-    return (client as any).call({
-      method,
-      args,
-      headers: options.headers,
-    });
+    return frappeRpc(client, method, args, options.headers);
   }
 
   public static async getList(
@@ -26,11 +25,12 @@ export class BaseService {
     args: any = {},
     options: ServiceOptions = {},
   ) {
-    const client = await getClient();
-    return (client as any).get_list(doctype, {
-      ...args,
-      headers: options.headers,
-    });
+    const response = await this.call(
+      "frappe.client.get_list",
+      { doctype, ...args },
+      options,
+    );
+    return response?.message ?? [];
   }
 
   public static async getDoc(
@@ -38,18 +38,26 @@ export class BaseService {
     name: string,
     options: ServiceOptions = {},
   ) {
-    const client = await getClient();
-    return (client as any).get_doc(doctype, name, {
-      headers: options.headers,
-    });
+    const response = await this.call(
+      "frappe.client.get",
+      { doctype, name },
+      options,
+    );
+    return response?.message;
+  }
+
+  /** Alias for getDoc — kept because several services call BaseService.get. */
+  public static async get(
+    doctype: string,
+    name: string,
+    options: ServiceOptions = {},
+  ) {
+    return this.getDoc(doctype, name, options);
   }
 
   public static async insert(doc: any, options: ServiceOptions = {}) {
-    const client = await getClient();
-    return (client as any).insert({
-      doc,
-      headers: options.headers,
-    });
+    const response = await this.call("frappe.client.insert", { doc }, options);
+    return response?.message;
   }
 
   public static async setValue(
@@ -58,16 +66,11 @@ export class BaseService {
     fieldname: any,
     options: ServiceOptions = {},
   ) {
-    const client = await getClient();
-    return (client as any).call({
-      method: "frappe.client.set_value",
-      args: {
-        doctype,
-        name,
-        fieldname,
-      },
-      headers: options.headers,
-    });
+    return this.call(
+      "frappe.client.set_value",
+      { doctype, name, fieldname },
+      options,
+    );
   }
 
   public static async delete(
@@ -75,18 +78,11 @@ export class BaseService {
     name: string,
     options: ServiceOptions = {},
   ) {
-    const client = await getClient();
-    return (client as any).delete(doctype, name, {
-      headers: options.headers,
-    });
+    return this.call("frappe.client.delete", { doctype, name }, options);
   }
 
   public static async submit(doc: any, options: ServiceOptions = {}) {
-    const client = await getClient();
-    return (client as any).submit({
-      doc,
-      headers: options.headers,
-    });
+    return this.call("frappe.client.submit", { doc }, options);
   }
 
   public static async cancel(
@@ -94,9 +90,6 @@ export class BaseService {
     name: string,
     options: ServiceOptions = {},
   ) {
-    const client = await getClient();
-    return (client as any).cancel(doctype, name, {
-      headers: options.headers,
-    });
+    return this.call("frappe.client.cancel", { doctype, name }, options);
   }
 }

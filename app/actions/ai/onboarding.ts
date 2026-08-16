@@ -109,7 +109,9 @@ export async function syncOnboardingToSite(userEmail: string) {
   }
 
   try {
-    const url = `https://${userData.siteName}/api/method/rcore.api.plan_builder.commit_onboarding_answers`;
+    // Manifest alias key: {app_name}.api.plan_builder.commit_onboarding_answers.commit_onboarding_answers
+    // (agent module manifest) - the single-leaf form does not exist on the backend.
+    const url = `https://${userData.siteName}/api/v1/method/rcore.api.plan_builder.commit_onboarding_answers.commit_onboarding_answers`;
     const response = await fetch(url, {
       method: "POST",
       headers,

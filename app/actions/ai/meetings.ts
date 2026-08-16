@@ -2,6 +2,7 @@
 
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
+import { frappeRpc } from "@/app/lib/frappe-rpc";
 
 export async function getMyEvents(data: { modelId?: string } = {}) {
   const { verifyActiveEmployee } = await import("@/app/lib/roles");
@@ -12,9 +13,7 @@ export async function getMyEvents(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const events = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const events = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Event",
         filters: {
           starts_on: [">=", new Date().toISOString().split("T")[0]],
@@ -23,8 +22,7 @@ export async function getMyEvents(data: { modelId?: string } = {}) {
         fields: ["name", "subject", "starts_on", "event_type"],
         order_by: "starts_on asc",
         limit_page_length: 5,
-      },
-    });
+      });
 
     return { success: true, events: events?.message || [] };
   } catch (e: any) {

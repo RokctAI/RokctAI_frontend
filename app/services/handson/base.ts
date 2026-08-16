@@ -1,21 +1,23 @@
 import { getClient } from "@/app/lib/client";
+import { frappeRpc } from "@/app/lib/frappe-rpc";
 
 export interface ServiceOptions {
   headers?: Record<string, string>;
 }
 
 export class HandsonBaseService {
+  /**
+   * Executes a whitelisted dotted method against the PaaS site as a real
+   * HTTP POST. Returns the full response body (Frappe `message` envelope
+   * preserved) so `response?.message` consumers keep working.
+   */
   public static async call(
     method: string,
     args: any = {},
     options: ServiceOptions = {},
   ) {
     const client = await getClient();
-    return (client as any).call({
-      method,
-      args,
-      headers: options.headers,
-    });
+    return frappeRpc(client, method, args, options.headers);
   }
 
   public static async getList(
@@ -23,11 +25,12 @@ export class HandsonBaseService {
     args: any = {},
     options: ServiceOptions = {},
   ) {
-    const client = await getClient();
-    return (client as any).get_list(doctype, {
-      ...args,
-      headers: options.headers,
-    });
+    const response = await this.call(
+      "frappe.client.get_list",
+      { doctype, ...args },
+      options,
+    );
+    return response?.message ?? [];
   }
 
   public static async getDoc(
@@ -35,18 +38,17 @@ export class HandsonBaseService {
     name: string,
     options: ServiceOptions = {},
   ) {
-    const client = await getClient();
-    return (client as any).get_doc(doctype, name, {
-      headers: options.headers,
-    });
+    const response = await this.call(
+      "frappe.client.get",
+      { doctype, name },
+      options,
+    );
+    return response?.message;
   }
 
   public static async insert(doc: any, options: ServiceOptions = {}) {
-    const client = await getClient();
-    return (client as any).insert({
-      doc,
-      headers: options.headers,
-    });
+    const response = await this.call("frappe.client.insert", { doc }, options);
+    return response?.message;
   }
 
   public static async update(
@@ -55,8 +57,12 @@ export class HandsonBaseService {
     data: any,
     options: ServiceOptions = {},
   ) {
-    const client = await getClient();
-    return (client as any).update_doc(doctype, name, data);
+    const response = await this.call(
+      "frappe.client.set_value",
+      { doctype, name, fieldname: data },
+      options,
+    );
+    return response?.message;
   }
 
   public static async delete(
@@ -64,7 +70,6 @@ export class HandsonBaseService {
     name: string,
     options: ServiceOptions = {},
   ) {
-    const client = await getClient();
-    return (client as any).delete_doc(doctype, name);
+    return this.call("frappe.client.delete", { doctype, name }, options);
   }
 }

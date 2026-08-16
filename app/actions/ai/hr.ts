@@ -10,6 +10,7 @@ import { auth } from "@/app/(auth)/auth";
 import { AI_MODELS } from "@/ai/models";
 import { verifyHrRole, getCurrentEmployeeId } from "@/app/lib/roles";
 import { revalidatePath } from "next/cache";
+import { frappeRpc } from "@/app/lib/frappe-rpc";
 
 // --- PERFORMANCE (GOALS) ---
 
@@ -30,14 +31,11 @@ export async function createAiGoal(data: {
 
   try {
     // Fetch current employee
-    const employeeRes = (await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
-      },
-    })) as any;
+      })) as any;
     const employee = employeeRes?.message?.name;
 
     if (!employee) {
@@ -47,9 +45,7 @@ export async function createAiGoal(data: {
       };
     }
 
-    const response = await (client as any).call({
-      method: "frappe.client.insert",
-      args: {
+    const response = await frappeRpc(client, "frappe.client.insert", {
         doc: {
           doctype: "Goal",
           employee: employee,
@@ -58,9 +54,7 @@ export async function createAiGoal(data: {
           end_date: data.end_date,
           status: "Open",
         },
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -87,9 +81,7 @@ export async function updateAiMyProfile(data: {
 
   const client = await getClient();
   try {
-    const response = await (client as any).call({
-      method: "frappe.client.set_value",
-      args: {
+    const response = await frappeRpc(client, "frappe.client.set_value", {
         doctype: "Employee",
         name: employeeId,
         fieldname: {
@@ -101,9 +93,7 @@ export async function updateAiMyProfile(data: {
           bank_branch_code: data.bank_branch_code,
           tax_id: data.tax_id,
         },
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
     revalidatePath("/handson/all/hrms/me/employees");
     return { success: true, message: "Profile updated successfully via AI." };
   } catch (e: any) {
@@ -118,28 +108,20 @@ export async function getAiGoals(data: { modelId?: string } = {}) {
   // We default to checking auth for security.
   try {
     // Fetch current employee
-    const employeeRes = await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found" };
 
-    const goals = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const goals = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Goal",
         filters: { employee: employee },
         fields: ["name", "goal", "status", "progress", "end_date"],
         limit_page_length: 10,
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     return { success: true, goals: goals?.message || [] };
   } catch (e: any) {
@@ -158,20 +140,15 @@ export async function getLeaveBalance(
 
   try {
     // Fetch current employee
-    const employeeRes = (await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
-      },
-    })) as any;
+      })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found" };
 
-    const allocations = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const allocations = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Leave Allocation",
         filters: {
           employee: employee,
@@ -182,16 +159,12 @@ export async function getLeaveBalance(
           "total_leaves_allocated",
           "new_leaves_allocated",
         ],
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     const allocationList = allocations?.message || [];
 
     // Fetch used leaves to calculate actual balance
-    const usedLeaves = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const usedLeaves = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Leave Application",
         filters: {
           employee: employee,
@@ -199,9 +172,7 @@ export async function getLeaveBalance(
           from_date: [">=", new Date().getFullYear() + "-01-01"],
         },
         fields: ["leave_type", "total_leave_days"],
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     const usedMap: Record<string, number> = {};
     if (usedLeaves?.message) {
@@ -241,20 +212,15 @@ export async function applyAiLeave(data: {
   }
 
   try {
-    const employeeRes = (await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
-      },
-    })) as any;
+      })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
-    const response = (await (client as any).call({
-      method: "frappe.client.insert",
-      args: {
+    const response = (await frappeRpc(client, "frappe.client.insert", {
         doc: {
           doctype: "Leave Application",
           employee: employee,
@@ -264,9 +230,7 @@ export async function applyAiLeave(data: {
           description: data.reason || "Applied via AI Assistant",
           status: "Open", // Or 'Applied' depending on workflow
         },
-      },
-      headers: { "X-AI-Action": "true" },
-    })) as any;
+      })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -295,14 +259,11 @@ export async function createAiExpenseClaim(data: {
   if (!hasQuota) return { success: false, error: "Quota exceeded." };
 
   try {
-    const employeeRes = (await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
-      },
-    })) as any;
+      })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
@@ -323,11 +284,7 @@ export async function createAiExpenseClaim(data: {
       docstatus: 0,
     };
 
-    const response = (await (client as any).call({
-      method: "frappe.client.insert",
-      args: { doc: args },
-      headers: { "X-AI-Action": "true" },
-    })) as any;
+    const response = (await frappeRpc(client, "frappe.client.insert", { doc: args })) as any;
 
     if (response?.message) {
       const docName = response.message.name;
@@ -335,9 +292,7 @@ export async function createAiExpenseClaim(data: {
       if (data.attachment_url) {
         // Production: Create a File document linked to the Expense Claim
         try {
-          (await (client as any).call({
-            method: "frappe.client.insert",
-            args: {
+          (await frappeRpc(client, "frappe.client.insert", {
               doc: {
                 doctype: "File",
                 file_url: data.attachment_url,
@@ -345,21 +300,16 @@ export async function createAiExpenseClaim(data: {
                 attached_to_name: docName,
                 is_private: 1,
               },
-            },
-            headers: { "X-AI-Action": "true" },
-          })) as any;
+            })) as any;
         } catch (fileError) {
           // Fallback to remarks
           console.warn("Failed to attach file", fileError);
-          (await (client as any).call({
-            method: "frappe.client.set_value",
-            args: {
+          (await frappeRpc(client, "frappe.client.set_value", {
               doctype: "Expense Claim",
               name: docName,
               fieldname: "remark",
               value: `Generated by AI. Attachment: ${data.attachment_url}`,
-            },
-          })) as any;
+            })) as any;
         }
       }
 
@@ -380,20 +330,15 @@ export async function getAiExpenses(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const employeeRes = (await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
-      },
-    })) as any;
+      })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found" };
 
-    const claims = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const claims = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Expense Claim",
         filters: { employee: employee },
         fields: [
@@ -405,8 +350,7 @@ export async function getAiExpenses(data: { modelId?: string } = {}) {
         ],
         order_by: "creation desc",
         limit_page_length: 5,
-      },
-    });
+      });
 
     return { success: true, claims: claims?.message || [] };
   } catch (e: any) {
@@ -431,37 +375,29 @@ export async function markAiAttendance(data: {
   if (!hasQuota) return { success: false, error: "Quota exceeded." };
 
   try {
-    const employeeRes = (await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
-      },
-    })) as any;
+      })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
     // Determine log type if not provided (Toggle based on last log)
     let logType = data.log_type;
     if (!logType) {
-      const lastLog = await (client as any).call({
-        method: "frappe.client.get_list",
-        args: {
+      const lastLog = await frappeRpc(client, "frappe.client.get_list", {
           doctype: "Employee Checkin",
           filters: { employee: employee },
           fields: ["log_type"],
           order_by: "time desc",
           limit_page_length: 1,
-        },
-      });
+        });
       const lastType = lastLog?.message?.[0]?.log_type;
       logType = lastType === "IN" ? "OUT" : "IN";
     }
 
-    const response = await (client as any).call({
-      method: "frappe.client.insert",
-      args: {
+    const response = await frappeRpc(client, "frappe.client.insert", {
         doc: {
           doctype: "Employee Checkin",
           employee: employee,
@@ -471,9 +407,7 @@ export async function markAiAttendance(data: {
           latitude: data.latitude,
           longitude: data.longitude,
         },
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -493,28 +427,22 @@ export async function getAttendanceStatus() {
   const client = await getClient();
 
   try {
-    const employeeRes = (await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
-      },
-    })) as any;
+      })) as any;
     const employee = employeeRes?.message?.name;
 
     if (!employee) return { status: "Unknown", lastLog: null };
 
-    const lastLog = (await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const lastLog = (await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Employee Checkin",
         filters: { employee: employee },
         fields: ["log_type", "time"],
         order_by: "time desc",
         limit_page_length: 1,
-      },
-    })) as any;
+      })) as any;
 
     const lastType = lastLog?.message?.[0]?.log_type;
     // If last was IN, status is 'Checked In', next action is 'Check Out'
@@ -538,20 +466,15 @@ export async function getAiPayslips(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const employeeRes = (await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
-      },
-    })) as any;
+      })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
-    const payslips = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const payslips = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Salary Slip",
         filters: { employee: employee, docstatus: 1 }, // Only submitted slips
         fields: [
@@ -564,8 +487,7 @@ export async function getAiPayslips(data: { modelId?: string } = {}) {
         ],
         order_by: "start_date desc",
         limit_page_length: 6,
-      },
-    });
+      });
 
     return { success: true, payslips: payslips?.message || [] };
   } catch (e: any) {
@@ -587,9 +509,7 @@ export async function getPendingApprovals(data: { modelId?: string } = {}) {
   // Using standard frappe.client.get_list which respects user permissions.
   try {
     // Fetch Open Leave Applications
-    const leaveApps = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const leaveApps = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Leave Application",
         filters: { status: "Open" }, // or "Applied" depending on workflow
         fields: [
@@ -603,13 +523,10 @@ export async function getPendingApprovals(data: { modelId?: string } = {}) {
           "total_leave_days",
         ],
         limit_page_length: 10,
-      },
-    });
+      });
 
     // Fetch Submitted Expense Claims (docstatus=1 but not yet Approved/Rejected)
-    const expenseClaims = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const expenseClaims = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Expense Claim",
         filters: {
           docstatus: 1,
@@ -624,8 +541,7 @@ export async function getPendingApprovals(data: { modelId?: string } = {}) {
           "posting_date",
         ],
         limit_page_length: 10,
-      },
-    });
+      });
 
     return {
       success: true,
@@ -657,46 +573,34 @@ export async function processApproval(data: {
   try {
     if (data.doctype === "Leave Application") {
       const status = data.action === "Approve" ? "Approved" : "Rejected";
-      await (client as any).call({
-        method: "frappe.client.set_value",
-        args: {
+      await frappeRpc(client, "frappe.client.set_value", {
           doctype: "Leave Application",
           name: data.name,
           fieldname: "status",
           value: status,
-        },
-        headers: { "X-AI-Action": "true" },
-      });
+        });
       // NOTIFY USER
       const { notifyDecision } = await import("@/app/actions/ai/notifications");
       await notifyDecision("Leave Application", data.name, status as any);
     } else if (data.doctype === "Expense Claim") {
       const status = data.action === "Approve" ? "Approved" : "Rejected";
-      await (client as any).call({
-        method: "frappe.client.set_value",
-        args: {
+      await frappeRpc(client, "frappe.client.set_value", {
           doctype: "Expense Claim",
           name: data.name,
           fieldname: "approval_status",
           value: status,
-        },
-        headers: { "X-AI-Action": "true" },
-      });
+        });
       // NOTIFY USER
       const { notifyDecision } = await import("@/app/actions/ai/notifications");
       await notifyDecision("Expense Claim", data.name, status as any);
     } else if (data.doctype === "Material Request") {
       const status = data.action === "Approve" ? "Approved" : "Rejected";
-      await (client as any).call({
-        method: "frappe.client.set_value",
-        args: {
+      await frappeRpc(client, "frappe.client.set_value", {
           doctype: "Material Request",
           name: data.name,
           fieldname: "workflow_state", // Assuming Workflow, or 'status'
           value: status,
-        },
-        headers: { "X-AI-Action": "true" },
-      });
+        });
       // NOTIFY USER
       const { notifyDecision } = await import("@/app/actions/ai/notifications");
       await notifyDecision("Material Request", data.name, status as any);
@@ -723,9 +627,7 @@ export async function getLeaveStats(data: { modelId?: string } = {}) {
     const startOfYear = `${currentYear}-01-01`;
     const endOfYear = `${currentYear}-12-31`;
 
-    const leaves = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const leaves = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Leave Application",
         filters: {
           status: "Approved",
@@ -734,8 +636,7 @@ export async function getLeaveStats(data: { modelId?: string } = {}) {
         },
         fields: ["department", "total_leave_days", "leave_type"],
         limit_page_length: 500, // Cap for performance
-      },
-    });
+      });
 
     const leaveList = leaves?.message || [];
 
@@ -771,17 +672,14 @@ export async function checkHrRole(data: { modelId?: string } = {}) {
   // Check if user has "HR Manager" or "System Manager" role.
   // In Frappe, we check "Has Role" table for user.
   try {
-    const roles = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const roles = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Has Role",
         filters: {
           parent: session?.user?.email,
           role: ["in", ["HR Manager", "System Manager", "HR User"]],
         },
         fields: ["role"],
-      },
-    });
+      });
 
     const userRoles = roles?.message || [];
     const hasRole = userRoles.length > 0;
@@ -799,9 +697,7 @@ export async function getAnnouncements(data: { modelId?: string } = {}) {
   // Fetch active announcements
   try {
     const now = new Date().toISOString().split("T")[0];
-    const announcements = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const announcements = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Announcement",
         // filters: {
         //    starts_on: ["<=", now],
@@ -810,8 +706,7 @@ export async function getAnnouncements(data: { modelId?: string } = {}) {
         fields: ["name", "subject", "description", "details", "creation"],
         order_by: "creation desc",
         limit_page_length: 3,
-      },
-    });
+      });
 
     return { success: true, announcements: announcements?.message || [] };
   } catch (e: any) {
@@ -824,16 +719,12 @@ export async function getAnnouncements(data: { modelId?: string } = {}) {
 export async function getAssetItems() {
   const client = await getClient();
   try {
-    const response = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const response = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Item",
         filters: { is_fixed_asset: 1 },
         fields: ["name", "item_name", "description", "image"],
         limit_page_length: 20,
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
     return response?.message || [];
   } catch (e) {
     return [];
@@ -854,23 +745,18 @@ export async function createAssetRequest(data: {
 
   try {
     // 1. Get Employee
-    const employeeRes = (await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: ["name", "company", "department"],
-      },
-    })) as any;
+      })) as any;
     const employeeObj = employeeRes?.message;
     if (!employeeObj)
       return { success: false, error: "Employee record not found." };
 
     // 2. Resolve Item Code
     // Attempt exact match or fuzzy search on name
-    const itemRes = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const itemRes = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Item",
         filters: [
           ["item_name", "like", `%${data.item_name}%`],
@@ -879,16 +765,13 @@ export async function createAssetRequest(data: {
         ],
         fields: ["name"],
         limit_page_length: 1,
-      },
-    });
+      });
 
     let itemCode = itemRes?.message?.[0]?.name;
 
     // Fallback: If no Fixed Asset found, check ANY item
     if (!itemCode) {
-      const anyItemRes = await (client as any).call({
-        method: "frappe.client.get_list",
-        args: {
+      const anyItemRes = await frappeRpc(client, "frappe.client.get_list", {
           doctype: "Item",
           filters: [
             ["item_name", "like", `%${data.item_name}%`],
@@ -896,8 +779,7 @@ export async function createAssetRequest(data: {
           ],
           fields: ["name"],
           limit_page_length: 1,
-        },
-      });
+        });
       itemCode = anyItemRes?.message?.[0]?.name;
     }
 
@@ -927,11 +809,7 @@ export async function createAssetRequest(data: {
       company: employeeObj.company,
     };
 
-    const response = (await (client as any).call({
-      method: "frappe.client.insert",
-      args: { doc: doc },
-      headers: { "X-AI-Action": "true" },
-    })) as any;
+    const response = (await frappeRpc(client, "frappe.client.insert", { doc: doc })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -966,14 +844,11 @@ export async function createAiEmployeeAdvance(data: {
 
   try {
     // 1. Get Employee
-    const employeeRes = (await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: ["name", "company", "department"],
-      },
-    })) as any;
+      })) as any;
     const employeeObj = employeeRes?.message;
     if (!employeeObj)
       return { success: false, error: "Employee record not found." };
@@ -990,11 +865,7 @@ export async function createAiEmployeeAdvance(data: {
       status: "Draft", // Pending Approval
     };
 
-    const response = (await (client as any).call({
-      method: "frappe.client.insert",
-      args: { doc: doc },
-      headers: { "X-AI-Action": "true" },
-    })) as any;
+    const response = (await frappeRpc(client, "frappe.client.insert", { doc: doc })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);

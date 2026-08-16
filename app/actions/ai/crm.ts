@@ -4,6 +4,7 @@ import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifyCrmRole } from "@/app/lib/roles";
 import { revalidatePath } from "next/cache";
+import { frappeRpc } from "@/app/lib/frappe-rpc";
 
 // --- DEALS ---
 
@@ -15,9 +16,7 @@ export async function getMyDeals(data: { modelId?: string } = {}) {
     return { success: false, error: "Unauthorized" };
 
   try {
-    const deals = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const deals = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Opportunity",
         filters: {
           status: ["in", ["Open", "Quotation", "Replied"]],
@@ -32,9 +31,7 @@ export async function getMyDeals(data: { modelId?: string } = {}) {
         ],
         order_by: "creation desc",
         limit_page_length: 10,
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     return { success: true, deals: deals?.message || [] };
   } catch (e: any) {
@@ -52,9 +49,7 @@ export async function getMyLeads(data: { modelId?: string } = {}) {
     return { success: false, error: "Unauthorized" };
 
   try {
-    const leads = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const leads = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "CRM Lead",
         filters: { status: ["!=", "Converted"] },
         fields: [
@@ -72,9 +67,7 @@ export async function getMyLeads(data: { modelId?: string } = {}) {
         ],
         order_by: "creation desc",
         limit_page_length: 10,
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     return { success: true, leads: leads?.message || [] };
   } catch (e: any) {
@@ -95,9 +88,7 @@ export async function createAiLead(data: {
   const client = await getClient();
 
   try {
-    const response = await (client as any).call({
-      method: "frappe.client.insert",
-      args: {
+    const response = await frappeRpc(client, "frappe.client.insert", {
         doc: {
           doctype: "CRM Lead",
           lead_name: data.lead_name,
@@ -107,9 +98,7 @@ export async function createAiLead(data: {
           id_number: data.id_number,
           first_name: data.lead_name, // Defaulting first_name to lead_name if empty
         },
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
     revalidatePath("/handson/all/crm/leads");
     return {
       success: true,
@@ -132,18 +121,14 @@ export async function updateAiLead(data: {
   const client = await getClient();
 
   try {
-    const response = await (client as any).call({
-      method: "frappe.client.set_value",
-      args: {
+    const response = await frappeRpc(client, "frappe.client.set_value", {
         doctype: "CRM Lead",
         name: data.name,
         fieldname: {
           kyc_status: data.kyc_status,
           id_number: data.id_number,
         },
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
     revalidatePath("/handson/all/crm/leads");
     return {
       success: true,
@@ -172,16 +157,12 @@ export async function getCustomers(
       filters.customer_name = ["like", `%${data.query}%`];
     }
 
-    const customers = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const customers = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Customer",
         filters: filters,
         fields: ["name", "customer_name", "customer_type", "territory"],
         limit_page_length: 10,
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     return { success: true, customers: (customers as any)?.message || [] };
   } catch (e: any) {
@@ -201,17 +182,13 @@ export async function getCommunicationLogs(
 
   const client = await getClient();
   try {
-    const logs = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const logs = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Communication",
         filters: { communication_medium: "Email" }, // Filter email only?
         fields: ["subject", "sender", "recipients", "communication_date"],
         order_by: "communication_date desc",
         limit_page_length: 10,
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
     return { success: true, logs: (logs as any)?.message || [] };
   } catch (e: any) {
     return { success: false, error: e?.message };

@@ -8,6 +8,7 @@ import {
 } from "@/app/lib/usage";
 import { auth } from "@/app/(auth)/auth";
 import { AI_MODELS } from "@/ai/models";
+import { frappeRpc } from "@/app/lib/frappe-rpc";
 
 export async function createAiTask(data: {
   name: string;
@@ -27,9 +28,7 @@ export async function createAiTask(data: {
   }
 
   try {
-    const response = await client.call({
-      method: "frappe.client.insert",
-      args: {
+    const response = await frappeRpc(client, "frappe.client.insert", {
         doc: {
           doctype: "Task",
           subject: data.name,
@@ -39,9 +38,7 @@ export async function createAiTask(data: {
           _assign: data.assignee ? JSON.stringify([data.assignee]) : undefined, // Auto-assign if provided
           status: "Open",
         },
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     if (response?.message) {
       if (session) {
@@ -71,17 +68,13 @@ export async function createAiNote(data: {
   }
 
   try {
-    const response = await client.call({
-      method: "frappe.client.insert",
-      args: {
+    const response = await frappeRpc(client, "frappe.client.insert", {
         doc: {
           doctype: "Note",
           title: data.title,
           public: 1,
         },
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     if (response?.message) {
       if (session) {
@@ -111,18 +104,14 @@ export async function createAiProject(data: {
   }
 
   try {
-    const response = await client.call({
-      method: "frappe.client.insert",
-      args: {
+    const response = await frappeRpc(client, "frappe.client.insert", {
         doc: {
           doctype: "Project",
           project_name: data.name,
           notes: data.description,
           status: "Open",
         },
-      },
-      headers: { "X-AI-Action": "true" },
-    });
+      });
 
     if (response?.message) {
       if (session) {

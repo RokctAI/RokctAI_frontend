@@ -3,6 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifyHrRole } from "@/app/lib/roles";
+import { frappeRpc } from "@/app/lib/frappe-rpc";
 
 export async function getJobApplicants(data: { modelId?: string } = {}) {
   if (!(await verifyHrRole())) return { success: false, error: "Unauthorized" };
@@ -10,16 +11,13 @@ export async function getJobApplicants(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const applicants = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const applicants = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Job Applicant",
         filters: { status: "Open" },
         fields: ["name", "applicant_name", "job_title", "status", "email_id"],
         order_by: "creation desc",
         limit_page_length: 10,
-      },
-    });
+      });
 
     return { success: true, applicants: applicants?.message || [] };
   } catch (e: any) {
@@ -39,15 +37,12 @@ export async function getJobOpenings(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const jobs = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const jobs = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Job Opening",
         filters: { status: "Open" },
         fields: ["name", "job_title", "department", "status"],
         limit_page_length: 10,
-      },
-    });
+      });
 
     return { success: true, jobs: jobs?.message || [] };
   } catch (e: any) {

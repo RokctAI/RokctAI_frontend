@@ -3,6 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifySystemManager } from "@/app/lib/roles";
+import { frappeRpc } from "@/app/lib/frappe-rpc";
 
 export async function countUsers(data: { modelId?: string } = {}) {
   if (!(await verifySystemManager()))
@@ -12,14 +13,11 @@ export async function countUsers(data: { modelId?: string } = {}) {
 
   try {
     // Count Active Users
-    const users = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const users = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "User",
         filters: { enabled: 1 },
         limit_page_length: 1, // We just want count? Frappe doesn't give count easily via get_list without GetAll
-      },
-    });
+      });
     // Actually better to get a list for the UI
     return { success: true, message: `Active Users check completed.` }; // Placeholder
   } catch (e: any) {
@@ -39,9 +37,7 @@ export async function getUsers(
     const filters: any = { enabled: 1, user_type: "System User" };
     if (data.query) filters.email = ["like", `%${data.query}%`];
 
-    const users = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const users = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "User",
         filters: filters,
         fields: [
@@ -52,8 +48,7 @@ export async function getUsers(
           "last_login",
         ],
         limit_page_length: 20,
-      },
-    });
+      });
 
     return { success: true, users: users?.message || [] };
   } catch (e: any) {
@@ -69,24 +64,18 @@ export async function getSystemHealth(data: { modelId?: string } = {}) {
 
   try {
     // Check for Failed Background Jobs
-    const jobs = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const jobs = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Background Job", // Note: Might not be exposed in standard client, assuming standard doctype
         filters: { status: "Failed" },
         limit_page_length: 5,
-      },
-    });
+      });
 
     // Check for Error Logs
-    const logs = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const logs = await frappeRpc(client, "frappe.client.get_list", {
         doctype: "Error Log",
         order_by: "creation desc",
         limit_page_length: 5,
-      },
-    });
+      });
 
     const jobCount = jobs?.message?.length || 0;
     const logCount = logs?.message?.length || 0;
