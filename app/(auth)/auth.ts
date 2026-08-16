@@ -121,7 +121,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           if (isPaaSLogin) {
             try {
               const subRes = await fetch(
-                `${baseUrl}/api/method/core.tenant.api.get_subscription_details`,
+                `${baseUrl}/api/v1/method/paas.tenant.api.get_subscription_details`,
                 {
                   method: "GET",
                   headers: {
