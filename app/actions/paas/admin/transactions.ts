@@ -27,7 +27,7 @@ export async function getPayoutRequests(page: number = 1, limit: number = 20) {
 export async function getPayouts(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_finance.get_all_payouts", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_reports.get_all_seller_payouts", { limit_start: start, limit_page_length: limit });
   } catch (error) {
     console.error("Failed to fetch payouts:", error);
     return [];
