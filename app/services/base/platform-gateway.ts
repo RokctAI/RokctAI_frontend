@@ -43,7 +43,7 @@ export const PLATFORM_GATEWAY_METHOD = 'rokct.platform.api';
  * The full request path derived from [PLATFORM_GATEWAY_METHOD]. Never
  * hardcode this elsewhere — import it.
  */
-export const PLATFORM_GATEWAY_PATH = `/api/method/${PLATFORM_GATEWAY_METHOD}`;
+export const PLATFORM_GATEWAY_PATH = `/api/v1/method/${PLATFORM_GATEWAY_METHOD}`;
 
 export interface PlatformCallOptions {
   /**
