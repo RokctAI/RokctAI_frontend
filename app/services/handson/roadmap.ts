@@ -1,4 +1,25 @@
 import { HandsonBaseService } from "./base";
+import { platformCall } from "@/app/services/base/platform-gateway";
+
+/**
+ * The platform/control site that hosts the brain functions. Brain calls go
+ * through the universal gateway (`rokct.platform.api`) on this host with a
+ * `{cmd, payload}` envelope — never via direct dotted brain method paths
+ * (per ruling; same host the release workflow's `brain_endpoint` targets).
+ */
+const PLATFORM_HOST = "https://platform.rokct.ai";
+
+/**
+ * Executes a brain function through the universal platform gateway.
+ * `cmd` is the dotted method minus the `rcore.` prefix (e.g.
+ * `api.brain.get_jules_status`). Returns the function's own result with
+ * the Frappe `message` envelope already unwrapped (platformCall handles
+ * that), or `null` on failure — matching how callers already consume
+ * these results (`res || []` etc.).
+ */
+function brainCall<T = any>(cmd: string, payload: Record<string, unknown>) {
+  return platformCall<T>(cmd, payload, { baseUrl: PLATFORM_HOST });
+}
 
 export class RoadmapService {
   static async getRoadmaps() {
@@ -79,7 +100,7 @@ export class RoadmapService {
   }
 
   static async getJulesSources(apiKey?: string) {
-    return HandsonBaseService.call("brain.api.get_jules_sources", {
+    return brainCall("api.brain.get_jules_sources", {
       api_key: apiKey,
     });
   }
@@ -118,14 +139,14 @@ export class RoadmapService {
   // --- Interactive Jules ---
 
   static async getJulesStatus(sessionId: string, apiKey?: string) {
-    return HandsonBaseService.call("brain.api.get_jules_status", {
+    return brainCall("api.brain.get_jules_status", {
       session_id: sessionId,
       api_key: apiKey,
     });
   }
 
   static async getJulesActivities(sessionId: string, apiKey?: string) {
-    return HandsonBaseService.call("brain.api.get_jules_activities", {
+    return brainCall("api.brain.get_jules_activities", {
       session_id: sessionId,
       api_key: apiKey,
     });
@@ -136,7 +157,7 @@ export class RoadmapService {
     action: "approve",
     apiKey?: string,
   ) {
-    return HandsonBaseService.call("brain.api.vote_on_plan", {
+    return brainCall("api.brain.vote_on_plan", {
       session_id: sessionId,
       action: action,
       api_key: apiKey,
@@ -148,7 +169,7 @@ export class RoadmapService {
     message: string,
     apiKey?: string,
   ) {
-    return HandsonBaseService.call("brain.api.send_jules_message", {
+    return brainCall("api.brain.send_jules_message", {
       session_id: sessionId,
       message: message,
       api_key: apiKey,
