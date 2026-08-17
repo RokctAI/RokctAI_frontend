@@ -1,5 +1,5 @@
 import { getControlClient } from "@/app/lib/client";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export interface ServiceOptions {
   headers?: Record<string, string>;
@@ -7,8 +7,9 @@ export interface ServiceOptions {
 
 export class ControlBaseService {
   /**
-   * Executes a whitelisted dotted method against the Control Plane as a
-   * real HTTP POST. Returns the full response body (Frappe `message`
+   * Executes a whitelisted dotted method against the Control Plane through
+   * the universal platform gateway (a `{cmd, payload}` POST — see
+   * app/lib/gateway-rpc.ts). Returns the full response body (Frappe `message`
    * envelope preserved) so `response?.message` consumers keep working.
    */
   public static async call(
@@ -17,7 +18,7 @@ export class ControlBaseService {
     options: ServiceOptions = {},
   ) {
     const client = await getControlClient();
-    return frappeRpc(client, method, args, options.headers);
+    return gatewayCall(client, method, args, options.headers);
   }
 
   public static async getList(

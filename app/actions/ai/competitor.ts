@@ -9,7 +9,7 @@ import {
 import { auth } from "@/app/(auth)/auth";
 import { AI_MODELS } from "@/ai/models";
 import { verifyCrmRole } from "@/app/lib/roles";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export async function createAiCompetitor(data: {
   name: string;
@@ -56,7 +56,7 @@ export async function createAiCompetitor(data: {
       payload.headquarters_location = `https://maps.google.com/?q=${data.latitude},${data.longitude}`;
     }
 
-    const response = (await frappeRpc(client, "frappe.client.insert", { doc: payload })) as any;
+    const response = (await gatewayCall(client, "frappe.client.insert", { doc: payload })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -79,7 +79,7 @@ export async function getAiCompetitors(data: { modelId?: string } = {}) {
     return { success: false, error: "Unauthorized" };
 
   try {
-    const competitors = (await frappeRpc(client, "frappe.client.get_list", {
+    const competitors = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Competitor",
         fields: [
           "name",
@@ -111,7 +111,7 @@ export async function analyzeAiCompetitor(data: {
   try {
     // Fetch Details + Child Tables?
     // Basic fetch for now
-    const competitor = (await frappeRpc(client, "frappe.client.get", {
+    const competitor = (await gatewayCall(client, "frappe.client.get", {
         doctype: "Competitor",
         name: data.name,
       })) as any;

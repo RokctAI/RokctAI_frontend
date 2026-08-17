@@ -3,7 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifySystemManager } from "@/app/lib/roles";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 // Platform Level Control Actions
 
@@ -18,7 +18,7 @@ export async function broadcastAnnouncement(data: {
   const client = await getClient();
 
   try {
-    const response = await frappeRpc(client, "frappe.client.insert", {
+    const response = await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "Announcement",
           subject: data.subject,

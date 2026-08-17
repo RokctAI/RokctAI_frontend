@@ -2,7 +2,7 @@
 
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export async function getMyEvents(data: { modelId?: string } = {}) {
   const { verifyActiveEmployee } = await import("@/app/lib/roles");
@@ -13,7 +13,7 @@ export async function getMyEvents(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const events = await frappeRpc(client, "frappe.client.get_list", {
+    const events = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Event",
         filters: {
           starts_on: [">=", new Date().toISOString().split("T")[0]],

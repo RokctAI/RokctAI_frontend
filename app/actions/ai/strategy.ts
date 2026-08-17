@@ -2,7 +2,7 @@
 
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 // Goals/Strategy often acceptable for all employees or constrained to managers?
 // Access via Employee record usually.
 
@@ -16,7 +16,7 @@ export async function getMyOkrs(data: { modelId?: string } = {}) {
 
   try {
     // Get Employee
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
@@ -24,7 +24,7 @@ export async function getMyOkrs(data: { modelId?: string } = {}) {
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
-    const goals = await frappeRpc(client, "frappe.client.get_list", {
+    const goals = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Goal",
         filters: { employee: employee, status: "Open" },
         fields: ["name", "goal", "progress", "end_date"],

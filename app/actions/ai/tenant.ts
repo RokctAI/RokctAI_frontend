@@ -3,7 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifySystemManager } from "@/app/lib/roles";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 // Tenant Action Actions
 
@@ -15,7 +15,7 @@ export async function getBillingStatus(data: { modelId?: string } = {}) {
   const client = await getClient();
   try {
     // Assuming "Subscription" doctype (or generic placeholder)
-    const sub = await frappeRpc(client, "frappe.client.get_list", {
+    const sub = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Subscription", // Standard in ERPNext
         fields: ["name", "status", "next_payment_date", "plan"],
         limit_page_length: 1,
@@ -40,7 +40,7 @@ export async function contactSupport(data: {
   const client = await getClient();
   try {
     // Create an Issue or Support Ticket
-    const response = await frappeRpc(client, "frappe.client.insert", {
+    const response = await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "Issue",
           subject: data.subject,
@@ -60,11 +60,13 @@ export async function contactSupport(data: {
 export async function getAvailableModels() {
   const client = await getClient();
   try {
-    // Manifest alias key: {app_name}.api.plan_builder.get_available_models.get_available_models
-    // (agent module manifest) - the single-leaf form does not exist on the backend.
-    const res = await frappeRpc(
+    // Gateway cmd = manifest alias key minus "{app_name}." (agent module
+    // manifest key:
+    // {app_name}.api.plan_builder.get_available_models.get_available_models
+    // - the single-leaf form does not exist on the backend).
+    const res = await gatewayCall(
       client,
-      "rcore.api.plan_builder.get_available_models.get_available_models",
+      "api.plan_builder.get_available_models.get_available_models",
     );
     if (res && res.message && (res.message.FREE || res.message.PAID)) {
       return { success: true, models: res.message };

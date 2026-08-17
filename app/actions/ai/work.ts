@@ -2,7 +2,7 @@
 
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export async function getMyProjects(data: { modelId?: string } = {}) {
   // GUARDRAIL: Only active employees can access work management.
@@ -17,7 +17,7 @@ export async function getMyProjects(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const projects = await frappeRpc(client, "frappe.client.get_list", {
+    const projects = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Project",
         filters: { status: "Open" }, // Todo: Filter by _user_tags or team?
         fields: [
@@ -49,7 +49,7 @@ export async function getMyTasks(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const tasks = await frappeRpc(client, "frappe.client.get_list", {
+    const tasks = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Task",
         filters: { status: "Open" }, // Filter by user assignment in real world
         fields: [

@@ -3,7 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { getDepartments } from "@/app/actions/handson/all/hrms/departments";
 import { auth } from "@/app/(auth)/auth";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export interface HolidayWorkInput {
   holiday: string; // Name of the holiday
@@ -17,7 +17,7 @@ export async function checkUpcomingHoliday() {
   try {
     // Find the next holiday after today
     const today = new Date().toISOString().split("T")[0];
-    const response = await frappeRpc(client, "frappe.client.get_list", {
+    const response = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Holiday",
         filters: [["holiday_date", ">", today]],
         fields: ["name", "description", "holiday_date"],
@@ -32,7 +32,7 @@ export async function checkUpcomingHoliday() {
       // Check if user has already responded (Global Check)
       if (session?.user?.email) {
         // 1. Check for Personal Note
-        const note = await frappeRpc(client, "frappe.client.get_list", {
+        const note = await gatewayCall(client, "frappe.client.get_list", {
             doctype: "Note",
             filters: [
               ["title", "like", `%Working on ${holidayTitle}%`],
@@ -42,7 +42,7 @@ export async function checkUpcomingHoliday() {
           });
 
         // 2. Check for Announcement
-        const announcement = await frappeRpc(client, "frappe.client.get_list", {
+        const announcement = await gatewayCall(client, "frappe.client.get_list", {
             doctype: "Announcement",
             filters: [
               ["subject", "like", `%${holidayTitle}%`],
@@ -81,7 +81,7 @@ export async function announceHolidayWork({
   try {
     if (audience === "Me Only") {
       // Log a Note for the user
-      await frappeRpc(client, "frappe.client.insert", {
+      await gatewayCall(client, "frappe.client.insert", {
           doc: {
             doctype: "Note",
             title: `Working on ${holiday}`,
@@ -92,7 +92,7 @@ export async function announceHolidayWork({
       return { success: true, message: "Logged your working day in Notes." };
     } else if (audience === "All") {
       // Create a Global Announcement
-      await frappeRpc(client, "frappe.client.insert", {
+      await gatewayCall(client, "frappe.client.insert", {
           doc: {
             doctype: "Announcement",
             subject: `Working Day: ${holiday}`,
@@ -114,7 +114,7 @@ export async function announceHolidayWork({
       // Better: We send an announcement that explicitly mentions the departments.
 
       const deptString = departments.join(", ");
-      await frappeRpc(client, "frappe.client.insert", {
+      await gatewayCall(client, "frappe.client.insert", {
           doc: {
             doctype: "Announcement",
             subject: `Working Day for ${deptString}`,

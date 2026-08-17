@@ -10,7 +10,7 @@ import { auth } from "@/app/(auth)/auth";
 import { AI_MODELS } from "@/ai/models";
 import { verifyHrRole, getCurrentEmployeeId } from "@/app/lib/roles";
 import { revalidatePath } from "next/cache";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 // --- PERFORMANCE (GOALS) ---
 
@@ -31,7 +31,7 @@ export async function createAiGoal(data: {
 
   try {
     // Fetch current employee
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
@@ -45,7 +45,7 @@ export async function createAiGoal(data: {
       };
     }
 
-    const response = await frappeRpc(client, "frappe.client.insert", {
+    const response = await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "Goal",
           employee: employee,
@@ -81,7 +81,7 @@ export async function updateAiMyProfile(data: {
 
   const client = await getClient();
   try {
-    const response = await frappeRpc(client, "frappe.client.set_value", {
+    const response = await gatewayCall(client, "frappe.client.set_value", {
         doctype: "Employee",
         name: employeeId,
         fieldname: {
@@ -108,7 +108,7 @@ export async function getAiGoals(data: { modelId?: string } = {}) {
   // We default to checking auth for security.
   try {
     // Fetch current employee
-    const employeeRes = await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
@@ -116,7 +116,7 @@ export async function getAiGoals(data: { modelId?: string } = {}) {
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found" };
 
-    const goals = await frappeRpc(client, "frappe.client.get_list", {
+    const goals = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Goal",
         filters: { employee: employee },
         fields: ["name", "goal", "status", "progress", "end_date"],
@@ -140,7 +140,7 @@ export async function getLeaveBalance(
 
   try {
     // Fetch current employee
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
@@ -148,7 +148,7 @@ export async function getLeaveBalance(
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found" };
 
-    const allocations = await frappeRpc(client, "frappe.client.get_list", {
+    const allocations = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Leave Allocation",
         filters: {
           employee: employee,
@@ -164,7 +164,7 @@ export async function getLeaveBalance(
     const allocationList = allocations?.message || [];
 
     // Fetch used leaves to calculate actual balance
-    const usedLeaves = await frappeRpc(client, "frappe.client.get_list", {
+    const usedLeaves = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Leave Application",
         filters: {
           employee: employee,
@@ -212,7 +212,7 @@ export async function applyAiLeave(data: {
   }
 
   try {
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
@@ -220,7 +220,7 @@ export async function applyAiLeave(data: {
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
-    const response = (await frappeRpc(client, "frappe.client.insert", {
+    const response = (await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "Leave Application",
           employee: employee,
@@ -259,7 +259,7 @@ export async function createAiExpenseClaim(data: {
   if (!hasQuota) return { success: false, error: "Quota exceeded." };
 
   try {
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
@@ -284,7 +284,7 @@ export async function createAiExpenseClaim(data: {
       docstatus: 0,
     };
 
-    const response = (await frappeRpc(client, "frappe.client.insert", { doc: args })) as any;
+    const response = (await gatewayCall(client, "frappe.client.insert", { doc: args })) as any;
 
     if (response?.message) {
       const docName = response.message.name;
@@ -292,7 +292,7 @@ export async function createAiExpenseClaim(data: {
       if (data.attachment_url) {
         // Production: Create a File document linked to the Expense Claim
         try {
-          (await frappeRpc(client, "frappe.client.insert", {
+          (await gatewayCall(client, "frappe.client.insert", {
               doc: {
                 doctype: "File",
                 file_url: data.attachment_url,
@@ -304,7 +304,7 @@ export async function createAiExpenseClaim(data: {
         } catch (fileError) {
           // Fallback to remarks
           console.warn("Failed to attach file", fileError);
-          (await frappeRpc(client, "frappe.client.set_value", {
+          (await gatewayCall(client, "frappe.client.set_value", {
               doctype: "Expense Claim",
               name: docName,
               fieldname: "remark",
@@ -330,7 +330,7 @@ export async function getAiExpenses(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
@@ -338,7 +338,7 @@ export async function getAiExpenses(data: { modelId?: string } = {}) {
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found" };
 
-    const claims = await frappeRpc(client, "frappe.client.get_list", {
+    const claims = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Expense Claim",
         filters: { employee: employee },
         fields: [
@@ -375,7 +375,7 @@ export async function markAiAttendance(data: {
   if (!hasQuota) return { success: false, error: "Quota exceeded." };
 
   try {
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
@@ -386,7 +386,7 @@ export async function markAiAttendance(data: {
     // Determine log type if not provided (Toggle based on last log)
     let logType = data.log_type;
     if (!logType) {
-      const lastLog = await frappeRpc(client, "frappe.client.get_list", {
+      const lastLog = await gatewayCall(client, "frappe.client.get_list", {
           doctype: "Employee Checkin",
           filters: { employee: employee },
           fields: ["log_type"],
@@ -397,7 +397,7 @@ export async function markAiAttendance(data: {
       logType = lastType === "IN" ? "OUT" : "IN";
     }
 
-    const response = await frappeRpc(client, "frappe.client.insert", {
+    const response = await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "Employee Checkin",
           employee: employee,
@@ -427,7 +427,7 @@ export async function getAttendanceStatus() {
   const client = await getClient();
 
   try {
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
@@ -436,7 +436,7 @@ export async function getAttendanceStatus() {
 
     if (!employee) return { status: "Unknown", lastLog: null };
 
-    const lastLog = (await frappeRpc(client, "frappe.client.get_list", {
+    const lastLog = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Employee Checkin",
         filters: { employee: employee },
         fields: ["log_type", "time"],
@@ -466,7 +466,7 @@ export async function getAiPayslips(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: "name",
@@ -474,7 +474,7 @@ export async function getAiPayslips(data: { modelId?: string } = {}) {
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
-    const payslips = await frappeRpc(client, "frappe.client.get_list", {
+    const payslips = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Salary Slip",
         filters: { employee: employee, docstatus: 1 }, // Only submitted slips
         fields: [
@@ -509,7 +509,7 @@ export async function getPendingApprovals(data: { modelId?: string } = {}) {
   // Using standard frappe.client.get_list which respects user permissions.
   try {
     // Fetch Open Leave Applications
-    const leaveApps = await frappeRpc(client, "frappe.client.get_list", {
+    const leaveApps = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Leave Application",
         filters: { status: "Open" }, // or "Applied" depending on workflow
         fields: [
@@ -526,7 +526,7 @@ export async function getPendingApprovals(data: { modelId?: string } = {}) {
       });
 
     // Fetch Submitted Expense Claims (docstatus=1 but not yet Approved/Rejected)
-    const expenseClaims = await frappeRpc(client, "frappe.client.get_list", {
+    const expenseClaims = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Expense Claim",
         filters: {
           docstatus: 1,
@@ -573,7 +573,7 @@ export async function processApproval(data: {
   try {
     if (data.doctype === "Leave Application") {
       const status = data.action === "Approve" ? "Approved" : "Rejected";
-      await frappeRpc(client, "frappe.client.set_value", {
+      await gatewayCall(client, "frappe.client.set_value", {
           doctype: "Leave Application",
           name: data.name,
           fieldname: "status",
@@ -584,7 +584,7 @@ export async function processApproval(data: {
       await notifyDecision("Leave Application", data.name, status as any);
     } else if (data.doctype === "Expense Claim") {
       const status = data.action === "Approve" ? "Approved" : "Rejected";
-      await frappeRpc(client, "frappe.client.set_value", {
+      await gatewayCall(client, "frappe.client.set_value", {
           doctype: "Expense Claim",
           name: data.name,
           fieldname: "approval_status",
@@ -595,7 +595,7 @@ export async function processApproval(data: {
       await notifyDecision("Expense Claim", data.name, status as any);
     } else if (data.doctype === "Material Request") {
       const status = data.action === "Approve" ? "Approved" : "Rejected";
-      await frappeRpc(client, "frappe.client.set_value", {
+      await gatewayCall(client, "frappe.client.set_value", {
           doctype: "Material Request",
           name: data.name,
           fieldname: "workflow_state", // Assuming Workflow, or 'status'
@@ -627,7 +627,7 @@ export async function getLeaveStats(data: { modelId?: string } = {}) {
     const startOfYear = `${currentYear}-01-01`;
     const endOfYear = `${currentYear}-12-31`;
 
-    const leaves = await frappeRpc(client, "frappe.client.get_list", {
+    const leaves = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Leave Application",
         filters: {
           status: "Approved",
@@ -672,7 +672,7 @@ export async function checkHrRole(data: { modelId?: string } = {}) {
   // Check if user has "HR Manager" or "System Manager" role.
   // In Frappe, we check "Has Role" table for user.
   try {
-    const roles = await frappeRpc(client, "frappe.client.get_list", {
+    const roles = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Has Role",
         filters: {
           parent: session?.user?.email,
@@ -697,7 +697,7 @@ export async function getAnnouncements(data: { modelId?: string } = {}) {
   // Fetch active announcements
   try {
     const now = new Date().toISOString().split("T")[0];
-    const announcements = await frappeRpc(client, "frappe.client.get_list", {
+    const announcements = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Announcement",
         // filters: {
         //    starts_on: ["<=", now],
@@ -719,7 +719,7 @@ export async function getAnnouncements(data: { modelId?: string } = {}) {
 export async function getAssetItems() {
   const client = await getClient();
   try {
-    const response = await frappeRpc(client, "frappe.client.get_list", {
+    const response = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Item",
         filters: { is_fixed_asset: 1 },
         fields: ["name", "item_name", "description", "image"],
@@ -745,7 +745,7 @@ export async function createAssetRequest(data: {
 
   try {
     // 1. Get Employee
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: ["name", "company", "department"],
@@ -756,7 +756,7 @@ export async function createAssetRequest(data: {
 
     // 2. Resolve Item Code
     // Attempt exact match or fuzzy search on name
-    const itemRes = await frappeRpc(client, "frappe.client.get_list", {
+    const itemRes = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Item",
         filters: [
           ["item_name", "like", `%${data.item_name}%`],
@@ -771,7 +771,7 @@ export async function createAssetRequest(data: {
 
     // Fallback: If no Fixed Asset found, check ANY item
     if (!itemCode) {
-      const anyItemRes = await frappeRpc(client, "frappe.client.get_list", {
+      const anyItemRes = await gatewayCall(client, "frappe.client.get_list", {
           doctype: "Item",
           filters: [
             ["item_name", "like", `%${data.item_name}%`],
@@ -809,7 +809,7 @@ export async function createAssetRequest(data: {
       company: employeeObj.company,
     };
 
-    const response = (await frappeRpc(client, "frappe.client.insert", { doc: doc })) as any;
+    const response = (await gatewayCall(client, "frappe.client.insert", { doc: doc })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -844,7 +844,7 @@ export async function createAiEmployeeAdvance(data: {
 
   try {
     // 1. Get Employee
-    const employeeRes = (await frappeRpc(client, "frappe.client.get_value", {
+    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session?.user?.email },
         fieldname: ["name", "company", "department"],
@@ -865,7 +865,7 @@ export async function createAiEmployeeAdvance(data: {
       status: "Draft", // Pending Approval
     };
 
-    const response = (await frappeRpc(client, "frappe.client.insert", { doc: doc })) as any;
+    const response = (await gatewayCall(client, "frappe.client.insert", { doc: doc })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);

@@ -3,7 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifyFinanceRole } from "@/app/lib/roles";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 // --- INVOICES (SALES) ---
 
@@ -14,7 +14,7 @@ export async function getSalesInvoices(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const invoices = await frappeRpc(client, "frappe.client.get_list", {
+    const invoices = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Sales Invoice",
         filters: {
           status: ["not in", ["Paid", "Cancelled", "Draft"]], // Fetch Unpaid/Overdue
@@ -47,7 +47,7 @@ export async function getPurchaseInvoices(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const invoices = await frappeRpc(client, "frappe.client.get_list", {
+    const invoices = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Purchase Invoice",
         filters: {
           status: ["not in", ["Paid", "Cancelled", "Draft"]],
@@ -85,7 +85,7 @@ export async function getPendingPayments(data: { modelId?: string } = {}) {
   try {
     // Fetch Payment Entries in Draft or Posted but unallocated?
     // Usually "Draft" payments imply pending approval/submission
-    const payments = await frappeRpc(client, "frappe.client.get_list", {
+    const payments = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Payment Entry",
         filters: {
           docstatus: 0, // Draft

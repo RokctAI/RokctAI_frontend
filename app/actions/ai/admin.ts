@@ -3,7 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifySystemManager } from "@/app/lib/roles";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export async function countUsers(data: { modelId?: string } = {}) {
   if (!(await verifySystemManager()))
@@ -13,7 +13,7 @@ export async function countUsers(data: { modelId?: string } = {}) {
 
   try {
     // Count Active Users
-    const users = await frappeRpc(client, "frappe.client.get_list", {
+    const users = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "User",
         filters: { enabled: 1 },
         limit_page_length: 1, // We just want count? Frappe doesn't give count easily via get_list without GetAll
@@ -37,7 +37,7 @@ export async function getUsers(
     const filters: any = { enabled: 1, user_type: "System User" };
     if (data.query) filters.email = ["like", `%${data.query}%`];
 
-    const users = await frappeRpc(client, "frappe.client.get_list", {
+    const users = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "User",
         filters: filters,
         fields: [
@@ -64,14 +64,14 @@ export async function getSystemHealth(data: { modelId?: string } = {}) {
 
   try {
     // Check for Failed Background Jobs
-    const jobs = await frappeRpc(client, "frappe.client.get_list", {
+    const jobs = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Background Job", // Note: Might not be exposed in standard client, assuming standard doctype
         filters: { status: "Failed" },
         limit_page_length: 5,
       });
 
     // Check for Error Logs
-    const logs = await frappeRpc(client, "frappe.client.get_list", {
+    const logs = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Error Log",
         order_by: "creation desc",
         limit_page_length: 5,

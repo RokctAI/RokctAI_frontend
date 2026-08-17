@@ -2,7 +2,7 @@
 
 import { getClient } from "@/app/lib/client";
 import { verifyCrmRole, verifySupplyChainRole } from "@/app/lib/roles";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 import {
   getQuotation,
   createSalesOrder,
@@ -127,7 +127,7 @@ async function fuzzySearch(doctype: string, query: string) {
   // Search by Name OR Customer Name
   // Using 'or_filters' if strictly needed, or just multiple calls.
   // Simple approach: filter by name like query
-  const results = await frappeRpc(client, "frappe.client.get_list", {
+  const results = await gatewayCall(client, "frappe.client.get_list", {
       doctype,
       filters: [["name", "like", `%${query}%`]],
       fields: ["name", "customer_name", "status", "grand_total"],
@@ -137,7 +137,7 @@ async function fuzzySearch(doctype: string, query: string) {
   // If no results by ID, search by customer/party name?
   // This is optional but powerful.
   if (!results?.message?.length) {
-    const customerResults = await frappeRpc(client, "frappe.client.get_list", {
+    const customerResults = await gatewayCall(client, "frappe.client.get_list", {
         doctype,
         filters: [["customer_name", "like", `%${query}%`]],
         fields: ["name", "customer_name", "status"],
@@ -152,7 +152,7 @@ async function fuzzySearch(doctype: string, query: string) {
 
 async function updateDocStatus(doctype: string, name: string, status: string) {
   const client = await getClient();
-  await frappeRpc(client, "frappe.client.set_value", { doctype, name, fieldname: { status } });
+  await gatewayCall(client, "frappe.client.set_value", { doctype, name, fieldname: { status } });
 
   // NOTIFY
   const { notifyDecision } = await import("@/app/actions/ai/notifications");

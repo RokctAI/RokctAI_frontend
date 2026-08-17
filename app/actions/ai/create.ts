@@ -8,7 +8,7 @@ import {
 } from "@/app/lib/usage";
 import { auth } from "@/app/(auth)/auth";
 import { AI_MODELS } from "@/ai/models";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export async function createAiTask(data: {
   name: string;
@@ -28,7 +28,7 @@ export async function createAiTask(data: {
   }
 
   try {
-    const response = await frappeRpc(client, "frappe.client.insert", {
+    const response = await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "Task",
           subject: data.name,
@@ -68,7 +68,7 @@ export async function createAiNote(data: {
   }
 
   try {
-    const response = await frappeRpc(client, "frappe.client.insert", {
+    const response = await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "Note",
           title: data.title,
@@ -104,7 +104,7 @@ export async function createAiProject(data: {
   }
 
   try {
-    const response = await frappeRpc(client, "frappe.client.insert", {
+    const response = await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "Project",
           project_name: data.name,

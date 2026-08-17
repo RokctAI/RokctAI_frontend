@@ -4,7 +4,7 @@ import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifyCrmRole } from "@/app/lib/roles";
 import { revalidatePath } from "next/cache";
-import { frappeRpc } from "@/app/lib/frappe-rpc";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 // --- DEALS ---
 
@@ -16,7 +16,7 @@ export async function getMyDeals(data: { modelId?: string } = {}) {
     return { success: false, error: "Unauthorized" };
 
   try {
-    const deals = await frappeRpc(client, "frappe.client.get_list", {
+    const deals = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Opportunity",
         filters: {
           status: ["in", ["Open", "Quotation", "Replied"]],
@@ -49,7 +49,7 @@ export async function getMyLeads(data: { modelId?: string } = {}) {
     return { success: false, error: "Unauthorized" };
 
   try {
-    const leads = await frappeRpc(client, "frappe.client.get_list", {
+    const leads = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "CRM Lead",
         filters: { status: ["!=", "Converted"] },
         fields: [
@@ -88,7 +88,7 @@ export async function createAiLead(data: {
   const client = await getClient();
 
   try {
-    const response = await frappeRpc(client, "frappe.client.insert", {
+    const response = await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "CRM Lead",
           lead_name: data.lead_name,
@@ -121,7 +121,7 @@ export async function updateAiLead(data: {
   const client = await getClient();
 
   try {
-    const response = await frappeRpc(client, "frappe.client.set_value", {
+    const response = await gatewayCall(client, "frappe.client.set_value", {
         doctype: "CRM Lead",
         name: data.name,
         fieldname: {
@@ -157,7 +157,7 @@ export async function getCustomers(
       filters.customer_name = ["like", `%${data.query}%`];
     }
 
-    const customers = await frappeRpc(client, "frappe.client.get_list", {
+    const customers = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Customer",
         filters: filters,
         fields: ["name", "customer_name", "customer_type", "territory"],
@@ -182,7 +182,7 @@ export async function getCommunicationLogs(
 
   const client = await getClient();
   try {
-    const logs = await frappeRpc(client, "frappe.client.get_list", {
+    const logs = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Communication",
         filters: { communication_medium: "Email" }, // Filter email only?
         fields: ["subject", "sender", "recipients", "communication_date"],
