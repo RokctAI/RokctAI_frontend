@@ -1,15 +1,13 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
 
 import { getPaaSClient } from "@/app/lib/client";
 
 export async function getGeneralSettings() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "paas.api.admin_settings.admin_settings.get_general_settings",
-    });
+    return await paasCall("api.admin_settings.get_general_settings");
   } catch (error) {
     console.error("Failed to fetch general settings:", error);
     return {};
@@ -17,12 +15,8 @@ export async function getGeneralSettings() {
 }
 
 export async function updateGeneralSettings(settings: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "paas.api.admin_settings.admin_settings.update_general_settings",
-      args: { settings_data: settings },
-    });
+    await paasCall("api.admin_settings.update_general_settings", { settings_data: settings });
     revalidatePath("/paas/admin/settings/general");
     return { success: true };
   } catch (error) {
@@ -32,13 +26,9 @@ export async function updateGeneralSettings(settings: any) {
 }
 
 export async function getCurrencies(page: number = 1, limit: number = 20) {
-  const frappe = await getPaaSClient();
   const start = (page - 1) * limit;
   try {
-    return await frappe.call({
-      method: "paas.api.admin_settings.admin_settings.get_all_currencies",
-      args: { limit_start: start, limit_page_length: limit },
-    });
+    return await paasCall("api.admin_settings.get_all_currencies", { limit_start: start, limit_page_length: limit });
   } catch (error) {
     console.error("Failed to fetch currencies:", error);
     return [];
@@ -46,11 +36,8 @@ export async function getCurrencies(page: number = 1, limit: number = 20) {
 }
 
 export async function getPaymentMethods() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "paas.api.admin_settings.admin_settings.get_payment_methods",
-    });
+    return await paasCall("api.admin_settings.get_payment_methods");
   } catch (error) {
     console.error("Failed to fetch payment methods:", error);
     return [];
@@ -111,11 +98,8 @@ export async function savePaymentGateway(doc: any) {
 }
 
 export async function getEmailSettings() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "paas.api.admin_settings.admin_settings.get_email_settings",
-    });
+    return await paasCall("api.admin_settings.get_email_settings");
   } catch (error) {
     console.error("Failed to fetch email settings:", error);
     return {};
@@ -123,12 +107,8 @@ export async function getEmailSettings() {
 }
 
 export async function getNotificationSettings() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method:
-        "paas.api.admin_settings.admin_settings.get_notification_settings",
-    });
+    return await paasCall("api.notification.get_notification_settings");
   } catch (error) {
     console.error("Failed to fetch notification settings:", error);
     return {};
@@ -136,11 +116,8 @@ export async function getNotificationSettings() {
 }
 
 export async function getSocialSettings() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "paas.api.admin_settings.admin_settings.get_social_settings",
-    });
+    return await paasCall("api.admin_settings.get_social_settings");
   } catch (error) {
     console.error("Failed to fetch social settings:", error);
     return {};
@@ -148,11 +125,8 @@ export async function getSocialSettings() {
 }
 
 export async function getAppSettings() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "paas.api.admin_settings.admin_settings.get_app_settings",
-    });
+    return await paasCall("api.admin_settings.get_app_settings");
   } catch (error) {
     console.error("Failed to fetch app settings:", error);
     return {};
@@ -160,13 +134,9 @@ export async function getAppSettings() {
 }
 
 export async function getPages(page: number = 1, limit: number = 20) {
-  const frappe = await getPaaSClient();
   const start = (page - 1) * limit;
   try {
-    return await frappe.call({
-      method: "paas.api.admin_content.admin_content.get_all_pages",
-      args: { limit_start: start, limit_page_length: limit },
-    });
+    return await paasCall("api.admin_content.get_all_pages", { limit_start: start, limit_page_length: limit });
   } catch (error) {
     console.error("Failed to fetch pages:", error);
     return [];
@@ -212,11 +182,8 @@ export async function updatePermissionSettings(settings: any) {
 }
 
 export async function getAvailableSourceProjects() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "paas.paas.builder.utils.get_available_source_projects",
-    });
+    return await paasCall("builder.utils.get_available_source_projects");
   } catch (error) {
     console.error("Failed to fetch available source projects:", error);
     return [];
@@ -333,13 +300,10 @@ export async function updateFlutterBuildSettings(settings: any) {
 }
 
 export async function getSystemInfo() {
-  const frappe = await getPaaSClient();
   try {
     const [infoRes, versionRes] = await Promise.allSettled([
-      frappe.call({
-        method: "paas.api.admin_settings.admin_settings.get_system_info",
-      }),
-      frappe.call({ method: "paas.api.get_version" }),
+      paasCall("api.admin_system.get_system_info"),
+      paasCall("api.get_version"),
     ]);
 
     const info =
@@ -475,13 +439,9 @@ export async function createPrivacyPolicy(data: any) {
 }
 
 export async function getLandingPage() {
-  const frappe = await getPaaSClient();
   try {
     // Assuming 'home' is the route for the landing page
-    return await frappe.call({
-      method: "paas.api.page.page.get_admin_web_page",
-      args: { route: "home" },
-    });
+    return await paasCall("api.page.get_admin_web_page", { route: "home" });
   } catch (error) {
     console.error("Failed to fetch landing page:", error);
     return null;
@@ -489,15 +449,11 @@ export async function getLandingPage() {
 }
 
 export async function updateLandingPage(data: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "paas.api.page.page.update_admin_web_page",
-      args: {
+    await paasCall("api.page.update_admin_web_page", {
         route: "home",
         page_data: data,
-      },
-    });
+      });
     revalidatePath("/paas/admin/settings/landing");
     return { success: true };
   } catch (error) {

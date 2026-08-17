@@ -1,15 +1,11 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
-import { getPaaSClient } from "@/app/lib/client";
 
 export async function getStories() {
-  const frappe = await getPaaSClient();
-
   try {
-    const stories = await frappe.call({
-      method: "paas.api.seller_story.seller_story.get_seller_stories",
-    });
+    const stories = await paasCall("api.seller_story.get_seller_stories");
     return stories;
   } catch (error) {
     console.error("Failed to fetch stories:", error);
@@ -18,15 +14,10 @@ export async function getStories() {
 }
 
 export async function createStory(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const story = await frappe.call({
-      method: "paas.api.seller_story.seller_story.create_seller_story",
-      args: {
+    const story = await paasCall("api.seller_story.create_seller_story", {
         story_data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/content/stories");
     return story;
   } catch (error) {
@@ -36,15 +27,10 @@ export async function createStory(data: any) {
 }
 
 export async function deleteStory(id: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method: "paas.api.seller_story.seller_story.delete_seller_story",
-      args: {
+    await paasCall("api.seller_story.delete_seller_story", {
         story_name: id,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/content/stories");
     return { success: true };
   } catch (error) {

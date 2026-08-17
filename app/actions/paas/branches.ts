@@ -1,26 +1,19 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
-import { getPaaSClient } from "@/app/lib/client";
 
 export async function getBranches() {
-  const frappe = await getPaaSClient();
-
   try {
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
     if (!shop) {
       return [];
     }
 
-    const branches = await frappe.call({
-      method: "paas.api.branch.branch.get_branches",
-      args: {
+    const branches = await paasCall("api.branch.get_branches", {
         shop_id: shop.name,
-      },
-    });
+      });
     return branches;
   } catch (error) {
     console.error("Failed to fetch branches:", error);
@@ -29,22 +22,15 @@ export async function getBranches() {
 }
 
 export async function createBranch(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
-    const branch = await frappe.call({
-      method: "paas.api.branch.branch.create_branch",
-      args: {
+    const branch = await paasCall("api.branch.create_branch", {
         branch_data: {
           ...data,
           shop: shop.name,
         },
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/restaurant/branches");
     return branch;
   } catch (error) {
@@ -54,16 +40,11 @@ export async function createBranch(data: any) {
 }
 
 export async function updateBranch(id: string, data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const branch = await frappe.call({
-      method: "paas.api.branch.branch.update_branch",
-      args: {
+    const branch = await paasCall("api.branch.update_branch", {
         branch_id: id,
         branch_data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/restaurant/branches");
     return branch;
   } catch (error) {
@@ -73,15 +54,10 @@ export async function updateBranch(id: string, data: any) {
 }
 
 export async function deleteBranch(id: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method: "paas.api.branch.branch.delete_branch",
-      args: {
+    await paasCall("api.branch.delete_branch", {
         branch_id: id,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/restaurant/branches");
     return { success: true };
   } catch (error) {

@@ -1,14 +1,11 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { getPaaSClient } from "@/app/lib/client";
 
 export async function getShop() {
-  const frappe = await getPaaSClient();
-
   try {
-    const shop = await frappe.call({
-      method: "paas.api.seller_shop.seller_shop.get_shop",
-    });
+    const shop = await paasCall("api.seller_shop.get_shop");
     return shop;
   } catch (error) {
     console.error("Failed to fetch shop:", error);
@@ -17,15 +14,10 @@ export async function getShop() {
 }
 
 export async function updateShop(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const shop = await frappe.call({
-      method: "paas.api.seller_shop.seller_shop.update_shop",
-      args: {
+    const shop = await paasCall("api.seller_shop.update_shop", {
         shop_data: data,
-      },
-    });
+      });
     return shop;
   } catch (error) {
     console.error("Failed to update shop:", error);
@@ -34,15 +26,10 @@ export async function updateShop(data: any) {
 }
 
 export async function setWorkingStatus(status: boolean) {
-  const frappe = await getPaaSClient();
-
   try {
-    const result = await frappe.call({
-      method: "paas.api.seller_shop.seller_shop.set_working_status",
-      args: {
+    const result = await paasCall("api.seller_shop.set_working_status", {
         status: status,
-      },
-    });
+      });
     return result;
   } catch (error) {
     console.error("Failed to set working status:", error);

@@ -1,17 +1,13 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
-import { getPaaSClient } from "@/app/lib/client";
 
 // Coupons
 
 export async function getCoupons() {
-  const frappe = await getPaaSClient();
-
   try {
-    const coupons = await frappe.call({
-      method: "paas.api.seller_marketing.seller_marketing.get_seller_coupons",
-    });
+    const coupons = await paasCall("api.seller_marketing.get_seller_coupons");
     return coupons;
   } catch (error) {
     console.error("Failed to fetch coupons:", error);
@@ -20,15 +16,10 @@ export async function getCoupons() {
 }
 
 export async function createCoupon(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const coupon = await frappe.call({
-      method: "paas.api.seller_marketing.seller_marketing.create_seller_coupon",
-      args: {
+    const coupon = await paasCall("api.seller_marketing.create_seller_coupon", {
         coupon_data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/marketing/coupons");
     return coupon;
   } catch (error) {
@@ -38,16 +29,11 @@ export async function createCoupon(data: any) {
 }
 
 export async function updateCoupon(name: string, data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const coupon = await frappe.call({
-      method: "paas.api.seller_marketing.seller_marketing.update_seller_coupon",
-      args: {
+    const coupon = await paasCall("api.seller_marketing.update_seller_coupon", {
         coupon_name: name,
         coupon_data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/marketing/coupons");
     return coupon;
   } catch (error) {
@@ -57,15 +43,10 @@ export async function updateCoupon(name: string, data: any) {
 }
 
 export async function deleteCoupon(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method: "paas.api.seller_marketing.seller_marketing.delete_seller_coupon",
-      args: {
+    await paasCall("api.seller_marketing.delete_seller_coupon", {
         coupon_name: name,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/marketing/coupons");
     return { success: true };
   } catch (error) {
@@ -77,12 +58,8 @@ export async function deleteCoupon(name: string) {
 // Bonuses
 
 export async function getBonuses() {
-  const frappe = await getPaaSClient();
-
   try {
-    const bonuses = await frappe.call({
-      method: "paas.api.seller_bonus.seller_bonus.get_seller_bonuses",
-    });
+    const bonuses = await paasCall("api.seller_bonus.get_seller_bonuses");
     return bonuses;
   } catch (error) {
     console.error("Failed to fetch bonuses:", error);

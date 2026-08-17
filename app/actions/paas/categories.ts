@@ -1,26 +1,19 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
-import { getPaaSClient } from "@/app/lib/client";
 
 export async function getCategories() {
-  const frappe = await getPaaSClient();
-
   try {
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
     if (!shop) {
       return [];
     }
 
-    const categories = await frappe.call({
-      method: "paas.api.category.category.get_categories",
-      args: {
+    const categories = await paasCall("api.category.get_categories", {
         shop_id: shop.name,
-      },
-    });
+      });
     return categories;
   } catch (error) {
     console.error("Failed to fetch categories:", error);
@@ -29,22 +22,15 @@ export async function getCategories() {
 }
 
 export async function createCategory(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
-    const category = await frappe.call({
-      method: "paas.api.category.category.create_category",
-      args: {
+    const category = await paasCall("api.category.create_category", {
         category_data: {
           ...data,
           shop: shop.name,
         },
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/products/categories");
     return category;
   } catch (error) {
@@ -54,16 +40,11 @@ export async function createCategory(data: any) {
 }
 
 export async function updateCategory(id: string, data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const category = await frappe.call({
-      method: "paas.api.category.category.update_category",
-      args: {
+    const category = await paasCall("api.category.update_category", {
         category_id: id,
         category_data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/products/categories");
     return category;
   } catch (error) {
@@ -73,15 +54,10 @@ export async function updateCategory(id: string, data: any) {
 }
 
 export async function deleteCategory(id: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method: "paas.api.category.category.delete_category",
-      args: {
+    await paasCall("api.category.delete_category", {
         category_id: id,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/products/categories");
     return { success: true };
   } catch (error) {

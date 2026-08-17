@@ -1,14 +1,10 @@
 "use server";
 
-import { getPaaSClient } from "@/app/lib/client";
+import { paasCall } from "@/app/lib/paas-gateway";
 
 export async function getSellerStatistics() {
-  const frappe = await getPaaSClient();
-
   try {
-    const stats = await frappe.call({
-      method: "paas.api.seller_reports.seller_reports.get_seller_statistics",
-    });
+    const stats = await paasCall("api.seller_reports.get_seller_statistics");
     return stats;
   } catch (error) {
     console.error("Failed to fetch statistics:", error);
@@ -17,16 +13,11 @@ export async function getSellerStatistics() {
 }
 
 export async function getOrderReport(fromDate?: string, toDate?: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    const report = await frappe.call({
-      method: "paas.api.seller_reports.seller_reports.get_seller_order_report",
-      args: {
+    const report = await paasCall("api.seller_reports.get_seller_order_report", {
         from_date: fromDate,
         to_date: toDate,
-      },
-    });
+      });
     return report;
   } catch (error) {
     console.error("Failed to fetch order report:", error);
