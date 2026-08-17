@@ -1,14 +1,10 @@
 "use server";
 
-import { getPaaSClient } from "@/app/lib/client";
+import { paasCall } from "@/app/lib/paas-gateway";
 
 export async function getDashboardStats() {
-  const frappe = await getPaaSClient();
-
   try {
-    const stats = await frappe.call({
-      method: "paas.api.seller_reports.seller_reports.get_seller_statistics",
-    });
+    const stats = await paasCall("api.seller_reports.get_seller_statistics");
     // Ensure response is serializable (removes null prototypes/classes)
     return JSON.parse(JSON.stringify(stats.message || stats));
   } catch (error) {

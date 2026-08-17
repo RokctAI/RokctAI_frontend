@@ -1,24 +1,17 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
-import { getPaaSClient } from "@/app/lib/client";
 
 // --- Extra Groups ---
 
 export async function getExtraGroups() {
-  const frappe = await getPaaSClient();
-
   try {
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
-    const groups = await frappe.call({
-      method: "paas.api.product_extra.product_extra.get_extra_groups",
-      args: {
+    const groups = await paasCall("api.product_extra.get_extra_groups", {
         shop_id: shop.name,
-      },
-    });
+      });
     return groups;
   } catch (error) {
     console.error("Failed to fetch extra groups:", error);
@@ -27,22 +20,15 @@ export async function getExtraGroups() {
 }
 
 export async function createExtraGroup(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
-    const group = await frappe.call({
-      method: "paas.api.product_extra.product_extra.create_extra_group",
-      args: {
+    const group = await paasCall("api.product_extra.create_extra_group", {
         data: {
           ...data,
           shop: shop.name,
         },
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/products/extras");
     return group;
   } catch (error) {
@@ -52,16 +38,11 @@ export async function createExtraGroup(data: any) {
 }
 
 export async function updateExtraGroup(name: string, data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const group = await frappe.call({
-      method: "paas.api.product_extra.product_extra.update_extra_group",
-      args: {
+    const group = await paasCall("api.product_extra.update_extra_group", {
         name: name,
         data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/products/extras");
     return group;
   } catch (error) {
@@ -71,15 +52,10 @@ export async function updateExtraGroup(name: string, data: any) {
 }
 
 export async function deleteExtraGroup(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method: "paas.api.product_extra.product_extra.delete_extra_group",
-      args: {
+    await paasCall("api.product_extra.delete_extra_group", {
         name: name,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/products/extras");
     return { success: true };
   } catch (error) {
@@ -91,15 +67,10 @@ export async function deleteExtraGroup(name: string) {
 // --- Extra Values ---
 
 export async function getExtraValues(groupId: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    const values = await frappe.call({
-      method: "paas.api.product_extra.product_extra.get_extra_values",
-      args: {
+    const values = await paasCall("api.product_extra.get_extra_values", {
         group_id: groupId,
-      },
-    });
+      });
     return values;
   } catch (error) {
     console.error("Failed to fetch extra values:", error);
@@ -108,15 +79,10 @@ export async function getExtraValues(groupId: string) {
 }
 
 export async function createExtraValue(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const value = await frappe.call({
-      method: "paas.api.product_extra.product_extra.create_extra_value",
-      args: {
+    const value = await paasCall("api.product_extra.create_extra_value", {
         data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/products/extras");
     return value;
   } catch (error) {
@@ -126,15 +92,10 @@ export async function createExtraValue(data: any) {
 }
 
 export async function deleteExtraValue(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method: "paas.api.product_extra.product_extra.delete_extra_value",
-      args: {
+    await paasCall("api.product_extra.delete_extra_value", {
         name: name,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/products/extras");
     return { success: true };
   } catch (error) {

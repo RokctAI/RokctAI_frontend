@@ -1,5 +1,6 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
 import { getPaaSClient } from "@/app/lib/client";
 
@@ -10,29 +11,22 @@ export async function getReservations(
   dateFrom?: string,
   dateTo?: string,
 ) {
-  const frappe = await getPaaSClient();
-
   try {
     // We need to fetch the shop ID first.
     // Assuming the user is a seller and has a shop.
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
     if (!shop) {
       console.error("No shop found for user");
       return [];
     }
 
-    const reservations = await frappe.call({
-      method: "paas.api.booking.booking.get_shop_reservations",
-      args: {
+    const reservations = await paasCall("api.booking.get_shop_reservations", {
         shop_id: shop.name,
         status: status,
         date_from: dateFrom,
         date_to: dateTo,
-      },
-    });
+      });
     return reservations;
   } catch (error) {
     console.error("Failed to fetch reservations:", error);
@@ -41,16 +35,11 @@ export async function getReservations(
 }
 
 export async function updateReservationStatus(name: string, status: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    const reservation = await frappe.call({
-      method: "paas.api.booking.booking.update_reservation_status",
-      args: {
+    const reservation = await paasCall("api.booking.update_reservation_status", {
         name: name,
         status: status,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/booking/reservations");
     return reservation;
   } catch (error) {
@@ -62,23 +51,16 @@ export async function updateReservationStatus(name: string, status: string) {
 // Shop Sections (Zones)
 
 export async function getShopSections() {
-  const frappe = await getPaaSClient();
-
   try {
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
     if (!shop) {
       return [];
     }
 
-    const sections = await frappe.call({
-      method: "paas.api.booking.booking.get_shop_sections_for_booking",
-      args: {
+    const sections = await paasCall("api.booking.get_shop_sections_for_booking", {
         shop_id: shop.name,
-      },
-    });
+      });
     return sections;
   } catch (error) {
     console.error("Failed to fetch shop sections:", error);
@@ -87,27 +69,20 @@ export async function getShopSections() {
 }
 
 export async function createShopSection(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
     if (!shop) {
       throw new Error("No shop found");
     }
 
-    const section = await frappe.call({
-      method: "paas.api.booking.booking.create_shop_section",
-      args: {
+    const section = await paasCall("api.booking.create_shop_section", {
         data: {
           ...data,
           shop: shop.name,
           doctype: "Shop Section",
         },
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/booking/tables");
     return section;
   } catch (error) {
@@ -117,16 +92,11 @@ export async function createShopSection(data: any) {
 }
 
 export async function updateShopSection(name: string, data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const section = await frappe.call({
-      method: "paas.api.booking.booking.update_shop_section",
-      args: {
+    const section = await paasCall("api.booking.update_shop_section", {
         name: name,
         data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/booking/tables");
     return section;
   } catch (error) {
@@ -136,15 +106,10 @@ export async function updateShopSection(name: string, data: any) {
 }
 
 export async function deleteShopSection(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method: "paas.api.booking.booking.delete_shop_section",
-      args: {
+    await paasCall("api.booking.delete_shop_section", {
         name: name,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/booking/tables");
     return { success: true };
   } catch (error) {
@@ -156,15 +121,10 @@ export async function deleteShopSection(name: string) {
 // Tables
 
 export async function getTables(sectionId: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    const tables = await frappe.call({
-      method: "paas.api.booking.booking.get_tables_for_section",
-      args: {
+    const tables = await paasCall("api.booking.get_tables_for_section", {
         shop_section_id: sectionId,
-      },
-    });
+      });
     return tables;
   } catch (error) {
     console.error("Failed to fetch tables:", error);
@@ -173,19 +133,14 @@ export async function getTables(sectionId: string) {
 }
 
 export async function createTable(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const table = await frappe.call({
-      method: "paas.api.booking.booking.create_table",
-      args: {
+    const table = await paasCall("api.booking.create_table", {
         data: {
           ...data,
           doctype: "Table",
           active: 1,
         },
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/booking/tables");
     return table;
   } catch (error) {
@@ -195,16 +150,11 @@ export async function createTable(data: any) {
 }
 
 export async function updateTable(name: string, data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const table = await frappe.call({
-      method: "paas.api.booking.booking.update_table",
-      args: {
+    const table = await paasCall("api.booking.update_table", {
         name: name,
         data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/booking/tables");
     return table;
   } catch (error) {
@@ -214,15 +164,10 @@ export async function updateTable(name: string, data: any) {
 }
 
 export async function deleteTable(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method: "paas.api.booking.booking.delete_table",
-      args: {
+    await paasCall("api.booking.delete_table", {
         name: name,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/booking/tables");
     return { success: true };
   } catch (error) {

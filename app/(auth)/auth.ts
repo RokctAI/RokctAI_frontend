@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 
 import { db } from "@/db";
 import { user } from "@/db/schema";
+import { PLATFORM_GATEWAY_PATH } from "@/app/services/base/platform-gateway";
 
 import { authConfig } from "./auth.config";
 
@@ -49,18 +50,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           let isPaaSLogin = credentials?.is_paas === "true";
 
           if (isPaaSLogin) {
-            // PaaS Login (via paas-login.tsx): Try Custom API first (for API Keys)
+            // PaaS Login (via paas-login.tsx): Try Custom API first (for API
+            // Keys). Rides the universal platform gateway with the
+            // prefix-free cmd for the users manifest's
+            // `{app_name}.api.user.login` whitelisted_methods key.
             try {
-              loginRes = await fetch(
-                `${baseUrl}/api/method/paas.api.user.user.login`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ usr: email, pwd: password }),
+              loginRes = await fetch(`${baseUrl}${PLATFORM_GATEWAY_PATH}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
                 },
-              );
+                body: JSON.stringify({
+                  cmd: "api.user.login",
+                  payload: { usr: email, pwd: password },
+                }),
+              });
             } catch (e) {
               console.warn("PaaS Login connection failed", e);
               loginRes = { ok: false } as Response;

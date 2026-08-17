@@ -1,7 +1,7 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
-import { getPaaSClient } from "@/app/lib/client";
 import { getCurrentSession } from "@/app/(auth)/actions"; // Keeping this as it's used for user email
 
 export async function createPOSOrder(orderData: any) {
@@ -10,13 +10,9 @@ export async function createPOSOrder(orderData: any) {
     throw new Error("User not authenticated");
   }
 
-  const frappe = await getPaaSClient();
-
   try {
     // 1. Get User's Shop
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
     if (!shop) {
       throw new Error("Shop not found for user");
@@ -34,12 +30,9 @@ export async function createPOSOrder(orderData: any) {
     };
 
     // 3. Create Order
-    const order = await frappe.call({
-      method: "paas.api.order.order.create_order",
-      args: {
+    const order = await paasCall("api.order.create_order", {
         order_data: finalOrderData,
-      },
-    });
+      });
 
     revalidatePath("/paas/dashboard/orders");
     return order;

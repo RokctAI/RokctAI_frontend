@@ -1,16 +1,12 @@
 "use server";
 
-import { getPaaSClient } from "@/app/lib/client";
+import { paasCall } from "@/app/lib/paas-gateway";
 
 // Wallet
 
 export async function getWallet() {
-  const frappe = await getPaaSClient();
-
   try {
-    const wallet = await frappe.call({
-      method: "paas.api.user.user.get_user_wallet",
-    });
+    const wallet = await paasCall("api.user.get_user_wallet");
     return wallet;
   } catch (error) {
     console.error("Failed to fetch wallet:", error);
@@ -19,12 +15,8 @@ export async function getWallet() {
 }
 
 export async function getWalletHistory() {
-  const frappe = await getPaaSClient();
-
   try {
-    const history = await frappe.call({
-      method: "paas.api.user.user.get_wallet_history",
-    });
+    const history = await paasCall("api.user.get_wallet_history");
     return history;
   } catch (error) {
     console.error("Failed to fetch wallet history:", error);
@@ -33,15 +25,10 @@ export async function getWalletHistory() {
 }
 
 export async function topUpWallet(amount: number) {
-  const frappe = await getPaaSClient();
-
   try {
-    const result = await frappe.call({
-      method: "paas.api.payment.payment.process_wallet_top_up",
-      args: {
+    const result = await paasCall("api.payment.process_wallet_top_up", {
         amount: amount,
-      },
-    });
+      });
     return result;
   } catch (error) {
     console.error("Failed to top up wallet:", error);
@@ -52,13 +39,8 @@ export async function topUpWallet(amount: number) {
 // Transactions
 
 export async function getTransactions() {
-  const frappe = await getPaaSClient();
-
   try {
-    const transactions = await frappe.call({
-      method:
-        "paas.api.seller_transactions.seller_transactions.get_seller_transactions",
-    });
+    const transactions = await paasCall("api.seller_transactions.get_seller_transactions");
     return transactions;
   } catch (error) {
     console.error("Failed to fetch transactions:", error);
@@ -67,13 +49,8 @@ export async function getTransactions() {
 }
 
 export async function getShopPayments() {
-  const frappe = await getPaaSClient();
-
   try {
-    const payments = await frappe.call({
-      method:
-        "paas.api.seller_transactions.seller_transactions.get_seller_shop_payments",
-    });
+    const payments = await paasCall("api.seller_transactions.get_seller_shop_payments");
     return payments;
   } catch (error) {
     console.error("Failed to fetch shop payments:", error);
@@ -82,13 +59,8 @@ export async function getShopPayments() {
 }
 
 export async function getPartnerPayments() {
-  const frappe = await getPaaSClient();
-
   try {
-    const payments = await frappe.call({
-      method:
-        "paas.api.seller_transactions.seller_transactions.get_seller_payment_to_partners",
-    });
+    const payments = await paasCall("api.seller_transactions.get_seller_payment_to_partners");
     return payments;
   } catch (error) {
     console.error("Failed to fetch partner payments:", error);
@@ -99,12 +71,8 @@ export async function getPartnerPayments() {
 // Payouts
 
 export async function getPayouts() {
-  const frappe = await getPaaSClient();
-
   try {
-    const payouts = await frappe.call({
-      method: "paas.api.seller_payout.seller_payout.get_seller_payouts",
-    });
+    const payouts = await paasCall("api.seller_payout.get_seller_payouts");
     return payouts;
   } catch (error) {
     console.error("Failed to fetch payouts:", error);

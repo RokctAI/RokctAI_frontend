@@ -1,5 +1,6 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { getPaaSClient } from "@/app/lib/client";
 
 // Staff Management - Generic function to get staff by role
@@ -7,9 +8,7 @@ async function getStaffByRole(role: string) {
   const frappe = await getPaaSClient();
 
   try {
-    const shop = await frappe.call({
-      method: "paas.api.user.user.get_user_shop",
-    });
+    const shop = await paasCall("api.user.get_user_shop");
 
     if (!shop) {
       return [];

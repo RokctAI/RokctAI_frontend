@@ -1,15 +1,13 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
 
 import { getPaaSClient } from "@/app/lib/client";
 
 export async function getLanguages() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "paas.api.admin_settings.admin_settings.get_all_languages",
-    });
+    return await paasCall("api.admin_settings.get_all_languages");
   } catch (error) {
     console.error("Failed to fetch languages:", error);
     return [];
@@ -17,11 +15,8 @@ export async function getLanguages() {
 }
 
 export async function getBackups() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "paas.api.admin_system.admin_system.get_backups",
-    });
+    return await paasCall("api.admin_system.get_backups");
   } catch (error) {
     console.error("Failed to fetch backups:", error);
     return [];
@@ -29,11 +24,8 @@ export async function getBackups() {
 }
 
 export async function createBackup() {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "paas.api.admin_system.admin_system.create_backup",
-    });
+    await paasCall("api.admin_system.create_backup");
     revalidatePath("/paas/admin/system/backup");
     return { success: true };
   } catch (error) {
@@ -43,13 +35,10 @@ export async function createBackup() {
 }
 
 export async function getSystemInfo() {
-  const frappe = await getPaaSClient();
   try {
     const [infoRes, versionRes] = await Promise.allSettled([
-      frappe.call({
-        method: "paas.api.admin_system.admin_system.get_system_info",
-      }),
-      frappe.call({ method: "paas.api.get_version" }),
+      paasCall("api.admin_system.get_system_info"),
+      paasCall("api.get_version"),
     ]);
 
     const info =
@@ -72,11 +61,8 @@ export async function getSystemInfo() {
 }
 
 export async function clearCache() {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "paas.api.admin_system.admin_system.clear_system_cache",
-    });
+    await paasCall("api.admin_system.clear_system_cache");
     return { success: true };
   } catch (error) {
     console.error("Failed to clear cache:", error);
@@ -122,11 +108,8 @@ export async function updateTranslation(name: string, value: string) {
 }
 
 export async function triggerSystemUpdate() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "paas.paas.api.system.system.trigger_system_update",
-    });
+    return await paasCall("api.system.trigger_system_update");
   } catch (error) {
     console.error("Failed to trigger system update:", error);
     throw error;

@@ -1,18 +1,13 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
-import { getPaaSClient } from "@/app/lib/client";
 
 // --- Kitchens ---
 
 export async function getKitchens() {
-  const frappe = await getPaaSClient();
-
   try {
-    return await frappe.call({
-      method:
-        "paas.api.seller_operations.seller_operations.get_seller_kitchens",
-    });
+    return await paasCall("api.seller_operations.get_seller_kitchens");
   } catch (error) {
     console.error("Failed to fetch kitchens:", error);
     return [];
@@ -20,14 +15,8 @@ export async function getKitchens() {
 }
 
 export async function createKitchen(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const kitchen = await frappe.call({
-      method:
-        "paas.api.seller_operations.seller_operations.create_seller_kitchen",
-      args: { kitchen_data: data },
-    });
+    const kitchen = await paasCall("api.seller_operations.create_seller_kitchen", { kitchen_data: data });
     revalidatePath("/paas/dashboard/restaurant/kitchens");
     return kitchen;
   } catch (error) {
@@ -37,14 +26,8 @@ export async function createKitchen(data: any) {
 }
 
 export async function updateKitchen(name: string, data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const kitchen = await frappe.call({
-      method:
-        "paas.api.seller_operations.seller_operations.update_seller_kitchen",
-      args: { kitchen_name: name, kitchen_data: data },
-    });
+    const kitchen = await paasCall("api.seller_operations.update_seller_kitchen", { kitchen_name: name, kitchen_data: data });
     revalidatePath("/paas/dashboard/restaurant/kitchens");
     return kitchen;
   } catch (error) {
@@ -54,14 +37,8 @@ export async function updateKitchen(name: string, data: any) {
 }
 
 export async function deleteKitchen(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method:
-        "paas.api.seller_operations.seller_operations.delete_seller_kitchen",
-      args: { kitchen_name: name },
-    });
+    await paasCall("api.seller_operations.delete_seller_kitchen", { kitchen_name: name });
     revalidatePath("/paas/dashboard/restaurant/kitchens");
     return { success: true };
   } catch (error) {
@@ -73,12 +50,8 @@ export async function deleteKitchen(name: string) {
 // --- Menus ---
 
 export async function getMenus() {
-  const frappe = await getPaaSClient();
-
   try {
-    return await frappe.call({
-      method: "paas.api.seller_operations.seller_operations.get_seller_menus",
-    });
+    return await paasCall("api.seller_operations.get_seller_menus");
   } catch (error) {
     console.error("Failed to fetch menus:", error);
     return [];
@@ -86,13 +59,8 @@ export async function getMenus() {
 }
 
 export async function createMenu(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const menu = await frappe.call({
-      method: "paas.api.seller_operations.seller_operations.create_seller_menu",
-      args: { menu_data: data },
-    });
+    const menu = await paasCall("api.seller_operations.create_seller_menu", { menu_data: data });
     revalidatePath("/paas/dashboard/products/menus");
     return menu;
   } catch (error) {
@@ -102,13 +70,8 @@ export async function createMenu(data: any) {
 }
 
 export async function deleteMenu(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method: "paas.api.seller_operations.seller_operations.delete_seller_menu",
-      args: { menu_name: name },
-    });
+    await paasCall("api.seller_operations.delete_seller_menu", { menu_name: name });
     revalidatePath("/paas/dashboard/products/menus");
     return { success: true };
   } catch (error) {
@@ -120,12 +83,8 @@ export async function deleteMenu(name: string) {
 // --- Combos ---
 
 export async function getCombos() {
-  const frappe = await getPaaSClient();
-
   try {
-    return await frappe.call({
-      method: "paas.api.seller_operations.seller_operations.get_seller_combos",
-    });
+    return await paasCall("api.seller_operations.get_seller_combos");
   } catch (error) {
     console.error("Failed to fetch combos:", error);
     return [];
@@ -133,14 +92,8 @@ export async function getCombos() {
 }
 
 export async function createCombo(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const combo = await frappe.call({
-      method:
-        "paas.api.seller_operations.seller_operations.create_seller_combo",
-      args: { combo_data: data },
-    });
+    const combo = await paasCall("api.seller_operations.create_seller_combo", { combo_data: data });
     revalidatePath("/paas/dashboard/products/combos");
     return combo;
   } catch (error) {
@@ -150,14 +103,8 @@ export async function createCombo(data: any) {
 }
 
 export async function deleteCombo(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method:
-        "paas.api.seller_operations.seller_operations.delete_seller_combo",
-      args: { combo_name: name },
-    });
+    await paasCall("api.seller_operations.delete_seller_combo", { combo_name: name });
     revalidatePath("/paas/dashboard/products/combos");
     return { success: true };
   } catch (error) {
