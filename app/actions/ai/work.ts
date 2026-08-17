@@ -2,6 +2,7 @@
 
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export async function getMyProjects(data: { modelId?: string } = {}) {
   // GUARDRAIL: Only active employees can access work management.
@@ -16,9 +17,7 @@ export async function getMyProjects(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const projects = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const projects = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Project",
         filters: { status: "Open" }, // Todo: Filter by _user_tags or team?
         fields: [
@@ -29,8 +28,7 @@ export async function getMyProjects(data: { modelId?: string } = {}) {
           "expected_end_date",
         ],
         limit_page_length: 10,
-      },
-    });
+      });
 
     return { success: true, projects: projects?.message || [] };
   } catch (e: any) {
@@ -51,9 +49,7 @@ export async function getMyTasks(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const tasks = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const tasks = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Task",
         filters: { status: "Open" }, // Filter by user assignment in real world
         fields: [
@@ -66,8 +62,7 @@ export async function getMyTasks(data: { modelId?: string } = {}) {
         ],
         limit_page_length: 10,
         order_by: "exp_end_date asc",
-      },
-    });
+      });
 
     return { success: true, tasks: tasks?.message || [] };
   } catch (e: any) {

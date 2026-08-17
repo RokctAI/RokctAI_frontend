@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { user } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/app/(auth)/auth";
+import { PLATFORM_GATEWAY_METHOD } from "@/app/services/base/platform-gateway";
 
 /**
  * Onboarding Data Structure
@@ -109,15 +110,22 @@ export async function syncOnboardingToSite(userEmail: string) {
   }
 
   try {
-    const url = `https://${userData.siteName}/api/method/rcore.api.plan_builder.commit_onboarding_answers`;
+    // Universal gateway call. cmd = manifest alias key minus "{app_name}."
+    // (agent module manifest key:
+    // {app_name}.api.plan_builder.commit_onboarding_answers — the doubled
+    // file-segment form was collapsed on agent main).
+    const url = `https://${userData.siteName}/api/v1/method/${PLATFORM_GATEWAY_METHOD}`;
     const response = await fetch(url, {
       method: "POST",
       headers,
       body: JSON.stringify({
-        profile_type: profileType,
-        instance_name: instanceName,
-        answers: JSON.stringify(onboardingData),
-        milestones: JSON.stringify([]), // can be expanded to sync milestones
+        cmd: "api.plan_builder.commit_onboarding_answers",
+        payload: {
+          profile_type: profileType,
+          instance_name: instanceName,
+          answers: JSON.stringify(onboardingData),
+          milestones: JSON.stringify([]), // can be expanded to sync milestones
+        },
       }),
     });
 

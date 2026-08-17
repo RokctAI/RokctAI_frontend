@@ -2,6 +2,7 @@
 
 import { auth } from "@/app/(auth)/auth";
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 /**
  * Gets the Employee record name (ID) for the currently logged-in user.
@@ -13,14 +14,11 @@ export async function getCurrentEmployeeId() {
 
   const client = await getClient();
   try {
-    const response = await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const response = await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session.user.email },
         fieldname: "name",
-      },
-    });
+      });
     return response?.message?.name || null;
   } catch (e) {
     return null;
@@ -50,29 +48,23 @@ export async function verifyActiveEmployee() {
 
   try {
     // 1. Get Employee ID
-    const empRes = await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
+    const empRes = await gatewayCall(client, "frappe.client.get_value", {
         doctype: "Employee",
         filters: { user_id: session.user.email },
         fieldname: "name",
-      },
-    });
+      });
     const employee = empRes?.message?.name;
     if (!employee) return true; // If no employee record, they might be admin/system user, so allow (or handle elsewhere)
 
     // 2. Check for Pending/Approved Separation (Resignation)
-    const separation = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const separation = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Employee Separation",
         filters: {
           employee: employee,
           status: ["in", ["Pending", "Approved", "Submitted"]], // Check exact status values
         },
         limit_page_length: 1,
-      },
-    });
+      });
 
     if (separation?.message?.length > 0) {
       // Resignation Process in Update
@@ -109,9 +101,7 @@ export async function verifyHrRole() {
   // For now, we allow access.
 
   try {
-    const roles = (await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const roles = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Has Role",
         filters: {
           parent: session.user.email,
@@ -119,8 +109,7 @@ export async function verifyHrRole() {
         },
         fields: ["role"],
         limit_page_length: 1,
-      },
-    })) as any;
+      })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {
@@ -143,9 +132,7 @@ export async function verifyCrmRole() {
   if (!session?.user?.email) return false;
 
   try {
-    const roles = (await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const roles = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Has Role",
         filters: {
           parent: session.user.email,
@@ -153,8 +140,7 @@ export async function verifyCrmRole() {
         },
         fields: ["role"],
         limit_page_length: 1,
-      },
-    })) as any;
+      })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {
@@ -175,9 +161,7 @@ export async function verifySupplyChainRole() {
   if (!session?.user?.email) return false;
 
   try {
-    const roles = (await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const roles = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Has Role",
         filters: {
           parent: session.user.email,
@@ -185,8 +169,7 @@ export async function verifySupplyChainRole() {
         },
         fields: ["role"],
         limit_page_length: 1,
-      },
-    })) as any;
+      })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {
@@ -208,9 +191,7 @@ export async function verifyFinanceRole() {
   if (!session?.user?.email) return false;
 
   try {
-    const roles = (await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const roles = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Has Role",
         filters: {
           parent: session.user.email,
@@ -218,8 +199,7 @@ export async function verifyFinanceRole() {
         },
         fields: ["role"],
         limit_page_length: 1,
-      },
-    })) as any;
+      })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {
@@ -240,9 +220,7 @@ export async function verifySystemManager() {
   if (!session?.user?.email) return false;
 
   try {
-    const roles = (await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const roles = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Has Role",
         filters: {
           parent: session.user.email,
@@ -250,8 +228,7 @@ export async function verifySystemManager() {
         },
         fields: ["role"],
         limit_page_length: 1,
-      },
-    })) as any;
+      })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {
@@ -297,9 +274,7 @@ export async function verifyLendingRole() {
 
   try {
     // 1. Check User Roles
-    const roles = (await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const roles = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Has Role",
         filters: {
           parent: session.user.email,
@@ -307,8 +282,7 @@ export async function verifyLendingRole() {
         },
         fields: ["role"],
         limit_page_length: 1,
-      },
-    })) as any;
+      })) as any;
 
     if (!roles?.message || roles.message.length === 0) return false;
 
@@ -397,9 +371,7 @@ export async function verifyLmsRole() {
   if (!session?.user?.email) return false;
 
   try {
-    const roles = (await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const roles = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Has Role",
         filters: {
           parent: session.user.email,
@@ -407,8 +379,7 @@ export async function verifyLmsRole() {
         },
         fields: ["role"],
         limit_page_length: 1,
-      },
-    })) as any;
+      })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {

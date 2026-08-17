@@ -3,6 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { getDepartments } from "@/app/actions/handson/all/hrms/departments";
 import { auth } from "@/app/(auth)/auth";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export interface HolidayWorkInput {
   holiday: string; // Name of the holiday
@@ -16,16 +17,13 @@ export async function checkUpcomingHoliday() {
   try {
     // Find the next holiday after today
     const today = new Date().toISOString().split("T")[0];
-    const response = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const response = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Holiday",
         filters: [["holiday_date", ">", today]],
         fields: ["name", "description", "holiday_date"],
         limit_page_length: 1,
         order_by: "holiday_date asc",
-      },
-    });
+      });
 
     if (response?.message?.length > 0) {
       const holiday = response.message[0];
@@ -34,30 +32,24 @@ export async function checkUpcomingHoliday() {
       // Check if user has already responded (Global Check)
       if (session?.user?.email) {
         // 1. Check for Personal Note
-        const note = await (client as any).call({
-          method: "frappe.client.get_list",
-          args: {
+        const note = await gatewayCall(client, "frappe.client.get_list", {
             doctype: "Note",
             filters: [
               ["title", "like", `%Working on ${holidayTitle}%`],
               ["owner", "=", session.user.email],
             ],
             limit_page_length: 1,
-          },
-        });
+          });
 
         // 2. Check for Announcement
-        const announcement = await (client as any).call({
-          method: "frappe.client.get_list",
-          args: {
+        const announcement = await gatewayCall(client, "frappe.client.get_list", {
             doctype: "Announcement",
             filters: [
               ["subject", "like", `%${holidayTitle}%`],
               ["owner", "=", session.user.email],
             ],
             limit_page_length: 1,
-          },
-        });
+          });
 
         if (
           (note?.message && note.message.length > 0) ||
@@ -89,23 +81,18 @@ export async function announceHolidayWork({
   try {
     if (audience === "Me Only") {
       // Log a Note for the user
-      await (client as any).call({
-        method: "frappe.client.insert",
-        args: {
+      await gatewayCall(client, "frappe.client.insert", {
           doc: {
             doctype: "Note",
             title: `Working on ${holiday}`,
             public: 0,
             content: `I will be working on the holiday: ${holiday}.`,
           },
-        },
-      });
+        });
       return { success: true, message: "Logged your working day in Notes." };
     } else if (audience === "All") {
       // Create a Global Announcement
-      await (client as any).call({
-        method: "frappe.client.insert",
-        args: {
+      await gatewayCall(client, "frappe.client.insert", {
           doc: {
             doctype: "Announcement",
             subject: `Working Day: ${holiday}`,
@@ -113,8 +100,7 @@ export async function announceHolidayWork({
             owner: session?.user?.email,
             status: "Active",
           },
-        },
-      });
+        });
       return {
         success: true,
         message: "Sent global announcement to all employees.",
@@ -128,17 +114,14 @@ export async function announceHolidayWork({
       // Better: We send an announcement that explicitly mentions the departments.
 
       const deptString = departments.join(", ");
-      await (client as any).call({
-        method: "frappe.client.insert",
-        args: {
+      await gatewayCall(client, "frappe.client.insert", {
           doc: {
             doctype: "Announcement",
             subject: `Working Day for ${deptString}`,
             content: `Attention ${deptString} teams,<br>You are scheduled to work on ${holiday}.`,
             status: "Active",
           },
-        },
-      });
+        });
       return {
         success: true,
         message: `Sent announcement targeted at: ${deptString}.`,

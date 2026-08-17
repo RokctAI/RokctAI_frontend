@@ -9,6 +9,7 @@ import {
 import { auth } from "@/app/(auth)/auth";
 import { AI_MODELS } from "@/ai/models";
 import { verifyCrmRole } from "@/app/lib/roles";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export async function createAiCompetitor(data: {
   name: string;
@@ -55,11 +56,7 @@ export async function createAiCompetitor(data: {
       payload.headquarters_location = `https://maps.google.com/?q=${data.latitude},${data.longitude}`;
     }
 
-    const response = (await client.call({
-      method: "frappe.client.insert",
-      args: { doc: payload },
-      headers: { "X-AI-Action": "true" },
-    })) as any;
+    const response = (await gatewayCall(client, "frappe.client.insert", { doc: payload })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -82,9 +79,7 @@ export async function getAiCompetitors(data: { modelId?: string } = {}) {
     return { success: false, error: "Unauthorized" };
 
   try {
-    const competitors = (await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const competitors = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Competitor",
         fields: [
           "name",
@@ -95,8 +90,7 @@ export async function getAiCompetitors(data: { modelId?: string } = {}) {
         ],
         order_by: "creation desc",
         limit_page_length: 10,
-      },
-    })) as any;
+      })) as any;
 
     return { success: true, competitors: competitors?.message || [] };
   } catch (e: any) {
@@ -117,13 +111,10 @@ export async function analyzeAiCompetitor(data: {
   try {
     // Fetch Details + Child Tables?
     // Basic fetch for now
-    const competitor = (await client.call({
-      method: "frappe.client.get",
-      args: {
+    const competitor = (await gatewayCall(client, "frappe.client.get", {
         doctype: "Competitor",
         name: data.name,
-      },
-    })) as any;
+      })) as any;
 
     return { success: true, competitor: competitor?.message };
   } catch (e: any) {

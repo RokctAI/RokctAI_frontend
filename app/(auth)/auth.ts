@@ -4,7 +4,10 @@ import Credentials from "next-auth/providers/credentials";
 
 import { db } from "@/db";
 import { user } from "@/db/schema";
-import { PLATFORM_GATEWAY_PATH } from "@/app/services/base/platform-gateway";
+import {
+  PLATFORM_GATEWAY_PATH,
+  platformCall,
+} from "@/app/services/base/platform-gateway";
 
 import { authConfig } from "./auth.config";
 
@@ -124,34 +127,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           if (isPaaSLogin) {
             try {
-              const subRes = await fetch(
-                `${baseUrl}/api/method/core.tenant.api.get_subscription_details`,
+              // Universal gateway call — cmd is the prefix-free tenant
+              // manifest key (never per-method URLs, never app-prefixed).
+              const details = await platformCall<any>(
+                "tenant.api.get_subscription_details",
+                undefined,
                 {
-                  method: "GET",
+                  baseUrl,
                   headers: {
                     Authorization: `token ${apiKey}:${apiSecret}`,
                   },
                 },
               );
-              if (subRes.ok) {
-                const subData = await subRes.json();
-                const details = subData.message;
-                if (details) {
-                  if (details.plan) {
-                    const match = details.plan.match(/^([^\(]+)/);
-                    if (match) {
-                      plan = match[1].trim();
-                    } else {
-                      plan = details.plan;
-                    }
+              if (details) {
+                if (details.plan) {
+                  const match = details.plan.match(/^([^\(]+)/);
+                  if (match) {
+                    plan = match[1].trim();
+                  } else {
+                    plan = details.plan;
                   }
-                  if (details.status) status = details.status;
-                  if (details.is_free_plan !== undefined)
-                    is_free_plan = details.is_free_plan;
-                  if (details.is_ai !== undefined) is_ai = details.is_ai;
-                  if (details.modules) modules = details.modules;
-                  subscriptionFetched = true;
                 }
+                if (details.status) status = details.status;
+                if (details.is_free_plan !== undefined)
+                  is_free_plan = details.is_free_plan;
+                if (details.is_ai !== undefined) is_ai = details.is_ai;
+                if (details.modules) modules = details.modules;
+                subscriptionFetched = true;
               }
             } catch (e) {
               console.warn("Failed to fetch subscription details", e);

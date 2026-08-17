@@ -9,6 +9,7 @@ import { createStockReconciliation } from "@/app/actions/handson/all/accounting/
 import { getItems } from "@/app/actions/handson/all/accounting/inventory/item";
 import { auth } from "@/app/(auth)/auth";
 import { AI_MODELS } from "@/ai/models";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 // --- QUOTATIONS (SALES/SELLING) ---
 
@@ -20,9 +21,7 @@ export async function getActiveQuotations(data: { modelId?: string } = {}) {
     return { success: false, error: "Unauthorized" };
 
   try {
-    const quotations = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const quotations = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Quotation",
         filters: {
           status: ["in", ["Open", "Replied"]],
@@ -39,8 +38,7 @@ export async function getActiveQuotations(data: { modelId?: string } = {}) {
         ],
         order_by: "transaction_date desc",
         limit_page_length: 10,
-      },
-    });
+      });
 
     return { success: true, quotations: quotations?.message || [] };
   } catch (e: any) {
@@ -61,9 +59,7 @@ export async function getPurchaseOrders(data: { modelId?: string } = {}) {
     return { success: false, error: "Unauthorized" };
 
   try {
-    const orders = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const orders = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Purchase Order",
         filters: {
           status: ["not in", ["Closed", "Completed", "Cancelled"]],
@@ -78,8 +74,7 @@ export async function getPurchaseOrders(data: { modelId?: string } = {}) {
         ],
         order_by: "transaction_date desc",
         limit_page_length: 10,
-      },
-    });
+      });
 
     return { success: true, orders: orders?.message || [] };
   } catch (e: any) {
@@ -116,14 +111,11 @@ export async function createAiPurchaseOrder(data: {
         // For now, let's keep the existing logic (Item Name Like query) or genericize later.
         // The existing logic searches by Item Name "like".
 
-        const itemDetails = (await (client as any).call({
-          method: "frappe.client.get_value",
-          args: {
+        const itemDetails = (await gatewayCall(client, "frappe.client.get_value", {
             doctype: "Item",
             filters: { item_name: ["like", line.item] },
             fieldname: ["name", "standard_rate"],
-          },
-        })) as any;
+          })) as any;
 
         const itemCode = itemDetails?.message?.name || line.item; // Fallback to input
         const rate = itemDetails?.message?.standard_rate || 0;
@@ -167,9 +159,7 @@ export async function checkStock(data: { itemQuery: string }) {
   const client = await getClient();
   try {
     // 1. Search for Item
-    const items = (await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const items = (await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Item",
         filters: {
           item_name: ["like", `%${data.itemQuery}%`],
@@ -177,8 +167,7 @@ export async function checkStock(data: { itemQuery: string }) {
         },
         fields: ["name", "item_name", "stock_uom", "standard_rate"],
         limit_page_length: 5,
-      },
-    })) as any;
+      })) as any;
 
     if (!items?.message || items.message.length === 0) {
       return {
@@ -190,14 +179,11 @@ export async function checkStock(data: { itemQuery: string }) {
     // 2. For each item, get Stock Levels
     const stockDetails = await Promise.all(
       items.message.map(async (item: any) => {
-        const bins = (await (client as any).call({
-          method: "frappe.client.get_list",
-          args: {
+        const bins = (await gatewayCall(client, "frappe.client.get_list", {
             doctype: "Bin",
             filters: { item_code: item.name },
             fields: ["warehouse", "actual_qty", "projected_qty"],
-          },
-        })) as any;
+          })) as any;
 
         return {
           ...item,
@@ -230,14 +216,11 @@ export async function createAiStockEntry(data: {
     const processedItems = await Promise.all(
       data.items.map(async (line) => {
         // Validate/Get Item Code logic same as above
-        const itemDetails = (await (client as any).call({
-          method: "frappe.client.get_value",
-          args: {
+        const itemDetails = (await gatewayCall(client, "frappe.client.get_value", {
             doctype: "Item",
             filters: { item_name: ["like", line.item] },
             fieldname: ["name", "stock_uom"],
-          },
-        })) as any;
+          })) as any;
         const itemCode = itemDetails?.message?.name || line.item;
 
         return {
@@ -250,9 +233,7 @@ export async function createAiStockEntry(data: {
       }),
     );
 
-    const response = (await (client as any).call({
-      method: "frappe.client.insert",
-      args: {
+    const response = (await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "Stock Entry",
           stock_entry_type: "Material Transfer",
@@ -260,8 +241,7 @@ export async function createAiStockEntry(data: {
           from_warehouse: data.source_warehouse,
           items: processedItems,
         },
-      },
-    })) as any;
+      })) as any;
 
     const session = await auth();
     if (session) {

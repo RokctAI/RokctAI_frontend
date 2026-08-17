@@ -3,6 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifySystemManager } from "@/app/lib/roles";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 // Tenant Action Actions
 
@@ -14,14 +15,11 @@ export async function getBillingStatus(data: { modelId?: string } = {}) {
   const client = await getClient();
   try {
     // Assuming "Subscription" doctype (or generic placeholder)
-    const sub = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const sub = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Subscription", // Standard in ERPNext
         fields: ["name", "status", "next_payment_date", "plan"],
         limit_page_length: 1,
-      },
-    });
+      });
     return {
       success: true,
       subscription: sub?.message?.[0] || "No active subscription found.",
@@ -42,17 +40,14 @@ export async function contactSupport(data: {
   const client = await getClient();
   try {
     // Create an Issue or Support Ticket
-    const response = await client.call({
-      method: "frappe.client.insert",
-      args: {
+    const response = await gatewayCall(client, "frappe.client.insert", {
         doc: {
           doctype: "Issue",
           subject: data.subject,
           description: data.message,
           raised_by: (await auth())?.user?.email,
         },
-      },
-    });
+      });
     return { success: true, message: "Support ticket created." };
   } catch (e: any) {
     return {
@@ -65,9 +60,13 @@ export async function contactSupport(data: {
 export async function getAvailableModels() {
   const client = await getClient();
   try {
-    const res = await client.call({
-      method: "rcore.api.plan_builder.get_available_models",
-    });
+    // Gateway cmd = manifest alias key minus "{app_name}." (agent module
+    // manifest key: {app_name}.api.plan_builder.get_available_models — the
+    // doubled file-segment form was collapsed on agent main).
+    const res = await gatewayCall(
+      client,
+      "api.plan_builder.get_available_models",
+    );
     if (res && res.message && (res.message.FREE || res.message.PAID)) {
       return { success: true, models: res.message };
     }

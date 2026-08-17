@@ -3,6 +3,7 @@
 import { getClient } from "@/app/lib/client";
 import { auth } from "@/app/(auth)/auth";
 import { verifyFinanceRole } from "@/app/lib/roles";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 // --- INVOICES (SALES) ---
 
@@ -13,9 +14,7 @@ export async function getSalesInvoices(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const invoices = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const invoices = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Sales Invoice",
         filters: {
           status: ["not in", ["Paid", "Cancelled", "Draft"]], // Fetch Unpaid/Overdue
@@ -31,8 +30,7 @@ export async function getSalesInvoices(data: { modelId?: string } = {}) {
         ],
         order_by: "due_date asc",
         limit_page_length: 10,
-      },
-    });
+      });
 
     return { success: true, invoices: invoices?.message || [] };
   } catch (e: any) {
@@ -49,9 +47,7 @@ export async function getPurchaseInvoices(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const invoices = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const invoices = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Purchase Invoice",
         filters: {
           status: ["not in", ["Paid", "Cancelled", "Draft"]],
@@ -67,8 +63,7 @@ export async function getPurchaseInvoices(data: { modelId?: string } = {}) {
         ],
         order_by: "bill_date asc",
         limit_page_length: 10,
-      },
-    });
+      });
 
     return { success: true, invoices: invoices?.message || [] };
   } catch (e: any) {
@@ -90,9 +85,7 @@ export async function getPendingPayments(data: { modelId?: string } = {}) {
   try {
     // Fetch Payment Entries in Draft or Posted but unallocated?
     // Usually "Draft" payments imply pending approval/submission
-    const payments = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const payments = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Payment Entry",
         filters: {
           docstatus: 0, // Draft
@@ -106,8 +99,7 @@ export async function getPendingPayments(data: { modelId?: string } = {}) {
         ],
         order_by: "posting_date desc",
         limit_page_length: 5,
-      },
-    });
+      });
 
     return { success: true, payments: payments?.message || [] };
   } catch (e: any) {
