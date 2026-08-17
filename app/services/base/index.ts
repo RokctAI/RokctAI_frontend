@@ -10,6 +10,7 @@ export {
   generateTraceId,
   tracedFetch,
   logFrontendError,
+  TELEMETRY_CMD,
   TELEMETRY_ENDPOINT,
   type LogFrontendErrorOptions,
 } from './telemetry';

@@ -8,6 +8,8 @@
  * client at base/dart/lib/src/services/telemetry.dart.
  */
 
+import { PLATFORM_GATEWAY_PATH } from './platform-gateway';
+
 // Module-scoped so this file typechecks with or without @types/node; the
 // verbatim `process.env.NODE_ENV` expression is kept for Next.js inlining.
 declare const process: { env: { NODE_ENV?: string } };
@@ -60,11 +62,17 @@ export function tracedFetch(
 }
 
 /**
- * `{app_name}.tenant.api.log_frontend_error` per the telemetry manifest's
- * whitelisted_methods mapping.
+ * Prefix-free gateway cmd for the telemetry manifest's
+ * `{app_name}.tenant.api.log_frontend_error` whitelisted_methods key.
+ * Delivered through the universal platform gateway
+ * (`POST {PLATFORM_GATEWAY_PATH}` with `{cmd, payload}`) — never a
+ * per-method `/api/method/<app>.<dotted>` URL, which would bake in the
+ * composed app's name.
  */
-export const TELEMETRY_ENDPOINT =
-  '/api/method/paas.tenant.api.log_frontend_error';
+export const TELEMETRY_CMD = 'tenant.api.log_frontend_error';
+
+/** The gateway request path telemetry posts to. */
+export const TELEMETRY_ENDPOINT = PLATFORM_GATEWAY_PATH;
 
 export interface LogFrontendErrorOptions {
   /** Stable machine-readable class (snake_case). */
@@ -101,8 +109,11 @@ export async function logFrontendError({
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        error_message: type,
-        context: JSON.stringify(payload),
+        cmd: TELEMETRY_CMD,
+        payload: {
+          error_message: type,
+          context: JSON.stringify(payload),
+        },
       }),
     });
   } catch (e) {
