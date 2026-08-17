@@ -46,6 +46,8 @@ on:
         default: '##.##.##'
         description: "Format for version bumping (e.g. ##.##.## or ##.##.#)"
 
+permissions: write-all
+
 jobs:
   # --- 1. DETECT PROJECT TYPE ---
   detect:
@@ -102,11 +104,6 @@ jobs:
   # --- 2. UNIFIED PIPELINE (Smart) ---
   pipeline:
     needs: [detect, sync-schemas]
-    permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-      issues: write
     uses: RokctAI/shared-workflows/.github/workflows/universal-pipeline.yml@main
     with:
       backfill_ai_notes_cutoff_version: ${{ inputs.backfill_ai_notes_cutoff_version }}

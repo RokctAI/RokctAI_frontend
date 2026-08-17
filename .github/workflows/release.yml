@@ -42,7 +42,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-    uses: RokctAI/shared-workflows/.github/workflows/universal-pipeline.yml@main
+    uses: RokctAI/shared-workflows/.github/workflows/universal-pipeline.yml@b41cc5ff4404112cae6516e7aed91eefdfb8a201 # shared-workflows main (gateway envelope)
     with:
       backfill_ai_notes_cutoff_version: ${{ inputs.backfill_ai_notes_cutoff_version }}
       project_type: 'node'
@@ -57,8 +57,10 @@ jobs:
       # Example: one_time_cleanup_cutoff_date: '2026-02-01'
       one_time_cleanup_cutoff_date: '2026-01-30'
       
-      # Brain Endpoint 
-      brain_endpoint: https://platform.rokct.ai/api/method/brain.api.generate_release_notes
+      # Brain Endpoint — universal platform gateway; the shared workflow wraps
+      # the request in a {cmd: "api.brain.generate_release_notes", payload} envelope
+      # when the endpoint ends with rokct.platform.api
+      brain_endpoint: https://platform.rokct.ai/api/v1/method/rokct.platform.api
 
       # Environment configuration
       node-version: ${{ inputs.node-version || '24' }}

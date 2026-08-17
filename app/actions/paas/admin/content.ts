@@ -8,7 +8,7 @@ import { getPaaSClient } from "@/app/lib/client";
 export async function getBrands(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_content.get_all_brands", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.brand.get_brands", { limit_start: start, limit_page_length: limit });
   } catch (error) {
     console.error("Failed to fetch brands:", error);
     return [];
@@ -18,7 +18,7 @@ export async function getBrands(page: number = 1, limit: number = 20) {
 export async function getBanners(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_content.get_all_banners", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_content.get_admin_banners", { limit_start: start, limit_page_length: limit });
   } catch (error) {
     console.error("Failed to fetch banners:", error);
     return [];
@@ -28,7 +28,11 @@ export async function getBanners(page: number = 1, limit: number = 20) {
 export async function getBlogs(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_content.get_all_blogs", { limit_start: start, limit_page_length: limit });
+    // api.blog.get_blogs paginates via limit/start and wraps its list in
+    // an api_response envelope ({ data: [...] }) — unwrap to keep the
+    // array contract this action always had.
+    const res = await paasCall<any>("api.blog.get_blogs", { limit, start });
+    return res?.data ?? [];
   } catch (error) {
     console.error("Failed to fetch blogs:", error);
     return [];
@@ -38,7 +42,7 @@ export async function getBlogs(page: number = 1, limit: number = 20) {
 export async function getStories(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_content.get_all_stories", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_content.get_admin_stories", { limit_start: start, limit_page_length: limit });
   } catch (error) {
     console.error("Failed to fetch stories:", error);
     return [];
@@ -58,7 +62,7 @@ export async function getUnits(page: number = 1, limit: number = 20) {
 export async function getCareers(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_content.get_all_careers", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.career.get_admin_careers", { limit_start: start, limit_page_length: limit });
   } catch (error) {
     console.error("Failed to fetch careers:", error);
     return [];

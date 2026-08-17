@@ -136,7 +136,7 @@ export async function getAppSettings() {
 export async function getPages(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_content.get_all_pages", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.page.get_admin_pages", { limit_start: start, limit_page_length: limit });
   } catch (error) {
     console.error("Failed to fetch pages:", error);
     return [];

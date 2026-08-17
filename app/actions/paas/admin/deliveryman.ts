@@ -42,7 +42,8 @@ export async function getDeliverymanRequests(
 ) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_logistics.get_deliveryman_requests", { limit_start: start, limit_page_length: limit });
+    // Rows carry model_type so the UI can distinguish deliveryman requests.
+    return await paasCall("api.admin_records.get_all_request_models", { limit_start: start, limit_page_length: limit });
   } catch (error) {
     console.error("Failed to fetch deliveryman requests:", error);
     return [];

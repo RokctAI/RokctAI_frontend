@@ -6,9 +6,10 @@ import { revalidatePath } from "next/cache";
 import { getPaaSClient } from "@/app/lib/client";
 
 export async function getAds(page: number = 1, limit: number = 20) {
-  const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_content.get_all_ads", { limit_start: start, limit_page_length: limit });
+    // api.banner.get_ads paginates by page number with a fixed server-side
+    // page size of 10; the limit parameter is not supported by the backend.
+    return await paasCall("api.banner.get_ads", { page });
   } catch (error) {
     console.error("Failed to fetch ads:", error);
     return [];
@@ -16,9 +17,11 @@ export async function getAds(page: number = 1, limit: number = 20) {
 }
 
 export async function getShopAdsPackages(page: number = 1, limit: number = 20) {
-  const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_content.get_all_shop_ads_packages", { limit_start: start, limit_page_length: limit });
+    // api.ads_package.get_ads_packages takes no arguments and returns all
+    // active packages; pagination params are accepted here for signature
+    // compatibility but not forwarded.
+    return await paasCall("api.ads_package.get_ads_packages");
   } catch (error) {
     console.error("Failed to fetch shop ads packages:", error);
     return [];

@@ -60,7 +60,9 @@ export async function getShopCategories(page: number = 1, limit: number = 20) {
 export async function getShopReviews(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_records.get_all_shop_reviews", { limit_start: start, limit_page_length: limit });
+    // Platform-wide review list; rows carry reviewable_type/reviewable_id
+    // so shop reviews can be distinguished client-side.
+    return await paasCall("api.admin_records.get_all_reviews", { limit_start: start, limit_page_length: limit });
   } catch (error) {
     console.error("Failed to fetch shop reviews:", error);
     return [];
