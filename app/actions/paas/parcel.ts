@@ -1,16 +1,11 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
-import { getPaaSClient } from "@/app/lib/client";
 
 export async function getParcelSettings() {
-  const frappe = await getPaaSClient();
-
   try {
-    const settings = await frappe.call({
-      method:
-        "paas.api.parcel_order_setting.parcel_order_setting.get_parcel_order_settings",
-    });
+    const settings = await paasCall("api.parcel_order_setting.get_parcel_order_settings");
     return settings;
   } catch (error) {
     console.error("Failed to fetch parcel settings:", error);
@@ -19,16 +14,10 @@ export async function getParcelSettings() {
 }
 
 export async function createParcelSetting(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const setting = await frappe.call({
-      method:
-        "paas.api.parcel_order_setting.parcel_order_setting.create_parcel_order_setting",
-      args: {
+    const setting = await paasCall("api.parcel_order_setting.create_parcel_order_setting", {
         setting_data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/settings/parcel");
     return setting;
   } catch (error) {
@@ -38,17 +27,11 @@ export async function createParcelSetting(data: any) {
 }
 
 export async function updateParcelSetting(name: string, data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const setting = await frappe.call({
-      method:
-        "paas.api.parcel_order_setting.parcel_order_setting.update_parcel_order_setting",
-      args: {
+    const setting = await paasCall("api.parcel_order_setting.update_parcel_order_setting", {
         name: name,
         setting_data: data,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/settings/parcel");
     return setting;
   } catch (error) {
@@ -58,16 +41,10 @@ export async function updateParcelSetting(name: string, data: any) {
 }
 
 export async function deleteParcelSetting(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method:
-        "paas.api.parcel_order_setting.parcel_order_setting.delete_parcel_order_setting",
-      args: {
+    await paasCall("api.parcel_order_setting.delete_parcel_order_setting", {
         name: name,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/settings/parcel");
     return { success: true };
   } catch (error) {
@@ -78,13 +55,8 @@ export async function deleteParcelSetting(name: string) {
 // Parcel Orders
 
 export async function getParcelOrders(limit = 20, offset = 0) {
-  const frappe = await getPaaSClient();
-
   try {
-    const orders = await frappe.call({
-      method: "paas.api.parcel.parcel.get_parcel_orders",
-      args: { limit, offset },
-    });
+    const orders = await paasCall("api.parcel.get_parcel_orders", { limit, offset });
     return orders;
   } catch (error) {
     console.error("Failed to fetch parcel orders:", error);
@@ -93,13 +65,8 @@ export async function getParcelOrders(limit = 20, offset = 0) {
 }
 
 export async function getParcelOrder(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    const order = await frappe.call({
-      method: "paas.api.parcel.parcel.get_user_parcel_order",
-      args: { name },
-    });
+    const order = await paasCall("api.parcel.get_user_parcel_order", { name });
     return order;
   } catch (error) {
     console.error("Failed to fetch parcel order:", error);
@@ -108,16 +75,11 @@ export async function getParcelOrder(name: string) {
 }
 
 export async function updateParcelStatus(name: string, status: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    const order = await frappe.call({
-      method: "paas.api.parcel.parcel.update_parcel_status",
-      args: {
+    const order = await paasCall("api.parcel.update_parcel_status", {
         parcel_order_id: name,
         status: status,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/orders/parcels");
     return order;
   } catch (error) {

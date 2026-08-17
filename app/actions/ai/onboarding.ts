@@ -112,14 +112,14 @@ export async function syncOnboardingToSite(userEmail: string) {
   try {
     // Universal gateway call. cmd = manifest alias key minus "{app_name}."
     // (agent module manifest key:
-    // {app_name}.api.plan_builder.commit_onboarding_answers.commit_onboarding_answers
-    // - the single-leaf form does not exist on the backend).
+    // {app_name}.api.plan_builder.commit_onboarding_answers — the doubled
+    // file-segment form was collapsed on agent main).
     const url = `https://${userData.siteName}/api/v1/method/${PLATFORM_GATEWAY_METHOD}`;
     const response = await fetch(url, {
       method: "POST",
       headers,
       body: JSON.stringify({
-        cmd: "api.plan_builder.commit_onboarding_answers.commit_onboarding_answers",
+        cmd: "api.plan_builder.commit_onboarding_answers",
         payload: {
           profile_type: profileType,
           instance_name: instanceName,

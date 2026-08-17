@@ -1,15 +1,10 @@
 "use server";
 
-import { getPaaSClient } from "@/app/lib/client";
+import { paasCall } from "@/app/lib/paas-gateway";
 
 export async function getDeliveryZones() {
-  const frappe = await getPaaSClient();
-
   try {
-    const zones = await frappe.call({
-      method:
-        "paas.api.seller_delivery_zone.seller_delivery_zone.get_seller_delivery_zones",
-    });
+    const zones = await paasCall("api.seller_delivery_zone.get_seller_delivery_zones");
     return zones;
   } catch (error) {
     console.error("Failed to fetch delivery zones:", error);
@@ -18,16 +13,10 @@ export async function getDeliveryZones() {
 }
 
 export async function createDeliveryZone(data: any) {
-  const frappe = await getPaaSClient();
-
   try {
-    const zone = await frappe.call({
-      method:
-        "paas.api.seller_delivery_zone.seller_delivery_zone.create_seller_delivery_zone",
-      args: {
+    const zone = await paasCall("api.seller_delivery_zone.create_seller_delivery_zone", {
         zone_data: data,
-      },
-    });
+      });
     return zone;
   } catch (error) {
     console.error("Failed to create delivery zone:", error);
@@ -36,16 +25,10 @@ export async function createDeliveryZone(data: any) {
 }
 
 export async function deleteDeliveryZone(name: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    await frappe.call({
-      method:
-        "paas.api.seller_delivery_zone.seller_delivery_zone.delete_seller_delivery_zone",
-      args: {
+    await paasCall("api.seller_delivery_zone.delete_seller_delivery_zone", {
         zone_name: name,
-      },
-    });
+      });
     return true;
   } catch (error) {
     console.error("Failed to delete delivery zone:", error);
@@ -54,17 +37,11 @@ export async function deleteDeliveryZone(name: string) {
 }
 
 export async function checkDeliveryFee(lat: number, lng: number) {
-  const frappe = await getPaaSClient();
-
   try {
-    const result = await frappe.call({
-      method:
-        "paas.api.seller_delivery_zone.seller_delivery_zone.check_delivery_fee",
-      args: {
+    const result = await paasCall("api.seller_delivery_zone.check_delivery_fee", {
         lat: lat,
         lng: lng,
-      },
-    });
+      });
     return result;
   } catch (error) {
     console.error("Failed to check delivery fee:", error);

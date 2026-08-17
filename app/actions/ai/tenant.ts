@@ -61,12 +61,11 @@ export async function getAvailableModels() {
   const client = await getClient();
   try {
     // Gateway cmd = manifest alias key minus "{app_name}." (agent module
-    // manifest key:
-    // {app_name}.api.plan_builder.get_available_models.get_available_models
-    // - the single-leaf form does not exist on the backend).
+    // manifest key: {app_name}.api.plan_builder.get_available_models — the
+    // doubled file-segment form was collapsed on agent main).
     const res = await gatewayCall(
       client,
-      "api.plan_builder.get_available_models.get_available_models",
+      "api.plan_builder.get_available_models",
     );
     if (res && res.message && (res.message.FREE || res.message.PAID)) {
       return { success: true, models: res.message };

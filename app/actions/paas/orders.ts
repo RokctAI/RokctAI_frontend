@@ -1,24 +1,19 @@
 "use server";
 
-import { getPaaSClient } from "@/app/lib/client";
+import { paasCall } from "@/app/lib/paas-gateway";
 
 export async function getOrders(
   page: number = 1,
   perPage: number = 20,
   status?: string,
 ) {
-  const frappe = await getPaaSClient();
-
   try {
     const start = (page - 1) * perPage;
-    const orders = await frappe.call({
-      method: "paas.api.seller_order.seller_order.get_seller_orders",
-      args: {
+    const orders = await paasCall("api.seller_order.get_seller_orders", {
         limit_start: start,
         limit_page_length: perPage,
         status: status === "all" ? undefined : status,
-      },
-    });
+      });
     return orders;
   } catch (error) {
     console.error("Failed to fetch orders:", error);
@@ -27,15 +22,10 @@ export async function getOrders(
 }
 
 export async function getOrder(id: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    const order = await frappe.call({
-      method: "paas.api.seller_order.seller_order.get_seller_order_details",
-      args: {
+    const order = await paasCall("api.seller_order.get_seller_order_details", {
         order_id: id,
-      },
-    });
+      });
     return order;
   } catch (error) {
     console.error("Failed to fetch order:", error);
@@ -44,16 +34,11 @@ export async function getOrder(id: string) {
 }
 
 export async function updateOrderStatus(id: string, status: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    const order = await frappe.call({
-      method: "paas.api.seller_order.seller_order.update_seller_order_status",
-      args: {
+    const order = await paasCall("api.seller_order.update_seller_order_status", {
         order_id: id,
         status: status,
-      },
-    });
+      });
     return order;
   } catch (error) {
     console.error("Failed to update order status:", error);

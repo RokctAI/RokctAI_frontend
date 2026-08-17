@@ -1,4 +1,5 @@
 import { getGuestClient } from "@/app/lib/client";
+import { platformCall } from "@/app/services/base/platform-gateway";
 import { GlobalSettingsService } from "@/app/services/control/global_settings";
 
 export class VersionsService {
@@ -25,16 +26,17 @@ export class VersionsService {
 
     const [rokctRes, paasRes, rpanelRes] = await Promise.allSettled([
       rokctFetch,
-      frappe.call({ method: "paas.api.get_version" }),
+      platformCall("api.get_version", undefined, {
+        baseUrl:
+          process.env.NEXT_PUBLIC_FRAPPE_URL || process.env.ROKCT_BASE_URL,
+      }),
       frappe.call({ method: "rpanel.api.get_version" }),
     ]);
 
     const rokctDataRaw = rokctRes.status === "fulfilled" ? rokctRes.value : {};
     const rokctData = rokctDataRaw.message || rokctDataRaw || {};
     const paasVer =
-      paasRes.status === "fulfilled"
-        ? paasRes.value.message || paasRes.value
-        : null;
+      paasRes.status === "fulfilled" && paasRes.value ? paasRes.value : null;
     const rpanelVer =
       rpanelRes.status === "fulfilled"
         ? rpanelRes.value.message || rpanelRes.value

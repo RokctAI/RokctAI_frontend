@@ -1,16 +1,12 @@
 "use server";
 
-import { getPaaSClient } from "@/app/lib/client";
+import { paasCall } from "@/app/lib/paas-gateway";
 
 // Subscriptions
 
 export async function getSubscriptions() {
-  const frappe = await getPaaSClient();
-
   try {
-    const subscriptions = await frappe.call({
-      method: "paas.api.subscription.subscription.list_subscriptions",
-    });
+    const subscriptions = await paasCall("api.subscription.list_subscriptions");
     return subscriptions;
   } catch (error) {
     console.error("Failed to fetch subscriptions:", error);
@@ -19,12 +15,8 @@ export async function getSubscriptions() {
 }
 
 export async function getMyShopSubscription() {
-  const frappe = await getPaaSClient();
-
   try {
-    const subs = await frappe.call({
-      method: "paas.api.subscription.subscription.get_my_shop_subscription",
-    });
+    const subs = await paasCall("api.subscription.get_my_shop_subscription");
     return subs.length > 0 ? subs[0] : null;
   } catch (error) {
     console.error("Failed to fetch my shop subscription:", error);
@@ -33,15 +25,10 @@ export async function getMyShopSubscription() {
 }
 
 export async function subscribeMyShop(subscriptionId: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    const result = await frappe.call({
-      method: "paas.api.subscription.subscription.subscribe_my_shop",
-      args: {
+    const result = await paasCall("api.subscription.subscribe_my_shop", {
         subscription_id: subscriptionId,
-      },
-    });
+      });
     return result;
   } catch (error) {
     console.error("Failed to subscribe shop:", error);
@@ -52,12 +39,8 @@ export async function subscribeMyShop(subscriptionId: string) {
 // Ads
 
 export async function getAdsPackages() {
-  const frappe = await getPaaSClient();
-
   try {
-    const packages = await frappe.call({
-      method: "paas.api.seller_marketing.seller_marketing.get_ads_packages",
-    });
+    const packages = await paasCall("api.seller_marketing.get_ads_packages");
     return packages;
   } catch (error) {
     console.error("Failed to fetch ads packages:", error);
@@ -66,13 +49,8 @@ export async function getAdsPackages() {
 }
 
 export async function getPurchasedAds() {
-  const frappe = await getPaaSClient();
-
   try {
-    const ads = await frappe.call({
-      method:
-        "paas.api.seller_marketing.seller_marketing.get_seller_shop_ads_packages",
-    });
+    const ads = await paasCall("api.seller_marketing.get_seller_shop_ads_packages");
     return ads;
   } catch (error) {
     console.error("Failed to fetch purchased ads:", error);
@@ -81,16 +59,10 @@ export async function getPurchasedAds() {
 }
 
 export async function purchaseAdsPackage(packageName: string) {
-  const frappe = await getPaaSClient();
-
   try {
-    const result = await frappe.call({
-      method:
-        "paas.api.seller_marketing.seller_marketing.purchase_shop_ads_package",
-      args: {
+    const result = await paasCall("api.seller_marketing.purchase_shop_ads_package", {
         package_name: packageName,
-      },
-    });
+      });
     return result;
   } catch (error) {
     console.error("Failed to purchase ads package:", error);

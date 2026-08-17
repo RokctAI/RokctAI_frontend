@@ -1,15 +1,11 @@
 "use server";
 
+import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
-import { getPaaSClient } from "@/app/lib/client";
 
 export async function getRefunds() {
-  const frappe = await getPaaSClient();
-
   try {
-    const refunds = await frappe.call({
-      method: "paas.api.seller_order.seller_order.get_seller_order_refunds",
-    });
+    const refunds = await paasCall("api.seller_order.get_seller_order_refunds");
     return refunds;
   } catch (error) {
     console.error("Failed to fetch refunds:", error);
@@ -22,17 +18,12 @@ export async function updateRefund(
   status: string,
   answer?: string,
 ) {
-  const frappe = await getPaaSClient();
-
   try {
-    const refund = await frappe.call({
-      method: "paas.api.seller_order.seller_order.update_seller_order_refund",
-      args: {
+    const refund = await paasCall("api.seller_order.update_seller_order_refund", {
         refund_name: refundId,
         status: status,
         answer: answer,
-      },
-    });
+      });
     revalidatePath("/paas/dashboard/orders/refunds");
     return refund;
   } catch (error) {
@@ -42,12 +33,8 @@ export async function updateRefund(
 }
 
 export async function getReviews() {
-  const frappe = await getPaaSClient();
-
   try {
-    const reviews = await frappe.call({
-      method: "paas.api.seller_order.seller_order.get_seller_reviews",
-    });
+    const reviews = await paasCall("api.seller_order.get_seller_reviews");
     return reviews;
   } catch (error) {
     console.error("Failed to fetch reviews:", error);
