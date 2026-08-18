@@ -85,7 +85,6 @@ export async function getMyLeads(data: { modelId?: string } = {}) {
           "kyc_status",
           "first_name",
           "last_name",
-          "organization",
         ],
         order_by: "creation desc",
         limit_page_length: 10,
@@ -114,7 +113,7 @@ export async function createAiLead(data: {
         doc: {
           doctype: "Lead",
           lead_name: data.lead_name,
-          organization: data.organization,
+          company_name: data.organization, // merged Lead uses ERPNext's "company_name" fieldname
           email_id: data.email_id,
           mobile_no: data.mobile_no,
           id_number: data.id_number,
