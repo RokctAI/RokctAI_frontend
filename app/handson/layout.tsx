@@ -293,29 +293,6 @@ const commonItems = [
     roles: EMPLOYEE_ROLES,
   },
 
-  // --- LMS ---
-  {
-    title: "LMS",
-    href: "/handson/all/lms",
-    icon: GraduationCap,
-    module: "LMS",
-    roles: LMS_ROLES,
-  },
-  {
-    title: "My Profile",
-    href: "/handson/all/lms/me/profile",
-    icon: UserCheck,
-    module: "LMS",
-    roles: LMS_ROLES,
-  },
-  {
-    title: "My Batches",
-    href: "/handson/all/lms/me/batches",
-    icon: Users,
-    module: "LMS",
-    roles: LMS_ROLES,
-  },
-
   // --- Projects ---
   {
     title: "Projects",
