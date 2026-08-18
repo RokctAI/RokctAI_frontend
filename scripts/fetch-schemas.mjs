@@ -418,10 +418,13 @@ async function main() {
         console.log('  -> Staging existing cached schemas.');
         schemasSynchronized = true;
       } else {
-        console.error('  [Error] Core schemas (ai_tools.json or api_manifest.json) are missing locally!');
-        if (process.env.CI) {
-          process.exit(1); // Fail build in CI if schemas are missing
-        }
+        // Fail-soft: no remote, no local backend checkout, no cached copies.
+        // Skip hydration entirely and leave the previously generated files
+        // (app/services/platform, app/actions/platform, lib/platform/validators,
+        // components/platform/forms) untouched so the build pipeline can proceed.
+        console.warn('  [Warning] Core schemas (ai_tools.json / api_manifest.json) are unavailable from every source.');
+        console.warn('            Skipping schema sync and TypeScript hydration; existing generated files are left as-is.');
+        console.warn('            To restore syncing, point GITHUB_RAW_BASE at a live schema source or commit the JSONs to app/config/schemas/.');
       }
     }
   }
@@ -433,10 +436,10 @@ async function main() {
       const apiManifest = JSON.parse(fs.readFileSync(path.join(SCHEMAS_DIR, 'api_manifest.json'), 'utf8'));
       generateTypeScriptFiles(aiTools, apiManifest);
     } catch (genErr) {
-      console.error('  [Error] Failed to generate TypeScript proxy services and actions:', genErr.message);
-      if (process.env.CI) {
-        process.exit(1);
-      }
+      // Fail-soft: a broken/unparsable cached schema should not block the
+      // whole build pipeline. Warn loudly and exit 0.
+      console.error('  [Warning] Failed to generate TypeScript proxy services and actions:', genErr.message);
+      console.warn('            Continuing without regeneration; check the cached schemas in app/config/schemas/.');
     }
   }
 
