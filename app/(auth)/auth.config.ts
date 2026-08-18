@@ -22,6 +22,8 @@
 
 import { NextAuthConfig } from "next-auth";
 
+import { AI_FIRST } from "@/app/config/compose";
+
 export const authConfig = {
   pages: {
     signIn: "/login",
@@ -92,6 +94,12 @@ export const authConfig = {
           if (nextUrl.pathname.startsWith("/paas")) {
             // Redirect to their homePage (likely /) or root
             return Response.redirect(new URL(homePage || "/", nextUrl));
+          }
+
+          // Compose-time gate: without the agent SDK the root chat surface
+          // does not exist, so non-PaaS users' post-login home is /handson.
+          if (!AI_FIRST && nextUrl.pathname === "/") {
+            return Response.redirect(new URL("/handson", nextUrl));
           }
 
           // If they are on root, let them stay there (Chat)

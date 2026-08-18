@@ -25,6 +25,7 @@ import Link from "next/link";
 import { HardDrive, User, Settings, LogOut } from "lucide-react";
 
 import { auth, signOut } from "@/app/(auth)/auth";
+import { AI_FIRST } from "@/app/config/compose";
 import { getGuestBranding } from "@/app/config/platform";
 import { PLATFORM_NAME } from "@/app/config/constants";
 import t from "@/app/lib/i18n";
@@ -51,11 +52,13 @@ import { BrandLogo } from "./brand-logo";
 export const Navbar = async () => {
   let session = await auth();
   let showRPanel = false;
-  let canUseAI = true;
+  // Compose-time gate: AI mode is only offered when the agent SDK surface is
+  // composed in (AI_FIRST). Plan/quota checks below can further disable it.
+  let canUseAI = AI_FIRST;
 
   if (session?.user) {
     // Logic for AI Usage Check (existing)
-    if (session.user.apiKey && session.user.apiSecret && session.user.isPaaS) {
+    if (AI_FIRST && session.user.apiKey && session.user.apiSecret && session.user.isPaaS) {
       try {
         const usageRes = await fetch(
           `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`,

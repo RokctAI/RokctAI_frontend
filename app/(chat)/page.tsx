@@ -22,6 +22,7 @@
 
 import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/app/(auth)/actions";
+import { AI_FIRST } from "@/app/config/compose";
 import { Chat } from "@/components/custom/chat";
 import { PaaSLogin } from "@/components/custom/paas-login";
 import { generateUUID } from "@/lib/utils";
@@ -45,6 +46,13 @@ export default async function Page({
     }
 
     return <PaaSLogin />;
+  }
+
+  // Compose-time gate: without the agent SDK there is no chat surface, so
+  // authenticated (non-PaaS) users land on the hands-on workspace instead.
+  // PaaS users never reach this page — auth.config.ts redirects them earlier.
+  if (!AI_FIRST) {
+    redirect("/handson");
   }
 
   // Auto-route: Summarize the last session, archive it as an Engram in DB, delete it, and start a completely fresh session
