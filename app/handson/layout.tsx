@@ -293,23 +293,8 @@ const commonItems = [
     roles: EMPLOYEE_ROLES,
   },
 
-  // --- Projects ---
-  {
-    title: "Projects",
-    href: "/handson/all/projects",
-    icon: Workflow,
-    module: "Projects",
-  },
-  {
-    title: "Strategy",
-    href: "/handson/all/projects/strategy",
-    icon: BrainCircuit,
-    module: "Projects",
-  },
-
   // --- Utilities ---
   { title: "Reports", href: "/handson/all/reports", icon: PieChart },
-  { title: "Workspace", href: "/handson/all/workspace", icon: Briefcase },
   { title: "Lookups", href: "/handson/all/lookups", icon: Search },
 
   // --- Global Settings ---
