@@ -22,6 +22,9 @@
 
 "use server";
 
+// [SDK-MANAGED] The canonical copy of this file lives in the tender module
+// (corporate/tender/nextjs/templates/...). Edits here should be mirrored there.
+
 import { TenderService } from "@/app/services/control/tender";
 import { revalidatePath } from "next/cache";
 
@@ -46,44 +49,64 @@ export async function getIntelligentTaskSets() {
 }
 
 // CRUD Actions
+//
+// "Generated Tender Task" and "Tender Workflow Task" are child tables, so
+// their actions carry the parent document name (Intelligent Task Set /
+// Tender Workflow Template) — child rows can only be written via the parent.
 
-export async function updateTenderControlSettings(name: string, data: any) {
-  const doc = await TenderService.updateTenderControlSettings(name, data);
+export async function updateTenderControlSettings(data: any) {
+  const doc = await TenderService.updateTenderControlSettings(data);
   revalidatePath("/handson/control/tender");
   return doc;
 }
 
-export async function createGeneratedTenderTask(data: any) {
-  const doc = await TenderService.createGeneratedTenderTask(data);
+export async function createGeneratedTenderTask(taskSet: string, data: any) {
+  const doc = await TenderService.createGeneratedTenderTask(taskSet, data);
   revalidatePath("/handson/control/tender");
   return doc;
 }
 
-export async function updateGeneratedTenderTask(name: string, data: any) {
-  const doc = await TenderService.updateGeneratedTenderTask(name, data);
+export async function updateGeneratedTenderTask(
+  taskSet: string,
+  name: string,
+  data: any,
+) {
+  const doc = await TenderService.updateGeneratedTenderTask(
+    taskSet,
+    name,
+    data,
+  );
   revalidatePath("/handson/control/tender");
   return doc;
 }
 
-export async function deleteGeneratedTenderTask(name: string) {
-  await TenderService.deleteGeneratedTenderTask(name);
+export async function deleteGeneratedTenderTask(taskSet: string, name: string) {
+  await TenderService.deleteGeneratedTenderTask(taskSet, name);
   revalidatePath("/handson/control/tender");
 }
 
-export async function createTenderWorkflowTask(data: any) {
-  const doc = await TenderService.createTenderWorkflowTask(data);
-  revalidatePath("/handson/control/tender");
-  return doc;
-}
-
-export async function updateTenderWorkflowTask(name: string, data: any) {
-  const doc = await TenderService.updateTenderWorkflowTask(name, data);
+export async function createTenderWorkflowTask(template: string, data: any) {
+  const doc = await TenderService.createTenderWorkflowTask(template, data);
   revalidatePath("/handson/control/tender");
   return doc;
 }
 
-export async function deleteTenderWorkflowTask(name: string) {
-  await TenderService.deleteTenderWorkflowTask(name);
+export async function updateTenderWorkflowTask(
+  template: string,
+  name: string,
+  data: any,
+) {
+  const doc = await TenderService.updateTenderWorkflowTask(
+    template,
+    name,
+    data,
+  );
+  revalidatePath("/handson/control/tender");
+  return doc;
+}
+
+export async function deleteTenderWorkflowTask(template: string, name: string) {
+  await TenderService.deleteTenderWorkflowTask(template, name);
   revalidatePath("/handson/control/tender");
 }
 

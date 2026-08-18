@@ -20,77 +20,133 @@
  * SOFTWARE.
  */
 
+// [SDK-MANAGED] The canonical copy of this file lives in the tender module
+// (corporate/tender/nextjs/templates/...). Edits here should be mirrored there.
+
 import { ControlBaseService } from "./base";
 
+/**
+ * A child-table row flattened out of its parent document. Both tender child
+ * tables ("Generated Tender Task" under Intelligent Task Set, "Tender
+ * Workflow Task" under Tender Workflow Template) share the same two fields.
+ */
+export interface TenderChildTaskRow {
+  name: string;
+  parent: string;
+  subject: string;
+  due_date_offset_days?: number;
+}
+
 export class TenderService {
+  /**
+   * "Tender Control Settings" is a Single doctype — frappe rejects
+   * get_list on Singles, so the one document is read directly. Its only
+   * field is `tender_country`.
+   */
   static async getTenderControlSettings() {
-    return ControlBaseService.getList("Tender Control Settings", {
-      fields: ["name", "default_workflow"],
-      limit: 1,
-    });
+    return ControlBaseService.getDoc(
+      "Tender Control Settings",
+      "Tender Control Settings",
+    );
   }
 
-  static async getGeneratedTenderTasks() {
-    return ControlBaseService.getList("Generated Tender Task", {
-      fields: ["name", "tender", "task_name", "status"],
-      order_by: "modified desc",
-    });
+  /**
+   * "Generated Tender Task" is a child table (istable=1) of Intelligent
+   * Task Set — frappe blocks bare get_list on child tables, so rows are
+   * read through their parent documents.
+   */
+  static async getGeneratedTenderTasks(): Promise<TenderChildTaskRow[]> {
+    return this.getChildTaskRows("Intelligent Task Set");
   }
 
-  static async getTenderWorkflowTasks() {
-    return ControlBaseService.getList("Tender Workflow Task", {
-      fields: ["name", "workflow", "task_description", "assigned_to"],
-      order_by: "modified desc",
-    });
+  /**
+   * "Tender Workflow Task" is a child table (istable=1) of Tender Workflow
+   * Template — same parent-based read as above.
+   */
+  static async getTenderWorkflowTasks(): Promise<TenderChildTaskRow[]> {
+    return this.getChildTaskRows("Tender Workflow Template");
   }
 
   static async getTenderWorkflowTemplates() {
     return ControlBaseService.getList("Tender Workflow Template", {
-      fields: ["name", "template_name", "created_by"],
+      // `template_name` and the standard `owner` field (there is no
+      // custom `created_by` field on this doctype).
+      fields: ["name", "template_name", "owner"],
       order_by: "modified desc",
     });
   }
 
   static async getIntelligentTaskSets() {
     return ControlBaseService.getList("Intelligent Task Set", {
-      fields: ["name", "set_name", "description"],
+      // Real fields are `ocid` and the `tasks` child table.
+      fields: ["name", "ocid"],
       order_by: "modified desc",
     });
   }
 
-  static async updateTenderControlSettings(name: string, data: any) {
-    return ControlBaseService.update("Tender Control Settings", name, data);
+  /** A Single's document name equals its doctype name. */
+  static async updateTenderControlSettings(data: any) {
+    return ControlBaseService.update(
+      "Tender Control Settings",
+      "Tender Control Settings",
+      data,
+    );
   }
 
-  static async createGeneratedTenderTask(data: any) {
-    return ControlBaseService.insert({
-      doctype: "Generated Tender Task",
-      ...data,
-    });
+  // ---------------------------------------------------------------------
+  // Child-table CRUD. Direct frappe.client insert/set_value/delete on an
+  // istable doctype is invalid — rows must be written through the parent
+  // document, so each helper takes the parent name alongside the row.
+  // ---------------------------------------------------------------------
+
+  static async createGeneratedTenderTask(taskSet: string, data: any) {
+    return this.appendChildTaskRow(
+      "Intelligent Task Set",
+      taskSet,
+      "Generated Tender Task",
+      data,
+    );
   }
 
-  static async updateGeneratedTenderTask(name: string, data: any) {
-    return ControlBaseService.update("Generated Tender Task", name, data);
+  static async updateGeneratedTenderTask(
+    taskSet: string,
+    name: string,
+    data: any,
+  ) {
+    return this.updateChildTaskRow("Intelligent Task Set", taskSet, name, data);
   }
 
-  static async deleteGeneratedTenderTask(name: string) {
-    return ControlBaseService.delete("Generated Tender Task", name);
+  static async deleteGeneratedTenderTask(taskSet: string, name: string) {
+    return this.deleteChildTaskRow("Intelligent Task Set", taskSet, name);
   }
 
-  static async createTenderWorkflowTask(data: any) {
-    return ControlBaseService.insert({
-      doctype: "Tender Workflow Task",
-      ...data,
-    });
+  static async createTenderWorkflowTask(template: string, data: any) {
+    return this.appendChildTaskRow(
+      "Tender Workflow Template",
+      template,
+      "Tender Workflow Task",
+      data,
+    );
   }
 
-  static async updateTenderWorkflowTask(name: string, data: any) {
-    return ControlBaseService.update("Tender Workflow Task", name, data);
+  static async updateTenderWorkflowTask(
+    template: string,
+    name: string,
+    data: any,
+  ) {
+    return this.updateChildTaskRow(
+      "Tender Workflow Template",
+      template,
+      name,
+      data,
+    );
   }
 
-  static async deleteTenderWorkflowTask(name: string) {
-    return ControlBaseService.delete("Tender Workflow Task", name);
+  static async deleteTenderWorkflowTask(template: string, name: string) {
+    return this.deleteChildTaskRow("Tender Workflow Template", template, name);
   }
+
+  // --- Regular (parent) doctype CRUD — unchanged framework paths. ---
 
   static async createTenderWorkflowTemplate(data: any) {
     return ControlBaseService.insert({
@@ -120,5 +176,70 @@ export class TenderService {
 
   static async deleteIntelligentTaskSet(name: string) {
     return ControlBaseService.delete("Intelligent Task Set", name);
+  }
+
+  // --- Internal helpers -------------------------------------------------
+
+  private static async getChildTaskRows(
+    parentDoctype: string,
+  ): Promise<TenderChildTaskRow[]> {
+    const parents = await ControlBaseService.getList(parentDoctype, {
+      fields: ["name"],
+      order_by: "modified desc",
+    });
+    const docs = await Promise.all(
+      (parents ?? []).map((p: any) =>
+        ControlBaseService.getDoc(parentDoctype, p.name),
+      ),
+    );
+    return docs.flatMap((doc: any) =>
+      (doc?.tasks ?? []).map((row: any) => ({
+        name: row.name,
+        parent: doc.name,
+        subject: row.subject,
+        due_date_offset_days: row.due_date_offset_days,
+      })),
+    );
+  }
+
+  private static async saveDoc(doc: any) {
+    const response = await ControlBaseService.call("frappe.client.save", {
+      doc,
+    });
+    return response?.message;
+  }
+
+  private static async appendChildTaskRow(
+    parentDoctype: string,
+    parentName: string,
+    childDoctype: string,
+    data: any,
+  ) {
+    const doc = await ControlBaseService.getDoc(parentDoctype, parentName);
+    doc.tasks = [...(doc.tasks ?? []), { doctype: childDoctype, ...data }];
+    return this.saveDoc(doc);
+  }
+
+  private static async updateChildTaskRow(
+    parentDoctype: string,
+    parentName: string,
+    rowName: string,
+    data: any,
+  ) {
+    const doc = await ControlBaseService.getDoc(parentDoctype, parentName);
+    doc.tasks = (doc.tasks ?? []).map((row: any) =>
+      row.name === rowName ? { ...row, ...data } : row,
+    );
+    return this.saveDoc(doc);
+  }
+
+  private static async deleteChildTaskRow(
+    parentDoctype: string,
+    parentName: string,
+    rowName: string,
+  ) {
+    const doc = await ControlBaseService.getDoc(parentDoctype, parentName);
+    doc.tasks = (doc.tasks ?? []).filter((row: any) => row.name !== rowName);
+    return this.saveDoc(doc);
   }
 }

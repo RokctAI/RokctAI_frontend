@@ -22,6 +22,9 @@
 
 "use client";
 
+// [SDK-MANAGED] The canonical copy of this file lives in the tender module
+// (corporate/tender/nextjs/templates/...). Edits here should be mirrored there.
+
 import { useEffect, useState } from "react";
 import { Loader2, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -57,7 +60,8 @@ import {
 } from "@/app/actions/handson/control/tender/tender";
 
 export default function TenderPage() {
-  const [settings, setSettings] = useState<any[]>([]);
+  // "Tender Control Settings" is a Single doctype — one document, not a list.
+  const [settings, setSettings] = useState<any | null>(null);
   const [tasks, setTasks] = useState<any[]>([]);
   const [workflowTasks, setWorkflowTasks] = useState<any[]>([]);
   const [templates, setTemplates] = useState<any[]>([]);
@@ -75,7 +79,7 @@ export default function TenderPage() {
           getTenderWorkflowTemplates(),
           getIntelligentTaskSets(),
         ]);
-      setSettings(settingsData || []);
+      setSettings(settingsData || null);
       setTasks(tasksData || []);
       setWorkflowTasks(wfTasksData || []);
       setTemplates(templatesData || []);
@@ -88,10 +92,12 @@ export default function TenderPage() {
     }
   }
 
-  async function handleDeleteTask(name: string) {
+  // Child-table rows are deleted through their parent document, so the
+  // handlers carry the parent name alongside the row name.
+  async function handleDeleteTask(taskSet: string, name: string) {
     if (!confirm("Are you sure you want to delete this task?")) return;
     try {
-      await deleteGeneratedTenderTask(name);
+      await deleteGeneratedTenderTask(taskSet, name);
       toast.success("Task deleted");
       fetchData();
     } catch (error) {
@@ -99,10 +105,10 @@ export default function TenderPage() {
     }
   }
 
-  async function handleDeleteWorkflowTask(name: string) {
+  async function handleDeleteWorkflowTask(template: string, name: string) {
     if (!confirm("Are you sure you want to delete this workflow task?")) return;
     try {
-      await deleteTenderWorkflowTask(name);
+      await deleteTenderWorkflowTask(template, name);
       toast.success("Workflow task deleted");
       fetchData();
     } catch (error) {
@@ -185,11 +191,11 @@ export default function TenderPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
-                    <TableHead>Default Workflow</TableHead>
+                    <TableHead>Tender Country</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {settings.length === 0 ? (
+                  {!settings ? (
                     <TableRow>
                       <TableCell
                         colSpan={2}
@@ -199,14 +205,12 @@ export default function TenderPage() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    settings.map((item) => (
-                      <TableRow key={item.name}>
-                        <TableCell className="font-medium">
-                          {item.name}
-                        </TableCell>
-                        <TableCell>{item.default_workflow}</TableCell>
-                      </TableRow>
-                    ))
+                    <TableRow key={settings.name}>
+                      <TableCell className="font-medium">
+                        {settings.name}
+                      </TableCell>
+                      <TableCell>{settings.tender_country}</TableCell>
+                    </TableRow>
                   )}
                 </TableBody>
               </Table>
@@ -225,10 +229,9 @@ export default function TenderPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>ID</TableHead>
-                    <TableHead>Tender</TableHead>
-                    <TableHead>Task Name</TableHead>
-                    <TableHead>Task Name</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Task Set</TableHead>
+                    <TableHead>Subject</TableHead>
+                    <TableHead>Due Offset (Days)</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -236,7 +239,7 @@ export default function TenderPage() {
                   {tasks.length === 0 ? (
                     <TableRow>
                       <TableCell
-                        colSpan={4}
+                        colSpan={5}
                         className="text-center h-24 text-muted-foreground"
                       >
                         No tasks found.
@@ -248,15 +251,17 @@ export default function TenderPage() {
                         <TableCell className="font-medium">
                           {item.name}
                         </TableCell>
-                        <TableCell>{item.tender}</TableCell>
-                        <TableCell>{item.task_name}</TableCell>
-                        <TableCell>{item.status}</TableCell>
+                        <TableCell>{item.parent}</TableCell>
+                        <TableCell>{item.subject}</TableCell>
+                        <TableCell>{item.due_date_offset_days}</TableCell>
                         <TableCell className="text-right">
                           <Button
                             variant="ghost"
                             size="icon"
                             className="text-red-500 hover:text-red-600"
-                            onClick={() => handleDeleteTask(item.name)}
+                            onClick={() =>
+                              handleDeleteTask(item.parent, item.name)
+                            }
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -283,10 +288,9 @@ export default function TenderPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>ID</TableHead>
-                    <TableHead>Workflow</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Assigned To</TableHead>
+                    <TableHead>Template</TableHead>
+                    <TableHead>Subject</TableHead>
+                    <TableHead>Due Offset (Days)</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -294,7 +298,7 @@ export default function TenderPage() {
                   {workflowTasks.length === 0 ? (
                     <TableRow>
                       <TableCell
-                        colSpan={4}
+                        colSpan={5}
                         className="text-center h-24 text-muted-foreground"
                       >
                         No workflow tasks found.
@@ -306,15 +310,17 @@ export default function TenderPage() {
                         <TableCell className="font-medium">
                           {item.name}
                         </TableCell>
-                        <TableCell>{item.workflow}</TableCell>
-                        <TableCell>{item.task_description}</TableCell>
-                        <TableCell>{item.assigned_to}</TableCell>
+                        <TableCell>{item.parent}</TableCell>
+                        <TableCell>{item.subject}</TableCell>
+                        <TableCell>{item.due_date_offset_days}</TableCell>
                         <TableCell className="text-right">
                           <Button
                             variant="ghost"
                             size="icon"
                             className="text-red-500 hover:text-red-600"
-                            onClick={() => handleDeleteWorkflowTask(item.name)}
+                            onClick={() =>
+                              handleDeleteWorkflowTask(item.parent, item.name)
+                            }
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -340,8 +346,7 @@ export default function TenderPage() {
                   <TableRow>
                     <TableHead>ID</TableHead>
                     <TableHead>Template Name</TableHead>
-                    <TableHead>Template Name</TableHead>
-                    <TableHead>Created By</TableHead>
+                    <TableHead>Owner</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -349,7 +354,7 @@ export default function TenderPage() {
                   {templates.length === 0 ? (
                     <TableRow>
                       <TableCell
-                        colSpan={3}
+                        colSpan={4}
                         className="text-center h-24 text-muted-foreground"
                       >
                         No templates found.
@@ -362,7 +367,7 @@ export default function TenderPage() {
                           {item.name}
                         </TableCell>
                         <TableCell>{item.template_name}</TableCell>
-                        <TableCell>{item.created_by}</TableCell>
+                        <TableCell>{item.owner}</TableCell>
                         <TableCell className="text-right">
                           <Button
                             variant="ghost"
@@ -393,9 +398,7 @@ export default function TenderPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>ID</TableHead>
-                    <TableHead>Set Name</TableHead>
-                    <TableHead>Set Name</TableHead>
-                    <TableHead>Description</TableHead>
+                    <TableHead>OCID</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -415,8 +418,7 @@ export default function TenderPage() {
                         <TableCell className="font-medium">
                           {item.name}
                         </TableCell>
-                        <TableCell>{item.set_name}</TableCell>
-                        <TableCell>{item.description}</TableCell>
+                        <TableCell>{item.ocid}</TableCell>
                         <TableCell className="text-right">
                           <Button
                             variant="ghost"
