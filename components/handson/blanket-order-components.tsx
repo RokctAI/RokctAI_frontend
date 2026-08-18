@@ -184,7 +184,7 @@ export function BlanketOrderForm() {
                 onValueChange={(v) => setFormData({ ...formData, supplier: v })}
               >
                 <SelectTrigger>
-                                <SelectValue placeholder={t('common.select_supplier')} />
+                  <SelectValue placeholder={t("common.select_supplier")} />
                 </SelectTrigger>
                 <SelectContent>
                   {suppliers.map((s) => (

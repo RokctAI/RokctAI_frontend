@@ -114,40 +114,53 @@ export default function RefundsPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">{t('app.paas.dashboard.orders.refunds.title')}</h1>
+        <h1 className="text-3xl font-bold">
+          {t("app.paas.dashboard.orders.refunds.title")}
+        </h1>
         <p className="text-muted-foreground">
-          {t('app.paas.dashboard.orders.refunds.desc')}
+          {t("app.paas.dashboard.orders.refunds.desc")}
         </p>
       </div>
 
-
-       <Card>
-         <CardHeader>
-           <CardTitle>{t('app.paas.dashboard.orders.refunds.card_title')}</CardTitle>
-           <CardDescription>
-             {t('app.paas.dashboard.orders.refunds.card_desc')}
-           </CardDescription>
-         </CardHeader>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {t("app.paas.dashboard.orders.refunds.card_title")}
+          </CardTitle>
+          <CardDescription>
+            {t("app.paas.dashboard.orders.refunds.card_desc")}
+          </CardDescription>
+        </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-               <TableRow>
-                 <TableHead>{t('app.paas.dashboard.orders.refunds.col_order')}</TableHead>
-                 <TableHead>{t('app.paas.dashboard.orders.refunds.col_reason')}</TableHead>
-                 <TableHead>{t('app.paas.dashboard.orders.refunds.col_status')}</TableHead>
-                 <TableHead>{t('app.paas.dashboard.orders.refunds.col_answer')}</TableHead>
-                 <TableHead className="text-right">{t('common.actions')}</TableHead>
-               </TableRow>
+              <TableRow>
+                <TableHead>
+                  {t("app.paas.dashboard.orders.refunds.col_order")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.orders.refunds.col_reason")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.orders.refunds.col_status")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.orders.refunds.col_answer")}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t("common.actions")}
+                </TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {refunds.length === 0 ? (
                 <TableRow>
-                   <TableCell
-                     colSpan={5}
-                     className="text-center h-24 text-muted-foreground"
-                   >
-                     {t('app.paas.dashboard.orders.refunds.no_data')}
-                   </TableCell>
+                  <TableCell
+                    colSpan={5}
+                    className="text-center h-24 text-muted-foreground"
+                  >
+                    {t("app.paas.dashboard.orders.refunds.no_data")}
+                  </TableCell>
                 </TableRow>
               ) : (
                 refunds.map((refund) => (
@@ -176,13 +189,13 @@ export default function RefundsPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       {refund.status === "New" && (
-                         <Button
-                           size="sm"
-                           variant="outline"
-                           onClick={() => handleOpenDialog(refund)}
-                         >
-                           {t('app.paas.dashboard.orders.refunds.btn_review')}
-                         </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleOpenDialog(refund)}
+                        >
+                          {t("app.paas.dashboard.orders.refunds.btn_review")}
+                        </Button>
                       )}
                     </TableCell>
                   </TableRow>
@@ -195,49 +208,57 @@ export default function RefundsPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
-           <DialogHeader>
-             <DialogTitle>{t('app.paas.dashboard.orders.refunds.dialog_title')}</DialogTitle>
-             <DialogDescription>
-               {t('app.paas.dashboard.orders.refunds.dialog_desc', { order: selectedRefund?.order })}
-             </DialogDescription>
-           </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>
+              {t("app.paas.dashboard.orders.refunds.dialog_title")}
+            </DialogTitle>
+            <DialogDescription>
+              {t("app.paas.dashboard.orders.refunds.dialog_desc", {
+                order: selectedRefund?.order,
+              })}
+            </DialogDescription>
+          </DialogHeader>
           <div className="space-y-4 py-4">
-             <div>
-               <Label className="font-semibold">{t('app.paas.dashboard.orders.refunds.label_reason')}</Label>
-               <p className="text-sm text-muted-foreground mt-1">
-                 {selectedRefund?.cause}
-               </p>
-             </div>
-             <div className="space-y-2">
-               <Label htmlFor="answer">{t('app.paas.dashboard.orders.refunds.label_answer')}</Label>
-               <Textarea
-                 id="answer"
-                 value={answer}
-                 onChange={(e) => setAnswer(e.target.value)}
-                 placeholder={t('app.paas.dashboard.orders.refunds.ph_answer')}
-                 rows={4}
-               />
-             </div>
+            <div>
+              <Label className="font-semibold">
+                {t("app.paas.dashboard.orders.refunds.label_reason")}
+              </Label>
+              <p className="text-sm text-muted-foreground mt-1">
+                {selectedRefund?.cause}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="answer">
+                {t("app.paas.dashboard.orders.refunds.label_answer")}
+              </Label>
+              <Textarea
+                id="answer"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                placeholder={t("app.paas.dashboard.orders.refunds.ph_answer")}
+                rows={4}
+              />
+            </div>
           </div>
           <DialogFooter className="gap-2">
-             <Button
-               variant="outline"
-               className="text-green-600 hover:text-green-700"
-               onClick={() => handleUpdateStatus("Accepted")}
-               disabled={processing}
-             >
-               <Check className="size-4 mr-2" />
-               {t('app.paas.dashboard.orders.refunds.btn_accept')}
-             </Button>
-             <Button
-               variant="outline"
-               className="text-red-600 hover:text-red-700"
-               onClick={() => handleUpdateStatus("Canceled")}
-               disabled={processing}
-             >
-               <X className="size-4 mr-2" />
-               {t('app.paas.dashboard.orders.refunds.btn_reject')}
-             </Button>
+            <Button
+              variant="outline"
+              className="text-green-600 hover:text-green-700"
+              onClick={() => handleUpdateStatus("Accepted")}
+              disabled={processing}
+            >
+              <Check className="size-4 mr-2" />
+              {t("app.paas.dashboard.orders.refunds.btn_accept")}
+            </Button>
+            <Button
+              variant="outline"
+              className="text-red-600 hover:text-red-700"
+              onClick={() => handleUpdateStatus("Canceled")}
+              disabled={processing}
+            >
+              <X className="size-4 mr-2" />
+              {t("app.paas.dashboard.orders.refunds.btn_reject")}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

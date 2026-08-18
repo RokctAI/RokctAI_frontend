@@ -45,23 +45,32 @@ export async function POST(request: Request) {
         method: "rcore.tenant.api.log_frontend_error",
         args: {
           error_message: errorMessage,
-          context: typeof context === "string" ? context : JSON.stringify(context || {}),
+          context:
+            typeof context === "string"
+              ? context
+              : JSON.stringify(context || {}),
         },
       });
     } else {
       // Call Control site error logger
-      const { OnboardingService } = await import("@/app/services/control/onboarding");
+      const { OnboardingService } =
+        await import("@/app/services/control/onboarding");
       // Since ControlBaseService is static, we call via ControlBaseService directly
-      const { ControlBaseService } = await import("@/app/services/control/base");
+      const { ControlBaseService } =
+        await import("@/app/services/control/base");
       logRes = await ControlBaseService.call("control.api.log_frontend_error", {
         error_message: errorMessage,
-        context: typeof context === "string" ? context : JSON.stringify(context || {}),
+        context:
+          typeof context === "string" ? context : JSON.stringify(context || {}),
       });
     }
 
     return Response.json({ success: true, backend_result: logRes });
   } catch (error: any) {
     console.error("Failed to forward frontend error to backend:", error);
-    return Response.json({ success: false, error: error.message }, { status: 500 });
+    return Response.json(
+      { success: false, error: error.message },
+      { status: 500 },
+    );
   }
 }

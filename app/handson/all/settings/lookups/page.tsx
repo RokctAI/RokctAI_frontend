@@ -94,16 +94,18 @@ import { getIndustries } from "@/app/actions/handson/all/crm/competitor";
 // --- Schemas ---
 
 const provinceSchema = z.object({
-  province_name: z.string().min(2, t('app.settings.lookups.name_required')),
+  province_name: z.string().min(2, t("app.settings.lookups.name_required")),
 });
 
 const locationTypeSchema = z.object({
-  location_type_name: z.string().min(2, t('app.settings.lookups.name_required')),
-  industry: z.string().min(1, t('app.settings.lookups.industry_required')),
+  location_type_name: z
+    .string()
+    .min(2, t("app.settings.lookups.name_required")),
+  industry: z.string().min(1, t("app.settings.lookups.industry_required")),
 });
 
 const organSchema = z.object({
-  organ_name: z.string().min(2, t('app.settings.lookups.name_required')),
+  organ_name: z.string().min(2, t("app.settings.lookups.name_required")),
   type: z.enum([
     "National Department",
     "Provincial Department",
@@ -165,7 +167,7 @@ export default function LookupsPage() {
       setIndustries(iData || []);
     } catch (error) {
       console.error(error);
-      toast.error(t('app.settings.lookups.fetch_fail'));
+      toast.error(t("app.settings.lookups.fetch_fail"));
     } finally {
       setLoading(false);
     }
@@ -180,36 +182,36 @@ export default function LookupsPage() {
   const onProvSubmit = async (values: z.infer<typeof provinceSchema>) => {
     try {
       await createProvince(values);
-      toast.success(t('app.settings.lookups.province_created'));
+      toast.success(t("app.settings.lookups.province_created"));
       setIsProvinceDialogOpen(false);
       provForm.reset();
       fetchData();
     } catch (error) {
-      toast.error(t('app.settings.lookups.province_create_fail'));
+      toast.error(t("app.settings.lookups.province_create_fail"));
     }
   };
 
   const onLocSubmit = async (values: z.infer<typeof locationTypeSchema>) => {
     try {
       await createLocationType(values);
-      toast.success(t('app.settings.lookups.location_created'));
+      toast.success(t("app.settings.lookups.location_created"));
       setIsLocTypeDialogOpen(false);
       locForm.reset();
       fetchData();
     } catch (error) {
-      toast.error(t('app.settings.lookups.location_create_fail'));
+      toast.error(t("app.settings.lookups.location_create_fail"));
     }
   };
 
   const onOrganSubmit = async (values: z.infer<typeof organSchema>) => {
     try {
       await createOrgan(values);
-      toast.success(t('app.settings.lookups.organ_created'));
+      toast.success(t("app.settings.lookups.organ_created"));
       setIsOrganDialogOpen(false);
       organForm.reset();
       fetchData();
     } catch (error) {
-      toast.error(t('app.settings.lookups.organ_create_fail'));
+      toast.error(t("app.settings.lookups.organ_create_fail"));
     }
   };
 
@@ -217,15 +219,15 @@ export default function LookupsPage() {
     type: "province" | "location" | "organ",
     name: string,
   ) => {
-    if (!confirm(t('app.settings.lookups.delete_confirm'))) return;
+    if (!confirm(t("app.settings.lookups.delete_confirm"))) return;
     try {
       if (type === "province") await deleteProvince(name);
       if (type === "location") await deleteLocationType(name);
       if (type === "organ") await deleteOrgan(name);
-      toast.success(t('app.settings.lookups.deleted'));
+      toast.success(t("app.settings.lookups.deleted"));
       fetchData();
     } catch (error) {
-      toast.error(t('app.settings.lookups.delete_fail'));
+      toast.error(t("app.settings.lookups.delete_fail"));
     }
   };
 
@@ -241,8 +243,12 @@ export default function LookupsPage() {
     <div className="space-y-8 p-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{t('app.settings.lookups.title')}</h1>
-          <p className="text-muted-foreground">{t('app.settings.lookups.desc')}</p>
+          <h1 className="text-3xl font-bold">
+            {t("app.settings.lookups.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("app.settings.lookups.desc")}
+          </p>
         </div>
       </div>
 
@@ -252,31 +258,42 @@ export default function LookupsPage() {
         onValueChange={setActiveTab}
       >
         <TabsList>
-          <TabsTrigger value="provinces">{t('app.settings.lookups.tab_provinces')}</TabsTrigger>
-          <TabsTrigger value="locations">{t('app.settings.lookups.tab_locations')}</TabsTrigger>
-          <TabsTrigger value="organs">{t('app.settings.lookups.tab_organs')}</TabsTrigger>
+          <TabsTrigger value="provinces">
+            {t("app.settings.lookups.tab_provinces")}
+          </TabsTrigger>
+          <TabsTrigger value="locations">
+            {t("app.settings.lookups.tab_locations")}
+          </TabsTrigger>
+          <TabsTrigger value="organs">
+            {t("app.settings.lookups.tab_organs")}
+          </TabsTrigger>
         </TabsList>
 
         {/* --- Provinces --- */}
-         <TabsContent value="provinces" className="space-y-4 mt-4">
-           <div className="flex justify-end">
-             <Button onClick={() => setIsProvinceDialogOpen(true)}>
-               <Plus className="mr-2 h-4 w-4" /> {t('app.settings.lookups.btn_new_province')}
-             </Button>
-           </div>
-           <Card>
-             <CardHeader>
-               <CardTitle>{t('app.settings.lookups.province_title')}</CardTitle>
-               <CardDescription>{t('app.settings.lookups.province_desc')}</CardDescription>
-             </CardHeader>
-             <CardContent>
-               <Table>
-                 <TableHeader>
-                   <TableRow>
-                     <TableHead>{t('app.settings.lookups.col_name')}</TableHead>
-                     <TableHead className="text-right">{t('app.settings.lookups.col_actions')}</TableHead>
-                   </TableRow>
-                 </TableHeader>
+        <TabsContent value="provinces" className="space-y-4 mt-4">
+          <div className="flex justify-end">
+            <Button onClick={() => setIsProvinceDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />{" "}
+              {t("app.settings.lookups.btn_new_province")}
+            </Button>
+          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("app.settings.lookups.province_title")}</CardTitle>
+              <CardDescription>
+                {t("app.settings.lookups.province_desc")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("app.settings.lookups.col_name")}</TableHead>
+                    <TableHead className="text-right">
+                      {t("app.settings.lookups.col_actions")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
                 <TableBody>
                   {provinces.map((prov) => (
                     <TableRow key={prov.name}>
@@ -303,26 +320,33 @@ export default function LookupsPage() {
         </TabsContent>
 
         {/* --- Location Types --- */}
-         <TabsContent value="locations" className="space-y-4 mt-4">
-           <div className="flex justify-end">
-             <Button onClick={() => setIsLocTypeDialogOpen(true)}>
-               <Plus className="mr-2 h-4 w-4" /> {t('app.settings.lookups.btn_new_type')}
-             </Button>
-           </div>
-           <Card>
-             <CardHeader>
-               <CardTitle>{t('app.settings.lookups.location_title')}</CardTitle>
-               <CardDescription>{t('app.settings.lookups.location_desc')}</CardDescription>
-             </CardHeader>
-             <CardContent>
-               <Table>
-                 <TableHeader>
-                   <TableRow>
-                     <TableHead>{t('app.settings.lookups.col_name')}</TableHead>
-                     <TableHead>{t('app.settings.lookups.col_industry')}</TableHead>
-                     <TableHead className="text-right">{t('app.settings.lookups.col_actions')}</TableHead>
-                   </TableRow>
-                 </TableHeader>
+        <TabsContent value="locations" className="space-y-4 mt-4">
+          <div className="flex justify-end">
+            <Button onClick={() => setIsLocTypeDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />{" "}
+              {t("app.settings.lookups.btn_new_type")}
+            </Button>
+          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("app.settings.lookups.location_title")}</CardTitle>
+              <CardDescription>
+                {t("app.settings.lookups.location_desc")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("app.settings.lookups.col_name")}</TableHead>
+                    <TableHead>
+                      {t("app.settings.lookups.col_industry")}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t("app.settings.lookups.col_actions")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
                 <TableBody>
                   {locationTypes.map((loc) => (
                     <TableRow key={loc.name}>
@@ -350,28 +374,31 @@ export default function LookupsPage() {
         </TabsContent>
 
         {/* --- Organs of State --- */}
-         <TabsContent value="organs" className="space-y-4 mt-4">
-           <div className="flex justify-end">
-             <Button onClick={() => setIsOrganDialogOpen(true)}>
-               <Plus className="mr-2 h-4 w-4" /> {t('app.settings.lookups.btn_new_entity')}
-             </Button>
-           </div>
-           <Card>
-             <CardHeader>
-               <CardTitle>{t('app.settings.lookups.organ_title')}</CardTitle>
-               <CardDescription>
-                 {t('app.settings.lookups.organ_desc')}
-               </CardDescription>
-             </CardHeader>
-             <CardContent>
-               <Table>
-                 <TableHeader>
-                   <TableRow>
-                     <TableHead>{t('app.settings.lookups.col_name')}</TableHead>
-                     <TableHead>{t('app.settings.lookups.col_type')}</TableHead>
-                     <TableHead className="text-right">{t('app.settings.lookups.col_actions')}</TableHead>
-                   </TableRow>
-                 </TableHeader>
+        <TabsContent value="organs" className="space-y-4 mt-4">
+          <div className="flex justify-end">
+            <Button onClick={() => setIsOrganDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />{" "}
+              {t("app.settings.lookups.btn_new_entity")}
+            </Button>
+          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("app.settings.lookups.organ_title")}</CardTitle>
+              <CardDescription>
+                {t("app.settings.lookups.organ_desc")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("app.settings.lookups.col_name")}</TableHead>
+                    <TableHead>{t("app.settings.lookups.col_type")}</TableHead>
+                    <TableHead className="text-right">
+                      {t("app.settings.lookups.col_actions")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
                 <TableBody>
                   {organs.map((org) => (
                     <TableRow key={org.name}>
@@ -401,157 +428,171 @@ export default function LookupsPage() {
 
       {/* --- Dialogs --- */}
 
-       <Dialog
-         open={isProvinceDialogOpen}
-         onOpenChange={setIsProvinceDialogOpen}
-       >
-         <DialogContent>
-           <DialogHeader>
-             <DialogTitle>{t('app.settings.lookups.dialog_province_title')}</DialogTitle>
-           </DialogHeader>
-           <Form {...provForm}>
-             <form
-               onSubmit={provForm.handleSubmit(onProvSubmit)}
-               className="space-y-4"
-             >
-               <FormField
-                 control={provForm.control}
-                 name="province_name"
-                 render={({ field }) => (
-                   <FormItem>
-                     <FormLabel>{t('app.settings.lookups.col_name')}</FormLabel>
-                     <FormControl>
-                       <Input {...field} />
-                     </FormControl>
-                     <FormMessage />
-                   </FormItem>
-                 )}
-               />
-               <DialogFooter>
-                 <Button type="submit">{t('app.settings.lookups.btn_create')}</Button>
-               </DialogFooter>
-             </form>
-           </Form>
-         </DialogContent>
-       </Dialog>
+      <Dialog
+        open={isProvinceDialogOpen}
+        onOpenChange={setIsProvinceDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t("app.settings.lookups.dialog_province_title")}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...provForm}>
+            <form
+              onSubmit={provForm.handleSubmit(onProvSubmit)}
+              className="space-y-4"
+            >
+              <FormField
+                control={provForm.control}
+                name="province_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("app.settings.lookups.col_name")}</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit">
+                  {t("app.settings.lookups.btn_create")}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
-       <Dialog open={isLocTypeDialogOpen} onOpenChange={setIsLocTypeDialogOpen}>
-         <DialogContent>
-           <DialogHeader>
-             <DialogTitle>{t('app.settings.lookups.dialog_location_title')}</DialogTitle>
-           </DialogHeader>
-           <Form {...locForm}>
-             <form
-               onSubmit={locForm.handleSubmit(onLocSubmit)}
-               className="space-y-4"
-             >
-               <FormField
-                 control={locForm.control}
-                 name="location_type_name"
-                 render={({ field }) => (
-                   <FormItem>
-                     <FormLabel>{t('app.settings.lookups.col_name')}</FormLabel>
-                     <FormControl>
-                       <Input {...field} />
-                     </FormControl>
-                     <FormMessage />
-                   </FormItem>
-                 )}
-               />
-               <FormField
-                 control={locForm.control}
-                 name="industry"
-                 render={({ field }) => (
-                   <FormItem>
-                     <FormLabel>{t('app.settings.lookups.col_industry')}</FormLabel>
-                     <Select onValueChange={field.onChange} value={field.value}>
-                       <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('common.select')} />
-                          </SelectTrigger>
-                       </FormControl>
-                       <SelectContent>
-                         {industries.map((i) => (
-                           <SelectItem key={i.name} value={i.name}>
-                             {i.industry_name}
-                           </SelectItem>
-                         ))}
-                       </SelectContent>
-                     </Select>
-                   </FormItem>
-                 )}
-               />
-               <DialogFooter>
-                 <Button type="submit">{t('app.settings.lookups.btn_create')}</Button>
-               </DialogFooter>
-             </form>
-           </Form>
-         </DialogContent>
-       </Dialog>
+      <Dialog open={isLocTypeDialogOpen} onOpenChange={setIsLocTypeDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t("app.settings.lookups.dialog_location_title")}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...locForm}>
+            <form
+              onSubmit={locForm.handleSubmit(onLocSubmit)}
+              className="space-y-4"
+            >
+              <FormField
+                control={locForm.control}
+                name="location_type_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("app.settings.lookups.col_name")}</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={locForm.control}
+                name="industry"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t("app.settings.lookups.col_industry")}
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t("common.select")} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {industries.map((i) => (
+                          <SelectItem key={i.name} value={i.name}>
+                            {i.industry_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit">
+                  {t("app.settings.lookups.btn_create")}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
-       <Dialog open={isOrganDialogOpen} onOpenChange={setIsOrganDialogOpen}>
-         <DialogContent>
-           <DialogHeader>
-             <DialogTitle>{t('app.settings.lookups.dialog_organ_title')}</DialogTitle>
-           </DialogHeader>
-           <Form {...organForm}>
-             <form
-               onSubmit={organForm.handleSubmit(onOrganSubmit)}
-               className="space-y-4"
-             >
-               <FormField
-                 control={organForm.control}
-                 name="organ_name"
-                 render={({ field }) => (
-                   <FormItem>
-                     <FormLabel>{t('app.settings.lookups.col_name')}</FormLabel>
-                     <FormControl>
-                       <Input {...field} />
-                     </FormControl>
-                     <FormMessage />
-                   </FormItem>
-                 )}
-               />
-               <FormField
-                 control={organForm.control}
-                 name="type"
-                 render={({ field }) => (
-                   <FormItem>
-                     <FormLabel>{t('app.settings.lookups.col_type')}</FormLabel>
-                     <Select
-                       onValueChange={field.onChange}
-                       defaultValue={field.value}
-                     >
-                       <FormControl>
-                         <SelectTrigger>
-                           <SelectValue />
-                         </SelectTrigger>
-                       </FormControl>
-                       <SelectContent>
-                         <SelectItem value="National Department">
-                           {t('app.settings.lookups.national_department')}
-                         </SelectItem>
-                         <SelectItem value="Provincial Department">
-                           {t('app.settings.lookups.provincial_department')}
-                         </SelectItem>
-                         <SelectItem value="Municipality">
-                           {t('app.settings.lookups.municipality')}
-                         </SelectItem>
-                         <SelectItem value="State Owned Entity">
-                           {t('app.settings.lookups.state_owned_entity')}
-                         </SelectItem>
-                       </SelectContent>
-                     </Select>
-                   </FormItem>
-                 )}
-               />
-               <DialogFooter>
-                 <Button type="submit">{t('app.settings.lookups.btn_create')}</Button>
-               </DialogFooter>
-             </form>
-           </Form>
-         </DialogContent>
-       </Dialog>
+      <Dialog open={isOrganDialogOpen} onOpenChange={setIsOrganDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t("app.settings.lookups.dialog_organ_title")}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...organForm}>
+            <form
+              onSubmit={organForm.handleSubmit(onOrganSubmit)}
+              className="space-y-4"
+            >
+              <FormField
+                control={organForm.control}
+                name="organ_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("app.settings.lookups.col_name")}</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={organForm.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("app.settings.lookups.col_type")}</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="National Department">
+                          {t("app.settings.lookups.national_department")}
+                        </SelectItem>
+                        <SelectItem value="Provincial Department">
+                          {t("app.settings.lookups.provincial_department")}
+                        </SelectItem>
+                        <SelectItem value="Municipality">
+                          {t("app.settings.lookups.municipality")}
+                        </SelectItem>
+                        <SelectItem value="State Owned Entity">
+                          {t("app.settings.lookups.state_owned_entity")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit">
+                  {t("app.settings.lookups.btn_create")}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -158,7 +158,7 @@ export default function POSPage() {
           <div className="relative flex-1">
             <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
             <Input
-              placeholder={t('app.paas.dashboard.pos.ph_search')}
+              placeholder={t("app.paas.dashboard.pos.ph_search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8"
@@ -183,9 +183,9 @@ export default function POSPage() {
                       className="object-cover"
                     />
                   ) : (
-                     <div className="flex items-center justify-center h-full text-muted-foreground">
-                       {t('common.no_data')}
-                     </div>
+                    <div className="flex items-center justify-center h-full text-muted-foreground">
+                      {t("common.no_data")}
+                    </div>
                   )}
                 </div>
                 <CardContent className="p-3">
@@ -208,19 +208,19 @@ export default function POSPage() {
       {/* Right Side: Cart Summary */}
       <Card className="w-[400px] flex flex-col h-full">
         <CardHeader className="pb-3">
-           <CardTitle className="flex items-center gap-2">
-             <ShoppingCart className="size-5" />
-             {t('app.paas.dashboard.pos.cart_title')}
-           </CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <ShoppingCart className="size-5" />
+            {t("app.paas.dashboard.pos.cart_title")}
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex-1 overflow-hidden p-0">
           <ScrollArea className="h-full px-6">
             <div className="space-y-4 py-4">
-               {cart.length === 0 ? (
-                 <div className="text-center text-muted-foreground py-8">
-                   {t('app.paas.dashboard.pos.cart_empty')}
-                 </div>
-               ) : (
+              {cart.length === 0 ? (
+                <div className="text-center text-muted-foreground py-8">
+                  {t("app.paas.dashboard.pos.cart_empty")}
+                </div>
+              ) : (
                 cart.map((item) => (
                   <div key={item.name} className="flex gap-4 items-start">
                     <div className="flex-1">
@@ -272,32 +272,38 @@ export default function POSPage() {
         <Separator />
         <CardFooter className="flex-col gap-4 pt-6">
           <div className="w-full space-y-2">
-             <div className="flex justify-between text-sm">
-               <span className="text-muted-foreground">{t('common.subtotal')}</span>
-               <span>${subtotal.toFixed(2)}</span>
-             </div>
-             <div className="flex justify-between text-sm">
-               <span className="text-muted-foreground">{t('app.paas.dashboard.pos.tax_label')}</span>
-               <span>${tax.toFixed(2)}</span>
-             </div>
-             <div className="flex justify-between font-bold text-lg pt-2 border-t">
-               <span>{t('common.total')}</span>
-               <span>${total.toFixed(2)}</span>
-             </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">
+                {t("common.subtotal")}
+              </span>
+              <span>${subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">
+                {t("app.paas.dashboard.pos.tax_label")}
+              </span>
+              <span>${tax.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between font-bold text-lg pt-2 border-t">
+              <span>{t("common.total")}</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
           </div>
-             <Button
-               className="w-full"
-               size="lg"
-               disabled={cart.length === 0 || processing}
-               onClick={handleCheckout}
-             >
-               {processing ? (
-                 <Loader2 className="size-4 animate-spin mr-2" />
-               ) : (
-                 <CreditCard className="size-4 mr-2" />
-               )}
-               {t('app.paas.dashboard.pos.btn_charge', { amount: total.toFixed(2) })}
-             </Button>
+          <Button
+            className="w-full"
+            size="lg"
+            disabled={cart.length === 0 || processing}
+            onClick={handleCheckout}
+          >
+            {processing ? (
+              <Loader2 className="size-4 animate-spin mr-2" />
+            ) : (
+              <CreditCard className="size-4 mr-2" />
+            )}
+            {t("app.paas.dashboard.pos.btn_charge", {
+              amount: total.toFixed(2),
+            })}
+          </Button>
         </CardFooter>
       </Card>
     </div>

@@ -37,22 +37,22 @@ export async function getSalesInvoices(data: { modelId?: string } = {}) {
 
   try {
     const invoices = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Sales Invoice",
-        filters: {
-          status: ["not in", ["Paid", "Cancelled", "Draft"]], // Fetch Unpaid/Overdue
-          docstatus: 1,
-        },
-        fields: [
-          "name",
-          "customer_name",
-          "grand_total",
-          "outstanding_amount",
-          "due_date",
-          "status",
-        ],
-        order_by: "due_date asc",
-        limit_page_length: 10,
-      });
+      doctype: "Sales Invoice",
+      filters: {
+        status: ["not in", ["Paid", "Cancelled", "Draft"]], // Fetch Unpaid/Overdue
+        docstatus: 1,
+      },
+      fields: [
+        "name",
+        "customer_name",
+        "grand_total",
+        "outstanding_amount",
+        "due_date",
+        "status",
+      ],
+      order_by: "due_date asc",
+      limit_page_length: 10,
+    });
 
     return { success: true, invoices: invoices?.message || [] };
   } catch (e: any) {
@@ -70,22 +70,22 @@ export async function getPurchaseInvoices(data: { modelId?: string } = {}) {
 
   try {
     const invoices = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Purchase Invoice",
-        filters: {
-          status: ["not in", ["Paid", "Cancelled", "Draft"]],
-          docstatus: 1,
-        },
-        fields: [
-          "name",
-          "supplier_name",
-          "grand_total",
-          "outstanding_amount",
-          "bill_date",
-          "status",
-        ],
-        order_by: "bill_date asc",
-        limit_page_length: 10,
-      });
+      doctype: "Purchase Invoice",
+      filters: {
+        status: ["not in", ["Paid", "Cancelled", "Draft"]],
+        docstatus: 1,
+      },
+      fields: [
+        "name",
+        "supplier_name",
+        "grand_total",
+        "outstanding_amount",
+        "bill_date",
+        "status",
+      ],
+      order_by: "bill_date asc",
+      limit_page_length: 10,
+    });
 
     return { success: true, invoices: invoices?.message || [] };
   } catch (e: any) {
@@ -108,20 +108,20 @@ export async function getPendingPayments(data: { modelId?: string } = {}) {
     // Fetch Payment Entries in Draft or Posted but unallocated?
     // Usually "Draft" payments imply pending approval/submission
     const payments = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Payment Entry",
-        filters: {
-          docstatus: 0, // Draft
-        },
-        fields: [
-          "name",
-          "party_name",
-          "paid_amount",
-          "payment_type",
-          "posting_date",
-        ],
-        order_by: "posting_date desc",
-        limit_page_length: 5,
-      });
+      doctype: "Payment Entry",
+      filters: {
+        docstatus: 0, // Draft
+      },
+      fields: [
+        "name",
+        "party_name",
+        "paid_amount",
+        "payment_type",
+        "posting_date",
+      ],
+      order_by: "posting_date desc",
+      limit_page_length: 5,
+    });
 
     return { success: true, payments: payments?.message || [] };
   } catch (e: any) {

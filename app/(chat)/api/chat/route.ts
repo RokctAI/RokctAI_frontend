@@ -27,21 +27,23 @@ import { getAuthenticatedTokens } from "@/app/lib/auth-utils";
 // Token rotation and renewal are handled by getAuthenticatedTokens() which calls refreshTokens() before expiry.
 export async function POST(request: Request) {
   const { id, messages, model } = await request.json();
-  
+
   let tokens;
   try {
     tokens = await getAuthenticatedTokens();
   } catch (e) {
     return new Response("Unauthorized", { status: 401 });
   }
-  
+
   const session = await auth();
   if (!session || !session.user || !session.user.id) {
     return new Response("Unauthorized", { status: 401 });
   }
 
   // Filter messages to get only non-empty ones
-  const coreMessages = messages.filter((m: any) => m.content && m.content.length > 0);
+  const coreMessages = messages.filter(
+    (m: any) => m.content && m.content.length > 0,
+  );
   const userMessage = coreMessages[coreMessages.length - 1]?.content || "";
 
   if (!userMessage) {
@@ -76,7 +78,9 @@ export async function POST(request: Request) {
 
         const lastSummary = (dbUser[0]?.onboardingData as any)?.lastSummary;
         if (lastSummary) {
-          console.log(`[Golden Thread Context] Injecting memory from previous sessions.`);
+          console.log(
+            `[Golden Thread Context] Injecting memory from previous sessions.`,
+          );
           messageToSend = `[SYSTEM MEMORY blueprinted from completed sessions]:\n${lastSummary}\n\n[USER NEW MESSAGE]:\n${userMessage}`;
         }
       } catch (err) {
@@ -88,7 +92,9 @@ export async function POST(request: Request) {
     if (shouldRoll) {
       const { generateUUID } = await import("@/lib/utils");
       newSessionId = generateUUID();
-      console.log(`[Session Roll] Threshold reached. Transitioning ${id} -> ${newSessionId}`);
+      console.log(
+        `[Session Roll] Threshold reached. Transitioning ${id} -> ${newSessionId}`,
+      );
 
       let summary = "";
       try {
@@ -104,11 +110,15 @@ export async function POST(request: Request) {
           });
           summary = sumRes?.summary || "";
         } else {
-          const { ControlBaseService } = await import("@/app/services/control/base");
-          const sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {
-            session_id: id,
-            messages: JSON.stringify(coreMessages),
-          });
+          const { ControlBaseService } =
+            await import("@/app/services/control/base");
+          const sumRes = await ControlBaseService.call(
+            "control.api.summarize_chat_session",
+            {
+              session_id: id,
+              messages: JSON.stringify(coreMessages),
+            },
+          );
           summary = sumRes?.summary || "";
         }
       } catch (err) {
@@ -130,14 +140,15 @@ export async function POST(request: Request) {
             .where(eq(userTable.id, session.user.id))
             .limit(1);
 
-          const currentData = (dbUser[0]?.onboardingData as Record<string, any>) || {};
+          const currentData =
+            (dbUser[0]?.onboardingData as Record<string, any>) || {};
           await db
             .update(userTable)
             .set({
               onboardingData: {
                 ...currentData,
-                lastSummary: summary
-              }
+                lastSummary: summary,
+              },
             })
             .where(eq(userTable.id, session.user.id));
         } catch (err) {
@@ -149,29 +160,35 @@ export async function POST(request: Request) {
       try {
         const { deleteChatById } = await import("@/db/queries");
         await deleteChatById({ id });
-        console.log(`[Auto-Clean] Cleaned up completed session ${id} from local logs.`);
+        console.log(
+          `[Auto-Clean] Cleaned up completed session ${id} from local logs.`,
+        );
       } catch (err) {
         console.error("Failed to clean up old session:", err);
       }
     }
 
     const activeSessionId = newSessionId || id;
-    const isEmployeePlan = session.user.plan === "Employee Plan" || session.user.subscriptionTier === "Employee Plan";
+    const isEmployeePlan =
+      session.user.plan === "Employee Plan" ||
+      session.user.subscriptionTier === "Employee Plan";
 
     if (isEmployeePlan) {
       // Forward chat turns of Employee Plan users directly to Paperclip
-      const paperclipUrl = process.env.PAPERCLIP_API_URL || "https://platform.rokct.ai/paperclip/api/chat";
+      const paperclipUrl =
+        process.env.PAPERCLIP_API_URL ||
+        "https://platform.rokct.ai/paperclip/api/chat";
       const paperclipRes = await fetch(paperclipUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.PAPERCLIP_API_TOKEN || ""}`
+          Authorization: `Bearer ${process.env.PAPERCLIP_API_TOKEN || ""}`,
         },
         body: JSON.stringify({
           id: activeSessionId,
           messages: [...coreMessages, { role: "user", content: messageToSend }],
-          model
-        })
+          model,
+        }),
       });
       if (paperclipRes.ok) {
         chatRes = await paperclipRes.json();
@@ -179,17 +196,28 @@ export async function POST(request: Request) {
         throw new Error("Failed to communicate with Paperclip agent host.");
       }
     } else if (isBusiness) {
-      const { OnboardingService } = await import("@/app/services/tenant/onboarding");
-      chatRes = await OnboardingService.chatWithRok(messageToSend, activeSessionId, model);
+      const { OnboardingService } =
+        await import("@/app/services/tenant/onboarding");
+      chatRes = await OnboardingService.chatWithRok(
+        messageToSend,
+        activeSessionId,
+        model,
+      );
     } else {
-      const { OnboardingService } = await import("@/app/services/control/onboarding");
-      chatRes = await OnboardingService.chatWithRok(messageToSend, activeSessionId, model);
+      const { OnboardingService } =
+        await import("@/app/services/control/onboarding");
+      chatRes = await OnboardingService.chatWithRok(
+        messageToSend,
+        activeSessionId,
+        model,
+      );
     }
 
     if (chatRes && chatRes.message) {
       responseMessage = chatRes.message;
     } else {
-      const errMessage = chatRes?.error || "I encountered an error connecting to ROK.";
+      const errMessage =
+        chatRes?.error || "I encountered an error connecting to ROK.";
       if (errMessage.includes("Quota Exceeded")) {
         return new Response(errMessage, { status: 403 });
       }
@@ -197,19 +225,24 @@ export async function POST(request: Request) {
     }
 
     // Onboarding Completion Detection: if completed, trigger an immediate session roll in background
-    const isOnboardingComplete = 
-      responseMessage.toLowerCase().includes("committed successfully") || 
+    const isOnboardingComplete =
+      responseMessage.toLowerCase().includes("committed successfully") ||
       responseMessage.toLowerCase().includes("database plan updated") ||
       responseMessage.toLowerCase().includes("plan on a page committed");
 
     if (isOnboardingComplete && !newSessionId) {
       const { generateUUID } = await import("@/lib/utils");
       newSessionId = generateUUID();
-      console.log(`[Onboarding Complete Roll] Onboarding completed. Auto-rolling ${id} -> ${newSessionId}`);
+      console.log(
+        `[Onboarding Complete Roll] Onboarding completed. Auto-rolling ${id} -> ${newSessionId}`,
+      );
 
       let onboardingSummary = "";
       try {
-        const fullMessagesHistory = [...coreMessages, { role: "assistant", content: responseMessage }];
+        const fullMessagesHistory = [
+          ...coreMessages,
+          { role: "assistant", content: responseMessage },
+        ];
         if (isBusiness) {
           const { getClient } = await import("@/app/lib/client");
           const client = await getClient();
@@ -222,11 +255,15 @@ export async function POST(request: Request) {
           });
           onboardingSummary = sumRes?.summary || "";
         } else {
-          const { ControlBaseService } = await import("@/app/services/control/base");
-          const sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {
-            session_id: id,
-            messages: JSON.stringify(fullMessagesHistory),
-          });
+          const { ControlBaseService } =
+            await import("@/app/services/control/base");
+          const sumRes = await ControlBaseService.call(
+            "control.api.summarize_chat_session",
+            {
+              session_id: id,
+              messages: JSON.stringify(fullMessagesHistory),
+            },
+          );
           onboardingSummary = sumRes?.summary || "";
         }
       } catch (err) {
@@ -246,14 +283,15 @@ export async function POST(request: Request) {
             .where(eq(userTable.id, session.user.id))
             .limit(1);
 
-          const currentData = (dbUser[0]?.onboardingData as Record<string, any>) || {};
+          const currentData =
+            (dbUser[0]?.onboardingData as Record<string, any>) || {};
           await db
             .update(userTable)
             .set({
               onboardingData: {
                 ...currentData,
-                lastSummary: onboardingSummary
-              }
+                lastSummary: onboardingSummary,
+              },
             })
             .where(eq(userTable.id, session.user.id));
         } catch (err) {
@@ -265,14 +303,19 @@ export async function POST(request: Request) {
       try {
         const { deleteChatById } = await import("@/db/queries");
         await deleteChatById({ id });
-        console.log(`[Auto-Clean] Cleaned up onboarding session ${id} from logs.`);
+        console.log(
+          `[Auto-Clean] Cleaned up onboarding session ${id} from logs.`,
+        );
       } catch (err) {
         console.error("Failed to clean up onboarding session:", err);
       }
     }
   } catch (e: any) {
     console.error("ROK Chat failed:", e);
-    const errMessage = e?.message || e?.description || "Failed to communicate with ROK on the remote VPS.";
+    const errMessage =
+      e?.message ||
+      e?.description ||
+      "Failed to communicate with ROK on the remote VPS.";
     if (errMessage.includes("Quota Exceeded")) {
       return new Response(errMessage, { status: 403 });
     }
@@ -286,27 +329,30 @@ export async function POST(request: Request) {
       id: targetIdToSave,
       messages: [
         ...coreMessages,
-        { 
-          role: "assistant", 
+        {
+          role: "assistant",
           content: responseMessage,
-          ...(chatRes && chatRes.tool_calls && chatRes.tool_calls.length > 0 ? {
-            toolInvocations: chatRes.tool_calls.map((tc: any) => {
-              let args = {};
-              try {
-                args = typeof tc.function.arguments === 'string' 
-                  ? JSON.parse(tc.function.arguments) 
-                  : tc.function.arguments;
-              } catch (e) {}
-              return {
-                state: "result",
-                toolCallId: tc.id,
-                toolName: tc.function.name,
-                args,
-                result: args
-              };
-            })
-          } : {})
-        }
+          ...(chatRes && chatRes.tool_calls && chatRes.tool_calls.length > 0
+            ? {
+                toolInvocations: chatRes.tool_calls.map((tc: any) => {
+                  let args = {};
+                  try {
+                    args =
+                      typeof tc.function.arguments === "string"
+                        ? JSON.parse(tc.function.arguments)
+                        : tc.function.arguments;
+                  } catch (e) {}
+                  return {
+                    state: "result",
+                    toolCallId: tc.id,
+                    toolName: tc.function.name,
+                    args,
+                    result: args,
+                  };
+                }),
+              }
+            : {}),
+        },
       ],
       userId: session.user.id,
     });
@@ -326,9 +372,10 @@ export async function POST(request: Request) {
           const toolName = tc.function.name;
           let args = {};
           try {
-            args = typeof tc.function.arguments === 'string' 
-              ? JSON.parse(tc.function.arguments) 
-              : tc.function.arguments;
+            args =
+              typeof tc.function.arguments === "string"
+                ? JSON.parse(tc.function.arguments)
+                : tc.function.arguments;
           } catch (e) {
             console.error("Failed to parse tool call arguments:", e);
           }
@@ -348,13 +395,13 @@ export async function POST(request: Request) {
         await new Promise((resolve) => setTimeout(resolve, 15)); // Smooth typing simulation
       }
       controller.close();
-    }
+    },
   });
 
   const responseHeaders: Record<string, string> = {
     "Content-Type": "text/plain; charset=utf-8",
     "Cache-Control": "no-cache",
-    "Connection": "keep-alive",
+    Connection: "keep-alive",
   };
 
   if (newSessionId) {
@@ -362,7 +409,7 @@ export async function POST(request: Request) {
   }
 
   return new Response(stream, {
-    headers: responseHeaders
+    headers: responseHeaders,
   });
 }
 

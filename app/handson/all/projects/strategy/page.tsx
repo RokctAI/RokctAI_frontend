@@ -300,11 +300,13 @@ export default function StrategyPage() {
           </p>
         </div>
         <div className="flex items-center gap-4">
-            <Select value={activeVisionId || ""} onValueChange={setMainVision}>
-              <SelectTrigger className="w-[250px]">
-                <SelectValue placeholder={t('app.projects.strategy.select_active_vision')} />
-              </SelectTrigger>
-              <SelectContent>
+          <Select value={activeVisionId || ""} onValueChange={setMainVision}>
+            <SelectTrigger className="w-[250px]">
+              <SelectValue
+                placeholder={t("app.projects.strategy.select_active_vision")}
+              />
+            </SelectTrigger>
+            <SelectContent>
               {visions.map((v) => (
                 <SelectItem key={v.name} value={v.name}>
                   {v.title}
@@ -701,16 +703,18 @@ export default function StrategyPage() {
                             ? "Pillar"
                             : "Strategic Objective"}
                       </FormLabel>
-                       <Select
-                         onValueChange={field.onChange}
-                         defaultValue={field.value}
-                         disabled={!!field.value}
-                       >
-                         <FormControl>
-                           <SelectTrigger>
-                             <SelectValue placeholder={t('common.select_parent')} />
-                           </SelectTrigger>
-                         </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={!!field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={t("common.select_parent")}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
                         <SelectContent>
                           {dialogType === "Pillar" &&
                             visions.map((v) => (

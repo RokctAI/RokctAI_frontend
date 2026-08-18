@@ -32,14 +32,16 @@ export const ANCHORS = {
   entity_invoice: "invoice bill charge receipt payment purchase sales",
   entity_order: "order sales purchase co po",
   entity_quote: "quote proposal estimate offer bid quotation",
-  entity_lead: "lead prospect customer client contact person sa_id kyc identification verification passport",
+  entity_lead:
+    "lead prospect customer client contact person sa_id kyc identification verification passport",
   entity_opportunity: "opportunity deal potential pipeline",
   entity_contract: "contract agreement sla",
   entity_project: "project plan campaign roadmap",
   entity_task: "task todo reminder deadline work job",
   entity_meeting: "meeting call appointment schedule calendar event",
   entity_email: "email message letter contact mail campaign",
-  entity_employee: "employee staff worker hr personnel profile salary bank_details tax_id",
+  entity_employee:
+    "employee staff worker hr personnel profile salary bank_details tax_id",
   entity_leave: "leave holiday vacation off sick timeoff",
   entity_claim: "expense claim reimbursement receipt money spend",
   entity_goal: "goal kpi target objective performance okr",
@@ -68,13 +70,16 @@ export class IntentClassifierService {
 
   async classify(text: string, contextEntity?: string) {
     const inputEmbedding = await serverSemanticSearch.getEmbedding(text);
-    
+
     const scores: Record<string, number> = {};
     for (const [key, anchorText] of Object.entries(ANCHORS)) {
-      const anchorEmbedding = await serverSemanticSearch.getEmbedding(anchorText);
-      
+      const anchorEmbedding =
+        await serverSemanticSearch.getEmbedding(anchorText);
+
       // Manual cosine similarity calculation
-      let dot = 0, magA = 0, magB = 0;
+      let dot = 0,
+        magA = 0,
+        magB = 0;
       for (let i = 0; i < inputEmbedding.length; i++) {
         dot += inputEmbedding[i] * anchorEmbedding[i];
         magA += inputEmbedding[i] * inputEmbedding[i];
@@ -102,7 +107,7 @@ export class IntentClassifierService {
         entity: entityResult.label,
         entityScore: entityResult.score,
       },
-      scores
+      scores,
     };
   }
 }

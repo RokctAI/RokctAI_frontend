@@ -38,8 +38,8 @@ export async function getShop() {
 export async function updateShop(data: any) {
   try {
     const shop = await paasCall("api.seller_shop.update_shop", {
-        shop_data: data,
-      });
+      shop_data: data,
+    });
     return shop;
   } catch (error) {
     console.error("Failed to update shop:", error);
@@ -50,8 +50,8 @@ export async function updateShop(data: any) {
 export async function setWorkingStatus(status: boolean) {
   try {
     const result = await paasCall("api.seller_shop.set_working_status", {
-        status: status,
-      });
+      status: status,
+    });
     return result;
   } catch (error) {
     console.error("Failed to set working status:", error);

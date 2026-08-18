@@ -107,11 +107,11 @@ export function CostCenterForm() {
           </div>
           <div>
             <Label>Parent Cost Center</Label>
-               <Input
-                 value={parent}
-                 onChange={(e) => setParent(e.target.value)}
-                 placeholder={t('common.ph_cost_center')}
-               />
+            <Input
+              value={parent}
+              onChange={(e) => setParent(e.target.value)}
+              placeholder={t("common.ph_cost_center")}
+            />
           </div>
           <Button onClick={handleSubmit}>Save</Button>
         </CardContent>

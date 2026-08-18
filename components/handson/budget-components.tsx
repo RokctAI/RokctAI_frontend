@@ -120,23 +120,23 @@ export function BudgetForm() {
           </div>
           <div>
             <Label>Cost Center</Label>
-               <Input
-                 value={center}
-                 onChange={(e) => setCenter(e.target.value)}
-                 placeholder={t('common.ph_cost_center')}
-               />
+            <Input
+              value={center}
+              onChange={(e) => setCenter(e.target.value)}
+              placeholder={t("common.ph_cost_center")}
+            />
           </div>
 
           <div className="p-4 border rounded bg-muted/20">
             <Label className="font-bold mb-2 block">Limit</Label>
             <div>
               <Label>Account</Label>
-               <Input
-                 value={account}
-                 onChange={(e) => setAccount(e.target.value)}
-                 placeholder={t('common.ph_expenses')}
-                 className="mb-2"
-               />
+              <Input
+                value={account}
+                onChange={(e) => setAccount(e.target.value)}
+                placeholder={t("common.ph_expenses")}
+                className="mb-2"
+              />
             </div>
             <div>
               <Label>Max Amount</Label>

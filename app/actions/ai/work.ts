@@ -40,17 +40,17 @@ export async function getMyProjects(data: { modelId?: string } = {}) {
 
   try {
     const projects = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Project",
-        filters: { status: "Open" }, // Todo: Filter by _user_tags or team?
-        fields: [
-          "name",
-          "project_name",
-          "status",
-          "percent_complete",
-          "expected_end_date",
-        ],
-        limit_page_length: 10,
-      });
+      doctype: "Project",
+      filters: { status: "Open" }, // Todo: Filter by _user_tags or team?
+      fields: [
+        "name",
+        "project_name",
+        "status",
+        "percent_complete",
+        "expected_end_date",
+      ],
+      limit_page_length: 10,
+    });
 
     return { success: true, projects: projects?.message || [] };
   } catch (e: any) {
@@ -72,19 +72,19 @@ export async function getMyTasks(data: { modelId?: string } = {}) {
 
   try {
     const tasks = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Task",
-        filters: { status: "Open" }, // Filter by user assignment in real world
-        fields: [
-          "name",
-          "subject",
-          "status",
-          "priority",
-          "exp_end_date",
-          "project",
-        ],
-        limit_page_length: 10,
-        order_by: "exp_end_date asc",
-      });
+      doctype: "Task",
+      filters: { status: "Open" }, // Filter by user assignment in real world
+      fields: [
+        "name",
+        "subject",
+        "status",
+        "priority",
+        "exp_end_date",
+        "project",
+      ],
+      limit_page_length: 10,
+      order_by: "exp_end_date asc",
+    });
 
     return { success: true, tasks: tasks?.message || [] };
   } catch (e: any) {

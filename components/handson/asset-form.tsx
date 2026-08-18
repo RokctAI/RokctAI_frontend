@@ -157,10 +157,10 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="assetName">Asset Name</Label>
-             <Input
-               id="assetName"
-               placeholder={t('common.ph_macbook')}
-               value={assetName}
+            <Input
+              id="assetName"
+              placeholder={t("common.ph_macbook")}
+              value={assetName}
               onChange={(e) => setAssetName(e.target.value)}
             />
           </div>
@@ -182,9 +182,9 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
               onValueChange={setCompany}
               disabled={isEdit}
             >
-               <SelectTrigger>
-                 <SelectValue placeholder={t('common.select_company')} />
-               </SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder={t("common.select_company")} />
+              </SelectTrigger>
               <SelectContent>
                 {companies.map((c) => (
                   <SelectItem key={c.name} value={c.name}>

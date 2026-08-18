@@ -32,8 +32,8 @@ export async function getExtraGroups() {
     const shop = await paasCall("api.user.get_user_shop");
 
     const groups = await paasCall("api.product_extra.get_extra_groups", {
-        shop_id: shop.name,
-      });
+      shop_id: shop.name,
+    });
     return groups;
   } catch (error) {
     console.error("Failed to fetch extra groups:", error);
@@ -46,11 +46,11 @@ export async function createExtraGroup(data: any) {
     const shop = await paasCall("api.user.get_user_shop");
 
     const group = await paasCall("api.product_extra.create_extra_group", {
-        data: {
-          ...data,
-          shop: shop.name,
-        },
-      });
+      data: {
+        ...data,
+        shop: shop.name,
+      },
+    });
     revalidatePath("/paas/dashboard/products/extras");
     return group;
   } catch (error) {
@@ -62,9 +62,9 @@ export async function createExtraGroup(data: any) {
 export async function updateExtraGroup(name: string, data: any) {
   try {
     const group = await paasCall("api.product_extra.update_extra_group", {
-        name: name,
-        data: data,
-      });
+      name: name,
+      data: data,
+    });
     revalidatePath("/paas/dashboard/products/extras");
     return group;
   } catch (error) {
@@ -76,8 +76,8 @@ export async function updateExtraGroup(name: string, data: any) {
 export async function deleteExtraGroup(name: string) {
   try {
     await paasCall("api.product_extra.delete_extra_group", {
-        name: name,
-      });
+      name: name,
+    });
     revalidatePath("/paas/dashboard/products/extras");
     return { success: true };
   } catch (error) {
@@ -91,8 +91,8 @@ export async function deleteExtraGroup(name: string) {
 export async function getExtraValues(groupId: string) {
   try {
     const values = await paasCall("api.product_extra.get_extra_values", {
-        group_id: groupId,
-      });
+      group_id: groupId,
+    });
     return values;
   } catch (error) {
     console.error("Failed to fetch extra values:", error);
@@ -103,8 +103,8 @@ export async function getExtraValues(groupId: string) {
 export async function createExtraValue(data: any) {
   try {
     const value = await paasCall("api.product_extra.create_extra_value", {
-        data: data,
-      });
+      data: data,
+    });
     revalidatePath("/paas/dashboard/products/extras");
     return value;
   } catch (error) {
@@ -116,8 +116,8 @@ export async function createExtraValue(data: any) {
 export async function deleteExtraValue(name: string) {
   try {
     await paasCall("api.product_extra.delete_extra_value", {
-        name: name,
-      });
+      name: name,
+    });
     revalidatePath("/paas/dashboard/products/extras");
     return { success: true };
   } catch (error) {

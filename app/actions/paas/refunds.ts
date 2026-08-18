@@ -41,11 +41,14 @@ export async function updateRefund(
   answer?: string,
 ) {
   try {
-    const refund = await paasCall("api.seller_order.update_seller_order_refund", {
+    const refund = await paasCall(
+      "api.seller_order.update_seller_order_refund",
+      {
         refund_name: refundId,
         status: status,
         answer: answer,
-      });
+      },
+    );
     revalidatePath("/paas/dashboard/orders/refunds");
     return refund;
   } catch (error) {

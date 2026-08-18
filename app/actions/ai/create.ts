@@ -51,16 +51,16 @@ export async function createAiTask(data: {
 
   try {
     const response = await gatewayCall(client, "frappe.client.insert", {
-        doc: {
-          doctype: "Task",
-          subject: data.name,
-          priority: data.priority || "Medium",
-          exp_end_date: data.end_date,
-          project: data.project,
-          _assign: data.assignee ? JSON.stringify([data.assignee]) : undefined, // Auto-assign if provided
-          status: "Open",
-        },
-      });
+      doc: {
+        doctype: "Task",
+        subject: data.name,
+        priority: data.priority || "Medium",
+        exp_end_date: data.end_date,
+        project: data.project,
+        _assign: data.assignee ? JSON.stringify([data.assignee]) : undefined, // Auto-assign if provided
+        status: "Open",
+      },
+    });
 
     if (response?.message) {
       if (session) {
@@ -91,12 +91,12 @@ export async function createAiNote(data: {
 
   try {
     const response = await gatewayCall(client, "frappe.client.insert", {
-        doc: {
-          doctype: "Note",
-          title: data.title,
-          public: 1,
-        },
-      });
+      doc: {
+        doctype: "Note",
+        title: data.title,
+        public: 1,
+      },
+    });
 
     if (response?.message) {
       if (session) {
@@ -127,13 +127,13 @@ export async function createAiProject(data: {
 
   try {
     const response = await gatewayCall(client, "frappe.client.insert", {
-        doc: {
-          doctype: "Project",
-          project_name: data.name,
-          notes: data.description,
-          status: "Open",
-        },
-      });
+      doc: {
+        doctype: "Project",
+        project_name: data.name,
+        notes: data.description,
+        status: "Open",
+      },
+    });
 
     if (response?.message) {
       if (session) {

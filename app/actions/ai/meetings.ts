@@ -36,15 +36,15 @@ export async function getMyEvents(data: { modelId?: string } = {}) {
 
   try {
     const events = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Event",
-        filters: {
-          starts_on: [">=", new Date().toISOString().split("T")[0]],
-          status: "Open",
-        },
-        fields: ["name", "subject", "starts_on", "event_type"],
-        order_by: "starts_on asc",
-        limit_page_length: 5,
-      });
+      doctype: "Event",
+      filters: {
+        starts_on: [">=", new Date().toISOString().split("T")[0]],
+        status: "Open",
+      },
+      fields: ["name", "subject", "starts_on", "event_type"],
+      order_by: "starts_on asc",
+      limit_page_length: 5,
+    });
 
     return { success: true, events: events?.message || [] };
   } catch (e: any) {

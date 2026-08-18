@@ -82,7 +82,7 @@ export default function TenantSupportPage() {
     setSubmitting(false);
 
     if (res.success) {
-      toast.success(t('app.support.toast_success'));
+      toast.success(t("app.support.toast_success"));
       setSubject("");
       setDescription("");
       setPriority("Medium");
@@ -94,32 +94,34 @@ export default function TenantSupportPage() {
 
   return (
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
-       <div className="flex items-center gap-4">
-         <div className="p-3 bg-blue-100 rounded-lg">
-           <LifeBuoy className="h-8 w-8 text-blue-600" />
-         </div>
-         <div>
-           <h1 className="text-3xl font-bold">{t('app.support.title')}</h1>
-           <p className="text-muted-foreground">
-             {t('app.support.desc')}
-           </p>
-         </div>
-       </div>
+      <div className="flex items-center gap-4">
+        <div className="p-3 bg-blue-100 rounded-lg">
+          <LifeBuoy className="h-8 w-8 text-blue-600" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold">{t("app.support.title")}</h1>
+          <p className="text-muted-foreground">{t("app.support.desc")}</p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Previous Tickets List */}
-         <div className="md:col-span-2 space-y-4">
-           <h2 className="text-xl font-semibold">{t('app.support.history_title')}</h2>
-           {loading ? (
-             <div className="text-muted-foreground">{t('app.support.loading_tickets')}</div>
-           ) : tickets.length === 0 ? (
-             <Card className="bg-slate-50 border-dashed">
-               <CardContent className="py-10 text-center text-muted-foreground">
-                 {t('app.support.no_tickets')}
-               </CardContent>
-             </Card>
-           ) : (
-             tickets.map((t) => (
+        <div className="md:col-span-2 space-y-4">
+          <h2 className="text-xl font-semibold">
+            {t("app.support.history_title")}
+          </h2>
+          {loading ? (
+            <div className="text-muted-foreground">
+              {t("app.support.loading_tickets")}
+            </div>
+          ) : tickets.length === 0 ? (
+            <Card className="bg-slate-50 border-dashed">
+              <CardContent className="py-10 text-center text-muted-foreground">
+                {t("app.support.no_tickets")}
+              </CardContent>
+            </Card>
+          ) : (
+            tickets.map((t) => (
               <Card key={t.name}>
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
@@ -154,63 +156,64 @@ export default function TenantSupportPage() {
         {/* New Ticket Form */}
         <div>
           <Card className="border-t-4 border-t-blue-600 shadow-md">
-               <CardHeader>
-                 <CardTitle>{t('app.support.request_title')}</CardTitle>
-                 <CardDescription>{t('app.support.request_desc')}</CardDescription>
-               </CardHeader>
-               <CardContent>
-                 <form onSubmit={handleSubmit} className="space-y-4">
-                   <div>
-                     <Label>{t('app.support.label_subject')}</Label>
-                     <Input
-                       value={subject}
-                       onChange={(e) => setSubject(e.target.value)}
-                       placeholder={t('app.support.ph_subject')}
-                       required
-                     />
-                   </div>
-                   <div>
-                     <Label>{t('app.support.label_priority')}</Label>
-                     <Select
-                       value={priority}
-                       onValueChange={(v: any) => setPriority(v)}
-                     >
-                       <SelectTrigger>
-                         <SelectValue />
-                       </SelectTrigger>
-                       <SelectContent>
-                         <SelectItem value="Low">Low</SelectItem>
-                         <SelectItem value="Medium">Medium</SelectItem>
-                         <SelectItem value="High">High</SelectItem>
-                         <SelectItem value="Urgent">Urgent</SelectItem>
-                       </SelectContent>
-                     </Select>
-                   </div>
-                   <div>
-                     <Label>{t('app.support.label_description')}</Label>
-                     <Textarea
-                       value={description}
-                       onChange={(e) => setDescription(e.target.value)}
-                       placeholder={t('app.support.ph_description')}
-                       rows={5}
-                       required
-                     />
-                   </div>
-                   <Button
-                     type="submit"
-                     className="w-full bg-blue-600 hover:bg-blue-700"
-                     disabled={submitting}
-                   >
-                     {submitting ? (
-                       t('app.support.btn_sending')
-                     ) : (
-                       <>
-                         <Send className="mr-2 h-4 w-4" /> {t('app.support.btn_submit')}
-                       </>
-                     )}
-                   </Button>
-                 </form>
-               </CardContent>
+            <CardHeader>
+              <CardTitle>{t("app.support.request_title")}</CardTitle>
+              <CardDescription>{t("app.support.request_desc")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <Label>{t("app.support.label_subject")}</Label>
+                  <Input
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    placeholder={t("app.support.ph_subject")}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>{t("app.support.label_priority")}</Label>
+                  <Select
+                    value={priority}
+                    onValueChange={(v: any) => setPriority(v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Low">Low</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="High">High</SelectItem>
+                      <SelectItem value="Urgent">Urgent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>{t("app.support.label_description")}</Label>
+                  <Textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder={t("app.support.ph_description")}
+                    rows={5}
+                    required
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    t("app.support.btn_sending")
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />{" "}
+                      {t("app.support.btn_submit")}
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
           </Card>
         </div>
       </div>

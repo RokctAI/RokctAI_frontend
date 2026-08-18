@@ -34,12 +34,12 @@ export async function getJobApplicants(data: { modelId?: string } = {}) {
 
   try {
     const applicants = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Job Applicant",
-        filters: { status: "Open" },
-        fields: ["name", "applicant_name", "job_title", "status", "email_id"],
-        order_by: "creation desc",
-        limit_page_length: 10,
-      });
+      doctype: "Job Applicant",
+      filters: { status: "Open" },
+      fields: ["name", "applicant_name", "job_title", "status", "email_id"],
+      order_by: "creation desc",
+      limit_page_length: 10,
+    });
 
     return { success: true, applicants: applicants?.message || [] };
   } catch (e: any) {
@@ -60,11 +60,11 @@ export async function getJobOpenings(data: { modelId?: string } = {}) {
 
   try {
     const jobs = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Job Opening",
-        filters: { status: "Open" },
-        fields: ["name", "job_title", "department", "status"],
-        limit_page_length: 10,
-      });
+      doctype: "Job Opening",
+      filters: { status: "Open" },
+      fields: ["name", "job_title", "department", "status"],
+      limit_page_length: 10,
+    });
 
     return { success: true, jobs: jobs?.message || [] };
   } catch (e: any) {

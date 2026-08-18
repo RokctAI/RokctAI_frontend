@@ -289,9 +289,11 @@ function CronJobsContent() {
                   onValueChange={setSelectedWebsite}
                   disabled={!!editingJob}
                 >
-                   <SelectTrigger>
-                     <SelectValue placeholder={t('app.control.rpanel.cron.ph_website')} />
-                   </SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t("app.control.rpanel.cron.ph_website")}
+                    />
+                  </SelectTrigger>
                   <SelectContent>
                     {websites.map((site) => (
                       <SelectItem key={site.name} value={site.name}>
@@ -311,22 +313,22 @@ function CronJobsContent() {
               </div>
               <div className="space-y-2">
                 <Label>Schedule (Cron Format)</Label>
-                 <Input
-                   value={schedule}
-                   onChange={(e) => setSchedule(e.target.value)}
-                   placeholder={t('app.control.rpanel.cron.ph_cron')}
-                 />
+                <Input
+                  value={schedule}
+                  onChange={(e) => setSchedule(e.target.value)}
+                  placeholder={t("app.control.rpanel.cron.ph_cron")}
+                />
                 <p className="text-xs text-muted-foreground">
                   Minute Hour Day Month Weekday
                 </p>
               </div>
               <div className="space-y-2">
                 <Label>Description (Optional)</Label>
-                 <Input
-                   value={description}
-                   onChange={(e) => setDescription(e.target.value)}
-                   placeholder={t('app.control.rpanel.cron.ph_command')}
-                 />
+                <Input
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder={t("app.control.rpanel.cron.ph_command")}
+                />
               </div>
             </div>
             <DialogFooter>

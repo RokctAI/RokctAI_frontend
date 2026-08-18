@@ -43,22 +43,22 @@ import {
 
 const clientMenuItems = [
   {
-    title: t('nav.client.dashboard'),
+    title: t("nav.client.dashboard"),
     icon: LayoutDashboard,
     url: "/portal",
   },
   {
-    title: t('nav.client.rpanel'),
+    title: t("nav.client.rpanel"),
     icon: Server,
     url: "/handson/control/rpanel",
   },
   {
-    title: t('nav.client.billing'),
+    title: t("nav.client.billing"),
     icon: CreditCard,
     url: "/portal/billing",
   },
   {
-    title: t('nav.client.profile'),
+    title: t("nav.client.profile"),
     icon: UserCircle,
     url: "/portal/profile",
   },
@@ -83,15 +83,15 @@ export function ClientNav({
   // 1. User has 'Telephony' module
   // const showTelephony = modules.includes("Telephony");
 
-   const filteredItems = clientMenuItems.filter((item) => {
-     if (item.title === t('nav.client.rpanel') && !showRpanel) return false;
-     return true;
-   });
-   
-   return (
-     <SidebarGroup>
-       <SidebarGroupLabel>{t('nav.client.panel_label')}</SidebarGroupLabel>
-       <SidebarMenu>
+  const filteredItems = clientMenuItems.filter((item) => {
+    if (item.title === t("nav.client.rpanel") && !showRpanel) return false;
+    return true;
+  });
+
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel>{t("nav.client.panel_label")}</SidebarGroupLabel>
+      <SidebarMenu>
         {filteredItems.map((item) => (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton

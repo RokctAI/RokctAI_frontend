@@ -45,11 +45,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 
 import * as actions from "@/app/actions/platform/lending/operations";
 import * as validators from "@/lib/platform/validators/lending/operations";
-
 
 export interface RunInterestAccrualFormProps {
   onSuccess?: (data: any) => void;
@@ -57,7 +62,11 @@ export interface RunInterestAccrualFormProps {
   defaultValues?: Partial<validators.RunInterestAccrualValues>;
 }
 
-export function RunInterestAccrualForm({ onSuccess, onError, defaultValues }: RunInterestAccrualFormProps) {
+export function RunInterestAccrualForm({
+  onSuccess,
+  onError,
+  defaultValues,
+}: RunInterestAccrualFormProps) {
   const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<validators.RunInterestAccrualValues>({
@@ -92,7 +101,6 @@ export function RunInterestAccrualForm({ onSuccess, onError, defaultValues }: Ru
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            
             <FormField
               control={form.control}
               name="term_loan"
@@ -124,4 +132,3 @@ export function RunInterestAccrualForm({ onSuccess, onError, defaultValues }: Ru
     </Card>
   );
 }
-

@@ -71,18 +71,18 @@ export async function updateAiMyProfile(data: {
   const client = await getClient();
   try {
     const response = await gatewayCall(client, "frappe.client.set_value", {
-        doctype: "Employee",
-        name: employeeId,
-        fieldname: {
-          first_name: data.first_name,
-          last_name: data.last_name,
-          id_number: data.id_number,
-          bank_name: data.bank_name,
-          bank_account_no: data.bank_account_no,
-          bank_branch_code: data.bank_branch_code,
-          tax_id: data.tax_id,
-        },
-      });
+      doctype: "Employee",
+      name: employeeId,
+      fieldname: {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        id_number: data.id_number,
+        bank_name: data.bank_name,
+        bank_account_no: data.bank_account_no,
+        bank_branch_code: data.bank_branch_code,
+        tax_id: data.tax_id,
+      },
+    });
     revalidatePath("/handson/all/hrms/me/employees");
     return { success: true, message: "Profile updated successfully via AI." };
   } catch (e: any) {
@@ -102,38 +102,34 @@ export async function getLeaveBalance(
   try {
     // Fetch current employee
     const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: "name",
-      })) as any;
+      doctype: "Employee",
+      filters: { user_id: session?.user?.email },
+      fieldname: "name",
+    })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found" };
 
     const allocations = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Leave Allocation",
-        filters: {
-          employee: employee,
-          to_date: [">=", new Date().toISOString().split("T")[0]],
-        },
-        fields: [
-          "leave_type",
-          "total_leaves_allocated",
-          "new_leaves_allocated",
-        ],
-      });
+      doctype: "Leave Allocation",
+      filters: {
+        employee: employee,
+        to_date: [">=", new Date().toISOString().split("T")[0]],
+      },
+      fields: ["leave_type", "total_leaves_allocated", "new_leaves_allocated"],
+    });
 
     const allocationList = allocations?.message || [];
 
     // Fetch used leaves to calculate actual balance
     const usedLeaves = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Leave Application",
-        filters: {
-          employee: employee,
-          status: "Approved",
-          from_date: [">=", new Date().getFullYear() + "-01-01"],
-        },
-        fields: ["leave_type", "total_leave_days"],
-      });
+      doctype: "Leave Application",
+      filters: {
+        employee: employee,
+        status: "Approved",
+        from_date: [">=", new Date().getFullYear() + "-01-01"],
+      },
+      fields: ["leave_type", "total_leave_days"],
+    });
 
     const usedMap: Record<string, number> = {};
     if (usedLeaves?.message) {
@@ -174,24 +170,24 @@ export async function applyAiLeave(data: {
 
   try {
     const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: "name",
-      })) as any;
+      doctype: "Employee",
+      filters: { user_id: session?.user?.email },
+      fieldname: "name",
+    })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
     const response = (await gatewayCall(client, "frappe.client.insert", {
-        doc: {
-          doctype: "Leave Application",
-          employee: employee,
-          leave_type: data.leave_type,
-          from_date: data.from_date,
-          to_date: data.to_date,
-          description: data.reason || "Applied via AI Assistant",
-          status: "Open", // Or 'Applied' depending on workflow
-        },
-      })) as any;
+      doc: {
+        doctype: "Leave Application",
+        employee: employee,
+        leave_type: data.leave_type,
+        from_date: data.from_date,
+        to_date: data.to_date,
+        description: data.reason || "Applied via AI Assistant",
+        status: "Open", // Or 'Applied' depending on workflow
+      },
+    })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -221,10 +217,10 @@ export async function createAiExpenseClaim(data: {
 
   try {
     const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: "name",
-      })) as any;
+      doctype: "Employee",
+      filters: { user_id: session?.user?.email },
+      fieldname: "name",
+    })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
@@ -245,7 +241,9 @@ export async function createAiExpenseClaim(data: {
       docstatus: 0,
     };
 
-    const response = (await gatewayCall(client, "frappe.client.insert", { doc: args })) as any;
+    const response = (await gatewayCall(client, "frappe.client.insert", {
+      doc: args,
+    })) as any;
 
     if (response?.message) {
       const docName = response.message.name;
@@ -254,23 +252,23 @@ export async function createAiExpenseClaim(data: {
         // Production: Create a File document linked to the Expense Claim
         try {
           (await gatewayCall(client, "frappe.client.insert", {
-              doc: {
-                doctype: "File",
-                file_url: data.attachment_url,
-                attached_to_doctype: "Expense Claim",
-                attached_to_name: docName,
-                is_private: 1,
-              },
-            })) as any;
+            doc: {
+              doctype: "File",
+              file_url: data.attachment_url,
+              attached_to_doctype: "Expense Claim",
+              attached_to_name: docName,
+              is_private: 1,
+            },
+          })) as any;
         } catch (fileError) {
           // Fallback to remarks
           console.warn("Failed to attach file", fileError);
           (await gatewayCall(client, "frappe.client.set_value", {
-              doctype: "Expense Claim",
-              name: docName,
-              fieldname: "remark",
-              value: `Generated by AI. Attachment: ${data.attachment_url}`,
-            })) as any;
+            doctype: "Expense Claim",
+            name: docName,
+            fieldname: "remark",
+            value: `Generated by AI. Attachment: ${data.attachment_url}`,
+          })) as any;
         }
       }
 
@@ -292,26 +290,26 @@ export async function getAiExpenses(data: { modelId?: string } = {}) {
 
   try {
     const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: "name",
-      })) as any;
+      doctype: "Employee",
+      filters: { user_id: session?.user?.email },
+      fieldname: "name",
+    })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found" };
 
     const claims = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Expense Claim",
-        filters: { employee: employee },
-        fields: [
-          "name",
-          "total_claimed_amount",
-          "approval_status",
-          "remark",
-          "creation",
-        ],
-        order_by: "creation desc",
-        limit_page_length: 5,
-      });
+      doctype: "Expense Claim",
+      filters: { employee: employee },
+      fields: [
+        "name",
+        "total_claimed_amount",
+        "approval_status",
+        "remark",
+        "creation",
+      ],
+      order_by: "creation desc",
+      limit_page_length: 5,
+    });
 
     return { success: true, claims: claims?.message || [] };
   } catch (e: any) {
@@ -337,10 +335,10 @@ export async function markAiAttendance(data: {
 
   try {
     const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: "name",
-      })) as any;
+      doctype: "Employee",
+      filters: { user_id: session?.user?.email },
+      fieldname: "name",
+    })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
@@ -348,27 +346,27 @@ export async function markAiAttendance(data: {
     let logType = data.log_type;
     if (!logType) {
       const lastLog = await gatewayCall(client, "frappe.client.get_list", {
-          doctype: "Employee Checkin",
-          filters: { employee: employee },
-          fields: ["log_type"],
-          order_by: "time desc",
-          limit_page_length: 1,
-        });
+        doctype: "Employee Checkin",
+        filters: { employee: employee },
+        fields: ["log_type"],
+        order_by: "time desc",
+        limit_page_length: 1,
+      });
       const lastType = lastLog?.message?.[0]?.log_type;
       logType = lastType === "IN" ? "OUT" : "IN";
     }
 
     const response = await gatewayCall(client, "frappe.client.insert", {
-        doc: {
-          doctype: "Employee Checkin",
-          employee: employee,
-          log_type: logType,
-          time: data.timestamp || new Date().toISOString(), // Current time
-          device_id: "AI_Assistant",
-          latitude: data.latitude,
-          longitude: data.longitude,
-        },
-      });
+      doc: {
+        doctype: "Employee Checkin",
+        employee: employee,
+        log_type: logType,
+        time: data.timestamp || new Date().toISOString(), // Current time
+        device_id: "AI_Assistant",
+        latitude: data.latitude,
+        longitude: data.longitude,
+      },
+    });
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -389,21 +387,21 @@ export async function getAttendanceStatus() {
 
   try {
     const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: "name",
-      })) as any;
+      doctype: "Employee",
+      filters: { user_id: session?.user?.email },
+      fieldname: "name",
+    })) as any;
     const employee = employeeRes?.message?.name;
 
     if (!employee) return { status: "Unknown", lastLog: null };
 
     const lastLog = (await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Employee Checkin",
-        filters: { employee: employee },
-        fields: ["log_type", "time"],
-        order_by: "time desc",
-        limit_page_length: 1,
-      })) as any;
+      doctype: "Employee Checkin",
+      filters: { employee: employee },
+      fields: ["log_type", "time"],
+      order_by: "time desc",
+      limit_page_length: 1,
+    })) as any;
 
     const lastType = lastLog?.message?.[0]?.log_type;
     // If last was IN, status is 'Checked In', next action is 'Check Out'
@@ -428,27 +426,27 @@ export async function getAiPayslips(data: { modelId?: string } = {}) {
 
   try {
     const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: "name",
-      })) as any;
+      doctype: "Employee",
+      filters: { user_id: session?.user?.email },
+      fieldname: "name",
+    })) as any;
     const employee = employeeRes?.message?.name;
     if (!employee) return { success: false, error: "Employee not found." };
 
     const payslips = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Salary Slip",
-        filters: { employee: employee, docstatus: 1 }, // Only submitted slips
-        fields: [
-          "name",
-          "month",
-          "start_date",
-          "end_date",
-          "net_pay",
-          "currency",
-        ],
-        order_by: "start_date desc",
-        limit_page_length: 6,
-      });
+      doctype: "Salary Slip",
+      filters: { employee: employee, docstatus: 1 }, // Only submitted slips
+      fields: [
+        "name",
+        "month",
+        "start_date",
+        "end_date",
+        "net_pay",
+        "currency",
+      ],
+      order_by: "start_date desc",
+      limit_page_length: 6,
+    });
 
     return { success: true, payslips: payslips?.message || [] };
   } catch (e: any) {
@@ -471,38 +469,38 @@ export async function getPendingApprovals(data: { modelId?: string } = {}) {
   try {
     // Fetch Open Leave Applications
     const leaveApps = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Leave Application",
-        filters: { status: "Open" }, // or "Applied" depending on workflow
-        fields: [
-          "name",
-          "employee",
-          "employee_name",
-          "leave_type",
-          "from_date",
-          "to_date",
-          "description",
-          "total_leave_days",
-        ],
-        limit_page_length: 10,
-      });
+      doctype: "Leave Application",
+      filters: { status: "Open" }, // or "Applied" depending on workflow
+      fields: [
+        "name",
+        "employee",
+        "employee_name",
+        "leave_type",
+        "from_date",
+        "to_date",
+        "description",
+        "total_leave_days",
+      ],
+      limit_page_length: 10,
+    });
 
     // Fetch Submitted Expense Claims (docstatus=1 but not yet Approved/Rejected)
     const expenseClaims = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Expense Claim",
-        filters: {
-          docstatus: 1,
-          approval_status: "Draft",
-        },
-        fields: [
-          "name",
-          "employee",
-          "employee_name",
-          "total_claimed_amount",
-          "remark",
-          "posting_date",
-        ],
-        limit_page_length: 10,
-      });
+      doctype: "Expense Claim",
+      filters: {
+        docstatus: 1,
+        approval_status: "Draft",
+      },
+      fields: [
+        "name",
+        "employee",
+        "employee_name",
+        "total_claimed_amount",
+        "remark",
+        "posting_date",
+      ],
+      limit_page_length: 10,
+    });
 
     return {
       success: true,
@@ -535,33 +533,33 @@ export async function processApproval(data: {
     if (data.doctype === "Leave Application") {
       const status = data.action === "Approve" ? "Approved" : "Rejected";
       await gatewayCall(client, "frappe.client.set_value", {
-          doctype: "Leave Application",
-          name: data.name,
-          fieldname: "status",
-          value: status,
-        });
+        doctype: "Leave Application",
+        name: data.name,
+        fieldname: "status",
+        value: status,
+      });
       // NOTIFY USER
       const { notifyDecision } = await import("@/app/actions/ai/notifications");
       await notifyDecision("Leave Application", data.name, status as any);
     } else if (data.doctype === "Expense Claim") {
       const status = data.action === "Approve" ? "Approved" : "Rejected";
       await gatewayCall(client, "frappe.client.set_value", {
-          doctype: "Expense Claim",
-          name: data.name,
-          fieldname: "approval_status",
-          value: status,
-        });
+        doctype: "Expense Claim",
+        name: data.name,
+        fieldname: "approval_status",
+        value: status,
+      });
       // NOTIFY USER
       const { notifyDecision } = await import("@/app/actions/ai/notifications");
       await notifyDecision("Expense Claim", data.name, status as any);
     } else if (data.doctype === "Material Request") {
       const status = data.action === "Approve" ? "Approved" : "Rejected";
       await gatewayCall(client, "frappe.client.set_value", {
-          doctype: "Material Request",
-          name: data.name,
-          fieldname: "workflow_state", // Assuming Workflow, or 'status'
-          value: status,
-        });
+        doctype: "Material Request",
+        name: data.name,
+        fieldname: "workflow_state", // Assuming Workflow, or 'status'
+        value: status,
+      });
       // NOTIFY USER
       const { notifyDecision } = await import("@/app/actions/ai/notifications");
       await notifyDecision("Material Request", data.name, status as any);
@@ -589,15 +587,15 @@ export async function getLeaveStats(data: { modelId?: string } = {}) {
     const endOfYear = `${currentYear}-12-31`;
 
     const leaves = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Leave Application",
-        filters: {
-          status: "Approved",
-          from_date: [">=", startOfYear],
-          to_date: ["<=", endOfYear],
-        },
-        fields: ["department", "total_leave_days", "leave_type"],
-        limit_page_length: 500, // Cap for performance
-      });
+      doctype: "Leave Application",
+      filters: {
+        status: "Approved",
+        from_date: [">=", startOfYear],
+        to_date: ["<=", endOfYear],
+      },
+      fields: ["department", "total_leave_days", "leave_type"],
+      limit_page_length: 500, // Cap for performance
+    });
 
     const leaveList = leaves?.message || [];
 
@@ -634,13 +632,13 @@ export async function checkHrRole(data: { modelId?: string } = {}) {
   // In Frappe, we check "Has Role" table for user.
   try {
     const roles = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Has Role",
-        filters: {
-          parent: session?.user?.email,
-          role: ["in", ["HR Manager", "System Manager", "HR User"]],
-        },
-        fields: ["role"],
-      });
+      doctype: "Has Role",
+      filters: {
+        parent: session?.user?.email,
+        role: ["in", ["HR Manager", "System Manager", "HR User"]],
+      },
+      fields: ["role"],
+    });
 
     const userRoles = roles?.message || [];
     const hasRole = userRoles.length > 0;
@@ -659,15 +657,15 @@ export async function getAnnouncements(data: { modelId?: string } = {}) {
   try {
     const now = new Date().toISOString().split("T")[0];
     const announcements = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Announcement",
-        // filters: {
-        //    starts_on: ["<=", now],
-        //    ends_on: [">=", now] // or empty
-        // },
-        fields: ["name", "subject", "description", "details", "creation"],
-        order_by: "creation desc",
-        limit_page_length: 3,
-      });
+      doctype: "Announcement",
+      // filters: {
+      //    starts_on: ["<=", now],
+      //    ends_on: [">=", now] // or empty
+      // },
+      fields: ["name", "subject", "description", "details", "creation"],
+      order_by: "creation desc",
+      limit_page_length: 3,
+    });
 
     return { success: true, announcements: announcements?.message || [] };
   } catch (e: any) {
@@ -681,11 +679,11 @@ export async function getAssetItems() {
   const client = await getClient();
   try {
     const response = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Item",
-        filters: { is_fixed_asset: 1 },
-        fields: ["name", "item_name", "description", "image"],
-        limit_page_length: 20,
-      });
+      doctype: "Item",
+      filters: { is_fixed_asset: 1 },
+      fields: ["name", "item_name", "description", "image"],
+      limit_page_length: 20,
+    });
     return response?.message || [];
   } catch (e) {
     return [];
@@ -707,10 +705,10 @@ export async function createAssetRequest(data: {
   try {
     // 1. Get Employee
     const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: ["name", "company", "department"],
-      })) as any;
+      doctype: "Employee",
+      filters: { user_id: session?.user?.email },
+      fieldname: ["name", "company", "department"],
+    })) as any;
     const employeeObj = employeeRes?.message;
     if (!employeeObj)
       return { success: false, error: "Employee record not found." };
@@ -718,29 +716,29 @@ export async function createAssetRequest(data: {
     // 2. Resolve Item Code
     // Attempt exact match or fuzzy search on name
     const itemRes = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Item",
-        filters: [
-          ["item_name", "like", `%${data.item_name}%`],
-          ["disabled", "=", 0],
-          ["is_fixed_asset", "=", 1], // Prefer fixed assets
-        ],
-        fields: ["name"],
-        limit_page_length: 1,
-      });
+      doctype: "Item",
+      filters: [
+        ["item_name", "like", `%${data.item_name}%`],
+        ["disabled", "=", 0],
+        ["is_fixed_asset", "=", 1], // Prefer fixed assets
+      ],
+      fields: ["name"],
+      limit_page_length: 1,
+    });
 
     let itemCode = itemRes?.message?.[0]?.name;
 
     // Fallback: If no Fixed Asset found, check ANY item
     if (!itemCode) {
       const anyItemRes = await gatewayCall(client, "frappe.client.get_list", {
-          doctype: "Item",
-          filters: [
-            ["item_name", "like", `%${data.item_name}%`],
-            ["disabled", "=", 0],
-          ],
-          fields: ["name"],
-          limit_page_length: 1,
-        });
+        doctype: "Item",
+        filters: [
+          ["item_name", "like", `%${data.item_name}%`],
+          ["disabled", "=", 0],
+        ],
+        fields: ["name"],
+        limit_page_length: 1,
+      });
       itemCode = anyItemRes?.message?.[0]?.name;
     }
 
@@ -770,7 +768,9 @@ export async function createAssetRequest(data: {
       company: employeeObj.company,
     };
 
-    const response = (await gatewayCall(client, "frappe.client.insert", { doc: doc })) as any;
+    const response = (await gatewayCall(client, "frappe.client.insert", {
+      doc: doc,
+    })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -806,10 +806,10 @@ export async function createAiEmployeeAdvance(data: {
   try {
     // 1. Get Employee
     const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: ["name", "company", "department"],
-      })) as any;
+      doctype: "Employee",
+      filters: { user_id: session?.user?.email },
+      fieldname: ["name", "company", "department"],
+    })) as any;
     const employeeObj = employeeRes?.message;
     if (!employeeObj)
       return { success: false, error: "Employee record not found." };
@@ -826,7 +826,9 @@ export async function createAiEmployeeAdvance(data: {
       status: "Draft", // Pending Approval
     };
 
-    const response = (await gatewayCall(client, "frappe.client.insert", { doc: doc })) as any;
+    const response = (await gatewayCall(client, "frappe.client.insert", {
+      doc: doc,
+    })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);

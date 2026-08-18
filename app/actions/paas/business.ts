@@ -49,8 +49,8 @@ export async function getMyShopSubscription() {
 export async function subscribeMyShop(subscriptionId: string) {
   try {
     const result = await paasCall("api.subscription.subscribe_my_shop", {
-        subscription_id: subscriptionId,
-      });
+      subscription_id: subscriptionId,
+    });
     return result;
   } catch (error) {
     console.error("Failed to subscribe shop:", error);
@@ -72,7 +72,9 @@ export async function getAdsPackages() {
 
 export async function getPurchasedAds() {
   try {
-    const ads = await paasCall("api.seller_marketing.get_seller_shop_ads_packages");
+    const ads = await paasCall(
+      "api.seller_marketing.get_seller_shop_ads_packages",
+    );
     return ads;
   } catch (error) {
     console.error("Failed to fetch purchased ads:", error);
@@ -82,9 +84,12 @@ export async function getPurchasedAds() {
 
 export async function purchaseAdsPackage(packageName: string) {
   try {
-    const result = await paasCall("api.seller_marketing.purchase_shop_ads_package", {
+    const result = await paasCall(
+      "api.seller_marketing.purchase_shop_ads_package",
+      {
         package_name: packageName,
-      });
+      },
+    );
     return result;
   } catch (error) {
     console.error("Failed to purchase ads package:", error);

@@ -25,7 +25,7 @@
     "MD003": false,
     "MD045": false,
     "MD051": false,
-    "MD059": false
+    "MD059": false,
   },
   "ignores": [
     "node_modules",
@@ -35,6 +35,6 @@
     "out-bash",
     "out-ps",
     ".kilo",
-    "**/.kilo/**"
-  ]
+    "**/.kilo/**",
+  ],
 }

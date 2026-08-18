@@ -38,10 +38,10 @@ export async function getBillingStatus(data: { modelId?: string } = {}) {
   try {
     // Assuming "Subscription" doctype (or generic placeholder)
     const sub = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Subscription", // Standard in ERPNext
-        fields: ["name", "status", "next_payment_date", "plan"],
-        limit_page_length: 1,
-      });
+      doctype: "Subscription", // Standard in ERPNext
+      fields: ["name", "status", "next_payment_date", "plan"],
+      limit_page_length: 1,
+    });
     return {
       success: true,
       subscription: sub?.message?.[0] || "No active subscription found.",
@@ -63,13 +63,13 @@ export async function contactSupport(data: {
   try {
     // Create an Issue or Support Ticket
     const response = await gatewayCall(client, "frappe.client.insert", {
-        doc: {
-          doctype: "Issue",
-          subject: data.subject,
-          description: data.message,
-          raised_by: (await auth())?.user?.email,
-        },
-      });
+      doc: {
+        doctype: "Issue",
+        subject: data.subject,
+        description: data.message,
+        raised_by: (await auth())?.user?.email,
+      },
+    });
     return { success: true, message: "Support ticket created." };
   } catch (e: any) {
     return {
@@ -92,9 +92,15 @@ export async function getAvailableModels() {
     if (res && res.message && (res.message.FREE || res.message.PAID)) {
       return { success: true, models: res.message };
     }
-    return { success: false, error: "Invalid models data returned from backend." };
+    return {
+      success: false,
+      error: "Invalid models data returned from backend.",
+    };
   } catch (e: any) {
     console.error("Failed to fetch available models from backend:", e);
-    return { success: false, error: e?.message || "Failed to fetch available models." };
+    return {
+      success: false,
+      error: e?.message || "Failed to fetch available models.",
+    };
   }
 }

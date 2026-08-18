@@ -28,20 +28,26 @@ export async function POST(request: NextRequest) {
     const { text, context } = await request.json();
 
     if (!text) {
-      return NextResponse.json({ status: "error", message: "Text is required" }, { status: 400 });
+      return NextResponse.json(
+        { status: "error", message: "Text is required" },
+        { status: 400 },
+      );
     }
 
     const result = await intentClassifierService.classify(
-      text, 
-      context?.entity
+      text,
+      context?.entity,
     );
 
     return NextResponse.json({
       status: "success",
-      ...result
+      ...result,
     });
   } catch (error: any) {
     console.error("Intent Classification Error:", error);
-    return NextResponse.json({ status: "error", message: error.message }, { status: 500 });
+    return NextResponse.json(
+      { status: "error", message: error.message },
+      { status: 500 },
+    );
   }
 }

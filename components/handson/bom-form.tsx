@@ -173,10 +173,10 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
         <CardContent className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="item">Item to Manufacture</Label>
-             <Input
-               id="item"
-               placeholder={t('common.ph_finished_product')}
-               value={item}
+            <Input
+              id="item"
+              placeholder={t("common.ph_finished_product")}
+              value={item}
               onChange={(e) => setItem(e.target.value)}
               readOnly={isEdit}
             />
@@ -198,9 +198,9 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
               onValueChange={setCompany}
               disabled={isEdit}
             >
-               <SelectTrigger>
-                 <SelectValue placeholder={t('common.select_company')} />
-               </SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder={t("common.select_company")} />
+              </SelectTrigger>
               <SelectContent>
                 {companies.map((c) => (
                   <SelectItem key={c.name} value={c.name}>

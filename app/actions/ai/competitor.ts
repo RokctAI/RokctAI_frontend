@@ -78,7 +78,9 @@ export async function createAiCompetitor(data: {
       payload.headquarters_location = `https://maps.google.com/?q=${data.latitude},${data.longitude}`;
     }
 
-    const response = (await gatewayCall(client, "frappe.client.insert", { doc: payload })) as any;
+    const response = (await gatewayCall(client, "frappe.client.insert", {
+      doc: payload,
+    })) as any;
 
     if (response?.message) {
       if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
@@ -102,17 +104,17 @@ export async function getAiCompetitors(data: { modelId?: string } = {}) {
 
   try {
     const competitors = (await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Competitor",
-        fields: [
-          "name",
-          "competitor_name",
-          "industry",
-          "threat_level",
-          "headquarters_location",
-        ],
-        order_by: "creation desc",
-        limit_page_length: 10,
-      })) as any;
+      doctype: "Competitor",
+      fields: [
+        "name",
+        "competitor_name",
+        "industry",
+        "threat_level",
+        "headquarters_location",
+      ],
+      order_by: "creation desc",
+      limit_page_length: 10,
+    })) as any;
 
     return { success: true, competitors: competitors?.message || [] };
   } catch (e: any) {
@@ -134,9 +136,9 @@ export async function analyzeAiCompetitor(data: {
     // Fetch Details + Child Tables?
     // Basic fetch for now
     const competitor = (await gatewayCall(client, "frappe.client.get", {
-        doctype: "Competitor",
-        name: data.name,
-      })) as any;
+      doctype: "Competitor",
+      name: data.name,
+    })) as any;
 
     return { success: true, competitor: competitor?.message };
   } catch (e: any) {

@@ -111,7 +111,9 @@ export async function syncOnboardingToSite(userEmail: string) {
   const userData = dbUser[0];
 
   if (!userData || !userData.siteName || !userData.onboardingData) {
-    console.log("Missing data, site name, or onboarding answers; cannot sync yet.");
+    console.log(
+      "Missing data, site name, or onboarding answers; cannot sync yet.",
+    );
     return { success: false, error: "Missing data or site name" };
   }
 
@@ -119,9 +121,11 @@ export async function syncOnboardingToSite(userEmail: string) {
   // If user onboardingData has 'full_name', it's a life profile; otherwise business.
   const onboardingData = userData.onboardingData as Record<string, any>;
   const profileType = onboardingData.full_name ? "life" : "business";
-  const instanceName = userData.siteName.split('.')[0] || "MyVenture";
+  const instanceName = userData.siteName.split(".")[0] || "MyVenture";
 
-  console.log(`Connecting to ${userData.siteName} to commit ${profileType} profile: ${instanceName}...`);
+  console.log(
+    `Connecting to ${userData.siteName} to commit ${profileType} profile: ${instanceName}...`,
+  );
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -152,13 +156,16 @@ export async function syncOnboardingToSite(userEmail: string) {
     });
 
     const result = await response.json();
-    
+
     if (response.ok && result.message?.status === "success") {
       console.log(`Plan committed successfully to ${userData.siteName}!`);
       return { success: true };
     } else {
       console.error(`Sync failed for ${userData.siteName}:`, result);
-      return { success: false, error: result.message || "Failed to commit onboarding profile" };
+      return {
+        success: false,
+        error: result.message || "Failed to commit onboarding profile",
+      };
     }
   } catch (e) {
     console.error("Failed to connect to tenant site onboarding API", e);

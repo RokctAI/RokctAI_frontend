@@ -54,16 +54,23 @@ export async function POST(request: Request) {
       });
     } else {
       // Call Control site summarization
-      const { ControlBaseService } = await import("@/app/services/control/base");
-      sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {
-        session_id: sessionId,
-        messages: JSON.stringify(messages),
-      });
+      const { ControlBaseService } =
+        await import("@/app/services/control/base");
+      sumRes = await ControlBaseService.call(
+        "control.api.summarize_chat_session",
+        {
+          session_id: sessionId,
+          messages: JSON.stringify(messages),
+        },
+      );
     }
 
     return Response.json({ success: true, summary: sumRes?.summary || sumRes });
   } catch (error: any) {
     console.error("Failed to summarize chat session:", error);
-    return Response.json({ success: false, error: error.message }, { status: 500 });
+    return Response.json(
+      { success: false, error: error.message },
+      { status: 500 },
+    );
   }
 }

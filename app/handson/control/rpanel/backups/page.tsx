@@ -270,9 +270,11 @@ function BackupsContent() {
                   value={selectedWebsite}
                   onValueChange={setSelectedWebsite}
                 >
-                   <SelectTrigger>
-                     <SelectValue placeholder={t('app.control.rpanel.backups.ph_website')} />
-                   </SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t("app.control.rpanel.backups.ph_website")}
+                    />
+                  </SelectTrigger>
                   <SelectContent>
                     {websites.map((site) => (
                       <SelectItem key={site.name} value={site.name}>
@@ -284,10 +286,12 @@ function BackupsContent() {
               </div>
               <div className="space-y-2">
                 <Label>Backup Type</Label>
-                 <Select value={selectedType} onValueChange={setSelectedType}>
-                   <SelectTrigger>
-                     <SelectValue placeholder={t('app.control.rpanel.backups.ph_type')} />
-                   </SelectTrigger>
+                <Select value={selectedType} onValueChange={setSelectedType}>
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t("app.control.rpanel.backups.ph_type")}
+                    />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Full">
                       Full Backup (Files + DB)

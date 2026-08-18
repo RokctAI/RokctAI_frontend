@@ -38,7 +38,7 @@ import React, {
 } from "react";
 import { toast } from "sonner";
 import t from "@/app/lib/i18n";
- 
+
 import { ArrowUpIcon, PaperclipIcon, StopIcon } from "./icons";
 import { PreviewAttachment } from "./preview-attachment";
 import { BrandLogo } from "./brand-logo";
@@ -194,25 +194,25 @@ export function MultimodalInput({
         const options: string[] = [];
 
         if (attStatus.success) {
-            if (attStatus.status === "Checked In") {
-              // Context: Checked In.
-              // Priority 1: Competitor (If CRM) -> As requested "show competitor"
-              if (isCrm) options.push(t('common.add_competitor'));
-              // Priority 2: Check Out
-              options.push(t('common.check_out'));
-            } else {
-              // Context: Checked Out.
-              // Priority 1: Check In -> As requested "says checkin"
-              options.push(t('common.check_in'));
-              // Priority 2: Competitor (If CRM) -> As requested "tap again add competitor"
-              if (isCrm) options.push(t('common.add_competitor'));
-            }
+          if (attStatus.status === "Checked In") {
+            // Context: Checked In.
+            // Priority 1: Competitor (If CRM) -> As requested "show competitor"
+            if (isCrm) options.push(t("common.add_competitor"));
+            // Priority 2: Check Out
+            options.push(t("common.check_out"));
+          } else {
+            // Context: Checked Out.
+            // Priority 1: Check In -> As requested "says checkin"
+            options.push(t("common.check_in"));
+            // Priority 2: Competitor (If CRM) -> As requested "tap again add competitor"
+            if (isCrm) options.push(t("common.add_competitor"));
+          }
         }
         // Fallback
-        if (options.length === 0) options.push(t('common.check_in'));
- 
-        if (options.length === 0) options.push(t('common.check_in'));
- 
+        if (options.length === 0) options.push(t("common.check_in"));
+
+        if (options.length === 0) options.push(t("common.check_in"));
+
         setPinOptions(options);
         setHasCrmAccess(isCrm);
         const { verifyHrRole } = await import("@/app/lib/roles");
@@ -220,7 +220,7 @@ export function MultimodalInput({
         setHasHrAccess(isHr);
         setPinStatus("Ready");
       } catch (e) {
-        setPinOptions([t('common.add_competitor')]);
+        setPinOptions([t("common.add_competitor")]);
         setPinStatus("Ready");
       }
     };
@@ -249,13 +249,13 @@ export function MultimodalInput({
           context: { entity: "competitor" },
         }),
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "success") {
-          setIntent(data.intent);
-          setDetails(data.details);
-        }
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status === "success") {
+            setIntent(data.intent);
+            setDetails(data.details);
+          }
+        });
     } else {
       // Standard Command (Check In / Out)
       setActivePinContext(null);
@@ -269,13 +269,13 @@ export function MultimodalInput({
             context: null,
           }),
         })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "success") {
-            setIntent(data.intent);
-            setDetails(data.details);
-          }
-        });
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "success") {
+              setIntent(data.intent);
+              setDetails(data.details);
+            }
+          });
       }, 0);
     }
   };
@@ -313,13 +313,13 @@ export function MultimodalInput({
         context: { entity: activePinContext },
       }),
     })
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === "success") {
-        setIntent(data.intent);
-        setDetails(data.details);
-      }
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          setIntent(data.intent);
+          setDetails(data.details);
+        }
+      });
 
     // Optimistic Update for Date
     if (dateResult) {
@@ -557,7 +557,7 @@ export function MultimodalInput({
       <div className="relative">
         <Textarea
           ref={textareaRef}
-          placeholder={t('common.ph_ask_rokct')}
+          placeholder={t("common.ph_ask_rokct")}
           value={input}
           onChange={handleInput}
           className="min-h-[24px] w-full bg-transparent border-none shadow-none resize-none focus-visible:ring-0 text-base py-2 px-1 max-h-[300px] placeholder:text-muted-foreground/70"

@@ -36,7 +36,11 @@ export class OnboardingService {
   /**
    * Sends a message to the secure ROK chat bridge on the Control VPS.
    */
-  static async chatWithRok(message: string, sessionId?: string, model?: string) {
+  static async chatWithRok(
+    message: string,
+    sessionId?: string,
+    model?: string,
+  ) {
     return ControlBaseService.call("control.api.chat_with_rok", {
       message,
       session_id: sessionId,
@@ -44,4 +48,3 @@ export class OnboardingService {
     });
   }
 }
-

@@ -42,12 +42,18 @@ export async function POST(request: NextRequest) {
     }
 
     if (!validSecret) {
-      return NextResponse.json({ message: "Webhook secret not configured on server" }, { status: 500 });
+      return NextResponse.json(
+        { message: "Webhook secret not configured on server" },
+        { status: 500 },
+      );
     }
 
     const signature = request.headers.get("X-Rokct-Signature");
     if (!signature) {
-      return NextResponse.json({ message: "Missing X-Rokct-Signature header" }, { status: 401 });
+      return NextResponse.json(
+        { message: "Missing X-Rokct-Signature header" },
+        { status: 401 },
+      );
     }
 
     const rawBody = await request.text();
@@ -57,7 +63,10 @@ export async function POST(request: NextRequest) {
       .digest("hex");
 
     if (signature !== expectedSignature) {
-      return NextResponse.json({ message: "Invalid payload signature" }, { status: 401 });
+      return NextResponse.json(
+        { message: "Invalid payload signature" },
+        { status: 401 },
+      );
     }
 
     const body = JSON.parse(rawBody);

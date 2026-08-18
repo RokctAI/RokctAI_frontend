@@ -166,24 +166,29 @@ export default function EventsPage() {
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">
         <div>
-           <h1 className="text-3xl font-bold">{t('app.workspace.events.title')}</h1>
-           <p className="text-muted-foreground">
-             {t('app.workspace.events.desc')}
-           </p>
+          <h1 className="text-3xl font-bold">
+            {t("app.workspace.events.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("app.workspace.events.desc")}
+          </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-             <Button>
-               <Plus className="mr-2 h-4 w-4" /> {t('app.workspace.events.btn_create')}
-             </Button>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />{" "}
+              {t("app.workspace.events.btn_create")}
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
-             <DialogHeader>
-               <DialogTitle>{t('app.workspace.events.dialog_title')}</DialogTitle>
-               <DialogDescription>
-                 {t('app.workspace.events.dialog_desc')}
-               </DialogDescription>
-             </DialogHeader>
+            <DialogHeader>
+              <DialogTitle>
+                {t("app.workspace.events.dialog_title")}
+              </DialogTitle>
+              <DialogDescription>
+                {t("app.workspace.events.dialog_desc")}
+              </DialogDescription>
+            </DialogHeader>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -193,13 +198,18 @@ export default function EventsPage() {
                   control={form.control}
                   name="subject"
                   render={({ field }) => (
-                               <FormItem>
-                                 <FormLabel>{t('app.workspace.events.label_subject')}</FormLabel>
-                                 <FormControl>
-                                   <Input placeholder={t('app.workspace.events.ph_subject')} {...field} />
-                                 </FormControl>
-                                 <FormMessage />
-                               </FormItem>
+                    <FormItem>
+                      <FormLabel>
+                        {t("app.workspace.events.label_subject")}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder={t("app.workspace.events.ph_subject")}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
                 />
                 <div className="grid grid-cols-2 gap-4">
@@ -207,9 +217,11 @@ export default function EventsPage() {
                     control={form.control}
                     name="starts_on"
                     render={({ field }) => (
-                               <FormItem className="flex flex-col">
-                                 <FormLabel>{t('app.workspace.events.label_date')}</FormLabel>
-                                 <Popover>
+                      <FormItem className="flex flex-col">
+                        <FormLabel>
+                          {t("app.workspace.events.label_date")}
+                        </FormLabel>
+                        <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
@@ -221,10 +233,12 @@ export default function EventsPage() {
                               >
                                 {field.value ? (
                                   format(field.value, "PPP")
-                                   ) : (
-                                     <span>{t('app.workspace.events.ph_pick_date')}</span>
-                                   )}
-                                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                ) : (
+                                  <span>
+                                    {t("app.workspace.events.ph_pick_date")}
+                                  </span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
@@ -246,9 +260,11 @@ export default function EventsPage() {
                     control={form.control}
                     name="time"
                     render={({ field }) => (
-                               <FormItem>
-                                 <FormLabel>{t('app.workspace.events.label_time')}</FormLabel>
-                                 <FormControl>
+                      <FormItem>
+                        <FormLabel>
+                          {t("app.workspace.events.label_time")}
+                        </FormLabel>
+                        <FormControl>
                           <div className="relative">
                             <Clock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
@@ -268,49 +284,64 @@ export default function EventsPage() {
                   control={form.control}
                   name="event_type"
                   render={({ field }) => (
-                               <FormItem>
-                                 <FormLabel>{t('app.workspace.events.label_type')}</FormLabel>
-                                 <Select
-                                   onValueChange={field.onChange}
-                                   defaultValue={field.value}
-                                 >
-                                   <FormControl>
-                                     <SelectTrigger>
-                                       <SelectValue placeholder={t('app.workspace.events.select_type')} />
-                                     </SelectTrigger>
-                                   </FormControl>
-                                   <SelectContent>
-                                     <SelectItem value="Private">{t('app.workspace.events.type_private')}</SelectItem>
-                                     <SelectItem value="Public">{t('app.workspace.events.type_public')}</SelectItem>
-                                   </SelectContent>
-                                 </Select>
-                                 <FormMessage />
-                               </FormItem>
+                    <FormItem>
+                      <FormLabel>
+                        {t("app.workspace.events.label_type")}
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={t(
+                                "app.workspace.events.select_type",
+                              )}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Private">
+                            {t("app.workspace.events.type_private")}
+                          </SelectItem>
+                          <SelectItem value="Public">
+                            {t("app.workspace.events.type_public")}
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
                   )}
                 />
                 <FormField
                   control={form.control}
                   name="description"
                   render={({ field }) => (
-                               <FormItem>
-                                 <FormLabel>{t('app.workspace.events.label_description')}</FormLabel>
-                                 <FormControl>
-                                   <Textarea placeholder={t('app.workspace.events.ph_agenda')} {...field} />
-                                 </FormControl>
-                                 <FormMessage />
-                               </FormItem>
+                    <FormItem>
+                      <FormLabel>
+                        {t("app.workspace.events.label_description")}
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder={t("app.workspace.events.ph_agenda")}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
                 />
-                   <Button
-                     type="submit"
-                     className="w-full"
-                     disabled={form.formState.isSubmitting}
-                   >
-                     {form.formState.isSubmitting && (
-                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                     )}
-                     {t('app.workspace.events.btn_save')}
-                   </Button>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {t("app.workspace.events.btn_save")}
+                </Button>
               </form>
             </Form>
           </DialogContent>
@@ -329,10 +360,12 @@ export default function EventsPage() {
               />
             </CardContent>
           </Card>
-           <div className="mt-4 p-4 border rounded bg-muted/20">
-             <h3 className="font-semibold mb-2">{t('app.workspace.events.upcoming_title')}</h3>
-             {/* Simple list of next 3 events irrespective of date selection */}
-             <div className="space-y-2 text-sm">
+          <div className="mt-4 p-4 border rounded bg-muted/20">
+            <h3 className="font-semibold mb-2">
+              {t("app.workspace.events.upcoming_title")}
+            </h3>
+            {/* Simple list of next 3 events irrespective of date selection */}
+            <div className="space-y-2 text-sm">
               {events.slice(0, 3).map((e) => (
                 <div key={e.name} className="flex justify-between">
                   <span>{e.subject}</span>
@@ -341,35 +374,37 @@ export default function EventsPage() {
                   </span>
                 </div>
               ))}
-               {events.length === 0 && (
-                 <span className="text-muted-foreground italic">
-                   {t('app.workspace.events.no_upcoming')}
-                 </span>
-               )}
+              {events.length === 0 && (
+                <span className="text-muted-foreground italic">
+                  {t("app.workspace.events.no_upcoming")}
+                </span>
+              )}
             </div>
           </div>
         </div>
 
         <div className="md:col-span-2 space-y-4">
-           <h2 className="text-xl font-semibold flex items-center">
-             <Clock className="mr-2 h-5 w-5 text-primary" />
-             {t('app.workspace.events.schedule_title', { date: date ? format(date, "MMMM do, yyyy") : "All Events" })}
-           </h2>
+          <h2 className="text-xl font-semibold flex items-center">
+            <Clock className="mr-2 h-5 w-5 text-primary" />
+            {t("app.workspace.events.schedule_title", {
+              date: date ? format(date, "MMMM do, yyyy") : "All Events",
+            })}
+          </h2>
 
           {loading ? (
             <div className="flex justify-center p-8">
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
           ) : selectedDateEvents.length === 0 ? (
-             <div className="flex flex-col items-center justify-center p-12 border border-dashed rounded bg-slate-50">
-               <CalendarIcon className="h-10 w-10 text-muted-foreground mb-3" />
-               <p className="text-muted-foreground font-medium">
-                 {t('app.workspace.events.no_events')}
-               </p>
-               <p className="text-xs text-muted-foreground">
-                 {t('app.workspace.events.no_events_desc')}
-               </p>
-             </div>
+            <div className="flex flex-col items-center justify-center p-12 border border-dashed rounded bg-slate-50">
+              <CalendarIcon className="h-10 w-10 text-muted-foreground mb-3" />
+              <p className="text-muted-foreground font-medium">
+                {t("app.workspace.events.no_events")}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t("app.workspace.events.no_events_desc")}
+              </p>
+            </div>
           ) : (
             <div className="space-y-2">
               {selectedDateEvents.map((event) => (

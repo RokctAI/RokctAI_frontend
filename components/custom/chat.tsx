@@ -320,7 +320,10 @@ export function Chat({
                   setAttachments={setAttachments}
                   messages={messages}
                   append={append}
-                  models={Object.values(availableModels).map((m: any) => ({ id: m.id, name: m.label || m.name }))}
+                  models={Object.values(availableModels).map((m: any) => ({
+                    id: m.id,
+                    name: m.label || m.name,
+                  }))}
                   selectedModelId={selectedModelId}
                   onModelChange={handleModelChange}
                   onLocalSubmit={(intent, details, text) => {

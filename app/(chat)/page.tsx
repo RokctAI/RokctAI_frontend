@@ -63,7 +63,9 @@ export default async function Page({
 
       if (chats && chats.length > 0) {
         const lastChat = chats[0];
-        console.log(`[Auto-Archive] Found old session ${lastChat.id} on /. Compacting memory and deleting raw logs.`);
+        console.log(
+          `[Auto-Archive] Found old session ${lastChat.id} on /. Compacting memory and deleting raw logs.`,
+        );
 
         let summary = "";
         const isBusiness = !!session.user.siteName;
@@ -83,15 +85,22 @@ export default async function Page({
             summary = sumRes?.summary || "";
           } else {
             // Call Control site summarization
-            const { ControlBaseService } = await import("@/app/services/control/base");
-            const sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {
-              session_id: lastChat.id,
-              messages: JSON.stringify(lastChat.messages),
-            });
+            const { ControlBaseService } =
+              await import("@/app/services/control/base");
+            const sumRes = await ControlBaseService.call(
+              "control.api.summarize_chat_session",
+              {
+                session_id: lastChat.id,
+                messages: JSON.stringify(lastChat.messages),
+              },
+            );
             summary = sumRes?.summary || "";
           }
         } catch (sumErr) {
-          console.error("Failed to summarize old session during archive:", sumErr);
+          console.error(
+            "Failed to summarize old session during archive:",
+            sumErr,
+          );
         }
 
         // Archive summary in local User table JSON field (onboardingData.lastSummary)
@@ -101,8 +110,9 @@ export default async function Page({
             .from(userTable)
             .where(eq(userTable.id, session.user.id))
             .limit(1);
-          
-          const currentData = (dbUser[0]?.onboardingData as Record<string, any>) || {};
+
+          const currentData =
+            (dbUser[0]?.onboardingData as Record<string, any>) || {};
           await db
             .update(userTable)
             .set({
@@ -112,12 +122,16 @@ export default async function Page({
               },
             })
             .where(eq(userTable.id, session.user.id));
-          console.log(`[Auto-Archive] Summary stored in user's engramMemory ledger.`);
+          console.log(
+            `[Auto-Archive] Summary stored in user's engramMemory ledger.`,
+          );
         }
 
         // Delete the old raw chat session completely to keep DB clean
         await deleteChatById({ id: lastChat.id });
-        console.log(`[Auto-Archive] Cleaned up completed session ${lastChat.id} from local chat logs.`);
+        console.log(
+          `[Auto-Archive] Cleaned up completed session ${lastChat.id} from local chat logs.`,
+        );
       }
     }
   } catch (e) {

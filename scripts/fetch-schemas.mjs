@@ -1,12 +1,13 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const SCHEMAS_DIR = path.join(__dirname, '../app/config/schemas');
-const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/RokctAI/Monorepo/main/rcore/rcore/platform/schemas';
+const SCHEMAS_DIR = path.join(__dirname, "../app/config/schemas");
+const GITHUB_RAW_BASE =
+  "https://raw.githubusercontent.com/RokctAI/Monorepo/main/rcore/rcore/platform/schemas";
 
 // Load Personal Access Token
 const token = process.env.MONOREPO_PAT || process.env.GITHUB_TOKEN;
@@ -15,28 +16,49 @@ async function fetchWithAuth(filename) {
   const url = `${GITHUB_RAW_BASE}/${filename}`;
   const headers = {};
   if (token) {
-    headers['Authorization'] = `token ${token}`;
+    headers["Authorization"] = `token ${token}`;
   }
 
   const response = await fetch(url, { headers });
   if (!response.ok) {
-    throw new Error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Failed to fetch ${filename}: ${response.status} ${response.statusText}`,
+    );
   }
   return response.json();
 }
 
-const LOCAL_MONOREPO_SCHEMAS_DIR = path.join(__dirname, '../../Monorepo/rcore/rcore/platform/schemas');
+const LOCAL_MONOREPO_SCHEMAS_DIR = path.join(
+  __dirname,
+  "../../Monorepo/rcore/rcore/platform/schemas",
+);
 
 function generateTypeScriptFiles(aiTools, apiManifest) {
-  console.log('  -> Hydrating TypeScript services, actions, validation schemas, and react form components...');
+  console.log(
+    "  -> Hydrating TypeScript services, actions, validation schemas, and react form components...",
+  );
 
-  const SERVICES_PLATFORM_DIR = path.join(__dirname, '../app/services/platform');
-  const ACTIONS_PLATFORM_DIR = path.join(__dirname, '../app/actions/platform');
-  const VALIDATORS_PLATFORM_DIR = path.join(__dirname, '../lib/platform/validators');
-  const FORMS_PLATFORM_DIR = path.join(__dirname, '../components/platform/forms');
+  const SERVICES_PLATFORM_DIR = path.join(
+    __dirname,
+    "../app/services/platform",
+  );
+  const ACTIONS_PLATFORM_DIR = path.join(__dirname, "../app/actions/platform");
+  const VALIDATORS_PLATFORM_DIR = path.join(
+    __dirname,
+    "../lib/platform/validators",
+  );
+  const FORMS_PLATFORM_DIR = path.join(
+    __dirname,
+    "../components/platform/forms",
+  );
 
   // Clean or recreate platform directories to avoid stale generated files
-  const dirs = [SERVICES_PLATFORM_DIR, ACTIONS_PLATFORM_DIR, VALIDATORS_PLATFORM_DIR, FORMS_PLATFORM_DIR];
+  const dirs = [
+    SERVICES_PLATFORM_DIR,
+    ACTIONS_PLATFORM_DIR,
+    VALIDATORS_PLATFORM_DIR,
+    FORMS_PLATFORM_DIR,
+  ];
   for (const d of dirs) {
     if (fs.existsSync(d)) {
       fs.rmSync(d, { recursive: true, force: true });
@@ -45,7 +67,9 @@ function generateTypeScriptFiles(aiTools, apiManifest) {
   }
 
   const toCamelCase = (str) =>
-    str.replace(/[-_:.]([a-z])/g, (_, char) => char.toUpperCase()).replace(/^(.)/, (_, char) => char.toLowerCase());
+    str
+      .replace(/[-_:.]([a-z])/g, (_, char) => char.toUpperCase())
+      .replace(/^(.)/, (_, char) => char.toLowerCase());
 
   const toPascalCase = (str) => {
     const camel = toCamelCase(str);
@@ -56,9 +80,9 @@ function generateTypeScriptFiles(aiTools, apiManifest) {
 
   for (const tool of aiTools) {
     const name = tool.name;
-    const parts = name.split(':');
-    let moduleName = 'general';
-    let groupName = 'general';
+    const parts = name.split(":");
+    let moduleName = "general";
+    let groupName = "general";
     let methodName = name;
 
     if (parts.length === 1) {
@@ -69,7 +93,7 @@ function generateTypeScriptFiles(aiTools, apiManifest) {
     } else {
       moduleName = parts[0];
       groupName = parts[1];
-      methodName = parts.slice(2).join('_');
+      methodName = parts.slice(2).join("_");
     }
 
     const tsMethodName = toCamelCase(methodName);
@@ -114,7 +138,9 @@ function generateTypeScriptFiles(aiTools, apiManifest) {
 import { BaseService, ServiceOptions } from "@/app/services/common/base";
 
 export class ${pascalGroupName}Service {
-${methods.map(m => `  /**
+${methods
+  .map(
+    (m) => `  /**
    * ${m.description || `Execute ${m.cmd}`}
    */
   static async ${m.methodName}(payload?: any, options?: ServiceOptions) {
@@ -128,10 +154,12 @@ ${methods.map(m => `  /**
       },
       options
     );
-  }`).join('\n\n')}
+  }`,
+  )
+  .join("\n\n")}
 }
 `;
-      fs.writeFileSync(serviceFilePath, serviceContent, 'utf8');
+      fs.writeFileSync(serviceFilePath, serviceContent, "utf8");
 
       // 2. Generate Action file
       const actionFilePath = path.join(moduleActionsDir, `${groupName}.ts`);
@@ -145,7 +173,9 @@ ${methods.map(m => `  /**
 import { ${pascalGroupName}Service } from "@/app/services/platform/${moduleName}/${groupName}";
 import { revalidatePath } from "next/cache";
 
-${methods.map(m => `/**
+${methods
+  .map(
+    (m) => `/**
  * ${m.description || `Execute ${m.cmd}`}
  */
 export async function ${m.methodName}(payload?: any) {
@@ -156,12 +186,17 @@ export async function ${m.methodName}(payload?: any) {
     console.error("Failed to execute Server Action ${m.methodName}:", error);
     throw error;
   }
-}`).join('\n\n')}
+}`,
+  )
+  .join("\n\n")}
 `;
-      fs.writeFileSync(actionFilePath, actionContent, 'utf8');
+      fs.writeFileSync(actionFilePath, actionContent, "utf8");
 
       // 3. Generate Zod Validator file
-      const validatorFilePath = path.join(moduleValidatorsDir, `${groupName}.ts`);
+      const validatorFilePath = path.join(
+        moduleValidatorsDir,
+        `${groupName}.ts`,
+      );
       const validatorContent = `// @ts-nocheck
 /**
  * Generated Zod Validators for Platform Module: ${moduleName}, Group: ${groupName}
@@ -169,33 +204,41 @@ export async function ${m.methodName}(payload?: any) {
  */
 import * as z from "zod";
 
-${methods.map(m => {
-  const pascalFuncName = toPascalCase(m.methodName);
-  const props = m.parameters?.properties || {};
-  return `export const ${m.methodName}Schema = z.object({
-${Object.entries(props).map(([pName, pValue]) => {
-  const isRequired = m.parameters?.required?.includes(pName);
-  let zodType = 'z.any()';
-  if (pValue.type === 'string') {
-    zodType = isRequired ? 'z.string().min(1, "Required")' : 'z.string().optional().or(z.literal(""))';
-  } else if (pValue.type === 'number' || pValue.type === 'integer') {
-    zodType = isRequired ? 'z.coerce.number()' : 'z.coerce.number().optional()';
-  } else if (pValue.type === 'boolean') {
-    zodType = isRequired ? 'z.boolean()' : 'z.boolean().optional()';
-  } else if (pValue.type === 'array') {
-    zodType = isRequired ? 'z.array(z.any())' : 'z.array(z.any()).optional()';
-  } else if (pValue.type === 'object') {
-    zodType = isRequired ? 'z.any()' : 'z.any().optional()';
-  }
-  return `  ${pName}: ${zodType},`;
-}).join('\n')}
+${methods
+  .map((m) => {
+    const pascalFuncName = toPascalCase(m.methodName);
+    const props = m.parameters?.properties || {};
+    return `export const ${m.methodName}Schema = z.object({
+${Object.entries(props)
+  .map(([pName, pValue]) => {
+    const isRequired = m.parameters?.required?.includes(pName);
+    let zodType = "z.any()";
+    if (pValue.type === "string") {
+      zodType = isRequired
+        ? 'z.string().min(1, "Required")'
+        : 'z.string().optional().or(z.literal(""))';
+    } else if (pValue.type === "number" || pValue.type === "integer") {
+      zodType = isRequired
+        ? "z.coerce.number()"
+        : "z.coerce.number().optional()";
+    } else if (pValue.type === "boolean") {
+      zodType = isRequired ? "z.boolean()" : "z.boolean().optional()";
+    } else if (pValue.type === "array") {
+      zodType = isRequired ? "z.array(z.any())" : "z.array(z.any()).optional()";
+    } else if (pValue.type === "object") {
+      zodType = isRequired ? "z.any()" : "z.any().optional()";
+    }
+    return `  ${pName}: ${zodType},`;
+  })
+  .join("\n")}
 });
 
 export type ${pascalFuncName}Values = z.infer<typeof ${m.methodName}Schema>;
 `;
-}).join('\n\n')}
+  })
+  .join("\n\n")}
 `;
-      fs.writeFileSync(validatorFilePath, validatorContent, 'utf8');
+      fs.writeFileSync(validatorFilePath, validatorContent, "utf8");
 
       // 4. Generate Form Component file
       const formFilePath = path.join(moduleFormsDir, `${groupName}.tsx`);
@@ -229,10 +272,11 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import * as actions from "@/app/actions/platform/${moduleName}/${groupName}";
 import * as validators from "@/lib/platform/validators/${moduleName}/${groupName}";
 
-${methods.map(m => {
-  const pascalFuncName = toPascalCase(m.methodName);
-  const props = m.parameters?.properties || {};
-  return `
+${methods
+  .map((m) => {
+    const pascalFuncName = toPascalCase(m.methodName);
+    const props = m.parameters?.properties || {};
+    return `
 export interface ${pascalFuncName}FormProps {
   onSuccess?: (data: any) => void;
   onError?: (error: any) => void;
@@ -245,12 +289,14 @@ export function ${pascalFuncName}Form({ onSuccess, onError, defaultValues }: ${p
   const form = useForm<validators.${pascalFuncName}Values>({
     resolver: zodResolver(validators.${m.methodName}Schema),
     defaultValues: {
-      ${Object.entries(props).map(([pName, pValue]) => {
-        let defVal = 'undefined';
-        if (pValue.type === 'string') defVal = '""';
-        else if (pValue.type === 'boolean') defVal = 'false';
-        return `${pName}: ${defVal},`;
-      }).join('\n      ')}
+      ${Object.entries(props)
+        .map(([pName, pValue]) => {
+          let defVal = "undefined";
+          if (pValue.type === "string") defVal = '""';
+          else if (pValue.type === "boolean") defVal = "false";
+          return `${pName}: ${defVal},`;
+        })
+        .join("\n      ")}
       ...defaultValues,
     },
   });
@@ -279,37 +325,46 @@ export function ${pascalFuncName}Form({ onSuccess, onError, defaultValues }: ${p
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            ${Object.entries(props).map(([pName, pValue]) => {
-              const label = toPascalCase(pName).replace(/([A-Z])/g, ' $1').trim();
-              const isTextArea = pName.toLowerCase().includes("description") || pName.toLowerCase().includes("overview") || pName.toLowerCase().includes("notes") || pName.toLowerCase().includes("payload");
-              const isNumber = pValue.type === "number" || pValue.type === "integer";
-              const isBoolean = pValue.type === "boolean";
+            ${Object.entries(props)
+              .map(([pName, pValue]) => {
+                const label = toPascalCase(pName)
+                  .replace(/([A-Z])/g, " $1")
+                  .trim();
+                const isTextArea =
+                  pName.toLowerCase().includes("description") ||
+                  pName.toLowerCase().includes("overview") ||
+                  pName.toLowerCase().includes("notes") ||
+                  pName.toLowerCase().includes("payload");
+                const isNumber =
+                  pValue.type === "number" || pValue.type === "integer";
+                const isBoolean = pValue.type === "boolean";
 
-              let inputComponent = `<Input placeholder="Enter ${pName}..." {...field} />`;
-              if (isTextArea) {
-                inputComponent = `<Textarea placeholder="Enter ${pName}..." className="min-h-[80px]" {...field} />`;
-              } else if (isNumber) {
-                inputComponent = `<Input type="number" placeholder="0" {...field} />`;
-              } else if (isBoolean) {
-                inputComponent = `<Input type="checkbox" className="w-4 h-4 cursor-pointer" checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />`;
-              }
+                let inputComponent = `<Input placeholder="Enter ${pName}..." {...field} />`;
+                if (isTextArea) {
+                  inputComponent = `<Textarea placeholder="Enter ${pName}..." className="min-h-[80px]" {...field} />`;
+                } else if (isNumber) {
+                  inputComponent = `<Input type="number" placeholder="0" {...field} />`;
+                } else if (isBoolean) {
+                  inputComponent = `<Input type="checkbox" className="w-4 h-4 cursor-pointer" checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />`;
+                }
 
-              return `
+                return `
             <FormField
               control={form.control}
               name="${pName}"
               render={({ field }) => (
-                <FormItem className="${isBoolean ? 'flex flex-row items-center space-x-3 space-y-0 rounded-md border p-3' : ''}">
+                <FormItem className="${isBoolean ? "flex flex-row items-center space-x-3 space-y-0 rounded-md border p-3" : ""}">
                   <FormLabel>${label}</FormLabel>
                   <FormControl>
                     ${inputComponent}
                   </FormControl>
-                  ${pValue.description ? `<FormDescription>${pValue.description}</FormDescription>` : ''}
+                  ${pValue.description ? `<FormDescription>${pValue.description}</FormDescription>` : ""}
                   <FormMessage />
                 </FormItem>
               )}
             />`;
-            }).join('\n')}
+              })
+              .join("\n")}
 
             <Button type="submit" disabled={submitting} className="w-full">
               {submitting ? (
@@ -328,19 +383,22 @@ export function ${pascalFuncName}Form({ onSuccess, onError, defaultValues }: ${p
   );
 }
 `;
-}).join('\n')}
+  })
+  .join("\n")}
 `;
-      fs.writeFileSync(formFilePath, formContent, 'utf8');
+      fs.writeFileSync(formFilePath, formContent, "utf8");
     }
   }
 
-  console.log('  -> TypeScript services, Server Actions, Zod validators, and forms successfully hydrated.');
+  console.log(
+    "  -> TypeScript services, Server Actions, Zod validators, and forms successfully hydrated.",
+  );
 }
 
 async function main() {
-  console.log('----------------------------------------------------');
-  console.log('   RokctAI Schema Sync: Synchronizing API Schemas');
-  console.log('----------------------------------------------------');
+  console.log("----------------------------------------------------");
+  console.log("   RokctAI Schema Sync: Synchronizing API Schemas");
+  console.log("----------------------------------------------------");
 
   let schemasSynchronized = false;
 
@@ -348,83 +406,137 @@ async function main() {
     fs.mkdirSync(SCHEMAS_DIR, { recursive: true });
 
     // 1. Fetch Remote Version
-    console.log('  -> Fetching remote schema_version.json...');
-    const remoteVersion = await fetchWithAuth('schema_version.json');
-    console.log(`     Remote Version: ${remoteVersion.version} (Generated: ${remoteVersion.timestamp})`);
+    console.log("  -> Fetching remote schema_version.json...");
+    const remoteVersion = await fetchWithAuth("schema_version.json");
+    console.log(
+      `     Remote Version: ${remoteVersion.version} (Generated: ${remoteVersion.timestamp})`,
+    );
 
     // 2. Check Local Version
-    const localVersionPath = path.join(SCHEMAS_DIR, 'schema_version.json');
+    const localVersionPath = path.join(SCHEMAS_DIR, "schema_version.json");
     let shouldFetch = true;
 
     if (fs.existsSync(localVersionPath)) {
       try {
-        const localVersion = JSON.parse(fs.readFileSync(localVersionPath, 'utf8'));
+        const localVersion = JSON.parse(
+          fs.readFileSync(localVersionPath, "utf8"),
+        );
         if (localVersion.version === remoteVersion.version) {
-          console.log('  -> Local schemas are already up-to-date with remote Monorepo.');
+          console.log(
+            "  -> Local schemas are already up-to-date with remote Monorepo.",
+          );
           shouldFetch = false;
           schemasSynchronized = true;
         }
       } catch (e) {
-        console.warn('  -> Failed to parse local schema_version.json. Re-fetching schemas.');
+        console.warn(
+          "  -> Failed to parse local schema_version.json. Re-fetching schemas.",
+        );
       }
     }
 
     if (shouldFetch) {
-      console.log('  -> Schemas out of sync. Downloading latest definitions...');
+      console.log(
+        "  -> Schemas out of sync. Downloading latest definitions...",
+      );
 
-      console.log('  -> Fetching ai_tools.json...');
-      const aiTools = await fetchWithAuth('ai_tools.json');
-      fs.writeFileSync(path.join(SCHEMAS_DIR, 'ai_tools.json'), JSON.stringify(aiTools, null, 4));
+      console.log("  -> Fetching ai_tools.json...");
+      const aiTools = await fetchWithAuth("ai_tools.json");
+      fs.writeFileSync(
+        path.join(SCHEMAS_DIR, "ai_tools.json"),
+        JSON.stringify(aiTools, null, 4),
+      );
 
-      console.log('  -> Fetching api_manifest.json...');
-      const apiManifest = await fetchWithAuth('api_manifest.json');
-      fs.writeFileSync(path.join(SCHEMAS_DIR, 'api_manifest.json'), JSON.stringify(apiManifest, null, 4));
+      console.log("  -> Fetching api_manifest.json...");
+      const apiManifest = await fetchWithAuth("api_manifest.json");
+      fs.writeFileSync(
+        path.join(SCHEMAS_DIR, "api_manifest.json"),
+        JSON.stringify(apiManifest, null, 4),
+      );
 
       // Save local version descriptor
-      fs.writeFileSync(localVersionPath, JSON.stringify(remoteVersion, null, 4));
+      fs.writeFileSync(
+        localVersionPath,
+        JSON.stringify(remoteVersion, null, 4),
+      );
 
-      console.log('  -> Schemas successfully synchronized and saved.');
+      console.log("  -> Schemas successfully synchronized and saved.");
       schemasSynchronized = true;
     }
   } catch (error) {
-    console.error('\n  [Warning] Remote schema synchronization failed:', error.message);
+    console.error(
+      "\n  [Warning] Remote schema synchronization failed:",
+      error.message,
+    );
     if (!token) {
-      console.warn('            Personal Access Token (MONOREPO_PAT) is missing. If this is a private repo, you must provide it.');
+      console.warn(
+        "            Personal Access Token (MONOREPO_PAT) is missing. If this is a private repo, you must provide it.",
+      );
     }
-    
+
     // Fallback: Check if we have local Monorepo sibling on disk
-    const localVersionPath = path.join(LOCAL_MONOREPO_SCHEMAS_DIR, 'schema_version.json');
-    const localToolsPath = path.join(LOCAL_MONOREPO_SCHEMAS_DIR, 'ai_tools.json');
-    const localManifestPath = path.join(LOCAL_MONOREPO_SCHEMAS_DIR, 'api_manifest.json');
+    const localVersionPath = path.join(
+      LOCAL_MONOREPO_SCHEMAS_DIR,
+      "schema_version.json",
+    );
+    const localToolsPath = path.join(
+      LOCAL_MONOREPO_SCHEMAS_DIR,
+      "ai_tools.json",
+    );
+    const localManifestPath = path.join(
+      LOCAL_MONOREPO_SCHEMAS_DIR,
+      "api_manifest.json",
+    );
 
     if (fs.existsSync(localToolsPath) && fs.existsSync(localManifestPath)) {
-      console.log('  -> Found local schemas in backend development directory! Copying...');
+      console.log(
+        "  -> Found local schemas in backend development directory! Copying...",
+      );
       try {
-        fs.copyFileSync(localToolsPath, path.join(SCHEMAS_DIR, 'ai_tools.json'));
-        fs.copyFileSync(localManifestPath, path.join(SCHEMAS_DIR, 'api_manifest.json'));
+        fs.copyFileSync(
+          localToolsPath,
+          path.join(SCHEMAS_DIR, "ai_tools.json"),
+        );
+        fs.copyFileSync(
+          localManifestPath,
+          path.join(SCHEMAS_DIR, "api_manifest.json"),
+        );
         if (fs.existsSync(localVersionPath)) {
-          fs.copyFileSync(localVersionPath, path.join(SCHEMAS_DIR, 'schema_version.json'));
+          fs.copyFileSync(
+            localVersionPath,
+            path.join(SCHEMAS_DIR, "schema_version.json"),
+          );
         }
-        console.log('  -> Local developer schemas successfully staged.');
+        console.log("  -> Local developer schemas successfully staged.");
         schemasSynchronized = true;
       } catch (copyErr) {
-        console.error('  -> Failed to copy local schemas:', copyErr.message);
+        console.error("  -> Failed to copy local schemas:", copyErr.message);
       }
     } else {
-      console.warn('            No local backend developer schemas found. Checking cached schemas...');
-      const toolsExist = fs.existsSync(path.join(SCHEMAS_DIR, 'ai_tools.json'));
-      const manifestExists = fs.existsSync(path.join(SCHEMAS_DIR, 'api_manifest.json'));
+      console.warn(
+        "            No local backend developer schemas found. Checking cached schemas...",
+      );
+      const toolsExist = fs.existsSync(path.join(SCHEMAS_DIR, "ai_tools.json"));
+      const manifestExists = fs.existsSync(
+        path.join(SCHEMAS_DIR, "api_manifest.json"),
+      );
       if (toolsExist && manifestExists) {
-        console.log('  -> Staging existing cached schemas.');
+        console.log("  -> Staging existing cached schemas.");
         schemasSynchronized = true;
       } else {
         // Fail-soft: no remote, no local backend checkout, no cached copies.
         // Skip hydration entirely and leave the previously generated files
         // (app/services/platform, app/actions/platform, lib/platform/validators,
         // components/platform/forms) untouched so the build pipeline can proceed.
-        console.warn('  [Warning] Core schemas (ai_tools.json / api_manifest.json) are unavailable from every source.');
-        console.warn('            Skipping schema sync and TypeScript hydration; existing generated files are left as-is.');
-        console.warn('            To restore syncing, point GITHUB_RAW_BASE at a live schema source or commit the JSONs to app/config/schemas/.');
+        console.warn(
+          "  [Warning] Core schemas (ai_tools.json / api_manifest.json) are unavailable from every source.",
+        );
+        console.warn(
+          "            Skipping schema sync and TypeScript hydration; existing generated files are left as-is.",
+        );
+        console.warn(
+          "            To restore syncing, point GITHUB_RAW_BASE at a live schema source or commit the JSONs to app/config/schemas/.",
+        );
       }
     }
   }
@@ -432,18 +544,27 @@ async function main() {
   // Hydrate TS files if schemas were successfully staged
   if (schemasSynchronized) {
     try {
-      const aiTools = JSON.parse(fs.readFileSync(path.join(SCHEMAS_DIR, 'ai_tools.json'), 'utf8'));
-      const apiManifest = JSON.parse(fs.readFileSync(path.join(SCHEMAS_DIR, 'api_manifest.json'), 'utf8'));
+      const aiTools = JSON.parse(
+        fs.readFileSync(path.join(SCHEMAS_DIR, "ai_tools.json"), "utf8"),
+      );
+      const apiManifest = JSON.parse(
+        fs.readFileSync(path.join(SCHEMAS_DIR, "api_manifest.json"), "utf8"),
+      );
       generateTypeScriptFiles(aiTools, apiManifest);
     } catch (genErr) {
       // Fail-soft: a broken/unparsable cached schema should not block the
       // whole build pipeline. Warn loudly and exit 0.
-      console.error('  [Warning] Failed to generate TypeScript proxy services and actions:', genErr.message);
-      console.warn('            Continuing without regeneration; check the cached schemas in app/config/schemas/.');
+      console.error(
+        "  [Warning] Failed to generate TypeScript proxy services and actions:",
+        genErr.message,
+      );
+      console.warn(
+        "            Continuing without regeneration; check the cached schemas in app/config/schemas/.",
+      );
     }
   }
 
-  console.log('----------------------------------------------------\n');
+  console.log("----------------------------------------------------\n");
 }
 
 main();

@@ -41,9 +41,7 @@ export default async function CoursesPage() {
 
       {courses.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-lg">
-          <p className="text-xl text-gray-500">
-            No subjects published yet.
-          </p>
+          <p className="text-xl text-gray-500">No subjects published yet.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

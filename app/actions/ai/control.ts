@@ -41,14 +41,14 @@ export async function broadcastAnnouncement(data: {
 
   try {
     const response = await gatewayCall(client, "frappe.client.insert", {
-        doc: {
-          doctype: "Announcement",
-          subject: data.subject,
-          description: data.message,
-          starts_on: new Date().toISOString().split("T")[0],
-          is_public: 1,
-        },
-      });
+      doc: {
+        doctype: "Announcement",
+        subject: data.subject,
+        description: data.message,
+        starts_on: new Date().toISOString().split("T")[0],
+        is_public: 1,
+      },
+    });
     return { success: true, message: "Announcement broadcasted successfully." };
   } catch (e: any) {
     return { success: false, error: e?.message };

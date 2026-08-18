@@ -40,12 +40,12 @@ export async function checkUpcomingHoliday() {
     // Find the next holiday after today
     const today = new Date().toISOString().split("T")[0];
     const response = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Holiday",
-        filters: [["holiday_date", ">", today]],
-        fields: ["name", "description", "holiday_date"],
-        limit_page_length: 1,
-        order_by: "holiday_date asc",
-      });
+      doctype: "Holiday",
+      filters: [["holiday_date", ">", today]],
+      fields: ["name", "description", "holiday_date"],
+      limit_page_length: 1,
+      order_by: "holiday_date asc",
+    });
 
     if (response?.message?.length > 0) {
       const holiday = response.message[0];
@@ -55,23 +55,27 @@ export async function checkUpcomingHoliday() {
       if (session?.user?.email) {
         // 1. Check for Personal Note
         const note = await gatewayCall(client, "frappe.client.get_list", {
-            doctype: "Note",
-            filters: [
-              ["title", "like", `%Working on ${holidayTitle}%`],
-              ["owner", "=", session.user.email],
-            ],
-            limit_page_length: 1,
-          });
+          doctype: "Note",
+          filters: [
+            ["title", "like", `%Working on ${holidayTitle}%`],
+            ["owner", "=", session.user.email],
+          ],
+          limit_page_length: 1,
+        });
 
         // 2. Check for Announcement
-        const announcement = await gatewayCall(client, "frappe.client.get_list", {
+        const announcement = await gatewayCall(
+          client,
+          "frappe.client.get_list",
+          {
             doctype: "Announcement",
             filters: [
               ["subject", "like", `%${holidayTitle}%`],
               ["owner", "=", session.user.email],
             ],
             limit_page_length: 1,
-          });
+          },
+        );
 
         if (
           (note?.message && note.message.length > 0) ||
@@ -104,25 +108,25 @@ export async function announceHolidayWork({
     if (audience === "Me Only") {
       // Log a Note for the user
       await gatewayCall(client, "frappe.client.insert", {
-          doc: {
-            doctype: "Note",
-            title: `Working on ${holiday}`,
-            public: 0,
-            content: `I will be working on the holiday: ${holiday}.`,
-          },
-        });
+        doc: {
+          doctype: "Note",
+          title: `Working on ${holiday}`,
+          public: 0,
+          content: `I will be working on the holiday: ${holiday}.`,
+        },
+      });
       return { success: true, message: "Logged your working day in Notes." };
     } else if (audience === "All") {
       // Create a Global Announcement
       await gatewayCall(client, "frappe.client.insert", {
-          doc: {
-            doctype: "Announcement",
-            subject: `Working Day: ${holiday}`,
-            content: `Dear Team,<br>Please note that we will be operational on ${holiday}.`,
-            owner: session?.user?.email,
-            status: "Active",
-          },
-        });
+        doc: {
+          doctype: "Announcement",
+          subject: `Working Day: ${holiday}`,
+          content: `Dear Team,<br>Please note that we will be operational on ${holiday}.`,
+          owner: session?.user?.email,
+          status: "Active",
+        },
+      });
       return {
         success: true,
         message: "Sent global announcement to all employees.",
@@ -137,13 +141,13 @@ export async function announceHolidayWork({
 
       const deptString = departments.join(", ");
       await gatewayCall(client, "frappe.client.insert", {
-          doc: {
-            doctype: "Announcement",
-            subject: `Working Day for ${deptString}`,
-            content: `Attention ${deptString} teams,<br>You are scheduled to work on ${holiday}.`,
-            status: "Active",
-          },
-        });
+        doc: {
+          doctype: "Announcement",
+          subject: `Working Day for ${deptString}`,
+          content: `Attention ${deptString} teams,<br>You are scheduled to work on ${holiday}.`,
+          status: "Active",
+        },
+      });
       return {
         success: true,
         message: `Sent announcement targeted at: ${deptString}.`,

@@ -39,21 +39,21 @@ export async function getMyDeals(data: { modelId?: string } = {}) {
 
   try {
     const deals = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Opportunity",
-        filters: {
-          status: ["in", ["Open", "Quotation", "Replied"]],
-        },
-        fields: [
-          "name",
-          "party_name",
-          "opportunity_amount",
-          "status",
-          "expected_closing",
-          "probability",
-        ],
-        order_by: "creation desc",
-        limit_page_length: 10,
-      });
+      doctype: "Opportunity",
+      filters: {
+        status: ["in", ["Open", "Quotation", "Replied"]],
+      },
+      fields: [
+        "name",
+        "party_name",
+        "opportunity_amount",
+        "status",
+        "expected_closing",
+        "probability",
+      ],
+      order_by: "creation desc",
+      limit_page_length: 10,
+    });
 
     return { success: true, deals: deals?.message || [] };
   } catch (e: any) {
@@ -72,24 +72,24 @@ export async function getMyLeads(data: { modelId?: string } = {}) {
 
   try {
     const leads = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "CRM Lead",
-        filters: { status: ["!=", "Converted"] },
-        fields: [
-          "name",
-          "lead_name",
-          "company_name",
-          "status",
-          "email_id",
-          "mobile_no",
-          "id_number",
-          "kyc_status",
-          "first_name",
-          "last_name",
-          "organization",
-        ],
-        order_by: "creation desc",
-        limit_page_length: 10,
-      });
+      doctype: "CRM Lead",
+      filters: { status: ["!=", "Converted"] },
+      fields: [
+        "name",
+        "lead_name",
+        "company_name",
+        "status",
+        "email_id",
+        "mobile_no",
+        "id_number",
+        "kyc_status",
+        "first_name",
+        "last_name",
+        "organization",
+      ],
+      order_by: "creation desc",
+      limit_page_length: 10,
+    });
 
     return { success: true, leads: leads?.message || [] };
   } catch (e: any) {
@@ -111,16 +111,16 @@ export async function createAiLead(data: {
 
   try {
     const response = await gatewayCall(client, "frappe.client.insert", {
-        doc: {
-          doctype: "CRM Lead",
-          lead_name: data.lead_name,
-          organization: data.organization,
-          email_id: data.email_id,
-          mobile_no: data.mobile_no,
-          id_number: data.id_number,
-          first_name: data.lead_name, // Defaulting first_name to lead_name if empty
-        },
-      });
+      doc: {
+        doctype: "CRM Lead",
+        lead_name: data.lead_name,
+        organization: data.organization,
+        email_id: data.email_id,
+        mobile_no: data.mobile_no,
+        id_number: data.id_number,
+        first_name: data.lead_name, // Defaulting first_name to lead_name if empty
+      },
+    });
     revalidatePath("/handson/all/crm/leads");
     return {
       success: true,
@@ -144,13 +144,13 @@ export async function updateAiLead(data: {
 
   try {
     const response = await gatewayCall(client, "frappe.client.set_value", {
-        doctype: "CRM Lead",
-        name: data.name,
-        fieldname: {
-          kyc_status: data.kyc_status,
-          id_number: data.id_number,
-        },
-      });
+      doctype: "CRM Lead",
+      name: data.name,
+      fieldname: {
+        kyc_status: data.kyc_status,
+        id_number: data.id_number,
+      },
+    });
     revalidatePath("/handson/all/crm/leads");
     return {
       success: true,
@@ -180,11 +180,11 @@ export async function getCustomers(
     }
 
     const customers = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Customer",
-        filters: filters,
-        fields: ["name", "customer_name", "customer_type", "territory"],
-        limit_page_length: 10,
-      });
+      doctype: "Customer",
+      filters: filters,
+      fields: ["name", "customer_name", "customer_type", "territory"],
+      limit_page_length: 10,
+    });
 
     return { success: true, customers: (customers as any)?.message || [] };
   } catch (e: any) {
@@ -205,12 +205,12 @@ export async function getCommunicationLogs(
   const client = await getClient();
   try {
     const logs = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Communication",
-        filters: { communication_medium: "Email" }, // Filter email only?
-        fields: ["subject", "sender", "recipients", "communication_date"],
-        order_by: "communication_date desc",
-        limit_page_length: 10,
-      });
+      doctype: "Communication",
+      filters: { communication_medium: "Email" }, // Filter email only?
+      fields: ["subject", "sender", "recipients", "communication_date"],
+      order_by: "communication_date desc",
+      limit_page_length: 10,
+    });
     return { success: true, logs: (logs as any)?.message || [] };
   } catch (e: any) {
     return { success: false, error: e?.message };

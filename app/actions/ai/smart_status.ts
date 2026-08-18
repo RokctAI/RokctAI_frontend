@@ -38,12 +38,7 @@ import {
 interface SmartActionInput {
   query: string;
   status:
-    | "Approved"
-    | "Rejected"
-    | "Delivered"
-    | "Paid"
-    | "Cancelled"
-    | "Completed";
+    "Approved" | "Rejected" | "Delivered" | "Paid" | "Cancelled" | "Completed";
   document_type?:
     | "Quotation"
     | "Sales Order"
@@ -150,22 +145,26 @@ async function fuzzySearch(doctype: string, query: string) {
   // Using 'or_filters' if strictly needed, or just multiple calls.
   // Simple approach: filter by name like query
   const results = await gatewayCall(client, "frappe.client.get_list", {
-      doctype,
-      filters: [["name", "like", `%${query}%`]],
-      fields: ["name", "customer_name", "status", "grand_total"],
-      limit_page_length: 5,
-    });
+    doctype,
+    filters: [["name", "like", `%${query}%`]],
+    fields: ["name", "customer_name", "status", "grand_total"],
+    limit_page_length: 5,
+  });
 
   // If no results by ID, search by customer/party name?
   // This is optional but powerful.
   if (!results?.message?.length) {
-    const customerResults = await gatewayCall(client, "frappe.client.get_list", {
+    const customerResults = await gatewayCall(
+      client,
+      "frappe.client.get_list",
+      {
         doctype,
         filters: [["customer_name", "like", `%${query}%`]],
         fields: ["name", "customer_name", "status"],
         limit_page_length: 5,
         order_by: "creation desc", // prioritize recent
-      });
+      },
+    );
     return customerResults?.message || [];
   }
 
@@ -174,7 +173,11 @@ async function fuzzySearch(doctype: string, query: string) {
 
 async function updateDocStatus(doctype: string, name: string, status: string) {
   const client = await getClient();
-  await gatewayCall(client, "frappe.client.set_value", { doctype, name, fieldname: { status } });
+  await gatewayCall(client, "frappe.client.set_value", {
+    doctype,
+    name,
+    fieldname: { status },
+  });
 
   // NOTIFY
   const { notifyDecision } = await import("@/app/actions/ai/notifications");

@@ -144,7 +144,11 @@ export function PurchaseOrderList({ orders, canEdit }: PurchaseOrderListProps) {
                       <Link
                         href={`/handson/all/financials/accounts/purchase-invoice/new?from_po=${order.name}`}
                       >
-                        <Button variant="ghost" size="icon" title={t("Make Bill")}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title={t("Make Bill")}
+                        >
                           <CreditCard className="h-4 w-4 text-green-600" />
                         </Button>
                       </Link>

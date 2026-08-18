@@ -149,42 +149,51 @@ export default function CategoriesPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-         <div>
-           <h1 className="text-3xl font-bold">{t('app.paas.dashboard.products.categories.title')}</h1>
-           <p className="text-muted-foreground">
-             {t('app.paas.dashboard.products.categories.desc')}
-           </p>
-         </div>
-         <Button onClick={() => handleOpenDialog()}>
-           <Plus className="mr-2 size-4" /> {t('app.paas.dashboard.products.categories.btn_add')}
-         </Button>
+        <div>
+          <h1 className="text-3xl font-bold">
+            {t("app.paas.dashboard.products.categories.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("app.paas.dashboard.products.categories.desc")}
+          </p>
+        </div>
+        <Button onClick={() => handleOpenDialog()}>
+          <Plus className="mr-2 size-4" />{" "}
+          {t("app.paas.dashboard.products.categories.btn_add")}
+        </Button>
       </div>
 
       <Card>
-         <CardHeader>
-           <CardTitle>{t('app.paas.dashboard.products.categories.card_title')}</CardTitle>
-           <CardDescription>
-             {t('app.paas.dashboard.products.categories.card_desc')}
-           </CardDescription>
-         </CardHeader>
+        <CardHeader>
+          <CardTitle>
+            {t("app.paas.dashboard.products.categories.card_title")}
+          </CardTitle>
+          <CardDescription>
+            {t("app.paas.dashboard.products.categories.card_desc")}
+          </CardDescription>
+        </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-               <TableRow>
-                 <TableHead>{t('app.paas.dashboard.products.categories.col_name')}</TableHead>
-                 <TableHead>{t('app.paas.dashboard.products.categories.col_sort')}</TableHead>
-                 <TableHead className="text-right">Actions</TableHead>
-               </TableRow>
+              <TableRow>
+                <TableHead>
+                  {t("app.paas.dashboard.products.categories.col_name")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.products.categories.col_sort")}
+                </TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {categories.length === 0 ? (
                 <TableRow>
-                   <TableCell
-                     colSpan={3}
-                     className="text-center h-24 text-muted-foreground"
-                   >
-                     {t('app.paas.dashboard.products.categories.no_data')}
-                   </TableCell>
+                  <TableCell
+                    colSpan={3}
+                    className="text-center h-24 text-muted-foreground"
+                  >
+                    {t("app.paas.dashboard.products.categories.no_data")}
+                  </TableCell>
                 </TableRow>
               ) : (
                 categories.map((category) => (
@@ -220,62 +229,70 @@ export default function CategoriesPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
-           <DialogHeader>
-             <DialogTitle>
-               {editing ? t('app.paas.dashboard.products.categories.dialog_edit') : t('app.paas.dashboard.products.categories.dialog_add')}
-             </DialogTitle>
-             <DialogDescription>
-               {editing
-                 ? t('app.paas.dashboard.products.categories.dialog_edit_desc')
-                 : t('app.paas.dashboard.products.categories.dialog_add_desc')}
-             </DialogDescription>
-           </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>
+              {editing
+                ? t("app.paas.dashboard.products.categories.dialog_edit")
+                : t("app.paas.dashboard.products.categories.dialog_add")}
+            </DialogTitle>
+            <DialogDescription>
+              {editing
+                ? t("app.paas.dashboard.products.categories.dialog_edit_desc")
+                : t("app.paas.dashboard.products.categories.dialog_add_desc")}
+            </DialogDescription>
+          </DialogHeader>
           <div className="grid gap-4 py-4">
-             <div className="grid gap-2">
-               <Label htmlFor="name">{t('app.paas.dashboard.products.categories.label_name')}</Label>
-               <Input
-                 id="name"
-                 value={formData.name}
-                 onChange={(e) =>
-                   setFormData((prev) => ({ ...prev, name: e.target.value }))
-                 }
-                 placeholder={t('app.paas.dashboard.products.categories.ph_name')}
-               />
-             </div>
-             <div className="grid gap-2">
-               <Label htmlFor="sort">{t('app.paas.dashboard.products.categories.label_sort')}</Label>
-               <Input
-                 id="sort"
-                 type="number"
-                 value={formData.sort}
-                 onChange={(e) =>
-                   setFormData((prev) => ({
-                     ...prev,
-                     sort: parseInt(e.target.value) || 0,
-                   }))
-                 }
-                 placeholder="0"
-               />
-             </div>
-             <ImageUpload
-               label={t('app.paas.dashboard.products.categories.label_image')}
-               value={formData.image}
-               onChange={(url) =>
-                 setFormData((prev) => ({ ...prev, image: url }))
-               }
-             />
+            <div className="grid gap-2">
+              <Label htmlFor="name">
+                {t("app.paas.dashboard.products.categories.label_name")}
+              </Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
+                placeholder={t(
+                  "app.paas.dashboard.products.categories.ph_name",
+                )}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="sort">
+                {t("app.paas.dashboard.products.categories.label_sort")}
+              </Label>
+              <Input
+                id="sort"
+                type="number"
+                value={formData.sort}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    sort: parseInt(e.target.value) || 0,
+                  }))
+                }
+                placeholder="0"
+              />
+            </div>
+            <ImageUpload
+              label={t("app.paas.dashboard.products.categories.label_image")}
+              value={formData.image}
+              onChange={(url) =>
+                setFormData((prev) => ({ ...prev, image: url }))
+              }
+            />
           </div>
-           <DialogFooter>
-             <Button onClick={handleSubmit} disabled={processing}>
-               {processing ? (
-                 <Loader2 className="size-4 animate-spin" />
-               ) : editing ? (
-                 t('common.update')
-               ) : (
-                 t('common.create')
-               )}
-             </Button>
-           </DialogFooter>
+          <DialogFooter>
+            <Button onClick={handleSubmit} disabled={processing}>
+              {processing ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : editing ? (
+                t("common.update")
+              ) : (
+                t("common.create")
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

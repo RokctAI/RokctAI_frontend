@@ -163,14 +163,14 @@ export default function ChatPage() {
 
           <div className="p-4 bg-white border-t rounded-b-lg">
             <div className="flex gap-2">
-                 <Input
-                   value={newMessage}
-                   onChange={(e) => setNewMessage(e.target.value)}
-                   onKeyDown={handleKeyDown}
-                   placeholder={t('app.workspace.chat.placeholder')}
-                   disabled={loading}
-                   className="flex-1 bg-slate-50 border-slate-200 focus-visible:ring-offset-0"
-                 />
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={t("app.workspace.chat.placeholder")}
+                disabled={loading}
+                className="flex-1 bg-slate-50 border-slate-200 focus-visible:ring-offset-0"
+              />
               <Button
                 onClick={handleSendMessage}
                 disabled={loading || !newMessage.trim()}

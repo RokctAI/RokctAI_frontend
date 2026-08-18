@@ -42,32 +42,32 @@ export async function createNotification(
 
   try {
     await gatewayCall(client, "frappe.client.insert", {
-        doc: {
-          doctype: "Notification Log",
-          subject: subject,
-          for_user: recipientEmail,
-          email_content: message,
-          type: "Alert",
-          document_type: "User", // Generic link
-          document_name: recipientEmail,
-          link: link,
-        },
-      });
+      doc: {
+        doctype: "Notification Log",
+        subject: subject,
+        for_user: recipientEmail,
+        email_content: message,
+        type: "Alert",
+        document_type: "User", // Generic link
+        document_name: recipientEmail,
+        link: link,
+      },
+    });
     return { success: true };
   } catch (e) {
     console.error("Failed to create notification", e);
     // Fallback: Try creating a Note if Notification Log fails (e.g. permission issues)
     try {
       await gatewayCall(client, "frappe.client.insert", {
-          doc: {
-            doctype: "Note",
-            title: subject,
-            public: 0,
-            content: message,
-            // owner: recipientEmail // Only works if we are admin, which we are not always.
-            // Notes are private to creator usually.
-          },
-        });
+        doc: {
+          doctype: "Note",
+          title: subject,
+          public: 0,
+          content: message,
+          // owner: recipientEmail // Only works if we are admin, which we are not always.
+          // Notes are private to creator usually.
+        },
+      });
       return { success: true, note: "Fallback to Note" };
     } catch (ex) {
       return { success: false };
@@ -84,17 +84,20 @@ export async function notifyDecision(
 
   try {
     // 1. Fetch the document to find the owner/employee
-    const doc = await gatewayCall(client, "frappe.client.get", { doctype, name: docname });
+    const doc = await gatewayCall(client, "frappe.client.get", {
+      doctype,
+      name: docname,
+    });
 
     let recipients: string[] = [];
 
     if (doctype === "Project") {
       // Fetch Team
       const userList = await gatewayCall(client, "frappe.client.get_list", {
-          doctype: "Project User",
-          filters: { parent: docname },
-          fields: ["user"],
-        });
+        doctype: "Project User",
+        filters: { parent: docname },
+        fields: ["user"],
+      });
       if (userList?.message) {
         recipients = userList.message.map((u: any) => u.user);
       }
@@ -107,10 +110,10 @@ export async function notifyDecision(
       let recipient = doc.message.owner;
       if (doc.message.employee) {
         const emp = await gatewayCall(client, "frappe.client.get_value", {
-            doctype: "Employee",
-            filters: { name: doc.message.employee },
-            fieldname: "user_id",
-          });
+          doctype: "Employee",
+          filters: { name: doc.message.employee },
+          fieldname: "user_id",
+        });
         if (emp?.message?.user_id) {
           recipient = emp.message.user_id;
         }
@@ -141,20 +144,20 @@ async function notifyDependentTasks(client: any, completedTaskId: string) {
   // We query the Child Table "Task Depends On" to find parents
   try {
     const dependentRows = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Task Depends On",
-        filters: { task: completedTaskId },
-        fields: ["parent"],
-      });
+      doctype: "Task Depends On",
+      filters: { task: completedTaskId },
+      fields: ["parent"],
+    });
 
     if (dependentRows?.message) {
       for (const row of dependentRows.message) {
         const dependentTaskId = row.parent;
         // Fetch the task to get the assignee
         const taskInfo = await gatewayCall(client, "frappe.client.get_value", {
-            doctype: "Task",
-            filters: { name: dependentTaskId },
-            fieldname: ["subject", "allocated_to", "owner"], // allocated_to is usually the field for assignee
-          });
+          doctype: "Task",
+          filters: { name: dependentTaskId },
+          fieldname: ["subject", "allocated_to", "owner"], // allocated_to is usually the field for assignee
+        });
 
         if (taskInfo?.message) {
           const { subject, allocated_to, owner } = taskInfo.message;

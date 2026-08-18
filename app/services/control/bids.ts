@@ -23,7 +23,8 @@
 import { ControlBaseService } from "./base";
 
 // Frappe whitelisted responses may arrive as the bare value or wrapped in { message }.
-const unwrap = (res: any) => (res && typeof res === "object" && "message" in res ? res.message : res);
+const unwrap = (res: any) =>
+  res && typeof res === "object" && "message" in res ? res.message : res;
 
 export interface ChecklistItem {
   name: string;
@@ -60,41 +61,62 @@ export interface TenderDetail {
 export class TenderBidService {
   static async getTenderDetail(slug: string): Promise<TenderDetail> {
     return unwrap(
-      await ControlBaseService.call("control.control.api.tenders.get_tender_detail", { slug }),
+      await ControlBaseService.call(
+        "control.control.api.tenders.get_tender_detail",
+        { slug },
+      ),
     );
   }
 
   static async claimTender(slug: string): Promise<TenderBid> {
     return unwrap(
-      await ControlBaseService.call("control.control.api.tenders.claim_tender", { slug }),
+      await ControlBaseService.call(
+        "control.control.api.tenders.claim_tender",
+        { slug },
+      ),
     );
   }
 
   static async getMyBids(): Promise<TenderBid[]> {
-    return unwrap(await ControlBaseService.call("control.control.api.tenders.get_my_bids", {}));
+    return unwrap(
+      await ControlBaseService.call(
+        "control.control.api.tenders.get_my_bids",
+        {},
+      ),
+    );
   }
 
   static async updateBidStatus(
     bid: string,
     status: string,
-    extras: { submitted_on?: string; outcome_value?: number; outcome_notes?: string } = {},
+    extras: {
+      submitted_on?: string;
+      outcome_value?: number;
+      outcome_notes?: string;
+    } = {},
   ): Promise<TenderBid> {
     return unwrap(
-      await ControlBaseService.call("control.control.api.tenders.update_bid_status", {
-        bid,
-        status,
-        ...extras,
-      }),
+      await ControlBaseService.call(
+        "control.control.api.tenders.update_bid_status",
+        {
+          bid,
+          status,
+          ...extras,
+        },
+      ),
     );
   }
 
   static async updateChecklistItem(bid: string, item: string, done: boolean) {
     return unwrap(
-      await ControlBaseService.call("control.control.api.tenders.update_checklist_item", {
-        bid,
-        item,
-        done: done ? 1 : 0,
-      }),
+      await ControlBaseService.call(
+        "control.control.api.tenders.update_checklist_item",
+        {
+          bid,
+          item,
+          done: done ? 1 : 0,
+        },
+      ),
     );
   }
 }
