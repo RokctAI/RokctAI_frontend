@@ -35,6 +35,12 @@ import { revalidatePath } from "next/cache";
 import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 // --- PERFORMANCE (GOALS) ---
+// Converged onto the canonical domain module (see
+// app/actions/domains/hr/goals.ts and app/lib/action-kit.ts). These thin
+// delegates keep the existing import path working for the AI/chat surface.
+// (Async wrappers rather than `export ... from` because "use server"
+// modules may only export async functions.)
+import * as goalsDomain from "@/app/actions/domains/hr/goals";
 
 export async function createAiGoal(data: {
   description: string;
@@ -42,50 +48,11 @@ export async function createAiGoal(data: {
   end_date?: string;
   modelId?: string;
 }) {
-  const session = await auth();
-  const client = await getClient();
+  return goalsDomain.createAiGoal(data);
+}
 
-  const modelToCharge = data.modelId || AI_MODELS.FREE.id;
-  const hasQuota = await checkTokenQuota(session);
-  if (!hasQuota) {
-    return { success: false, error: "Quota exceeded." };
-  }
-
-  try {
-    // Fetch current employee
-    const employeeRes = (await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: "name",
-      })) as any;
-    const employee = employeeRes?.message?.name;
-
-    if (!employee) {
-      return {
-        success: false,
-        error: "Employee record not found for your user.",
-      };
-    }
-
-    const response = await gatewayCall(client, "frappe.client.insert", {
-        doc: {
-          doctype: "Goal",
-          employee: employee,
-          goal: data.description,
-          start_date: data.start_date || new Date().toISOString().split("T")[0],
-          end_date: data.end_date,
-          status: "Open",
-        },
-      });
-
-    if (response?.message) {
-      if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
-      return { success: true, message: response.message };
-    }
-    return { success: false, error: "No response from backend" };
-  } catch (e: any) {
-    return { success: false, error: e?.message || "Unknown error" };
-  }
+export async function getAiGoals(data: { modelId?: string } = {}) {
+  return goalsDomain.getAiGoals(data);
 }
 
 export async function updateAiMyProfile(data: {
@@ -120,34 +87,6 @@ export async function updateAiMyProfile(data: {
     return { success: true, message: "Profile updated successfully via AI." };
   } catch (e: any) {
     return { success: false, error: e?.message || "Failed to update profile." };
-  }
-}
-
-export async function getAiGoals(data: { modelId?: string } = {}) {
-  const session = await auth();
-  const client = await getClient();
-
-  // We default to checking auth for security.
-  try {
-    // Fetch current employee
-    const employeeRes = await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session?.user?.email },
-        fieldname: "name",
-      });
-    const employee = employeeRes?.message?.name;
-    if (!employee) return { success: false, error: "Employee not found" };
-
-    const goals = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Goal",
-        filters: { employee: employee },
-        fields: ["name", "goal", "status", "progress", "end_date"],
-        limit_page_length: 10,
-      });
-
-    return { success: true, goals: goals?.message || [] };
-  } catch (e: any) {
-    return { success: false, error: e?.message };
   }
 }
 

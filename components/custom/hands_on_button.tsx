@@ -25,6 +25,8 @@
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { AI_FIRST } from "@/app/config/compose";
+
 import { Button } from "../ui/button";
 
 export const HandsOnButton = ({ canUseAI = true }: { canUseAI?: boolean }) => {
@@ -32,6 +34,12 @@ export const HandsOnButton = ({ canUseAI = true }: { canUseAI?: boolean }) => {
   const pathname = usePathname();
 
   const isHandsOnPage = pathname === "/handson";
+
+  // Compose-time gate: without the agent SDK there is no Auto (chat) mode to
+  // switch to, so the toggle is not offered on the hands-on page at all.
+  if (!AI_FIRST && isHandsOnPage) {
+    return null;
+  }
 
   const handleClick = () => {
     if (isHandsOnPage) {
