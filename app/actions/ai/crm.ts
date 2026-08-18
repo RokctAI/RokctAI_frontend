@@ -72,7 +72,7 @@ export async function getMyLeads(data: { modelId?: string } = {}) {
 
   try {
     const leads = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "CRM Lead",
+        doctype: "Lead",
         filters: { status: ["!=", "Converted"] },
         fields: [
           "name",
@@ -112,7 +112,7 @@ export async function createAiLead(data: {
   try {
     const response = await gatewayCall(client, "frappe.client.insert", {
         doc: {
-          doctype: "CRM Lead",
+          doctype: "Lead",
           lead_name: data.lead_name,
           organization: data.organization,
           email_id: data.email_id,
@@ -144,7 +144,7 @@ export async function updateAiLead(data: {
 
   try {
     const response = await gatewayCall(client, "frappe.client.set_value", {
-        doctype: "CRM Lead",
+        doctype: "Lead",
         name: data.name,
         fieldname: {
           kyc_status: data.kyc_status,
