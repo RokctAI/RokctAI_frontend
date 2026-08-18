@@ -26,40 +26,23 @@ import { revalidatePath } from "next/cache";
 import { verifyHrRole } from "@/app/lib/roles";
 import { PerformanceService } from "@/app/services/all/hrms/performance";
 
+// Goals converged onto the canonical domain module (see
+// app/actions/domains/hr/goals.ts and app/lib/action-kit.ts). These thin
+// delegates keep the existing import path working for the hands-on pages.
+// (Async wrappers rather than `export ... from` because "use server"
+// modules may only export async functions.)
+import * as goalsDomain from "@/app/actions/domains/hr/goals";
+
 export async function getAllGoals() {
-  if (!(await verifyHrRole())) return [];
-  try {
-    return await PerformanceService.getGoals();
-  } catch (e) {
-    console.error("Failed to fetch Goals", e);
-    return [];
-  }
+  return goalsDomain.getAllGoals();
 }
 
 export async function createGoal(data: any) {
-  if (!(await verifyHrRole())) return { success: false, error: "Unauthorized" };
-  try {
-    const result = await PerformanceService.createGoal(data);
-    revalidatePath("/handson/all/hrms/performance");
-    return {
-      success: true,
-      message: "Goal created successfully",
-      data: result,
-    };
-  } catch (e: any) {
-    return { success: false, error: e.message || "Failed to create Goal" };
-  }
+  return goalsDomain.createGoal(data);
 }
 
 export async function updateGoal(name: string, data: any) {
-  if (!(await verifyHrRole())) return { success: false, error: "Unauthorized" };
-  try {
-    await PerformanceService.updateGoal(name, data);
-    revalidatePath("/handson/all/hrms/performance");
-    return { success: true, message: "Goal updated successfully" };
-  } catch (e: any) {
-    return { success: false, error: e.message || "Failed to update Goal" };
-  }
+  return goalsDomain.updateGoal(name, data);
 }
 
 export async function getAllAppraisals() {
