@@ -20,7 +20,15 @@
  * SOFTWARE.
  */
 
+// [SDK-MANAGED] The canonical copy of this file lives in the tender module
+// (corporate/tender/nextjs/templates/...). Edits here should be mirrored there.
+
 import { ControlBaseService } from "./base";
+
+// Gateway contract (control/hooks.py + app/services/base/platform-gateway.ts):
+// the control gateway only serves cmds carrying the `control:` prefix, so
+// every call below uses the registered `control:<name>` cmd — never the raw
+// dotted `control.control.api.tenders.*` path (which the gateway rejects).
 
 // Frappe whitelisted responses may arrive as the bare value or wrapped in { message }.
 const unwrap = (res: any) => (res && typeof res === "object" && "message" in res ? res.message : res);
@@ -60,18 +68,18 @@ export interface TenderDetail {
 export class TenderBidService {
   static async getTenderDetail(slug: string): Promise<TenderDetail> {
     return unwrap(
-      await ControlBaseService.call("control.control.api.tenders.get_tender_detail", { slug }),
+      await ControlBaseService.call("control:get_tender_detail", { slug }),
     );
   }
 
   static async claimTender(slug: string): Promise<TenderBid> {
     return unwrap(
-      await ControlBaseService.call("control.control.api.tenders.claim_tender", { slug }),
+      await ControlBaseService.call("control:claim_tender", { slug }),
     );
   }
 
   static async getMyBids(): Promise<TenderBid[]> {
-    return unwrap(await ControlBaseService.call("control.control.api.tenders.get_my_bids", {}));
+    return unwrap(await ControlBaseService.call("control:get_my_bids", {}));
   }
 
   static async updateBidStatus(
@@ -80,7 +88,7 @@ export class TenderBidService {
     extras: { submitted_on?: string; outcome_value?: number; outcome_notes?: string } = {},
   ): Promise<TenderBid> {
     return unwrap(
-      await ControlBaseService.call("control.control.api.tenders.update_bid_status", {
+      await ControlBaseService.call("control:update_bid_status", {
         bid,
         status,
         ...extras,
@@ -90,7 +98,7 @@ export class TenderBidService {
 
   static async updateChecklistItem(bid: string, item: string, done: boolean) {
     return unwrap(
-      await ControlBaseService.call("control.control.api.tenders.update_checklist_item", {
+      await ControlBaseService.call("control:update_checklist_item", {
         bid,
         item,
         done: done ? 1 : 0,
