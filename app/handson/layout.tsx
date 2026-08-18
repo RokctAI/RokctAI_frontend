@@ -237,62 +237,6 @@ const tenantItems = [
 
 // Items visible to everyone (Shared Modules)
 const commonItems = [
-  // --- Accounting ---
-  {
-    title: "Accounting",
-    href: "/handson/all/accounting/accounts",
-    icon: Calculator,
-    roles: FINANCE_ROLES,
-    module: "Accounting",
-  },
-
-  // --- HRMS ---
-  {
-    title: "HRMS",
-    href: "/handson/all/hrms/personnel",
-    icon: UserCog,
-    roles: HR_ROLES,
-    module: "HRMS",
-  },
-
-  // --- HRMS / Me ---
-  {
-    title: "My Attendance",
-    href: "/handson/all/hrms/me/attendance",
-    icon: CalendarCheck,
-    roles: EMPLOYEE_ROLES,
-  },
-  {
-    title: "My Expenses",
-    href: "/handson/all/hrms/me/expenses",
-    icon: Receipt,
-    roles: EMPLOYEE_ROLES,
-  },
-  {
-    title: "My Leave",
-    href: "/handson/all/hrms/me/leave",
-    icon: Plane,
-    roles: EMPLOYEE_ROLES,
-  },
-  {
-    title: "My Payroll",
-    href: "/handson/all/hrms/me/payroll",
-    icon: Banknote,
-    roles: EMPLOYEE_ROLES,
-  },
-  {
-    title: "My Performance",
-    href: "/handson/all/hrms/me/performance",
-    icon: Target,
-    roles: EMPLOYEE_ROLES,
-  },
-  {
-    title: "My Team",
-    href: "/handson/all/hrms/me/employees",
-    icon: UserCheck,
-    roles: EMPLOYEE_ROLES,
-  },
-
   // --- Utilities ---
   { title: "Reports", href: "/handson/all/reports", icon: PieChart },
   { title: "Lookups", href: "/handson/all/lookups", icon: Search },
