@@ -42,10 +42,13 @@ export async function GET(req: NextRequest) {
 
   const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL;
   if (!BRIDGE_URL) {
-    return new Response(JSON.stringify({ error: "WhatsApp Bridge URL is not configured" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "WhatsApp Bridge URL is not configured" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
   const targetUrl = `${BRIDGE_URL}/sessions/init?tenantId=${tenantId}`;
 
@@ -54,8 +57,10 @@ export async function GET(req: NextRequest) {
 
     if (!response.ok) {
       return new Response(
-        JSON.stringify({ error: "Failed to connect to centralized WhatsApp bridge" }),
-        { status: 502, headers: { "Content-Type": "application/json" } }
+        JSON.stringify({
+          error: "Failed to connect to centralized WhatsApp bridge",
+        }),
+        { status: 502, headers: { "Content-Type": "application/json" } },
       );
     }
 
@@ -71,7 +76,7 @@ export async function GET(req: NextRequest) {
     console.error("WhatsApp bridge routing error:", err);
     return new Response(
       JSON.stringify({ error: `Bridge communication failed: ${err.message}` }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 }

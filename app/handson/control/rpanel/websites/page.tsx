@@ -443,14 +443,18 @@ export default function WebsitesPage() {
                 <label className="text-sm font-medium text-gray-400">
                   PHP Version
                 </label>
-               <Select
-                 value={editPhpVersion}
-                 onValueChange={setEditPhpVersion}
-               >
-                 <SelectTrigger className="bg-[#0f1219] border-gray-600 text-white">
-                   <SelectValue placeholder={t('app.control.rpanel.websites.select_version')} />
-                 </SelectTrigger>
-                 <SelectContent className="bg-[#1a1f36] border-gray-600 text-white">
+                <Select
+                  value={editPhpVersion}
+                  onValueChange={setEditPhpVersion}
+                >
+                  <SelectTrigger className="bg-[#0f1219] border-gray-600 text-white">
+                    <SelectValue
+                      placeholder={t(
+                        "app.control.rpanel.websites.select_version",
+                      )}
+                    />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1a1f36] border-gray-600 text-white">
                     <SelectItem value="8.3">PHP 8.3</SelectItem>
                     <SelectItem value="8.2">PHP 8.2</SelectItem>
                     <SelectItem value="8.1">PHP 8.1</SelectItem>
@@ -462,16 +466,24 @@ export default function WebsitesPage() {
                 <label className="text-sm font-medium text-gray-400">
                   PHP Mode
                 </label>
-               <Select value={editPhpMode} onValueChange={setEditPhpMode}>
-                 <SelectTrigger className="bg-[#0f1219] border-gray-600 text-white">
-                   <SelectValue placeholder={t('app.control.rpanel.websites.select_mode')} />
-                 </SelectTrigger>
-                 <SelectContent className="bg-[#1a1f36] border-gray-600 text-white">
-                   <SelectItem value="Apache module">{t('app.control.rpanel.websites.mode_apache')}</SelectItem>
-                   <SelectItem value="PHP-FPM">{t('app.control.rpanel.websites.mode_php_fpm')}</SelectItem>
-                    <SelectItem value="Reverse proxy">{t('app.control.rpanel.websites.mode_reverse_proxy')}</SelectItem>
-                 </SelectContent>
-               </Select>
+                <Select value={editPhpMode} onValueChange={setEditPhpMode}>
+                  <SelectTrigger className="bg-[#0f1219] border-gray-600 text-white">
+                    <SelectValue
+                      placeholder={t("app.control.rpanel.websites.select_mode")}
+                    />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1a1f36] border-gray-600 text-white">
+                    <SelectItem value="Apache module">
+                      {t("app.control.rpanel.websites.mode_apache")}
+                    </SelectItem>
+                    <SelectItem value="PHP-FPM">
+                      {t("app.control.rpanel.websites.mode_php_fpm")}
+                    </SelectItem>
+                    <SelectItem value="Reverse proxy">
+                      {t("app.control.rpanel.websites.mode_reverse_proxy")}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <DialogFooter>

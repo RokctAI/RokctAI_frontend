@@ -71,8 +71,7 @@ export interface ActionOptions {
 
 export type ActionFailure = { success: false; error: string };
 export type ActionResult<T extends Record<string, unknown>> =
-  | ({ success: true } & T)
-  | ActionFailure;
+  ({ success: true } & T) | ActionFailure;
 
 /**
  * Run a guarded, enveloped action. Returns `{ success: true, ...result }`

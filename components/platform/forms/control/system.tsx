@@ -45,11 +45,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 
 import * as actions from "@/app/actions/platform/control/system";
 import * as validators from "@/lib/platform/validators/control/system";
-
 
 export interface RebootFormProps {
   onSuccess?: (data: any) => void;
@@ -57,7 +62,11 @@ export interface RebootFormProps {
   defaultValues?: Partial<validators.RebootValues>;
 }
 
-export function RebootForm({ onSuccess, onError, defaultValues }: RebootFormProps) {
+export function RebootForm({
+  onSuccess,
+  onError,
+  defaultValues,
+}: RebootFormProps) {
   const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<validators.RebootValues>({
@@ -87,12 +96,13 @@ export function RebootForm({ onSuccess, onError, defaultValues }: RebootFormProp
     <Card className="w-full">
       <CardHeader>
         <CardTitle>Reboot</CardTitle>
-        <CardDescription>Trigger control plane graceful system reboot</CardDescription>
+        <CardDescription>
+          Trigger control plane graceful system reboot
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            
             <FormField
               control={form.control}
               name="force"
@@ -100,9 +110,14 @@ export function RebootForm({ onSuccess, onError, defaultValues }: RebootFormProp
                 <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-3">
                   <FormLabel>Force</FormLabel>
                   <FormControl>
-                    <Input type="checkbox" className="w-4 h-4 cursor-pointer" checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />
+                    <Input
+                      type="checkbox"
+                      className="w-4 h-4 cursor-pointer"
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                    />
                   </FormControl>
-                  
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -124,4 +139,3 @@ export function RebootForm({ onSuccess, onError, defaultValues }: RebootFormProp
     </Card>
   );
 }
-

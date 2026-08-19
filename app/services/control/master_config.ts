@@ -23,11 +23,7 @@
 import { ControlBaseService } from "./base";
 
 export type ConfigCategory =
-  | "Task Status"
-  | "Tag"
-  | "Label"
-  | "Account Name"
-  | "Workflow State";
+  "Task Status" | "Tag" | "Label" | "Account Name" | "Workflow State";
 export type ConfigRegion = "All" | "RSA" | "KEN" | "USA" | "EUR";
 
 export interface ConfigItem {

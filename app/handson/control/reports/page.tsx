@@ -163,9 +163,10 @@ export default function ReportsPage() {
           </p>
         </div>
         <div className="flex gap-2">
-           <Button variant="outline" onClick={handleSeed}>
-             <PlayCircle className="mr-2 h-4 w-4" /> {t('app.control.reports.seed_examples')}
-           </Button>
+          <Button variant="outline" onClick={handleSeed}>
+            <PlayCircle className="mr-2 h-4 w-4" />{" "}
+            {t("app.control.reports.seed_examples")}
+          </Button>
           <Button onClick={openNew}>
             <Plus className="mr-2 h-4 w-4" /> New Report
           </Button>
@@ -213,10 +214,10 @@ export default function ReportsPage() {
       </div>
 
       {reports.length === 0 && !loading && (
-            <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
-              <BarChart3 className="mx-auto h-12 w-12 opacity-20 mb-4" />
-              <p>{t('app.control.reports.no_reports_desc')}</p>
-            </div>
+        <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
+          <BarChart3 className="mx-auto h-12 w-12 opacity-20 mb-4" />
+          <p>{t("app.control.reports.no_reports_desc")}</p>
+        </div>
       )}
 
       {/* Editor Dialog */}
@@ -236,16 +237,16 @@ export default function ReportsPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Report Title</Label>
-                   <Input
-                     value={editingReport.title}
-                     onChange={(e) =>
-                       setEditingReport({
-                         ...editingReport,
-                         title: e.target.value,
-                       })
-                     }
-                     placeholder={t('app.control.reports.ph_report_name')}
-                   />
+                <Input
+                  value={editingReport.title}
+                  onChange={(e) =>
+                    setEditingReport({
+                      ...editingReport,
+                      title: e.target.value,
+                    })
+                  }
+                  placeholder={t("app.control.reports.ph_report_name")}
+                />
               </div>
               <div className="space-y-2">
                 <Label>Category</Label>
@@ -312,32 +313,32 @@ export default function ReportsPage() {
                 </div>
                 {editingReport.chart_type !== "table" && (
                   <>
-                     <div className="space-y-2">
-                       <Label>X-Axis Field (Label)</Label>
-                       <Input
-                         placeholder={t('app.control.reports.ph_date_filter')}
-                         value={editingReport.x_axis_field || ""}
-                         onChange={(e) =>
-                           setEditingReport({
-                             ...editingReport,
-                             x_axis_field: e.target.value,
-                           })
-                         }
-                       />
-                     </div>
-                     <div className="space-y-2">
-                       <Label>Y-Axis Field (Value)</Label>
-                       <Input
-                         placeholder={t('app.control.reports.ph_total_sum')}
-                         value={editingReport.y_axis_field || ""}
-                         onChange={(e) =>
-                           setEditingReport({
-                             ...editingReport,
-                             y_axis_field: e.target.value,
-                           })
-                         }
-                       />
-                     </div>
+                    <div className="space-y-2">
+                      <Label>X-Axis Field (Label)</Label>
+                      <Input
+                        placeholder={t("app.control.reports.ph_date_filter")}
+                        value={editingReport.x_axis_field || ""}
+                        onChange={(e) =>
+                          setEditingReport({
+                            ...editingReport,
+                            x_axis_field: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Y-Axis Field (Value)</Label>
+                      <Input
+                        placeholder={t("app.control.reports.ph_total_sum")}
+                        value={editingReport.y_axis_field || ""}
+                        onChange={(e) =>
+                          setEditingReport({
+                            ...editingReport,
+                            y_axis_field: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
                   </>
                 )}
               </div>
@@ -345,16 +346,16 @@ export default function ReportsPage() {
 
             <div className="space-y-2">
               <Label>Description (Internal Note)</Label>
-               <Input
-                 value={editingReport.description || ""}
-                 onChange={(e) =>
-                   setEditingReport({
-                     ...editingReport,
-                     description: e.target.value,
-                   })
-                 }
-                 placeholder={t('app.control.reports.ph_description')}
-               />
+              <Input
+                value={editingReport.description || ""}
+                onChange={(e) =>
+                  setEditingReport({
+                    ...editingReport,
+                    description: e.target.value,
+                  })
+                }
+                placeholder={t("app.control.reports.ph_description")}
+              />
             </div>
 
             <div className="flex items-center gap-2">

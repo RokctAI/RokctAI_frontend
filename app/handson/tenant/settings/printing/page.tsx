@@ -189,59 +189,63 @@ export default function PrintSettingsPage() {
     <div className="h-[calc(100vh-4rem)] flex flex-col p-4 gap-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
-           <h1 className="text-2xl font-bold flex items-center gap-2">
-             <Printer className="h-6 w-6" /> {t('app.printing_settings.title')}
-           </h1>
-           <Select
-             value={selectedFormat?.name}
-             onValueChange={(val) => {
-               const f = formats.find((x) => x.name === val);
-               if (f) selectFormat(f);
-             }}
-           >
-             <SelectTrigger className="w-[250px]">
-               <SelectValue placeholder={t('app.printing_settings.ph_select_format')} />
-             </SelectTrigger>
-             <SelectContent>
-               {formats.map((f) => (
-                 <SelectItem key={f.name} value={f.name}>
-                   {f.name}
-                   {company?.default_print_format === f.name && (
-                     <span className="ml-2 text-xs text-green-600 font-bold">
-                       {t('app.printing_settings.label_default')}
-                     </span>
-                   )}
-                 </SelectItem>
-               ))}
-             </SelectContent>
-           </Select>
-           {company?.default_print_format === selectedFormat?.name && (
-             <Badge variant="secondary" className="bg-green-100 text-green-800">
-               {t('app.printing_settings.status_active_default')}
-             </Badge>
-           )}
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <Printer className="h-6 w-6" /> {t("app.printing_settings.title")}
+          </h1>
+          <Select
+            value={selectedFormat?.name}
+            onValueChange={(val) => {
+              const f = formats.find((x) => x.name === val);
+              if (f) selectFormat(f);
+            }}
+          >
+            <SelectTrigger className="w-[250px]">
+              <SelectValue
+                placeholder={t("app.printing_settings.ph_select_format")}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {formats.map((f) => (
+                <SelectItem key={f.name} value={f.name}>
+                  {f.name}
+                  {company?.default_print_format === f.name && (
+                    <span className="ml-2 text-xs text-green-600 font-bold">
+                      {t("app.printing_settings.label_default")}
+                    </span>
+                  )}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {company?.default_print_format === selectedFormat?.name && (
+            <Badge variant="secondary" className="bg-green-100 text-green-800">
+              {t("app.printing_settings.status_active_default")}
+            </Badge>
+          )}
         </div>
         <div className="flex gap-2">
-             {selectedFormat &&
-               company?.default_print_format !== selectedFormat.name && (
-                 <Button variant="outline" onClick={handleSetDefault}>
-                   {t('app.printing_settings.btn_set_default')}
-                 </Button>
-               )}
-             <Button onClick={handleSave}>
-               <Save className="mr-2 h-4 w-4" /> {t('app.printing_settings.btn_save')}
-             </Button>
+          {selectedFormat &&
+            company?.default_print_format !== selectedFormat.name && (
+              <Button variant="outline" onClick={handleSetDefault}>
+                {t("app.printing_settings.btn_set_default")}
+              </Button>
+            )}
+          <Button onClick={handleSave}>
+            <Save className="mr-2 h-4 w-4" />{" "}
+            {t("app.printing_settings.btn_save")}
+          </Button>
         </div>
       </div>
 
       <div className="flex-1 grid grid-cols-2 gap-4 h-full overflow-hidden">
         {/* Editor */}
         <Card className="flex flex-col h-full overflow-hidden">
-           <CardHeader className="py-2 bg-muted/30 border-b">
-             <CardTitle className="text-sm font-medium flex items-center gap-2">
-               <Code className="h-4 w-4" /> {t('app.printing_settings.editor_title')}
-             </CardTitle>
-           </CardHeader>
+          <CardHeader className="py-2 bg-muted/30 border-b">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Code className="h-4 w-4" />{" "}
+              {t("app.printing_settings.editor_title")}
+            </CardTitle>
+          </CardHeader>
           <div className="flex-1 p-0">
             <Textarea
               className="w-full h-full resize-none border-0 rounded-none font-mono text-xs p-4 focus-visible:ring-0"
@@ -253,11 +257,12 @@ export default function PrintSettingsPage() {
 
         {/* Preview */}
         <Card className="flex flex-col h-full overflow-hidden bg-white">
-           <CardHeader className="py-2 bg-muted/30 border-b">
-             <CardTitle className="text-sm font-medium flex items-center gap-2">
-               <Eye className="h-4 w-4" /> {t('app.printing_settings.preview_title')}
-             </CardTitle>
-           </CardHeader>
+          <CardHeader className="py-2 bg-muted/30 border-b">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Eye className="h-4 w-4" />{" "}
+              {t("app.printing_settings.preview_title")}
+            </CardTitle>
+          </CardHeader>
           <div className="flex-1 p-8 overflow-auto bg-white">
             <div
               className="print-preview-content prose max-w-none"

@@ -27,7 +27,10 @@ import { useSession } from "next-auth/react";
 
 export function VisitorTracker() {
   const { data: session } = useSession();
-  const lastReported = useRef<{ uuid: string | null; email: string | null }>({ uuid: null, email: null });
+  const lastReported = useRef<{ uuid: string | null; email: string | null }>({
+    uuid: null,
+    email: null,
+  });
 
   useEffect(() => {
     // Generate or retrieve persistent visitor UUID
@@ -37,11 +40,14 @@ export function VisitorTracker() {
       if (typeof crypto.randomUUID === "function") {
         visitorUuid = crypto.randomUUID();
       } else {
-        visitorUuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-          const r = (Math.random() * 16) | 0;
-          const v = c === "x" ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        });
+        visitorUuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+          /[xy]/g,
+          (c) => {
+            const r = (Math.random() * 16) | 0;
+            const v = c === "x" ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+          },
+        );
       }
       localStorage.setItem("visitor_uuid", visitorUuid);
     }
@@ -49,7 +55,10 @@ export function VisitorTracker() {
     const currentEmail = session?.user?.email || "";
 
     // Only report if UUID or user email state changed (e.g., transition from guest to logged-in)
-    if (lastReported.current.uuid !== visitorUuid || lastReported.current.email !== currentEmail) {
+    if (
+      lastReported.current.uuid !== visitorUuid ||
+      lastReported.current.email !== currentEmail
+    ) {
       lastReported.current = { uuid: visitorUuid, email: currentEmail };
 
       fetch("/api/visitor", {

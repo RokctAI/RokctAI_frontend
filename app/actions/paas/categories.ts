@@ -34,8 +34,8 @@ export async function getCategories() {
     }
 
     const categories = await paasCall("api.category.get_categories", {
-        shop_id: shop.name,
-      });
+      shop_id: shop.name,
+    });
     return categories;
   } catch (error) {
     console.error("Failed to fetch categories:", error);
@@ -48,11 +48,11 @@ export async function createCategory(data: any) {
     const shop = await paasCall("api.user.get_user_shop");
 
     const category = await paasCall("api.category.create_category", {
-        category_data: {
-          ...data,
-          shop: shop.name,
-        },
-      });
+      category_data: {
+        ...data,
+        shop: shop.name,
+      },
+    });
     revalidatePath("/paas/dashboard/products/categories");
     return category;
   } catch (error) {
@@ -64,9 +64,9 @@ export async function createCategory(data: any) {
 export async function updateCategory(id: string, data: any) {
   try {
     const category = await paasCall("api.category.update_category", {
-        category_id: id,
-        category_data: data,
-      });
+      category_id: id,
+      category_data: data,
+    });
     revalidatePath("/paas/dashboard/products/categories");
     return category;
   } catch (error) {
@@ -78,8 +78,8 @@ export async function updateCategory(id: string, data: any) {
 export async function deleteCategory(id: string) {
   try {
     await paasCall("api.category.delete_category", {
-        category_id: id,
-      });
+      category_id: id,
+    });
     revalidatePath("/paas/dashboard/products/categories");
     return { success: true };
   } catch (error) {

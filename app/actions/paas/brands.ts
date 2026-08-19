@@ -30,9 +30,9 @@ export async function getBrands() {
     const shop = await paasCall("api.user.get_user_shop");
 
     const brands = await paasCall("api.brand.get_brands", {
-        limit_start: 0,
-        limit_page_length: 100,
-      });
+      limit_start: 0,
+      limit_page_length: 100,
+    });
 
     // Filter brands for current shop
     return brands.filter((b: any) => b.shop === shop.name);
@@ -47,11 +47,11 @@ export async function createBrand(data: any) {
     const shop = await paasCall("api.user.get_user_shop");
 
     const brand = await paasCall("api.brand.create_brand", {
-        brand_data: {
-          ...data,
-          shop: shop.name,
-        },
-      });
+      brand_data: {
+        ...data,
+        shop: shop.name,
+      },
+    });
     revalidatePath("/paas/dashboard/content/brands");
     return brand;
   } catch (error) {
@@ -63,9 +63,9 @@ export async function createBrand(data: any) {
 export async function updateBrand(uuid: string, data: any) {
   try {
     const brand = await paasCall("api.brand.update_brand", {
-        uuid: uuid,
-        brand_data: data,
-      });
+      uuid: uuid,
+      brand_data: data,
+    });
     revalidatePath("/paas/dashboard/content/brands");
     return brand;
   } catch (error) {
@@ -77,8 +77,8 @@ export async function updateBrand(uuid: string, data: any) {
 export async function deleteBrand(uuid: string) {
   try {
     await paasCall("api.brand.delete_brand", {
-        uuid: uuid,
-      });
+      uuid: uuid,
+    });
     revalidatePath("/paas/dashboard/content/brands");
     return { success: true };
   } catch (error) {

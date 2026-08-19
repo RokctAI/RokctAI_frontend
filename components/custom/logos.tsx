@@ -70,22 +70,22 @@ export function Logos() {
           </p>
 
           <div className="w-full relative flex overflow-hidden mask-image-linear-gradient group">
-            <div 
+            <div
               className="flex items-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 whitespace-nowrap animate-marquee group-hover:[animation-play-state:paused]"
-              style={{ animationDuration: '20s' }}
+              style={{ animationDuration: "20s" }}
             >
               {[...LOGOS, ...LOGOS, ...LOGOS].map((logo, idx) => (
                 <div
                   key={`${logo.name}-${idx}`}
                   className="relative flex-shrink-0 h-8 w-24 md:h-12 md:w-40 flex items-center justify-center"
                 >
-                    <Image
-                      src={logo.url}
-                      alt={logo.name}
-                      fill
-                      className="object-contain"
-                      unoptimized
-                    />
+                  <Image
+                    src={logo.url}
+                    alt={logo.name}
+                    fill
+                    className="object-contain"
+                    unoptimized
+                  />
                 </div>
               ))}
             </div>

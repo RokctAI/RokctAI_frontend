@@ -53,7 +53,10 @@ export async function getShopAdsPackages(page: number = 1, limit: number = 20) {
 export async function getCashbackRules(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_data.get_all_cashback_rules", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_data.get_all_cashback_rules", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch cashback rules:", error);
     return [];
@@ -63,7 +66,10 @@ export async function getCashbackRules(page: number = 1, limit: number = 20) {
 export async function getShopBonuses(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_reports.get_all_shop_bonuses", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_reports.get_all_shop_bonuses", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch shop bonuses:", error);
     return [];
@@ -73,7 +79,10 @@ export async function getShopBonuses(page: number = 1, limit: number = 20) {
 export async function getReferrals(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_data.get_all_referrals", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_data.get_all_referrals", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch referrals:", error);
     return [];

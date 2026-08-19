@@ -43,10 +43,13 @@ export async function getOrderReport(fromDate?: string, toDate?: string) {
     new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
   try {
-    const report = await paasCall("api.seller_reports.get_seller_sales_report", {
-      from_date: from,
-      to_date: to,
-    });
+    const report = await paasCall(
+      "api.seller_reports.get_seller_sales_report",
+      {
+        from_date: from,
+        to_date: to,
+      },
+    );
     return report;
   } catch (error) {
     console.error("Failed to fetch order report:", error);

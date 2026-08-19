@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     if (!visitor_id) {
       return NextResponse.json(
         { success: false, error: "visitor_id is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -54,15 +54,15 @@ export async function POST(request: Request) {
       // User is authenticated on a tenant site
       let host = siteName;
       if (!host.startsWith("http")) {
-        host = host.includes("localhost") ? `http://${host}` : `https://${host}`;
+        host = host.includes("localhost")
+          ? `http://${host}`
+          : `https://${host}`;
       }
       targetUrl = `${host}/api/method/rcore.tenant.api.record_unique_visit`;
     } else {
       // Guest visitor on control panel
       const host =
-        process.env.NEXT_PUBLIC_FRAPPE_URL ||
-        process.env.ROKCT_BASE_URL ||
-        "";
+        process.env.NEXT_PUBLIC_FRAPPE_URL || process.env.ROKCT_BASE_URL || "";
       targetUrl = `${host}/api/method/control.control.api.tenant.record_unique_visit`;
     }
 
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
       console.error(`Failed to report visitor to ${targetUrl}:`, errorText);
       return NextResponse.json(
         { success: false, error: "Backend failed to record visit" },
-        { status: 502 }
+        { status: 502 },
       );
     }
 
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
     console.error("Error in visitor api route:", error);
     return NextResponse.json(
       { success: false, error: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

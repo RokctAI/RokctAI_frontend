@@ -113,24 +113,24 @@ export default function LandingPageSettings() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label>Page Title</Label>
-             <Input
-               value={formData.title}
-               onChange={(e) =>
-                 setFormData({ ...formData, title: e.target.value })
-               }
-               placeholder={t('app.paas.admin.settings.landing.ph_title')}
-             />
+            <Input
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              placeholder={t("app.paas.admin.settings.landing.ph_title")}
+            />
           </div>
           <div className="space-y-2">
             <Label>Main Content (JSON/HTML)</Label>
-               <Textarea
-                 value={formData.main_section}
-                 onChange={(e) =>
-                   setFormData({ ...formData, main_section: e.target.value })
-                 }
-                 placeholder={t('app.paas.admin.settings.landing.ph_content')}
-                 className="min-h-[200px] font-mono"
-               />
+            <Textarea
+              value={formData.main_section}
+              onChange={(e) =>
+                setFormData({ ...formData, main_section: e.target.value })
+              }
+              placeholder={t("app.paas.admin.settings.landing.ph_content")}
+              className="min-h-[200px] font-mono"
+            />
             <p className="text-xs text-muted-foreground">
               This field supports JSON configuration for dynamic sections or raw
               HTML.
