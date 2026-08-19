@@ -103,7 +103,7 @@ export const Navbar = async () => {
     <>
       <div className="bg-background absolute top-0 left-0 w-dvw py-2 px-6 justify-between flex flex-row items-center z-30">
         <div className="flex flex-row gap-3 items-center">
-          {session?.user && <History user={session.user} />}
+          {AI_FIRST && session?.user && <History user={session.user} />}
           <div className="flex flex-row gap-2 items-center">
             <Link href="/" className="flex flex-row gap-2 items-center">
               <BrandLogo width={24} height={24} />
@@ -209,7 +209,7 @@ export const Navbar = async () => {
                <Link href="/login">{t('auth.login')}</Link>
              </Button>
           )}
-          <RightPlaneTrigger />
+          {AI_FIRST && <RightPlaneTrigger />}
         </div>
       </div>
     </>

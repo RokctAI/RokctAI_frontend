@@ -33,7 +33,8 @@ const sdkFlags: Record<string, boolean> = {
   // @rokct-sdk-flags-end
 };
 
-// The chat surface still ships in-tree, so the shell defaults to AI-first.
-// When it extracts to the agent SDK, this default flips to false and the
-// agent SDK manifest injects `agent: true,` at the marker.
-export const AI_FIRST = sdkFlags.agent ?? true;
+// The chat surface now ships in the agent SDK, so the bare shell defaults to
+// hands-on mode. Composing the agent SDK installs the chat surface and its
+// manifest injects `agent: true,` at the marker, flipping the shell back to
+// AI-first.
+export const AI_FIRST = sdkFlags.agent ?? false;
