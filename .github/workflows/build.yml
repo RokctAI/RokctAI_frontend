@@ -74,6 +74,86 @@ jobs:
              echo "is_node=false" >> $GITHUB_OUTPUT
           fi
 
+  # --- 1.4. COMPOSE CHECK (registry-template compose canary) ---
+  # This shell is the rokctapp product's web shell. Per the unified composer
+  # contract (The-Rokct-Protocol #253), the shell stays THIN: it commits only
+  # the one-line .rokct/config/app_type naming a product template in the
+  # protocol's registry (core/utils/frappe/composer/<app_type>.json); the
+  # Next.js composer materializes composer.json from that template and
+  # composes the template's `sdks` list. Nothing composed is ever committed
+  # back — the bare shell stays bare on main.
+  #
+  # This job is a validation canary only: it proves the registry compose
+  # succeeds against protocol main. It SELF-SKIPS (exit 0, loud log line)
+  # whenever any prerequisite is absent — no app_type marker, protocol not
+  # reachable, the registry contract not yet on protocol main, or the named
+  # template missing / carrying no enabled `sdks` (then app_type is a plain
+  # role marker per the contract). It does not gate the pipeline job, so the
+  # bare-shell build/release path is unaffected in every case.
+  compose-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Compose from registry template (self-skipping)
+        env:
+          MONOREPO_PAT: ${{ secrets.MONOREPO_PAT }}
+        run: |
+          set -euo pipefail
+
+          # Gate 1: the shell must carry the app_type marker.
+          if [ ! -f ".rokct/config/app_type" ]; then
+            echo "No .rokct/config/app_type marker - not a composed shell. Skipping compose check."
+            exit 0
+          fi
+          APP_TYPE=$(tr -d '\r\n[:space:]' < .rokct/config/app_type | tr '[:upper:]' '[:lower:]')
+          echo "app_type marker: '${APP_TYPE}'"
+
+          # Gate 2: a protocol checkout (composer code + template registry).
+          PROTOCOL_DIR="${RUNNER_TEMP}/The-Rokct-Protocol"
+          if ! git clone --depth 1 "https://x-access-token:${MONOREPO_PAT:-}@github.com/RokctAI/The-Rokct-Protocol.git" "$PROTOCOL_DIR" 2>/dev/null; then
+            echo "::warning::Could not clone The-Rokct-Protocol (missing MONOREPO_PAT?). Skipping compose check."
+            exit 0
+          fi
+
+          # Gate 3: the registry contract (protocol PR #253) must be on
+          # protocol main. Before it lands, composing from a template is not
+          # possible and this shell has no committed composer.json - skip.
+          if ! grep -q "def resolve_composer_config" "$PROTOCOL_DIR/core/utils/nextjs/sdk_composer.py" 2>/dev/null; then
+            echo "Registry-template contract not on protocol main yet (The-Rokct-Protocol #253). Skipping compose check."
+            exit 0
+          fi
+
+          # Gate 4: the marker must name a registry template with at least
+          # one enabled `sdks` entry; otherwise it is a plain role marker
+          # (shared-namespace contract) and there is nothing to compose here.
+          TEMPLATE="$PROTOCOL_DIR/core/utils/frappe/composer/${APP_TYPE}.json"
+          if [ ! -f "$TEMPLATE" ] || ! python3 -c "import json,sys; t=json.load(open(sys.argv[1])); sys.exit(0 if any(s.get('enabled') for s in t.get('sdks', [])) else 1)" "$TEMPLATE"; then
+            echo "Registry template '${APP_TYPE}' absent or has no enabled sdks - app_type acts as a plain role marker. Skipping compose check."
+            exit 0
+          fi
+
+          echo "Composing '${APP_TYPE}' from the registry template..."
+          # install.py files import sdk_installer_base from the host's .rokct/.
+          cp "$PROTOCOL_DIR/core/utils/nextjs/sdk_installer_base.py" .rokct/sdk_installer_base.py
+          export ROKCT_PROTOCOL_DIR="$PROTOCOL_DIR"
+          # This repo's package manager is pnpm; we install merged deps below.
+          export ROKCT_SKIP_NPM_INSTALL=1
+          # The registry template rides ref:main without per-SDK sha256 pins
+          # yet - pinning belongs in the registry template (protocol
+          # follow-up), same as the flutter templates.
+          export ROKCT_ALLOW_UNPINNED_SDKS=1
+          python3 "$PROTOCOL_DIR/core/utils/nextjs/sdk_composer.py"
+
+          echo "Compose OK. Verifying merged dependencies install..."
+          pnpm install --no-frozen-lockfile
+
+          echo "--- composed change summary (nothing is committed) ---"
+          git status --porcelain | head -40
+          echo "...total changed/untracked paths: $(git status --porcelain | wc -l)"
+
   # --- 1.5. SYNC API SCHEMAS ---
   sync-schemas:
     runs-on: ubuntu-latest
