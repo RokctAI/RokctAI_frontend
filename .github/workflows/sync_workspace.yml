@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Guard: skip if session active or no config
+      - name: "Guard: skip if session active or no config"
         id: guard
         run: |
           if [ -f .rokct/active_session.txt ]; then
