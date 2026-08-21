@@ -21,22 +21,24 @@ jobs:
         run: |
           if [ -f .rokct/active_session.txt ]; then
             echo "Active session in progress, skipping sync."
-            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "skip=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           if [ ! -f .rokct/.workspace_config.json ]; then
             echo "No workspace config found, skipping sync."
-            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "skip=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           if [ ! -f .rokct/.sync_ready ]; then
             echo "No sync_ready marker — end_protocol has not been run. Skipping."
-            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "skip=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          echo "parent_repo=$(jq -r .parent_repo .rokct/.workspace_config.json)" >> $GITHUB_OUTPUT
-          echo "parent_branch=$(jq -r .parent_branch // 'main' .rokct/.workspace_config.json)" >> $GITHUB_OUTPUT
-          echo "working_files=$(jq -r .working_files[] .rokct/.workspace_config.json | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+          {
+            echo "parent_repo=$(jq -r .parent_repo .rokct/.workspace_config.json)"
+            echo "parent_branch=$(jq -r .parent_branch // 'main' .rokct/.workspace_config.json)"
+            echo "working_files=$(jq -r .working_files[] .rokct/.workspace_config.json | jq -R -s -c 'split("\n")[:-1]')"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Checkout parent workspace repo
         if: ${{ !contains(steps.guard.outputs.skip, 'true') }}
