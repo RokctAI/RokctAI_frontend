@@ -62,16 +62,16 @@ jobs:
         run: |
           if [ -f "pubspec.yaml" ]; then
              echo "Flutter project detected."
-             echo "is_flutter=true" >> $GITHUB_OUTPUT
-             echo "is_node=false" >> $GITHUB_OUTPUT
+             echo "is_flutter=true" >> "$GITHUB_OUTPUT"
+             echo "is_node=false" >> "$GITHUB_OUTPUT"
           elif [ -f "package.json" ]; then
              echo "Node.js project detected."
-             echo "is_flutter=false" >> $GITHUB_OUTPUT
-             echo "is_node=true" >> $GITHUB_OUTPUT
+             echo "is_flutter=false" >> "$GITHUB_OUTPUT"
+             echo "is_node=true" >> "$GITHUB_OUTPUT"
           else
              echo "Unknown project type. Skipping builds."
-             echo "is_flutter=false" >> $GITHUB_OUTPUT
-             echo "is_node=false" >> $GITHUB_OUTPUT
+             echo "is_flutter=false" >> "$GITHUB_OUTPUT"
+             echo "is_node=false" >> "$GITHUB_OUTPUT"
           fi
 
   # --- 1.4. COMPOSE CHECK (registry-template compose canary) ---
