@@ -103,25 +103,28 @@ export default function GalleryPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-         <div>
-           <h1 className="text-3xl font-bold">{t('app.paas.dashboard.settings.gallery.title')}</h1>
-           <p className="text-muted-foreground">
-             {t('app.paas.dashboard.settings.gallery.desc')}
-           </p>
-         </div>
-         <Button onClick={() => setIsDialogOpen(true)}>
-           <Plus className="mr-2 size-4" /> {t('app.paas.dashboard.settings.gallery.btn_add')}
-         </Button>
+        <div>
+          <h1 className="text-3xl font-bold">
+            {t("app.paas.dashboard.settings.gallery.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("app.paas.dashboard.settings.gallery.desc")}
+          </p>
+        </div>
+        <Button onClick={() => setIsDialogOpen(true)}>
+          <Plus className="mr-2 size-4" />{" "}
+          {t("app.paas.dashboard.settings.gallery.btn_add")}
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-         {images.length === 0 ? (
-           <Card className="col-span-full">
-             <CardContent className="py-12 text-center text-muted-foreground">
-               {t('app.paas.dashboard.settings.gallery.no_data')}
-             </CardContent>
-           </Card>
-         ) : (
+        {images.length === 0 ? (
+          <Card className="col-span-full">
+            <CardContent className="py-12 text-center text-muted-foreground">
+              {t("app.paas.dashboard.settings.gallery.no_data")}
+            </CardContent>
+          </Card>
+        ) : (
           images.map((img) => (
             <Card key={img.name} className="overflow-hidden group relative">
               <div className="aspect-square relative bg-muted">
@@ -147,27 +150,29 @@ export default function GalleryPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
-           <DialogHeader>
-             <DialogTitle>{t('app.paas.dashboard.settings.gallery.dialog_title')}</DialogTitle>
-             <DialogDescription>
-               {t('app.paas.dashboard.settings.gallery.dialog_desc')}
-             </DialogDescription>
-           </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>
+              {t("app.paas.dashboard.settings.gallery.dialog_title")}
+            </DialogTitle>
+            <DialogDescription>
+              {t("app.paas.dashboard.settings.gallery.dialog_desc")}
+            </DialogDescription>
+          </DialogHeader>
           <div className="py-4">
-             <ImageUpload
-               label={t('app.paas.dashboard.settings.gallery.label_image')}
-               value={newImage}
-               onChange={setNewImage}
-             />
+            <ImageUpload
+              label={t("app.paas.dashboard.settings.gallery.label_image")}
+              value={newImage}
+              onChange={setNewImage}
+            />
           </div>
           <DialogFooter>
-             <Button onClick={handleSubmit} disabled={processing}>
-               {processing ? (
-                 <Loader2 className="size-4 animate-spin" />
-               ) : (
-                 t('common.create')
-               )}
-             </Button>
+            <Button onClick={handleSubmit} disabled={processing}>
+              {processing ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                t("common.create")
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

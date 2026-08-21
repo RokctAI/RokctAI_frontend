@@ -59,7 +59,7 @@ declare const process: { env: Record<string, string | undefined> };
 // and automatically skip overwriting it during future upgrades.
 // ==========================================
 
-export const PLATFORM_GATEWAY_METHOD = 'rokct.platform.api';
+export const PLATFORM_GATEWAY_METHOD = "rokct.platform.api";
 
 /**
  * The full request path derived from [PLATFORM_GATEWAY_METHOD]. Never
@@ -81,7 +81,7 @@ export interface PlatformCallOptions {
    * fetch caching (`next.revalidate`) applies — use it for public,
    * cacheable reads; the gateway accepts both.
    */
-  method?: 'GET' | 'POST';
+  method?: "GET" | "POST";
   /**
    * Extra request headers — e.g. `Authorization` for authenticated
    * server-side calls, or an idempotency key.
@@ -119,7 +119,7 @@ export async function platformCall<T = unknown>(
     process.env.NEXT_PUBLIC_ROKCT_BASE_URL;
   if (!baseUrl) return null;
 
-  const method = options.method ?? 'POST';
+  const method = options.method ?? "POST";
   const timeout = options.timeout ?? 10000;
   const { headers: fetchHeaders, ...fetchRest } = options.fetchOptions ?? {};
 
@@ -140,18 +140,18 @@ export async function platformCall<T = unknown>(
       signal: controller.signal,
     };
 
-    if (method === 'GET') {
+    if (method === "GET") {
       const params = new URLSearchParams({ cmd });
       if (payload !== undefined) {
         params.set(
-          'payload',
-          typeof payload === 'string' ? payload : JSON.stringify(payload),
+          "payload",
+          typeof payload === "string" ? payload : JSON.stringify(payload),
         );
       }
       url += `?${params.toString()}`;
     } else {
       init.headers = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...(init.headers as Record<string, string>),
       };
       init.body = JSON.stringify({

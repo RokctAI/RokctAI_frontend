@@ -31,16 +31,16 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  QrCode, 
-  CheckCircle2, 
-  Wifi, 
-  WifiOff, 
-  AlertCircle, 
-  RefreshCw, 
-  Smartphone, 
-  LogOut, 
-  Loader2 
+import {
+  QrCode,
+  CheckCircle2,
+  Wifi,
+  WifiOff,
+  AlertCircle,
+  RefreshCw,
+  Smartphone,
+  LogOut,
+  Loader2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -57,7 +57,8 @@ interface WhatsAppLinkCardProps {
   tenantId: string;
 }
 
-type ConnectionState = "idle" | "connecting" | "qr" | "open" | "close" | "error";
+type ConnectionState =
+  "idle" | "connecting" | "qr" | "open" | "close" | "error";
 
 export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
   const [connState, setConnState] = useState<ConnectionState>("idle");
@@ -70,7 +71,9 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
   useEffect(() => {
     async function checkStatus() {
       try {
-        const response = await fetch(`/api/whatsapp/status?tenantId=${tenantId}`);
+        const response = await fetch(
+          `/api/whatsapp/status?tenantId=${tenantId}`,
+        );
         if (response.ok) {
           const res = await response.json();
           if (res.connected) {
@@ -188,7 +191,8 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
               ROKCT WhatsApp Web Link
             </CardTitle>
             <CardDescription className="text-xs text-muted-foreground">
-              Scan our host-level secure QR code to enable direct customer messaging.
+              Scan our host-level secure QR code to enable direct customer
+              messaging.
             </CardDescription>
           </div>
 
@@ -229,17 +233,25 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
               </h3>
               <ol className="space-y-3 text-sm text-foreground/80 list-decimal pl-4">
                 <li>Open WhatsApp on your mobile phone.</li>
-                <li>Tap <strong>Menu</strong> or <strong>Settings</strong> and select <strong>Linked Devices</strong>.</li>
-                <li>Tap on <strong>Link a Device</strong>.</li>
-                <li>Point your phone screen to the QR Code on the right to scan it.</li>
+                <li>
+                  Tap <strong>Menu</strong> or <strong>Settings</strong> and
+                  select <strong>Linked Devices</strong>.
+                </li>
+                <li>
+                  Tap on <strong>Link a Device</strong>.
+                </li>
+                <li>
+                  Point your phone screen to the QR Code on the right to scan
+                  it.
+                </li>
               </ol>
             </div>
 
             <div className="pt-2 flex flex-col sm:flex-row gap-3">
               {connState === "open" ? (
-                <Button 
-                  variant="destructive" 
-                  onClick={handleDisconnect} 
+                <Button
+                  variant="destructive"
+                  onClick={handleDisconnect}
                   disabled={actionLoading}
                   className="w-full sm:w-auto shadow-lg shadow-destructive/10"
                 >
@@ -251,7 +263,7 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                   Unlink Channel
                 </Button>
               ) : (
-                <Button 
+                <Button
                   onClick={startPairing}
                   disabled={connState === "connecting"}
                   className="w-full sm:w-auto bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/95 hover:to-indigo-600/95 shadow-lg shadow-primary/20 text-white font-medium"
@@ -288,7 +300,9 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                     <CheckCircle2 className="size-12 animate-bounce" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-semibold text-lg text-foreground">WhatsApp Linked Successfully</p>
+                    <p className="font-semibold text-lg text-foreground">
+                      WhatsApp Linked Successfully
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       Your business instance is active and receiving commands.
                     </p>
@@ -307,9 +321,9 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                 >
                   <div className="p-4 bg-white rounded-2xl border border-muted shadow-inner relative group">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={qrImageUrl} 
-                      alt="WhatsApp Web Link QR Code" 
+                    <img
+                      src={qrImageUrl}
+                      alt="WhatsApp Web Link QR Code"
                       className="size-[200px] select-none pointer-events-none"
                     />
                   </div>
@@ -332,7 +346,9 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                     <Loader2 className="size-10 animate-spin" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-medium text-sm text-foreground">Initializing Baileys session...</p>
+                    <p className="font-medium text-sm text-foreground">
+                      Initializing Baileys session...
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       Retrieving QR socket channel from Control VPS...
                     </p>
@@ -350,7 +366,9 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                   className="text-center space-y-3 text-muted-foreground p-6"
                 >
                   <QrCode className="size-12 mx-auto stroke-[1.2] text-muted-foreground/60" />
-                  <p className="text-xs">No active pairing session. Click generate to start.</p>
+                  <p className="text-xs">
+                    No active pairing session. Click generate to start.
+                  </p>
                 </motion.div>
               )}
 
@@ -367,12 +385,19 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                     <AlertCircle className="size-10 animate-shake" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-semibold text-sm text-destructive">Connection Interrupted</p>
+                    <p className="font-semibold text-sm text-destructive">
+                      Connection Interrupted
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       The pairing request timed out or was declined.
                     </p>
                   </div>
-                  <Button size="sm" variant="outline" onClick={startPairing} className="mt-2 text-xs">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={startPairing}
+                    className="mt-2 text-xs"
+                  >
                     <RefreshCw className="size-3 mr-1.5" />
                     Retry
                   </Button>

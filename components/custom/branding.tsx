@@ -34,11 +34,11 @@ import {
  * It uses localStorage caching to ensure the branding appears instantly on refresh.
  * Uses a 'mounted' state to prevent hydration mismatches from localStorage access.
  */
-export function Branding({ 
+export function Branding({
   showBadge = false,
   forceWhite = false,
-  className
-}: { 
+  className,
+}: {
   showBadge?: boolean;
   forceWhite?: boolean;
   className?: string;
@@ -60,7 +60,9 @@ export function Branding({
   if (!mounted || !branding) {
     return (
       <span className="flex items-center gap-1.5">
-        <span className={`${className || 'text-2xl'} font-sans font-bold tracking-tight leading-none ${forceWhite ? 'text-white' : 'text-black dark:text-white'}`}>
+        <span
+          className={`${className || "text-2xl"} font-sans font-bold tracking-tight leading-none ${forceWhite ? "text-white" : "text-black dark:text-white"}`}
+        >
           {PLATFORM_NAME}
         </span>
       </span>
@@ -70,10 +72,12 @@ export function Branding({
   return (
     <span className="flex items-center gap-1.5">
       <span
-        className={`${className || 'text-2xl'} font-sans font-bold tracking-tight leading-none ${forceWhite ? 'text-white' : 'text-black dark:text-white'}`}
+        className={`${className || "text-2xl"} font-sans font-bold tracking-tight leading-none ${forceWhite ? "text-white" : "text-black dark:text-white"}`}
       >
         {branding.before}
-        {showBadge && branding.code && <span style={branding.style}>{branding.code}</span>}
+        {showBadge && branding.code && (
+          <span style={branding.style}>{branding.code}</span>
+        )}
         {branding.after}
       </span>
     </span>

@@ -33,7 +33,11 @@ export async function getSalesReport(
   company?: string,
 ) {
   try {
-    return await paasCall("api.admin_reports.get_multi_company_sales_report", { from_date: fromDate, to_date: toDate, company });
+    return await paasCall("api.admin_reports.get_multi_company_sales_report", {
+      from_date: fromDate,
+      to_date: toDate,
+      company,
+    });
   } catch (error) {
     console.error("Failed to fetch sales report:", error);
     return [];
@@ -43,7 +47,10 @@ export async function getSalesReport(
 export async function getTransactions(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_reports.get_all_transactions", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_reports.get_all_transactions", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch transactions:", error);
     return [];
@@ -53,7 +60,10 @@ export async function getTransactions(page: number = 1, limit: number = 20) {
 export async function getPayouts(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_reports.get_all_seller_payouts", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_reports.get_all_seller_payouts", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch payouts:", error);
     return [];
@@ -63,7 +73,10 @@ export async function getPayouts(page: number = 1, limit: number = 20) {
 export async function getWalletHistory(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_reports.get_all_wallet_histories", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_reports.get_all_wallet_histories", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch wallet history:", error);
     return [];

@@ -74,28 +74,30 @@ export default function ParcelOrdersPage() {
       setOrders(data || []);
     } catch (error) {
       console.error("Error fetching parcel orders:", error);
-      toast.error(t('app.paas.dashboard.orders.parcels.toast_load_fail'));
+      toast.error(t("app.paas.dashboard.orders.parcels.toast_load_fail"));
     } finally {
       setLoading(false);
     }
   }
- 
+
   useEffect(() => {
     fetchOrders();
   }, []);
- 
+
   const filteredOrders =
     statusFilter === "all"
       ? orders
       : orders.filter((order) => order.status === statusFilter);
- 
+
   async function handleStatusUpdate(name: string, status: string) {
     try {
       await updateParcelStatus(name, status);
-      toast.success(t('app.paas.dashboard.orders.parcels.toast_update_success', { status }));
+      toast.success(
+        t("app.paas.dashboard.orders.parcels.toast_update_success", { status }),
+      );
       fetchOrders();
     } catch (error) {
-      toast.error(t('app.paas.dashboard.orders.parcels.toast_update_fail'));
+      toast.error(t("app.paas.dashboard.orders.parcels.toast_update_fail"));
     }
   }
 
@@ -111,44 +113,78 @@ export default function ParcelOrdersPage() {
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{t('app.paas.dashboard.orders.parcels.title')}</h1>
+          <h1 className="text-3xl font-bold">
+            {t("app.paas.dashboard.orders.parcels.title")}
+          </h1>
           <p className="text-muted-foreground">
-            {t('app.paas.dashboard.orders.parcels.desc')}
+            {t("app.paas.dashboard.orders.parcels.desc")}
           </p>
         </div>
         <div className="w-[200px]">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger>
-              <SelectValue placeholder={t('app.paas.dashboard.orders.parcels.ph_filter')} />
+              <SelectValue
+                placeholder={t("app.paas.dashboard.orders.parcels.ph_filter")}
+              />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('app.paas.dashboard.orders.parcels.status_all')}</SelectItem>
-              <SelectItem value="New">{t('app.paas.dashboard.orders.parcels.status_new')}</SelectItem>
-              <SelectItem value="Accepted">{t('app.paas.dashboard.orders.parcels.status_accepted')}</SelectItem>
-              <SelectItem value="Ready">{t('app.paas.dashboard.orders.parcels.status_ready')}</SelectItem>
-              <SelectItem value="On a way">{t('app.paas.dashboard.orders.parcels.status_on_way')}</SelectItem>
-              <SelectItem value="Delivered">{t('app.paas.dashboard.orders.parcels.status_delivered')}</SelectItem>
-              <SelectItem value="Canceled">{t('app.paas.dashboard.orders.parcels.status_canceled')}</SelectItem>
+              <SelectItem value="all">
+                {t("app.paas.dashboard.orders.parcels.status_all")}
+              </SelectItem>
+              <SelectItem value="New">
+                {t("app.paas.dashboard.orders.parcels.status_new")}
+              </SelectItem>
+              <SelectItem value="Accepted">
+                {t("app.paas.dashboard.orders.parcels.status_accepted")}
+              </SelectItem>
+              <SelectItem value="Ready">
+                {t("app.paas.dashboard.orders.parcels.status_ready")}
+              </SelectItem>
+              <SelectItem value="On a way">
+                {t("app.paas.dashboard.orders.parcels.status_on_way")}
+              </SelectItem>
+              <SelectItem value="Delivered">
+                {t("app.paas.dashboard.orders.parcels.status_delivered")}
+              </SelectItem>
+              <SelectItem value="Canceled">
+                {t("app.paas.dashboard.orders.parcels.status_canceled")}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
- 
+
       <Card>
         <CardHeader>
-          <CardTitle>{t('app.paas.dashboard.orders.parcels.card_title')}</CardTitle>
-          <CardDescription>{t('app.paas.dashboard.orders.parcels.card_desc')}</CardDescription>
+          <CardTitle>
+            {t("app.paas.dashboard.orders.parcels.card_title")}
+          </CardTitle>
+          <CardDescription>
+            {t("app.paas.dashboard.orders.parcels.card_desc")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('app.paas.dashboard.orders.parcels.col_order_id')}</TableHead>
-                <TableHead>{t('app.paas.dashboard.orders.parcels.col_date')}</TableHead>
-                <TableHead>{t('app.paas.dashboard.orders.parcels.col_destination')}</TableHead>
-                <TableHead>{t('app.paas.dashboard.orders.parcels.col_price')}</TableHead>
-                <TableHead>{t('app.paas.dashboard.orders.parcels.col_status')}</TableHead>
-                <TableHead className="text-right">{t('app.paas.dashboard.orders.parcels.col_actions')}</TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.orders.parcels.col_order_id")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.orders.parcels.col_date")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.orders.parcels.col_destination")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.orders.parcels.col_price")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.orders.parcels.col_status")}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t("app.paas.dashboard.orders.parcels.col_actions")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -158,7 +194,7 @@ export default function ParcelOrdersPage() {
                     colSpan={6}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    {t('app.paas.dashboard.orders.parcels.no_orders')}
+                    {t("app.paas.dashboard.orders.parcels.no_orders")}
                   </TableCell>
                 </TableRow>
               ) : (

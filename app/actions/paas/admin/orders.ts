@@ -25,7 +25,6 @@
 import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
 
-
 export async function getOrders(
   page: number = 1,
   limit: number = 20,
@@ -39,7 +38,11 @@ export async function getOrders(
   if (status && status !== "all") filters.status = status;
 
   try {
-    return await paasCall("api.admin_records.get_all_orders", { limit_start: start, limit_page_length: limit, filters: filters });
+    return await paasCall("api.admin_records.get_all_orders", {
+      limit_start: start,
+      limit_page_length: limit,
+      filters: filters,
+    });
   } catch (error) {
     console.error("Failed to fetch orders:", error);
     return [];
@@ -57,7 +60,10 @@ export async function getOrderStatuses() {
 
 export async function updateOrderStatus(name: string, status: string) {
   try {
-    await paasCall("api.order.update_order_status", { order_id: name, status: status });
+    await paasCall("api.order.update_order_status", {
+      order_id: name,
+      status: status,
+    });
     revalidatePath("/paas/admin/orders");
     return { success: true };
   } catch (error) {
@@ -69,7 +75,10 @@ export async function updateOrderStatus(name: string, status: string) {
 export async function getParcelOrders(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_records.get_all_parcel_orders", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_records.get_all_parcel_orders", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch parcel orders:", error);
     return [];
@@ -79,7 +88,10 @@ export async function getParcelOrders(page: number = 1, limit: number = 20) {
 export async function getRefunds(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_records.get_all_order_refunds", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_records.get_all_order_refunds", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch refunds:", error);
     return [];
@@ -92,7 +104,11 @@ export async function updateRefund(
   answer?: string,
 ) {
   try {
-    await paasCall("api.admin_records.update_admin_order_refund", { refund_name: name, status, answer });
+    await paasCall("api.admin_records.update_admin_order_refund", {
+      refund_name: name,
+      status,
+      answer,
+    });
     revalidatePath("/paas/admin/orders/refunds");
     return { success: true };
   } catch (error) {
@@ -104,7 +120,10 @@ export async function updateRefund(
 export async function getBookings(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_records.get_all_bookings", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_records.get_all_bookings", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch bookings:", error);
     return [];
@@ -116,7 +135,10 @@ export async function getOrderReviews(page: number = 1, limit: number = 20) {
   try {
     // Platform-wide review list; rows carry reviewable_type/reviewable_id
     // so order reviews can be distinguished client-side.
-    return await paasCall("api.admin_records.get_all_reviews", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_records.get_all_reviews", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch order reviews:", error);
     return [];

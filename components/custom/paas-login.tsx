@@ -103,9 +103,9 @@ export function PaaSLogin() {
               />
             </div>
             <div className="space-y-2">
-               <Label htmlFor={P_ID}>Password</Label>
+              <Label htmlFor={P_ID}>Password</Label>
               <Input
-                 id={P_ID}
+                id={P_ID}
                 name="password"
                 type="password"
                 required

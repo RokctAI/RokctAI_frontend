@@ -34,8 +34,8 @@ export async function getBranches() {
     }
 
     const branches = await paasCall("api.branch.get_branches", {
-        shop_id: shop.name,
-      });
+      shop_id: shop.name,
+    });
     return branches;
   } catch (error) {
     console.error("Failed to fetch branches:", error);
@@ -48,11 +48,11 @@ export async function createBranch(data: any) {
     const shop = await paasCall("api.user.get_user_shop");
 
     const branch = await paasCall("api.branch.create_branch", {
-        branch_data: {
-          ...data,
-          shop: shop.name,
-        },
-      });
+      branch_data: {
+        ...data,
+        shop: shop.name,
+      },
+    });
     revalidatePath("/paas/dashboard/restaurant/branches");
     return branch;
   } catch (error) {
@@ -64,9 +64,9 @@ export async function createBranch(data: any) {
 export async function updateBranch(id: string, data: any) {
   try {
     const branch = await paasCall("api.branch.update_branch", {
-        branch_id: id,
-        branch_data: data,
-      });
+      branch_id: id,
+      branch_data: data,
+    });
     revalidatePath("/paas/dashboard/restaurant/branches");
     return branch;
   } catch (error) {
@@ -78,8 +78,8 @@ export async function updateBranch(id: string, data: any) {
 export async function deleteBranch(id: string) {
   try {
     await paasCall("api.branch.delete_branch", {
-        branch_id: id,
-      });
+      branch_id: id,
+    });
     revalidatePath("/paas/dashboard/restaurant/branches");
     return { success: true };
   } catch (error) {

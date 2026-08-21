@@ -37,10 +37,10 @@ export async function getCurrentEmployeeId() {
   const client = await getClient();
   try {
     const response = await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session.user.email },
-        fieldname: "name",
-      });
+      doctype: "Employee",
+      filters: { user_id: session.user.email },
+      fieldname: "name",
+    });
     return response?.message?.name || null;
   } catch (e) {
     return null;
@@ -71,22 +71,22 @@ export async function verifyActiveEmployee() {
   try {
     // 1. Get Employee ID
     const empRes = await gatewayCall(client, "frappe.client.get_value", {
-        doctype: "Employee",
-        filters: { user_id: session.user.email },
-        fieldname: "name",
-      });
+      doctype: "Employee",
+      filters: { user_id: session.user.email },
+      fieldname: "name",
+    });
     const employee = empRes?.message?.name;
     if (!employee) return true; // If no employee record, they might be admin/system user, so allow (or handle elsewhere)
 
     // 2. Check for Pending/Approved Separation (Resignation)
     const separation = await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Employee Separation",
-        filters: {
-          employee: employee,
-          status: ["in", ["Pending", "Approved", "Submitted"]], // Check exact status values
-        },
-        limit_page_length: 1,
-      });
+      doctype: "Employee Separation",
+      filters: {
+        employee: employee,
+        status: ["in", ["Pending", "Approved", "Submitted"]], // Check exact status values
+      },
+      limit_page_length: 1,
+    });
 
     if (separation?.message?.length > 0) {
       // Resignation Process in Update
@@ -124,14 +124,14 @@ export async function verifyHrRole() {
 
   try {
     const roles = (await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Has Role",
-        filters: {
-          parent: session.user.email,
-          role: ["in", HR_ROLES],
-        },
-        fields: ["role"],
-        limit_page_length: 1,
-      })) as any;
+      doctype: "Has Role",
+      filters: {
+        parent: session.user.email,
+        role: ["in", HR_ROLES],
+      },
+      fields: ["role"],
+      limit_page_length: 1,
+    })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {
@@ -155,14 +155,14 @@ export async function verifyCrmRole() {
 
   try {
     const roles = (await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Has Role",
-        filters: {
-          parent: session.user.email,
-          role: ["in", CRM_ROLES],
-        },
-        fields: ["role"],
-        limit_page_length: 1,
-      })) as any;
+      doctype: "Has Role",
+      filters: {
+        parent: session.user.email,
+        role: ["in", CRM_ROLES],
+      },
+      fields: ["role"],
+      limit_page_length: 1,
+    })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {
@@ -184,14 +184,14 @@ export async function verifySupplyChainRole() {
 
   try {
     const roles = (await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Has Role",
-        filters: {
-          parent: session.user.email,
-          role: ["in", SUPPLY_CHAIN_ROLES],
-        },
-        fields: ["role"],
-        limit_page_length: 1,
-      })) as any;
+      doctype: "Has Role",
+      filters: {
+        parent: session.user.email,
+        role: ["in", SUPPLY_CHAIN_ROLES],
+      },
+      fields: ["role"],
+      limit_page_length: 1,
+    })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {
@@ -214,14 +214,14 @@ export async function verifyFinanceRole() {
 
   try {
     const roles = (await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Has Role",
-        filters: {
-          parent: session.user.email,
-          role: ["in", FINANCE_ROLES],
-        },
-        fields: ["role"],
-        limit_page_length: 1,
-      })) as any;
+      doctype: "Has Role",
+      filters: {
+        parent: session.user.email,
+        role: ["in", FINANCE_ROLES],
+      },
+      fields: ["role"],
+      limit_page_length: 1,
+    })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {
@@ -243,14 +243,14 @@ export async function verifySystemManager() {
 
   try {
     const roles = (await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Has Role",
-        filters: {
-          parent: session.user.email,
-          role: ["=", "System Manager"],
-        },
-        fields: ["role"],
-        limit_page_length: 1,
-      })) as any;
+      doctype: "Has Role",
+      filters: {
+        parent: session.user.email,
+        role: ["=", "System Manager"],
+      },
+      fields: ["role"],
+      limit_page_length: 1,
+    })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {
@@ -297,14 +297,14 @@ export async function verifyLendingRole() {
   try {
     // 1. Check User Roles
     const roles = (await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Has Role",
-        filters: {
-          parent: session.user.email,
-          role: ["in", LENDING_ROLES],
-        },
-        fields: ["role"],
-        limit_page_length: 1,
-      })) as any;
+      doctype: "Has Role",
+      filters: {
+        parent: session.user.email,
+        role: ["in", LENDING_ROLES],
+      },
+      fields: ["role"],
+      limit_page_length: 1,
+    })) as any;
 
     if (!roles?.message || roles.message.length === 0) return false;
 
@@ -394,14 +394,14 @@ export async function verifyLmsRole() {
 
   try {
     const roles = (await gatewayCall(client, "frappe.client.get_list", {
-        doctype: "Has Role",
-        filters: {
-          parent: session.user.email,
-          role: ["in", LMS_ROLES],
-        },
-        fields: ["role"],
-        limit_page_length: 1,
-      })) as any;
+      doctype: "Has Role",
+      filters: {
+        parent: session.user.email,
+        role: ["in", LMS_ROLES],
+      },
+      fields: ["role"],
+      limit_page_length: 1,
+    })) as any;
 
     return roles?.message && roles.message.length > 0;
   } catch (e) {

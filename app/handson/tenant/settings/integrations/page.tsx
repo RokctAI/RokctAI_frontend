@@ -120,17 +120,21 @@ export default function IntegrationsPage() {
       const data = await getIntegrations();
       setServices(data);
     } catch (e) {
-      toast.error(t('app.integrations.toast_load_fail'));
+      toast.error(t("app.integrations.toast_load_fail"));
     } finally {
       setLoading(false);
     }
   }
- 
+
   async function handleConnect() {
     if (!selectedService) return;
     try {
       await connectIntegration(selectedService.name, { apiKey });
-      toast.success(t('app.integrations.toast_connect_success', { service: selectedService.label }));
+      toast.success(
+        t("app.integrations.toast_connect_success", {
+          service: selectedService.label,
+        }),
+      );
       setSelectedService(null);
       setApiKey("");
       // Optimistic update or reload
@@ -140,33 +144,44 @@ export default function IntegrationsPage() {
         ),
       );
     } catch (e) {
-      toast.error(t('app.integrations.toast_connect_fail'));
+      toast.error(t("app.integrations.toast_connect_fail"));
     }
   }
 
   async function handleDisconnect(service: IntegrationService) {
-    if (!confirm(t('app.integrations.confirm_disconnect', { service: service.label }))) return;
+    if (
+      !confirm(
+        t("app.integrations.confirm_disconnect", { service: service.label }),
+      )
+    )
+      return;
     try {
       await disconnectIntegration(service.name);
-      toast.success(t('app.integrations.toast_disconnect_success', { service: service.label }));
+      toast.success(
+        t("app.integrations.toast_disconnect_success", {
+          service: service.label,
+        }),
+      );
       setServices((prev) =>
         prev.map((s) =>
           s.name === service.name ? { ...s, is_connected: false } : s,
         ),
       );
     } catch (e) {
-      toast.error(t('app.integrations.toast_disconnect_fail'));
+      toast.error(t("app.integrations.toast_disconnect_fail"));
     }
   }
 
   return (
     <div className="p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('app.integrations.title')}</h1>
-          <p className="text-muted-foreground mt-1">
-            {t('app.integrations.desc')}
-          </p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t("app.integrations.title")}
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          {t("app.integrations.desc")}
+        </p>
+      </div>
 
       {loading ? (
         <div className="flex h-48 items-center justify-center">
@@ -178,7 +193,10 @@ export default function IntegrationsPage() {
           {services.map((service) => {
             const Icon = iconMap[service.icon] || Settings2;
             return (
-              <Card key={service.name} className="flex flex-col border border-muted/40 shadow-sm bg-background/50 backdrop-blur-sm">
+              <Card
+                key={service.name}
+                className="flex flex-col border border-muted/40 shadow-sm bg-background/50 backdrop-blur-sm"
+              >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xl font-bold">
                     {service.label}
@@ -190,41 +208,46 @@ export default function IntegrationsPage() {
                     {service.description}
                   </CardDescription>
                   <div className="flex items-center gap-2">
-                     {service.is_connected ? (
-                       <Badge
-                         variant="default"
-                         className="bg-green-600 hover:bg-green-700"
-                       >
-                         <CheckCircle2 className="mr-1 h-3 w-3" /> {t('app.integrations.status_connected')}
-                       </Badge>
-                     ) : (
-                       <Badge variant="outline" className="text-muted-foreground">
-                         <XCircle className="mr-1 h-3 w-3" /> {t('app.integrations.status_disconnected')}
-                       </Badge>
-                     )}
+                    {service.is_connected ? (
+                      <Badge
+                        variant="default"
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        <CheckCircle2 className="mr-1 h-3 w-3" />{" "}
+                        {t("app.integrations.status_connected")}
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="outline"
+                        className="text-muted-foreground"
+                      >
+                        <XCircle className="mr-1 h-3 w-3" />{" "}
+                        {t("app.integrations.status_disconnected")}
+                      </Badge>
+                    )}
                   </div>
                 </CardContent>
                 <CardFooter className="pt-4 border-t border-muted/20">
                   {service.is_connected ? (
-                     <div className="flex gap-2 w-full">
-                       <Button variant="outline" className="flex-1">
-                         {t('app.integrations.btn_configure')}
-                       </Button>
-                       <Button
-                         variant="destructive"
-                         size="icon"
-                         onClick={() => handleDisconnect(service)}
-                       >
-                         <XCircle className="h-4 w-4" />
-                       </Button>
-                     </div>
+                    <div className="flex gap-2 w-full">
+                      <Button variant="outline" className="flex-1">
+                        {t("app.integrations.btn_configure")}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => handleDisconnect(service)}
+                      >
+                        <XCircle className="h-4 w-4" />
+                      </Button>
+                    </div>
                   ) : (
-                     <Button
-                       className="w-full"
-                       onClick={() => setSelectedService(service)}
-                     >
-                       {t('app.integrations.btn_connect')}
-                     </Button>
+                    <Button
+                      className="w-full"
+                      onClick={() => setSelectedService(service)}
+                    >
+                      {t("app.integrations.btn_connect")}
+                    </Button>
                   )}
                 </CardFooter>
               </Card>
@@ -234,80 +257,90 @@ export default function IntegrationsPage() {
           {/* Premium WhatsApp Native Integration Card */}
           <Card className="flex flex-col border border-primary/20 bg-gradient-to-br from-background/80 via-background/40 to-background/20 relative overflow-hidden shadow-md">
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
-             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-               <CardTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-600">
-                 {t('app.integrations.whatsapp_title')}
-               </CardTitle>
-               <Smartphone className="h-6 w-6 text-primary animate-pulse" />
-             </CardHeader>
-             <CardContent className="flex-1 pt-4">
-               <CardDescription className="text-sm text-muted-foreground mb-4">
-                 {t('app.integrations.whatsapp_desc')}
-               </CardDescription>
-               <div className="flex items-center gap-2">
-                 {wsConnected ? (
-                   <Badge
-                     variant="default"
-                     className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
-                   >
-                     <CheckCircle2 className="mr-1 h-3 w-3" /> {t('app.integrations.status_connected')}
-                   </Badge>
-                 ) : (
-                   <Badge variant="outline" className="text-muted-foreground font-medium">
-                     <XCircle className="mr-1 h-3 w-3" /> {t('app.integrations.status_disconnected')}
-                   </Badge>
-                 )}
-               </div>
-             </CardContent>
-             <CardFooter className="pt-4 border-t border-muted/20">
-               <Button
-                 className="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/95 hover:to-indigo-600/95 text-white font-medium shadow-sm"
-                 onClick={() => setShowWhatsAppModal(true)}
-               >
-                 {wsConnected ? t('app.integrations.whatsapp_btn_config') : t('app.integrations.whatsapp_btn_link')}
-               </Button>
-             </CardFooter>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-600">
+                {t("app.integrations.whatsapp_title")}
+              </CardTitle>
+              <Smartphone className="h-6 w-6 text-primary animate-pulse" />
+            </CardHeader>
+            <CardContent className="flex-1 pt-4">
+              <CardDescription className="text-sm text-muted-foreground mb-4">
+                {t("app.integrations.whatsapp_desc")}
+              </CardDescription>
+              <div className="flex items-center gap-2">
+                {wsConnected ? (
+                  <Badge
+                    variant="default"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+                  >
+                    <CheckCircle2 className="mr-1 h-3 w-3" />{" "}
+                    {t("app.integrations.status_connected")}
+                  </Badge>
+                ) : (
+                  <Badge
+                    variant="outline"
+                    className="text-muted-foreground font-medium"
+                  >
+                    <XCircle className="mr-1 h-3 w-3" />{" "}
+                    {t("app.integrations.status_disconnected")}
+                  </Badge>
+                )}
+              </div>
+            </CardContent>
+            <CardFooter className="pt-4 border-t border-muted/20">
+              <Button
+                className="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/95 hover:to-indigo-600/95 text-white font-medium shadow-sm"
+                onClick={() => setShowWhatsAppModal(true)}
+              >
+                {wsConnected
+                  ? t("app.integrations.whatsapp_btn_config")
+                  : t("app.integrations.whatsapp_btn_link")}
+              </Button>
+            </CardFooter>
           </Card>
         </div>
       )}
 
       {/* Slack/Calendar Connection Dialog */}
-       <Dialog
-         open={!!selectedService}
-         onOpenChange={(open) => !open && setSelectedService(null)}
-       >
-         <DialogContent>
-           <DialogHeader>
-             <DialogTitle>{t('app.integrations.dialog_title', { service: selectedService?.label })}</DialogTitle>
-             <DialogDescription>
-               {t('app.integrations.dialog_desc')}
-             </DialogDescription>
-           </DialogHeader>
-           <div className="grid gap-4 py-4">
-             <div className="space-y-2">
-               <Label>{t('app.integrations.label_api_key')}</Label>
-               <Input
-                 value={apiKey}
-                 onChange={(e) => setApiKey(e.target.value)}
-                 placeholder={t('app.integrations.ph_api_key')}
-                 type="password"
-               />
-             </div>
-           </div>
-           <DialogFooter>
-             <Button variant="outline" onClick={() => setSelectedService(null)}>
-               {t('common.cancel')}
-             </Button>
-             <Button onClick={handleConnect}>{t('app.integrations.btn_save_connect')}</Button>
-           </DialogFooter>
-         </DialogContent>
-       </Dialog>
+      <Dialog
+        open={!!selectedService}
+        onOpenChange={(open) => !open && setSelectedService(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {t("app.integrations.dialog_title", {
+                service: selectedService?.label,
+              })}
+            </DialogTitle>
+            <DialogDescription>
+              {t("app.integrations.dialog_desc")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label>{t("app.integrations.label_api_key")}</Label>
+              <Input
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder={t("app.integrations.ph_api_key")}
+                type="password"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedService(null)}>
+              {t("common.cancel")}
+            </Button>
+            <Button onClick={handleConnect}>
+              {t("app.integrations.btn_save_connect")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Premium WhatsApp Native Pairing Dialog */}
-      <Dialog
-        open={showWhatsAppModal}
-        onOpenChange={setShowWhatsAppModal}
-      >
+      <Dialog open={showWhatsAppModal} onOpenChange={setShowWhatsAppModal}>
         <DialogContent className="max-w-4xl bg-background/95 backdrop-blur-md border border-muted/40 p-0 overflow-hidden rounded-2xl">
           <WhatsAppLinkCard tenantId={tenantId} />
         </DialogContent>

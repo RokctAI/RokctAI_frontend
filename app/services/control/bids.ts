@@ -31,7 +31,8 @@ import { ControlBaseService } from "./base";
 // dotted `control.control.api.tenders.*` path (which the gateway rejects).
 
 // Frappe whitelisted responses may arrive as the bare value or wrapped in { message }.
-const unwrap = (res: any) => (res && typeof res === "object" && "message" in res ? res.message : res);
+const unwrap = (res: any) =>
+  res && typeof res === "object" && "message" in res ? res.message : res;
 
 export interface ChecklistItem {
   name: string;
@@ -85,7 +86,11 @@ export class TenderBidService {
   static async updateBidStatus(
     bid: string,
     status: string,
-    extras: { submitted_on?: string; outcome_value?: number; outcome_notes?: string } = {},
+    extras: {
+      submitted_on?: string;
+      outcome_value?: number;
+      outcome_notes?: string;
+    } = {},
   ): Promise<TenderBid> {
     return unwrap(
       await ControlBaseService.call("control:update_bid_status", {

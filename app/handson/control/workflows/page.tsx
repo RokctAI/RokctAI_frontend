@@ -79,13 +79,13 @@ import type { WorkflowRule } from "@/app/services/control/workflows";
 import t from "@/app/lib/i18n";
 
 const OPERATORS = [
-  { label: t('app.workflows.operators.equals'), value: "equals" },
-  { label: t('app.workflows.operators.not_equals'), value: "not_equals" },
-  { label: t('app.workflows.operators.greater_than'), value: "greater_than" },
-  { label: t('app.workflows.operators.less_than'), value: "less_than" },
-  { label: t('app.workflows.operators.contains'), value: "contains" },
-  { label: t('app.workflows.operators.is_empty'), value: "is_empty" },
-  { label: t('app.workflows.operators.is_not_empty'), value: "is_not_empty" },
+  { label: t("app.workflows.operators.equals"), value: "equals" },
+  { label: t("app.workflows.operators.not_equals"), value: "not_equals" },
+  { label: t("app.workflows.operators.greater_than"), value: "greater_than" },
+  { label: t("app.workflows.operators.less_than"), value: "less_than" },
+  { label: t("app.workflows.operators.contains"), value: "contains" },
+  { label: t("app.workflows.operators.is_empty"), value: "is_empty" },
+  { label: t("app.workflows.operators.is_not_empty"), value: "is_not_empty" },
 ];
 
 const DOCTYPES = [
@@ -96,8 +96,8 @@ const DOCTYPES = [
 ];
 
 const ACTIONS = [
-  { label: t('app.workflows.actions.set_field'), value: "set_field" },
-  { label: t('app.workflows.actions.block_save'), value: "block_save" },
+  { label: t("app.workflows.actions.set_field"), value: "set_field" },
+  { label: t("app.workflows.actions.block_save"), value: "block_save" },
 ];
 
 export default function WorkflowsPage() {
@@ -124,38 +124,38 @@ export default function WorkflowsPage() {
       const data = await getGlobalWorkflows();
       setRules(data || []);
     } catch (e) {
-      toast.error(t('app.workflows.toast_load_fail'));
+      toast.error(t("app.workflows.toast_load_fail"));
     } finally {
       setLoading(false);
     }
   }
- 
+
   async function handleSeed() {
     setLoading(true);
     await seedWorkflows();
-    toast.success(t('app.workflows.toast_seed_success'));
+    toast.success(t("app.workflows.toast_seed_success"));
     loadRules();
   }
 
   async function handleSave() {
     if (!editingRule.description) {
-      toast.error(t('app.workflows.toast_desc_req'));
+      toast.error(t("app.workflows.toast_desc_req"));
       return;
     }
     try {
       await saveGlobalWorkflow(editingRule);
-      toast.success(t('app.workflows.toast_save_success'));
+      toast.success(t("app.workflows.toast_save_success"));
       setIsEditOpen(false);
       loadRules();
     } catch (e) {
-      toast.error(t('app.workflows.toast_save_fail'));
+      toast.error(t("app.workflows.toast_save_fail"));
     }
   }
 
   async function handleDelete(name?: string) {
     if (!name || !confirm("Delete this rule?")) return;
     await deleteGlobalWorkflow(name);
-    toast.success(t('app.workflows.toast_delete_success'));
+    toast.success(t("app.workflows.toast_delete_success"));
     loadRules();
   }
 
@@ -230,18 +230,17 @@ export default function WorkflowsPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Workflow className="h-8 w-8" /> {t('app.workflows.title')}
+            <Workflow className="h-8 w-8" /> {t("app.workflows.title")}
           </h1>
-          <p className="text-muted-foreground">
-            {t('app.workflows.desc')}
-          </p>
+          <p className="text-muted-foreground">{t("app.workflows.desc")}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleSeed}>
-            <PlayCircle className="mr-2 h-4 w-4" /> {t('app.workflows.btn_seed')}
+            <PlayCircle className="mr-2 h-4 w-4" />{" "}
+            {t("app.workflows.btn_seed")}
           </Button>
           <Button onClick={openNew}>
-            <Plus className="mr-2 h-4 w-4" /> {t('app.workflows.btn_new')}
+            <Plus className="mr-2 h-4 w-4" /> {t("app.workflows.btn_new")}
           </Button>
         </div>
       </div>
@@ -265,11 +264,15 @@ export default function WorkflowsPage() {
                       Teams ({rule.min_users}+)
                     </Badge>
                   )}
-                     {rule.is_active ? (
-                       <Badge className="bg-green-600">{t('app.workflows.status_active')}</Badge>
-                     ) : (
-                       <Badge variant="secondary">{t('app.workflows.status_disabled')}</Badge>
-                     )}
+                  {rule.is_active ? (
+                    <Badge className="bg-green-600">
+                      {t("app.workflows.status_active")}
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary">
+                      {t("app.workflows.status_disabled")}
+                    </Badge>
+                  )}
                 </div>
               </div>
               <CardTitle className="leading-tight mt-2">
@@ -278,11 +281,11 @@ export default function WorkflowsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4 text-sm">
-                 <div>
-                   <p className="font-semibold text-muted-foreground text-xs uppercase mb-1">
-                     {t('app.workflows.condition_label')}
-                   </p>
-                   <ul className="space-y-1">
+                <div>
+                  <p className="font-semibold text-muted-foreground text-xs uppercase mb-1">
+                    {t("app.workflows.condition_label")}
+                  </p>
+                  <ul className="space-y-1">
                     {rule.conditions.map((c, i) => (
                       <li key={i} className="bg-muted/50 p-1 rounded px-2">
                         <span className="font-mono">{c.field}</span>{" "}
@@ -291,23 +294,30 @@ export default function WorkflowsPage() {
                     ))}
                   </ul>
                 </div>
-                 <div>
-                   <p className="font-semibold text-muted-foreground text-xs uppercase mb-1">
-                     {t('app.workflows.action_label')}
-                   </p>
-                   <ul className="space-y-1">
+                <div>
+                  <p className="font-semibold text-muted-foreground text-xs uppercase mb-1">
+                    {t("app.workflows.action_label")}
+                  </p>
+                  <ul className="space-y-1">
                     {rule.actions.map((a, i) => (
                       <li
                         key={i}
                         className="flex items-center gap-2 p-1 px-2 rounded bg-blue-50 text-blue-800"
                       >
-                         {a.type === "block_save" ? (
-                           <span>{t('app.workflows.block_save_msg', { message: a.message })}</span>
-                         ) : (
-                           <span>
-                             {t('app.workflows.set_field_msg', { field: a.field, value: a.value })}
-                           </span>
-                         )}
+                        {a.type === "block_save" ? (
+                          <span>
+                            {t("app.workflows.block_save_msg", {
+                              message: a.message,
+                            })}
+                          </span>
+                        ) : (
+                          <span>
+                            {t("app.workflows.set_field_msg", {
+                              field: a.field,
+                              value: a.value,
+                            })}
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -317,56 +327,58 @@ export default function WorkflowsPage() {
                 {/* Hover actions if needed */}
               </div>
               <div className="flex justify-end mt-4 gap-2 pt-2 border-t">
-                 <Button
-                   variant="ghost"
-                   size="sm"
-                   onClick={() => openEdit(rule)}
-                 >
-                   {t('common.edit')}
-                 </Button>
-                 <Button
-                   variant="ghost"
-                   size="sm"
-                   className="text-destructive"
-                   onClick={() => handleDelete(rule.name)}
-                 >
-                   {t('common.delete')}
-                 </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openEdit(rule)}
+                >
+                  {t("common.edit")}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-destructive"
+                  onClick={() => handleDelete(rule.name)}
+                >
+                  {t("common.delete")}
+                </Button>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-       {rules.length === 0 && !loading && (
-         <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
-           <Workflow className="mx-auto h-12 w-12 opacity-20 mb-4" />
-           <p>{t('app.workflows.no_rules')}</p>
-         </div>
-       )}
+      {rules.length === 0 && !loading && (
+        <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
+          <Workflow className="mx-auto h-12 w-12 opacity-20 mb-4" />
+          <p>{t("app.workflows.no_rules")}</p>
+        </div>
+      )}
 
       {/* Editor Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-           <DialogHeader>
-             <DialogTitle>
-               {editingRule.name ? t('common.edit') : t('app.workflows.dialog_new')}
-             </DialogTitle>
-             <DialogDescription>
-               {t('app.workflows.dialog_desc')}
-             </DialogDescription>
-           </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>
+              {editingRule.name
+                ? t("common.edit")
+                : t("app.workflows.dialog_new")}
+            </DialogTitle>
+            <DialogDescription>
+              {t("app.workflows.dialog_desc")}
+            </DialogDescription>
+          </DialogHeader>
 
           <div className="grid gap-6 py-4">
             <div className="grid grid-cols-2 gap-4">
-             <div className="space-y-2">
-               <Label>{t('app.workflows.label_doctype')}</Label>
-               <Select
-                 value={editingRule.doc_type}
-                 onValueChange={(val) =>
-                   setEditingRule({ ...editingRule, doc_type: val })
-                 }
-               >
+              <div className="space-y-2">
+                <Label>{t("app.workflows.label_doctype")}</Label>
+                <Select
+                  value={editingRule.doc_type}
+                  onValueChange={(val) =>
+                    setEditingRule({ ...editingRule, doc_type: val })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -380,59 +392,59 @@ export default function WorkflowsPage() {
                 </Select>
               </div>
             </div>
-             <div className="space-y-2">
-               <Label>{t('app.workflows.label_desc')}</Label>
-               <Input
-                 value={editingRule.description}
-                 onChange={(e) =>
-                   setEditingRule({
-                     ...editingRule,
-                     description: e.target.value,
-                   })
-                 }
-                 placeholder={t('app.workflows.ph_desc')}
-               />
-             </div>
+            <div className="space-y-2">
+              <Label>{t("app.workflows.label_desc")}</Label>
+              <Input
+                value={editingRule.description}
+                onChange={(e) =>
+                  setEditingRule({
+                    ...editingRule,
+                    description: e.target.value,
+                  })
+                }
+                placeholder={t("app.workflows.ph_desc")}
+              />
+            </div>
           </div>
 
-           <div className="space-y-2">
-             <Label>{t('app.workflows.label_min_users')}</Label>
-             <div className="flex gap-2 items-center">
-               <Input
-                 type="number"
-                 className="w-[100px]"
-                 value={editingRule.min_users || 0}
-                 onChange={(e) =>
-                   setEditingRule({
-                     ...editingRule,
-                     min_users: parseInt(e.target.value),
-                   })
-                 }
-               />
-               <span className="text-sm text-muted-foreground">
-                 {t('app.workflows.min_users_desc')}
-               </span>
-             </div>
-           </div>
+          <div className="space-y-2">
+            <Label>{t("app.workflows.label_min_users")}</Label>
+            <div className="flex gap-2 items-center">
+              <Input
+                type="number"
+                className="w-[100px]"
+                value={editingRule.min_users || 0}
+                onChange={(e) =>
+                  setEditingRule({
+                    ...editingRule,
+                    min_users: parseInt(e.target.value),
+                  })
+                }
+              />
+              <span className="text-sm text-muted-foreground">
+                {t("app.workflows.min_users_desc")}
+              </span>
+            </div>
+          </div>
 
           {/* Conditions Section */}
-           <div className="space-y-3 border p-4 rounded-lg bg-muted/20">
-             <div className="flex justify-between items-center">
-               <h4 className="font-semibold text-sm">
-                 {t('app.workflows.conditions_title')}
-               </h4>
-               <Button size="sm" variant="outline" onClick={addCondition}>
-                 <Plus className="h-3 w-3 mr-1" /> {t('app.workflows.btn_add')}
-               </Button>
-             </div>
+          <div className="space-y-3 border p-4 rounded-lg bg-muted/20">
+            <div className="flex justify-between items-center">
+              <h4 className="font-semibold text-sm">
+                {t("app.workflows.conditions_title")}
+              </h4>
+              <Button size="sm" variant="outline" onClick={addCondition}>
+                <Plus className="h-3 w-3 mr-1" /> {t("app.workflows.btn_add")}
+              </Button>
+            </div>
             {editingRule.conditions.map((c, i) => (
               <div key={i} className="flex gap-2 items-center">
-                 <Input
-                   className="w-[150px]"
-                   placeholder={t('app.workflows.ph_field')}
-                   value={c.field}
-                   onChange={(e) => updateCondition(i, "field", e.target.value)}
-                 />
+                <Input
+                  className="w-[150px]"
+                  placeholder={t("app.workflows.ph_field")}
+                  value={c.field}
+                  onChange={(e) => updateCondition(i, "field", e.target.value)}
+                />
                 <Select
                   value={c.operator}
                   onValueChange={(val) => updateCondition(i, "operator", val)}
@@ -449,14 +461,14 @@ export default function WorkflowsPage() {
                   </SelectContent>
                 </Select>
                 {c.operator !== "is_empty" && c.operator !== "is_not_empty" && (
-                 <Input
-                   className="flex-1"
-                   placeholder={t('app.workflows.ph_value')}
-                   value={c.value}
-                   onChange={(e) =>
-                     updateCondition(i, "value", e.target.value)
-                   }
-                 />
+                  <Input
+                    className="flex-1"
+                    placeholder={t("app.workflows.ph_value")}
+                    value={c.value}
+                    onChange={(e) =>
+                      updateCondition(i, "value", e.target.value)
+                    }
+                  />
                 )}
                 <Button
                   size="icon"
@@ -471,15 +483,15 @@ export default function WorkflowsPage() {
           </div>
 
           {/* Actions Section */}
-           <div className="space-y-3 border p-4 rounded-lg bg-blue-50/50">
-             <div className="flex justify-between items-center">
-               <h4 className="font-semibold text-sm">
-                 {t('app.workflows.actions_title')}
-               </h4>
-               <Button size="sm" variant="outline" onClick={addAction}>
-                 <Plus className="h-3 w-3 mr-1" /> {t('app.workflows.btn_add')}
-               </Button>
-             </div>
+          <div className="space-y-3 border p-4 rounded-lg bg-blue-50/50">
+            <div className="flex justify-between items-center">
+              <h4 className="font-semibold text-sm">
+                {t("app.workflows.actions_title")}
+              </h4>
+              <Button size="sm" variant="outline" onClick={addAction}>
+                <Plus className="h-3 w-3 mr-1" /> {t("app.workflows.btn_add")}
+              </Button>
+            </div>
             {editingRule.actions.map((a, i) => (
               <div
                 key={i}
@@ -513,48 +525,48 @@ export default function WorkflowsPage() {
 
                 {a.type === "set_field" && (
                   <div className="flex gap-2">
-                     <Input
-                       placeholder={t('app.workflows.ph_set_field')}
-                       value={a.field}
-                       onChange={(e) => updateAction(i, "field", e.target.value)}
-                     />
-                     <Input
-                       placeholder={t('app.workflows.ph_set_value')}
-                       value={a.value}
-                       onChange={(e) => updateAction(i, "value", e.target.value)}
-                     />
+                    <Input
+                      placeholder={t("app.workflows.ph_set_field")}
+                      value={a.field}
+                      onChange={(e) => updateAction(i, "field", e.target.value)}
+                    />
+                    <Input
+                      placeholder={t("app.workflows.ph_set_value")}
+                      value={a.value}
+                      onChange={(e) => updateAction(i, "value", e.target.value)}
+                    />
                   </div>
                 )}
 
                 {a.type === "block_save" && (
-                   <Input
-                     placeholder={t('app.workflows.ph_error_msg')}
-                     value={a.message}
-                     onChange={(e) => updateAction(i, "message", e.target.value)}
-                   />
+                  <Input
+                    placeholder={t("app.workflows.ph_error_msg")}
+                    value={a.message}
+                    onChange={(e) => updateAction(i, "message", e.target.value)}
+                  />
                 )}
               </div>
             ))}
           </div>
 
-           <div className="flex items-center gap-2">
-             <Switch
-               checked={editingRule.is_active}
-               onCheckedChange={(c) =>
-                 setEditingRule({ ...editingRule, is_active: c })
-               }
-             />
-             <Label>{t('app.workflows.label_active')}</Label>
-           </div>
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={editingRule.is_active}
+              onCheckedChange={(c) =>
+                setEditingRule({ ...editingRule, is_active: c })
+              }
+            />
+            <Label>{t("app.workflows.label_active")}</Label>
+          </div>
 
-           <DialogFooter>
-             <Button variant="outline" onClick={() => setIsEditOpen(false)}>
-               {t('common.cancel')}
-             </Button>
-             <Button onClick={handleSave}>
-               <Save className="mr-2 h-4 w-4" /> {t('app.workflows.btn_save')}
-             </Button>
-           </DialogFooter>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              {t("common.cancel")}
+            </Button>
+            <Button onClick={handleSave}>
+              <Save className="mr-2 h-4 w-4" /> {t("app.workflows.btn_save")}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

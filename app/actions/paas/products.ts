@@ -30,9 +30,9 @@ export async function getProducts(page: number = 1, perPage: number = 20) {
   try {
     const start = (page - 1) * perPage;
     const products = await paasCall("api.seller_product.get_seller_products", {
-        limit_start: start,
-        limit_page_length: perPage,
-      });
+      limit_start: start,
+      limit_page_length: perPage,
+    });
     return products;
   } catch (error) {
     console.error("Failed to fetch products:", error);
@@ -61,8 +61,8 @@ export async function getProduct(name: string) {
 export async function createProduct(data: any) {
   try {
     const product = await paasCall("api.seller_product.create_seller_product", {
-        product_data: data,
-      });
+      product_data: data,
+    });
     return product;
   } catch (error) {
     console.error("Failed to create product:", error);
@@ -73,9 +73,9 @@ export async function createProduct(data: any) {
 export async function updateProduct(name: string, data: any) {
   try {
     const product = await paasCall("api.seller_product.update_seller_product", {
-        product_name: name,
-        product_data: data,
-      });
+      product_name: name,
+      product_data: data,
+    });
     return product;
   } catch (error) {
     console.error("Failed to update product:", error);
@@ -86,8 +86,8 @@ export async function updateProduct(name: string, data: any) {
 export async function deleteProduct(name: string) {
   try {
     await paasCall("api.seller_product.delete_seller_product", {
-        product_name: name,
-      });
+      product_name: name,
+    });
     return true;
   } catch (error) {
     console.error("Failed to delete product:", error);
@@ -97,7 +97,9 @@ export async function deleteProduct(name: string) {
 
 export async function getInventory(itemCode: string) {
   try {
-    return await paasCall("api.seller_operations.get_seller_inventory_items", { item_code: itemCode });
+    return await paasCall("api.seller_operations.get_seller_inventory_items", {
+      item_code: itemCode,
+    });
   } catch (error) {
     console.error("Failed to fetch inventory:", error);
     return [];
@@ -110,7 +112,11 @@ export async function adjustInventory(
   newQty: number,
 ) {
   try {
-    await paasCall("api.seller_operations.adjust_seller_inventory", { item_code: itemCode, warehouse: warehouse, new_qty: newQty });
+    await paasCall("api.seller_operations.adjust_seller_inventory", {
+      item_code: itemCode,
+      warehouse: warehouse,
+      new_qty: newQty,
+    });
     revalidatePath(`/dashboard/products/${itemCode}`);
     return { success: true };
   } catch (error) {

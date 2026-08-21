@@ -133,15 +133,15 @@ export default function POSPage() {
     setProcessing(true);
     try {
       await createPOSOrder({ items: cart, total: calculateTotal() });
-      toast.success(t('app.paas.admin.pos.toast_success'));
+      toast.success(t("app.paas.admin.pos.toast_success"));
       setCart([]);
     } catch (error) {
-      toast.error(t('app.paas.admin.pos.toast_fail'));
+      toast.error(t("app.paas.admin.pos.toast_fail"));
     } finally {
       setProcessing(false);
     }
   };
- 
+
   return (
     <div className="flex h-[calc(100vh-4rem)] gap-4 p-4">
       {/* Left Side: Products */}
@@ -150,7 +150,7 @@ export default function POSPage() {
           <div className="relative flex-1">
             <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
             <Input
-              placeholder={t('app.paas.admin.pos.ph_search')}
+              placeholder={t("app.paas.admin.pos.ph_search")}
               className="pl-8"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -162,7 +162,7 @@ export default function POSPage() {
                 variant={selectedCategory === "all" ? "default" : "outline"}
                 onClick={() => setSelectedCategory("all")}
               >
-                {t('app.paas.admin.pos.cat_all')}
+                {t("app.paas.admin.pos.cat_all")}
               </Button>
               {categories.map((cat) => (
                 <Button
@@ -178,7 +178,7 @@ export default function POSPage() {
             </div>
           </ScrollArea>
         </div>
- 
+
         <ScrollArea className="flex-1">
           {loading ? (
             <div className="flex justify-center p-8">
@@ -203,7 +203,7 @@ export default function POSPage() {
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full text-muted-foreground">
-                          {t('app.paas.admin.pos.no_image')}
+                          {t("app.paas.admin.pos.no_image")}
                         </div>
                       )}
                     </div>
@@ -220,20 +220,20 @@ export default function POSPage() {
           )}
         </ScrollArea>
       </div>
- 
+
       {/* Right Side: Cart */}
       <Card className="w-[400px] flex flex-col">
         <div className="p-4 border-b">
           <h2 className="font-semibold flex items-center gap-2">
             <ShoppingCart className="size-4" />
-            {t('app.paas.admin.pos.cart_title')}
+            {t("app.paas.admin.pos.cart_title")}
           </h2>
         </div>
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-4">
             {cart.length === 0 ? (
               <div className="text-center text-muted-foreground py-8">
-                {t('app.paas.admin.pos.cart_empty')}
+                {t("app.paas.admin.pos.cart_empty")}
               </div>
             ) : (
               cart.map((item) => (
@@ -280,7 +280,7 @@ export default function POSPage() {
         </ScrollArea>
         <div className="p-4 border-t bg-muted/50 space-y-4">
           <div className="flex justify-between items-center text-lg font-bold">
-            <span>{t('app.paas.admin.pos.total')}</span>
+            <span>{t("app.paas.admin.pos.total")}</span>
             <span>${calculateTotal().toFixed(2)}</span>
           </div>
           <Button
@@ -290,7 +290,7 @@ export default function POSPage() {
             onClick={handleCheckout}
           >
             {processing ? <Loader2 className="animate-spin mr-2" /> : null}
-            {t('app.paas.admin.pos.btn_checkout')}
+            {t("app.paas.admin.pos.btn_checkout")}
           </Button>
         </div>
       </Card>

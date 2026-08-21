@@ -30,19 +30,22 @@ export function SecuritySection({ id }: { id?: string }) {
   const cards = [
     {
       title: "Industry-grade data security",
-      description: "GDPR, ISO 27001, AICPA SOC 2 certification for industry-standard data security.",
-      image: "https://cdn.getmerlin.in/cms/Frame_1321318025_5_0a00fc2b21.png"
+      description:
+        "GDPR, ISO 27001, AICPA SOC 2 certification for industry-standard data security.",
+      image: "https://cdn.getmerlin.in/cms/Frame_1321318025_5_0a00fc2b21.png",
     },
     {
       title: "Make your own prompt library",
-      description: "Automate generation of text, comments and posts with one click.",
-      image: "https://cdn.getmerlin.in/cms/Frame_1321318025_8_db66981d2c.png"
+      description:
+        "Automate generation of text, comments and posts with one click.",
+      image: "https://cdn.getmerlin.in/cms/Frame_1321318025_8_db66981d2c.png",
     },
     {
       title: "Create custom bots",
-      description: "String instructions, context and knowledge together to create custom chatbots.",
-      image: "https://cdn.getmerlin.in/cms/Frame_1321318025_1_81fb6cae7e.png"
-    }
+      description:
+        "String instructions, context and knowledge together to create custom chatbots.",
+      image: "https://cdn.getmerlin.in/cms/Frame_1321318025_1_81fb6cae7e.png",
+    },
   ];
 
   return (
@@ -54,7 +57,8 @@ export function SecuritySection({ id }: { id?: string }) {
           </h2>
           <div className="flex w-full max-w-md flex-col gap-4">
             <p className="font-sans text-center text-xl font-medium text-muted-foreground md:text-left">
-              Build custom solutions that adapt to your context, knowledge or brand voice, with industry-leading security.
+              Build custom solutions that adapt to your context, knowledge or
+              brand voice, with industry-leading security.
             </p>
           </div>
         </div>

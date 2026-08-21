@@ -29,7 +29,7 @@ class ServerSemanticSearch {
       const { pipeline } = await import("@xenova/transformers");
       ServerSemanticSearch.instance = await pipeline(
         "feature-extraction",
-        "Xenova/all-MiniLM-L6-v2"
+        "Xenova/all-MiniLM-L6-v2",
       );
     }
     return ServerSemanticSearch.instance;
@@ -57,14 +57,14 @@ class ServerSemanticSearch {
     if (!results.length) return results;
 
     const queryEmbedding = await this.getEmbedding(query);
-    
+
     const scoredResults = await Promise.all(
       results.map(async (res) => {
         const text = `${res.title} ${res.institution || ""} ${res.organization || ""} ${res.category || ""}`;
         const resEmbedding = await this.getEmbedding(text);
         const score = this.cosineSimilarity(queryEmbedding, resEmbedding);
         return { ...res, semanticScore: score };
-      })
+      }),
     );
 
     return scoredResults.sort((a, b) => b.semanticScore - a.semanticScore);
