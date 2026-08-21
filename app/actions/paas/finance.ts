@@ -49,8 +49,8 @@ export async function getWalletHistory() {
 export async function topUpWallet(amount: number) {
   try {
     const result = await paasCall("api.payment.process_wallet_top_up", {
-        amount: amount,
-      });
+      amount: amount,
+    });
     return result;
   } catch (error) {
     console.error("Failed to top up wallet:", error);
@@ -62,7 +62,9 @@ export async function topUpWallet(amount: number) {
 
 export async function getTransactions() {
   try {
-    const transactions = await paasCall("api.seller_transactions.get_seller_transactions");
+    const transactions = await paasCall(
+      "api.seller_transactions.get_seller_transactions",
+    );
     return transactions;
   } catch (error) {
     console.error("Failed to fetch transactions:", error);
@@ -72,7 +74,9 @@ export async function getTransactions() {
 
 export async function getShopPayments() {
   try {
-    const payments = await paasCall("api.seller_transactions.get_seller_shop_payments");
+    const payments = await paasCall(
+      "api.seller_transactions.get_seller_shop_payments",
+    );
     return payments;
   } catch (error) {
     console.error("Failed to fetch shop payments:", error);
@@ -82,7 +86,9 @@ export async function getShopPayments() {
 
 export async function getPartnerPayments() {
   try {
-    const payments = await paasCall("api.seller_transactions.get_seller_payment_to_partners");
+    const payments = await paasCall(
+      "api.seller_transactions.get_seller_payment_to_partners",
+    );
     return payments;
   } catch (error) {
     console.error("Failed to fetch partner payments:", error);

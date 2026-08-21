@@ -32,4 +32,3 @@ export const rebootSchema = z.object({
 });
 
 export type RebootValues = z.infer<typeof rebootSchema>;
-

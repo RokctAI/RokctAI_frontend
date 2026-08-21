@@ -31,13 +31,22 @@ import {
 } from "@/app/actions/opportunities/bids";
 import type { ChecklistItem, TenderBid } from "@/app/services/control/bids";
 
-const BID_STATUSES = ["Watching", "Preparing", "Submitted", "Awarded", "Lost", "Withdrawn"];
+const BID_STATUSES = [
+  "Watching",
+  "Preparing",
+  "Submitted",
+  "Awarded",
+  "Lost",
+  "Withdrawn",
+];
 
 const STATUS_COLORS: Record<string, string> = {
   Watching: "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
   Preparing: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-  Submitted: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
-  Awarded: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+  Submitted:
+    "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+  Awarded:
+    "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
   Lost: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
   Withdrawn: "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500",
 };
@@ -60,9 +69,16 @@ export function DeadlineChip({ closingDate }: { closingDate?: string | null }) {
         : days <= 21
           ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
           : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300";
-  const label = days < 0 ? "Closed" : days === 0 ? "Closes today" : `${days} day${days === 1 ? "" : "s"} left`;
+  const label =
+    days < 0
+      ? "Closed"
+      : days === 0
+        ? "Closes today"
+        : `${days} day${days === 1 ? "" : "s"} left`;
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}`}>
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}`}
+    >
       {label}
     </span>
   );
@@ -133,7 +149,9 @@ export function TenderChecklist({
   initialBid: TenderBid | null;
 }) {
   const [bid, setBid] = useState<TenderBid | null>(initialBid);
-  const [items, setItems] = useState<ChecklistItem[]>(initialBid?.checklist ?? []);
+  const [items, setItems] = useState<ChecklistItem[]>(
+    initialBid?.checklist ?? [],
+  );
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -146,8 +164,8 @@ export function TenderChecklist({
           Response Checklist
         </h2>
         <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-          Track this tender to get its response checklist, tick tasks off with your team, and
-          follow it through to submission.
+          Track this tender to get its response checklist, tick tasks off with
+          your team, and follow it through to submission.
         </p>
         <button
           disabled={pending}
@@ -167,7 +185,9 @@ export function TenderChecklist({
         >
           {pending ? "Setting up…" : "Track this tender"}
         </button>
-        {error && <p className="text-sm text-red-600 dark:text-red-400 mt-3">{error}</p>}
+        {error && (
+          <p className="text-sm text-red-600 dark:text-red-400 mt-3">{error}</p>
+        )}
       </div>
     );
   }
@@ -211,15 +231,23 @@ export function TenderChecklist({
                 const nextDone = e.target.checked;
                 setItems((prev) =>
                   prev.map((i) =>
-                    i.name === item.name ? { ...i, status: nextDone ? "Done" : "Open" } : i,
+                    i.name === item.name
+                      ? { ...i, status: nextDone ? "Done" : "Open" }
+                      : i,
                   ),
                 );
                 startTransition(async () => {
-                  const res: any = await updateChecklistItem(bid.name, item.name, nextDone);
+                  const res: any = await updateChecklistItem(
+                    bid.name,
+                    item.name,
+                    nextDone,
+                  );
                   if (res?.error) {
                     setItems((prev) =>
                       prev.map((i) =>
-                        i.name === item.name ? { ...i, status: nextDone ? "Open" : "Done" } : i,
+                        i.name === item.name
+                          ? { ...i, status: nextDone ? "Open" : "Done" }
+                          : i,
                       ),
                     );
                     setError(res.error);
@@ -241,7 +269,9 @@ export function TenderChecklist({
         ))}
       </ul>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400 mt-3">{error}</p>}
+      {error && (
+        <p className="text-sm text-red-600 dark:text-red-400 mt-3">{error}</p>
+      )}
     </div>
   );
 }

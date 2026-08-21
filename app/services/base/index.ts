@@ -35,10 +35,10 @@ export {
   TELEMETRY_CMD,
   TELEMETRY_ENDPOINT,
   type LogFrontendErrorOptions,
-} from './telemetry';
+} from "./telemetry";
 export {
   platformCall,
   PLATFORM_GATEWAY_METHOD,
   PLATFORM_GATEWAY_PATH,
   type PlatformCallOptions,
-} from './platform-gateway';
+} from "./platform-gateway";

@@ -146,60 +146,70 @@ export default function DeliveryZonesPage() {
             <ArrowLeft className="size-4" />
           </Button>
         </Link>
-         <h1 className="text-3xl font-bold">{t('app.paas.dashboard.settings.delivery_zones.title')}</h1>
+        <h1 className="text-3xl font-bold">
+          {t("app.paas.dashboard.settings.delivery_zones.title")}
+        </h1>
       </div>
 
-       <Alert>
-         <AlertCircle className="size-4" />
-         <AlertTitle>{t('app.paas.dashboard.settings.delivery_zones.alert_title')}</AlertTitle>
-         <AlertDescription>
-           {t('app.paas.dashboard.settings.delivery_zones.alert_desc')}
-         </AlertDescription>
-       </Alert>
+      <Alert>
+        <AlertCircle className="size-4" />
+        <AlertTitle>
+          {t("app.paas.dashboard.settings.delivery_zones.alert_title")}
+        </AlertTitle>
+        <AlertDescription>
+          {t("app.paas.dashboard.settings.delivery_zones.alert_desc")}
+        </AlertDescription>
+      </Alert>
 
       <Card>
-         <CardHeader>
-           <CardTitle>{t('app.paas.dashboard.settings.delivery_zones.card_title')}</CardTitle>
-           <CardDescription>
-             {t('app.paas.dashboard.settings.delivery_zones.card_desc')}
-           </CardDescription>
-         </CardHeader>
+        <CardHeader>
+          <CardTitle>
+            {t("app.paas.dashboard.settings.delivery_zones.card_title")}
+          </CardTitle>
+          <CardDescription>
+            {t("app.paas.dashboard.settings.delivery_zones.card_desc")}
+          </CardDescription>
+        </CardHeader>
         <CardContent>
           <form onSubmit={handleCreate} className="space-y-4">
-               <div className="space-y-2">
-                 <Label htmlFor="coords">{t('app.paas.dashboard.settings.delivery_zones.label_coords')}</Label>
-                 <Textarea
-                   id="coords"
-                   value={newZoneCoords}
-                   onChange={(e) => setNewZoneCoords(e.target.value)}
-                   placeholder={t('app.paas.dashboard.settings.delivery_zones.ph_coords')}
-                   rows={4}
-                   required
-                 />
-               </div>
-             <Button type="submit" disabled={creating}>
-               {creating ? (
-                 <>
-                   <Loader2 className="mr-2 size-4 animate-spin" />
-                   {t('common.creating')}
-                 </>
-               ) : (
-                 <>
-                   <Plus className="mr-2 size-4" />
-                   {t('app.paas.dashboard.settings.delivery_zones.btn_add')}
-                 </>
-               )}
-             </Button>
+            <div className="space-y-2">
+              <Label htmlFor="coords">
+                {t("app.paas.dashboard.settings.delivery_zones.label_coords")}
+              </Label>
+              <Textarea
+                id="coords"
+                value={newZoneCoords}
+                onChange={(e) => setNewZoneCoords(e.target.value)}
+                placeholder={t(
+                  "app.paas.dashboard.settings.delivery_zones.ph_coords",
+                )}
+                rows={4}
+                required
+              />
+            </div>
+            <Button type="submit" disabled={creating}>
+              {creating ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  {t("common.creating")}
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 size-4" />
+                  {t("app.paas.dashboard.settings.delivery_zones.btn_add")}
+                </>
+              )}
+            </Button>
           </form>
         </CardContent>
       </Card>
 
       <div className="grid gap-4">
-         {zones.length === 0 ? (
-           <div className="text-center text-muted-foreground py-8">
-             {t('app.paas.dashboard.settings.delivery_zones.no_data')}
-           </div>
-         ) : (
+        {zones.length === 0 ? (
+          <div className="text-center text-muted-foreground py-8">
+            {t("app.paas.dashboard.settings.delivery_zones.no_data")}
+          </div>
+        ) : (
           zones.map((zone) => (
             <Card key={zone.name}>
               <CardContent className="flex items-center justify-between p-6">

@@ -149,7 +149,7 @@ const SUB_STATUSES = {
 } as const;
 
 export default function SubscriptionsPage() {
-  const monthlyLimitLabel = t('subscriptions.monthly_token_limit');
+  const monthlyLimitLabel = t("subscriptions.monthly_token_limit");
   const [customers, setCustomers] = useState<any[]>([]);
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [plans, setPlans] = useState<any[]>([]);
@@ -639,26 +639,32 @@ export default function SubscriptionsPage() {
                   control={planForm.control}
                   name="plan_name"
                   render={({ field }) => (
-                               <FormItem>
-                                 <FormLabel>Plan Name</FormLabel>
-                                 <FormControl>
-                                   <Input placeholder={t('app.subscriptions.ph_tier')} {...field} />
-                                 </FormControl>
-                                 <FormMessage />
-                               </FormItem>
+                    <FormItem>
+                      <FormLabel>Plan Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder={t("app.subscriptions.ph_tier")}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
                 />
                 <FormField
                   control={planForm.control}
                   name="plan_category"
                   render={({ field }) => (
-                               <FormItem>
-                                 <FormLabel>Category</FormLabel>
-                                 <FormControl>
-                                   <Input placeholder={t('app.subscriptions.ph_plan')} {...field} />
-                                 </FormControl>
-                                 <FormMessage />
-                               </FormItem>
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder={t("app.subscriptions.ph_plan")}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
                 />
               </div>
@@ -699,20 +705,28 @@ export default function SubscriptionsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Billing Interval</FormLabel>
-                               <Select
-                                 onValueChange={field.onChange}
-                                 defaultValue={field.value}
-                                 value={field.value}
-                               >
-                                 <FormControl>
-                                   <SelectTrigger>
-                                     <SelectValue placeholder={t('app.subscriptions.select_interval')} />
-                                   </SelectTrigger>
-                                 </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value={BILLING_INTERVALS.MONTHLY}>{t('app.subscriptions.interval_monthly')}</SelectItem>
-                                    <SelectItem value={BILLING_INTERVALS.YEARLY}>{t('app.subscriptions.interval_yearly')}</SelectItem>
-                                  </SelectContent>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={t(
+                                "app.subscriptions.select_interval",
+                              )}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={BILLING_INTERVALS.MONTHLY}>
+                            {t("app.subscriptions.interval_monthly")}
+                          </SelectItem>
+                          <SelectItem value={BILLING_INTERVALS.YEARLY}>
+                            {t("app.subscriptions.interval_yearly")}
+                          </SelectItem>
+                        </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
@@ -734,12 +748,12 @@ export default function SubscriptionsPage() {
               </div>
 
               <div className="p-4 border rounded-md bg-muted/20">
-                   <FormField
-                     control={planForm.control}
-                     name={monthlyLimitId}
-                     render={({ field }) => (
+                <FormField
+                  control={planForm.control}
+                  name={monthlyLimitId}
+                  render={({ field }) => (
                     <FormItem>
-                       <FormLabel>{monthlyLimitLabel}</FormLabel>
+                      <FormLabel>{monthlyLimitLabel}</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="50000" {...field} />
                       </FormControl>
@@ -818,9 +832,13 @@ export default function SubscriptionsPage() {
                               value={field.value}
                             >
                               <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder={t('app.subscriptions.ph_module')} />
-                                  </SelectTrigger>
+                                <SelectTrigger>
+                                  <SelectValue
+                                    placeholder={t(
+                                      "app.subscriptions.ph_module",
+                                    )}
+                                  />
+                                </SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                 {modules.map((m) => (
@@ -876,13 +894,16 @@ export default function SubscriptionsPage() {
                 control={subForm.control}
                 name="company"
                 render={({ field }) => (
-                   <FormItem>
-                     <FormLabel>Company</FormLabel>
-                     <FormControl>
-                       <Input placeholder={t('app.subscriptions.ph_company')} {...field} />
-                     </FormControl>
-                     <FormMessage />
-                   </FormItem>
+                  <FormItem>
+                    <FormLabel>Company</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t("app.subscriptions.ph_company")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
               />
               <FormField
@@ -891,12 +912,14 @@ export default function SubscriptionsPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Plan</FormLabel>
-                               <Select onValueChange={field.onChange} value={field.value}>
-                                 <FormControl>
-                                   <SelectTrigger>
-                                     <SelectValue placeholder={t('app.subscriptions.select_module')} />
-                                   </SelectTrigger>
-                                 </FormControl>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={t("app.subscriptions.select_module")}
+                          />
+                        </SelectTrigger>
+                      </FormControl>
                       <SelectContent>
                         {plans.map((p) => (
                           <SelectItem key={p.name} value={p.name}>
@@ -915,19 +938,31 @@ export default function SubscriptionsPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                               <Select onValueChange={field.onChange} value={field.value}>
-                                 <FormControl>
-                                   <SelectTrigger>
-                                     <SelectValue placeholder={t('app.subscriptions.select_status')} />
-                                   </SelectTrigger>
-                                 </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value={SUB_STATUSES.ACTIVE}>{t('app.subscriptions.status_active')}</SelectItem>
-                                    <SelectItem value={SUB_STATUSES.TRIALING}>{t('app.subscriptions.status_trialing')}</SelectItem>
-                                    <SelectItem value={SUB_STATUSES.PAST_DUE}>{t('app.subscriptions.status_past_due')}</SelectItem>
-                                    <SelectItem value={SUB_STATUSES.CANCELED}>{t('app.subscriptions.status_canceled')}</SelectItem>
-                                    <SelectItem value={SUB_STATUSES.UNPAID}>{t('app.subscriptions.status_unpaid')}</SelectItem>
-                                  </SelectContent>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={t("app.subscriptions.select_status")}
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={SUB_STATUSES.ACTIVE}>
+                          {t("app.subscriptions.status_active")}
+                        </SelectItem>
+                        <SelectItem value={SUB_STATUSES.TRIALING}>
+                          {t("app.subscriptions.status_trialing")}
+                        </SelectItem>
+                        <SelectItem value={SUB_STATUSES.PAST_DUE}>
+                          {t("app.subscriptions.status_past_due")}
+                        </SelectItem>
+                        <SelectItem value={SUB_STATUSES.CANCELED}>
+                          {t("app.subscriptions.status_canceled")}
+                        </SelectItem>
+                        <SelectItem value={SUB_STATUSES.UNPAID}>
+                          {t("app.subscriptions.status_unpaid")}
+                        </SelectItem>
+                      </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>

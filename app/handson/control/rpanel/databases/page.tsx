@@ -99,43 +99,48 @@ function DatabasesContent() {
 
   return (
     <>
-       <div className="flex justify-between items-center mb-6">
-         <h1 className="text-2xl font-bold flex items-center gap-2">
-           <Database className="h-6 w-6 text-green-500" /> {t('common.databases')}
-         </h1>
-       </div>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold flex items-center gap-2">
+          <Database className="h-6 w-6 text-green-500" />{" "}
+          {t("common.databases")}
+        </h1>
+      </div>
 
       <div className="flex justify-between items-center mb-6">
         <div className="relative w-1/3">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-           <Input
-             placeholder={t('common.search_databases')}
-             className="pl-9 bg-[#1a1f36] border-gray-700 text-gray-200"
-             value={searchQuery}
-             onChange={(e: any) => setSearchQuery(e.target.value)}
-           />
+          <Input
+            placeholder={t("common.search_databases")}
+            className="pl-9 bg-[#1a1f36] border-gray-700 text-gray-200"
+            value={searchQuery}
+            onChange={(e: any) => setSearchQuery(e.target.value)}
+          />
         </div>
       </div>
 
       <div className="rounded-lg border border-gray-700 bg-[#1a1f36] overflow-hidden shadow-sm">
-         {loading ? (
-           <div className="p-8 text-center text-gray-400">
-             {t('common.loading')}
-           </div>
-         ) : filteredDbs.length === 0 ? (
-           <div className="p-8 text-center text-gray-400">
-             {t('common.no_data')}
-           </div>
-         ) : (
+        {loading ? (
+          <div className="p-8 text-center text-gray-400">
+            {t("common.loading")}
+          </div>
+        ) : filteredDbs.length === 0 ? (
+          <div className="p-8 text-center text-gray-400">
+            {t("common.no_data")}
+          </div>
+        ) : (
           <table className="w-full text-sm text-left">
             <thead className="text-gray-400 font-medium border-b border-gray-700 bg-[#1a1f36]">
-               <tr>
-                 <th className="px-6 py-4 font-normal">{t('common.database_name')}</th>
-                 <th className="px-6 py-4 font-normal">{t('common.database_user')}</th>
-                 <th className="px-6 py-4 font-normal">{t('common.host')}</th>
-                 <th className="px-6 py-4 font-normal">{t('common.website')}</th>
-                 <th className="px-6 py-4 text-right"></th>
-               </tr>
+              <tr>
+                <th className="px-6 py-4 font-normal">
+                  {t("common.database_name")}
+                </th>
+                <th className="px-6 py-4 font-normal">
+                  {t("common.database_user")}
+                </th>
+                <th className="px-6 py-4 font-normal">{t("common.host")}</th>
+                <th className="px-6 py-4 font-normal">{t("common.website")}</th>
+                <th className="px-6 py-4 text-right"></th>
+              </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
               {filteredDbs.map((db) => (
@@ -147,15 +152,17 @@ function DatabasesContent() {
                     {db.db_name}
                   </td>
                   <td className="px-6 py-4 text-gray-300">{db.db_user}</td>
-                   <td className="px-6 py-4 text-gray-400">{db.host || 'localhost'}</td>
+                  <td className="px-6 py-4 text-gray-400">
+                    {db.host || "localhost"}
+                  </td>
                   <td className="px-6 py-4 text-blue-400">{db.domain}</td>
                   <td className="px-6 py-4 text-right">
-                       <Button
-                         variant="ghost"
-                         size="icon"
-                         onClick={() => setEditingDb(db)}
-                         title="Change Password" // placeholder
-                       >
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setEditingDb(db)}
+                      title="Change Password" // placeholder
+                    >
                       <KeyRound className="h-4 w-4" />
                     </Button>
                   </td>
@@ -171,13 +178,15 @@ function DatabasesContent() {
         onOpenChange={(open) => !open && setEditingDb(null)}
       >
         <DialogContent className="bg-[#1a1f36] border-gray-700 text-gray-200">
-           <DialogHeader>
-             <DialogTitle>{t('common.change_password')}: {editingDb?.db_user}</DialogTitle>
-           </DialogHeader>
-           <div className="space-y-4 py-4">
-             <label className="text-sm font-medium text-gray-400">
-               {t('common.new_password')}
-             </label>
+          <DialogHeader>
+            <DialogTitle>
+              {t("common.change_password")}: {editingDb?.db_user}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <label className="text-sm font-medium text-gray-400">
+              {t("common.new_password")}
+            </label>
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
@@ -200,9 +209,9 @@ function DatabasesContent() {
             <Button variant="ghost" onClick={() => setEditingDb(null)}>
               Cancel
             </Button>
-              <Button onClick={handlePasswordUpdate} disabled={isSaving}>
-                 Update Password
-              </Button>
+            <Button onClick={handlePasswordUpdate} disabled={isSaving}>
+              Update Password
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

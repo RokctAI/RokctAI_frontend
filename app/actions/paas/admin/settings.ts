@@ -38,7 +38,9 @@ export async function getGeneralSettings() {
 
 export async function updateGeneralSettings(settings: any) {
   try {
-    await paasCall("api.admin_settings.update_general_settings", { settings_data: settings });
+    await paasCall("api.admin_settings.update_general_settings", {
+      settings_data: settings,
+    });
     revalidatePath("/paas/admin/settings/general");
     return { success: true };
   } catch (error) {
@@ -50,7 +52,10 @@ export async function updateGeneralSettings(settings: any) {
 export async function getCurrencies(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_settings.get_all_currencies", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_settings.get_all_currencies", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch currencies:", error);
     return [];
@@ -158,7 +163,10 @@ export async function getAppSettings() {
 export async function getPages(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.page.get_admin_pages", { limit_start: start, limit_page_length: limit });
+    return await paasCall("api.page.get_admin_pages", {
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch pages:", error);
     return [];
@@ -473,9 +481,9 @@ export async function getLandingPage() {
 export async function updateLandingPage(data: any) {
   try {
     await paasCall("api.page.update_admin_web_page", {
-        route: "home",
-        page_data: data,
-      });
+      route: "home",
+      page_data: data,
+    });
     revalidatePath("/paas/admin/settings/landing");
     return { success: true };
   } catch (error) {

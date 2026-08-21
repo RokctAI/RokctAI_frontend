@@ -163,51 +163,63 @@ export default function BookingSettingsPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
-         <div>
-           <h1 className="text-3xl font-bold">{t('app.paas.dashboard.settings.booking.title')}</h1>
-           <p className="text-muted-foreground">
-             {t('app.paas.dashboard.settings.booking.desc')}
-           </p>
-         </div>
+        <div>
+          <h1 className="text-3xl font-bold">
+            {t("app.paas.dashboard.settings.booking.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("app.paas.dashboard.settings.booking.desc")}
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Sections List */}
         <Card className="md:col-span-1">
-           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-             <CardTitle className="text-lg font-medium">{t('app.paas.dashboard.settings.booking.zones_title')}</CardTitle>
-             <Dialog
-               open={isSectionDialogOpen}
-               onOpenChange={setIsSectionDialogOpen}
-             >
-               <DialogTrigger asChild>
-                 <Button size="sm" variant="outline">
-                   <Plus className="size-4" />
-                 </Button>
-               </DialogTrigger>
-               <DialogContent>
-                 <DialogHeader>
-                   <DialogTitle>{t('app.paas.dashboard.settings.booking.dialog_zone_title')}</DialogTitle>
-                   <DialogDescription>
-                     {t('app.paas.dashboard.settings.booking.dialog_zone_desc')}
-                   </DialogDescription>
-                 </DialogHeader>
-                 <div className="space-y-4 py-4">
-                   <div className="space-y-2">
-                     <Label>{t('app.paas.dashboard.settings.booking.label_zone_name')}</Label>
-                     <Input
-                       value={sectionName}
-                       onChange={(e) => setSectionName(e.target.value)}
-                       placeholder={t('app.paas.dashboard.settings.booking.ph_zone_name')}
-                     />
-                   </div>
-                 </div>
-                 <DialogFooter>
-                   <Button onClick={handleCreateSection}>{t('app.paas.dashboard.settings.booking.btn_create_zone')}</Button>
-                 </DialogFooter>
-               </DialogContent>
-             </Dialog>
-           </CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-lg font-medium">
+              {t("app.paas.dashboard.settings.booking.zones_title")}
+            </CardTitle>
+            <Dialog
+              open={isSectionDialogOpen}
+              onOpenChange={setIsSectionDialogOpen}
+            >
+              <DialogTrigger asChild>
+                <Button size="sm" variant="outline">
+                  <Plus className="size-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    {t("app.paas.dashboard.settings.booking.dialog_zone_title")}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {t("app.paas.dashboard.settings.booking.dialog_zone_desc")}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label>
+                      {t("app.paas.dashboard.settings.booking.label_zone_name")}
+                    </Label>
+                    <Input
+                      value={sectionName}
+                      onChange={(e) => setSectionName(e.target.value)}
+                      placeholder={t(
+                        "app.paas.dashboard.settings.booking.ph_zone_name",
+                      )}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button onClick={handleCreateSection}>
+                    {t("app.paas.dashboard.settings.booking.btn_create_zone")}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardHeader>
           <CardContent className="pt-4">
             <div className="space-y-2">
               {sections.map((section) => (
@@ -234,67 +246,81 @@ export default function BookingSettingsPage() {
                   </Button>
                 </div>
               ))}
-               {sections.length === 0 && (
-                 <p className="text-sm text-muted-foreground text-center py-4">
-                   {t('app.paas.dashboard.settings.booking.no_zones')}
-                 </p>
-               )}
+              {sections.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  {t("app.paas.dashboard.settings.booking.no_zones")}
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
 
         {/* Tables List */}
         <Card className="md:col-span-2">
-           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-             <CardTitle className="text-lg font-medium">
-               {t('app.paas.dashboard.settings.booking.tables_title')}{" "}
-               {selectedSection &&
-               sections.find((s) => s.name === selectedSection)
-                 ? `- ${sections.find((s) => s.name === selectedSection).section_name}`
-                 : ""}
-             </CardTitle>
-             <Dialog
-               open={isTableDialogOpen}
-               onOpenChange={setIsTableDialogOpen}
-             >
-               <DialogTrigger asChild>
-                 <Button size="sm" disabled={!selectedSection}>
-                   <Plus className="mr-2 size-4" />
-                   {t('app.paas.dashboard.settings.booking.btn_add_table')}
-                 </Button>
-               </DialogTrigger>
-               <DialogContent>
-                 <DialogHeader>
-                   <DialogTitle>{t('app.paas.dashboard.settings.booking.dialog_table_title')}</DialogTitle>
-                   <DialogDescription>
-                     {t('app.paas.dashboard.settings.booking.dialog_table_desc')}
-                   </DialogDescription>
-                 </DialogHeader>
-                 <div className="space-y-4 py-4">
-                   <div className="space-y-2">
-                     <Label>{t('app.paas.dashboard.settings.booking.label_table_name')}</Label>
-                     <Input
-                       value={tableName}
-                       onChange={(e) => setTableName(e.target.value)}
-                       placeholder={t('app.paas.dashboard.settings.booking.ph_table_name')}
-                     />
-                   </div>
-                   <div className="space-y-2">
-                     <Label>{t('app.paas.dashboard.settings.booking.label_seats')}</Label>
-                     <Input
-                       type="number"
-                       value={tableSeats}
-                       onChange={(e) => setTableSeats(parseInt(e.target.value))}
-                       min={1}
-                     />
-                   </div>
-                 </div>
-                 <DialogFooter>
-                   <Button onClick={handleCreateTable}>{t('app.paas.dashboard.settings.booking.btn_create_table')}</Button>
-                 </DialogFooter>
-               </DialogContent>
-             </Dialog>
-           </CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-lg font-medium">
+              {t("app.paas.dashboard.settings.booking.tables_title")}{" "}
+              {selectedSection &&
+              sections.find((s) => s.name === selectedSection)
+                ? `- ${sections.find((s) => s.name === selectedSection).section_name}`
+                : ""}
+            </CardTitle>
+            <Dialog
+              open={isTableDialogOpen}
+              onOpenChange={setIsTableDialogOpen}
+            >
+              <DialogTrigger asChild>
+                <Button size="sm" disabled={!selectedSection}>
+                  <Plus className="mr-2 size-4" />
+                  {t("app.paas.dashboard.settings.booking.btn_add_table")}
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    {t(
+                      "app.paas.dashboard.settings.booking.dialog_table_title",
+                    )}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {t("app.paas.dashboard.settings.booking.dialog_table_desc")}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label>
+                      {t(
+                        "app.paas.dashboard.settings.booking.label_table_name",
+                      )}
+                    </Label>
+                    <Input
+                      value={tableName}
+                      onChange={(e) => setTableName(e.target.value)}
+                      placeholder={t(
+                        "app.paas.dashboard.settings.booking.ph_table_name",
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>
+                      {t("app.paas.dashboard.settings.booking.label_seats")}
+                    </Label>
+                    <Input
+                      type="number"
+                      value={tableSeats}
+                      onChange={(e) => setTableSeats(parseInt(e.target.value))}
+                      min={1}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button onClick={handleCreateTable}>
+                    {t("app.paas.dashboard.settings.booking.btn_create_table")}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardHeader>
           <CardContent className="pt-4">
             {loadingTables ? (
               <div className="flex justify-center py-8">
@@ -327,11 +353,11 @@ export default function BookingSettingsPage() {
                     </p>
                   </div>
                 ))}
-                 {tables.length === 0 && (
-                   <div className="col-span-full text-center py-8 text-muted-foreground">
-                     {t('app.paas.dashboard.settings.booking.no_tables')}
-                   </div>
-                 )}
+                {tables.length === 0 && (
+                  <div className="col-span-full text-center py-8 text-muted-foreground">
+                    {t("app.paas.dashboard.settings.booking.no_tables")}
+                  </div>
+                )}
               </div>
             )}
           </CardContent>

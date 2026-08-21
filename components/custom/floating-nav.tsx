@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-﻿"use client";
+"use client";
 
 import { PLATFORM_NAME } from "@/app/config/platform";
 import React, { useEffect, useState } from "react";
@@ -64,7 +64,10 @@ export function FloatingNav() {
       });
     };
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions,
+    );
 
     SECTIONS.forEach((section) => {
       const element = document.getElementById(section.id);

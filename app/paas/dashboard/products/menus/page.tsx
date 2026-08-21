@@ -111,23 +111,28 @@ export default function MenusPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-         <div>
-           <h1 className="text-3xl font-bold">{t('app.paas.dashboard.products.menus.title')}</h1>
-           <p className="text-muted-foreground">{t('app.paas.dashboard.products.menus.desc')}</p>
-         </div>
-         <Button onClick={() => setIsDialogOpen(true)}>
-           <Plus className="mr-2 size-4" /> {t('app.paas.dashboard.products.menus.btn_add')}
-         </Button>
+        <div>
+          <h1 className="text-3xl font-bold">
+            {t("app.paas.dashboard.products.menus.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("app.paas.dashboard.products.menus.desc")}
+          </p>
+        </div>
+        <Button onClick={() => setIsDialogOpen(true)}>
+          <Plus className="mr-2 size-4" />{" "}
+          {t("app.paas.dashboard.products.menus.btn_add")}
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-         {menus.length === 0 ? (
-           <Card className="col-span-full">
-             <CardContent className="py-12 text-center text-muted-foreground">
-               {t('app.paas.dashboard.products.menus.no_data')}
-             </CardContent>
-           </Card>
-         ) : (
+        {menus.length === 0 ? (
+          <Card className="col-span-full">
+            <CardContent className="py-12 text-center text-muted-foreground">
+              {t("app.paas.dashboard.products.menus.no_data")}
+            </CardContent>
+          </Card>
+        ) : (
           menus.map((menu) => (
             <Card key={menu.name}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -155,30 +160,34 @@ export default function MenusPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
-           <DialogHeader>
-             <DialogTitle>{t('app.paas.dashboard.products.menus.dialog_title')}</DialogTitle>
-           </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>
+              {t("app.paas.dashboard.products.menus.dialog_title")}
+            </DialogTitle>
+          </DialogHeader>
           <div className="grid gap-4 py-4">
-             <div className="grid gap-2">
-               <Label htmlFor="name">{t('app.paas.dashboard.products.menus.label_name')}</Label>
-               <Input
-                 id="name"
-                 value={formData.name}
-                 onChange={(e) =>
-                   setFormData((prev) => ({ ...prev, name: e.target.value }))
-                 }
-                 placeholder={t('app.paas.dashboard.products.menus.ph_name')}
-               />
-             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="name">
+                {t("app.paas.dashboard.products.menus.label_name")}
+              </Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
+                placeholder={t("app.paas.dashboard.products.menus.ph_name")}
+              />
+            </div>
           </div>
           <DialogFooter>
-             <Button onClick={handleSubmit} disabled={processing}>
-               {processing ? (
-                 <Loader2 className="size-4 animate-spin" />
-               ) : (
-                 t('common.create')
-               )}
-             </Button>
+            <Button onClick={handleSubmit} disabled={processing}>
+              {processing ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                t("common.create")
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

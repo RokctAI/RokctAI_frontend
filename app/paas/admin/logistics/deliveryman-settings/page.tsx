@@ -58,18 +58,24 @@ export default function DeliverymanSettingsPage() {
         setFormData(data);
       }
     } catch (error) {
-      toast.error(t('paas.admin.logistics.deliveryman_settings.toast_load_fail'));
+      toast.error(
+        t("paas.admin.logistics.deliveryman_settings.toast_load_fail"),
+      );
     } finally {
       setLoading(false);
     }
   }
- 
+
   async function handleSave() {
     try {
       await updateDeliverySettings(formData);
-      toast.success(t('paas.admin.logistics.deliveryman_settings.toast_save_success'));
+      toast.success(
+        t("paas.admin.logistics.deliveryman_settings.toast_save_success"),
+      );
     } catch (error) {
-      toast.error(t('paas.admin.logistics.deliveryman_settings.toast_save_fail'));
+      toast.error(
+        t("paas.admin.logistics.deliveryman_settings.toast_save_fail"),
+      );
     }
   }
 
@@ -85,24 +91,30 @@ export default function DeliverymanSettingsPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
-          {t('paas.admin.logistics.deliveryman_settings.title')}
+          {t("paas.admin.logistics.deliveryman_settings.title")}
         </h2>
         <p className="text-muted-foreground">
-          {t('paas.admin.logistics.deliveryman_settings.desc')}
+          {t("paas.admin.logistics.deliveryman_settings.desc")}
         </p>
       </div>
- 
+
       <Card>
         <CardHeader>
-          <CardTitle>{t('paas.admin.logistics.deliveryman_settings.card_title')}</CardTitle>
+          <CardTitle>
+            {t("paas.admin.logistics.deliveryman_settings.card_title")}
+          </CardTitle>
           <CardDescription>
-            {t('paas.admin.logistics.deliveryman_settings.card_desc')}
+            {t("paas.admin.logistics.deliveryman_settings.card_desc")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>{t('paas.admin.logistics.deliveryman_settings.label_search_radius')}</Label>
+              <Label>
+                {t(
+                  "paas.admin.logistics.deliveryman_settings.label_search_radius",
+                )}
+              </Label>
               <Input
                 type="number"
                 value={formData.search_radius || ""}
@@ -112,11 +124,17 @@ export default function DeliverymanSettingsPage() {
                     search_radius: parseFloat(e.target.value),
                   })
                 }
-                placeholder={t('paas.admin.logistics.deliveryman_settings.ph_search_radius')}
+                placeholder={t(
+                  "paas.admin.logistics.deliveryman_settings.ph_search_radius",
+                )}
               />
             </div>
             <div className="space-y-2">
-              <Label>{t('paas.admin.logistics.deliveryman_settings.label_max_orders')}</Label>
+              <Label>
+                {t(
+                  "paas.admin.logistics.deliveryman_settings.label_max_orders",
+                )}
+              </Label>
               <Input
                 type="number"
                 value={formData.max_orders || ""}
@@ -126,11 +144,15 @@ export default function DeliverymanSettingsPage() {
                     max_orders: parseInt(e.target.value),
                   })
                 }
-                placeholder={t('paas.admin.logistics.deliveryman_settings.ph_max_orders')}
+                placeholder={t(
+                  "paas.admin.logistics.deliveryman_settings.ph_max_orders",
+                )}
               />
             </div>
             <div className="space-y-2">
-              <Label>{t('paas.admin.logistics.deliveryman_settings.label_base_fee')}</Label>
+              <Label>
+                {t("paas.admin.logistics.deliveryman_settings.label_base_fee")}
+              </Label>
               <Input
                 type="number"
                 value={formData.base_fee || ""}
@@ -144,7 +166,11 @@ export default function DeliverymanSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>{t('paas.admin.logistics.deliveryman_settings.label_fee_per_km')}</Label>
+              <Label>
+                {t(
+                  "paas.admin.logistics.deliveryman_settings.label_fee_per_km",
+                )}
+              </Label>
               <Input
                 type="number"
                 value={formData.fee_per_km || ""}
@@ -158,7 +184,7 @@ export default function DeliverymanSettingsPage() {
               />
             </div>
           </div>
- 
+
           <div className="flex items-center space-x-2 pt-4">
             <Switch
               checked={!!formData.auto_assign}
@@ -166,15 +192,17 @@ export default function DeliverymanSettingsPage() {
                 setFormData({ ...formData, auto_assign: checked ? 1 : 0 })
               }
             />
-            <Label>{t('paas.admin.logistics.deliveryman_settings.label_auto_assign')}</Label>
+            <Label>
+              {t("paas.admin.logistics.deliveryman_settings.label_auto_assign")}
+            </Label>
           </div>
         </CardContent>
       </Card>
- 
+
       <div className="flex justify-end">
         <Button onClick={handleSave}>
           <Save className="mr-2 size-4" />
-          {t('paas.admin.logistics.deliveryman_settings.btn_save')}
+          {t("paas.admin.logistics.deliveryman_settings.btn_save")}
         </Button>
       </div>
     </div>

@@ -35,7 +35,10 @@ export interface Opportunity {
 }
 
 function cleanTitle(title: string): string {
-  return title.replace(/^Tender Opportunity:\s*/i, "Tender: ").replace(/^Grant Opportunity:\s*/i, "Grant: ").replace(/^Equity Opportunity:\s*/i, "Equity: ");
+  return title
+    .replace(/^Tender Opportunity:\s*/i, "Tender: ")
+    .replace(/^Grant Opportunity:\s*/i, "Grant: ")
+    .replace(/^Equity Opportunity:\s*/i, "Equity: ");
 }
 
 export class OpportunityPublicService {
@@ -44,31 +47,33 @@ export class OpportunityPublicService {
 
     // ── 1. Original backend fetch (unchanged) ──────────────────────────────
     const results = await Promise.all(
-      types.map(type =>
+      types.map((type) =>
         platformCall<any>(
           "control:get_public_opportunities",
           JSON.stringify({
             opportunity_type: type,
-            filters: JSON.stringify({ title: ["like", `%${query}%`] })
+            filters: JSON.stringify({ title: ["like", `%${query}%`] }),
           }),
-          { method: "GET", fetchOptions: { next: { revalidate: 60 } } }
-        )
-      )
+          { method: "GET", fetchOptions: { next: { revalidate: 60 } } },
+        ),
+      ),
     );
 
-    const tenders = ((results[0]?.data) ?? results[0] ?? []) as Opportunity[];
-    const grants  = ((results[1]?.data) ?? results[1] ?? []) as Opportunity[];
-    const equity  = ((results[2]?.data) ?? results[2] ?? []) as Opportunity[];
+    const tenders = (results[0]?.data ?? results[0] ?? []) as Opportunity[];
+    const grants = (results[1]?.data ?? results[1] ?? []) as Opportunity[];
+    const equity = (results[2]?.data ?? results[2] ?? []) as Opportunity[];
 
-    const clean = (opps: Opportunity[]) => opps.map(o => ({ ...o, title: cleanTitle(o.title) }));
+    const clean = (opps: Opportunity[]) =>
+      opps.map((o) => ({ ...o, title: cleanTitle(o.title) }));
 
     // ── 2. If backend returned data, use it ────────────────────────────────
-    const hasData = tenders.length > 0 || grants.length > 0 || equity.length > 0;
+    const hasData =
+      tenders.length > 0 || grants.length > 0 || equity.length > 0;
     if (hasData) {
-      return { 
-        tenders: clean(tenders), 
-        grants: clean(grants), 
-        equity: clean(equity) 
+      return {
+        tenders: clean(tenders),
+        grants: clean(grants),
+        equity: clean(equity),
       };
     }
 
@@ -89,8 +94,8 @@ export class OpportunityPublicService {
       const data = await res.json();
       return {
         tenders: clean((data.tenders ?? []) as Opportunity[]),
-        grants:  clean((data.grants  ?? []) as Opportunity[]),
-        equity:  clean((data.equity  ?? []) as Opportunity[]),
+        grants: clean((data.grants ?? []) as Opportunity[]),
+        equity: clean((data.equity ?? []) as Opportunity[]),
       };
     } catch {
       return { tenders: [], grants: [], equity: [] };

@@ -34,14 +34,19 @@ import { AllFeaturesSection } from "@/components/custom/all-features-section";
 import { ChatSection } from "@/components/custom/chat-section";
 import { SocialSection } from "@/components/custom/social-section";
 
-
 import { WorkflowSection } from "@/components/custom/workflow-section";
 
 import { FaqSection } from "@/components/custom/faq-section";
 import { TestimonialsSection } from "@/components/custom/testimonials-section";
 import { useState } from "react";
 
-export function LandingContent({ plans, session }: { plans: any[], session?: any }) {
+export function LandingContent({
+  plans,
+  session,
+}: {
+  plans: any[];
+  session?: any;
+}) {
   const router = useRouter();
   const [category, setCategory] = useState("rokct");
   const [searchActive, setSearchActive] = useState(false);
@@ -51,43 +56,40 @@ export function LandingContent({ plans, session }: { plans: any[], session?: any
       <Header loginUrl="/login" signupUrl="/register" session={session} />
       <main className="flex-1">
         <FloatingNav />
-        <Hero id="hero" signupUrl="/register" onResultsChange={setSearchActive} />
-        <div style={{ display: searchActive ? "none" : undefined }}>
-        <Logos />
-
-        
-        
-        <ChatSection id="chat" />
-        {/* Empty anchor divs for FloatingNav sections contained within ChatSection */}
-        <div id="projects" />
-        <div id="crafts" />
-        <div id="research" />
-
-        <SocialSection id="social" />
-        <AllFeaturesSection id="features" />
-
-        
-
-        
-        
-        
-        
-        <WorkflowSection id="workflow" />
-
-        <Pricing
-          id="pricing-original"
-          signupUrl={(plan) => (plan ? `/register?plan=${plan}` : "/register")}
-          category={category}
-          onCategoryChange={setCategory}
-          initialPlans={plans}
+        <Hero
+          id="hero"
+          signupUrl="/register"
+          onResultsChange={setSearchActive}
         />
-        
-        <CopiedPricing id="pricing" />
+        <div style={{ display: searchActive ? "none" : undefined }}>
+          <Logos />
 
-        <FaqSection id="faq" />
+          <ChatSection id="chat" />
+          {/* Empty anchor divs for FloatingNav sections contained within ChatSection */}
+          <div id="projects" />
+          <div id="crafts" />
+          <div id="research" />
 
-        <TestimonialsSection id="testimonials" />
+          <SocialSection id="social" />
+          <AllFeaturesSection id="features" />
 
+          <WorkflowSection id="workflow" />
+
+          <Pricing
+            id="pricing-original"
+            signupUrl={(plan) =>
+              plan ? `/register?plan=${plan}` : "/register"
+            }
+            category={category}
+            onCategoryChange={setCategory}
+            initialPlans={plans}
+          />
+
+          <CopiedPricing id="pricing" />
+
+          <FaqSection id="faq" />
+
+          <TestimonialsSection id="testimonials" />
         </div>
         <div id="footer" />
       </main>

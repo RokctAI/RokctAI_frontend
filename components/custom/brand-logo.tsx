@@ -49,16 +49,17 @@ export function BrandLogo({
     setMounted(true);
   }, []);
 
-  const branding = mounted && typeof window !== "undefined"
-    ? JSON.parse(localStorage.getItem("rokct_branding_data") || "null")
-    : null;
+  const branding =
+    mounted && typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("rokct_branding_data") || "null")
+      : null;
   const isBeta = branding?.showBeta !== false;
 
   const imageClasses = `${className || ""} ${showBadge && isBeta ? "mb-[14%]" : ""}`;
 
   return (
     <div
-      className={`relative flex items-center justify-center overflow-hidden ${isCircle ? 'rounded-full' : 'rounded-[5px]'} bg-gradient-to-br from-zinc-800 to-zinc-950 dark:from-zinc-100 dark:to-zinc-300`}
+      className={`relative flex items-center justify-center overflow-hidden ${isCircle ? "rounded-full" : "rounded-[5px]"} bg-gradient-to-br from-zinc-800 to-zinc-950 dark:from-zinc-100 dark:to-zinc-300`}
       style={{ width, height, minWidth: width, minHeight: height }}
     >
       {/* CSS-based theme-toggling images to prevent hydration flicker on first paint */}

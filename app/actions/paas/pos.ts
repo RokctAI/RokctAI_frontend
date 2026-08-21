@@ -53,8 +53,8 @@ export async function createPOSOrder(orderData: any) {
 
     // 3. Create Order
     const order = await paasCall("api.order.create_order", {
-        order_data: finalOrderData,
-      });
+      order_data: finalOrderData,
+    });
 
     revalidatePath("/paas/dashboard/orders");
     return order;

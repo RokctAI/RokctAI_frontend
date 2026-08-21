@@ -43,18 +43,24 @@ export async function GET(req: NextRequest) {
 
   const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL;
   if (!BRIDGE_URL) {
-    return new Response(JSON.stringify({ error: "WhatsApp Bridge URL is not configured" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "WhatsApp Bridge URL is not configured" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   try {
-    const res = await fetch(`${BRIDGE_URL}/sessions/status?tenantId=${tenantId}`, {
-      cache: "no-store",
-    });
+    const res = await fetch(
+      `${BRIDGE_URL}/sessions/status?tenantId=${tenantId}`,
+      {
+        cache: "no-store",
+      },
+    );
     if (!res.ok) throw new Error("Bridge connection failed");
-    
+
     const data = await res.json();
     return new Response(JSON.stringify(data), {
       status: 200,
@@ -63,11 +69,15 @@ export async function GET(req: NextRequest) {
   } catch (err: any) {
     console.warn("WhatsApp bridge status check failed:", err.message);
     return new Response(
-      JSON.stringify({ connected: false, initialized: false, error: err.message }),
+      JSON.stringify({
+        connected: false,
+        initialized: false,
+        error: err.message,
+      }),
       {
         status: 200, // Return standard JSON to prevent client-side throws
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   }
 }

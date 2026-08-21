@@ -168,47 +168,64 @@ export default function ParcelSettingsPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-         <div>
-           <h1 className="text-3xl font-bold">{t('app.paas.dashboard.settings.parcel.title')}</h1>
-           <p className="text-muted-foreground">
-             {t('app.paas.dashboard.settings.parcel.desc')}
-           </p>
-         </div>
-         <Button onClick={() => handleOpenDialog()}>
-           <Plus className="mr-2 size-4" /> {t('app.paas.dashboard.settings.parcel.btn_add')}
-         </Button>
+        <div>
+          <h1 className="text-3xl font-bold">
+            {t("app.paas.dashboard.settings.parcel.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("app.paas.dashboard.settings.parcel.desc")}
+          </p>
+        </div>
+        <Button onClick={() => handleOpenDialog()}>
+          <Plus className="mr-2 size-4" />{" "}
+          {t("app.paas.dashboard.settings.parcel.btn_add")}
+        </Button>
       </div>
 
-       <Card>
-         <CardHeader>
-           <CardTitle>{t('app.paas.dashboard.settings.parcel.card_title')}</CardTitle>
-           <CardDescription>
-             {t('app.paas.dashboard.settings.parcel.card_desc')}
-           </CardDescription>
-         </CardHeader>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {t("app.paas.dashboard.settings.parcel.card_title")}
+          </CardTitle>
+          <CardDescription>
+            {t("app.paas.dashboard.settings.parcel.card_desc")}
+          </CardDescription>
+        </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-               <TableRow>
-                 <TableHead>{t('app.paas.dashboard.settings.parcel.col_type')}</TableHead>
-                 <TableHead>{t('app.paas.dashboard.settings.parcel.col_weight')}</TableHead>
-                 <TableHead>{t('app.paas.dashboard.settings.parcel.col_base_price')}</TableHead>
-                 <TableHead>{t('app.paas.dashboard.settings.parcel.col_price_km')}</TableHead>
-                 <TableHead>{t('app.paas.dashboard.settings.parcel.col_special')}</TableHead>
-                 <TableHead className="text-right">{t('common.actions')}</TableHead>
-               </TableRow>
+              <TableRow>
+                <TableHead>
+                  {t("app.paas.dashboard.settings.parcel.col_type")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.settings.parcel.col_weight")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.settings.parcel.col_base_price")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.settings.parcel.col_price_km")}
+                </TableHead>
+                <TableHead>
+                  {t("app.paas.dashboard.settings.parcel.col_special")}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t("common.actions")}
+                </TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
-               {settings.length === 0 ? (
-                 <TableRow>
-                   <TableCell
-                     colSpan={6}
-                     className="text-center h-24 text-muted-foreground"
-                   >
-                     {t('app.paas.dashboard.settings.parcel.no_data')}
-                   </TableCell>
-                 </TableRow>
-               ) : (
+              {settings.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={6}
+                    className="text-center h-24 text-muted-foreground"
+                  >
+                    {t("app.paas.dashboard.settings.parcel.no_data")}
+                  </TableCell>
+                </TableRow>
+              ) : (
                 settings.map((setting) => (
                   <TableRow key={setting.name}>
                     <TableCell className="font-medium">
@@ -219,7 +236,9 @@ export default function ParcelSettingsPage() {
                     </TableCell>
                     <TableCell>${setting.price.toFixed(2)}</TableCell>
                     <TableCell>${setting.price_per_km.toFixed(2)}</TableCell>
-                     <TableCell>{setting.special ? t('common.yes') : t('common.no')}</TableCell>
+                    <TableCell>
+                      {setting.special ? t("common.yes") : t("common.no")}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"
@@ -247,147 +266,167 @@ export default function ParcelSettingsPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
-           <DialogHeader>
-             <DialogTitle>
-               {editing ? t('app.paas.dashboard.settings.parcel.dialog_edit') : t('app.paas.dashboard.settings.parcel.dialog_add')}
-             </DialogTitle>
-             <DialogDescription>
-               {t('app.paas.dashboard.settings.parcel.dialog_desc')}
-             </DialogDescription>
-           </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>
+              {editing
+                ? t("app.paas.dashboard.settings.parcel.dialog_edit")
+                : t("app.paas.dashboard.settings.parcel.dialog_add")}
+            </DialogTitle>
+            <DialogDescription>
+              {t("app.paas.dashboard.settings.parcel.dialog_desc")}
+            </DialogDescription>
+          </DialogHeader>
           <div className="grid gap-4 py-4">
-             <div className="grid gap-2">
-               <Label htmlFor="type">{t('app.paas.dashboard.settings.parcel.label_type')}</Label>
-               <Input
-                 id="type"
-                 value={formData.type}
-                 onChange={(e) =>
-                   setFormData((prev) => ({ ...prev, type: e.target.value }))
-                 }
-                 placeholder={t('app.paas.dashboard.settings.parcel.ph_type')}
-               />
-             </div>
-            <div className="grid grid-cols-2 gap-4">
-               <div className="grid gap-2">
-                 <Label htmlFor="min_g">{t('app.paas.dashboard.settings.parcel.label_min_g')}</Label>
-                 <Input
-                   id="min_g"
-                   type="number"
-                   value={formData.min_g}
-                   onChange={(e) =>
-                     setFormData((prev) => ({
-                       ...prev,
-                       min_g: parseFloat(e.target.value),
-                     }))
-                   }
-                 />
-               </div>
-               <div className="grid gap-2">
-                 <Label htmlFor="max_g">{t('app.paas.dashboard.settings.parcel.label_max_g')}</Label>
-                 <Input
-                   id="max_g"
-                   type="number"
-                   value={formData.max_g}
-                   onChange={(e) =>
-                     setFormData((prev) => ({
-                       ...prev,
-                       max_g: parseFloat(e.target.value),
-                     }))
-                   }
-                 />
-               </div>
+            <div className="grid gap-2">
+              <Label htmlFor="type">
+                {t("app.paas.dashboard.settings.parcel.label_type")}
+              </Label>
+              <Input
+                id="type"
+                value={formData.type}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, type: e.target.value }))
+                }
+                placeholder={t("app.paas.dashboard.settings.parcel.ph_type")}
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
-               <div className="grid gap-2">
-                 <Label htmlFor="price">{t('app.paas.dashboard.settings.parcel.label_base_price')}</Label>
-                 <Input
-                   id="price"
-                   type="number"
-                   value={formData.price}
-                   onChange={(e) =>
-                     setFormData((prev) => ({
-                       ...prev,
-                       price: parseFloat(e.target.value),
-                     }))
-                   }
-                 />
-               </div>
-               <div className="grid gap-2">
-                 <Label htmlFor="price_per_km">{t('app.paas.dashboard.settings.parcel.label_price_km')}</Label>
-                 <Input
-                   id="price_per_km"
-                   type="number"
-                   value={formData.price_per_km}
-                   onChange={(e) =>
-                     setFormData((prev) => ({
-                       ...prev,
-                       price_per_km: parseFloat(e.target.value),
-                     }))
-                   }
-                 />
-               </div>
+              <div className="grid gap-2">
+                <Label htmlFor="min_g">
+                  {t("app.paas.dashboard.settings.parcel.label_min_g")}
+                </Label>
+                <Input
+                  id="min_g"
+                  type="number"
+                  value={formData.min_g}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      min_g: parseFloat(e.target.value),
+                    }))
+                  }
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="max_g">
+                  {t("app.paas.dashboard.settings.parcel.label_max_g")}
+                </Label>
+                <Input
+                  id="max_g"
+                  type="number"
+                  value={formData.max_g}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      max_g: parseFloat(e.target.value),
+                    }))
+                  }
+                />
+              </div>
             </div>
-             <div className="flex items-center space-x-2">
-               <Switch
-                 id="special"
-                 checked={!!formData.special}
-                 onCheckedChange={(checked) =>
-                   setFormData((prev) => ({ ...prev, special: checked ? 1 : 0 }))
-                 }
-               />
-               <Label htmlFor="special">{t('app.paas.dashboard.settings.parcel.label_special')}</Label>
-             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="price">
+                  {t("app.paas.dashboard.settings.parcel.label_base_price")}
+                </Label>
+                <Input
+                  id="price"
+                  type="number"
+                  value={formData.price}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      price: parseFloat(e.target.value),
+                    }))
+                  }
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="price_per_km">
+                  {t("app.paas.dashboard.settings.parcel.label_price_km")}
+                </Label>
+                <Input
+                  id="price_per_km"
+                  type="number"
+                  value={formData.price_per_km}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      price_per_km: parseFloat(e.target.value),
+                    }))
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="special"
+                checked={!!formData.special}
+                onCheckedChange={(checked) =>
+                  setFormData((prev) => ({ ...prev, special: checked ? 1 : 0 }))
+                }
+              />
+              <Label htmlFor="special">
+                {t("app.paas.dashboard.settings.parcel.label_special")}
+              </Label>
+            </div>
             {!!formData.special && (
               <div className="grid grid-cols-2 gap-4">
-                 <div className="grid gap-2">
-                   <Label htmlFor="special_price">{t('app.paas.dashboard.settings.parcel.label_special_base_price')}</Label>
-                   <Input
-                     id="special_price"
-                     type="number"
-                     value={formData.special_price}
-                     onChange={(e) =>
-                       setFormData((prev) => ({
-                         ...prev,
-                         special_price: parseFloat(e.target.value),
-                       }))
-                     }
-                   />
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="special_price_per_km">
-                     {t('app.paas.dashboard.settings.parcel.label_special_price_km')}
-                   </Label>
-                   <Input
-                     id="special_price_per_km"
-                     type="number"
-                     value={formData.special_price_per_km}
-                     onChange={(e) =>
-                       setFormData((prev) => ({
-                         ...prev,
-                         special_price_per_km: parseFloat(e.target.value),
-                       }))
-                     }
-                   />
-                 </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="special_price">
+                    {t(
+                      "app.paas.dashboard.settings.parcel.label_special_base_price",
+                    )}
+                  </Label>
+                  <Input
+                    id="special_price"
+                    type="number"
+                    value={formData.special_price}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        special_price: parseFloat(e.target.value),
+                      }))
+                    }
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="special_price_per_km">
+                    {t(
+                      "app.paas.dashboard.settings.parcel.label_special_price_km",
+                    )}
+                  </Label>
+                  <Input
+                    id="special_price_per_km"
+                    type="number"
+                    value={formData.special_price_per_km}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        special_price_per_km: parseFloat(e.target.value),
+                      }))
+                    }
+                  />
+                </div>
               </div>
             )}
-             <ImageUpload
-               label={t('app.paas.dashboard.settings.parcel.label_image')}
-               value={formData.img}
-               onChange={(url) => setFormData((prev) => ({ ...prev, img: url }))}
-             />
+            <ImageUpload
+              label={t("app.paas.dashboard.settings.parcel.label_image")}
+              value={formData.img}
+              onChange={(url) => setFormData((prev) => ({ ...prev, img: url }))}
+            />
           </div>
-           <DialogFooter>
-             <Button onClick={handleSubmit} disabled={processing}>
-               {processing ? (
-                 <Loader2 className="size-4 animate-spin" />
-               ) : editing ? (
-                 t('common.update')
-               ) : (
-                 t('common.create')
-               )}
-             </Button>
-           </DialogFooter>
+          <DialogFooter>
+            <Button onClick={handleSubmit} disabled={processing}>
+              {processing ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : editing ? (
+                t("common.update")
+              ) : (
+                t("common.create")
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
