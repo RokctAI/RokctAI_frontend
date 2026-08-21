@@ -151,8 +151,12 @@ jobs:
           pnpm install --no-frozen-lockfile
 
           echo "--- composed change summary (nothing is committed) ---"
-          git status --porcelain | head -40
-          echo "...total changed/untracked paths: $(git status --porcelain | wc -l)"
+          # Capture once; piping git into head would SIGPIPE git (exit 141
+          # under pipefail) as soon as head stops reading after 40 lines.
+          STATUS=$(git status --porcelain)
+          head -40 <<< "$STATUS"
+          if [ -n "$STATUS" ]; then COUNT=$(wc -l <<< "$STATUS"); else COUNT=0; fi
+          echo "...total changed/untracked paths: $COUNT"
 
   # --- 1.5. SYNC API SCHEMAS ---
   sync-schemas:
