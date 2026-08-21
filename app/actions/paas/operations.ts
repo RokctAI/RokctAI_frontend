@@ -38,7 +38,10 @@ export async function getKitchens() {
 
 export async function createKitchen(data: any) {
   try {
-    const kitchen = await paasCall("api.seller_operations.create_seller_kitchen", { kitchen_data: data });
+    const kitchen = await paasCall(
+      "api.seller_operations.create_seller_kitchen",
+      { kitchen_data: data },
+    );
     revalidatePath("/paas/dashboard/restaurant/kitchens");
     return kitchen;
   } catch (error) {
@@ -49,7 +52,10 @@ export async function createKitchen(data: any) {
 
 export async function updateKitchen(name: string, data: any) {
   try {
-    const kitchen = await paasCall("api.seller_operations.update_seller_kitchen", { kitchen_name: name, kitchen_data: data });
+    const kitchen = await paasCall(
+      "api.seller_operations.update_seller_kitchen",
+      { kitchen_name: name, kitchen_data: data },
+    );
     revalidatePath("/paas/dashboard/restaurant/kitchens");
     return kitchen;
   } catch (error) {
@@ -60,7 +66,9 @@ export async function updateKitchen(name: string, data: any) {
 
 export async function deleteKitchen(name: string) {
   try {
-    await paasCall("api.seller_operations.delete_seller_kitchen", { kitchen_name: name });
+    await paasCall("api.seller_operations.delete_seller_kitchen", {
+      kitchen_name: name,
+    });
     revalidatePath("/paas/dashboard/restaurant/kitchens");
     return { success: true };
   } catch (error) {
@@ -82,7 +90,9 @@ export async function getMenus() {
 
 export async function createMenu(data: any) {
   try {
-    const menu = await paasCall("api.seller_operations.create_seller_menu", { menu_data: data });
+    const menu = await paasCall("api.seller_operations.create_seller_menu", {
+      menu_data: data,
+    });
     revalidatePath("/paas/dashboard/products/menus");
     return menu;
   } catch (error) {
@@ -93,7 +103,9 @@ export async function createMenu(data: any) {
 
 export async function deleteMenu(name: string) {
   try {
-    await paasCall("api.seller_operations.delete_seller_menu", { menu_name: name });
+    await paasCall("api.seller_operations.delete_seller_menu", {
+      menu_name: name,
+    });
     revalidatePath("/paas/dashboard/products/menus");
     return { success: true };
   } catch (error) {
@@ -115,7 +127,9 @@ export async function getCombos() {
 
 export async function createCombo(data: any) {
   try {
-    const combo = await paasCall("api.seller_operations.create_seller_combo", { combo_data: data });
+    const combo = await paasCall("api.seller_operations.create_seller_combo", {
+      combo_data: data,
+    });
     revalidatePath("/paas/dashboard/products/combos");
     return combo;
   } catch (error) {
@@ -126,7 +140,9 @@ export async function createCombo(data: any) {
 
 export async function deleteCombo(name: string) {
   try {
-    await paasCall("api.seller_operations.delete_seller_combo", { combo_name: name });
+    await paasCall("api.seller_operations.delete_seller_combo", {
+      combo_name: name,
+    });
     revalidatePath("/paas/dashboard/products/combos");
     return { success: true };
   } catch (error) {

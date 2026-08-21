@@ -43,10 +43,13 @@ export async function POST(req: NextRequest) {
 
     const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL;
     if (!BRIDGE_URL) {
-      return new Response(JSON.stringify({ error: "WhatsApp Bridge URL is not configured" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "WhatsApp Bridge URL is not configured" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
 
     const res = await fetch(`${BRIDGE_URL}/sessions/disconnect`, {
@@ -69,7 +72,7 @@ export async function POST(req: NextRequest) {
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   }
 }

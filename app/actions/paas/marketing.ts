@@ -40,8 +40,8 @@ export async function getCoupons() {
 export async function createCoupon(data: any) {
   try {
     const coupon = await paasCall("api.seller_marketing.create_seller_coupon", {
-        coupon_data: data,
-      });
+      coupon_data: data,
+    });
     revalidatePath("/paas/dashboard/marketing/coupons");
     return coupon;
   } catch (error) {
@@ -53,9 +53,9 @@ export async function createCoupon(data: any) {
 export async function updateCoupon(name: string, data: any) {
   try {
     const coupon = await paasCall("api.seller_marketing.update_seller_coupon", {
-        coupon_name: name,
-        coupon_data: data,
-      });
+      coupon_name: name,
+      coupon_data: data,
+    });
     revalidatePath("/paas/dashboard/marketing/coupons");
     return coupon;
   } catch (error) {
@@ -67,8 +67,8 @@ export async function updateCoupon(name: string, data: any) {
 export async function deleteCoupon(name: string) {
   try {
     await paasCall("api.seller_marketing.delete_seller_coupon", {
-        coupon_name: name,
-      });
+      coupon_name: name,
+    });
     revalidatePath("/paas/dashboard/marketing/coupons");
     return { success: true };
   } catch (error) {

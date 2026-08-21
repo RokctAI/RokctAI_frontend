@@ -60,7 +60,11 @@ export async function getMyBids() {
 export async function updateBidStatus(
   bid: string,
   status: string,
-  extras: { submitted_on?: string; outcome_value?: number; outcome_notes?: string } = {},
+  extras: {
+    submitted_on?: string;
+    outcome_value?: number;
+    outcome_notes?: string;
+  } = {},
 ) {
   try {
     const doc = await TenderBidService.updateBidStatus(bid, status, extras);
@@ -71,7 +75,11 @@ export async function updateBidStatus(
   }
 }
 
-export async function updateChecklistItem(bid: string, item: string, done: boolean) {
+export async function updateChecklistItem(
+  bid: string,
+  item: string,
+  done: boolean,
+) {
   try {
     return await TenderBidService.updateChecklistItem(bid, item, done);
   } catch (e: any) {

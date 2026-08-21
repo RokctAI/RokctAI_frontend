@@ -85,7 +85,7 @@ import {
 } from "@/app/actions/handson/all/roadmap/roadmap";
 
 export default function SystemPage() {
-  const syncLabel = t('system.sync_secret');
+  const syncLabel = t("system.sync_secret");
   const [brainSettings, setBrainSettings] = useState<any[]>([]);
   const [weatherSettings, setWeatherSettings] = useState<any[]>([]);
   const [auths, setAuths] = useState<any[]>([]);
@@ -485,7 +485,7 @@ export default function SystemPage() {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">{syncLabel}</span>
+                      <span className="text-muted-foreground">{syncLabel}</span>
                       <span className="font-mono">
                         {globalSettings?.platformSyncSecret
                           ? "Configured"
@@ -511,35 +511,37 @@ export default function SystemPage() {
                 </div>
                 <div className="flex items-center gap-2 w-[250px]">
                   {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-                               <Select
-                                 disabled={saving}
-                                 value={publicRoadmapId || "none"}
-                                 onValueChange={async (val) => {
-                                   setSaving(true);
-                                   try {
-                                     const newVal = val === "none" ? null : val;
-                                     await setPublicRoadmap(newVal);
-                                     setPublicRoadmapId(val);
-                                     toast.success("Public Roadmap Updated");
-                                   } catch (e) {
-                                     toast.error("Failed to update public roadmap");
-                                   } finally {
-                                     setSaving(false);
-                                   }
-                                 }}
-                               >
-                                 <SelectTrigger>
-                                   <SelectValue placeholder={t('app.control.system.select_roadmap')} />
-                                 </SelectTrigger>
-                                 <SelectContent>
-                                   <SelectItem value="none">-- None (Hidden) --</SelectItem>
-                                   {roadmaps.map((r) => (
-                                     <SelectItem key={r.name} value={r.name}>
-                                       {r.title}
-                                     </SelectItem>
-                                   ))}
-                                 </SelectContent>
-                               </Select>
+                  <Select
+                    disabled={saving}
+                    value={publicRoadmapId || "none"}
+                    onValueChange={async (val) => {
+                      setSaving(true);
+                      try {
+                        const newVal = val === "none" ? null : val;
+                        await setPublicRoadmap(newVal);
+                        setPublicRoadmapId(val);
+                        toast.success("Public Roadmap Updated");
+                      } catch (e) {
+                        toast.error("Failed to update public roadmap");
+                      } finally {
+                        setSaving(false);
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={t("app.control.system.select_roadmap")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">-- None (Hidden) --</SelectItem>
+                      {roadmaps.map((r) => (
+                        <SelectItem key={r.name} value={r.name}>
+                          {r.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardContent>

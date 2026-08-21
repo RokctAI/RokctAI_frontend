@@ -132,7 +132,11 @@ export default function GeneralSettingsPage() {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('app.paas.admin.settings.general.ph_default_shop')} />
+                  <SelectValue
+                    placeholder={t(
+                      "app.paas.admin.settings.general.ph_default_shop",
+                    )}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {shops.map((shop) => (
@@ -143,7 +147,7 @@ export default function GeneralSettingsPage() {
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground">
-                {t('app.paas.admin.settings.general.default_shop_desc')}
+                {t("app.paas.admin.settings.general.default_shop_desc")}
               </p>
             </div>
             <div className="space-y-2">
@@ -239,9 +243,13 @@ export default function GeneralSettingsPage() {
                     setSettings({ ...settings, default_shop: val })
                   }
                 >
-                   <SelectTrigger>
-                     <SelectValue placeholder={t('app.paas.admin.settings.general.ph_default_shop')} />
-                   </SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t(
+                        "app.paas.admin.settings.general.ph_default_shop",
+                      )}
+                    />
+                  </SelectTrigger>
                   <SelectContent>
                     {shops.map((shop) => (
                       <SelectItem key={shop.name} value={shop.name}>

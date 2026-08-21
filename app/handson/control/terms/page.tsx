@@ -214,29 +214,29 @@ export default function MasterTermsPage() {
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <Label>Title</Label>
-               <Input
-                 value={editingTerm?.title || ""}
-                 onChange={(e) =>
-                   setEditingTerm((prev) =>
-                     prev ? { ...prev, title: e.target.value } : null,
-                   )
-                 }
-                 placeholder={t('app.control.terms.ph_title')}
-               />
+              <Input
+                value={editingTerm?.title || ""}
+                onChange={(e) =>
+                  setEditingTerm((prev) =>
+                    prev ? { ...prev, title: e.target.value } : null,
+                  )
+                }
+                placeholder={t("app.control.terms.ph_title")}
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Content (Legal Text)</Label>
-               <Textarea
-                 className="min-h-[200px]"
-                 value={editingTerm?.terms || ""}
-                 onChange={(e) =>
-                   setEditingTerm((prev) =>
-                     prev ? { ...prev, terms: e.target.value } : null,
-                   )
-                 }
-                 placeholder={t('app.control.terms.ph_content')}
-               />
+              <Textarea
+                className="min-h-[200px]"
+                value={editingTerm?.terms || ""}
+                onChange={(e) =>
+                  setEditingTerm((prev) =>
+                    prev ? { ...prev, terms: e.target.value } : null,
+                  )
+                }
+                placeholder={t("app.control.terms.ph_content")}
+              />
             </div>
           </div>
 

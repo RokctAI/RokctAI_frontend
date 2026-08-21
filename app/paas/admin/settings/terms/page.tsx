@@ -205,35 +205,39 @@ export default function TermsPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
-           <DialogHeader>
-             <DialogTitle>{editingTerm ? t('app.paas.admin.settings.terms.dialog_edit') : t('app.paas.admin.settings.terms.dialog_add')}</DialogTitle>
-             <DialogDescription>
-               {editingTerm
-                 ? t('app.paas.admin.settings.terms.dialog_edit_desc')
-                 : t('app.paas.admin.settings.terms.dialog_add_desc')}
-             </DialogDescription>
-           </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>
+              {editingTerm
+                ? t("app.paas.admin.settings.terms.dialog_edit")
+                : t("app.paas.admin.settings.terms.dialog_add")}
+            </DialogTitle>
+            <DialogDescription>
+              {editingTerm
+                ? t("app.paas.admin.settings.terms.dialog_edit_desc")
+                : t("app.paas.admin.settings.terms.dialog_add_desc")}
+            </DialogDescription>
+          </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Title</Label>
-               <Input
-                 value={formData.title}
-                 onChange={(e) =>
-                   setFormData({ ...formData, title: e.target.value })
-                 }
-                 placeholder={t('app.paas.admin.settings.terms.ph_title')}
-               />
+              <Input
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                placeholder={t("app.paas.admin.settings.terms.ph_title")}
+              />
             </div>
             <div className="space-y-2">
               <Label>Terms Content</Label>
-               <Textarea
-                 value={formData.terms}
-                 onChange={(e) =>
-                   setFormData({ ...formData, terms: e.target.value })
-                 }
-                 placeholder={t('app.paas.admin.settings.terms.ph_content')}
-                 className="min-h-[200px]"
-               />
+              <Textarea
+                value={formData.terms}
+                onChange={(e) =>
+                  setFormData({ ...formData, terms: e.target.value })
+                }
+                placeholder={t("app.paas.admin.settings.terms.ph_content")}
+                className="min-h-[200px]"
+              />
             </div>
             <div className="space-y-2 flex flex-col justify-end pb-2">
               <div className="flex items-center space-x-2">

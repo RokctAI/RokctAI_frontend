@@ -27,7 +27,9 @@ import { revalidatePath } from "next/cache";
 
 export async function getParcelSettings() {
   try {
-    const settings = await paasCall("api.parcel_order_setting.get_parcel_order_settings");
+    const settings = await paasCall(
+      "api.parcel_order_setting.get_parcel_order_settings",
+    );
     return settings;
   } catch (error) {
     console.error("Failed to fetch parcel settings:", error);
@@ -37,9 +39,12 @@ export async function getParcelSettings() {
 
 export async function createParcelSetting(data: any) {
   try {
-    const setting = await paasCall("api.parcel_order_setting.create_parcel_order_setting", {
+    const setting = await paasCall(
+      "api.parcel_order_setting.create_parcel_order_setting",
+      {
         setting_data: data,
-      });
+      },
+    );
     revalidatePath("/paas/dashboard/settings/parcel");
     return setting;
   } catch (error) {
@@ -50,10 +55,13 @@ export async function createParcelSetting(data: any) {
 
 export async function updateParcelSetting(name: string, data: any) {
   try {
-    const setting = await paasCall("api.parcel_order_setting.update_parcel_order_setting", {
+    const setting = await paasCall(
+      "api.parcel_order_setting.update_parcel_order_setting",
+      {
         name: name,
         setting_data: data,
-      });
+      },
+    );
     revalidatePath("/paas/dashboard/settings/parcel");
     return setting;
   } catch (error) {
@@ -65,8 +73,8 @@ export async function updateParcelSetting(name: string, data: any) {
 export async function deleteParcelSetting(name: string) {
   try {
     await paasCall("api.parcel_order_setting.delete_parcel_order_setting", {
-        name: name,
-      });
+      name: name,
+    });
     revalidatePath("/paas/dashboard/settings/parcel");
     return { success: true };
   } catch (error) {
@@ -78,7 +86,10 @@ export async function deleteParcelSetting(name: string) {
 
 export async function getParcelOrders(limit = 20, offset = 0) {
   try {
-    const orders = await paasCall("api.parcel.get_parcel_orders", { limit, offset });
+    const orders = await paasCall("api.parcel.get_parcel_orders", {
+      limit,
+      offset,
+    });
     return orders;
   } catch (error) {
     console.error("Failed to fetch parcel orders:", error);
@@ -99,9 +110,9 @@ export async function getParcelOrder(name: string) {
 export async function updateParcelStatus(name: string, status: string) {
   try {
     const order = await paasCall("api.parcel.update_parcel_status", {
-        parcel_order_id: name,
-        status: status,
-      });
+      parcel_order_id: name,
+      status: status,
+    });
     revalidatePath("/paas/dashboard/orders/parcels");
     return order;
   } catch (error) {

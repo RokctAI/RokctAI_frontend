@@ -30,7 +30,7 @@
  * client at base/dart/lib/src/services/telemetry.dart.
  */
 
-import { PLATFORM_GATEWAY_PATH } from './platform-gateway';
+import { PLATFORM_GATEWAY_PATH } from "./platform-gateway";
 
 // Module-scoped so this file typechecks with or without @types/node; the
 // verbatim `process.env.NODE_ENV` expression is kept for Next.js inlining.
@@ -38,7 +38,7 @@ declare const process: { env: { NODE_ENV?: string } };
 
 const isProduction = (): boolean => {
   try {
-    return process.env.NODE_ENV === 'production';
+    return process.env.NODE_ENV === "production";
   } catch {
     return true; // no `process` at all — stay quiet, as in production
   }
@@ -64,7 +64,7 @@ export function generateTraceId(): string {
   const micros = Date.now() * 1000;
   const rand = Math.floor(Math.random() * 0x100000000)
     .toString(16)
-    .padStart(8, '0');
+    .padStart(8, "0");
   return `web-${micros}-${rand}`;
 }
 
@@ -77,8 +77,8 @@ export function tracedFetch(
   init?: RequestInit,
 ): Promise<Response> {
   const headers = new Headers(init?.headers);
-  if (!headers.has('x-trace-id')) {
-    headers.set('x-trace-id', generateTraceId());
+  if (!headers.has("x-trace-id")) {
+    headers.set("x-trace-id", generateTraceId());
   }
   return fetch(input, { ...init, headers });
 }
@@ -91,7 +91,7 @@ export function tracedFetch(
  * per-method `/api/method/<app>.<dotted>` URL, which would bake in the
  * composed app's name.
  */
-export const TELEMETRY_CMD = 'tenant.api.log_frontend_error';
+export const TELEMETRY_CMD = "tenant.api.log_frontend_error";
 
 /** The gateway request path telemetry posts to. */
 export const TELEMETRY_ENDPOINT = PLATFORM_GATEWAY_PATH;
@@ -128,8 +128,8 @@ export async function logFrontendError({
   }
   try {
     await tracedFetch(TELEMETRY_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         cmd: TELEMETRY_CMD,
         payload: {

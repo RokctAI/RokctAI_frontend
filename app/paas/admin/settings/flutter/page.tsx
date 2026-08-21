@@ -125,7 +125,7 @@ export default function FlutterSettingsPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
-          {t('app.paas.admin.settings.flutter.title')}
+          {t("app.paas.admin.settings.flutter.title")}
         </h2>
         <p className="text-muted-foreground">
           Manage your Flutter application configuration and build settings.
@@ -196,21 +196,25 @@ export default function FlutterSettingsPage() {
                       setAppConfig({ ...appConfig, source_project: val })
                     }
                   >
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('app.paas.admin.settings.flutter.ph_source_project')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {sourceProjects.map((project: any) => (
-                          <SelectItem key={project.value} value={project.value}>
-                            {project.label}
-                          </SelectItem>
-                        ))}
-                        {sourceProjects.length === 0 && (
-                          <SelectItem value="none" disabled>
-                            {t('app.paas.admin.settings.flutter.no_projects')}
-                          </SelectItem>
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={t(
+                          "app.paas.admin.settings.flutter.ph_source_project",
                         )}
-                      </SelectContent>
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sourceProjects.map((project: any) => (
+                        <SelectItem key={project.value} value={project.value}>
+                          {project.label}
+                        </SelectItem>
+                      ))}
+                      {sourceProjects.length === 0 && (
+                        <SelectItem value="none" disabled>
+                          {t("app.paas.admin.settings.flutter.no_projects")}
+                        </SelectItem>
+                      )}
+                    </SelectContent>
                   </Select>
                 </div>
               </div>

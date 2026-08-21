@@ -33,14 +33,16 @@ export class OrdersService {
    */
   static async list(payload?: any, options?: ServiceOptions) {
     const isControl = "paas:orders:list".startsWith("control:");
-    const gateway = isControl ? "rcore.platform.api.control" : "rcore.platform.api.tenant";
+    const gateway = isControl
+      ? "rcore.platform.api.control"
+      : "rcore.platform.api.tenant";
     return await BaseService.call(
       gateway,
       {
         cmd: "paas:orders:list",
-        payload
+        payload,
       },
-      options
+      options,
     );
   }
 }

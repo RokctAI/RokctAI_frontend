@@ -39,12 +39,12 @@ export async function getWhatsAppConfig() {
 export async function updateWhatsAppConfig(data: any) {
   try {
     const result = await paasCall("whatsapp.utils.save_whatsapp_config", {
-        enabled: data.enabled,
-        phone_number_id: data.phone_number_id,
-        access_token: data.access_token,
-        app_secret: data.app_secret,
-        verify_token: data.verify_token,
-      });
+      enabled: data.enabled,
+      phone_number_id: data.phone_number_id,
+      access_token: data.access_token,
+      app_secret: data.app_secret,
+      verify_token: data.verify_token,
+    });
     return result;
   } catch (error) {
     console.error("Failed to update WhatsApp config:", error);

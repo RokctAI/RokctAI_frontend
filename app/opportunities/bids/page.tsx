@@ -52,7 +52,9 @@ export default async function MyBidsPage() {
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-28 pb-20">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">My Bids</h1>
+            <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
+              My Bids
+            </h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               Tenders you are tracking, soonest closing first.
             </p>
@@ -69,7 +71,10 @@ export default async function MyBidsPage() {
           <div className="rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50 dark:bg-amber-900/10 p-5">
             <p className="text-sm text-zinc-700 dark:text-zinc-300">
               Bid tracking is part of the tender management subscription.{" "}
-              <Link href="/landing#pricing" className="text-purple-600 dark:text-purple-400 hover:underline">
+              <Link
+                href="/landing#pricing"
+                className="text-purple-600 dark:text-purple-400 hover:underline"
+              >
                 See plans
               </Link>{" "}
               — or if you already subscribe, try signing in again.

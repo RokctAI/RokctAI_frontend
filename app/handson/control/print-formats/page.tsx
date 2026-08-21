@@ -186,7 +186,7 @@ export default function MasterPrintFormatsPage() {
       const data = await getMasterPrintFormats();
       setFormats(data || []);
     } catch (e) {
-      toast.error(t('app.control.print_formats.load_fail'));
+      toast.error(t("app.control.print_formats.load_fail"));
     } finally {
       setLoading(false);
     }
@@ -201,23 +201,23 @@ export default function MasterPrintFormatsPage() {
         editingFormat.doc_type,
         editingFormat.html,
       );
-      toast.success(t('app.control.print_formats.save_success'));
+      toast.success(t("app.control.print_formats.save_success"));
       setEditingFormat(null);
       setIsNew(false);
       loadFormats();
     } catch (e) {
-      toast.error(t('app.control.print_formats.save_fail'));
+      toast.error(t("app.control.print_formats.save_fail"));
     }
   }
 
   async function handleDelete(name: string) {
-    if (!confirm(t('app.control.print_formats.delete_confirm'))) return;
+    if (!confirm(t("app.control.print_formats.delete_confirm"))) return;
     try {
       await deleteMasterPrintFormat(name);
-      toast.success(t('app.control.print_formats.delete_success'));
+      toast.success(t("app.control.print_formats.delete_success"));
       loadFormats();
     } catch (e) {
-      toast.error(t('app.control.print_formats.delete_fail'));
+      toast.error(t("app.control.print_formats.delete_fail"));
     }
   }
 
@@ -227,12 +227,12 @@ export default function MasterPrintFormatsPage() {
   };
 
   const openNew = () => {
-     setEditingFormat({
-       name: "",
-       doc_type: "Sales Invoice",
-       html: t('app.control.print_formats.title'),
-       standard: false,
-     });
+    setEditingFormat({
+      name: "",
+      doc_type: "Sales Invoice",
+      html: t("app.control.print_formats.title"),
+      standard: false,
+    });
     setIsNew(true);
   };
 
@@ -285,117 +285,134 @@ export default function MasterPrintFormatsPage() {
           <div className="flex items-center gap-4">
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <Edit2 className="h-6 w-6" />{" "}
-              {isNew ? t('app.control.print_formats.new_title') : "Editing " + editingFormat.name}
+              {isNew
+                ? t("app.control.print_formats.new_title")
+                : "Editing " + editingFormat.name}
             </h1>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setEditingFormat(null)}>
-              {t('app.control.print_formats.cancel')}
+              {t("app.control.print_formats.cancel")}
             </Button>
             <Button onClick={handleSave}>
-              <Save className="mr-2 h-4 w-4" /> {t('app.control.print_formats.save')}
+              <Save className="mr-2 h-4 w-4" />{" "}
+              {t("app.control.print_formats.save")}
             </Button>
           </div>
         </div>
 
-           <div className="flex gap-4 mb-2">
-              <Input
-                placeholder={t('app.control.print_formats.ph_name')}
-                value={editingFormat.name}
-                onChange={(e) =>
-                  setEditingFormat({ ...editingFormat, name: e.target.value })
-                }
-                disabled={!isNew}
-                className="w-[300px]"
+        <div className="flex gap-4 mb-2">
+          <Input
+            placeholder={t("app.control.print_formats.ph_name")}
+            value={editingFormat.name}
+            onChange={(e) =>
+              setEditingFormat({ ...editingFormat, name: e.target.value })
+            }
+            disabled={!isNew}
+            className="w-[300px]"
+          />
+          <Select
+            value={editingFormat.doc_type}
+            onValueChange={(val) =>
+              setEditingFormat({ ...editingFormat, doc_type: val })
+            }
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue
+                placeholder={t("app.control.print_formats.ph_doctype")}
               />
-              <Select
-                value={editingFormat.doc_type}
-                onValueChange={(val) =>
-                  setEditingFormat({ ...editingFormat, doc_type: val })
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Sales Invoice">
+                {t("app.control.print_formats.sales_invoice")}
+              </SelectItem>
+              <SelectItem value="Quotation">
+                {t("app.control.print_formats.quotation")}
+              </SelectItem>
+              <SelectItem value="POS Invoice">
+                {t("app.control.print_formats.pos_invoice")}
+              </SelectItem>
+              <SelectItem value="Offer Letter">
+                {t("app.control.print_formats.offer_letter")}
+              </SelectItem>
+              <SelectItem value="Appointment Letter">
+                {t("app.control.print_formats.appointment_letter")}
+              </SelectItem>
+              <SelectItem value="Salary Slip">
+                {t("app.control.print_formats.salary_slip")}
+              </SelectItem>
+              <SelectItem value="Experience Certificate">
+                {t("app.control.print_formats.experience_certificate")}
+              </SelectItem>
+              <SelectItem value="No Objection Certificate">
+                {t("app.control.print_formats.noc")}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex-1 grid grid-cols-2 gap-4 h-full overflow-hidden">
+          <Card className="flex flex-col h-full overflow-hidden">
+            <CardHeader className="py-2 bg-muted/30 border-b">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <Code className="h-4 w-4" />{" "}
+                {t("app.control.print_formats.source_code")}
+              </CardTitle>
+            </CardHeader>
+            <div className="flex-1 p-0">
+              <Textarea
+                className="w-full h-full resize-none border-0 rounded-none font-mono text-xs p-4 focus-visible:ring-0"
+                value={editingFormat.html}
+                onChange={(e) =>
+                  setEditingFormat({ ...editingFormat, html: e.target.value })
                 }
-              >
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder={t('app.control.print_formats.ph_doctype')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Sales Invoice">{t('app.control.print_formats.sales_invoice')}</SelectItem>
-                  <SelectItem value="Quotation">{t('app.control.print_formats.quotation')}</SelectItem>
-                  <SelectItem value="POS Invoice">{t('app.control.print_formats.pos_invoice')}</SelectItem>
-                  <SelectItem value="Offer Letter">{t('app.control.print_formats.offer_letter')}</SelectItem>
-                  <SelectItem value="Appointment Letter">
-                    {t('app.control.print_formats.appointment_letter')}
-                  </SelectItem>
-                  <SelectItem value="Salary Slip">{t('app.control.print_formats.salary_slip')}</SelectItem>
-                  <SelectItem value="Experience Certificate">
-                    {t('app.control.print_formats.experience_certificate')}
-                  </SelectItem>
-                  <SelectItem value="No Objection Certificate">
-                    {t('app.control.print_formats.noc')}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              />
             </div>
+          </Card>
 
-         <div className="flex-1 grid grid-cols-2 gap-4 h-full overflow-hidden">
-           <Card className="flex flex-col h-full overflow-hidden">
-             <CardHeader className="py-2 bg-muted/30 border-b">
-               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                 <Code className="h-4 w-4" /> {t('app.control.print_formats.source_code')}
-               </CardTitle>
-             </CardHeader>
-             <div className="flex-1 p-0">
-               <Textarea
-                 className="w-full h-full resize-none border-0 rounded-none font-mono text-xs p-4 focus-visible:ring-0"
-                 value={editingFormat.html}
-                 onChange={(e) =>
-                   setEditingFormat({ ...editingFormat, html: e.target.value })
-                 }
-               />
-             </div>
-           </Card>
-
-           <Card className="flex flex-col h-full overflow-hidden bg-white">
-             <CardHeader className="py-2 bg-muted/30 border-b">
-               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                 <Eye className="h-4 w-4" /> {t('app.control.print_formats.preview')}
-               </CardTitle>
-             </CardHeader>
-             <div className="flex-1 p-8 overflow-auto bg-white">
-               <div
-                 className="print-preview-content prose max-w-none"
-                 dangerouslySetInnerHTML={{
-                   __html: renderPreview(editingFormat.html, previewData),
-                 }}
-               />
-               <style jsx global>{`
-                 .print-preview-content table {
-                   width: 100%;
-                   border-collapse: collapse;
-                   margin-top: 20px;
-                 }
-                 .print-preview-content th,
-                 .print-preview-content td {
-                   padding: 8px;
-                   border-bottom: 1px solid #ddd;
-                 }
-                 .print-preview-content .text-right {
-                   text-align: right;
-                 }
-                 .print-preview-content .text-muted {
-                   color: #666;
-                 }
-                 .print-preview-content .row {
-                   display: flex;
-                   margin-bottom: 20px;
-                 }
-                 .print-preview-content .col-6 {
-                   width: 50%;
-                 }
-               `}</style>
-             </div>
-           </Card>
-         </div>
-       </div>
+          <Card className="flex flex-col h-full overflow-hidden bg-white">
+            <CardHeader className="py-2 bg-muted/30 border-b">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <Eye className="h-4 w-4" />{" "}
+                {t("app.control.print_formats.preview")}
+              </CardTitle>
+            </CardHeader>
+            <div className="flex-1 p-8 overflow-auto bg-white">
+              <div
+                className="print-preview-content prose max-w-none"
+                dangerouslySetInnerHTML={{
+                  __html: renderPreview(editingFormat.html, previewData),
+                }}
+              />
+              <style jsx global>{`
+                .print-preview-content table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin-top: 20px;
+                }
+                .print-preview-content th,
+                .print-preview-content td {
+                  padding: 8px;
+                  border-bottom: 1px solid #ddd;
+                }
+                .print-preview-content .text-right {
+                  text-align: right;
+                }
+                .print-preview-content .text-muted {
+                  color: #666;
+                }
+                .print-preview-content .row {
+                  display: flex;
+                  margin-bottom: 20px;
+                }
+                .print-preview-content .col-6 {
+                  width: 50%;
+                }
+              `}</style>
+            </div>
+          </Card>
+        </div>
+      </div>
     );
   }
 
@@ -403,13 +420,16 @@ export default function MasterPrintFormatsPage() {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">{t('app.control.print_formats.page_title')}</h1>
+          <h1 className="text-3xl font-bold">
+            {t("app.control.print_formats.page_title")}
+          </h1>
           <p className="text-muted-foreground">
-            {t('app.control.print_formats.page_desc')}
+            {t("app.control.print_formats.page_desc")}
           </p>
         </div>
         <Button onClick={openNew}>
-          <Plus className="mr-2 h-4 w-4" /> {t('app.control.print_formats.btn_new')}
+          <Plus className="mr-2 h-4 w-4" />{" "}
+          {t("app.control.print_formats.btn_new")}
         </Button>
       </div>
 
@@ -417,16 +437,20 @@ export default function MasterPrintFormatsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t('app.control.print_formats.col_name')}</TableHead>
-              <TableHead>{t('app.control.print_formats.col_doctype')}</TableHead>
-              <TableHead className="w-[100px]">{t('app.control.print_formats.col_actions')}</TableHead>
+              <TableHead>{t("app.control.print_formats.col_name")}</TableHead>
+              <TableHead>
+                {t("app.control.print_formats.col_doctype")}
+              </TableHead>
+              <TableHead className="w-[100px]">
+                {t("app.control.print_formats.col_actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
                 <TableCell colSpan={3} className="text-center py-8">
-                  {t('common.loading')}
+                  {t("common.loading")}
                 </TableCell>
               </TableRow>
             ) : formats.length === 0 ? (
@@ -435,7 +459,7 @@ export default function MasterPrintFormatsPage() {
                   colSpan={3}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  {t('app.control.print_formats.no_formats')}
+                  {t("app.control.print_formats.no_formats")}
                 </TableCell>
               </TableRow>
             ) : (

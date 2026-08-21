@@ -190,14 +190,14 @@ export default function StoriesPage() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="title">Title *</Label>
-               <Input
-                 id="title"
-                 value={formData.title}
-                 onChange={(e) =>
-                   setFormData((prev) => ({ ...prev, title: e.target.value }))
-                 }
-                 placeholder={t('app.paas.dashboard.content.stories.ph_title')}
-               />
+              <Input
+                id="title"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, title: e.target.value }))
+                }
+                placeholder={t("app.paas.dashboard.content.stories.ph_title")}
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="link">Link (Optional)</Label>
@@ -210,13 +210,13 @@ export default function StoriesPage() {
                 placeholder="https://..."
               />
             </div>
-             <ImageUpload
-               label={t('app.paas.dashboard.content.stories.label_image')}
-               value={formData.image}
-               onChange={(url) =>
-                 setFormData((prev) => ({ ...prev, image: url }))
-               }
-             />
+            <ImageUpload
+              label={t("app.paas.dashboard.content.stories.label_image")}
+              value={formData.image}
+              onChange={(url) =>
+                setFormData((prev) => ({ ...prev, image: url }))
+              }
+            />
           </div>
           <DialogFooter>
             <Button onClick={handleSubmit} disabled={processing}>

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-﻿"use client";
+"use client";
 
 import { Loader2, PlusCircle, Edit, Trash2 } from "lucide-react";
 import Image from "next/image";

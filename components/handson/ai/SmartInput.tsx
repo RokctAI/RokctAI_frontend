@@ -48,7 +48,6 @@ export function SmartInput({
 
   return (
     <div className={cn("relative group", className)}>
-
       <Textarea
         value={value}
         onChange={handleChange}

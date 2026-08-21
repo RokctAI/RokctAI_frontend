@@ -33,12 +33,27 @@ export interface FeatureLink {
 
 export const PLATFORM_FEATURES: Record<number, FeatureLink> = {
   // Left Column Platforms
-  1: { name: "features.browser_extension", href: "https://chromewebstore.google.com/", active: true, label: "none" },
-  2: { name: "features.web_app", href: "/dashboard", active: true, label: "none" },
+  1: {
+    name: "features.browser_extension",
+    href: "https://chromewebstore.google.com/",
+    active: true,
+    label: "none",
+  },
+  2: {
+    name: "features.web_app",
+    href: "/dashboard",
+    active: true,
+    label: "none",
+  },
   3: { name: "features.mobile_apps", href: "#", active: true, label: "none" },
 
   // AI Chat
-  4: { name: "features.chat_rokct", href: "/chat", active: true, label: "none" },
+  4: {
+    name: "features.chat_rokct",
+    href: "/chat",
+    active: true,
+    label: "none",
+  },
 
   // Productivity Column
   5: { name: "features.ai_erp", href: "#", active: true, label: "soon" },
@@ -46,20 +61,50 @@ export const PLATFORM_FEATURES: Record<number, FeatureLink> = {
   7: { name: "features.telephony", href: "#", active: true, label: "none" },
 
   // Tools Column
-  8: { name: "features.fraud_detector", href: "#", active: true, label: "none" },
+  8: {
+    name: "features.fraud_detector",
+    href: "#",
+    active: true,
+    label: "none",
+  },
   9: { name: "features.loan_man", href: "#", active: true, label: "none" },
   10: { name: "features.tenders", href: "#", active: true, label: "new" },
   11: { name: "features.funding", href: "#", active: true, label: "new" },
 
   // Summary Column
-  12: { name: "features.yt_summarizer", href: "#", active: true, label: "none" },
-  13: { name: "features.article_summarizer", href: "#", active: true, label: "none" },
+  12: {
+    name: "features.yt_summarizer",
+    href: "#",
+    active: true,
+    label: "none",
+  },
+  13: {
+    name: "features.article_summarizer",
+    href: "#",
+    active: true,
+    label: "none",
+  },
 
   // Top-Level Nav Links
-  14: { name: "features.pricing", href: "#pricing", active: true, label: "none" },
-  15: { name: "features.affiliate", href: "/affiliate", active: true, label: "none" },
+  14: {
+    name: "features.pricing",
+    href: "#pricing",
+    active: true,
+    label: "none",
+  },
+  15: {
+    name: "features.affiliate",
+    href: "/affiliate",
+    active: true,
+    label: "none",
+  },
   16: { name: "features.teams", href: "/teams", active: true, label: "none" },
-  17: { name: "features.chat_rokct", href: "/chat", active: true, label: "none" },
+  17: {
+    name: "features.chat_rokct",
+    href: "/chat",
+    active: true,
+    label: "none",
+  },
 };
 
 // Legacy boolean exports for backward compatibility if imported elsewhere

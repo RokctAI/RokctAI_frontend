@@ -111,25 +111,28 @@ export default function KitchensPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-         <div>
-           <h1 className="text-3xl font-bold">{t('app.paas.dashboard.restaurant.kitchens.title')}</h1>
-           <p className="text-muted-foreground">
-             {t('app.paas.dashboard.restaurant.kitchens.desc')}
-           </p>
-         </div>
-         <Button onClick={() => setIsDialogOpen(true)}>
-           <Plus className="mr-2 size-4" /> {t('app.paas.dashboard.restaurant.kitchens.btn_add')}
-         </Button>
+        <div>
+          <h1 className="text-3xl font-bold">
+            {t("app.paas.dashboard.restaurant.kitchens.title")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("app.paas.dashboard.restaurant.kitchens.desc")}
+          </p>
+        </div>
+        <Button onClick={() => setIsDialogOpen(true)}>
+          <Plus className="mr-2 size-4" />{" "}
+          {t("app.paas.dashboard.restaurant.kitchens.btn_add")}
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-         {kitchens.length === 0 ? (
-           <Card className="col-span-full">
-             <CardContent className="py-12 text-center text-muted-foreground">
-               {t('app.paas.dashboard.restaurant.kitchens.no_data')}
-             </CardContent>
-           </Card>
-         ) : (
+        {kitchens.length === 0 ? (
+          <Card className="col-span-full">
+            <CardContent className="py-12 text-center text-muted-foreground">
+              {t("app.paas.dashboard.restaurant.kitchens.no_data")}
+            </CardContent>
+          </Card>
+        ) : (
           kitchens.map((kitchen) => (
             <Card key={kitchen.name}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -140,11 +143,11 @@ export default function KitchensPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between items-center mt-4">
-                   <div
-                     className={`text-sm px-2 py-1 rounded-full ${kitchen.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
-                   >
-                     {kitchen.active ? t('common.yes') : t('common.no')}
-                   </div>
+                  <div
+                    className={`text-sm px-2 py-1 rounded-full ${kitchen.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+                  >
+                    {kitchen.active ? t("common.yes") : t("common.no")}
+                  </div>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -162,21 +165,27 @@ export default function KitchensPage() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
-           <DialogHeader>
-             <DialogTitle>{t('app.paas.dashboard.restaurant.kitchens.dialog_title')}</DialogTitle>
-           </DialogHeader>
+          <DialogHeader>
+            <DialogTitle>
+              {t("app.paas.dashboard.restaurant.kitchens.dialog_title")}
+            </DialogTitle>
+          </DialogHeader>
           <div className="grid gap-4 py-4">
-             <div className="grid gap-2">
-               <Label htmlFor="name">{t('app.paas.dashboard.restaurant.kitchens.label_name')}</Label>
-               <Input
-                 id="name"
-                 value={formData.name}
-                 onChange={(e) =>
-                   setFormData((prev) => ({ ...prev, name: e.target.value }))
-                 }
-                 placeholder={t('app.paas.dashboard.restaurant.kitchens.ph_name')}
-               />
-             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="name">
+                {t("app.paas.dashboard.restaurant.kitchens.label_name")}
+              </Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
+                placeholder={t(
+                  "app.paas.dashboard.restaurant.kitchens.ph_name",
+                )}
+              />
+            </div>
             <div className="flex items-center space-x-2">
               <Switch
                 id="active"
@@ -185,17 +194,17 @@ export default function KitchensPage() {
                   setFormData((prev) => ({ ...prev, active: checked ? 1 : 0 }))
                 }
               />
-               <Label htmlFor="active">{t('common.active')}</Label>
+              <Label htmlFor="active">{t("common.active")}</Label>
             </div>
           </div>
           <DialogFooter>
-             <Button onClick={handleSubmit} disabled={processing}>
-               {processing ? (
-                 <Loader2 className="size-4 animate-spin" />
-               ) : (
-                 t('common.create')
-               )}
-             </Button>
+            <Button onClick={handleSubmit} disabled={processing}>
+              {processing ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                t("common.create")
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

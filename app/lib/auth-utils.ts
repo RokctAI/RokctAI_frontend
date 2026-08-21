@@ -30,15 +30,17 @@ export async function getAuthenticatedTokens() {
   }
 
   const user = session.user as any;
-  
+
   // Check if tokens are expired or nearing expiry
   if (user.tokenExpiry) {
     const now = new Date();
     const expiry = new Date(user.tokenExpiry);
-    
+
     // Refresh if expired or expires in less than 5 minutes
-    if (now > expiry || (expiry.getTime() - now.getTime()) < 300000) {
-      console.log(`[Auth] Tokens expired or nearing expiry. Triggering refresh...`);
+    if (now > expiry || expiry.getTime() - now.getTime() < 300000) {
+      console.log(
+        `[Auth] Tokens expired or nearing expiry. Triggering refresh...`,
+      );
       const refreshRes = await refreshTokens();
       if (!refreshRes.success) {
         throw new Error("Session expired. Please login again.");

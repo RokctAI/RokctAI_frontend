@@ -46,10 +46,26 @@ import { Loader2 } from "lucide-react";
 import t from "@/app/lib/i18n";
 
 const DOC_SERIES_OPTIONS = [
-  { label: t('app.settings.naming.purchase_order'), value: "PO-", doctype: "Purchase Order" },
-  { label: t('app.settings.naming.quotation'), value: "QTN-", doctype: "Quotation" },
-  { label: t('app.settings.naming.sales_invoice'), value: "SINV-", doctype: "Sales Invoice" },
-  { label: t('app.settings.naming.project'), value: "PROJ-", doctype: "Project" },
+  {
+    label: t("app.settings.naming.purchase_order"),
+    value: "PO-",
+    doctype: "Purchase Order",
+  },
+  {
+    label: t("app.settings.naming.quotation"),
+    value: "QTN-",
+    doctype: "Quotation",
+  },
+  {
+    label: t("app.settings.naming.sales_invoice"),
+    value: "SINV-",
+    doctype: "Sales Invoice",
+  },
+  {
+    label: t("app.settings.naming.project"),
+    value: "PROJ-",
+    doctype: "Project",
+  },
 ];
 
 function getDefaultPrefix(doctype: string) {

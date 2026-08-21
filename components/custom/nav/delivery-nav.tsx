@@ -37,22 +37,22 @@ import {
 
 const deliveryMenuItems = [
   {
-    title: t('nav.delivery.dashboard'),
+    title: t("nav.delivery.dashboard"),
     url: "/paas/dashboard/delivery",
     icon: LayoutDashboard,
   },
   {
-    title: t('nav.delivery.my_orders'),
+    title: t("nav.delivery.my_orders"),
     url: "/paas/dashboard/delivery/orders",
     icon: Package,
   },
   {
-    title: t('nav.delivery.earnings'),
+    title: t("nav.delivery.earnings"),
     url: "/paas/dashboard/delivery/finance",
     icon: DollarSign,
   },
   {
-    title: t('nav.delivery.profile'),
+    title: t("nav.delivery.profile"),
     url: "/paas/dashboard/delivery/profile",
     icon: User,
   },
@@ -63,7 +63,7 @@ export function DeliveryNav() {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>{t('nav.delivery.panel_label')}</SidebarGroupLabel>
+      <SidebarGroupLabel>{t("nav.delivery.panel_label")}</SidebarGroupLabel>
       <SidebarMenu>
         {deliveryMenuItems.map((item) => (
           <SidebarMenuItem key={item.title}>

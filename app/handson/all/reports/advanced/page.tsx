@@ -186,9 +186,10 @@ function AdvancedReportViewer() {
             />
             Refresh Data
           </Button>
-           <Button variant="secondary">
-             <Download className="mr-2 h-4 w-4" /> {t('app.reports.advanced.export_csv')}
-           </Button>
+          <Button variant="secondary">
+            <Download className="mr-2 h-4 w-4" />{" "}
+            {t("app.reports.advanced.export_csv")}
+          </Button>
         </div>
       </div>
 
@@ -196,27 +197,35 @@ function AdvancedReportViewer() {
       <div className="bg-muted/30 p-4 rounded-lg flex flex-wrap gap-4 items-end border">
         {!reportMeta && (
           <div className="space-y-2 w-full md:w-auto">
-             <Label>{t('app.reports.advanced.label_doctype')}</Label>
-             <Select value={doctype} onValueChange={setDoctype}>
+            <Label>{t("app.reports.advanced.label_doctype")}</Label>
+            <Select value={doctype} onValueChange={setDoctype}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue />
               </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={DOC_TYPES.SALES_INVOICE}>{t('app.reports.advanced.sales_invoice')}</SelectItem>
-                  <SelectItem value={DOC_TYPES.PURCHASE_INVOICE}>
-                    {t('app.reports.advanced.purchase_invoice')}
-                  </SelectItem>
-                   <SelectItem value={DOC_TYPES.CUSTOMER}>{t('app.reports.advanced.customer')}</SelectItem>
-                  <SelectItem value={DOC_TYPES.ITEM}>{t('app.reports.advanced.item')}</SelectItem>
-                  <SelectItem value={DOC_TYPES.LEAD}>{t('app.reports.advanced.lead')}</SelectItem>
-               </SelectContent>
+              <SelectContent>
+                <SelectItem value={DOC_TYPES.SALES_INVOICE}>
+                  {t("app.reports.advanced.sales_invoice")}
+                </SelectItem>
+                <SelectItem value={DOC_TYPES.PURCHASE_INVOICE}>
+                  {t("app.reports.advanced.purchase_invoice")}
+                </SelectItem>
+                <SelectItem value={DOC_TYPES.CUSTOMER}>
+                  {t("app.reports.advanced.customer")}
+                </SelectItem>
+                <SelectItem value={DOC_TYPES.ITEM}>
+                  {t("app.reports.advanced.item")}
+                </SelectItem>
+                <SelectItem value={DOC_TYPES.LEAD}>
+                  {t("app.reports.advanced.lead")}
+                </SelectItem>
+              </SelectContent>
             </Select>
           </div>
         )}
 
         <div className="space-y-2">
-             <Label>{t('app.reports.advanced.label_columns')}</Label>
-             <DropdownMenu>
+          <Label>{t("app.reports.advanced.label_columns")}</Label>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="w-[200px] justify-between">
                 {columns.length} Selected{" "}
@@ -224,8 +233,10 @@ function AdvancedReportViewer() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
-                 <DropdownMenuLabel>{t('app.reports.advanced.available_fields')}</DropdownMenuLabel>
-                 <DropdownMenuSeparator />
+              <DropdownMenuLabel>
+                {t("app.reports.advanced.available_fields")}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
               {availableColumns.map((col) => (
                 <DropdownMenuCheckboxItem
                   key={col}
@@ -241,8 +252,8 @@ function AdvancedReportViewer() {
 
         {/* Placeholders for Date Range, etc */}
         <div className="space-y-2">
-             <Label>{t('app.reports.advanced.label_date_range')}</Label>
-             <div className="flex gap-2">
+          <Label>{t("app.reports.advanced.label_date_range")}</Label>
+          <div className="flex gap-2">
             <Input type="date" className="w-[140px]" />
             <span className="self-center text-muted-foreground">-</span>
             <Input type="date" className="w-[140px]" />
@@ -251,9 +262,9 @@ function AdvancedReportViewer() {
 
         <div className="ml-auto pb-0.5">
           {!reportMeta && (
-             <Button onClick={() => runReport(doctype, columns)}>
-               {t('common.generate')}
-             </Button>
+            <Button onClick={() => runReport(doctype, columns)}>
+              {t("common.generate")}
+            </Button>
           )}
         </div>
       </div>
@@ -273,21 +284,21 @@ function AdvancedReportViewer() {
           <TableBody>
             {loading ? (
               <TableRow>
-                   <TableCell
-                     colSpan={columns.length}
-                     className="text-center py-12"
-                   >
-                     {t('app.reports.advanced.loading_data')}
-                   </TableCell>
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-center py-12"
+                >
+                  {t("app.reports.advanced.loading_data")}
+                </TableCell>
               </TableRow>
             ) : data.length === 0 ? (
               <TableRow>
-                   <TableCell
-                     colSpan={columns.length}
-                     className="text-center py-12 text-muted-foreground"
-                   >
-                     {t('app.reports.advanced.no_records')}
-                   </TableCell>
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-center py-12 text-muted-foreground"
+                >
+                  {t("app.reports.advanced.no_records")}
+                </TableCell>
               </TableRow>
             ) : (
               data.map((row, idx) => (
@@ -311,8 +322,8 @@ function AdvancedReportViewer() {
 
 export default function AdvancedReportPage() {
   return (
-     <Suspense fallback={<div>{t('app.reports.advanced.loading_report')}</div>}>
-       <AdvancedReportViewer />
-     </Suspense>
+    <Suspense fallback={<div>{t("app.reports.advanced.loading_report")}</div>}>
+      <AdvancedReportViewer />
+    </Suspense>
   );
 }

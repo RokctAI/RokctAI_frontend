@@ -26,33 +26,36 @@ import type { Opportunity } from "@/app/services/public/opportunities";
 import { serverSemanticSearch } from "@/app/services/server/semantic-search";
 import { analyzeIntent } from "@/app/lib/intent-engine";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 // ─── GitHub raw CDN URLs ────────────────────────────────────────────────────
-const GITHUB_RAW = "https://raw.githubusercontent.com/RokctAI/opportunities/main/published/api";
+const GITHUB_RAW =
+  "https://raw.githubusercontent.com/RokctAI/opportunities/main/published/api";
 
 const GITHUB_URLS: Record<string, string> = {
   tenders: `${GITHUB_RAW}/tenders.json`,
-  grants:  `${GITHUB_RAW}/grants.json`,
-  equity:  `${GITHUB_RAW}/equity.json`,
+  grants: `${GITHUB_RAW}/grants.json`,
+  equity: `${GITHUB_RAW}/equity.json`,
 };
 
 // ─── Fetch + cache from GitHub (revalidates every 24 hours) ─────────────────
 const fetchFromGitHub = unstable_cache(
   async (type: string): Promise<Opportunity[]> => {
     try {
-      const res = await fetch(GITHUB_URLS[type], { next: { revalidate: 86400 } });
+      const res = await fetch(GITHUB_URLS[type], {
+        next: { revalidate: 86400 },
+      });
       if (!res.ok) return [];
       const raw = await res.json();
       const list: any[] = Array.isArray(raw) ? raw : (raw.data ?? []);
       return list.map((item: any) => ({
-        title:        cleanTitle(item.title        ?? ""),
-        slug:         item.slug         ?? item.title?.toLowerCase().replace(/\s+/g, "-") ?? "",
-        institution:  item.institution  ?? item.organization ?? "",
-        organization: item.organization ?? item.institution  ?? "",
+        title: cleanTitle(item.title ?? ""),
+        slug: item.slug ?? item.title?.toLowerCase().replace(/\s+/g, "-") ?? "",
+        institution: item.institution ?? item.organization ?? "",
+        organization: item.organization ?? item.institution ?? "",
         closing_date: item.closing_date ?? "",
-        deadline:     item.deadline     ?? "",
-        category:     item.category     ?? type,
+        deadline: item.deadline ?? "",
+        category: item.category ?? type,
         type,
       }));
     } catch {
@@ -64,13 +67,16 @@ const fetchFromGitHub = unstable_cache(
 );
 
 function cleanTitle(title: string): string {
-  return title.replace(/^Tender Opportunity:\s*/i, "Tender: ").replace(/^Grant Opportunity:\s*/i, "Grant: ").replace(/^Equity Opportunity:\s*/i, "Equity: ");
+  return title
+    .replace(/^Tender Opportunity:\s*/i, "Tender: ")
+    .replace(/^Grant Opportunity:\s*/i, "Grant: ")
+    .replace(/^Equity Opportunity:\s*/i, "Equity: ");
 }
 
 // ─── Case-insensitive in-memory search ───────────────────────────────────────
 function parseDate(dateStr: string): Date | null {
   if (!dateStr) return null;
-  
+
   // Handle DD-MM-YYYY or DD/MM/YYYY
   const dmyRegex = /^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/;
   const match = dateStr.match(dmyRegex);
@@ -78,7 +84,7 @@ function parseDate(dateStr: string): Date | null {
     const [_, day, month, year] = match;
     return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
   }
-  
+
   const d = new Date(dateStr);
   return isNaN(d.getTime()) ? null : d;
 }
@@ -95,8 +101,11 @@ function filterExpired(items: Opportunity[]): Opportunity[] {
 
 function filterByQuery(items: Opportunity[], query: string): Opportunity[] {
   if (!query.trim()) return items.slice(0, 20);
-  
-  const keywords = query.toLowerCase().split(/\s+/).filter(k => k.length > 2);
+
+  const keywords = query
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((k) => k.length > 2);
   if (keywords.length === 0) {
     // Fallback to basic search if no significant keywords found
     const q = query.toLowerCase();
@@ -110,8 +119,9 @@ function filterByQuery(items: Opportunity[], query: string): Opportunity[] {
   }
 
   return items.filter((o) => {
-    const content = `${o.title} ${o.institution} ${o.organization} ${o.category}`.toLowerCase();
-    return keywords.some(kw => content.includes(kw));
+    const content =
+      `${o.title} ${o.institution} ${o.organization} ${o.category}`.toLowerCase();
+    return keywords.some((kw) => content.includes(kw));
   });
 }
 
@@ -145,9 +155,15 @@ export async function GET(request: Request) {
     if (!allNull) {
       return Response.json({
         source: "backend",
-        tenders: (backendResults[0]?.data ?? backendResults[0] ?? []) as Opportunity[],
-        grants:  (backendResults[1]?.data ?? backendResults[1] ?? []) as Opportunity[],
-        equity:  (backendResults[2]?.data ?? backendResults[2] ?? []) as Opportunity[],
+        tenders: (backendResults[0]?.data ??
+          backendResults[0] ??
+          []) as Opportunity[],
+        grants: (backendResults[1]?.data ??
+          backendResults[1] ??
+          []) as Opportunity[],
+        equity: (backendResults[2]?.data ??
+          backendResults[2] ??
+          []) as Opportunity[],
       });
     }
   } catch {
@@ -161,13 +177,13 @@ export async function GET(request: Request) {
 
   const { type: intentType, opportunityType, cleaned } = analyzeIntent(query);
 
-  // If it's a specific type match (e.g., "funding" -> grants), 
+  // If it's a specific type match (e.g., "funding" -> grants),
   // prioritize showing those and ignore strict keyword matching if needed.
   if (intentType === "type_match" && opportunityType) {
     const results = {
       tenders: opportunityType === "tenders" ? filterExpired(tenders) : [],
-      grants:  opportunityType === "grants" ? filterExpired(grants) : [],
-      equity:  opportunityType === "equity" ? filterExpired(equity) : [],
+      grants: opportunityType === "grants" ? filterExpired(grants) : [],
+      equity: opportunityType === "equity" ? filterExpired(equity) : [],
     };
 
     if (cleaned.trim()) {
@@ -179,8 +195,8 @@ export async function GET(request: Request) {
       return Response.json({
         source: "github",
         tenders: rankedTenders,
-        grants:  rankedGrants,
-        equity:  rankedEquity,
+        grants: rankedGrants,
+        equity: rankedEquity,
       });
     }
 
@@ -199,19 +215,24 @@ export async function GET(request: Request) {
   let filteredEquity = filterByQuery(expiredEquity, query);
 
   // SEMANTIC FALLBACK: If keyword search found nothing, use semantic search on the full set
-  if (query.trim() && (filteredTenders.length === 0 && filteredGrants.length === 0 && filteredEquity.length === 0)) {
+  if (
+    query.trim() &&
+    filteredTenders.length === 0 &&
+    filteredGrants.length === 0 &&
+    filteredEquity.length === 0
+  ) {
     const [rankedTenders, rankedGrants, rankedEquity] = await Promise.all([
       serverSemanticSearch.rankResults(query, expiredTenders),
       serverSemanticSearch.rankResults(query, expiredGrants),
       serverSemanticSearch.rankResults(query, expiredEquity),
     ]);
-    
+
     // Take top 20 from each to avoid huge response
     return Response.json({
       source: "github",
       tenders: rankedTenders.slice(0, 20),
-      grants:  rankedGrants.slice(0, 20),
-      equity:  rankedEquity.slice(0, 20),
+      grants: rankedGrants.slice(0, 20),
+      equity: rankedEquity.slice(0, 20),
     });
   }
 
@@ -226,15 +247,15 @@ export async function GET(request: Request) {
     return Response.json({
       source: "github",
       tenders: rankedTenders,
-      grants:  rankedGrants,
-      equity:  rankedEquity,
+      grants: rankedGrants,
+      equity: rankedEquity,
     });
   }
 
   return Response.json({
     source: "github",
     tenders: filteredTenders,
-    grants:  filteredGrants,
-    equity:  filteredEquity,
+    grants: filteredGrants,
+    equity: filteredEquity,
   });
 }

@@ -155,7 +155,8 @@ export default function TenantReportsPage() {
             <YAxis />
             <Tooltip />
             <Legend />
-               <Line type="monotone" dataKey={y_axis_field!} stroke="#82ca9d" /> // placeholder
+            <Line type="monotone" dataKey={y_axis_field!} stroke="#82ca9d" /> //
+            placeholder
           </LineChart>
         ) : chart_type === "pie" ? (
           <RechartsPieChart>

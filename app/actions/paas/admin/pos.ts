@@ -25,7 +25,6 @@
 import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
 
-
 export async function getPOSProducts(
   category: string = "",
   search: string = "",
@@ -34,7 +33,12 @@ export async function getPOSProducts(
 ) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_management.get_pos_products", { category, search, limit_start: start, limit_page_length: limit });
+    return await paasCall("api.admin_management.get_pos_products", {
+      category,
+      search,
+      limit_start: start,
+      limit_page_length: limit,
+    });
   } catch (error) {
     console.error("Failed to fetch POS products:", error);
     return [];
@@ -52,7 +56,9 @@ export async function getPOSCategories() {
 
 export async function createPOSOrder(orderData: any) {
   try {
-    const result = await paasCall("api.admin_management.create_pos_order", { order_data: orderData });
+    const result = await paasCall("api.admin_management.create_pos_order", {
+      order_data: orderData,
+    });
     revalidatePath("/paas/admin/pos");
     return { success: true, orderId: result.name };
   } catch (error) {

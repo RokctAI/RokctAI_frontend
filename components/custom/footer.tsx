@@ -28,7 +28,13 @@ import { JobsService } from "@/app/services/control/jobs";
 import { BrandLogo } from "./brand-logo";
 import { Branding } from "./branding";
 import { RoadmapPublicService } from "@/app/services/public/roadmap";
-import { Twitter, Youtube, Linkedin, Instagram, ChevronDown } from "lucide-react";
+import {
+  Twitter,
+  Youtube,
+  Linkedin,
+  Instagram,
+  ChevronDown,
+} from "lucide-react";
 import t from "@/app/lib/i18n";
 import { Button } from "@/components/ui/button";
 import versionData from "@/version.json";
@@ -43,7 +49,7 @@ async function PublicRoadmapLink() {
           href="/public/roadmap"
           className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
         >
-          {t('footer.roadmap')}
+          {t("footer.roadmap")}
         </Link>
       );
     }
@@ -64,7 +70,7 @@ export async function Footer() {
     const { VersionsService } = await import("@/app/services/public/versions");
     const versions = await VersionsService.getPublicVersions();
     if (versions) {
-        isOnline = true;
+      isOnline = true;
     }
   } catch (e) {}
 
@@ -76,7 +82,11 @@ export async function Footer() {
 
   // Helper to find term by likely title or name
   const getTermLink = (preferredTitle: string) => {
-    const term = terms.find(t => t.title?.toLowerCase().includes(preferredTitle.toLowerCase()) || t.name?.toLowerCase().includes(preferredTitle.toLowerCase()));
+    const term = terms.find(
+      (t) =>
+        t.title?.toLowerCase().includes(preferredTitle.toLowerCase()) ||
+        t.name?.toLowerCase().includes(preferredTitle.toLowerCase()),
+    );
     if (term) return `/legal/${term.name}`;
     return "#";
   };
@@ -85,23 +95,23 @@ export async function Footer() {
   const renderBadge = (id: number) => {
     const label = PLATFORM_FEATURES[id]?.label;
     if (!label || label === "none") return null;
-    
+
     if (label === "soon") {
       return (
         <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
-          {t('common.soon')}
+          {t("common.soon")}
         </span>
       );
     }
-    
+
     if (label === "new") {
       return (
         <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
-          {t('common.new')}
+          {t("common.new")}
         </span>
       );
     }
-    
+
     return null;
   };
 
@@ -139,29 +149,60 @@ export async function Footer() {
             <div className="flex items-center h-[64px]">
               <BrandLogo width={64} height={64} showBadge={false} />
               <div className="pl-3 flex items-center pt-1">
-                <Branding showBadge={false} className="text-[88px] tracking-tighter leading-none" />
+                <Branding
+                  showBadge={false}
+                  className="text-[88px] tracking-tighter leading-none"
+                />
               </div>
             </div>
-             <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-[240px]">
-               {t('footer.tagline')}
-             </p>
-             <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-6 rounded-lg text-lg">
-               {t('footer.contact_us')}
-             </Button>
+            <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-[240px]">
+              {t("footer.tagline")}
+            </p>
+            <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-6 rounded-lg text-lg">
+              {t("footer.contact_us")}
+            </Button>
             <div className="flex gap-6 mt-2">
-              <Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"><Twitter className="w-6 h-6" /></Link>
-              <Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"><Youtube className="w-6 h-6" /></Link>
-              <Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"><Linkedin className="w-6 h-6" /></Link>
-              <Link href="#" className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"><Instagram className="w-6 h-6" /></Link>
+              <Link
+                href="#"
+                className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+              >
+                <Twitter className="w-6 h-6" />
+              </Link>
+              <Link
+                href="#"
+                className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+              >
+                <Youtube className="w-6 h-6" />
+              </Link>
+              <Link
+                href="#"
+                className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+              >
+                <Linkedin className="w-6 h-6" />
+              </Link>
+              <Link
+                href="#"
+                className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+              >
+                <Instagram className="w-6 h-6" />
+              </Link>
             </div>
           </div>
 
           {/* Column 2: Productivity & Summary */}
-          {(PLATFORM_FEATURES[5]?.active || PLATFORM_FEATURES[6]?.active || PLATFORM_FEATURES[7]?.active || PLATFORM_FEATURES[12]?.active || PLATFORM_FEATURES[13]?.active) && (
+          {(PLATFORM_FEATURES[5]?.active ||
+            PLATFORM_FEATURES[6]?.active ||
+            PLATFORM_FEATURES[7]?.active ||
+            PLATFORM_FEATURES[12]?.active ||
+            PLATFORM_FEATURES[13]?.active) && (
             <div className="flex flex-col gap-12">
-              {(PLATFORM_FEATURES[5]?.active || PLATFORM_FEATURES[6]?.active || PLATFORM_FEATURES[7]?.active) && (
+              {(PLATFORM_FEATURES[5]?.active ||
+                PLATFORM_FEATURES[6]?.active ||
+                PLATFORM_FEATURES[7]?.active) && (
                 <div className="flex flex-col gap-6">
-                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">{t('header.productivity')}</h4>
+                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">
+                    {t("header.productivity")}
+                  </h4>
                   <div className="flex flex-col gap-4">
                     {renderFooterLink(5)}
                     {renderFooterLink(6)}
@@ -169,9 +210,12 @@ export async function Footer() {
                   </div>
                 </div>
               )}
-              {(PLATFORM_FEATURES[12]?.active || PLATFORM_FEATURES[13]?.active) && (
+              {(PLATFORM_FEATURES[12]?.active ||
+                PLATFORM_FEATURES[13]?.active) && (
                 <div className="flex flex-col gap-6">
-                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">{t('header.summary')}</h4>
+                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">
+                    {t("header.summary")}
+                  </h4>
                   <div className="flex flex-col gap-4">
                     {renderFooterLink(12)}
                     {renderFooterLink(13)}
@@ -185,32 +229,81 @@ export async function Footer() {
           <div className="flex flex-col gap-12">
             {PLATFORM_FEATURES[4]?.active && (
               <div className="flex flex-col gap-6">
-                 <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">{t('header.ai_chat')}</h4>
-                <div className="flex flex-col gap-4">
-                  {renderFooterLink(4)}
-                </div>
+                <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">
+                  {t("header.ai_chat")}
+                </h4>
+                <div className="flex flex-col gap-4">{renderFooterLink(4)}</div>
               </div>
             )}
             <div className="flex flex-col gap-6">
-               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">{t('footer.company')}</h4>
+              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">
+                {t("footer.company")}
+              </h4>
               <div className="flex flex-col gap-4">
-                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.team')}</Link>
-                 <Link href={getTermLink("Privacy")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.privacy_policy')}</Link>
-                 <Link href={getTermLink("Legal")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.legal')}</Link>
-                 <Link href={getTermLink("Cookie")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.cookie_policy')}</Link>
-                 <Link href={getTermLink("Terms and Conditions")} className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.terms')}</Link>
-                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.data_protection')}</Link>
-                 {hasCareers && <Link href="/careers" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.careers')}</Link>}
-                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.refund_policy')}</Link>
+                <Link
+                  href="#"
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                >
+                  {t("footer.team")}
+                </Link>
+                <Link
+                  href={getTermLink("Privacy")}
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                >
+                  {t("footer.privacy_policy")}
+                </Link>
+                <Link
+                  href={getTermLink("Legal")}
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                >
+                  {t("footer.legal")}
+                </Link>
+                <Link
+                  href={getTermLink("Cookie")}
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                >
+                  {t("footer.cookie_policy")}
+                </Link>
+                <Link
+                  href={getTermLink("Terms and Conditions")}
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                >
+                  {t("footer.terms")}
+                </Link>
+                <Link
+                  href="#"
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                >
+                  {t("footer.data_protection")}
+                </Link>
+                {hasCareers && (
+                  <Link
+                    href="/careers"
+                    className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                  >
+                    {t("footer.careers")}
+                  </Link>
+                )}
+                <Link
+                  href="#"
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                >
+                  {t("footer.refund_policy")}
+                </Link>
               </div>
             </div>
           </div>
 
           {/* Column 4: AI Tools & Resources */}
           <div className="flex flex-col gap-12">
-            {(PLATFORM_FEATURES[8]?.active || PLATFORM_FEATURES[9]?.active || PLATFORM_FEATURES[10]?.active || PLATFORM_FEATURES[11]?.active) && (
+            {(PLATFORM_FEATURES[8]?.active ||
+              PLATFORM_FEATURES[9]?.active ||
+              PLATFORM_FEATURES[10]?.active ||
+              PLATFORM_FEATURES[11]?.active) && (
               <div className="flex flex-col gap-6">
-                 <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">{t('header.tools')}</h4>
+                <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">
+                  {t("header.tools")}
+                </h4>
                 <div className="flex flex-col gap-4">
                   {renderFooterLink(8)}
                   {renderFooterLink(9)}
@@ -220,12 +313,29 @@ export async function Footer() {
               </div>
             )}
             <div className="flex flex-col gap-6">
-               <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">{t('footer.resources')}</h4>
+              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">
+                {t("footer.resources")}
+              </h4>
               <div className="flex flex-col gap-4">
-                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.product_wiki')}</Link>
-                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.how_it_works')}</Link>
+                <Link
+                  href="#"
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                >
+                  {t("footer.product_wiki")}
+                </Link>
+                <Link
+                  href="#"
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                >
+                  {t("footer.how_it_works")}
+                </Link>
                 <PublicRoadmapLink />
-                 <Link href="#" className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors">{t('footer.feature_request')}</Link>
+                <Link
+                  href="#"
+                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
+                >
+                  {t("footer.feature_request")}
+                </Link>
               </div>
             </div>
           </div>
@@ -237,14 +347,20 @@ export async function Footer() {
             © Copyright {new Date().getFullYear()} - {LEGAL_COMPANY_NAME}
           </p>
           <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2 px-2 py-1 md:px-3 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10">
-                 <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'}`} />
-                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">
-                    <span className="hidden md:inline">{t('system.status_prefix')} </span>
-                    {isOnline ? t('system.online') : t('system.offline')}
-                  </span>
-               </div>
-              <span className="hidden md:inline text-xs font-mono font-bold text-gray-700 uppercase">{t('system.version')} {version}</span>
+            <div className="flex items-center gap-2 px-2 py-1 md:px-3 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10">
+              <div
+                className={`w-2 h-2 rounded-full ${isOnline ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"}`}
+              />
+              <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">
+                <span className="hidden md:inline">
+                  {t("system.status_prefix")}{" "}
+                </span>
+                {isOnline ? t("system.online") : t("system.offline")}
+              </span>
+            </div>
+            <span className="hidden md:inline text-xs font-mono font-bold text-gray-700 uppercase">
+              {t("system.version")} {version}
+            </span>
           </div>
         </div>
       </div>

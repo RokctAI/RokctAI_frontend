@@ -219,11 +219,11 @@ export default function FinancialReportsPage() {
         <h1 className="text-3xl font-bold">Financial Reports</h1>
 
         <div className="flex items-center gap-2">
-            <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder={t('common.select_company')} />
-              </SelectTrigger>
-              <SelectContent>
+          <Select value={selectedCompany} onValueChange={setSelectedCompany}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder={t("common.select_company")} />
+            </SelectTrigger>
+            <SelectContent>
               {companies.map((c) => (
                 <SelectItem key={c.name} value={c.name}>
                   {c.company_name || c.name}
