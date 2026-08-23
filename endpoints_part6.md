@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-08-23):** This endpoint census predates the fleet single-gateway rule. Client calls now ride the single platform gateway — `POST /api/v1/method/rokct.platform.api` with a `cmd` field (see `app/services/base/platform-gateway.ts`). This census is retained as historical reference only.
+
 # API Endpoints Summary
 
 **Total Interactions Found:** 897
