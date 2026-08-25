@@ -36,6 +36,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { getShops } from "@/app/actions/paas/shop";
 import t from "@/app/lib/i18n";
@@ -113,6 +120,27 @@ export default function GeneralSettingsPage() {
                   setSettings({ ...settings, business_name: e.target.value })
                 }
               />
+            </div>
+            <div className="space-y-2">
+              <Label>Trademark Symbol</Label>
+              <Select
+                value={settings.trademark_symbol || "Registered"}
+                onValueChange={(val) =>
+                  setSettings({ ...settings, trademark_symbol: val })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Registered">Registered ®</SelectItem>
+                  <SelectItem value="Trademark">Trademark ™</SelectItem>
+                  <SelectItem value="None">None</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground">
+                Symbol shown next to the app name in the mobile apps.
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Phone</Label>
