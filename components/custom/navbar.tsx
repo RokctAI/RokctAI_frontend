@@ -29,6 +29,7 @@ import { AI_FIRST } from "@/app/config/compose";
 import { getGuestBranding } from "@/app/config/platform";
 import { PLATFORM_NAME } from "@/app/config/constants";
 import t from "@/app/lib/i18n";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
 import { HandsOnButton } from "./hands_on_button";
 import { History } from "./history";
@@ -65,21 +66,23 @@ export const Navbar = async () => {
       session.user.isPaaS
     ) {
       try {
-        const usageRes = await fetch(
-          `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`,
+        // Universal gateway call — cmd is the prefix-free subscriptions
+        // manifest key (`{app_name}.tenant.api.get_token_usage`).
+        const usageData = await platformCall<any>(
+          "tenant.api.get_token_usage",
+          undefined,
           {
             headers: {
               Authorization: `token ${session.user.apiKey}:${session.user.apiSecret}`,
             },
           },
         );
-        if (usageRes.ok) {
-          const usageData = await usageRes.json();
+        if (usageData) {
           const {
             daily_flash_remaining,
             is_flash_unlimited,
             seat_limit_exceeded,
-          } = usageData.message || {};
+          } = usageData;
 
           if (seat_limit_exceeded) {
             canUseAI = false;

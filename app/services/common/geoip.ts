@@ -23,6 +23,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { platformCall } from "@/app/services/base/platform-gateway";
 import { GlobalSettingsService } from "../control/global_settings";
 
 export type GeoIPData = {
@@ -72,23 +73,20 @@ export async function getGuestCountryCode(): Promise<GeoIPData> {
     ip.startsWith("192.168.") ||
     ip.startsWith("10.")
   ) {
-    // Remote Logging of Localhost
+    // Remote Logging of Localhost — prefix-free telemetry manifest cmd
+    // (`{app_name}.tenant.api.log_frontend_error`) via the gateway.
     if (isDebug) {
-      fetch(
-        `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.log_frontend_error`,
+      platformCall(
+        "tenant.api.log_frontend_error",
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            error_message: `GeoIP: Localhost detected (IP: ${ip})`,
-            context: JSON.stringify({
-              category: "GeoIP",
-              ip: ip,
-              level: "DEBUG",
-            }),
+          error_message: `GeoIP: Localhost detected (IP: ${ip})`,
+          context: JSON.stringify({
+            category: "GeoIP",
+            ip: ip,
+            level: "DEBUG",
           }),
-          keepalive: true,
         },
+        { fetchOptions: { keepalive: true } },
       ).catch(() => {});
     }
 
@@ -121,23 +119,20 @@ export async function getGuestCountryCode(): Promise<GeoIPData> {
           ip: ip,
         };
 
-        // Remote Logging to Frappe for visibility
+        // Remote Logging to Frappe for visibility — telemetry cmd via
+        // the gateway.
         if (isDebug) {
-          fetch(
-            `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.log_frontend_error`,
+          platformCall(
+            "tenant.api.log_frontend_error",
             {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                error_message: `GeoIP Success: ${ip}`,
-                context: JSON.stringify({
-                  category: "GeoIP",
-                  result: result,
-                  level: "DEBUG",
-                }),
+              error_message: `GeoIP Success: ${ip}`,
+              context: JSON.stringify({
+                category: "GeoIP",
+                result: result,
+                level: "DEBUG",
               }),
-              keepalive: true,
             },
+            { fetchOptions: { keepalive: true } },
           ).catch(() => {});
         }
 
@@ -145,23 +140,19 @@ export async function getGuestCountryCode(): Promise<GeoIPData> {
       }
     }
   } catch (e) {
-    // Remote Logging of failure
+    // Remote Logging of failure — telemetry cmd via the gateway.
     if (isDebug) {
-      fetch(
-        `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.log_frontend_error`,
+      platformCall(
+        "tenant.api.log_frontend_error",
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            error_message: `GeoIP Failure: ${ip} - ${String(e)}`,
-            context: JSON.stringify({
-              category: "GeoIP",
-              error: String(e),
-              level: "ERROR",
-            }),
+          error_message: `GeoIP Failure: ${ip} - ${String(e)}`,
+          context: JSON.stringify({
+            category: "GeoIP",
+            error: String(e),
+            level: "ERROR",
           }),
-          keepalive: true,
         },
+        { fetchOptions: { keepalive: true } },
       ).catch(() => {});
     }
   }

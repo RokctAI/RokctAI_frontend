@@ -27,6 +27,7 @@ import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
 import { user, globalSettings } from "@/db/schema";
+import { platformCall } from "@/app/services/base/platform-gateway";
 import { signIn, auth } from "./auth";
 
 export async function getCurrentSession() {
@@ -47,20 +48,18 @@ export async function refreshTokens() {
       return { success: false, error: "Refresh token or Base URL missing" };
     }
 
-    const response = await fetch(
-      `${baseUrl}/api/method/rcore.api.auth.refresh`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh_token }),
-      },
+    // Universal gateway call — cmd is the prefix-free auth manifest key
+    // (`{app_name}.api.auth.refresh`), never a per-method URL.
+    const data = await platformCall<any>(
+      "api.auth.refresh",
+      { refresh_token },
+      { baseUrl },
     );
 
-    if (!response.ok) {
-      throw new Error(`Backend refresh failed with status ${response.status}`);
+    if (!data) {
+      throw new Error("Backend refresh failed");
     }
 
-    const data = await response.json();
     if (data.status === true) {
       return {
         success: true,
@@ -359,25 +358,24 @@ export async function getIndustries(): Promise<string[]> {
 
     if (!adminKey || !adminSecret) return [];
 
-    const res = await fetch(`${baseUrl}/api/method/frappe.client.get_list`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `token ${adminKey}:${adminSecret}`,
-      },
-      body: JSON.stringify({
+    // Framework methods ride the gateway with the full dotted frappe path
+    // (same cmd the ControlBaseService.getList helper uses).
+    const industries = await platformCall<any[]>(
+      "frappe.client.get_list",
+      {
         doctype: "Industry Type",
         fields: ["name"],
         limit_page_length: 100,
         order_by: "name asc",
-      }),
-    });
+      },
+      {
+        baseUrl,
+        headers: { Authorization: `token ${adminKey}:${adminSecret}` },
+      },
+    );
 
-    if (res.ok) {
-      const data = await res.json();
-      if (data.message && Array.isArray(data.message)) {
-        return data.message.map((item: any) => item.name);
-      }
+    if (Array.isArray(industries)) {
+      return industries.map((item: any) => item.name);
     }
     return [];
   } catch (error) {
