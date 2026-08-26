@@ -4,3 +4,4 @@
 # GitHub Release Archive Exclusions
 .github/ export-ignore
 .rokct/ export-ignore
+*.py text eol=lf
