@@ -25,14 +25,32 @@
 import { paasCall } from "@/app/lib/paas-gateway";
 import { revalidatePath } from "next/cache";
 
-import { getPaaSClient } from "@/app/lib/client";
-
 export async function getLanguages() {
   try {
-    return await paasCall("api.admin_settings.get_all_languages");
+    // limit_page_length 0 = no limit, so admins see every seeded language.
+    return await paasCall("api.admin_settings.get_all_languages", {
+      limit_page_length: 0,
+    });
   } catch (error) {
     console.error("Failed to fetch languages:", error);
     return [];
+  }
+}
+
+export async function updateLanguage(
+  languageName: string,
+  languageData: Record<string, unknown>,
+) {
+  try {
+    await paasCall("api.admin_settings.update_language", {
+      language_name: languageName,
+      language_data: languageData,
+    });
+    revalidatePath("/paas/admin/system/languages");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update language:", error);
+    throw error;
   }
 }
 
@@ -92,34 +110,99 @@ export async function clearCache() {
   }
 }
 
-export async function getTranslations() {
-  const frappe = await getPaaSClient();
+export interface TranslationRow {
+  id: string;
+  group: string;
+  locale: string;
+  value: string;
+  status: number;
+}
+
+export interface TranslationsPage {
+  total: number;
+  perPage: number;
+  translations: Record<string, TranslationRow[]>;
+}
+
+/**
+ * Drops empty/whitespace-only locale values. An empty PaaS Translation row
+ * suppresses the app's fallback and renders blank, so blanks are omitted
+ * rather than persisted.
+ */
+function pruneEmptyValues(values: Record<string, string>) {
+  const pruned: Record<string, string> = {};
+  for (const [locale, text] of Object.entries(values)) {
+    if (typeof text === "string" && text.trim() !== "") {
+      pruned[locale] = text;
+    }
+  }
+  return pruned;
+}
+
+export async function getTranslations(params?: {
+  search?: string;
+  group?: string;
+  locale?: string;
+  page?: number;
+  perPage?: number;
+}): Promise<TranslationsPage> {
+  const perPage = params?.perPage ?? 20;
+  const empty: TranslationsPage = { total: 0, perPage, translations: {} };
   try {
-    return await frappe.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "PaaS Translation",
-        fields: ["name", "locale", "group", "key", "value", "status"],
-        limit_page_length: 1000,
-      },
+    const res = await paasCall("api.translation.get_translations_paginate", {
+      ...(params?.search ? { search: params.search } : {}),
+      ...(params?.group ? { group: params.group } : {}),
+      ...(params?.locale ? { locale: params.locale } : {}),
+      page: params?.page ?? 1,
+      perPage,
     });
+    return (res as any)?.data ?? empty;
   } catch (error) {
     console.error("Failed to fetch translations:", error);
-    return [];
+    return empty;
   }
 }
 
-export async function updateTranslation(name: string, value: string) {
-  const frappe = await getPaaSClient();
+export async function createTranslation(
+  group: string,
+  key: string,
+  values: Record<string, string>,
+) {
+  const value = pruneEmptyValues(values);
+  if (Object.keys(value).length === 0) {
+    // The backend upserts by delete-then-insert; an empty dict would
+    // silently wipe the key. Require at least one non-empty value.
+    throw new Error("At least one non-empty translation value is required");
+  }
   try {
-    await frappe.call({
-      method: "frappe.client.set_value",
-      args: {
-        doctype: "PaaS Translation",
-        name: name,
-        fieldname: "value",
-        value: value,
-      },
+    await paasCall("api.translation.create_translation", {
+      group,
+      key,
+      value,
+    });
+    revalidatePath("/paas/admin/system/translations");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to create translation:", error);
+    throw error;
+  }
+}
+
+export async function updateTranslation(
+  key: string,
+  group: string,
+  values: Record<string, string>,
+) {
+  const value = pruneEmptyValues(values);
+  if (Object.keys(value).length === 0) {
+    // Same guard as createTranslation: never send an empty dict.
+    throw new Error("At least one non-empty translation value is required");
+  }
+  try {
+    await paasCall("api.translation.update_translation", {
+      key,
+      group,
+      value,
     });
     revalidatePath("/paas/admin/system/translations");
     return { success: true };
