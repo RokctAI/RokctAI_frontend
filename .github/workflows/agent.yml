@@ -1,0 +1,53 @@
+name: "Agent: Automated Git Delegation"
+
+# Trimmed variant of agent.yml, selected per-repo via
+# workflows/.rok/distribution.json: every push/schedule/PR-closed job in the
+# shared suite is hard-gated to factory/opportunities/the-rokct-protocol, so
+# on any other repo those triggers only produce no-op runs. The jobs body
+# stays byte-identical to agent.yml — only the `on:` triggers differ.
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      id:
+        required: true
+        type: string
+      type:
+        required: true
+        type: string
+      theme:
+        required: true
+        type: string
+      status:
+        required: true
+        type: string
+      agent:
+        required: true
+        type: string
+      session:
+        required: true
+        type: string
+      pr:
+        required: false
+        type: string
+
+concurrency:
+  group: agent-delegation
+  cancel-in-progress: false
+
+jobs:
+  agent:
+    uses: RokctAI/shared-workflows/.github/workflows/universal-agent.yml@1d5ebbcdf3dc771fed587fe90e5f91f3a305392c # shared-workflows main @ 2026-08-24
+    with:
+      mode: 'auto'
+      ledger_id: ${{ inputs.id }}
+      ledger_type: ${{ inputs.type }}
+      ledger_theme: ${{ inputs.theme }}
+      ledger_status: ${{ inputs.status }}
+      ledger_agent: ${{ inputs.agent }}
+      ledger_session: ${{ inputs.session }}
+      ledger_pr: ${{ inputs.pr }}
+    secrets:
+      JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      MONOREPO_PAT: ${{ secrets.MONOREPO_PAT }}
