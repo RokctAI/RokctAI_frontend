@@ -20,25 +20,14 @@
  * SOFTWARE.
  */
 
-import { auth } from "@/app/(auth)/auth";
 import Link from "next/link";
 import { RedirectType, redirect } from "next/navigation";
 
 export default async function HandsOnMode() {
-  const session = await auth();
-  const userRole = (session?.user as any)?.roles?.[0];
-  const isPaaS = (session?.user as any)?.isPaaS;
-
-  // Same logic as Layout to determine primary destination
-  const isControlUser =
-    !isPaaS || ["System Manager", "Administrator"].includes(userRole);
-
-  if (isControlUser) {
-    redirect("/handson/control", RedirectType.replace);
-  } else {
-    // For tenant, redirect to dashboard or settings
-    redirect("/handson/tenant", RedirectType.replace);
-  }
+  // This shell serves control-plane (rokctapp) users only — the paas product
+  // has its own app shell repo (delivery-frontend), so there is no
+  // paas-tenant branch here anymore.
+  redirect("/handson/control", RedirectType.replace);
 
   return (
     <div className="flex flex-col items-center justify-center h-[50vh] p-4 text-center">

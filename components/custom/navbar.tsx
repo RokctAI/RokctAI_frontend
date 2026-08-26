@@ -59,12 +59,7 @@ export const Navbar = async () => {
 
   if (session?.user) {
     // Logic for AI Usage Check (existing)
-    if (
-      AI_FIRST &&
-      session.user.apiKey &&
-      session.user.apiSecret &&
-      session.user.isPaaS
-    ) {
+    if (AI_FIRST && session.user.apiKey && session.user.apiSecret) {
       try {
         // Universal gateway call — cmd is the prefix-free subscriptions
         // manifest key (`{app_name}.tenant.api.get_token_usage`).

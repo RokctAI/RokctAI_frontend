@@ -262,11 +262,9 @@ export default async function HandsOnLayout({
   const branding = (await getGuestBranding()) as any;
   const userRoles = (session?.user as any)?.roles || [];
   const userRole = userRoles[0]; // Keep for legacy if needed, but logic should use array
-  const isPaaS = (session?.user as any)?.isPaaS;
-  // Simple logic: If they have system/admin roles OR are NOT a PaaS user (meaning they are Control panel login), show Control
-  // Note: The logic might need refinement based on exact role definitions in your system.
-  // For now assuming: If not isPaaS (Control Control Login) OR Role is System Manager -> Control Access
-  // Else -> Tenant Access
+  // This shell serves control-plane (rokctapp) users only — the paas product
+  // has its own app shell repo (delivery-frontend), so there is no
+  // paas-tenant branch here anymore.
 
   // Helper to check role access
   const hasRole = (itemRoles?: string[]) => {
@@ -281,43 +279,20 @@ export default async function HandsOnLayout({
     return itemRoles.some((role) => userRoles.includes(role));
   };
 
-  // Helper to check module access
-  // If user is Control User, they ignore module limits (they are the provider)
-  // If Tenant User, they must have the module enabled
-  // Note: session.user.modules is populated by auth.ts on login
-  const enabledModules: string[] = (session?.user as any)?.modules || [];
-
-  const hasModule = (itemModule?: string) => {
-    if (!isPaaS) return true; // Control users see everything (or handled by roles)
-    if (!itemModule) return true; // No specific module required
-
-    return enabledModules.includes(itemModule);
-  };
-
+  // Control-plane users ignore module limits (they are the provider), so
+  // access is filtered by role only.
   const filterItems = (items: any[]) => {
-    return items.filter(
-      (item) => hasRole(item.roles) && hasModule(item.module),
-    );
+    return items.filter((item) => hasRole(item.roles));
   };
 
   let menuItems: any[] = [];
   let title = "Hands-on";
 
-  // Determine Context
-  // Logic adapted from auth.config.ts / auth.ts insights
-  const isControlUser =
-    !isPaaS ||
-    userRoles.some((r: string) =>
-      ["System Manager", "Administrator"].includes(r),
-    );
-
   const company = (session?.user as any)?.company;
   const companyLabel = company?.companyName || PLATFORM_NAME;
 
   // Apply Contextual Branding (Dashboard Titles)
-  title = branding
-    ? `${companyLabel} ${isControlUser ? "Control" : "Tenant"}`
-    : title;
+  title = branding ? `${companyLabel} Control` : title;
 
   // Apply Role & Module Filtering
   menuItems = filterItems(menuItems);
@@ -355,9 +330,7 @@ export default async function HandsOnLayout({
                   {branding.before}
                   <span style={branding.style}>{branding.code}</span>
                   {branding.after}
-                  <span className="ml-2 opacity-60 font-normal">
-                    {isControlUser ? "Control" : "Tenant"}
-                  </span>
+                  <span className="ml-2 opacity-60 font-normal">Control</span>
                 </span>
               ) : (
                 title

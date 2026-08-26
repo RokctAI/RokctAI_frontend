@@ -44,8 +44,9 @@ export async function GET(request: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  if (!session.user.isPaaS || !session.user.apiKey || !session.user.apiSecret) {
-    // Non-PaaS / Dev users are assumed to be unlimited for now
+  if (!session.user.apiKey || !session.user.apiSecret) {
+    // Sessions without platform API credentials have no tenant quota
+    // backend — assumed to be unlimited for now
     return Response.json({
       daily_flash_remaining: 1000,
       is_flash_unlimited: true,
