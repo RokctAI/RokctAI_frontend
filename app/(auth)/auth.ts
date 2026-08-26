@@ -184,9 +184,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // NEW: Standard Login (Control Site) - Check for Hosting Client / SaaS Sub
             try {
               const cookie = loginRes.headers.get("set-cookie");
-              const subRes = await fetch(
-                `${baseUrl}/api/method/control.control.api.subscription.get_my_subscription`,
+              // Universal gateway call — the control gateway only serves
+              // `control:`-prefixed cmds; this is the subscriptions
+              // manifest's `control:get_my_subscription` key.
+              const subData = await platformCall<any>(
+                "control:get_my_subscription",
+                undefined,
                 {
+                  baseUrl,
+                  // GET keeps the cookie-authenticated call free of
+                  // frappe's CSRF check on POSTs.
                   method: "GET",
                   headers: {
                     Cookie: cookie || "",
@@ -194,8 +201,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 },
               );
 
-              if (subRes.ok) {
-                const subData = await subRes.json();
+              if (subData) {
                 // Only update if we actually found a subscription
                 if (subData.status === "success" && subData.message) {
                   const details = subData.message;

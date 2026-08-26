@@ -25,6 +25,7 @@ import { AI_MODELS } from "@/ai/models";
 import { getModel } from "@/ai";
 import { generateText } from "ai";
 import { getAuthenticatedTokens } from "@/app/lib/auth-utils";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
 // Token rotation and renewal are handled by getAuthenticatedTokens() which calls refreshTokens() before expiry.
 export const dynamic = "force-dynamic";
@@ -75,8 +76,11 @@ export async function GET(request: Request) {
   }
 
   try {
-    const usageRes = await fetch(
-      `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`,
+    // Universal gateway call — cmd is the prefix-free subscriptions
+    // manifest key (`{app_name}.tenant.api.get_token_usage`).
+    const usageData = await platformCall<any>(
+      "tenant.api.get_token_usage",
+      undefined,
       {
         headers: {
           Authorization: `token ${session.user.apiKey}:${session.user.apiSecret}`,
@@ -84,10 +88,8 @@ export async function GET(request: Request) {
       },
     );
 
-    if (usageRes.ok) {
-      const usageData = await usageRes.json();
-      const { daily_flash_remaining, is_flash_unlimited } =
-        usageData.message || {};
+    if (usageData) {
+      const { daily_flash_remaining, is_flash_unlimited } = usageData;
 
       // Allowed if BOTH Google is healthy AND Internal Quota is remaining
       const allowed =

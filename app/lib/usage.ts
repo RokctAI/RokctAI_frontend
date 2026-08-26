@@ -21,6 +21,7 @@
  */
 
 import { auth } from "@/app/(auth)/auth";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
 export const ACTION_TOKEN_COST = 50; // Flat fee for AI actions
 
@@ -40,18 +41,18 @@ export async function recordTokenUsage(
   }
 
   try {
-    await fetch(
-      `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.record_token_usage`,
+    // Universal gateway call — cmd is the prefix-free subscriptions
+    // manifest key (`{app_name}.tenant.api.record_token_usage`).
+    await platformCall(
+      "tenant.api.record_token_usage",
       {
-        method: "POST",
+        tokens_used: tokens,
+        model_name: model,
+      },
+      {
         headers: {
-          "Content-Type": "application/json",
           Authorization: `token ${session.user.apiKey}:${session.user.apiSecret}`,
         },
-        body: JSON.stringify({
-          tokens_used: tokens,
-          model_name: model,
-        }),
       },
     );
   } catch (e) {
@@ -73,20 +74,21 @@ export async function checkTokenQuota(session: any): Promise<boolean> {
   }
 
   try {
-    const usageRes = await fetch(
-      `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`,
+    // Universal gateway call — cmd is the prefix-free subscriptions
+    // manifest key (`{app_name}.tenant.api.get_token_usage`).
+    const usage = await platformCall<any>(
+      "tenant.api.get_token_usage",
+      undefined,
       {
         headers: {
           Authorization: `token ${session.user.apiKey}:${session.user.apiSecret}`,
         },
-        cache: "no-store",
+        fetchOptions: { cache: "no-store" },
       },
     );
 
-    if (usageRes.ok) {
-      const usageData = await usageRes.json();
-      const { daily_flash_remaining, is_flash_unlimited } =
-        usageData.message || {};
+    if (usage) {
+      const { daily_flash_remaining, is_flash_unlimited } = usage;
 
       if (is_flash_unlimited) return true;
       if (daily_flash_remaining >= ACTION_TOKEN_COST) return true;

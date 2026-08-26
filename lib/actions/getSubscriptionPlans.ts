@@ -24,6 +24,8 @@
 // No longer needed, using environment variable directly
 import { z } from "zod";
 
+import { platformCall } from "@/app/services/base/platform-gateway";
+
 const subscriptionPlanSchema = z.object({
   name: z.string(),
   plan_name: z.string(),
@@ -56,23 +58,25 @@ export const getSubscriptionPlans = async (category?: string) => {
       process.env.ROKCT_BASE_URL || process.env.NEXT_PUBLIC_FRAPPE_URL;
     if (!baseUrl) throw new Error("Base URL not configured");
 
-    const url = `${baseUrl}/api/v1/method/control.control.api.subscription.get_subscription_plans${category ? `?category=${category}` : ""}`;
+    // Universal gateway call — the control gateway only serves
+    // `control:`-prefixed cmds; this is the subscriptions manifest's
+    // `control:get_subscription_plans` key. Use no-store to ensure fresh
+    // pricing data.
+    const message = await platformCall<unknown>(
+      "control:get_subscription_plans",
+      category ? { category } : undefined,
+      {
+        baseUrl,
+        fetchOptions: { cache: "no-store" },
+      },
+    );
 
-    // Use no-store to ensure fresh pricing data
-    const response = await fetch(url, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error(`Pricing Fetch Failed: ${response.status}`, errorBody);
-      throw new Error(`Request failed: ${response.status}`);
+    if (!message) {
+      console.error("Pricing Fetch Failed");
+      throw new Error("Request failed");
     }
 
-    const result = await response.json();
-    const validatedData = responseSchema.parse(result);
+    const validatedData = responseSchema.parse({ message });
     // Standardized Mapping: Backend already correctly maps plan_category -> category
     const plans = validatedData.message.map((plan) => ({
       ...plan,

@@ -27,6 +27,7 @@ import { AI_MODELS } from "@/ai/models";
 import { auth } from "@/app/(auth)/auth";
 import { getAuthenticatedTokens } from "@/app/lib/auth-utils";
 import t from "@/app/lib/i18n";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
 // Token rotation and renewal are handled by getAuthenticatedTokens() which calls refreshTokens() before expiry.
 export const revalidate = 0;
@@ -78,18 +79,19 @@ export async function POST(request: Request) {
       session?.user?.isPaaS
     ) {
       try {
-        const usageRes = await fetch(
-          `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.get_token_usage`,
+        // Universal gateway call — cmd is the prefix-free subscriptions
+        // manifest key (`{app_name}.tenant.api.get_token_usage`).
+        const usageData = await platformCall<any>(
+          "tenant.api.get_token_usage",
+          undefined,
           {
             headers: {
               Authorization: `token ${session.user.apiKey}:${session.user.apiSecret}`,
             },
           },
         );
-        if (usageRes.ok) {
-          const usageData = await usageRes.json();
-          const { daily_flash_remaining, is_flash_unlimited } =
-            usageData.message || {};
+        if (usageData) {
+          const { daily_flash_remaining, is_flash_unlimited } = usageData;
 
           if (is_flash_unlimited || daily_flash_remaining > 0) {
             allowRequest = true;
@@ -153,25 +155,24 @@ export async function POST(request: Request) {
     } catch (error) {
       console.error("Gemini Flash Failed", error);
 
-      // Log to Backend
+      // Log to Backend — prefix-free telemetry manifest cmd
+      // (`{app_name}.tenant.api.log_frontend_error`) via the gateway.
       if (session.user.apiKey && session.user.apiSecret) {
-        fetch(
-          `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.log_frontend_error`,
+        platformCall(
+          "tenant.api.log_frontend_error",
           {
-            method: "POST",
+            error_message:
+              error instanceof Error ? error.message : t("api.error_log"),
+            context: JSON.stringify({
+              route: "api/ai/text",
+              prompt_type: promptType,
+              user: session.user.email,
+            }),
+          },
+          {
             headers: {
-              "Content-Type": "application/json",
               Authorization: `token ${session.user.apiKey}:${session.user.apiSecret}`,
             },
-            body: JSON.stringify({
-              error_message:
-                error instanceof Error ? error.message : t("api.error_log"),
-              context: JSON.stringify({
-                route: "api/ai/text",
-                prompt_type: promptType,
-                user: session.user.email,
-              }),
-            }),
           },
         ).catch((e) => console.error(t("api.error_log"), e));
       }
@@ -189,19 +190,18 @@ export async function POST(request: Request) {
       session.user.apiKey &&
       session.user.apiSecret
     ) {
-      // Fire and forget usage recording
-      fetch(
-        `${process.env.ROKCT_BASE_URL}/api/method/core.tenant.api.record_token_usage`,
+      // Fire and forget usage recording — prefix-free subscriptions
+      // manifest cmd (`{app_name}.tenant.api.record_token_usage`).
+      platformCall(
+        "tenant.api.record_token_usage",
         {
-          method: "POST",
+          tokens_used: tokensUsed,
+          model_name: usedModel,
+        },
+        {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `token ${session.user.apiKey}:${session.user.apiSecret}`,
           },
-          body: JSON.stringify({
-            tokens_used: tokensUsed,
-            model_name: usedModel,
-          }),
         },
       ).catch((e) => console.error(t("api.error_record"), e));
     }
