@@ -72,12 +72,8 @@ export async function POST(request: Request) {
       });
     }
 
-    // Check Token Balance if PaaS
-    if (
-      session?.user?.apiKey &&
-      session?.user?.apiSecret &&
-      session?.user?.isPaaS
-    ) {
+    // Check Token Balance when the session carries platform API credentials
+    if (session?.user?.apiKey && session?.user?.apiSecret) {
       try {
         // Universal gateway call — cmd is the prefix-free subscriptions
         // manifest key (`{app_name}.tenant.api.get_token_usage`).
@@ -109,7 +105,7 @@ export async function POST(request: Request) {
         return new Response(t("api.quota_check_failed"), { status: 500 });
       }
     } else {
-      // Dev / Non-PaaS fallback
+      // Dev / no-credentials fallback
       allowRequest = true;
     }
 
@@ -184,12 +180,7 @@ export async function POST(request: Request) {
     }
 
     // 4. Record Usage
-    if (
-      tokensUsed > 0 &&
-      session.user.isPaaS &&
-      session.user.apiKey &&
-      session.user.apiSecret
-    ) {
+    if (tokensUsed > 0 && session.user.apiKey && session.user.apiSecret) {
       // Fire and forget usage recording — prefix-free subscriptions
       // manifest cmd (`{app_name}.tenant.api.record_token_usage`).
       platformCall(

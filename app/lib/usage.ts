@@ -30,10 +30,11 @@ export async function recordTokenUsage(
   tokens: number,
   model: string,
 ) {
+  // Sessions without platform API credentials (no tenant backend to bill
+  // against) have nothing to record.
   if (
     !session ||
     !session.user ||
-    !session.user.isPaaS ||
     !session.user.apiKey ||
     !session.user.apiSecret
   ) {
@@ -64,12 +65,11 @@ export async function checkTokenQuota(session: any): Promise<boolean> {
   if (
     !session ||
     !session.user ||
-    !session.user.isPaaS ||
     !session.user.apiKey ||
     !session.user.apiSecret
   ) {
-    // Decide policy for non-PaaS: Allow or Block?
-    // Assuming Dev/Internal are allowed.
+    // No platform API credentials means no tenant quota backend to check —
+    // Dev/Internal sessions are allowed.
     return true;
   }
 
