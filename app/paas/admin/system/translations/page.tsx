@@ -415,11 +415,7 @@ export default function TranslationsPage() {
                 Languages left blank are omitted so the app falls back to its
                 default language.
               </p>
-              <Button
-                onClick={handleSave}
-                disabled={saving}
-                className="w-full"
-              >
+              <Button onClick={handleSave} disabled={saving} className="w-full">
                 {saving && <Loader2 className="mr-2 size-4 animate-spin" />}
                 {editor.mode === "create" ? "Create" : "Save"}
               </Button>
