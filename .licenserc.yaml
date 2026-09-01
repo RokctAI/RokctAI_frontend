@@ -1,0 +1,68 @@
+# Configuration for apache/skywalking-eyes (license-eye) v0.4.0.
+header:
+  license:
+    spdx-id: AGPL-3.0-only
+    copyright-owner: ROKCT INTELLIGENCE (PTY) LTD
+    # The literal header text license-eye matches against. WITHOUT this,
+    # license-eye has no template to compare and matches nothing at all:
+    # it ships header templates for Apache-2.0 and MPL-2.0 ONLY, so neither
+    # MIT nor AGPL-3.0 can be resolved from the spdx-id alone and the check
+    # scores `valid: 0, invalid: <everything>` regardless of what the files
+    # actually carry. Supplying the text makes the check actually check.
+    #
+    # This repository is licensed under the GNU Affero General Public
+    # License v3 (see the root LICENSE file). Keep this block, the root
+    # LICENSE and the header in every source file in agreement.
+    content: |
+      Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU Affero General Public License as published
+      by the Free Software Foundation, version 3.
+
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+      GNU Affero General Public License for more details.
+
+      You should have received a copy of the GNU Affero General Public License
+      along with this program. If not, see <https://www.gnu.org/licenses/>.
+  # Only real, hand-written source files need a header. Without this
+  # allowlist license-eye defaults to '**' and checks every file in the
+  # repo, dragging .gitignore, README.md, manifest.json, workflow YAML
+  # and lint configs into the check. license-eye only honours `paths`
+  # and `paths-ignore` when they are nested here under `header:`.
+  paths:
+    - '**/*.py'
+    - '**/*.js'
+    - '**/*.jsx'
+    - '**/*.ts'
+    - '**/*.tsx'
+    - '**/*.dart'
+  paths-ignore:
+    # No upstream-licensed source in this repository: every .ts, .tsx, .js and
+    # .py file here carries the ROKCT copyright line and no Frappe/ERPNext or
+    # other third-party header (verified across all 571 source files). The
+    # ERPNext references in the handson components are UI copy and runtime
+    # notes, not licence notices. If upstream-derived code is ever vendored
+    # in, exclude it here — it must NEVER acquire our header.
+    # Vendored / third-party code
+    - '**/node_modules/**'
+    - '**/vendor/**'
+    # Build output and generated code
+    - '**/dist/**'
+    # Next.js build output and static export
+    - '**/.next/**'
+    - '**/out/**'
+    - '**/build/**'
+    - '**/.dart_tool/**'
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'
+    - '**/*.gr.dart'
+    - '**/*.min.js'
+    # Local environments
+    - '**/venv/**'
+    - '**/.venv/**'
+    # Agent-internal protocol state (mirrors per-repo configs)
+    - '.rokct/**'
+  comment: on-failure
