@@ -3,7 +3,8 @@
     "licenses": "UNLICENSED",
     "private": true,
     "path": "/home/runner/work/RokctAI_frontend/RokctAI_frontend",
-    "licenseFile": "/home/runner/work/RokctAI_frontend/RokctAI_frontend/LICENSE"
+    "licenseFile": "/home/runner/work/RokctAI_frontend/RokctAI_frontend/LICENSE",
+    "noticeFile": "/home/runner/work/RokctAI_frontend/RokctAI_frontend/NOTICE"
   }
 }
 
