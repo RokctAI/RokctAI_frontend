@@ -1,0 +1,38 @@
+RokctAI Frontend
+Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+
+This product is distributed under the GNU Affero General Public License
+version 3. See the LICENSE file in the root of this repository for the full
+terms that govern this work as a whole.
+
+--------------------------------------------------------------------------
+Upstream attribution
+--------------------------------------------------------------------------
+
+This repository began as a fork of the "Next.js Gemini Chatbot" template by
+Vercel, an open-source project published at:
+
+    https://github.com/vercel-labs/gemini-chatbot
+
+That upstream work is licensed under the Apache License, Version 2.0, which
+is a permissive licence. Its copyright notice and licence text are retained
+below verbatim, as that licence requires. Redistributing the combined work
+under the AGPL v3 does not revoke or diminish the upstream grant: the
+upstream portions remain available from Vercel under Apache-2.0 on the terms
+reproduced here.
+
+Upstream LICENSE, reproduced verbatim:
+
+    Copyright 2023 Vercel, Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
