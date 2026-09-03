@@ -1,8 +1,0 @@
-# API Reference: page
-
-Source file: `app/paas/admin/settings/email/page.tsx`
-
-## Whitelisted API Endpoints
-
-### `function fetchSettings()`
-*No documentation provided (generation failed).*

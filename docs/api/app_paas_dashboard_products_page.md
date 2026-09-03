@@ -1,8 +1,0 @@
-# API Reference: page
-
-Source file: `app/paas/dashboard/products/page.tsx`
-
-## Whitelisted API Endpoints
-
-### `function fetchProducts()`
-*No documentation provided (generation failed).*
