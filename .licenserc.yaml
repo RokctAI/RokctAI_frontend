@@ -33,12 +33,12 @@ header:
   # and lint configs into the check. license-eye only honours `paths`
   # and `paths-ignore` when they are nested here under `header:`.
   paths:
-    - '**/*.py'
-    - '**/*.js'
-    - '**/*.jsx'
-    - '**/*.ts'
-    - '**/*.tsx'
-    - '**/*.dart'
+    - "**/*.py"
+    - "**/*.js"
+    - "**/*.jsx"
+    - "**/*.ts"
+    - "**/*.tsx"
+    - "**/*.dart"
   paths-ignore:
     # No upstream-licensed source in this repository: every .ts, .tsx, .js and
     # .py file here carries the ROKCT copyright line and no Frappe/ERPNext or
@@ -47,22 +47,22 @@ header:
     # notes, not licence notices. If upstream-derived code is ever vendored
     # in, exclude it here — it must NEVER acquire our header.
     # Vendored / third-party code
-    - '**/node_modules/**'
-    - '**/vendor/**'
+    - "**/node_modules/**"
+    - "**/vendor/**"
     # Build output and generated code
-    - '**/dist/**'
+    - "**/dist/**"
     # Next.js build output and static export
-    - '**/.next/**'
-    - '**/out/**'
-    - '**/build/**'
-    - '**/.dart_tool/**'
-    - '**/*.g.dart'
-    - '**/*.freezed.dart'
-    - '**/*.gr.dart'
-    - '**/*.min.js'
+    - "**/.next/**"
+    - "**/out/**"
+    - "**/build/**"
+    - "**/.dart_tool/**"
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gr.dart"
+    - "**/*.min.js"
     # Local environments
-    - '**/venv/**'
-    - '**/.venv/**'
+    - "**/venv/**"
+    - "**/.venv/**"
     # Agent-internal protocol state (mirrors per-repo configs)
-    - '.rokct/**'
+    - ".rokct/**"
   comment: on-failure
