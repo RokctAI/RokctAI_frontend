@@ -1,8 +1,0 @@
-# API Reference: auth
-
-Source file: `app/(auth)/auth.ts`
-
-## Whitelisted API Endpoints
-
-### `function siteName(credentials?.site_name as string) || null; const dbUser = await db .select() .from(user) .where(eq(user.email, email as string)) .limit(1); let isPaaSLogin = credentials?.is_paas === "true"; if (siteName && !isPaaSLogin) { baseUrl = siteName.startsWith("http") ? siteName :`https://${siteName}`; } else { if (dbUser.length > 0 && dbUser[0].siteName && !isPaaSLogin) { siteName = dbUser[0].siteName; baseUrl = siteName.startsWith("http") ? siteName : `https://${siteName}`; } } if (!baseUrl) throw new Error( "ROKCT_BASE_URL is not set and no site found for user.", ); let loginRes; let apiKey = null; let apiSecret = null; let name = ""; let isOnboarded = false; let roles: string[] = []; let homePage = "/"; if (isPaaSLogin) { try { loginRes = await fetch(`${baseUrl}/api/method/paas.api.user.user.login`, { method: "POST", headers: { "Content-Type": "application/json", }, body: JSON.stringify({ usr: email, pwd: password }), }, ); } catch (e) { console.warn("PaaS Login connection failed", e); loginRes = { ok: false } as Response; } } else { try { const targetUrl = `${baseUrl}/api/method/core.api.auth.login`; console.log(`[Auth] Attempting login to: ${targetUrl} for ${email}`, ); loginRes = await fetch(targetUrl, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json", }, body: JSON.stringify({ usr: email, pwd: password }), }); console.log(`[Auth] Login Fetch Completed. Status: ${loginRes.status}`, ); } catch (e) { console.warn("[Auth] Standard Login connection failed", e); loginRes = { ok: false, status: 0, text: async ()`
-*No documentation provided (generation failed).*
