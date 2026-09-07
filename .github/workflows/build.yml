@@ -141,10 +141,10 @@ jobs:
           export ROKCT_PROTOCOL_DIR="$PROTOCOL_DIR"
           # This repo's package manager is pnpm; we install merged deps below.
           export ROKCT_SKIP_NPM_INSTALL=1
-          # The registry template rides ref:main without per-SDK sha256 pins
-          # yet - pinning belongs in the registry template (protocol
-          # follow-up), same as the flutter templates.
-          export ROKCT_ALLOW_UNPINNED_SDKS=1
+          # No ROKCT_ALLOW_UNPINNED_SDKS opt-out: the rokctapp registry
+          # template now carries a per-SDK sha256 pin for every enabled entry,
+          # so the composer's unpinned-installer gate verifies all of them and
+          # this canary fails loudly the moment an entry loses its pin.
           python3 "$PROTOCOL_DIR/core/utils/nextjs/sdk_composer.py"
 
           echo "Compose OK. Verifying merged dependencies install..."

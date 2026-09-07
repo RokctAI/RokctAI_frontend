@@ -44,3 +44,11 @@ yarn-error.log*
 .svn/
 .swiftpm/
 migrate_working_dir/
+
+# Composer artifacts (this shell stays thin: composed output is regenerated at
+# build time from the registry template named in .rokct/config/app_type and is
+# never committed back to main).
+/composer.json
+.rokct/sdk_installer_base.py
+.rokct/cache/
+.rokct/__pycache__/
