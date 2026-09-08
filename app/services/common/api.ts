@@ -13,50 +13,52 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+"use server";
 
+import { platformCall } from "@/app/services/base/platform-gateway";
+
+export interface PublicApiOptions {
+  /** Abort after this many milliseconds. Default 10000. */
+  timeout?: number;
+  /** Extra request headers (e.g. `X-Rokct-Debug`). */
+  headers?: Record<string, string>;
+  /** Next.js fetch cache hints. Default `{ revalidate: 60 }`. */
+  next?: { revalidate?: number | false; tags?: string[] };
+}
+
+/**
+ * Guest read against the control plane (`ROKCT_BASE_URL`) through the ONE
+ * platform gateway — `/api/v1/method/rokct.platform.api` with a `cmd` —
+ * never a per-method `/api/method/<dotted.name>` URL (fleet rule; see
+ * app/services/base/platform-gateway.ts). `cmd` is a control gateway key
+ * (`control:<name>`, the control gateway serves only those). The call goes
+ * out as a GET so Next.js fetch caching (`next.revalidate`) applies exactly
+ * as the old per-method fetch did; the gateway accepts both verbs.
+ *
+ * This is a server action so the client-rendered status page can use it
+ * (the gateway helper and `ROKCT_BASE_URL` are server-only). Returns the
+ * unwrapped `message`, or `null` on any failure — the historical contract.
+ */
 export async function callPublicApi(
-  method: string,
+  cmd: string,
   params: Record<string, any> = {},
-  options: RequestInit & { timeout?: number } = {},
+  options: PublicApiOptions = {},
 ) {
   const baseUrl = process.env.ROKCT_BASE_URL;
   if (!baseUrl) return null;
 
-  const { timeout = 10000, ...fetchOptions } = options;
+  const { timeout = 10000, headers, next = { revalidate: 60 } } = options;
 
-  try {
-    const query = new URLSearchParams(params).toString();
-    const url = `${baseUrl}/api/method/${method}${query ? `?${query}` : ""}`;
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-    const defaultOptions: RequestInit = {
-      next: { revalidate: 60 },
-      signal: controller.signal,
-    };
-
-    const finalOptions = {
-      ...defaultOptions,
-      ...fetchOptions,
-      headers: { ...defaultOptions.headers, ...fetchOptions.headers },
-      signal: controller.signal, // Ensure signal is set
-    };
-
-    try {
-      const res = await fetch(url, finalOptions);
-      clearTimeout(timeoutId);
-
-      if (!res.ok) return null;
-
-      const data = await res.json();
-      return data.message || data;
-    } catch (fetchError) {
-      clearTimeout(timeoutId);
-      throw fetchError;
-    }
-  } catch (e) {
-    console.error(`API Call Failed: ${method}`, e);
-    return null;
-  }
+  return platformCall<any>(
+    cmd,
+    Object.keys(params).length > 0 ? params : undefined,
+    {
+      baseUrl,
+      method: "GET",
+      requireAuth: false,
+      timeout,
+      headers,
+      fetchOptions: { next },
+    },
+  );
 }

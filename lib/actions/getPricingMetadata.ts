@@ -61,15 +61,11 @@ export async function getPricingMetadata(userCountry?: string) {
       );
     }
 
-    const data = await callPublicApi(
-      "control.control.api.subscription.get_pricing_metadata",
-      params,
-      {
-        headers: isDebug ? { "X-Rokct-Debug": "true" } : {},
-        next: { revalidate: 3600 }, // Cache for 1 hour
-        timeout: 3000, // 3s Timeout (Restored)
-      },
-    );
+    const data = await callPublicApi("control:get_pricing_metadata", params, {
+      headers: isDebug ? { "X-Rokct-Debug": "true" } : {},
+      next: { revalidate: 3600 }, // Cache for 1 hour
+      timeout: 3000, // 3s Timeout (Restored)
+    });
 
     const fallbackData = {
       currency: "USD",

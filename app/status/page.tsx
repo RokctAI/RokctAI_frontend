@@ -43,9 +43,7 @@ export default function StatusPage() {
   useEffect(() => {
     async function fetchStatus() {
       try {
-        const res = await callPublicApi(
-          "control.control.api.system.get_system_status",
-        );
+        const res = await callPublicApi("control:get_system_status");
         if (res && res.status) {
           setData(res);
         }
