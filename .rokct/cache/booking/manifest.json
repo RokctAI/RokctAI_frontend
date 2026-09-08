@@ -1,0 +1,60 @@
+{
+  "name": "booking_sdk",
+  "version": "1.1.0",
+  "installs": [
+    {
+      "from": "templates/app/admin/orders/bookings/page.tsx",
+      "to": "app/admin/orders/bookings/page.tsx"
+    },
+    {
+      "from": "templates/app/actions/booking/booking.ts",
+      "to": "app/actions/booking/booking.ts"
+    },
+    {
+      "from": "templates/app/manager/booking/reservations/[id]/page.tsx",
+      "to": "app/manager/booking/reservations/[id]/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/booking/reservations/page.tsx",
+      "to": "app/manager/booking/reservations/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/booking/tables/page.tsx",
+      "to": "app/manager/booking/tables/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/bookings/[id]/page.tsx",
+      "to": "app/manager/bookings/[id]/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/bookings/page.tsx",
+      "to": "app/manager/bookings/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/settings/booking/page.tsx",
+      "to": "app/manager/settings/booking/page.tsx"
+    }
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/actions/orders/admin/orders.ts",
+    "app/lib/client.ts",
+    "app/lib/i18n/index.ts",
+    "app/services/base/platform-gateway.ts",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/select.tsx",
+    "components/ui/separator.tsx",
+    "components/ui/table.tsx",
+    "components/ui/tabs.tsx"
+  ],
+  "_comment": {
+    "app/actions/orders/admin/orders.ts": "commerce/orders (orders_sdk)"
+  }
+}

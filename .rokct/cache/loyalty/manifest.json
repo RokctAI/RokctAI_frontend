@@ -1,0 +1,41 @@
+{
+  "name": "loyalty_sdk",
+  "version": "1.0.0",
+  "installs": [
+    {
+      "from": "templates/app/admin/marketing/bonuses/page.tsx",
+      "to": "app/admin/marketing/bonuses/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/marketing/cashback/page.tsx",
+      "to": "app/admin/marketing/cashback/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/marketing/referrals/page.tsx",
+      "to": "app/admin/marketing/referrals/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/marketing/bonuses/page.tsx",
+      "to": "app/manager/marketing/bonuses/page.tsx"
+    }
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/actions/promotions/admin/marketing.ts",
+    "app/actions/promotions/marketing.ts",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/table.tsx",
+    "lib/utils.ts"
+  ],
+  "_comment": {
+    "app/actions/promotions/admin/marketing.ts": "commerce/promotions (promotions_sdk)",
+    "app/actions/promotions/marketing.ts": "commerce/promotions (promotions_sdk)"
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "name": "products_sdk",
+  "version": "1.2.0",
+  "installs": [
+    {
+      "from": "templates/app/actions/products/upload.ts",
+      "to": "app/actions/products/upload.ts"
+    },
+    {
+      "from": "templates/components/custom/image-upload.tsx",
+      "to": "components/custom/image-upload.tsx"
+    },
+    {
+      "from": "templates/app/actions/products/admin/products.ts",
+      "to": "app/actions/products/admin/products.ts"
+    },
+    {
+      "from": "templates/app/admin/content/brands/page.tsx",
+      "to": "app/admin/content/brands/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/content/gallery/page.tsx",
+      "to": "app/admin/content/gallery/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/products/categories/page.tsx",
+      "to": "app/admin/products/categories/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/products/extras/page.tsx",
+      "to": "app/admin/products/extras/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/products/page.tsx",
+      "to": "app/admin/products/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/products/receipts/page.tsx",
+      "to": "app/admin/products/receipts/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/products/reviews/page.tsx",
+      "to": "app/admin/products/reviews/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/reports/categories/page.tsx",
+      "to": "app/admin/reports/categories/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/reports/products/page.tsx",
+      "to": "app/admin/reports/products/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/reports/stock/page.tsx",
+      "to": "app/admin/reports/stock/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/reports/variation/page.tsx",
+      "to": "app/admin/reports/variation/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/shops/categories/page.tsx",
+      "to": "app/admin/shops/categories/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/shops/units/page.tsx",
+      "to": "app/admin/shops/units/page.tsx"
+    },
+    {
+      "from": "templates/app/actions/products/brands.ts",
+      "to": "app/actions/products/brands.ts"
+    },
+    {
+      "from": "templates/app/actions/products/categories.ts",
+      "to": "app/actions/products/categories.ts"
+    },
+    {
+      "from": "templates/app/actions/products/extras.ts",
+      "to": "app/actions/products/extras.ts"
+    },
+    {
+      "from": "templates/app/actions/products/gallery.ts",
+      "to": "app/actions/products/gallery.ts"
+    },
+    {
+      "from": "templates/app/actions/products/operations.ts",
+      "to": "app/actions/products/operations.ts"
+    },
+    {
+      "from": "templates/app/actions/products/products.ts",
+      "to": "app/actions/products/products.ts"
+    },
+    {
+      "from": "templates/app/actions/products/receipts.ts",
+      "to": "app/actions/products/receipts.ts"
+    },
+    {
+      "from": "templates/app/manager/content/brands/page.tsx",
+      "to": "app/manager/content/brands/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/products/[id]/page.tsx",
+      "to": "app/manager/products/[id]/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/products/categories/page.tsx",
+      "to": "app/manager/products/categories/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/products/combos/page.tsx",
+      "to": "app/manager/products/combos/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/products/extras/page.tsx",
+      "to": "app/manager/products/extras/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/products/menus/page.tsx",
+      "to": "app/manager/products/menus/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/products/page.tsx",
+      "to": "app/manager/products/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/products/receipts/page.tsx",
+      "to": "app/manager/products/receipts/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/settings/gallery/page.tsx",
+      "to": "app/manager/settings/gallery/page.tsx"
+    }
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/actions/base/admin/content.ts",
+    "app/actions/merchants/admin/shops.ts",
+    "app/lib/i18n/index.ts",
+    "app/services/base/platform-gateway.ts",
+    "components/admin/GenericReport.tsx",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx",
+    "components/ui/collapsible.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/table.tsx",
+    "components/ui/textarea.tsx"
+  ],
+  "_comment": {
+    "app/actions/merchants/admin/shops.ts": "commerce/merchants (merchants_sdk)"
+  }
+}

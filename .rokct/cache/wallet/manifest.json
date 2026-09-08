@@ -1,0 +1,55 @@
+{
+  "name": "wallet_sdk",
+  "version": "1.0.0",
+  "installs": [
+    {
+      "from": "templates/app/admin/business/wallet/page.tsx",
+      "to": "app/admin/business/wallet/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/customers/wallets/page.tsx",
+      "to": "app/admin/customers/wallets/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/finance/wallet/page.tsx",
+      "to": "app/admin/finance/wallet/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/finance/wallet/page.tsx",
+      "to": "app/manager/finance/wallet/page.tsx"
+    }
+  ],
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.563.0",
+    "sonner": "^2.0.7"
+  },
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/actions/gateways/admin/finance.ts",
+    "app/actions/gateways/finance.ts",
+    "app/actions/users/admin/customers.ts",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/table.tsx",
+    "lib/utils.ts"
+  ],
+  "_comment": {
+    "app/actions/gateways/admin/finance.ts": "pay/gateways (installed by that SDK)",
+    "app/actions/gateways/finance.ts": "pay/gateways (installed by that SDK)",
+    "app/actions/users/admin/customers.ts": "users SDK (installed by users_sdk, RokctAI/Users PR #83)",
+    "components/ui/badge.tsx": "host shell",
+    "components/ui/button.tsx": "host shell",
+    "components/ui/card.tsx": "host shell",
+    "components/ui/dialog.tsx": "host shell",
+    "components/ui/input.tsx": "host shell",
+    "components/ui/label.tsx": "host shell",
+    "components/ui/table.tsx": "host shell",
+    "lib/utils.ts": "host shell"
+  }
+}

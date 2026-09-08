@@ -1,0 +1,25 @@
+{
+  "name": "kitchen_sdk",
+  "version": "1.0.0",
+  "installs": [
+    {
+      "from": "templates/app/manager/restaurant/kitchens/page.tsx",
+      "to": "app/manager/restaurant/kitchens/page.tsx"
+    }
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/actions/products/operations.ts",
+    "app/lib/i18n/index.ts",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx"
+  ],
+  "_comment": {
+    "app/actions/products/operations.ts": "commerce/products (products_sdk)"
+  }
+}

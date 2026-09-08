@@ -1,0 +1,204 @@
+{
+  "name": "agent_sdk",
+  "version": "1.5.0",
+  "installs": [
+    { "from": "templates/app/handson/all/agent", "to": "app/handson/all/agent" },
+    { "from": "templates/app/actions/handson/all/agent", "to": "app/actions/handson/all/agent" },
+    { "from": "templates/app/services/all/agent", "to": "app/services/all/agent" },
+    { "from": "templates/app/(chat)", "to": "app/(chat)" },
+    { "from": "templates/app/actions/ai", "to": "app/actions/ai" },
+    { "from": "templates/ai/local", "to": "ai/local" },
+    { "from": "templates/app/api/ai/classify-intent", "to": "app/api/ai/classify-intent" },
+    { "from": "templates/app/api/tasks", "to": "app/api/tasks" },
+    { "from": "templates/app/api/notes", "to": "app/api/notes" },
+    { "from": "templates/app/api/projects", "to": "app/api/projects" },
+    { "from": "templates/app/services/server/intent-classifier.ts", "to": "app/services/server/intent-classifier.ts" },
+    { "from": "templates/app/services/public/opportunities.ts", "to": "app/services/public/opportunities.ts" },
+    { "from": "templates/app/lib/intent-engine.ts", "to": "app/lib/intent-engine.ts" },
+    { "from": "templates/components/custom/landing/agent-opportunities.tsx", "to": "components/custom/landing/agent-opportunities.tsx" },
+    { "from": "templates/components/custom/landing/agent-hero-form.tsx", "to": "components/custom/landing/agent-hero-form.tsx" },
+    { "from": "templates/components/custom/chat-section.tsx", "to": "components/custom/chat-section.tsx" },
+    { "from": "templates/components/custom/landing/agent-landing-config.ts", "to": "components/custom/landing/agent-landing-config.ts" },
+    { "from": "templates/components/custom/floating-nav.tsx", "to": "components/custom/floating-nav.tsx" },
+    { "from": "templates/components/custom/logos.tsx", "to": "components/custom/logos.tsx" },
+    { "from": "templates/components/custom/social-section.tsx", "to": "components/custom/social-section.tsx" },
+    { "from": "templates/components/custom/all-features-section.tsx", "to": "components/custom/all-features-section.tsx" },
+    { "from": "templates/components/custom/workflow-section.tsx", "to": "components/custom/workflow-section.tsx" },
+    { "from": "templates/components/custom/pricing.tsx", "to": "components/custom/pricing.tsx" },
+    { "from": "templates/components/custom/copied-pricing.tsx", "to": "components/custom/copied-pricing.tsx" },
+    { "from": "templates/components/custom/faq-section.tsx", "to": "components/custom/faq-section.tsx" },
+    { "from": "templates/components/custom/testimonials-section.tsx", "to": "components/custom/testimonials-section.tsx" },
+    { "from": "templates/components/tasks", "to": "components/tasks" },
+    { "from": "templates/components/flights", "to": "components/flights" },
+    { "from": "templates/components/notes", "to": "components/notes" },
+    { "from": "templates/components/projects", "to": "components/projects" },
+    { "from": "templates/components/overviews", "to": "components/overviews" },
+    { "from": "templates/components/custom/chat.tsx", "to": "components/custom/chat.tsx" },
+    { "from": "templates/components/custom/message.tsx", "to": "components/custom/message.tsx" },
+    { "from": "templates/components/custom/multimodal-input.tsx", "to": "components/custom/multimodal-input.tsx" },
+    { "from": "templates/components/custom/overview.tsx", "to": "components/custom/overview.tsx" },
+    { "from": "templates/components/custom/model-selector.tsx", "to": "components/custom/model-selector.tsx" },
+    { "from": "templates/components/custom/left-sidebar.tsx", "to": "components/custom/left-sidebar.tsx" },
+    { "from": "templates/components/custom/right-plane.tsx", "to": "components/custom/right-plane.tsx" },
+    { "from": "templates/components/custom/use-scroll-to-bottom.ts", "to": "components/custom/use-scroll-to-bottom.ts" },
+    { "from": "templates/components/custom/use-window-size.tsx", "to": "components/custom/use-window-size.tsx" },
+    { "from": "templates/components/custom/preview-attachment.tsx", "to": "components/custom/preview-attachment.tsx" },
+    { "from": "templates/components/custom/weather.tsx", "to": "components/custom/weather.tsx" },
+    { "from": "templates/lib/dummy-flight-data.ts", "to": "lib/dummy-flight-data.ts" },
+    { "from": "templates/lib/mock-conversations.ts", "to": "lib/mock-conversations.ts" }
+  ],
+  "dependencies": {
+    "ai": "6.0.44",
+    "@ai-sdk/react": "^3.0.71",
+    "streamdown": "^1.6.7",
+    "chrono-node": "^2.7.5",
+    "framer-motion": "^12.29.0",
+    "date-fns": "^4.1.0",
+    "sonner": "^2.0.7",
+    "lucide-react": "^0.563.0",
+    "swr": "^2.3.8",
+    "classnames": "^2.5.1",
+    "recharts": "^2.15.4",
+    "zod": "^4.1.13",
+    "@vercel/blob": "^2.0.0",
+    "@radix-ui/react-icons": "^1.3.0"
+  },
+  "devDependencies": {},
+  "integrations": [
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/agent\", label: \"Memory\" },"
+    },
+    {
+      "target": "app/config/compose.ts",
+      "placeholder": "// @rokct-sdk-flags-start",
+      "replacement": "  agent: true,"
+    },
+    {
+      "target": "components/custom/landing/hero-sections.ts",
+      "placeholder": "// @rokct-sdk-hero-sections-start",
+      "replacement": "  { id: \"agent-opportunities\", load: () => import(\"@/components/custom/landing/agent-opportunities\") },"
+    },
+    {
+      "target": "components/custom/landing/hero-form.ts",
+      "placeholder": "// @rokct-sdk-hero-form-start",
+      "replacement": "  { id: \"agent-chat\", load: () => import(\"@/components/custom/landing/agent-hero-form\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"floating-nav\", load: () => import(\"@/components/custom/floating-nav\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"chat-section\", load: () => import(\"@/components/custom/chat-section\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"logos\", load: () => import(\"@/components/custom/logos\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"social-section\", load: () => import(\"@/components/custom/social-section\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"all-features-section\", load: () => import(\"@/components/custom/all-features-section\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"workflow-section\", load: () => import(\"@/components/custom/workflow-section\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"pricing\", load: () => import(\"@/components/custom/pricing\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"copied-pricing\", load: () => import(\"@/components/custom/copied-pricing\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"faq-section\", load: () => import(\"@/components/custom/faq-section\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"testimonials-section\", load: () => import(\"@/components/custom/testimonials-section\") },"
+    }
+  ],
+  "requires": [
+    "app/(auth)/auth.ts",
+    "app/(auth)/actions.ts",
+    "app/config/compose.ts",
+    "app/lib/client.ts",
+    "app/lib/roles.ts",
+    "app/lib/gateway-rpc.ts",
+    "app/lib/usage.ts",
+    "app/lib/auth-utils.ts",
+    "app/lib/search.ts",
+    "app/lib/i18n/index.ts",
+    "lib/utils.ts",
+    "lib/ai-notification-store.ts",
+    "db/index.ts",
+    "db/queries.ts",
+    "db/schema.ts",
+    "ai/models.ts",
+    "app/actions/domains/hr/goals.ts",
+    "app/actions/handson/all/accounting/buying/order.ts",
+    "app/actions/handson/all/accounting/inventory/item.ts",
+    "app/actions/handson/all/accounting/inventory/stock.ts",
+    "app/actions/handson/all/accounting/selling/quotation.ts",
+    "app/actions/handson/all/hrms/dashboard.ts",
+    "app/actions/handson/all/hrms/departments.ts",
+    "app/actions/handson/all/hrms/employees.ts",
+    "app/actions/handson/all/projects/projects.ts",
+    "app/actions/handson/all/workspace/calendar.ts",
+    "app/services/all/projects/projects.ts",
+    "app/services/base/platform-gateway.ts",
+    "app/services/common/base.ts",
+    "app/services/control/base.ts",
+    "app/services/control/onboarding.ts",
+    "app/services/tenant/onboarding.ts",
+    "app/services/server/semantic-search.ts",
+    "components/custom/icons.tsx",
+    "components/custom/brand-logo.tsx",
+    "components/custom/ai-status-pill.tsx",
+    "components/custom/paas-login.tsx",
+    "components/custom/landing/hero-sections.ts",
+    "components/custom/landing/hero-form.ts",
+    "components/custom/landing/landing-config.ts",
+    "components/custom/landing/page-sections.ts",
+    "app/actions/base/landing.ts",
+    "lib/actions/getPricingMetadata.ts",
+    "components/ui/button.tsx",
+    "components/ui/textarea.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/card.tsx",
+    "components/ui/badge.tsx",
+    "components/ui/tabs.tsx",
+    "components/ui/sidebar.tsx",
+    "components/ui/dropdown-menu.tsx",
+    "components/ui/carousel.tsx",
+    "app/config/platform.ts"
+  ],
+  "_comment": {
+    "about": "Since 1.4.0 this half holds rokctapp's landing page sections (Ray, 2026-09-03: each home SDK holds its own landing page, like profile in Dart): base_sdk >= 1.5.0 carries only the generic landing host (app/landing/page.tsx, components/custom/landing-content.tsx, the page-sections.ts registry, the hero) and this SDK registers its floating nav, chat, logos, social, features, workflow, pricing, comparison, faq and testimonials sections into it, one integrations line each at the // @rokct-sdk-page-sections-start marker, in page order (the installer anchors each line after the previous one). Their copy is components/custom/landing/agent-landing-config.ts. base_sdk composes first. Since 1.5.0 it also holds the hero's chat box (Ray, 2026-09-08: \"chat box is for chat related stuff, i think if agent sdk is home it inject that chat\"): base_sdk 1.7.0's hero carries no input, only a form slot, components/custom/landing/hero-form.ts, a one-marker registry like the others; this SDK installs components/custom/landing/agent-hero-form.tsx - the search-style input, its typewriter placeholders, the submit and the hero-sections.ts results (which that box, not the hero, now loads and renders) - and registers it with one line at // @rokct-sdk-hero-form-start. The form types its props structurally rather than importing hero-form.ts, so against a base_sdk older than 1.7.0 (no hero-form.ts, integration skipped with a warning) the file is installed but unused and the shell still builds with the hero's own box.",
+    "components/custom/landing/landing-config.ts": "installed by base_sdk >= 1.5.0 (LandingNavItem for floating-nav.tsx, planSignupUrl for pricing.tsx)",
+    "components/custom/landing/page-sections.ts": "installed by base_sdk >= 1.5.0 (the registry the integrations target; PageSectionMeta/PageSectionProps for the section templates)",
+    "app/actions/base/landing.ts": "installed by base_sdk >= 1.5.0 (LandingPlan, the plan row type pricing.tsx reads)",
+    "lib/actions/getPricingMetadata.ts": "host shell (currency localisation pricing.tsx asks for through agent-landing-config.ts pricing.localize; set it to null to drop it)",
+    "components/ui/carousel.tsx": "host shell (chat-section.tsx, social-section.tsx and workflow-section.tsx)",
+    "ai/models.ts": "host shell (agent-landing-config.ts reads the paid model id for the {model} token in plan features; the chat surface reads it too)"
+  }
+}

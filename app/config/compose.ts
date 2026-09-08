@@ -24,6 +24,7 @@
 // comments inside the object literal.
 const sdkFlags: Record<string, boolean> = {
   // @rokct-sdk-flags-start
+  agent: true,
   // @rokct-sdk-flags-end
 };
 

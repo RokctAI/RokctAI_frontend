@@ -1,0 +1,100 @@
+{
+  "name": "merchants_sdk",
+  "version": "1.1.0",
+  "installs": [
+    {
+      "from": "templates/app/actions/merchants/admin/shops.ts",
+      "to": "app/actions/merchants/admin/shops.ts"
+    },
+    {
+      "from": "templates/app/admin/shops/[id]/page.tsx",
+      "to": "app/admin/shops/[id]/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/shops/page.tsx",
+      "to": "app/admin/shops/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/shops/reviews/page.tsx",
+      "to": "app/admin/shops/reviews/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/shops/tags/page.tsx",
+      "to": "app/admin/shops/tags/page.tsx"
+    },
+    {
+      "from": "templates/app/actions/merchants/branches.ts",
+      "to": "app/actions/merchants/branches.ts"
+    },
+    {
+      "from": "templates/app/actions/merchants/business.ts",
+      "to": "app/actions/merchants/business.ts"
+    },
+    {
+      "from": "templates/app/actions/merchants/invites.ts",
+      "to": "app/actions/merchants/invites.ts"
+    },
+    {
+      "from": "templates/app/actions/merchants/shop.ts",
+      "to": "app/actions/merchants/shop.ts"
+    },
+    {
+      "from": "templates/app/actions/merchants/staff.ts",
+      "to": "app/actions/merchants/staff.ts"
+    },
+    {
+      "from": "templates/app/actions/merchants/working-hours.ts",
+      "to": "app/actions/merchants/working-hours.ts"
+    },
+    {
+      "from": "templates/app/manager/customers/page.tsx",
+      "to": "app/manager/customers/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/invites/page.tsx",
+      "to": "app/manager/invites/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/restaurant/branches/page.tsx",
+      "to": "app/manager/restaurant/branches/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/restaurant/staff/page.tsx",
+      "to": "app/manager/restaurant/staff/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/settings/page.tsx",
+      "to": "app/manager/settings/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/settings/working-hours/page.tsx",
+      "to": "app/manager/settings/working-hours/page.tsx"
+    },
+    {
+      "from": "templates/components/custom/nav/merchant-nav.tsx",
+      "to": "components/custom/nav/merchant-nav.tsx"
+    }
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/(auth)/actions.ts",
+    "app/actions/users/customers.ts",
+    "app/lib/client.ts",
+    "app/lib/i18n/index.ts",
+    "app/services/base/platform-gateway.ts",
+    "components/ui/avatar.tsx",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx",
+    "components/ui/collapsible.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/sidebar.tsx",
+    "components/ui/switch.tsx",
+    "components/ui/table.tsx",
+    "components/ui/textarea.tsx"
+  ]
+}
