@@ -9,6 +9,16 @@ on:
     branches: [ main, develop ]
     paths-ignore:
       - '**.md'
+  # Pre-merge signal (mirrors supacharge-web #11). The pipeline's release
+  # job and every other side-effecting job in shared-workflows (release,
+  # manual-cleanup, ai-changelog-backfill; shared-workflows #523) skip on
+  # pull_request, so a PR run is lint + security + node build + compose
+  # canary only; nothing is tagged or published until the merge lands on
+  # main. Same paths-ignore as push so a docs-only PR is not built either.
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
   repository_dispatch:
     types: [schema_updated]
   workflow_dispatch:
@@ -174,6 +184,9 @@ jobs:
           MONOREPO_PAT: ${{ secrets.MONOREPO_PAT }}
         run: node scripts/fetch-schemas.mjs
       - name: Commit and Push Updated Schemas
+        # A pull_request run checks out refs/pull/N/merge, which cannot be
+        # pushed to; the schema sync only writes back on push/dispatch runs.
+        if: github.event_name != 'pull_request'
         run: |
           if git status --porcelain app/config/schemas app/services/platform app/actions/platform lib/platform/validators components/platform/forms | grep -q .; then
             git config user.email "bot@rokct.ai"
