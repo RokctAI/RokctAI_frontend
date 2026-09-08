@@ -1,0 +1,139 @@
+/*
+ * Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+"use server";
+
+import { getClient } from "@/app/lib/client";
+import {
+  recordTokenUsage,
+  checkTokenQuota,
+  ACTION_TOKEN_COST,
+} from "@/app/lib/usage";
+import { auth } from "@/app/(auth)/auth";
+import { AI_MODELS } from "@/ai/models";
+import { verifyCrmRole } from "@/app/lib/roles";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
+
+export async function createAiCompetitor(data: {
+  name: string;
+  industry?: string;
+  threat_level?: string;
+  latitude?: number;
+  longitude?: number;
+  website?: string;
+  modelId?: string;
+}) {
+  const session = await auth();
+  const client = await getClient();
+
+  const modelToCharge = data.modelId || AI_MODELS.FREE.id;
+
+  // 1. Security Check
+  if (!(await verifyCrmRole())) {
+    return {
+      success: false,
+      error: "Unauthorized: Access Restricted to CRM/Sales Managers.",
+    };
+  }
+
+  // 2. Quota Check
+  const hasQuota = await checkTokenQuota(session);
+  if (!hasQuota) return { success: false, error: "Quota exceeded." };
+
+  try {
+    const payload: any = {
+      doctype: "Competitor",
+      competitor_name: data.name,
+      industry: data.industry,
+      threat_level: data.threat_level,
+      website: data.website,
+    };
+
+    // If location provided, we might need to store it.
+    // Standard "Competitor" doctype might not have lat/long fields by default.
+    // We will assume custom fields 'latitude' and 'longitude' exist or put it in 'headquarters_location' or remarks.
+    if (data.latitude && data.longitude) {
+      payload.latitude = data.latitude;
+      payload.longitude = data.longitude;
+      // Also simpler google maps link in generic field for visibility
+      payload.headquarters_location = `https://maps.google.com/?q=${data.latitude},${data.longitude}`;
+    }
+
+    const response = (await gatewayCall(client, "frappe.client.insert", { doc: payload })) as any;
+
+    if (response?.message) {
+      if (session) recordTokenUsage(session, ACTION_TOKEN_COST, modelToCharge);
+      return {
+        success: true,
+        message: `Competitor '${data.name}' added successfully.`,
+      };
+    }
+    return { success: false, error: "No response from backend." };
+  } catch (e: any) {
+    return { success: false, error: e?.message || "Unknown error" };
+  }
+}
+
+export async function getAiCompetitors(data: { modelId?: string } = {}) {
+  const session = await auth();
+  const client = await getClient();
+
+  if (!(await verifyCrmRole()))
+    return { success: false, error: "Unauthorized" };
+
+  try {
+    const competitors = (await gatewayCall(client, "frappe.client.get_list", {
+        doctype: "Competitor",
+        fields: [
+          "name",
+          "competitor_name",
+          "industry",
+          "threat_level",
+          "headquarters_location",
+        ],
+        order_by: "creation desc",
+        limit_page_length: 10,
+      })) as any;
+
+    return { success: true, competitors: competitors?.message || [] };
+  } catch (e: any) {
+    return { success: false, error: e?.message };
+  }
+}
+
+export async function analyzeAiCompetitor(data: {
+  name: string;
+  modelId?: string;
+}) {
+  const session = await auth();
+  const client = await getClient();
+
+  if (!(await verifyCrmRole()))
+    return { success: false, error: "Unauthorized" };
+
+  try {
+    // Fetch Details + Child Tables?
+    // Basic fetch for now
+    const competitor = (await gatewayCall(client, "frappe.client.get", {
+        doctype: "Competitor",
+        name: data.name,
+      })) as any;
+
+    return { success: true, competitor: competitor?.message };
+  } catch (e: any) {
+    return { success: false, error: e?.message };
+  }
+}

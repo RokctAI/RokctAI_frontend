@@ -1,0 +1,148 @@
+{
+  "name": "crm_sdk",
+  "version": "1.0.0",
+  "installs": [
+    {
+      "from": "templates/app/handson/all/crm",
+      "to": "app/handson/all/crm"
+    },
+    {
+      "from": "templates/app/actions/handson/all/crm",
+      "to": "app/actions/handson/all/crm"
+    },
+    {
+      "from": "templates/app/services/all/crm",
+      "to": "app/services/all/crm"
+    },
+    {
+      "from": "templates/components/handson/activity-timeline.tsx",
+      "to": "components/handson/activity-timeline.tsx"
+    },
+    {
+      "from": "templates/components/handson/generic-form.tsx",
+      "to": "components/handson/generic-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/kanban-board.tsx",
+      "to": "components/handson/kanban-board.tsx"
+    },
+    {
+      "from": "templates/components/handson/view-toggle.tsx",
+      "to": "components/handson/view-toggle.tsx"
+    },
+    {
+      "from": "templates/components/handson/dashboard",
+      "to": "components/handson/dashboard"
+    },
+    {
+      "from": "templates/components/handson/leads",
+      "to": "components/handson/leads"
+    },
+    {
+      "from": "templates/components/handson/deals",
+      "to": "components/handson/deals"
+    },
+    {
+      "from": "templates/components/handson/contacts",
+      "to": "components/handson/contacts"
+    },
+    {
+      "from": "templates/components/handson/organizations",
+      "to": "components/handson/organizations"
+    },
+    {
+      "from": "templates/components/handson/contracts",
+      "to": "components/handson/contracts"
+    },
+    {
+      "from": "templates/components/handson/issue-form.tsx",
+      "to": "components/handson/issue-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/issue-list.tsx",
+      "to": "components/handson/issue-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/support-extras-components.tsx",
+      "to": "components/handson/support-extras-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/lead-form.tsx",
+      "to": "components/handson/lead-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/lead-list.tsx",
+      "to": "components/handson/lead-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/prospect-form.tsx",
+      "to": "components/handson/prospect-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/prospect-list.tsx",
+      "to": "components/handson/prospect-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/opportunity-form.tsx",
+      "to": "components/handson/opportunity-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/opportunity-list.tsx",
+      "to": "components/handson/opportunity-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/note-components.tsx",
+      "to": "components/handson/note-components.tsx"
+    },
+    {
+      "from": "templates/components/custom/CompetitorMap.tsx",
+      "to": "components/custom/CompetitorMap.tsx"
+    }
+  ],
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@tanstack/react-table": "^8.21.3",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.563.0",
+    "react-hook-form": "^7.68.0",
+    "recharts": "^2.15.4",
+    "sonner": "^2.0.7",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {},
+  "integrations": [
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/crm/dashboard\", label: \"CRM\" },"
+    }
+  ],
+  "requires": [
+    "app/actions/handson/all/accounting/inventory/item.ts",
+    "app/actions/handson/all/accounting/selling/sales_order.ts",
+    "app/actions/handson/all/workspace/communication.ts",
+    "app/lib/client.ts",
+    "app/lib/i18n/index.ts",
+    "app/lib/roles.ts",
+    "app/lib/role_constants.ts",
+    "app/services/common/base.ts",
+    "components/ui/avatar.tsx",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx",
+    "components/ui/checkbox.tsx",
+    "components/ui/data-table.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/dropdown-menu.tsx",
+    "components/ui/form.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/radio-group.tsx",
+    "components/ui/scroll-area.tsx",
+    "components/ui/select.tsx",
+    "components/ui/switch.tsx",
+    "components/ui/table.tsx",
+    "components/ui/tabs.tsx",
+    "components/ui/textarea.tsx"
+  ]
+}

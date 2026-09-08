@@ -33,6 +33,19 @@ interface MenuItem {
 // the marker on the next line inside the array.
 const sdkNavItems: { href: string; label: string }[] = [
   // @rokct-sdk-nav-start
+  { href: "/handson/all/accounting/accounts", label: "Accounting" },
+  { href: "/handson/all/hrms/personnel", label: "HRMS" },
+  { href: "/handson/all/hrms/me/attendance", label: "My Attendance" },
+  { href: "/handson/all/hrms/me/expenses", label: "My Expenses" },
+  { href: "/handson/all/hrms/me/leave", label: "My Leave" },
+  { href: "/handson/all/hrms/me/payroll", label: "My Payroll" },
+  { href: "/handson/all/hrms/me/performance", label: "My Performance" },
+  { href: "/handson/all/hrms/me/employees", label: "My Team" },
+  { href: "/handson/all/crm/dashboard", label: "CRM" },
+  { href: "/handson/all/projects", label: "Projects" },
+  { href: "/handson/all/projects/strategy", label: "Strategy" },
+  { href: "/handson/all/workspace", label: "Workspace" },
+  { href: "/handson/all/agent", label: "Memory" },
   // @rokct-sdk-nav-end
 ];
 

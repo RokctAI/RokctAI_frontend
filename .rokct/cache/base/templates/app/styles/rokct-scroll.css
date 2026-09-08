@@ -1,0 +1,69 @@
+/*
+ * Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
+ * The platform scrollbar: rokctai_frontend's thin yellow scroll thumb
+ * (app/globals.css "Custom Scrollbar", lines 165-189 on its main),
+ * carried by base_sdk since 1.7.0 so every composed shell has it. Ray,
+ * 2026-09-08: "rokctai_frontend has a unique scroll with yellow color i
+ * think each sdk should use it, so it can move to base sdk".
+ *
+ * base_sdk's landing page (app/landing/page.tsx) imports this file, so a
+ * composed shell gets the scroll on /landing with no host edit; a host
+ * that wants it on every route adds one line to its app/globals.css:
+ *
+ *   @import "./styles/rokct-scroll.css";
+ *
+ * (rokctai_frontend keeps its own identical rules in globals.css; a
+ * duplicate declaration with the same values renders the same.)
+ *
+ * The colours are CSS variables with the yellow (Tailwind yellow-400 /
+ * yellow-500) as the default, so a home SDK rethemes the scroll by
+ * redefining them on :root in a stylesheet of its own, e.g.
+ * :root { --rokct-scroll-thumb: #2563eb; --rokct-scroll-thumb-hover: #1d4ed8; }
+ */
+
+:root {
+  --rokct-scroll-width: 6px;
+  --rokct-scroll-track: transparent;
+  --rokct-scroll-thumb: #facc15;
+  --rokct-scroll-thumb-hover: #eab308;
+}
+
+::-webkit-scrollbar {
+  width: var(--rokct-scroll-width);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--rokct-scroll-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rokct-scroll-thumb);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--rokct-scroll-thumb-hover);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--rokct-scroll-thumb);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--rokct-scroll-thumb-hover);
+}

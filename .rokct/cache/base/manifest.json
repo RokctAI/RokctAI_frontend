@@ -1,0 +1,273 @@
+{
+  "name": "base_sdk",
+  "version": "1.9.0",
+  "installs": [
+    {
+      "from": "src/services",
+      "to": "app/services/base"
+    },
+    {
+      "from": "templates/components/custom/app-sidebar.tsx",
+      "to": "components/custom/app-sidebar.tsx"
+    },
+    {
+      "from": "templates/components/custom/beta-toggle.tsx",
+      "to": "components/custom/beta-toggle.tsx"
+    },
+    {
+      "from": "templates/components/custom/hero.tsx",
+      "to": "components/custom/hero.tsx"
+    },
+    {
+      "from": "templates/components/custom/landing/hero-config.ts",
+      "to": "components/custom/landing/hero-config.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/hero-copy.ts",
+      "to": "components/custom/landing/hero-copy.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/hero-form.ts",
+      "to": "components/custom/landing/hero-form.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/hero-sections.ts",
+      "to": "components/custom/landing/hero-sections.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/landing-config.ts",
+      "to": "components/custom/landing/landing-config.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/page-sections.ts",
+      "to": "components/custom/landing/page-sections.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/plans-query.ts",
+      "to": "components/custom/landing/plans-query.ts"
+    },
+    {
+      "from": "templates/components/custom/landing-content.tsx",
+      "to": "components/custom/landing-content.tsx"
+    },
+    {
+      "from": "templates/app/landing/page.tsx",
+      "to": "app/landing/page.tsx"
+    },
+    {
+      "from": "templates/app/styles/rokct-scroll.css",
+      "to": "app/styles/rokct-scroll.css"
+    },
+    {
+      "from": "templates/app/actions/base/landing.ts",
+      "to": "app/actions/base/landing.ts"
+    },
+    {
+      "from": "templates/components/custom/nav/nav-user.tsx",
+      "to": "components/custom/nav/nav-user.tsx"
+    },
+    {
+      "from": "templates/components/custom/nav/team-switcher.tsx",
+      "to": "components/custom/nav/team-switcher.tsx"
+    },
+    {
+      "from": "templates/components/ui/date-range-picker.tsx",
+      "to": "components/ui/date-range-picker.tsx"
+    },
+    {
+      "from": "templates/hooks/use-mobile.tsx",
+      "to": "hooks/use-mobile.tsx"
+    },
+    {
+      "from": "templates/app/actions/base/admin/content.ts",
+      "to": "app/actions/base/admin/content.ts"
+    },
+    {
+      "from": "templates/app/actions/base/admin/settings.ts",
+      "to": "app/actions/base/admin/settings.ts"
+    },
+    {
+      "from": "templates/app/actions/base/admin/system.ts",
+      "to": "app/actions/base/admin/system.ts"
+    },
+    {
+      "from": "templates/app/admin/content/blogs/page.tsx",
+      "to": "app/admin/content/blogs/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/content/faqs/page.tsx",
+      "to": "app/admin/content/faqs/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/page.tsx",
+      "to": "app/admin/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/app/page.tsx",
+      "to": "app/admin/settings/app/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/currencies/page.tsx",
+      "to": "app/admin/settings/currencies/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/faqs/page.tsx",
+      "to": "app/admin/settings/faqs/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/flutter/page.tsx",
+      "to": "app/admin/settings/flutter/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/general/page.tsx",
+      "to": "app/admin/settings/general/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/landing/page.tsx",
+      "to": "app/admin/settings/landing/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/pages/page.tsx",
+      "to": "app/admin/settings/pages/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/privacy/page.tsx",
+      "to": "app/admin/settings/privacy/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/social/page.tsx",
+      "to": "app/admin/settings/social/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/system/page.tsx",
+      "to": "app/admin/settings/system/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/settings/terms/page.tsx",
+      "to": "app/admin/settings/terms/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/system/backup/page.tsx",
+      "to": "app/admin/system/backup/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/system/info/page.tsx",
+      "to": "app/admin/system/info/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/system/languages/page.tsx",
+      "to": "app/admin/system/languages/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/system/translations/page.tsx",
+      "to": "app/admin/system/translations/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/system/update/page.tsx",
+      "to": "app/admin/system/update/page.tsx"
+    },
+    {
+      "from": "templates/components/custom/nav/admin-nav.tsx",
+      "to": "components/custom/nav/admin-nav.tsx"
+    },
+    {
+      "from": "templates/components/custom/nav/client-nav.tsx",
+      "to": "components/custom/nav/client-nav.tsx"
+    },
+    {
+      "from": "templates/app/manager/layout.tsx",
+      "to": "app/manager/layout.tsx"
+    },
+    {
+      "from": "templates/app/manager/page.tsx",
+      "to": "app/manager/page.tsx"
+    }
+  ],
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "framer-motion": "^12.29.0",
+    "lucide-react": "^0.563.0",
+    "next-auth": "5.0.0-beta.30",
+    "recharts": "^2.15.4",
+    "sonner": "^2.0.7"
+  },
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/actions/handson/control/system/global-settings.ts",
+    "app/actions/merchants/shop.ts",
+    "app/actions/telemetry/admin/dashboard.ts",
+    "app/actions/telemetry/dashboard.ts",
+    "app/config/features.ts",
+    "app/config/platform.ts",
+    "app/lib/client.ts",
+    "app/lib/i18n/index.ts",
+    "app/lib/session.ts",
+    "components/custom/brand-logo.tsx",
+    "components/custom/branding.tsx",
+    "components/custom/header.tsx",
+    "components/custom/nav/delivery-nav.tsx",
+    "components/custom/nav/merchant-nav.tsx",
+    "components/custom/session-provider.tsx",
+    "components/ui/alert.tsx",
+    "components/ui/avatar.tsx",
+    "components/ui/badge.tsx",
+    "components/ui/breadcrumb.tsx",
+    "components/ui/button.tsx",
+    "components/ui/calendar.tsx",
+    "components/ui/card.tsx",
+    "components/ui/collapsible.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/dropdown-menu.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/popover.tsx",
+    "components/ui/select.tsx",
+    "components/ui/separator.tsx",
+    "components/ui/sidebar.tsx",
+    "components/ui/switch.tsx",
+    "components/ui/table.tsx",
+    "components/ui/tabs.tsx",
+    "components/ui/textarea.tsx",
+    "lib/utils.ts"
+  ],
+  "_comment": {
+    "about": "base/nextjs is the shared kernel (ADR-005): unlike domain SDKs whose installable content root is templates/, its content root is src/ (mirroring base/dart/lib/src). Next.js has no package mechanism, so kernel modules reach hosts by file copy: installs points at src/services directly and lands the whole kernel services surface at app/services/base/, imported by hosts and by other SDKs' copied files as '@/app/services/base/...'. Since 1.2.0 it also carries the paas-era shell chrome (sidebar, navs, dashboard/admin home, layout) and the admin settings/CMS surfaces as flat templates/ entries in the one top-level installs list (no app_type persona blocks; admin and manager see similar pages and the page code hides what the other role should not see). Since 1.3.0 the kernel's platform-gateway.ts also carries the tenant/session wrapper the paas-era shell kept in app/lib/paas-gateway.ts (paasCall): the tenant base URL is resolved per request (session site, request host, env) and the session's API credentials go out as the Authorization header, mirroring the Dart kernel's HttpService + TokenInterceptor. Since 1.4.0 it also carries the generic landing hero (components/custom/hero.tsx) with its copy in components/custom/landing/hero-config.ts and the section registry components/custom/landing/hero-sections.ts: a feature SDK contributes a section under the hero input by injecting one line at the registry's // @rokct-sdk-hero-sections-start marker through its manifest integrations (the same contract as the nav and compose-flag markers), and the hero loads registered sections with a dynamic import, so the hero itself stays free of any feature's code. Since 1.5.0 the rest of the landing HOST is generic too - and only the host: app/landing/page.tsx (reads the session through the kernel seam and prefetches the platform's plans via app/actions/base/landing.ts), the client orchestrator components/custom/landing-content.tsx, the section registry components/custom/landing/page-sections.ts and the generic values in components/custom/landing/landing-config.ts (auth URLs, the nav's hero/footer ends, the plans query - no product copy). Ray, 2026-09-03: each home SDK holds its own landing page, the way a Dart home SDK holds its profile screens. So the content sections of a product's landing page live in that product's home SDK, which registers each one with one line at the // @rokct-sdk-page-sections-start marker, `{ id: \"<file>\", load: () => import(\"@/components/custom/<file>\") }`; the orchestrator loads them by dynamic import, renders them in ascending meta.order (hero 0, negative before the hero as overlays) and hands each PageSectionProps (id, urls, session, plans, nav). agent_sdk 1.4.0 registers rokctapp's floating nav, logos, chat, social, features, workflow, pricing, comparison, faq and testimonials sections; a shell with nothing registered renders the hero alone. The host files land on the shell's own paths, so the composer overwrites the shell copies. Since 1.6.0 the hero's copy has a seam too: components/custom/landing/hero-copy.ts is a third one-marker registry, // @rokct-sdk-hero-copy-start, where a home SDK registers a module whose default export is a HeroCopy (any subset of HeroConfig: headlineWords, headlineSuffix, wordIntervalMs, placeholders, logoPlaceholderToken, backgroundImage, trustLine, badges, fallbackHref) with one line, `{ id: \\\"<sdk>-hero\\\", load: () => import(\\\"@/components/custom/landing/<file>\\\") }`; the hero lays it over HERO_CONFIG (hero-config.ts keeps rokctapp's words as the default) and shows no copy while the module loads. Nothing registered renders HERO_CONFIG from the first paint as before, so rokctapp is unchanged; a thin shell such as supacharge gets its own hero words from its home SDK (lms_sdk) instead of editing an installed file that the next compose regenerates. Since 1.7.0 the hero carries no input at all. Ray, 2026-09-08: \"no hero work same way as landing, they need to be injected like generic profile, chat box is for chat related stuff, i think if agent sdk is home it inject that chat\" - so the search-style input, its typewriter placeholders, the submit and the hero-sections results that sat inside hero.tsx moved out to agent_sdk 1.5.0 (components/custom/landing/agent-hero-form.tsx), and in their place the hero renders the FIRST entry of a fourth one-marker registry, components/custom/landing/hero-form.ts (// @rokct-sdk-hero-form-start, `{ id: \"<sdk>-<form>\", load: () => import(\"@/components/custom/landing/<file>\") }`), through a next/dynamic loader so the form is server-rendered with the hero; the module's default export takes HeroFormProps (hero, signupUrl, onFocusChange, onActiveChange, onHeadlineWordsChange). hero-sections.ts stays here (feature SDKs still register sections into it) but the registered form, not the hero, consumes it. Nothing registered renders no form: headline, trust line and badges alone (supacharge until lms_sdk registers its own); rokctapp with agent_sdk 1.5.0 renders the same DOM as before. Since 1.8.0 it also carries the platform scrollbar (Ray, 2026-09-08: \"rokctai_frontend has a unique scroll with yellow color i think each sdk should use it, so it can move to base sdk\"): app/styles/rokct-scroll.css is rokctai_frontend's Custom Scrollbar block (app/globals.css lines 165-189: 6px webkit scrollbar, transparent track, #facc15 thumb, #eab308 on hover, same in .dark) with the values as CSS variables on :root (--rokct-scroll-width, --rokct-scroll-track, --rokct-scroll-thumb, --rokct-scroll-thumb-hover; the yellow is the default, a home SDK rethemes by redefining them). app/landing/page.tsx imports it, so every composed shell has the scroll on /landing with no host edit; a host that wants it on every route adds `@import \"./styles/rokct-scroll.css\";` to its app/globals.css. rokctai_frontend keeps its own identical rules, so it renders the same. Since 1.9.0 the plans query has a seam too: components/custom/landing/plans-query.ts is a fifth one-marker registry, // @rokct-sdk-plans-query-start, where a home SDK registers a module whose default export is a LandingPlansQuery ({cmd, payload}) or null, with one line, `{ id: \"<sdk>-plans\", load: () => import(\"@/components/custom/landing/<file>\") }`; app/actions/base/landing.ts prefetches with loadLandingPlansQuery(), which answers the FIRST entry that loads and falls back to LANDING_CONFIG.plansQuery when nothing is registered, so rokctapp still reads the platform Subscription Plan catalog byte-for-byte as before. It exists because that catalog is the plans on which someone RUNS a rokct app (USD 20/200 tenant plans) - right for rokctai_frontend, wrong for a product whose landing sells to its own end users: supacharge's visitors are learners, and lms_sdk registers the tenant's own learner catalog here.",
+    "app/actions/handson/control/system/global-settings.ts": "host shell (handson control actions)",
+    "app/actions/merchants/shop.ts": "commerce/merchants (installed by merchants_sdk; the commerce consolidation PR moved app/actions/paas/shop.ts there)",
+    "app/actions/telemetry/admin/dashboard.ts": "core/telemetry (installed by telemetry_sdk, this PR)",
+    "app/actions/telemetry/dashboard.ts": "core/telemetry (installed by telemetry_sdk, this PR)",
+    "app/config/features.ts": "host shell (feature toggles; hero-config.ts reads them for the store badges)",
+    "app/config/platform.ts": "host shell",
+    "app/lib/client.ts": "host shell",
+    "app/lib/i18n/index.ts": "host shell",
+    "app/lib/session.ts": "host shell session seam (neutral no-session copy in the bare shell; auth_sdk overwrites it with the NextAuth-backed one). The kernel's session.ts reads the session ONLY through this seam, never through app/(auth).",
+    "components/custom/brand-logo.tsx": "host shell (brand mark the hero renders)",
+    "components/custom/branding.tsx": "host shell (brand wordmark the hero renders)",
+    "components/custom/header.tsx": "host shell (site header the landing host renders; also used by the shell's status and careers pages)",
+    "components/custom/nav/delivery-nav.tsx": "delivery repo (no SDK home in paas-map; stays in the shell until the delivery frontend takes it)",
+    "components/custom/nav/merchant-nav.tsx": "commerce/merchants (mapped there in paas-map; installed by that SDK)",
+    "components/custom/session-provider.tsx": "host shell; auth_sdk 1.4.0 (Users#93) installs it. app-sidebar.tsx and nav/team-switcher.tsx read useSession() from next-auth/react, which only works under the provider this file mounts, so a shell composing base_sdk WITHOUT auth_sdk must ship a pass-through session-provider.tsx (and the next-auth dependency declared above) or /manager 500s",
+    "components/ui/alert.tsx": "host shell",
+    "components/ui/avatar.tsx": "host shell",
+    "components/ui/badge.tsx": "host shell",
+    "components/ui/breadcrumb.tsx": "host shell",
+    "components/ui/button.tsx": "host shell",
+    "components/ui/calendar.tsx": "host shell (SDK-required keep)",
+    "components/ui/card.tsx": "host shell",
+    "components/ui/collapsible.tsx": "host shell (SDK-required keep)",
+    "components/ui/dialog.tsx": "host shell",
+    "components/ui/dropdown-menu.tsx": "host shell",
+    "components/ui/input.tsx": "host shell",
+    "components/ui/label.tsx": "host shell",
+    "components/ui/popover.tsx": "host shell",
+    "components/ui/select.tsx": "host shell",
+    "components/ui/separator.tsx": "host shell",
+    "components/ui/sidebar.tsx": "host shell (SDK-required keep)",
+    "components/ui/switch.tsx": "host shell",
+    "components/ui/table.tsx": "host shell",
+    "components/ui/tabs.tsx": "host shell",
+    "components/ui/textarea.tsx": "host shell",
+    "lib/utils.ts": "host shell"
+  }
+}

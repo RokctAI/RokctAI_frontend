@@ -1,0 +1,502 @@
+{
+  "name": "erp_sdk",
+  "version": "1.0.0",
+  "installs": [
+    {
+      "from": "templates/app/handson/all/accounting",
+      "to": "app/handson/all/accounting"
+    },
+    {
+      "from": "templates/app/handson/all/hrms",
+      "to": "app/handson/all/hrms"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/assets",
+      "to": "app/actions/handson/all/accounting/assets"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/budgets",
+      "to": "app/actions/handson/all/accounting/budgets"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/cost_centers",
+      "to": "app/actions/handson/all/accounting/cost_centers"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/invoices",
+      "to": "app/actions/handson/all/accounting/invoices"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/journals",
+      "to": "app/actions/handson/all/accounting/journals"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/manufacturing",
+      "to": "app/actions/handson/all/accounting/manufacturing"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/payments",
+      "to": "app/actions/handson/all/accounting/payments"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/purchases",
+      "to": "app/actions/handson/all/accounting/purchases"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/buying/quality.ts",
+      "to": "app/actions/handson/all/accounting/buying/quality.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/buying/receipt.ts",
+      "to": "app/actions/handson/all/accounting/buying/receipt.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/buying/rfq.ts",
+      "to": "app/actions/handson/all/accounting/buying/rfq.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/buying/subcontracting.ts",
+      "to": "app/actions/handson/all/accounting/buying/subcontracting.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/buying/supplier.ts",
+      "to": "app/actions/handson/all/accounting/buying/supplier.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/inventory/batch_serial.ts",
+      "to": "app/actions/handson/all/accounting/inventory/batch_serial.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/inventory/logistics.ts",
+      "to": "app/actions/handson/all/accounting/inventory/logistics.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/accounting/selling/extras.ts",
+      "to": "app/actions/handson/all/accounting/selling/extras.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/me",
+      "to": "app/actions/handson/all/hrms/me"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/advances.ts",
+      "to": "app/actions/handson/all/hrms/advances.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/attendance.ts",
+      "to": "app/actions/handson/all/hrms/attendance.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/designations.ts",
+      "to": "app/actions/handson/all/hrms/designations.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/expenses.ts",
+      "to": "app/actions/handson/all/hrms/expenses.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/leave.ts",
+      "to": "app/actions/handson/all/hrms/leave.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/loans.ts",
+      "to": "app/actions/handson/all/hrms/loans.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/payroll.ts",
+      "to": "app/actions/handson/all/hrms/payroll.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/performance.ts",
+      "to": "app/actions/handson/all/hrms/performance.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/promotions.ts",
+      "to": "app/actions/handson/all/hrms/promotions.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/recruitment.ts",
+      "to": "app/actions/handson/all/hrms/recruitment.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/separations.ts",
+      "to": "app/actions/handson/all/hrms/separations.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/shifts.ts",
+      "to": "app/actions/handson/all/hrms/shifts.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/hrms/travel.ts",
+      "to": "app/actions/handson/all/hrms/travel.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/crm/campaigns.ts",
+      "to": "app/actions/handson/all/crm/campaigns.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/crm/contracts.ts",
+      "to": "app/actions/handson/all/crm/contracts.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/crm/lifecycle.ts",
+      "to": "app/actions/handson/all/crm/lifecycle.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/crm/subscriptions.ts",
+      "to": "app/actions/handson/all/crm/subscriptions.ts"
+    },
+    {
+      "from": "templates/app/services/all/accounting",
+      "to": "app/services/all/accounting"
+    },
+    {
+      "from": "templates/app/services/all/hrms/advances.ts",
+      "to": "app/services/all/hrms/advances.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/attendance.ts",
+      "to": "app/services/all/hrms/attendance.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/dashboard.ts",
+      "to": "app/services/all/hrms/dashboard.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/departments.ts",
+      "to": "app/services/all/hrms/departments.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/designations.ts",
+      "to": "app/services/all/hrms/designations.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/employees.ts",
+      "to": "app/services/all/hrms/employees.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/expenses.ts",
+      "to": "app/services/all/hrms/expenses.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/leave.ts",
+      "to": "app/services/all/hrms/leave.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/loans.ts",
+      "to": "app/services/all/hrms/loans.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/payroll.ts",
+      "to": "app/services/all/hrms/payroll.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/promotions.ts",
+      "to": "app/services/all/hrms/promotions.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/recruitment.ts",
+      "to": "app/services/all/hrms/recruitment.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/separations.ts",
+      "to": "app/services/all/hrms/separations.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/shifts.ts",
+      "to": "app/services/all/hrms/shifts.ts"
+    },
+    {
+      "from": "templates/app/services/all/hrms/travel.ts",
+      "to": "app/services/all/hrms/travel.ts"
+    },
+    {
+      "from": "templates/app/services/all/crm/commercial.ts",
+      "to": "app/services/all/crm/commercial.ts"
+    },
+    {
+      "from": "templates/app/services/all/crm/marketing.ts",
+      "to": "app/services/all/crm/marketing.ts"
+    },
+    {
+      "from": "templates/components/handson/accounts-dashboard.tsx",
+      "to": "components/handson/accounts-dashboard.tsx"
+    },
+    {
+      "from": "templates/components/handson/asset-advanced-components.tsx",
+      "to": "components/handson/asset-advanced-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/asset-form.tsx",
+      "to": "components/handson/asset-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/asset-list.tsx",
+      "to": "components/handson/asset-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/asset-maintenance-components.tsx",
+      "to": "components/handson/asset-maintenance-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/asset-value-adjustment-components.tsx",
+      "to": "components/handson/asset-value-adjustment-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/bank-clearance-components.tsx",
+      "to": "components/handson/bank-clearance-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/blanket-order-components.tsx",
+      "to": "components/handson/blanket-order-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/bom-form.tsx",
+      "to": "components/handson/bom-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/bom-list.tsx",
+      "to": "components/handson/bom-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/budget-components.tsx",
+      "to": "components/handson/budget-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/buying-advanced-components.tsx",
+      "to": "components/handson/buying-advanced-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/buying-dashboard.tsx",
+      "to": "components/handson/buying-dashboard.tsx"
+    },
+    {
+      "from": "templates/components/handson/commercial-extras-components.tsx",
+      "to": "components/handson/commercial-extras-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/cost-center-components.tsx",
+      "to": "components/handson/cost-center-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/delivery-note-components.tsx",
+      "to": "components/handson/delivery-note-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/invoice-form.tsx",
+      "to": "components/handson/invoice-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/invoice-list.tsx",
+      "to": "components/handson/invoice-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/item-form.tsx",
+      "to": "components/handson/item-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/item-list.tsx",
+      "to": "components/handson/item-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/job-applicant-list.tsx",
+      "to": "components/handson/job-applicant-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/job-opening-list.tsx",
+      "to": "components/handson/job-opening-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/journal-entry-components.tsx",
+      "to": "components/handson/journal-entry-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/material-request-components.tsx",
+      "to": "components/handson/material-request-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/payment-entry-components.tsx",
+      "to": "components/handson/payment-entry-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/production-plan-components.tsx",
+      "to": "components/handson/production-plan-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/purchase-invoice-components.tsx",
+      "to": "components/handson/purchase-invoice-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/purchase-invoice-list.tsx",
+      "to": "components/handson/purchase-invoice-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/purchase-order-form.tsx",
+      "to": "components/handson/purchase-order-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/purchase-order-list.tsx",
+      "to": "components/handson/purchase-order-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/purchase-receipt-components.tsx",
+      "to": "components/handson/purchase-receipt-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/quotation-form.tsx",
+      "to": "components/handson/quotation-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/quotation-list.tsx",
+      "to": "components/handson/quotation-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/routing-components.tsx",
+      "to": "components/handson/routing-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/sales-order-components.tsx",
+      "to": "components/handson/sales-order-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/shop-floor-components.tsx",
+      "to": "components/handson/shop-floor-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/stock-advanced-components.tsx",
+      "to": "components/handson/stock-advanced-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/stock-entry-form.tsx",
+      "to": "components/handson/stock-entry-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/stock-entry-list.tsx",
+      "to": "components/handson/stock-entry-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/stock-logistics-components.tsx",
+      "to": "components/handson/stock-logistics-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/subcontracting-order-form.tsx",
+      "to": "components/handson/subcontracting-order-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/subcontracting-order-list.tsx",
+      "to": "components/handson/subcontracting-order-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/subcontracting-receipt-components.tsx",
+      "to": "components/handson/subcontracting-receipt-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/subscription-components.tsx",
+      "to": "components/handson/subscription-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/supplier-list.tsx",
+      "to": "components/handson/supplier-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/work-order-form.tsx",
+      "to": "components/handson/work-order-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/work-order-list.tsx",
+      "to": "components/handson/work-order-list.tsx"
+    }
+  ],
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.563.0",
+    "react-hook-form": "^7.68.0",
+    "recharts": "^2.15.4",
+    "sonner": "^2.0.7",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {},
+  "integrations": [
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/accounting/accounts\", label: \"Accounting\" },"
+    },
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/hrms/personnel\", label: \"HRMS\" },"
+    },
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/hrms/me/attendance\", label: \"My Attendance\" },"
+    },
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/hrms/me/expenses\", label: \"My Expenses\" },"
+    },
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/hrms/me/leave\", label: \"My Leave\" },"
+    },
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/hrms/me/payroll\", label: \"My Payroll\" },"
+    },
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/hrms/me/performance\", label: \"My Performance\" },"
+    },
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/hrms/me/employees\", label: \"My Team\" },"
+    }
+  ],
+  "requires": [
+    "app/(auth)/auth.ts",
+    "app/actions/currency.ts",
+    "app/actions/domains/hr/goals.ts",
+    "app/actions/handson/all/accounting/buying/order.ts",
+    "app/actions/handson/all/accounting/inventory/item.ts",
+    "app/actions/handson/all/accounting/inventory/stock.ts",
+    "app/actions/handson/all/accounting/selling/delivery_note.ts",
+    "app/actions/handson/all/accounting/selling/quotation.ts",
+    "app/actions/handson/all/accounting/selling/sales_order.ts",
+    "app/actions/handson/all/hrms/companies.ts",
+    "app/actions/handson/all/hrms/departments.ts",
+    "app/actions/handson/all/hrms/employees.ts",
+    "app/actions/handson/all/reports/financial.ts",
+    "app/lib/client.ts",
+    "app/lib/i18n/index.ts",
+    "app/lib/roles.ts",
+    "app/services/all/hrms/performance.ts",
+    "app/services/common/base.ts",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/calendar.tsx",
+    "components/ui/card.tsx",
+    "components/ui/checkbox.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/dropdown-menu.tsx",
+    "components/ui/form.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/popover.tsx",
+    "components/ui/progress.tsx",
+    "components/ui/radio-group.tsx",
+    "components/ui/select.tsx",
+    "components/ui/separator.tsx",
+    "components/ui/skeleton.tsx",
+    "components/ui/table.tsx",
+    "components/ui/tabs.tsx",
+    "components/ui/textarea.tsx",
+    "lib/utils.ts"
+  ]
+}

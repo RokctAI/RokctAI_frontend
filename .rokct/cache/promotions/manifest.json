@@ -1,0 +1,74 @@
+{
+  "name": "promotions_sdk",
+  "version": "1.1.0",
+  "installs": [
+    {
+      "from": "templates/app/actions/promotions/admin/marketing.ts",
+      "to": "app/actions/promotions/admin/marketing.ts"
+    },
+    {
+      "from": "templates/app/admin/content/banners/page.tsx",
+      "to": "app/admin/content/banners/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/content/stories/page.tsx",
+      "to": "app/admin/content/stories/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/customers/subscribers/page.tsx",
+      "to": "app/admin/customers/subscribers/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/marketing/ads/page.tsx",
+      "to": "app/admin/marketing/ads/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/marketing/subscribers/page.tsx",
+      "to": "app/admin/marketing/subscribers/page.tsx"
+    },
+    {
+      "from": "templates/app/actions/promotions/marketing.ts",
+      "to": "app/actions/promotions/marketing.ts"
+    },
+    {
+      "from": "templates/app/actions/promotions/stories.ts",
+      "to": "app/actions/promotions/stories.ts"
+    },
+    {
+      "from": "templates/app/manager/business/ads/page.tsx",
+      "to": "app/manager/business/ads/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/content/stories/page.tsx",
+      "to": "app/manager/content/stories/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/marketing/coupons/page.tsx",
+      "to": "app/manager/marketing/coupons/page.tsx"
+    }
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/actions/base/admin/content.ts",
+    "app/actions/merchants/business.ts",
+    "app/actions/users/admin/customers.ts",
+    "app/lib/client.ts",
+    "app/lib/i18n/index.ts",
+    "app/services/base/platform-gateway.ts",
+    "components/custom/image-upload.tsx",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/table.tsx",
+    "components/ui/tabs.tsx"
+  ],
+  "_comment": {
+    "app/actions/merchants/business.ts": "commerce/merchants (merchants_sdk)",
+    "components/custom/image-upload.tsx": "commerce/products (products_sdk)"
+  }
+}

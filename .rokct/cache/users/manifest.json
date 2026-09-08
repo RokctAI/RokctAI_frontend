@@ -1,0 +1,56 @@
+{
+  "name": "users_sdk",
+  "version": "1.1.0",
+  "installs": [
+    {
+      "from": "templates/app/actions/users/admin/customers.ts",
+      "to": "app/actions/users/admin/customers.ts"
+    },
+    {
+      "from": "templates/app/actions/users/admin/users.ts",
+      "to": "app/actions/users/admin/users.ts"
+    },
+    {
+      "from": "templates/app/admin/settings/permissions/page.tsx",
+      "to": "app/admin/settings/permissions/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/users/page.tsx",
+      "to": "app/admin/users/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/users/roles/page.tsx",
+      "to": "app/admin/users/roles/page.tsx"
+    },
+    {
+      "from": "templates/app/actions/users/customers.ts",
+      "to": "app/actions/users/customers.ts"
+    }
+  ],
+  "dependencies": {
+    "lucide-react": "^0.563.0",
+    "sonner": "^2.0.7"
+  },
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/actions/base/admin/settings.ts",
+    "app/services/base/platform-gateway.ts",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx",
+    "components/ui/label.tsx",
+    "components/ui/switch.tsx",
+    "components/ui/table.tsx"
+  ],
+  "_comment": {
+    "app/actions/base/admin/settings.ts": "core base_sdk (core #160)",
+    "app/services/base/platform-gateway.ts": "core/base (installed by base_sdk >= 1.3.0, which carries paasCall on the kernel platform gateway)",
+    "components/ui/badge.tsx": "host shell",
+    "components/ui/button.tsx": "host shell",
+    "components/ui/card.tsx": "host shell",
+    "components/ui/label.tsx": "host shell",
+    "components/ui/switch.tsx": "host shell",
+    "components/ui/table.tsx": "host shell"
+  }
+}

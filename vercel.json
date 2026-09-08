@@ -1,1 +1,4 @@
-{}
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "bash scripts/compose.sh && pnpm run build"
+}

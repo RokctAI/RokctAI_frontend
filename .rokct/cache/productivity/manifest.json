@@ -1,0 +1,120 @@
+{
+  "name": "productivity_sdk",
+  "version": "1.0.0",
+  "installs": [
+    {
+      "from": "templates/app/handson/all/projects",
+      "to": "app/handson/all/projects"
+    },
+    {
+      "from": "templates/app/handson/all/workspace",
+      "to": "app/handson/all/workspace"
+    },
+    {
+      "from": "templates/app/actions/handson/all/projects",
+      "to": "app/actions/handson/all/projects"
+    },
+    {
+      "from": "templates/app/actions/handson/all/workspace/dashboard.ts",
+      "to": "app/actions/handson/all/workspace/dashboard.ts"
+    },
+    {
+      "from": "templates/app/actions/handson/all/workspace/events.ts",
+      "to": "app/actions/handson/all/workspace/events.ts"
+    },
+    {
+      "from": "templates/app/actions/ai/work.ts",
+      "to": "app/actions/ai/work.ts"
+    },
+    {
+      "from": "templates/app/actions/ai/strategy.ts",
+      "to": "app/actions/ai/strategy.ts"
+    },
+    {
+      "from": "templates/app/actions/ai/meetings.ts",
+      "to": "app/actions/ai/meetings.ts"
+    },
+    {
+      "from": "templates/app/actions/ai/smart_status.ts",
+      "to": "app/actions/ai/smart_status.ts"
+    },
+    {
+      "from": "templates/app/services/all/projects",
+      "to": "app/services/all/projects"
+    },
+    {
+      "from": "templates/components/handson/project-form.tsx",
+      "to": "components/handson/project-form.tsx"
+    },
+    {
+      "from": "templates/components/handson/project-list.tsx",
+      "to": "components/handson/project-list.tsx"
+    },
+    {
+      "from": "templates/components/handson/task-components.tsx",
+      "to": "components/handson/task-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/timesheet-components.tsx",
+      "to": "components/handson/timesheet-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/activity-type-components.tsx",
+      "to": "components/handson/activity-type-components.tsx"
+    },
+    {
+      "from": "templates/components/handson/unified-workspace.tsx",
+      "to": "components/handson/unified-workspace.tsx"
+    },
+    {
+      "from": "templates/components/handson/work-item-card.tsx",
+      "to": "components/handson/work-item-card.tsx"
+    }
+  ],
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.563.0",
+    "react-hook-form": "^7.68.0",
+    "sonner": "^2.0.7",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {},
+  "integrations": [
+    {
+      "target": "app/handson/sidebar-client.tsx",
+      "placeholder": "// @rokct-sdk-nav-start",
+      "replacement": "  { href: \"/handson/all/projects\", label: \"Projects\" },\n  { href: \"/handson/all/projects/strategy\", label: \"Strategy\" },\n  { href: \"/handson/all/workspace\", label: \"Workspace\" },"
+    }
+  ],
+  "requires": [
+    "app/(auth)/auth.ts",
+    "app/actions/company.ts",
+    "app/actions/handson/all/accounting/selling/quotation.ts",
+    "app/actions/handson/all/workspace/communication.ts",
+    "app/lib/client.ts",
+    "app/lib/gateway-rpc.ts",
+    "app/lib/i18n/index.ts",
+    "app/lib/roles.ts",
+    "app/services/common/base.ts",
+    "components/ui/accordion.tsx",
+    "components/ui/avatar.tsx",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/calendar.tsx",
+    "components/ui/card.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/form.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/popover.tsx",
+    "components/ui/progress.tsx",
+    "components/ui/scroll-area.tsx",
+    "components/ui/select.tsx",
+    "components/ui/slider.tsx",
+    "components/ui/table.tsx",
+    "components/ui/tabs.tsx",
+    "components/ui/textarea.tsx",
+    "lib/utils.ts"
+  ]
+}

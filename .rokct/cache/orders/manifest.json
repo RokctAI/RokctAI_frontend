@@ -1,0 +1,153 @@
+{
+  "name": "orders_sdk",
+  "version": "1.1.0",
+  "installs": [
+    {
+      "from": "templates/app/actions/platform/orders/orders.ts",
+      "to": "app/actions/platform/orders/orders.ts"
+    },
+    {
+      "from": "templates/app/services/platform/orders/orders.ts",
+      "to": "app/services/platform/orders/orders.ts"
+    },
+    {
+      "from": "templates/components/platform/forms/orders/orders.tsx",
+      "to": "components/platform/forms/orders/orders.tsx"
+    },
+    {
+      "from": "templates/lib/platform/validators/orders/orders.ts",
+      "to": "lib/platform/validators/orders/orders.ts"
+    },
+    {
+      "from": "templates/app/actions/orders/admin/orders.ts",
+      "to": "app/actions/orders/admin/orders.ts"
+    },
+    {
+      "from": "templates/app/actions/orders/admin/pos.ts",
+      "to": "app/actions/orders/admin/pos.ts"
+    },
+    {
+      "from": "templates/app/admin/orders/page.tsx",
+      "to": "app/admin/orders/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/orders/parcel/page.tsx",
+      "to": "app/admin/orders/parcel/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/orders/refunds/page.tsx",
+      "to": "app/admin/orders/refunds/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/orders/reviews/page.tsx",
+      "to": "app/admin/orders/reviews/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/orders/scheduled/page.tsx",
+      "to": "app/admin/orders/scheduled/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/orders/settings/page.tsx",
+      "to": "app/admin/orders/settings/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/pos/page.tsx",
+      "to": "app/admin/pos/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/reports/orders/page.tsx",
+      "to": "app/admin/reports/orders/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/reports/revenue/page.tsx",
+      "to": "app/admin/reports/revenue/page.tsx"
+    },
+    {
+      "from": "templates/app/admin/support/reviews/page.tsx",
+      "to": "app/admin/support/reviews/page.tsx"
+    },
+    {
+      "from": "templates/app/actions/orders/orders.ts",
+      "to": "app/actions/orders/orders.ts"
+    },
+    {
+      "from": "templates/app/actions/orders/parcel.ts",
+      "to": "app/actions/orders/parcel.ts"
+    },
+    {
+      "from": "templates/app/actions/orders/pos.ts",
+      "to": "app/actions/orders/pos.ts"
+    },
+    {
+      "from": "templates/app/actions/orders/refunds.ts",
+      "to": "app/actions/orders/refunds.ts"
+    },
+    {
+      "from": "templates/app/manager/orders/[id]/page.tsx",
+      "to": "app/manager/orders/[id]/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/orders/page.tsx",
+      "to": "app/manager/orders/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/orders/parcels/[id]/page.tsx",
+      "to": "app/manager/orders/parcels/[id]/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/orders/parcels/page.tsx",
+      "to": "app/manager/orders/parcels/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/orders/refunds/page.tsx",
+      "to": "app/manager/orders/refunds/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/orders/reviews/page.tsx",
+      "to": "app/manager/orders/reviews/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/pos/page.tsx",
+      "to": "app/manager/pos/page.tsx"
+    },
+    {
+      "from": "templates/app/manager/settings/parcel/page.tsx",
+      "to": "app/manager/settings/parcel/page.tsx"
+    }
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/(auth)/actions.ts",
+    "app/actions/products/products.ts",
+    "app/actions/support/admin/support.ts",
+    "app/actions/telemetry/admin/reports.ts",
+    "app/lib/i18n/index.ts",
+    "app/services/base/platform-gateway.ts",
+    "app/services/common/base.ts",
+    "components/admin/GenericReport.tsx",
+    "components/custom/image-upload.tsx",
+    "components/ui/avatar.tsx",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx",
+    "components/ui/date-range-picker.tsx",
+    "components/ui/dialog.tsx",
+    "components/ui/form.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/scroll-area.tsx",
+    "components/ui/select.tsx",
+    "components/ui/separator.tsx",
+    "components/ui/switch.tsx",
+    "components/ui/table.tsx",
+    "components/ui/tabs.tsx",
+    "components/ui/textarea.tsx",
+    "lib/utils.ts"
+  ],
+  "_comment": {
+    "app/actions/products/products.ts": "commerce/products (products_sdk)",
+    "components/custom/image-upload.tsx": "commerce/products (products_sdk)"
+  }
+}
