@@ -544,21 +544,26 @@ def write_composed_gitignore_block():
 
 
 def reconcile_tracked_host_files():
-    """Seam files are both committed by the host and installed by an SDK
-    (app/lib/session.ts and components/custom/session-provider.tsx by
-    auth_sdk, hooks/use-mobile.tsx by base_sdk): the bare shell commits a
-    neutral copy so it builds with nothing composed, and composing installs
-    the SDK's copy over it - the contract each of those files documents.
+    """Some destinations an SDK installs are also committed by this host,
+    and the installers just overwrote them. Restore the host copy from git -
+    a refresh commit must never carry an SDK copy of a host file - and
+    record the HOST copy's hash in the install record.
 
-    The installers just overwrote them here. Restore the host copy from git
-    (the refresh commit must never carry an SDK copy of a host file) and
-    record the host copy's hash in the install record. The installer skips
-    a destination whose hash differs from its record ("modified by a
-    developer"), so recording the SDK copy's hash - what the installer wrote
-    - would make every fresh checkout skip the seam and compose the bare
-    pass-through instead of auth_sdk's SessionProvider. With the host hash
-    recorded, an offline compose finds the seam unmodified and installs the
-    SDK copy, as it must."""
+    Which hash goes in the record matters. The installer skips a destination
+    whose hash differs from its record ("modified by a developer"), so
+    recording the SDK copy's hash - what the installer had just written -
+    would make the next compose in this same working tree skip that path and
+    leave the restored host copy standing, quietly composing something other
+    than what a deploy composes. With the host hash recorded, a compose finds
+    the file unmodified and installs the SDK copy over it, which is what the
+    deploy does too: a fresh checkout carries no install record at all, so
+    nothing is ever skipped there.
+
+    In this shell the reconciled set is the stale host copies of SDK-owned
+    landing components named in the zero-drift step of
+    .github/workflows/build.yml, plus app/(chat)/opengraph-image.png and
+    twitter-image.png, which are byte-identical to the agent_sdk copies and
+    so never actually change."""
     files = installed_files_from_state()
     tracked = tracked_paths()
     state = load_json(STATE_FILE)
