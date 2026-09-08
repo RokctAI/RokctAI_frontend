@@ -25,20 +25,20 @@ export class VersionsService {
     const settings = await GlobalSettingsService.getGlobalSettings();
     const isDebug = settings?.isDebugMode ?? false;
 
-    // Use fetch for rokct to ensure headers are passed reliably
-    const rokctFetch = fetch(
-      `${process.env.ROKCT_BASE_URL}/api/method/control.control.api.versions.get_versions`,
+    // Control-plane versions ride the ONE platform gateway (`control:` cmd
+    // from control's override_whitelisted_methods), never a per-method URL.
+    // GET keeps Next.js fetch caching (`next.revalidate`) as before.
+    const rokctFetch = platformCall<Record<string, any>>(
+      "control:get_versions",
+      undefined,
       {
+        baseUrl: process.env.ROKCT_BASE_URL,
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...(isDebug ? { "X-Rokct-Debug": "true" } : {}),
-        },
-        next: { revalidate: 300 }, // Cache for 5 mins
+        requireAuth: false,
+        headers: isDebug ? { "X-Rokct-Debug": "true" } : undefined,
+        fetchOptions: { next: { revalidate: 300 } }, // Cache for 5 mins
       },
-    )
-      .then((res) => res.json())
-      .catch(() => ({}));
+    );
 
     const [rokctRes, paasRes, rpanelRes] = await Promise.allSettled([
       rokctFetch,
@@ -49,8 +49,9 @@ export class VersionsService {
       frappe.call({ method: "rpanel.api.get_version" }),
     ]);
 
-    const rokctDataRaw = rokctRes.status === "fulfilled" ? rokctRes.value : {};
-    const rokctData = rokctDataRaw.message || rokctDataRaw || {};
+    // platformCall already unwraps Frappe's `message` envelope.
+    const rokctData =
+      rokctRes.status === "fulfilled" && rokctRes.value ? rokctRes.value : {};
     const paasVer =
       paasRes.status === "fulfilled" && paasRes.value ? paasRes.value : null;
     const rpanelVer =

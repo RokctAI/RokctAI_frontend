@@ -38,54 +38,19 @@ export async function POST(request: Request) {
       request.headers.get("x-real-ip") ||
       "unknown";
 
-    // Get current session
+    // Get current session (only for the optional user_id on the record).
     const session = await auth();
-    const siteName = session?.user ? (session.user as any).siteName : null;
     const user_id = session?.user?.email || null;
 
-    if (siteName) {
-      // User is authenticated on a tenant site.
-      // FLAGGED — cannot ride the gateway: no tenant-role SDK manifest
-      // declares a record_unique_visit alias (the telemetry module only
-      // registers it control-side), so there is no verifiable cmd for
-      // this leg. Left on the per-method URL pending a backend alias.
-      let host = siteName;
-      if (!host.startsWith("http")) {
-        host = host.includes("localhost")
-          ? `http://${host}`
-          : `https://${host}`;
-      }
-      const targetUrl = `${host}/api/method/rcore.tenant.api.record_unique_visit`;
-
-      // Call Frappe API endpoint (whitelisted with allow_guest=True)
-      const response = await fetch(targetUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          visitor_id,
-          client_ip,
-          user_id,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`Failed to report visitor to ${targetUrl}:`, errorText);
-        return NextResponse.json(
-          { success: false, error: "Backend failed to record visit" },
-          { status: 502 },
-        );
-      }
-
-      const data = await response.json();
-      return NextResponse.json({ success: true, data });
-    }
-
-    // Guest visitor on control panel — universal gateway call; the control
-    // gateway only serves `control:`-prefixed cmds, and this is the
-    // telemetry manifest's `control:record_unique_visit` key.
+    // Every visit — guest or signed-in tenant user — goes to the control
+    // plane's unique-visit counter through the ONE platform gateway
+    // (`control:record_unique_visit`, the telemetry manifest's control-role
+    // cmd, also in control's override_whitelisted_methods). The former
+    // tenant leg POSTed a per-method URL
+    // (`/api/method/rcore.tenant.api.record_unique_visit`) at the tenant
+    // site, where no tenant-role manifest registers that method, so it
+    // could never succeed; the control counter is the only sink for this
+    // record. The cmd is allow_guest, so no session credentials are sent.
     const host =
       process.env.NEXT_PUBLIC_FRAPPE_URL || process.env.ROKCT_BASE_URL || "";
     const data = await platformCall(
@@ -95,7 +60,7 @@ export async function POST(request: Request) {
         client_ip,
         user_id,
       },
-      { baseUrl: host },
+      { baseUrl: host, requireAuth: false },
     );
 
     if (data === null) {
