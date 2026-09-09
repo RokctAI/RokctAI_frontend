@@ -13,14 +13,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+// The host shell's middleware, installed by auth_sdk (NextAuth-gated).
+// The credentials form (auth_sdk 1.7.0): the ACCOUNT fields and nothing
+// else of its own. Login asks email and password; sign-up asks first name,
+// last name, email and password, then whatever extra fields the home SDK
+// declared in its register config (components/custom/auth/register-registry.ts
+// RegisterField), rendered here in declaration order. Until 1.7.0 the
+// sign-up half carried one product's fields inline - a plan, an industry,
+// a company, a country, a voucher, a service domain; those are a register
+// config's to declare now, and with none declared the form is the generic
+// account form the Dart auth SDK shows an app whose home SDK declares
+// nothing.
 
 import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Button } from "@/components/ui/button";
-import { PLATFORM_NAME, VOUCHER_OFFSET_Y } from "@/app/config/constants";
-import { Ticket, Globe } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
 import t from "@/app/lib/i18n";
 import {
   Select,
@@ -29,308 +36,198 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type {
+  RegisterField,
+  RegisterFieldOption,
+} from "@/components/custom/auth/register-registry";
+
+const LABEL = "text-zinc-600 font-normal dark:text-zinc-400";
+const CONTROL = "bg-muted text-md md:text-sm border-none";
+
+/** One extra field of a register config. */
+function ExtraField({
+  field,
+  value,
+}: {
+  field: RegisterField;
+  /** A prefilled value (from `fromQuery`); the field's own default otherwise. */
+  value?: string | null;
+}) {
+  const [options, setOptions] = useState<RegisterFieldOption[]>(
+    field.options ?? [],
+  );
+  useEffect(() => {
+    if (!field.loadOptions) return;
+    let live = true;
+    field
+      .loadOptions()
+      .then((loaded) => {
+        if (live && Array.isArray(loaded)) setOptions(loaded);
+      })
+      .catch((error) =>
+        console.error(`[auth] options for "${field.name}" failed:`, error),
+      );
+    return () => {
+      live = false;
+    };
+  }, [field]);
+
+  const initial = value ?? field.defaultValue ?? "";
+  const type = field.type ?? "text";
+  if (type === "hidden") {
+    return <input type="hidden" name={field.name} value={initial} />;
+  }
+  const span = field.span === 2 ? "md:col-span-2" : "";
+
+  if (type === "checkbox") {
+    return (
+      <div className={`flex items-center gap-2 ${span}`}>
+        <input
+          id={field.name}
+          name={field.name}
+          type="checkbox"
+          defaultChecked={initial === "on" || initial === "true"}
+          required={field.required}
+          className="h-4 w-4"
+        />
+        <Label htmlFor={field.name} className={LABEL}>
+          {field.label}
+        </Label>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`flex flex-col gap-2 ${span}`}>
+      <Label htmlFor={field.name} className={LABEL}>
+        {field.label}
+      </Label>
+      {type === "select" ? (
+        <Select name={field.name} required={field.required} defaultValue={initial || undefined}>
+          <SelectTrigger id={field.name} className={CONTROL}>
+            <SelectValue placeholder={field.placeholder} />
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ) : (
+        <Input
+          id={field.name}
+          name={field.name}
+          type={type}
+          className={CONTROL}
+          placeholder={field.placeholder}
+          defaultValue={initial}
+          required={field.required}
+          autoComplete={field.autoComplete}
+        />
+      )}
+      {field.hint && (
+        <p className="text-xs text-muted-foreground">{field.hint}</p>
+      )}
+    </div>
+  );
+}
 
 export function AuthForm({
   action,
   children,
   defaultEmail = "",
   mode,
-  selectedPlan,
-  defaultCountry,
-  industries = [],
-  isServicePlan = false,
-  onServicePlanChange = () => {},
-  plans = [],
+  extraFields = [],
+  prefilled = {},
 }: {
   action: any;
   children: React.ReactNode;
   defaultEmail?: string;
   mode: "login" | "signup";
-  selectedPlan?: string | null;
-  defaultCountry?: string | null;
-  industries?: string[];
-  isServicePlan?: boolean;
-  onServicePlanChange?: (checked: boolean) => void;
-  plans?: any[];
+  /** The home SDK's extra sign-up fields (RegisterConfig.fields); ignored for login. */
+  extraFields?: RegisterField[];
+  /** Values for extra fields read from the register URL (`fromQuery`), by field name. */
+  prefilled?: Record<string, string | null | undefined>;
 }) {
-  const [showVoucher, setShowVoucher] = useState(false);
-  const [activePlan, setActivePlan] = useState(selectedPlan || "Free");
-
-  // `selectedPlan` is not always known on the first render: /register now
-  // reads `?plan=` in a Suspense-isolated leaf (so the form itself can
-  // server-render) and hands the value up immediately after mount. Without
-  // this sync the lazily-supplied plan would be dropped, because the
-  // initial value of useState is only ever read once.
-  useEffect(() => {
-    if (selectedPlan) setActivePlan(selectedPlan);
-  }, [selectedPlan]);
-
+  const signup = mode === "signup";
   return (
     <form action={action} className="flex flex-col gap-4 px-0 pt-8 relative">
-      {mode === "signup" && !showVoucher && (
-        <button
-          type="button"
-          onClick={() => setShowVoucher(true)}
-          className={`absolute top-0 right-0 -mt-8 -mr-8 px-3 py-1.5 bg-yellow-400 hover:bg-yellow-500 text-yellow-950 text-[10px] font-bold uppercase tracking-wider rounded-tr-md transition-colors flex items-center z-10`}
-        >
-          {t("auth.use_voucher")}
-        </button>
-      )}
-
-      {mode === "signup" && showVoucher && (
-        <div className="flex justify-end -mb-2">
-          <button
-            type="button"
-            onClick={() => setShowVoucher(false)}
-            className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-400 flex items-center gap-1 transition-colors"
-          >
-            {t("auth.cancel_voucher")}
-          </button>
-        </div>
-      )}
-
       <div className="flex flex-col gap-2">
-        {mode === "signup" && plans && plans.length > 0 && (
-          <div className="flex flex-col gap-2 pb-2">
-            <Label
-              htmlFor="plan"
-              className="text-zinc-600 font-normal dark:text-zinc-400"
-            >
-              {t("auth.selected_plan")}
-            </Label>
-            <Select
-              name="plan"
-              value={activePlan}
-              onValueChange={setActivePlan}
-            >
-              <SelectTrigger
-                id="plan"
-                className="bg-muted text-md md:text-sm border-none"
-              >
-                <SelectValue placeholder={t("auth.ph_select_plan")} />
-              </SelectTrigger>
-              <SelectContent>
-                {plans.map((p) => (
-                  <SelectItem key={p.id || p.plan_name} value={p.plan_name}>
-                    {t("auth.plan_suffix", { plan: p.plan_name })}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-        {/* Row 1: Names (Signup Only) */}
-        {mode === "signup" && (
+        {signup && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="first_name"
-                className="text-zinc-600 font-normal dark:text-zinc-400"
-              >
+              <Label htmlFor="first_name" className={LABEL}>
                 {t("auth.label_first_name")}
               </Label>
               <Input
                 id="first_name"
                 name="first_name"
-                className="bg-muted text-md md:text-sm border-none"
+                className={CONTROL}
                 type="text"
                 placeholder={t("auth.ph_first_name")}
+                autoComplete="given-name"
                 required
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="last_name"
-                className="text-zinc-600 font-normal dark:text-zinc-400"
-              >
+              <Label htmlFor="last_name" className={LABEL}>
                 {t("auth.label_last_name")}
               </Label>
               <Input
                 id="last_name"
                 name="last_name"
-                className="bg-muted text-md md:text-sm border-none"
+                className={CONTROL}
                 type="text"
                 placeholder={t("auth.ph_last_name")}
+                autoComplete="family-name"
                 required
               />
             </div>
           </div>
         )}
 
-        {/* Row 2: Email & Industry (for Signup) */}
-        <div
-          className={
-            mode === "signup"
-              ? "grid grid-cols-1 md:grid-cols-2 gap-4"
-              : "flex flex-col gap-2"
-          }
-        >
-          <div className="flex flex-col gap-2">
-            <Label
-              htmlFor="email"
-              className="text-zinc-600 font-normal dark:text-zinc-400"
-            >
-              {t("auth.label_email")}
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              className="bg-muted text-md md:text-sm border-none"
-              type={mode === "signup" ? "email" : "text"}
-              placeholder={t("auth.ph_email")}
-              autoComplete="email"
-              required
-              defaultValue={defaultEmail}
-            />
-          </div>
-
-          {mode === "signup" && (
-            <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="industry"
-                className="text-zinc-600 font-normal dark:text-zinc-400"
-              >
-                {t("auth.label_industry")}
-              </Label>
-              <Select name="industry" required>
-                <SelectTrigger
-                  id="industry"
-                  className="bg-muted text-md md:text-sm border-none"
-                >
-                  <SelectValue placeholder={t("auth.ph_select_industry")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {industries?.map((ind) => (
-                    <SelectItem key={ind} value={ind}>
-                      {ind}
-                    </SelectItem>
-                  )) || (
-                    <SelectItem value="Other">
-                      {t("auth.industry_other")}
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="email" className={LABEL}>
+            {t("auth.label_email")}
+          </Label>
+          <Input
+            id="email"
+            name="email"
+            className={CONTROL}
+            type={signup ? "email" : "text"}
+            placeholder={t("auth.ph_email")}
+            autoComplete="email"
+            required
+            defaultValue={defaultEmail}
+          />
         </div>
 
-        {/* Row 3: Password & Company Name (for Signup) */}
-        <div
-          className={
-            mode === "signup"
-              ? "grid grid-cols-1 md:grid-cols-2 gap-4"
-              : "flex flex-col gap-2"
-          }
-        >
-          <div className="flex flex-col gap-2">
-            <Label
-              htmlFor="password"
-              className="text-zinc-600 font-normal dark:text-zinc-400"
-            >
-              {t("auth.label_password")}
-            </Label>
-            <Input
-              id="password"
-              name="password"
-              className="bg-muted text-md md:text-sm border-none"
-              type="password"
-              required
-            />
-          </div>
-
-          {mode === "signup" && (
-            <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="company_name"
-                className="text-zinc-600 font-normal dark:text-zinc-400"
-              >
-                {t("auth.label_company_name")}
-              </Label>
-              <Input
-                id="company_name"
-                name="company_name"
-                className="bg-muted text-md md:text-sm border-none"
-                type="text"
-                placeholder={t("auth.ph_company_name")}
-                required
-              />
-            </div>
-          )}
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="password" className={LABEL}>
+            {t("auth.label_password")}
+          </Label>
+          <Input
+            id="password"
+            name="password"
+            className={CONTROL}
+            type="password"
+            autoComplete={signup ? "new-password" : "current-password"}
+            required
+          />
         </div>
 
-        {/* Row 4: Country & Voucher (Conditional) */}
-        {mode === "signup" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="country"
-                className="text-zinc-600 font-normal dark:text-zinc-400"
-              >
-                {t("auth.label_country")}
-              </Label>
-              <Input
-                id="country"
-                name="country"
-                className="bg-muted text-md md:text-sm border-none"
-                type="text"
-                placeholder={t("auth.ph_country")}
-                defaultValue={defaultCountry || ""}
-                required
+        {signup && extraFields.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            {extraFields.map((field) => (
+              <ExtraField
+                key={field.name}
+                field={field}
+                value={prefilled[field.name]}
               />
-            </div>
-
-            {showVoucher && (
-              <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-right-1">
-                <Label
-                  htmlFor="voucher_code"
-                  className="text-primary font-medium flex items-center gap-1"
-                >
-                  <Ticket className="w-3 h-3" />
-                  {t("auth.label_voucher_code")}
-                </Label>
-                <Input
-                  id="voucher_code"
-                  name="voucher_code"
-                  className="bg-muted text-md md:text-sm border-primary/20 border ring-primary/10 focus-visible:ring-ring shadow-sm"
-                  type="text"
-                  placeholder={t("auth.ph_voucher_code")}
-                  autoFocus
-                />
-              </div>
-            )}
+            ))}
           </div>
-        )}
-
-        {mode === "signup" && (
-          <input type="hidden" name="plan" value={activePlan} />
-        )}
-
-        {mode === "signup" && (
-          <>
-            {/* Auto-detect if Service Plan, OR if name involves Hosting (Safe Fallback) */}
-            {(plans.find((p) => p.plan_name === activePlan)?.plan_type ===
-              "Service" ||
-              activePlan?.toLowerCase().includes("hosting")) && (
-              <div className="flex flex-col gap-2 pt-2 animate-in fade-in slide-in-from-top-1">
-                <input type="hidden" name="is_service_plan" value="true" />
-                <Label
-                  htmlFor="domain"
-                  className="text-zinc-600 font-normal dark:text-zinc-400 flex items-center gap-1"
-                >
-                  <Globe className="w-3 h-3" />
-                  {t("auth.label_domain")}
-                </Label>
-                <Input
-                  id="domain"
-                  name="domain"
-                  className="bg-muted text-md md:text-sm border-none"
-                  type="text"
-                  placeholder={t("auth.ph_domain")}
-                />
-              </div>
-            )}
-          </>
         )}
       </div>
 

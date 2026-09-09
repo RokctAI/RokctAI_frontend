@@ -44,8 +44,13 @@
 // The letter is drawn in the shell's PRIMARY colour (Ray, 2026-09-09:
 // "that letter should take color of primary color"), never a hard-coded
 // brand: the registered `themeColor` when the copy names one; else the
-// first `--primary:` declaration inside the `:root` block of the host's
-// app/globals.css, read from disk once per process (the shadcn/Tailwind
+// first `--primary:` declaration in ANY `:root` block of the host's
+// app/globals.css - every `:root` in the file is scanned in order, nested
+// ones under `@layer base` or `@media` included, and the first block that
+// declares `--primary` wins (since 1.19.1; 1.17.0 read only the first
+// `:root {`, which on a host with an early `:root` of unrelated variables
+// missed the theme tokens under `@layer base`); a `:root` whose selector
+// also names `.dark` is skipped - read from disk once per process (the shadcn/Tailwind
 // `H S% L%` triple, and hex, rgb()/rgba(), hsl()/hsla() and oklch() forms
 // are all understood and normalised to hex, which is what satori draws);
 // else white. A primary too dark to read on the ground (relative
@@ -234,15 +239,58 @@ function luminance(rgb: Rgb): number {
   return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
 }
 
-/** The first `--primary:` value inside the `:root` block of a stylesheet, or null. */
+/** A `:root` selector head: the selector text before an opening brace, holding `:root`. */
+const ROOT_SELECTOR_RE = /([^{};]*):root\b([^{};]*)\{/g;
+
+/**
+ * Every `:root` block of a stylesheet, in source order, with its selector
+ * head - nested ones included, so a `:root` inside `@layer base { ... }`
+ * or `@media (...) { ... }` is seen. Each body is the BALANCED `{...}`
+ * after the selector, not the text up to the first `}`; comments are
+ * stripped first so a brace in one cannot unbalance the scan.
+ */
+function rootBlocksOf(css: string): { selector: string; body: string }[] {
+  const text = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  const blocks: { selector: string; body: string }[] = [];
+  for (const m of text.matchAll(ROOT_SELECTOR_RE)) {
+    const open = (m.index ?? 0) + m[0].length - 1;
+    let depth = 0;
+    let close = -1;
+    for (let i = open; i < text.length; i += 1) {
+      if (text[i] === "{") depth += 1;
+      else if (text[i] === "}") {
+        depth -= 1;
+        if (depth === 0) {
+          close = i;
+          break;
+        }
+      }
+    }
+    blocks.push({
+      selector: `${m[1]}:root${m[2]}`.trim(),
+      body: text.slice(open + 1, close < 0 ? undefined : close),
+    });
+  }
+  return blocks;
+}
+
+/**
+ * The `--primary:` value the host's `:root` declares, or null: every
+ * `:root` block in the file is scanned in order (since 1.19.1; until then
+ * only the FIRST `:root {` was read, and a host whose theme tokens sit in
+ * a later `@layer base { :root { ... } }` under an earlier `:root` of
+ * unrelated variables got white), and the first block that declares
+ * `--primary` wins. A block whose selector also names `.dark` (a
+ * `:root.dark` or `.dark :root` override) is not a `:root` theme and is
+ * skipped; a plain `.dark { ... }` block is never matched.
+ */
 function rootPrimaryOf(css: string): string | null {
-  const rootAt = css.search(/:root\s*\{/);
-  if (rootAt < 0) return null;
-  const open = css.indexOf("{", rootAt);
-  const close = css.indexOf("}", open);
-  const block = css.slice(open + 1, close < 0 ? undefined : close);
-  const decl = block.match(/--primary\s*:\s*([^;}]+)/);
-  return decl ? decl[1].trim() : null;
+  for (const { selector, body } of rootBlocksOf(css)) {
+    if (/\.dark\b/.test(selector)) continue;
+    const decl = body.match(/--primary\s*:\s*([^;}]+)/);
+    if (decl) return decl[1].trim();
+  }
+  return null;
 }
 
 let cachedGlobalsPrimary: Rgb | null | undefined;

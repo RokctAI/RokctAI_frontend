@@ -36,6 +36,20 @@
 // registered `copy.icon` is linked next; and with none of those the links
 // point at app/brand-icon/route.tsx, the generated tile with the domain's
 // first letter. Nothing here ever replaces an icon the host already has.
+// Since 1.20.0 only the LAYOUT's Metadata carries `icons` at all:
+// buildPageMetadata() emits none, because Next replaces `icons` per
+// segment wholesale (and suppresses the file-convention app/icon.* when
+// any segment sets it), so a page's generated set overrode the root
+// layout's own `icons` override. A page inherits the layout's icons -
+// override, host file, registered copy.icon or generated, in that order.
+//
+// Known limitation: hostIconExists() is a runtime check of the process's
+// working directory. Inside a serverless function (Vercel: cwd /var/task,
+// with app/icon.* not traced into the bundle) it is false even when the
+// icon file is committed, so a shell that relies on a file-convention
+// icon WITHOUT a layout `icons` override may still get the letter tile
+// in production. A layout override is the reliable way to keep a file
+// icon; see the CHANGELOG for the two candidate fixes.
 //
 // Since 1.19.0 the host a shell SHOWS - the letter on that tile and the
 // host line on the generated link-preview card - follows the REQUEST
@@ -50,6 +64,12 @@
 
 import type { Metadata } from "next";
 
+import {
+  type HeaderReader,
+  isPublicHost,
+  normaliseHost,
+  requestHost,
+} from "@/app/services/base/tenant-hosts";
 import {
   loadSiteMetadata,
   type SiteMetadataCopy,
@@ -97,80 +117,17 @@ export function resolveSiteUrl(
   return fromEnv || copy.url?.trim() || undefined;
 }
 
-/**
- * Request hosts that are never a site's own domain: the loopback and
- * unspecified addresses a local run answers on. Matched whole, after
- * normaliseHost (port and "www." stripped, lower-cased).
- */
-export const NON_PUBLIC_HOSTS = [
-  "localhost",
-  "127.0.0.1",
-  "[::1]",
-  "::1",
-  "0.0.0.0",
-] as const;
-
-/**
- * Suffixes of request hosts that are never a site's own domain: platform
- * preview deployments and private-network names. A host that ends in one
- * is treated like a local one.
- */
-export const NON_PUBLIC_HOST_SUFFIXES = [
-  ".vercel.app",
-  ".local",
-  ".internal",
-] as const;
-
-/**
- * Anything with a `get(name)`: the Headers of a request, or what
- * `headers()` from next/headers resolves to.
- */
-export type HeaderReader = Pick<Headers, "get">;
-
-/** The host without its port: `[::1]:3000` is `[::1]`, `shop.rokct.ai:443` is `shop.rokct.ai`. */
-function stripPort(host: string): string {
-  if (host.startsWith("[")) {
-    const end = host.indexOf("]");
-    return end < 0 ? host : host.slice(0, end + 1);
-  }
-  const colon = host.indexOf(":");
-  return colon < 0 ? host : host.slice(0, colon);
-}
-
-/**
- * A host header value as a comparable host name: the first value when
- * the header is comma-separated (a proxy chain appends), trimmed, the
- * port dropped, a leading "www." removed, lower-cased. Null when nothing
- * is left.
- */
-export function normaliseHost(raw: string | null | undefined): string | null {
-  if (!raw) return null;
-  const first = raw.split(",", 1)[0].trim();
-  if (!first) return null;
-  const host = stripPort(first).replace(/^www\./i, "").toLowerCase();
-  return host || null;
-}
-
-/**
- * True when a normalised host could be a site's own domain: not empty,
- * not one of NON_PUBLIC_HOSTS, not ending in one of
- * NON_PUBLIC_HOST_SUFFIXES.
- */
-export function isPublicHost(host: string | null | undefined): host is string {
-  if (!host) return false;
-  if ((NON_PUBLIC_HOSTS as readonly string[]).includes(host)) return false;
-  return !NON_PUBLIC_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
-}
-
-/**
- * The host the request came in on, normalised: `x-forwarded-host` (what
- * the proxy in front of the deployment saw) first, else `host`. Null
- * with no headers or neither header.
- */
-export function requestHost(headers: HeaderReader | null | undefined): string | null {
-  if (!headers) return null;
-  return normaliseHost(headers.get("x-forwarded-host")) ?? normaliseHost(headers.get("host"));
-}
+// The host predicate itself lives in the kernel since 1.20.0
+// (app/services/base/tenant-hosts.ts, pure and edge-safe) so middleware
+// can share it; re-exported here so the 1.19.0 surface is unchanged.
+export {
+  NON_PUBLIC_HOSTS,
+  NON_PUBLIC_HOST_SUFFIXES,
+  isPublicHost,
+  normaliseHost,
+  requestHost,
+  type HeaderReader,
+} from "@/app/services/base/tenant-hosts";
 
 /** The host of the configured site url (resolveSiteUrl), normalised; null when it is not a URL. */
 export function siteHost(copy: Pick<SiteMetadataCopy, "url">): string | null {
@@ -322,8 +279,17 @@ export async function buildSiteMetadata(
   const description = copy.description || undefined;
   const image = resolvePreviewImage(copy);
   const metadataBase = resolveMetadataBase(copy);
-  // The disk check is skipped when the caller overrides `icons` anyway.
-  const icons = overrides?.icons === undefined ? await resolveIcons(copy) : undefined;
+  // Icons belong to the LAYOUT scope only (1.20.0). Next replaces `icons`
+  // per segment wholesale and suppresses the file-convention app/icon.*
+  // when any segment sets it, so a page that emitted the generated set
+  // overrode the root layout's own `icons` override: rokct.ai's landing
+  // page lost the logo favicon its layout declares to the letter tile. A
+  // page carries no `icons` and inherits the layout's answer; an explicit
+  // override skips the disk check too.
+  const icons =
+    options.scope === "page" || overrides?.icons !== undefined
+      ? undefined
+      : await resolveIcons(copy);
 
   const built: Metadata = {
     ...(metadataBase ? { metadataBase } : {}),
@@ -368,7 +334,8 @@ export async function buildSiteMetadata(
 /**
  * The same Metadata for a PAGE's generateMetadata (the landing page uses
  * it): the title is absolute, so a layout that already applies the
- * `%s — <siteName>` template does not suffix it twice.
+ * `%s — <siteName>` template does not suffix it twice, and it carries NO
+ * `icons` (1.20.0), so the layout stays the single owner of the favicon.
  */
 export function buildPageMetadata(
   overrides?: Partial<Metadata>,

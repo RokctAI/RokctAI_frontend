@@ -369,7 +369,7 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
     },
     defaultCategoryStyle:
       "text-slate-600 border-slate-200 hover:border-slate-500 hover:text-slate-500 data-[state=active]:bg-slate-600 data-[state=active]:text-white dark:text-slate-400 dark:border-slate-800",
-    hiddenCategories: ["lms"],
+    hiddenCategories: ["lms", "hosting", "paas"],
     hideFreePlansIn: ["rokct"],
     featureTokens: { model: modelLabel(AI_MODELS.PAID.id) },
     localize: () =>

@@ -47,6 +47,7 @@ import {
   ArrowUpRight,
   Box,
   ChevronDown,
+  Chrome,
   FileText,
   Globe,
   MessageSquare,
@@ -124,8 +125,9 @@ const INLINE_LINK =
   "flex items-center gap-1.5 whitespace-nowrap text-foreground/70 transition-colors hover:text-foreground";
 
 /**
- * The closed set of glyphs an item may name (HeaderMenuIcon). Named imports,
- * so the header bundles these seven and not the whole of lucide-react.
+ * The closed set of glyphs an item or action may name (HeaderMenuIcon).
+ * Named imports, so the header bundles these eight and not the whole of
+ * lucide-react; "chrome" is lucide's own mark, no third-party asset.
  */
 const MENU_ICONS: Record<HeaderMenuIcon, LucideIcon> = {
   box: Box,
@@ -135,6 +137,7 @@ const MENU_ICONS: Record<HeaderMenuIcon, LucideIcon> = {
   zap: Zap,
   wrench: Wrench,
   "file-text": FileText,
+  chrome: Chrome,
 };
 
 /** An item with a description or an icon is drawn as a card, not a link. */
@@ -418,13 +421,23 @@ export function HeaderMenuActions({
       {actions.map((action) => {
         const primary = (action.variant ?? "primary") === "primary";
         const className = cn(
-          "inline-flex items-center justify-center font-medium transition-colors",
+          "inline-flex items-center justify-center gap-2 font-medium transition-colors",
           layout === "bar"
             ? "rounded-md px-3 py-1.5 text-[13px]"
             : "w-full rounded-2xl py-4 text-lg font-bold",
           primary
             ? "bg-primary text-black hover:opacity-90"
             : "border border-border text-foreground hover:bg-foreground/5",
+        );
+        // 1.20.0: the glyph before the label (rokct.ai's Chrome mark on its
+        // extension button), the size the panel's cards draw theirs at; no
+        // icon named renders the label alone, as before.
+        const Icon = action.icon ? MENU_ICONS[action.icon] : null;
+        const content = (
+          <>
+            {Icon && <Icon aria-hidden="true" className="h-5 w-5 shrink-0" />}
+            <span>{action.label}</span>
+          </>
         );
         return action.external ? (
           <a
@@ -435,7 +448,7 @@ export function HeaderMenuActions({
             className={className}
             onClick={onNavigate}
           >
-            {action.label}
+            {content}
           </a>
         ) : (
           <Link
@@ -444,7 +457,7 @@ export function HeaderMenuActions({
             className={className}
             onClick={onNavigate}
           >
-            {action.label}
+            {content}
           </Link>
         );
       })}

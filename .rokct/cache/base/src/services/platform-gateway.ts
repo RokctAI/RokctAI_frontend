@@ -67,8 +67,16 @@ import {
   normalizeSiteUrl,
   sameSite,
 } from './tenant-hosts';
+import { registerControlTenantHostResolver } from './tenant-host-control';
 
 export { PLATFORM_GATEWAY_METHOD, PLATFORM_GATEWAY_PATH };
+
+// base_sdk 1.20.0: the control site answers which tenant a request host
+// belongs to (a custom domain), so the per-host step of
+// resolveTenantBaseUrl below works with no host wiring. Idempotent, a
+// no-op without ROKCT_BASE_URL or with ROKCT_TENANT_HOST_LOOKUP=off, and
+// a host's own setTenantHostResolver call still replaces it.
+registerControlTenantHostResolver();
 
 /** Anything carrying request headers: a `Request`, a `NextRequest`, … */
 export interface RequestLike {
@@ -105,7 +113,11 @@ export interface TenantResolutionInput {
  *  3. The host name the request arrived on, mapped to a tenant site by
  *     `ROKCT_TENANT_HOSTS` or a registered resolver — only consulted when
  *     one of those is configured (`hasTenantHostLookup`), so env-only
- *     deployments never touch the request headers.
+ *     deployments never touch the request headers. Since 1.20.0 the
+ *     control-backed resolver (tenant-host-control.ts) is registered
+ *     whenever `ROKCT_BASE_URL` is set, so a tenant's custom domain
+ *     resolves to its site here; non-public and the shell's own hosts
+ *     answer nothing without a network call.
  *  4. `ROKCT_BASE_URL` / `NEXT_PUBLIC_ROKCT_BASE_URL` /
  *     `NEXT_PUBLIC_FRAPPE_URL` — the configured default.
  *

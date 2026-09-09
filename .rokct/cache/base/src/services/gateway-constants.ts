@@ -31,10 +31,15 @@
 export const PLATFORM_GATEWAY_METHOD = 'rokct.platform.api';
 
 /**
- * The full request path derived from [PLATFORM_GATEWAY_METHOD]. Uses the
- * versioned `/api/v1/method/` prefix (project ruling: every client-facing
- * endpoint URL is `/api/v1/method/<name>`; the Frappenize fork mounts the
+ * The versioned method prefix every client-facing endpoint URL carries
+ * (project ruling: `/api/v1/method/<name>`; the Frappenize fork mounts the
  * same v1 rules under both `/api` and `/api/v1`). Never hardcode this
- * elsewhere — import it.
+ * elsewhere — import it, or [PLATFORM_GATEWAY_PATH] for the gateway.
  */
-export const PLATFORM_GATEWAY_PATH = `/api/v1/method/${PLATFORM_GATEWAY_METHOD}`;
+export const PLATFORM_METHOD_PATH = '/api/v1/method';
+
+/**
+ * The full request path derived from [PLATFORM_GATEWAY_METHOD] under
+ * [PLATFORM_METHOD_PATH]. Never hardcode this elsewhere — import it.
+ */
+export const PLATFORM_GATEWAY_PATH = `${PLATFORM_METHOD_PATH}/${PLATFORM_GATEWAY_METHOD}`;

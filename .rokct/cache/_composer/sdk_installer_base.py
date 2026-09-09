@@ -199,21 +199,35 @@ class HomeSdkConflict(RuntimeError):
     """Raised when composer.json flags more than one home SDK."""
 
 
+# The shell lock a Next.js shell's compose wrapper (scripts/compose.sh)
+# writes at refresh time and composes from OFFLINE at deploy time, when
+# composer.json - a refresh-time scratch copy of the registry template - is
+# gone. Its sdks[] entries carry the same "name" and "home_sdk" keys as the
+# composer profile they were built from.
+LOCK_FILE = os.path.join(PROJECT_ROOT, ".rokct", "lock.json")
+
+
 def _read_composer_sdks():
     """Enabled sdks[] entries of the host's composer.json (the composer
-    profile the shell was composed from), in compose order. [] when the
-    file is absent or unreadable."""
+    profile the shell was composed from), in compose order. When
+    composer.json is absent - an offline compose from the committed cache -
+    the sdks[] entries of .rokct/lock.json stand in, so the "home_sdk"
+    flag the lock copied from the profile still resolves. [] when neither
+    file is present or the one present is unreadable."""
     composer_path = os.path.join(PROJECT_ROOT, "composer.json")
-    if not os.path.exists(composer_path):
+    source = composer_path if os.path.exists(composer_path) else LOCK_FILE
+    if not os.path.exists(source):
         return []
     try:
-        with open(composer_path, "r", encoding="utf-8-sig") as f:
+        with open(source, "r", encoding="utf-8-sig") as f:
             config = json.load(f)
     except Exception as e:
         print(
-            f"[!] WARNING: unreadable composer.json {composer_path} ({e}); it cannot "
-            f"be used to resolve the home SDK"
+            f"[!] WARNING: unreadable {os.path.basename(source)} {source} ({e}); it "
+            f"cannot be used to resolve the home SDK"
         )
+        return []
+    if not isinstance(config, dict):
         return []
     return [
         s

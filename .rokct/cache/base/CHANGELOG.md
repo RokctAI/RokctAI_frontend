@@ -1,5 +1,209 @@
 # Changelog
 
+## 1.21.0
+
+* The home SDK declares what the header's brand slot draws. Ray,
+  2026-09-09: "i saw supacharge got a s logo in header, let home sdk
+  declare if it needs logo there or not. supacharge text is the logo
+  right now until i design an icon". The "S" is supacharge-web's own
+  `components/custom/brand-logo.tsx` (a `requires` file), an asset-free
+  placeholder that draws the platform's first letter on a dark square,
+  which the header has rendered beside the wordmark since 1.14.0 shipped
+  it (`<BrandLogo width={32} height={32} />`); base had no way for a home
+  SDK to say the slot should be empty, and no way to put a real icon there
+  without a host edit.
+  * `components/custom/landing/header-menu.ts`: `HeaderMenu` gains
+    `brand?: HeaderBrand` - `{ logo?: "auto" | "none" | <path>;
+    wordmark?: boolean }` - in the registry a home SDK already answers,
+    under the same first-entry rule. `"none"` draws no image (the
+    wordmark, the host's `branding.tsx`, IS the logo); a path
+    (`/images/logo.svg`, or an absolute URL) draws that image at 32px; and
+    `"auto"` (the default, and what a menu that declares nothing gets)
+    draws a REAL icon only: the copy's registered `icon` from
+    `site-metadata.ts` when there is one, else the host shell's own
+    `brand-logo.tsx` - the mark every shell drew before this field
+    existed. The generated `/brand-icon` letter tile (1.17.0) is for the
+    browser tab and the share card only and is NEVER drawn in the header,
+    not even when a declaration or a registered `icon` names it (it falls
+    through to the "auto" rule). `wordmark: false` drops the wordmark for
+    a shell whose image already spells its name. `resolveHeaderBrand(brand,
+    copy)` is the pure rule, `headerBrandNeedsCopy()` says when the copy
+    is consulted (only "auto"), `isGeneratedBrandIcon()` names the refused
+    tile and `loadHeaderBrand()` loads the menu, then the copy only when
+    needed, and never throws.
+  * `components/custom/header.tsx` renders the brand link through
+    `next/dynamic` the way `hero.tsx` renders the form: the declaration is
+    resolved once per module and server-rendered with the bar, so the
+    first paint already carries the declared mark and the "S" never
+    flashes before it goes. With nothing registered in either registry
+    there is no loader and the slot is the host's mark and wordmark as
+    before. The header never imports `app/lib/site-metadata.ts` (it
+    reaches for `node:fs`); the tile path is restated in the registry.
+    Every prop of `Header` is unchanged.
+  * rokct.ai: agent_sdk's menu declares no `brand` and its copy registers
+    no `icon`, so the header draws rokctai_frontend's own `brand-logo.tsx`
+    (`/images/logo.svg` with its dark variant) exactly as before - no
+    agent_sdk change is needed to keep the logo. supacharge.app: lms_sdk
+    1.13.0 declares `brand: { logo: "none" }` and the header is the
+    wordmark alone.
+  * `tests/test_manifest.py` asserts the declaration and the header's
+    use of it, and stages `header-menu.ts` under node (22.6+,
+    type-stripping) to execute `tests/header-brand.test.mts`: "none" draws
+    no image, a path draws that src, "auto" with no real icon draws the
+    host's mark with no src and never `/brand-icon`, "auto" with a
+    registered `copy.icon` draws that src, the tile is refused however it
+    is named, and a menu that fails to load is skipped.
+* Fixed: `app/lib/site-metadata.ts` imports the `HeaderReader` type it
+  uses (shell builds without `ignoreBuildErrors` failed on 1.20.0).
+  1.20.0 moved the host predicate into the kernel and imported
+  `isPublicHost`, `normaliseHost` and `requestHost` from
+  `@/app/services/base/tenant-hosts`, but `resolveDisplayHost`'s
+  signature still names `HeaderReader`, and the
+  `export { ... type HeaderReader }` re-export at the bottom of the file
+  does not put that name in scope: `next build` on a composed shell
+  stopped at `site-metadata.ts(157,12): TS2304: Cannot find name
+  'HeaderReader'` (found by the hosting shell build). The import now
+  carries `type HeaderReader`.
+  * `tests/test_manifest.py` guards the class of miss two ways: a
+    stdlib check that every name the file re-exports from the kernel
+    and also uses in its own code is imported, and a real `tsc` pass
+    (strict, isolatedModules - the shells' tsconfig) over a staged copy
+    of the file with the kernel's `tenant-hosts.ts`, the landing
+    registry and `next`/`node:*` stubs beside it, run whenever a
+    compiler is reachable (`ROKCT_TSC=<path to tsc>`, else `tsc` on
+    PATH) and skipped otherwise.
+
+## 1.20.0
+
+* The host switch: the kernel answers WHICH TENANT a request host belongs
+  to, so one deployment can open a tenant's portal on that tenant's own
+  domain and keep the storefront on every other host. A tenant that points
+  a `custom_domain` (on its Company Subscription at the control site) at
+  the shell expects that host to be its login, not the platform's landing
+  page; the control site owns that mapping, and since control #164 exposes
+  it as the guest method
+  `control.control.api.subscription.resolve_site_by_host(host)` ->
+  `{"site_name": "<site>"}` or `null` (live subscriptions only; invalid,
+  local and preview hosts answer `null` without a lookup).
+  * `app/services/base/tenant-host-control.ts` (new): `resolveTenantSiteByHost(host)`
+    asks that method with a plain guest `POST` to
+    `ROKCT_BASE_URL/api/v1/method/<dotted name>` - no credentials ever, and
+    not through the gateway door, which on a control site routes only
+    registered `control:` keys and has none for this lookup - and answers
+    the site name or `null`. Answers are cached in memory, positive for
+    `TENANT_HOST_POSITIVE_TTL_MS` (5 min) and negative for
+    `TENANT_HOST_NEGATIVE_TTL_MS` (60 s), overridable through
+    `ROKCT_TENANT_HOST_TTL_MS` / `ROKCT_TENANT_HOST_NEGATIVE_TTL_MS`;
+    one lookup is bounded by `ROKCT_TENANT_HOST_TIMEOUT_MS` (3 s) and
+    concurrent lookups of one host share one request. It NEVER throws: a
+    network error, a timeout, a non-2xx status or a malformed answer is
+    `null` - unknown host = storefront - logged once per process. It never
+    asks for a host that is not a public one (1.19.0's `isPublicHost`:
+    localhost, loopback, `.vercel.app`, `.local`, `.internal`), for the
+    configured `NEXT_PUBLIC_SITE_URL` host or for the control host, and a
+    host in the `ROKCT_TENANT_HOSTS` map answers from the map so a local
+    run can point `localhost:3000` at a tenant. An answer that is not a
+    host name, or that is the control site itself, is `null`: no host ever
+    opens a portal against the control plane. `ROKCT_TENANT_HOST_LOOKUP=off`
+    switches the lookup off.
+  * `resolveTenantSiteForRequest(headers)` is the middleware entry:
+    `x-forwarded-host` (first value) else `host`, port and a leading
+    `www.` stripped, lower-cased - 1.19.0's `requestHost` - then the
+    lookup above. The module imports only the pure kernel helpers and
+    uses the global `fetch`, so it runs in the edge runtime as well as on
+    the server. auth_sdk 1.7.0's middleware forwards its answer as the
+    `x-rokct-tenant-site` request header (`TENANT_SITE_HEADER`).
+  * `platform-gateway.ts` calls `registerControlTenantHostResolver()` at
+    load, which plugs the same lookup into `setTenantHostResolver`
+    (idempotent; a no-op without `ROKCT_BASE_URL` or with the lookup off;
+    a host's own `setTenantHostResolver` call still replaces it), so
+    `resolveTenantBaseUrl`'s per-host step now resolves a custom domain to
+    its backend with no host wiring. Note that with a control site
+    configured `hasTenantHostLookup()` is therefore true, so a call with
+    no explicit `baseUrl` and no session site reads the request host.
+  * The host predicate moved INTO the kernel so middleware can share it
+    without pulling the metadata shell (and its `node:fs` probe) into the
+    edge bundle: `tenant-hosts.ts` now carries `NON_PUBLIC_HOSTS`,
+    `NON_PUBLIC_HOST_SUFFIXES`, `HeaderReader`, `normaliseHost()`,
+    `isPublicHost()` and `requestHost()`; `app/lib/site-metadata.ts`
+    imports and re-exports them, so its 1.19.0 surface and
+    `resolveDisplayHost` are unchanged. `gateway-constants.ts` gains
+    `PLATFORM_METHOD_PATH` (`/api/v1/method`), from which
+    `PLATFORM_GATEWAY_PATH` is now derived.
+  * `tests/tenant-host-control.test.mts` (new, node's own test runner,
+    run by `tests/test_manifest.py`): the non-public, own-host, map and
+    switched-off short-circuits make no call; a public host is asked once
+    as a guest and cached; a negative answer is cached and asked again
+    after its TTL, a positive one after its; concurrent lookups share a
+    request; a network error, a non-2xx and a malformed answer are `null`,
+    logged once; header precedence; and the registered resolver makes
+    `lookupTenantHost` answer the tenant's origin.
+* A PAGE's Metadata carries no `icons`; the layout is the favicon's single
+  owner. Ray, 2026-09-09: "rokct got a letter favicon and lost its own
+  image". `app/landing/page.tsx` is `force-dynamic` and its
+  `generateMetadata` calls `buildPageMetadata()`, which resolved icons like
+  the layout does; at request time in a serverless function
+  `hostIconExists()` is false (see below) and with no registered
+  `copy.icon` the page emitted the generated `/brand-icon` set. Next
+  replaces `icons` per segment wholesale and suppresses the file-convention
+  `app/icon.*` when any segment sets it, so the page's generated set
+  overrode the root layout's explicit `icons` override - rokct.ai's own
+  logo. `buildSiteMetadata()` now resolves icons ONLY for the layout scope:
+  `buildPageMetadata()` emits no `icons` key and a page inherits the
+  layout's answer (override, host file, `copy.icon`, generated - the same
+  order as before); an explicit `icons` override is still returned
+  untouched, without the disk check. supacharge-web is unaffected (no
+  override, no icon file: the letter both before and after).
+  * Known limitation, not fixed here: `hostIconExists()` is a runtime
+    check of the process's working directory, and inside a Vercel function
+    (cwd `/var/task`, `app/icon.*` not traced into the bundle) it is false
+    even when the icon file is committed. A shell that relies on a
+    file-convention icon WITHOUT a layout `icons` override may therefore
+    still get the letter tile in production. Two candidate fixes, to be
+    decided: a compose-time constant the installer writes (the composer
+    knows at build time whether the host ships an icon file), or
+    `outputFileTracingIncludes` in the shell's `next.config` so the icon
+    files are traced and the disk check sees them.
+  * `tests/site-metadata-icons.test.mts` (new; run by `test_manifest.py`
+    against a staged copy with the registry stubbed): `buildPageMetadata()`
+    has no `icons` key, `buildSiteMetadata()` (layout) has one, and
+    `buildSiteMetadata({ icons })` returns the override untouched.
+* The header's action buttons may carry a glyph. Ray, 2026-09-09: rokct
+  "got its header back but it think it lost its chrome icon" - the old
+  rokct header drew the Chrome mark on its "Add ROK Extension" button, and
+  1.18.0's `HeaderMenuAction` was label only. `HeaderMenuAction` gains
+  `icon?: HeaderMenuIcon`, `HeaderMenuActions` draws it before the label in
+  both layouts (bar and stacked, `h-5 w-5`, the size the panel's cards draw
+  theirs at), and `HeaderMenuIcon` gains `"chrome"`, mapped to
+  lucide-react's own `Chrome` glyph - no third-party asset. An action
+  without an icon renders exactly as before. agent_sdk sets
+  `icon: "chrome"` on its extension action in a later release.
+
+## 1.19.1
+
+* Favicon letter colour found in any `:root` block. `app/brand-icon/route.tsx`
+  (1.17.0) read the host's `--primary` from the FIRST `:root {` of
+  `app/globals.css` and stopped at its first `}`. rokctai_frontend's
+  stylesheet opens with a `:root` of `--foreground-rgb` and friends and
+  keeps `--primary: 48 96% 53%` in a second `:root` under `@layer base`,
+  so its tile drew a white R; supacharge-web, whose first `:root` already
+  carries `--primary`, was orange. Ray, 2026-09-09: the letter takes the
+  primary colour.
+  * `rootBlocksOf(css)` (new) lists every `:root` block in source order,
+    nested ones under `@layer` / `@media` included, each with its selector
+    head and its BALANCED `{...}` body (comments stripped first so a brace
+    in one cannot unbalance the scan). `rootPrimaryOf(css)` walks them and
+    answers the first block that declares `--primary`, skipping a block
+    whose selector also names `.dark` (`:root.dark`, `.dark :root`); a
+    plain `.dark { ... }` block is never a match. The value parsing
+    (shadcn `H S% L%`, hex, `rgb()`, `hsl()`, `oklch()`) and the fallback
+    order - the registered `themeColor`, else `--primary`, else white -
+    are unchanged, so a shell that resolved before resolves the same.
+  * `tests/test_manifest.py` lifts the pure helpers out of the route and
+    executes them under node (22.6+, type-stripping) against the two
+    shells' layouts, a `.dark` `:root` override, a comment holding a
+    brace and a file with `--primary-foreground` only.
+
 ## 1.19.0
 
 * The host the shell SHOWS follows the REQUEST first. The generated

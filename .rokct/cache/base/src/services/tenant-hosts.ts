@@ -30,9 +30,17 @@
  *    env map, then through a resolver registered with
  *    [setTenantHostResolver] (the hook for a control-site lookup later).
  *  - [envBaseUrl]: the build-time/default backend, the last fallback.
+ *  - [normaliseHost] / [isPublicHost] / [requestHost]: the host-name
+ *    predicate the shell shows a host with (base 1.19.0, moved here from
+ *    app/lib/site-metadata.ts in 1.20.0 so the edge runtime can use it):
+ *    a header value as a comparable host name, and whether that name
+ *    could be a site's own domain rather than a local or preview one.
  *
- * The request-scoped orchestration (session, headers) lives in
- * platform-gateway.ts's `resolveTenantBaseUrl`.
+ * Everything here is pure and imports nothing, so it runs in the edge
+ * runtime (middleware) as well as on the server. The request-scoped
+ * orchestration (session, headers) lives in platform-gateway.ts's
+ * `resolveTenantBaseUrl`; the control-site lookup that answers a custom
+ * domain lives in tenant-host-control.ts.
  */
 
 // Module-scoped so this file typechecks with or without @types/node; the
@@ -211,4 +219,81 @@ export function hostFromHeaders(
   const forwarded = headers.get('x-forwarded-host');
   const host = (forwarded ?? headers.get('host') ?? '').split(',')[0].trim();
   return host || undefined;
+}
+
+/**
+ * Request hosts that are never a site's own domain: the loopback and
+ * unspecified addresses a local run answers on. Matched whole, after
+ * [normaliseHost] (port and "www." stripped, lower-cased).
+ */
+export const NON_PUBLIC_HOSTS = [
+  'localhost',
+  '127.0.0.1',
+  '[::1]',
+  '::1',
+  '0.0.0.0',
+] as const;
+
+/**
+ * Suffixes of request hosts that are never a site's own domain: platform
+ * preview deployments and private-network names. A host that ends in one
+ * is treated like a local one.
+ */
+export const NON_PUBLIC_HOST_SUFFIXES = [
+  '.vercel.app',
+  '.local',
+  '.internal',
+] as const;
+
+/**
+ * Anything with a `get(name)`: the Headers of a request, or what
+ * `headers()` from next/headers resolves to.
+ */
+export type HeaderReader = { get(name: string): string | null };
+
+/** The host without its port: `[::1]:3000` is `[::1]`, `shop.rokct.ai:443` is `shop.rokct.ai`. */
+function stripPort(host: string): string {
+  if (host.startsWith('[')) {
+    const end = host.indexOf(']');
+    return end < 0 ? host : host.slice(0, end + 1);
+  }
+  const colon = host.indexOf(':');
+  return colon < 0 ? host : host.slice(0, colon);
+}
+
+/**
+ * A host header value as a comparable host name: the first value when
+ * the header is comma-separated (a proxy chain appends), trimmed, the
+ * port dropped, a leading "www." removed, lower-cased. Null when nothing
+ * is left.
+ */
+export function normaliseHost(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const first = raw.split(',', 1)[0].trim();
+  if (!first) return null;
+  const host = stripPort(first).replace(/^www\./i, '').toLowerCase();
+  return host || null;
+}
+
+/**
+ * True when a normalised host could be a site's own domain: not empty,
+ * not one of [NON_PUBLIC_HOSTS], not ending in one of
+ * [NON_PUBLIC_HOST_SUFFIXES].
+ */
+export function isPublicHost(host: string | null | undefined): host is string {
+  if (!host) return false;
+  if ((NON_PUBLIC_HOSTS as readonly string[]).includes(host)) return false;
+  return !NON_PUBLIC_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
+}
+
+/**
+ * The host the request came in on, normalised: `x-forwarded-host` (what
+ * the proxy in front of the deployment saw) first, else `host`. Null
+ * with no headers or neither header. The normalised twin of
+ * [hostFromHeaders], which keeps the port for the `ROKCT_TENANT_HOSTS`
+ * map's exact-host entries.
+ */
+export function requestHost(headers: HeaderReader | null | undefined): string | null {
+  if (!headers) return null;
+  return normaliseHost(headers.get('x-forwarded-host')) ?? normaliseHost(headers.get('host'));
 }

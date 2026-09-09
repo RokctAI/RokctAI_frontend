@@ -57,6 +57,21 @@
 // platform cards of rokct.ai's Product panel. A menu with no groups renders
 // exactly as it did in 1.16.0.
 //
+// Since 1.21.0 the menu also carries the BRAND declaration (Ray,
+// 2026-09-09: "i saw supacharge got a s logo in header, let home sdk
+// declare if it needs logo there or not. supacharge text is the logo right
+// now until i design an icon"). The header draws the host shell's own
+// brand-logo.tsx beside the wordmark, and a shell with no icon of its own
+// draws a placeholder there - supacharge-web's is the platform's first
+// letter on a dark square, the "S" Ray saw. `brand.logo` lets the home SDK
+// say what belongs in that slot: "none" (the wordmark IS the logo), a path
+// to a real image, or "auto" (the default: the copy's registered `icon`
+// from ./site-metadata.ts when there is one, else the host's own mark).
+// The generated /brand-icon letter tile (app/brand-icon/route.tsx) is for
+// the browser tab and the share card only and is never drawn here, not
+// even when named. [resolveHeaderBrand] is the pure rule and
+// [loadHeaderBrand] the loader the header renders through.
+//
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as
 // ./hero-sections.ts, ./hero-copy.ts, ./hero-form.ts, ./plans-query.ts and
@@ -71,6 +86,10 @@ import type {
   LandingNavBadge,
   LandingNavItem,
 } from "@/components/custom/landing/landing-config";
+import {
+  loadSiteMetadata,
+  type SiteMetadataCopy,
+} from "@/components/custom/landing/site-metadata";
 
 /**
  * One fixed destination in the header menu: a route or an external URL the
@@ -100,11 +119,13 @@ export interface HeaderMenuLink {
 }
 
 /**
- * The icons a menu item may name (since 1.18.0). A closed set, resolved by
- * components/custom/header-menu.tsx from lucide-react, so the header bundles
- * a handful of glyphs and not the whole icon library: "box" (a product),
- * "globe" (the web), "smartphone" (mobile), "message-square" (chat), "zap"
- * (automation), "wrench" (tools), "file-text" (documents).
+ * The icons a menu item or action may name (since 1.18.0). A closed set,
+ * resolved by components/custom/header-menu.tsx from lucide-react, so the
+ * header bundles a handful of glyphs and not the whole icon library: "box"
+ * (a product), "globe" (the web), "smartphone" (mobile), "message-square"
+ * (chat), "zap" (automation), "wrench" (tools), "file-text" (documents)
+ * and, since 1.20.0, "chrome" (lucide's own Chrome mark, for a browser
+ * extension action - no third-party asset).
  */
 export type HeaderMenuIcon =
   | "box"
@@ -113,7 +134,37 @@ export type HeaderMenuIcon =
   | "message-square"
   | "zap"
   | "wrench"
-  | "file-text";
+  | "file-text"
+  | "chrome";
+
+/**
+ * What the header's brand slot draws, as the home SDK declares it (since
+ * 1.21.0):
+ *
+ *  - `"none"`: no image at all; the wordmark (the host's branding.tsx) is
+ *    the logo. Supacharge until an icon is designed.
+ *  - a path (`/images/logo.svg`, or an absolute URL): that image, 32px
+ *    square, beside the wordmark.
+ *  - `"auto"`, or nothing declared: a REAL icon only. The `icon` the home
+ *    SDK registered in ./site-metadata.ts when there is one, else the host
+ *    shell's own components/custom/brand-logo.tsx - the mark every shell
+ *    rendered before this field existed, so a shell that declares nothing
+ *    draws exactly what it drew. The generated `/brand-icon` letter tile is
+ *    NEVER the answer here; a path naming it is treated as "auto".
+ */
+export type HeaderBrandLogo = "auto" | "none" | (string & {});
+
+/** The home SDK's brand declaration for the header (since 1.21.0). */
+export interface HeaderBrand {
+  /** What the image slot draws; see HeaderBrandLogo. Default "auto". */
+  logo?: HeaderBrandLogo;
+  /**
+   * Whether the wordmark (the host's branding.tsx) renders beside the
+   * mark. Default true; only a shell whose image already spells its name
+   * turns it off.
+   */
+  wordmark?: boolean;
+}
 
 /**
  * What a home SDK supplies for the header.
@@ -151,6 +202,13 @@ export interface HeaderMenu {
    * of the theme toggle and the auth links. Optional and new in 1.14.0.
    */
   actions?: HeaderMenuAction[];
+  /**
+   * How the header draws the brand (since 1.21.0; Ray, 2026-09-09: "let
+   * home sdk declare if it needs logo there or not"). Optional; a menu
+   * that leaves it out draws the host's own mark beside the wordmark,
+   * exactly as before.
+   */
+  brand?: HeaderBrand;
 }
 
 /**
@@ -188,6 +246,12 @@ export interface HeaderMenuAction {
   variant?: "primary" | "ghost";
   /** Open in a new tab with rel="noopener noreferrer". */
   external?: boolean;
+  /**
+   * A glyph drawn before the label (since 1.20.0), named from the same
+   * closed set as an item's: rokct.ai's extension button carries "chrome".
+   * Without one the button is label only, as before.
+   */
+  icon?: HeaderMenuIcon;
 }
 
 /** The shape of a registered menu module. */
@@ -351,4 +415,92 @@ export async function loadHeaderMenu(): Promise<HeaderMenu | null> {
     }
   }
   return null;
+}
+
+/**
+ * The brand slot, resolved: `"none"` draws nothing, `"host"` draws the
+ * host shell's own brand-logo.tsx, `{ src }` draws that image.
+ */
+export type ResolvedHeaderBrandLogo = "none" | "host" | { src: string };
+
+/** What the header renders in its brand link, resolved by [resolveHeaderBrand]. */
+export interface ResolvedHeaderBrand {
+  logo: ResolvedHeaderBrandLogo;
+  /** Whether the wordmark renders; true unless the home SDK said otherwise. */
+  wordmark: boolean;
+}
+
+/**
+ * The generated favicon route base_sdk installs at app/brand-icon/route.tsx
+ * (app/lib/site-metadata.ts's GENERATED_BRAND_ICON, restated here because
+ * that module reaches for node:fs and this one is bundled for the
+ * browser). The letter tile is for the tab and the share card only.
+ */
+const GENERATED_BRAND_ICON_PATH = "/brand-icon";
+
+/** True for the generated letter tile, as a path or behind any origin. */
+export function isGeneratedBrandIcon(path: string): boolean {
+  const bare = path.trim().replace(/^[a-z][a-z0-9+.-]*:\/\/[^/]+/i, "");
+  return (
+    bare === GENERATED_BRAND_ICON_PATH ||
+    bare.startsWith(`${GENERATED_BRAND_ICON_PATH}?`) ||
+    bare.startsWith(`${GENERATED_BRAND_ICON_PATH}/`)
+  );
+}
+
+/**
+ * The pure rule for the header's brand slot (since 1.21.0). `brand` is the
+ * home SDK's declaration (the menu's `brand`, or nothing when no menu is
+ * registered or it declares none); `copy` is the registered site-metadata
+ * copy, of which only `icon` matters, or null when it was not loaded.
+ *
+ *  - `logo: "none"` answers no image.
+ *  - an explicit path answers that path, unless it names the generated
+ *    /brand-icon tile, which falls through to the "auto" rule.
+ *  - `"auto"` (or nothing) answers the copy's `icon` when it is a real one,
+ *    else "host": the host shell's own brand-logo.tsx.
+ *
+ * The generated tile is never the answer, whatever was declared.
+ */
+export function resolveHeaderBrand(
+  brand: HeaderBrand | null | undefined,
+  copy: Pick<SiteMetadataCopy, "icon"> | null | undefined,
+): ResolvedHeaderBrand {
+  const wordmark = brand?.wordmark !== false;
+  const declared = brand?.logo?.trim() ?? "";
+  if (declared === "none") return { logo: "none", wordmark };
+  if (declared && declared !== "auto" && !isGeneratedBrandIcon(declared)) {
+    return { logo: { src: declared }, wordmark };
+  }
+  const icon = copy?.icon?.trim() ?? "";
+  if (icon && !isGeneratedBrandIcon(icon)) {
+    return { logo: { src: icon }, wordmark };
+  }
+  return { logo: "host", wordmark };
+}
+
+/** True when the declaration needs the registered copy to resolve. */
+export function headerBrandNeedsCopy(brand: HeaderBrand | null | undefined): boolean {
+  const declared = brand?.logo?.trim() ?? "";
+  return declared === "" || declared === "auto" || isGeneratedBrandIcon(declared);
+}
+
+/**
+ * Loads the registered menu's brand declaration and, only when the rule
+ * needs it (nothing declared, "auto", or the refused tile), the registered
+ * site-metadata copy, and answers [resolveHeaderBrand]. Never throws: a
+ * copy that fails to load is logged and the host's own mark is drawn, so
+ * the header always renders.
+ */
+export async function loadHeaderBrand(): Promise<ResolvedHeaderBrand> {
+  const brand = (await loadHeaderMenu())?.brand ?? null;
+  let copy: Pick<SiteMetadataCopy, "icon"> | null = null;
+  if (headerBrandNeedsCopy(brand)) {
+    try {
+      copy = await loadSiteMetadata();
+    } catch (error) {
+      console.error("[landing] failed to load the site copy for the header brand:", error);
+    }
+  }
+  return resolveHeaderBrand(brand, copy);
 }

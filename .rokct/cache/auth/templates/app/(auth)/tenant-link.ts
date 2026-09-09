@@ -24,7 +24,10 @@
 //   2. WHERE do the keys and site this login produced get remembered?
 //      (./auth.ts, after it.)
 //   3. Under WHICH platform administrator does a registration provision?
-//      (./actions.ts, before the provisioning call, and getIndustries().)
+//      (Since 1.7.0 a home SDK's register provisioner, ./register-provision.ts,
+//      asks this; auth_sdk's own default provisions nothing. The register
+//      write itself, linkRegistration(), stayed auth's own: ./register-link.ts,
+//      after ANY provisioner succeeds.)
 //
 // Until now there was exactly one answer to all three: the local Postgres
 // store this SDK installs (db/, lib/drizzle/). That store is a
