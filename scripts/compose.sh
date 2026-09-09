@@ -26,7 +26,8 @@
 #                                      (.rokct/config/app_type ->
 #                                      core/utils/frappe/composer/<app_type>.json),
 #                                      replaces .rokct/cache/<sdk>/ wholesale,
-#                                      rewrites .rokct/lock.json, the
+#                                      rewrites .rokct/lock.json (every SDK's
+#                                      pins and its home_sdk flag), the
 #                                      composed-output block in .gitignore and
 #                                      (only when a dependency changed)
 #                                      pnpm-lock.yaml, and stages the cache.
@@ -217,17 +218,51 @@ def load_vendored_composer():
     return sdk_composer
 
 
-def run_installers(sdk_names):
+def lock_home_sdk(sdks):
+    """Name of the lock entry flagged "home_sdk": true (the flag build_lock()
+    copies from the composer profile), or None for a lock written before the
+    flag existed. Two flagged entries is the ambiguity the flag exists to
+    settle, so it stops the compose - the same rule the composer applies."""
+    flagged = [s["name"] for s in sdks if s.get("home_sdk") is True]
+    if len(flagged) > 1:
+        die(f"lock.json flags {len(flagged)} SDKs as home_sdk ({', '.join(flagged)}); "
+            "exactly one entry may. Fix the registry template and refresh.")
+    return flagged[0] if flagged else None
+
+
+def run_installers(sdks):
     """Run each cached SDK's install.py through the composer's own
     run_installer (same logging, same failure handling), then its
     post-install checklist. Never touches resolve_and_cache_sdks, so nothing
-    is fetched."""
+    is fetched.
+
+    The installers resolve the home SDK from composer.json (the profile the
+    shell was composed from), which an offline compose does not have: the
+    refresh discarded its scratch copy and the file is gitignored. Give them
+    the lock's answer the same way - a scratch composer.json carrying just
+    the sdks[] names and their home_sdk flags, removed again afterwards - so
+    the home SDK's ownership of its files and of the single-answer landing
+    registries holds at deploy time exactly as it does at refresh time. A
+    composer.json already in the tree is the installers' input as it stands."""
     shutil.copyfile(os.path.join(VENDOR_DIR, "sdk_installer_base.py"), RUNTIME_INSTALLER_BASE)
     composer = load_vendored_composer()
-    configs = [{"name": n} for n in sdk_names]
-    for cfg in configs:
-        composer.run_installer(cfg)
-    composer.collect_post_install_checklist(configs)
+    configs = [{"name": s["name"]} for s in sdks]
+    scratch_composer = not os.path.exists(COMPOSER_JSON)
+    if scratch_composer:
+        write_json(COMPOSER_JSON, {
+            "_comment": ("Scratch copy written by `scripts/compose.sh` (offline) from "
+                         ".rokct/lock.json for the SDK installers; removed when the "
+                         "compose ends. Do not commit."),
+            "sdks": [{"name": s["name"], "enabled": True, "home_sdk": s.get("home_sdk") is True}
+                     for s in sdks],
+        })
+    try:
+        for cfg in configs:
+            composer.run_installer(cfg)
+        composer.collect_post_install_checklist(configs)
+    finally:
+        if scratch_composer and os.path.exists(COMPOSER_JSON):
+            os.remove(COMPOSER_JSON)
     if composer.FAILED_SDKS:
         die("Compose FAILED: " + ", ".join(sorted(set(composer.FAILED_SDKS))))
 
@@ -301,12 +336,26 @@ def offline():
     for sdk in sdks:
         print(f"    {sdk['name']:<18} {sdk.get('version') or '?':<8} {(sdk.get('commit') or '?')[:12]}  "
               f"installing from committed {sdk.get('cache')}")
+    home_sdk = lock_home_sdk(sdks)
+    if home_sdk:
+        print(f"[i] home SDK: {home_sdk}")
+    else:
+        print("[i] no home SDK: lock.json carries no home_sdk flag (written before the flag existed) - "
+              "home files land in install order; run `scripts/compose.sh refresh` to record it.")
+    if os.path.exists(COMPOSER_JSON):
+        tree_home = lock_home_sdk([
+            s for s in load_json(COMPOSER_JSON).get("sdks", [])
+            if isinstance(s, dict) and s.get("name") and s.get("enabled", True)
+        ])
+        if tree_home != home_sdk:
+            print(f"[!] composer.json in the tree flags {tree_home or 'no'} home SDK but lock.json flags "
+                  f"{home_sdk or 'none'}; the installers read composer.json. Mirror it to the registry.")
 
     # 3. Install. The refresh commit already carries every dependency the
     #    installers merge into package.json, so a diff here means the commit
     #    was incomplete - fail rather than build against an unlocked tree.
     before = read_bytes(PACKAGE_JSON)
-    run_installers([s["name"] for s in sdks])
+    run_installers(sdks)
     if read_bytes(PACKAGE_JSON) != before:
         die("The installers changed package.json during an offline compose.",
             "The committed package.json/pnpm-lock.yaml are behind the cache - "
@@ -452,6 +501,7 @@ def build_lock(protocol_ref, composer_pins, app_type):
         sdks.append(
             {
                 "name": name,
+                "home_sdk": entry.get("home_sdk") is True,
                 "cache": f".rokct/cache/{clean}",
                 "git": url,
                 "path": entry.get("path", ""),

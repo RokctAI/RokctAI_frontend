@@ -14,6 +14,7 @@
   "sdks": [
     {
       "name": "telemetry_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/telemetry",
       "git": "https://github.com/RokctAI/core",
       "path": "../core/telemetry/nextjs",
@@ -25,6 +26,7 @@
     },
     {
       "name": "base_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/base",
       "git": "https://github.com/RokctAI/core",
       "path": "../core/base/nextjs",
@@ -36,6 +38,7 @@
     },
     {
       "name": "auth_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/auth",
       "git": "https://github.com/RokctAI/Users",
       "path": "../Users/auth/nextjs",
@@ -47,6 +50,7 @@
     },
     {
       "name": "users_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/users",
       "git": "https://github.com/RokctAI/Users",
       "path": "../Users/users/nextjs",
@@ -58,6 +62,7 @@
     },
     {
       "name": "merchants_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/merchants",
       "git": "https://github.com/RokctAI/commerce",
       "path": "../commerce/merchants/nextjs",
@@ -69,6 +74,7 @@
     },
     {
       "name": "support_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/support",
       "git": "https://github.com/RokctAI/productivity",
       "path": "../productivity/support/nextjs",
@@ -80,6 +86,7 @@
     },
     {
       "name": "comms_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/comms",
       "git": "https://github.com/RokctAI/core",
       "path": "../core/comms/nextjs",
@@ -91,6 +98,7 @@
     },
     {
       "name": "gateways_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/gateways",
       "git": "https://github.com/RokctAI/pay",
       "path": "../pay/gateways/nextjs",
@@ -102,6 +110,7 @@
     },
     {
       "name": "wallet_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/wallet",
       "git": "https://github.com/RokctAI/pay",
       "path": "../pay/wallet/nextjs",
@@ -113,6 +122,7 @@
     },
     {
       "name": "products_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/products",
       "git": "https://github.com/RokctAI/commerce",
       "path": "../commerce/products/nextjs",
@@ -124,6 +134,7 @@
     },
     {
       "name": "kitchen_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/kitchen",
       "git": "https://github.com/RokctAI/commerce",
       "path": "../commerce/kitchen/nextjs",
@@ -135,6 +146,7 @@
     },
     {
       "name": "orders_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/orders",
       "git": "https://github.com/RokctAI/commerce",
       "path": "../commerce/orders/nextjs",
@@ -146,6 +158,7 @@
     },
     {
       "name": "booking_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/booking",
       "git": "https://github.com/RokctAI/commerce",
       "path": "../commerce/booking/nextjs",
@@ -157,6 +170,7 @@
     },
     {
       "name": "promotions_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/promotions",
       "git": "https://github.com/RokctAI/commerce",
       "path": "../commerce/promotions/nextjs",
@@ -168,6 +182,7 @@
     },
     {
       "name": "loyalty_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/loyalty",
       "git": "https://github.com/RokctAI/commerce",
       "path": "../commerce/loyalty/nextjs",
@@ -179,6 +194,7 @@
     },
     {
       "name": "erp_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/erp",
       "git": "https://github.com/RokctAI/pay",
       "path": "../pay/erp/nextjs",
@@ -190,6 +206,7 @@
     },
     {
       "name": "crm_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/crm",
       "git": "https://github.com/RokctAI/productivity",
       "path": "../productivity/crm/nextjs",
@@ -201,6 +218,7 @@
     },
     {
       "name": "productivity_sdk",
+      "home_sdk": false,
       "cache": ".rokct/cache/productivity",
       "git": "https://github.com/RokctAI/productivity",
       "path": "../productivity/productivity/nextjs",
@@ -212,6 +230,7 @@
     },
     {
       "name": "agent_sdk",
+      "home_sdk": true,
       "cache": ".rokct/cache/agent",
       "git": "https://github.com/RokctAI/agent",
       "path": "../agent/agent/nextjs",
