@@ -55,7 +55,11 @@ export interface HeroBadge {
    * "app-store" (the Apple mark) or "chrome" (lucide's Chrome mark, the one
    * the header's extension button draws). Absent, or an image with an
    * empty `src`: the badge is not drawn (below `md` it would be an empty
-   * pill), so a badge waits for its icon rather than inventing one.
+   * pill), so a badge waits for its icon rather than inventing one. Since
+   * 1.26.0 base serves the platform marks itself (./brand-marks.ts:
+   * BRAND_MARKS, `/brand/marks/<name>.svg`) - a home SDK's hero copy may
+   * hand one to a badge, typed or as the bare path, and base inverts the
+   * two monochrome ones (App Store, Windows) on the dark shell.
    */
   icon?: { src: string; alt: string } | "app-store" | "chrome";
 }

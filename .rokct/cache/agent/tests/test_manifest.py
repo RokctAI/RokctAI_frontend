@@ -48,12 +48,16 @@ ACTIONS = os.path.join(AUTH_GROUP, "agent-register-actions.ts")
 HEADER_MENU = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-header-menu.ts")
 # 1.13.0: rokct.ai's say over base_sdk 1.23.0's network strip.
 NETWORK_STRIP = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-network-strip.ts")
-# 1.15.0: the Chrome Web Store mark, served by the shell itself.
+# 1.15.0: the Chrome Web Store mark on the hero's badge and the header's
+# extension button. 1.16.0: the files are base_sdk 1.26.0's, installed
+# under public/brand/marks/ on every host; this SDK names their paths and
+# ships nothing under templates/public.
 HERO_COPY = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-hero-copy.ts")
-CHROME_MARK = os.path.join(TEMPLATES, "public", "brand", "marks", "chrome-web-store.svg")
+PUBLIC = os.path.join(TEMPLATES, "public")
+MARKS_DIR = os.path.join(PUBLIC, "brand", "marks")
 CHROME_MARK_PATH = "/brand/marks/chrome-web-store.svg"
-GOOGLE_PLAY_MARK = os.path.join(TEMPLATES, "public", "brand", "marks", "google-play.svg")
 GOOGLE_PLAY_MARK_PATH = "/brand/marks/google-play.svg"
+APP_STORE_MARK_PATH = "/brand/marks/app-store.svg"
 
 # The modules the node suites run against, staged into one directory.
 STAGED = {
@@ -204,6 +208,16 @@ class TestManifest(unittest.TestCase):
         self.assertIn("1.25.0", comment["components/custom/header-menu.tsx"])
         self.assertIn("base_sdk >= 1.23.0", comment["components/custom/landing/hero-config.ts"])
         self.assertIn("base_sdk >= 1.23.0", comment["components/custom/landing/hero-copy.ts"])
+        # 1.16.0: the marks are base_sdk 1.26.0's files, so the floor is 1.26.0.
+        self.assertIn("base_sdk >= 1.26.0", read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.15.0")[0])
+        self.assertIn("1.26.0", comment["about"])
+        for key in (
+            "components/custom/landing/header-menu.ts",
+            "components/custom/header-menu.tsx",
+            "components/custom/landing/hero-config.ts",
+            "components/custom/landing/hero-copy.ts",
+        ):
+            self.assertIn("base_sdk >= 1.26.0", comment[key], key)
         self.assertIn("auth_sdk >= 1.7.0", comment["components/custom/auth/register-registry.ts"])
         self.assertIn("auth_sdk >= 1.7.0", comment["app/(auth)/register-provision.ts"])
         self.assertIn("auth_sdk >= 1.6.0", comment["app/(auth)/tenant-link.ts"])
@@ -311,44 +325,18 @@ class TestRegisterInjection(unittest.TestCase):
         # The header and the hero name the same file.
         self.assertEqual(read(HERO_COPY).count(f'src: "{CHROME_MARK_PATH}",'), 1)
 
-    def assert_clean_mark(self, path, view_box):
-        """A plain SVG the shell serves itself: parses, carries nothing
-        unsafe, references no host - every reference a fragment of itself."""
-        self.assertTrue(os.path.exists(path), path)
-        svg = read(path)
-        self.assertLess(len(svg.encode("utf-8")), 8192)
-        import xml.etree.ElementTree as ET
-        root = ET.fromstring(svg)
-        self.assertEqual(root.tag, "{http://www.w3.org/2000/svg}svg")
-        self.assertEqual(root.get("viewBox"), view_box)
-        tags = {el.tag.split("}")[-1] for el in root.iter()}
-        for unsafe in ("script", "foreignObject", "image", "font", "font-face", "style", "a", "use"):
-            self.assertNotIn(unsafe, tags, f"{os.path.basename(path)} carries <{unsafe}>")
-        for el in root.iter():
-            for name, value in el.attrib.items():
-                self.assertFalse(name.endswith("href"), f"{el.tag} {name}")
-                if "url(" in value:
-                    self.assertRegex(value, r"^url\(#[A-Za-z0-9_]+\)$")
-        self.assertEqual(re.findall(r"https?://", svg), ["http://"])  # the xmlns only
-        self.assertNotIn("getmerlin", svg)
-        return svg
-
-    def test_chrome_mark_is_installed_locally(self):
-        # The file itself: a plain SVG under public/brand/marks/, installed
-        # through the same public/brand mapping lms_sdk's marks use.
+    def test_marks_are_base_sdks_not_this_sdks(self):
+        # 1.16.0: base_sdk 1.26.0 installs the platform marks under
+        # public/brand/marks/ on every host, so this SDK ships none of them
+        # - no templates/public at all - and installs nothing under public/.
+        # The 1.15.0 copies (chrome-web-store.svg, google-play.svg) and the
+        # public/brand mapping that carried them are gone.
+        self.assertFalse(os.path.exists(MARKS_DIR), MARKS_DIR)
+        self.assertFalse(os.path.exists(PUBLIC), PUBLIC)
         manifest = load_manifest()
-        self.assertIn(("templates/public/brand", "public/brand"), [(i["from"], i["to"]) for i in manifest["installs"]])
-        self.assert_clean_mark(CHROME_MARK, "0 0 29 26")
-
-    def test_google_play_mark_is_installed_locally(self):
-        # Ray, 2026-09-09: "we use what these platforms use for
-        # familiarity" - the coloured Play triangle in Google's own brand
-        # colours, the drawing rokct's hero showed before base 1.23.0
-        # stripped its CDN source, as a local file.
-        svg = self.assert_clean_mark(GOOGLE_PLAY_MARK, "0 0 25 26")
-        fills = set(re.findall(r'fill="(#[0-9A-Fa-f]{6})"', svg))
-        self.assertEqual(fills, {"#EA4335", "#FBBC04", "#4285F4", "#34A853"})
-        self.assertEqual(svg.count("<path"), 4)
+        for entry in manifest["installs"]:
+            self.assertFalse(entry["from"].startswith("templates/public"), entry["from"])
+            self.assertFalse(entry["to"].startswith("public"), entry["to"])
 
     def test_hero_copy_is_registered_where_base_looks(self):
         # 1.15.0: the same mark on the hero's Chrome Web Store badge, as
@@ -376,27 +364,38 @@ class TestRegisterInjection(unittest.TestCase):
         marks = src[src.index("export const LOCAL_MARKS"):src.index("};", src.index("export const LOCAL_MARKS"))]
         self.assertIn("chrome: CHROME_WEB_STORE_MARK,", marks)
         self.assertIn('"google-play": GOOGLE_PLAY_MARK,', marks)
-        self.assertNotIn("app-store", marks)  # the App Store badge keeps base's Apple glyph
+        # 1.16.0: the App Store badge draws base's official file too, in
+        # place of base's built-in Apple glyph.
+        self.assertIn('"app-store": APP_STORE_MARK,', marks)
         self.assertIn(f'src: "{GOOGLE_PLAY_MARK_PATH}",', src)
         self.assertIn('alt: "Google Play",', src)
+        self.assertIn(f'src: "{APP_STORE_MARK_PATH}",', src)
+        self.assertIn('alt: "App Store",', src)
         self.assertIn("return mark ? { ...badge, icon: mark } : badge;", src)
+        # Every mark the hero and the header name is one of base_sdk
+        # 1.26.0's files under /brand/marks/, never a file of this SDK's
+        # and never a host.
+        for path in (HERO_COPY, HEADER_MENU):
+            for value in re.findall(r'src: "([^"]+)"', read(path)):
+                self.assertRegex(value, r"^/brand/marks/[a-z-]+\.svg$", path)
+        self.assertEqual(
+            sorted(set(re.findall(r'src: "([^"]+)"', src))),
+            [APP_STORE_MARK_PATH, CHROME_MARK_PATH, GOOGLE_PLAY_MARK_PATH],
+        )
         # Multi-colour marks: no dark-mode inversion, and this SDK ships no CSS.
         self.assertNotIn("invert", src)
         self.assertFalse([i for i in manifest["installs"] if i["from"].endswith(".css")])
 
     def test_header_and_hero_surfaces_name_no_third_party_host(self):
-        # The header menu, the hero copy and the marks directory name no
-        # host but the store the button opens; cdn.getmerlin.in, which the
-        # old header hot-linked the mark from, appears nowhere in them.
+        # The header menu and the hero copy name no host but the store the
+        # button opens; cdn.getmerlin.in, which the old header hot-linked
+        # the mark from, appears nowhere in them.
         # (agent-landing-config.ts still hot-links its section images from
         # that CDN - known placeholders under Ray's 15:02Z ruling, out of
         # this release's scope and not asserted here.)
         # The store the button opens, the SVG namespace, the licence header.
         allowed = {"chromewebstore.google.com", "www.w3.org", "www.gnu.org"}
-        paths = [HEADER_MENU, HERO_COPY]
-        marks = os.path.dirname(CHROME_MARK)
-        paths += [os.path.join(marks, f) for f in sorted(os.listdir(marks))]
-        for path in paths:
+        for path in (HEADER_MENU, HERO_COPY):
             with self.subTest(file=os.path.relpath(path, SDK_ROOT)):
                 src = read(path)
                 self.assertNotIn("getmerlin", src)

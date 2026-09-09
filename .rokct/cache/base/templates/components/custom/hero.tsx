@@ -33,6 +33,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Chrome } from "lucide-react";
 
 import { BrandLogo } from "@/components/custom/brand-logo";
+import { markImageClass } from "@/components/custom/landing/brand-marks";
 import { Branding } from "@/components/custom/branding";
 import {
   HERO_CONFIG,
@@ -100,7 +101,19 @@ function BadgeIcon({ icon }: { icon: HeroBadge["icon"] }) {
     );
   }
   if (!icon.src.trim()) return null;
-  return <Image src={icon.src} alt={icon.alt} width={24} height={24} />;
+  // 1.26.0: a monochrome mark base serves itself (/brand/marks/app-store.svg,
+  // /brand/marks/windows.svg) is `currentColor` inside an <img>, i.e. black,
+  // so it carries `dark:invert` on the dark shell; the rule is brand-marks.ts'
+  // markImageClass, keyed on the src alone. Every other image: no filter.
+  return (
+    <Image
+      src={icon.src}
+      alt={icon.alt}
+      width={24}
+      height={24}
+      className={markImageClass(icon.src)}
+    />
+  );
 }
 
 export function Hero({

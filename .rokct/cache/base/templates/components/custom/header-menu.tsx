@@ -64,6 +64,7 @@ import type {
   HeaderMenuItem,
   HeaderMenuResolvedGroup,
 } from "@/components/custom/landing/header-menu";
+import { markImageClass } from "@/components/custom/landing/brand-marks";
 import { MenuLabel } from "@/components/custom/menu-label";
 import { cn } from "@/lib/utils";
 
@@ -523,7 +524,10 @@ export function HeaderMenuActions({
         // icon named renders the label alone, as before. 1.25.0: an image
         // the shell serves itself draws in the same slot, as a plain <img>
         // the way the header draws a declared brand image (Ray, 2026-09-09:
-        // "use it but bring it local").
+        // "use it but bring it local"). 1.26.0: a monochrome mark base serves
+        // itself (brand-marks.ts, `mono`) is black inside an <img>, so it
+        // carries `dark:invert` on the dark shell - markImageClass, keyed on
+        // the src; a coloured mark, or any other image, gets no filter.
         const icon = actionIcon(action.icon);
         const Icon = icon && "glyph" in icon ? icon.glyph : null;
         const image = icon && "image" in icon ? icon.image : null;
@@ -537,7 +541,7 @@ export function HeaderMenuActions({
                 alt={image.alt}
                 width={20}
                 height={20}
-                className="h-5 w-5 shrink-0 object-contain"
+                className={cn("h-5 w-5 shrink-0 object-contain", markImageClass(image.src))}
               />
             )}
             <span>{action.label}</span>

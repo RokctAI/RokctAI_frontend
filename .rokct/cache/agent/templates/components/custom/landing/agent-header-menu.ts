@@ -70,12 +70,13 @@
 // button the old nav drew it as, not the outlined `ghost`.
 //
 // Since 1.15.0 (base_sdk 1.25.0) the extension button draws the Chrome
-// Web Store MARK the old header drew, from this SDK's own public file
+// Web Store MARK the old header drew, from a public file of the shell's
 // rather than the third party's CDN the old header hot-linked it from.
 // Ray, 2026-09-09: "i dont think merlin owns [the icon] so use it but
-// bring it local". The file is templates/public/brand/marks/
-// chrome-web-store.svg, installed to public/brand/marks/, and the hero's
-// Chrome Web Store badge (./agent-hero-copy.ts) names the same path.
+// bring it local". Since 1.16.0 (base_sdk 1.26.0) that file is base's:
+// base installs public/brand/marks/chrome-web-store.svg on every host and
+// this SDK only names the path, which is how a home SDK opts in. The
+// hero's Chrome Web Store badge (./agent-hero-copy.ts) names the same path.
 
 import type { HeaderMenu } from "@/components/custom/landing/header-menu";
 import { getBrandingSync } from "@/app/config/platform";
@@ -84,10 +85,11 @@ import t from "@/app/lib/i18n";
 const CHROME_WEB_STORE = "https://chromewebstore.google.com/";
 
 /**
- * The Chrome Web Store mark on the extension button (1.15.0): the SVG this
- * SDK installs under public/brand/marks/, the drawing the old header
- * hot-linked, served by the shell itself. ./agent-hero-copy.ts names the
- * same file for the hero's badge; keep the two literals identical.
+ * The Chrome Web Store mark on the extension button (1.15.0): the SVG
+ * base_sdk 1.26.0 installs under public/brand/marks/ (this SDK's own file
+ * until 1.16.0), the drawing the old header hot-linked, served by the
+ * shell itself. ./agent-hero-copy.ts names the same file for the hero's
+ * badge; keep the two literals identical.
  */
 const CHROME_WEB_STORE_MARK = {
   src: "/brand/marks/chrome-web-store.svg",
