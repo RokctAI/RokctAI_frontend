@@ -29,11 +29,17 @@
 // at about 62% of the square's height, in the sans face next/og bundles
 // (regular is the only weight it ships, so fontWeight 700 is a wish
 // satori grants only when a bolder face is available - no font fetch,
-// same as the card). The letter is the first character of the site host
-// - NEXT_PUBLIC_SITE_URL, else the copy's `url`, else the origin of the
-// request being answered - with a leading "www." stripped and the
-// character uppercased; when the host gives no letter or digit the site
-// name's first character is used, and failing that "R".
+// same as the card). The letter is the first character of the host the
+// shell shows (resolveDisplayHost in app/lib/site-metadata.ts, since
+// 1.19.0): the REQUEST's host first - `x-forwarded-host`, else `host`,
+// port and a leading "www." stripped - so a white-label or custom domain
+// in front of the same deployment gets its own letter; unless that host
+// is not a public one (localhost, 127.0.0.1, [::1], 0.0.0.0, anything
+// ending .vercel.app, .local or .internal, or none), in which case the
+// configured site's host - NEXT_PUBLIC_SITE_URL, else the copy's `url` -
+// so a preview or a local run keeps the site's letter. The character is
+// uppercased; when the host gives no letter or digit the site name's
+// first character is used, and failing that "R".
 //
 // The letter is drawn in the shell's PRIMARY colour (Ray, 2026-09-09:
 // "that letter should take color of primary color"), never a hard-coded
@@ -50,7 +56,7 @@
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 
-import { resolveSiteUrl } from "@/app/lib/site-metadata";
+import { resolveDisplayHost } from "@/app/lib/site-metadata";
 import { loadSiteMetadata } from "@/components/custom/landing/site-metadata";
 
 export const runtime = "nodejs";
@@ -93,16 +99,6 @@ function parseIconSize(raw: string | null): number {
   return Math.min(MAX_ICON_SIZE, Math.max(MIN_ICON_SIZE, n));
 }
 
-/** The host of a URL or origin with any leading "www." removed; null when it is not a URL. */
-function hostOf(url: string | undefined): string | null {
-  if (!url) return null;
-  try {
-    return new URL(url).hostname.replace(/^www\./i, "");
-  } catch {
-    return null;
-  }
-}
-
 /** The first letter or digit of `text`, uppercased; null when there is none. */
 function firstGlyph(text: string | null | undefined): string | null {
   if (!text) return null;
@@ -111,17 +107,16 @@ function firstGlyph(text: string | null | undefined): string | null {
 }
 
 /**
- * The letter the tile carries: the site host's first letter, else the
- * request host's, else the site name's, else FALLBACK_LETTER.
+ * The letter the tile carries: the shown host's first letter (the request
+ * host when it is a public one, else the configured site's), else the
+ * site name's, else FALLBACK_LETTER.
  */
 function pickLetter(
-  siteHost: string | null,
-  requestHost: string | null,
+  displayHost: string | null,
   siteName: string | undefined,
 ): string {
   return (
-    firstGlyph(siteHost) ??
-    firstGlyph(requestHost) ??
+    firstGlyph(displayHost) ??
     firstGlyph(siteName) ??
     FALLBACK_LETTER
   );
@@ -285,23 +280,11 @@ async function resolvePrimary(themeColor: string | undefined): Promise<Rgb> {
   return (await globalsPrimary()) ?? (parseColor(FALLBACK_LETTER_COLOR) as Rgb);
 }
 
-/** The origin the request came in on, from the forwarded headers or the host header. */
-function requestOrigin(request: NextRequest): string | undefined {
-  const host =
-    request.headers.get("x-forwarded-host") ?? request.headers.get("host");
-  if (!host) return undefined;
-  const proto =
-    request.headers.get("x-forwarded-proto") ??
-    (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
-  return `${proto}://${host}`;
-}
-
 export async function GET(request: NextRequest) {
   const size = parseIconSize(request.nextUrl.searchParams.get("s"));
   const copy = await loadSiteMetadata();
   const letter = pickLetter(
-    hostOf(resolveSiteUrl(copy)),
-    hostOf(requestOrigin(request)),
+    resolveDisplayHost(copy, request.headers),
     copy.siteName || copy.title,
   );
 

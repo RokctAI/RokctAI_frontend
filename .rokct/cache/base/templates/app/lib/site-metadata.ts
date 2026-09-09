@@ -36,6 +36,17 @@
 // registered `copy.icon` is linked next; and with none of those the links
 // point at app/brand-icon/route.tsx, the generated tile with the domain's
 // first letter. Nothing here ever replaces an icon the host already has.
+//
+// Since 1.19.0 the host a shell SHOWS - the letter on that tile and the
+// host line on the generated link-preview card - follows the REQUEST
+// first (resolveDisplayHost): a white-label or custom domain in front of
+// the same deployment gets its own letter and its own host line, from
+// the `x-forwarded-host` / `host` header of the request being answered.
+// A request host that is not a public one - localhost, a loopback or
+// unspecified address, a `.vercel.app` preview, a `.local` or
+// `.internal` name - keeps the CONFIGURED site's host (NEXT_PUBLIC_SITE_URL,
+// else the copy's `url`), so previews and local runs still show the site
+// they are a preview of, and only then the site name.
 
 import type { Metadata } from "next";
 
@@ -84,6 +95,114 @@ export function resolveSiteUrl(
 ): string | undefined {
   const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   return fromEnv || copy.url?.trim() || undefined;
+}
+
+/**
+ * Request hosts that are never a site's own domain: the loopback and
+ * unspecified addresses a local run answers on. Matched whole, after
+ * normaliseHost (port and "www." stripped, lower-cased).
+ */
+export const NON_PUBLIC_HOSTS = [
+  "localhost",
+  "127.0.0.1",
+  "[::1]",
+  "::1",
+  "0.0.0.0",
+] as const;
+
+/**
+ * Suffixes of request hosts that are never a site's own domain: platform
+ * preview deployments and private-network names. A host that ends in one
+ * is treated like a local one.
+ */
+export const NON_PUBLIC_HOST_SUFFIXES = [
+  ".vercel.app",
+  ".local",
+  ".internal",
+] as const;
+
+/**
+ * Anything with a `get(name)`: the Headers of a request, or what
+ * `headers()` from next/headers resolves to.
+ */
+export type HeaderReader = Pick<Headers, "get">;
+
+/** The host without its port: `[::1]:3000` is `[::1]`, `shop.rokct.ai:443` is `shop.rokct.ai`. */
+function stripPort(host: string): string {
+  if (host.startsWith("[")) {
+    const end = host.indexOf("]");
+    return end < 0 ? host : host.slice(0, end + 1);
+  }
+  const colon = host.indexOf(":");
+  return colon < 0 ? host : host.slice(0, colon);
+}
+
+/**
+ * A host header value as a comparable host name: the first value when
+ * the header is comma-separated (a proxy chain appends), trimmed, the
+ * port dropped, a leading "www." removed, lower-cased. Null when nothing
+ * is left.
+ */
+export function normaliseHost(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const first = raw.split(",", 1)[0].trim();
+  if (!first) return null;
+  const host = stripPort(first).replace(/^www\./i, "").toLowerCase();
+  return host || null;
+}
+
+/**
+ * True when a normalised host could be a site's own domain: not empty,
+ * not one of NON_PUBLIC_HOSTS, not ending in one of
+ * NON_PUBLIC_HOST_SUFFIXES.
+ */
+export function isPublicHost(host: string | null | undefined): host is string {
+  if (!host) return false;
+  if ((NON_PUBLIC_HOSTS as readonly string[]).includes(host)) return false;
+  return !NON_PUBLIC_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
+}
+
+/**
+ * The host the request came in on, normalised: `x-forwarded-host` (what
+ * the proxy in front of the deployment saw) first, else `host`. Null
+ * with no headers or neither header.
+ */
+export function requestHost(headers: HeaderReader | null | undefined): string | null {
+  if (!headers) return null;
+  return normaliseHost(headers.get("x-forwarded-host")) ?? normaliseHost(headers.get("host"));
+}
+
+/** The host of the configured site url (resolveSiteUrl), normalised; null when it is not a URL. */
+export function siteHost(copy: Pick<SiteMetadataCopy, "url">): string | null {
+  const url = resolveSiteUrl(copy);
+  if (!url) return null;
+  try {
+    return normaliseHost(new URL(url).host);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The host a shell SHOWS - the letter on the generated favicon tile, the
+ * host line on the generated link-preview card. The request host first,
+ * so a white-label or custom domain in front of the same deployment gets
+ * its own letter and host line; UNLESS that host is not a public one
+ * (isPublicHost: localhost, 127.0.0.1, [::1], 0.0.0.0, anything ending
+ * `.vercel.app`, `.local` or `.internal`, or no host at all), in which
+ * case the CONFIGURED site's host - NEXT_PUBLIC_SITE_URL, else the copy's
+ * `url` - so a preview deployment or a local run keeps the site's own
+ * letter and host line; and with neither, the site name (or title), so
+ * a caller always has something to print. Null only when there is
+ * nothing at all.
+ */
+export function resolveDisplayHost(
+  copy: Pick<SiteMetadataCopy, "url" | "siteName" | "title">,
+  headers: HeaderReader | null | undefined,
+): string | null {
+  const fromRequest = requestHost(headers);
+  if (isPublicHost(fromRequest)) return fromRequest;
+  return siteHost(copy) || copy.siteName?.trim() || copy.title?.trim() || null;
 }
 
 /** Parses the origin into a URL, or undefined (logged) when it is not one. */

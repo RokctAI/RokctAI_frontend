@@ -43,6 +43,16 @@
 // single-column card, a ready-made preview that will not load falls back
 // to the drawn one.
 //
+// The host printed on the card follows the REQUEST first (since 1.19.0,
+// resolveDisplayHost in app/lib/site-metadata.ts): a white-label or
+// custom domain in front of the same deployment prints its own host;
+// a request host that is not a public one (localhost, 127.0.0.1, [::1],
+// 0.0.0.0, anything ending .vercel.app, .local or .internal, or none -
+// static generation, say) prints the configured site's host instead -
+// NEXT_PUBLIC_SITE_URL, else the copy's `url` - and with neither the site
+// name. Assets are unchanged: the request origin first, the configured
+// site url only when there is no request.
+//
 // app/twitter-image.tsx re-exports this so both cards are one picture.
 
 import { ImageResponse } from "next/og";
@@ -50,6 +60,7 @@ import { headers } from "next/headers";
 
 import {
   isPreviewImage,
+  resolveDisplayHost,
   resolveSiteUrl,
 } from "@/app/lib/site-metadata";
 import {
@@ -79,21 +90,29 @@ interface FetchedAsset {
 }
 
 /**
- * The origin of the request being answered, from the forwarded headers or
- * the host header; undefined outside a request (static generation, say).
+ * The headers of the request being answered; undefined outside a request
+ * (static generation, say), where `headers()` throws.
  */
-async function requestOrigin(): Promise<string | undefined> {
+async function requestHeaders(): Promise<Headers | undefined> {
   try {
-    const h = await headers();
-    const host = h.get("x-forwarded-host") ?? h.get("host");
-    if (!host) return undefined;
-    const proto =
-      h.get("x-forwarded-proto") ??
-      (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
-    return `${proto}://${host}`;
+    return await headers();
   } catch {
     return undefined;
   }
+}
+
+/**
+ * The origin of the request being answered, from the forwarded headers or
+ * the host header; undefined outside a request.
+ */
+function requestOrigin(h: Headers | undefined): string | undefined {
+  if (!h) return undefined;
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  if (!host) return undefined;
+  const proto =
+    h.get("x-forwarded-proto") ??
+    (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
+  return `${proto}://${host}`;
 }
 
 function guessType(path: string, fallback: string): string {
@@ -261,25 +280,18 @@ function stillBox(asset: FetchedAsset): { width: number; height: number } | null
   return { width: STILL_WIDTH, height: Math.round(STILL_WIDTH / ratio) };
 }
 
-function displayHost(origin: string | undefined): string | null {
-  if (!origin) return null;
-  try {
-    return new URL(origin).host;
-  } catch {
-    return null;
-  }
-}
-
 export default async function OpenGraphImage() {
   const copy = await loadSiteMetadata();
   // Assets come from the server answering this request first - it is the
   // one that certainly serves its own public/ - and from the configured
   // site url only when there is no request (static generation). The host
-  // printed on the card is the other way round: the site's public origin.
+  // printed on the card is the request's too when it is a public one (a
+  // custom domain prints itself), else the configured site's.
   const configured = resolveSiteUrl(copy);
-  const request = await requestOrigin();
+  const h = await requestHeaders();
+  const request = requestOrigin(h);
   const origin = request ?? configured;
-  const host = displayHost(configured ?? request);
+  const host = resolveDisplayHost(copy, h);
 
   if (isPreviewImage(copy.ogImage)) {
     const ready = await fetchAsset(copy.ogImage, origin);
