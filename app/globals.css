@@ -42,8 +42,8 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 244 40% 63%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 48 96% 53%;
+    --primary-foreground: 0 0% 0%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
@@ -69,7 +69,7 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 244 40% 63%;
+    --primary: 48 96% 53%;
     --primary-foreground: 240 5.9% 10%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
@@ -172,18 +172,18 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #facc15;
+  background: hsl(var(--primary));
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #eab308;
+  background: hsl(45 93% 47%);
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #facc15;
+  background: hsl(var(--primary));
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #eab308;
+  background: hsl(45 93% 47%);
 }

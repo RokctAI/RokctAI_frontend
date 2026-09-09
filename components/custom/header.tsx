@@ -77,7 +77,7 @@ export function Header({
 
     if (label === "soon") {
       return (
-        <span className="text-[9px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none shrink-0">
+        <span className="text-[9px] bg-primary text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none shrink-0">
           {t("common.soon")}
         </span>
       );
@@ -85,7 +85,7 @@ export function Header({
 
     if (label === "new") {
       return (
-        <span className="text-[9px] bg-yellow-400 text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none shrink-0">
+        <span className="text-[9px] bg-primary text-black px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none shrink-0">
           {t("common.new")}
         </span>
       );
@@ -546,7 +546,7 @@ export function Header({
               <Link
                 href={PLATFORM_FEATURES[1].href}
                 target="_blank"
-                className="flex items-center gap-2 px-3 py-1.5 bg-yellow-400 text-black rounded-md text-[13px] font-medium hover:bg-yellow-300 transition-all"
+                className="flex items-center gap-2 px-3 py-1.5 bg-primary text-black rounded-md text-[13px] font-medium hover:bg-primary/90 transition-all"
               >
                 <Image
                   src="https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg"
@@ -652,9 +652,8 @@ export function Header({
               <Link
                 href={PLATFORM_FEATURES[1].href}
                 target="_blank"
-                className="block text-xl font-bold text-white text-center py-4 bg-[#4f46e5] rounded-2xl"
+                className="block text-xl font-bold text-black text-center py-4 bg-primary rounded-2xl"
               >
-                Add{" "}
                 {t("header.add_extension", {
                   platform: PLATFORM_NAME.toUpperCase(),
                 })}
