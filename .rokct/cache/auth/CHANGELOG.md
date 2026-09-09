@@ -1,3 +1,111 @@
+## 1.7.0
+
+Requires base_sdk >= 1.20.0 (`app/services/base/tenant-host-control.ts`).
+
+* **The tenant-host switch.** `middleware.ts` asks base_sdk's
+  `resolveTenantSiteForRequest` which tenant site, if any, the host a request
+  arrived on belongs to - a custom domain a tenant pointed at this
+  deployment, resolved at the control site and cached; never a non-public
+  host, never the configured site's own host, never thrown. With NOTHING
+  resolved the request is handed to NextAuth exactly as before: the
+  storefront. With a site: the request goes on with the
+  `x-rokct-tenant-site` header set; `/` and `/landing` are REWRITTEN to
+  `/login` (the URL stays); `/register` is REDIRECTED to `/login`; every
+  other path keeps today's path/role logic with the header. NextAuth's gate
+  runs first on every path, so a signed-in user still lands on their
+  dashboard from `/`; the switch only reshapes the gate's pass-through
+  answers, and its cookies travel on the replacement. The decision is pure
+  and tested: `app/(auth)/tenant-host.ts` (`TENANT_LOGIN_PATH`,
+  `TENANT_HOME_PATHS`, `TENANT_REGISTER_PATHS`, `tenantHostDecision`,
+  `isPassThrough`, `resolveTenantSite`).
+* **`/login` is one path with two forms.** `app/(auth)/login/page.tsx` is a
+  server switch: with a `site_name` query parameter (it wins) or the
+  forwarded header it renders the tenant portal login
+  (`components/custom/paas-login.tsx`, which takes the site as a
+  `tenantSite` prop when the query names none and posts to
+  `https://<site>` and nowhere else); otherwise the platform's own sign-in,
+  now `login/login-view.tsx` - the client page this file used to be, moved
+  verbatim. The `login` action falls back to the header when the form
+  named no site. Unknown hosts never render a portal against the control
+  site: without a resolved site there is no portal.
+* **The register registry** (Ray, 2026-09-09: "register is not fitting for
+  all, what rokct need is not what all needs, any home sdk need to inject
+  what it needs, just like dart auth sdk has"). The Dart auth SDK owns the
+  register FLOW and nothing product-specific: the home SDK flips
+  `AuthRegistrationConfig` flags through a manifest integration at the
+  installed shell's `// @auth-registration-config` placeholder, contributes
+  post-account steps (`RegistrationStep`: visible, skippable, content)
+  through its manifest `registration_steps` list into
+  `@generated-registration-steps`, and extends completion at
+  `@registration-complete-hook`. Mirrored here as two one-marker,
+  single-answer registries in `tenant-link.ts`'s shape:
+  * `components/custom/auth/register-registry.ts`
+    (`// @rokct-sdk-register-start`; one line,
+    `{ id: "<sdk>-register", load: () => import("@/components/custom/auth/<file>") },`):
+    a `RegisterConfig` - `enabled` (false: the register page redirects to
+    `TENANT_LOGIN_PATH`, the tenant host's own path), `copy` (title,
+    subtitle, cta, signInPrompt, signInLabel), `fields` (`RegisterField`:
+    name, label, type, placeholder, required, defaultValue, `fromQuery`,
+    autoComplete, hint, options, `loadOptions`, span) rendered after the
+    account fields by `auth-form.tsx`, and `steps` (`RegisterStep`: id,
+    label, skippable, `load` -> a component taking `next`, `skip`, `email`,
+    `siteName`) run one after another by `register/register-view.tsx` once
+    the account exists. `loadRegisterConfig()` answers the first entry that
+    loads, laid over `DEFAULT_REGISTER_CONFIG`.
+  * `app/(auth)/register-provision.ts`
+    (`// @rokct-sdk-register-provision-start`; one line,
+    `{ id: "<sdk>-register-provision", load: () => import("@/app/(auth)/<file>") },`):
+    a `RegisterProvisioner` whose `provision(submission)` - email, password,
+    firstName, lastName, `values` (every extra field by name), `tenantSite`
+    - answers a `RegisterOutcome`: `success` with an optional `signIn`
+    (email, password, siteName, extra) and `message`, or `failed` /
+    `user_exists` / `invalid_data` with `error`. A separate server-side
+    file so no server module is reachable from the client-safe config.
+  * With NOTHING registered: auth_sdk's own register page - first name,
+    last name, email, password, the platform's words - and the default
+    provisioner `app/(auth)/register-provision-default.ts`: the platform's
+    guest `api.user.register_user` on the tenant site the request is for
+    (the Dart `AuthRepository`'s own sign-up call), then a sign-in. Never
+    the control site.
+  * **Moved OUT of auth_sdk**, for agent_sdk to inject through the two
+    registries in a later release: everything `register()` and
+    `auth-form.tsx` carried inline for one product - company and tenant
+    provisioning at the control site under a platform administrator's keys
+    (`control:provision_service_subscription`,
+    `control:provision_new_tenant`, the `adminCredentials` read), the plan
+    select and the `?plan=` prefill, the industry catalogue
+    (`getIndustries()`, gone from `actions.ts`), the country and currency
+    lookup (`get_pricing_metadata`), the voucher and the service-plan
+    domain, and the plan-dependent auto-login rule.
+    `lib/actions/getSubscriptionPlans.ts` stays installed (other files may
+    import it) but nothing in auth_sdk reads it any more.
+  * `register/page.tsx` is now a server component that reads the config,
+    redirects when register is off, and prefills `fromQuery` fields from
+    the URL; the form itself still server-renders as ordinary HTML.
+* **The local user row is still written on register.** Moving the
+  provisioning out did not move the persistence with it: after ANY
+  provisioner succeeds - the default or an injected one - `register()`
+  links the account locally through the shell's tenant link exactly where
+  1.6.0 did (after provisioning, before the auto-login, unconditionally):
+  `app/(auth)/register-link.ts` `linkRegisteredAccount()` writes the email
+  and the site (the outcome's `siteName`, else the tenant site the request
+  came from) with the 1.6.0 onboarding record through
+  `loadTenantLink().linkRegistration()`. That row is the multi-tenancy store
+  (Ray, 2026-09-08): it maps a user to the base URL they came from, a later
+  login only updates it, and whether anything is written stays the
+  per-shell `ROKCT_TENANT_LINK` choice - never a deletion. A provisioner
+  never sees the local store.
+* `README.md` (new): the host switch, the register contract and a worked
+  example. `tests/` (new): `test_manifest.py` in base_sdk's style, and two
+  node suites it runs - `tenant-host.test.mts` (a resolved host rewrites
+  `/` and `/landing` and redirects `/register`, every other path passes;
+  pass-through detection; query-over-header site resolution) and
+  `register-registry.test.mts` (nothing injected is the default page;
+  an injected config replaces copy, fields and steps; an injected
+  provisioner replaces the default; `enabled: false` is not offered),
+  and `register-link.test.mts` (the local row is written after a
+  provisioner succeeds, for the outcome's site, else the request's).
+
 ## 1.6.0
 
 * **Login and register no longer decide for themselves that the answer is a

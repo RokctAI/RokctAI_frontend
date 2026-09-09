@@ -45,6 +45,18 @@
 // rokct.ai renders it in its palette and Supacharge in its own without
 // either editing this file.
 //
+// Since 1.21.0 the home SDK says what the brand slot draws (Ray,
+// 2026-09-09: "i saw supacharge got a s logo in header, let home sdk
+// declare if it needs logo there or not. supacharge text is the logo right
+// now until i design an icon"). The menu's `brand.logo` is "none" (no
+// image, the wordmark is the logo), a path (that image) or "auto" (a real
+// icon: the copy's registered `icon`, else the host's own brand-logo.tsx -
+// the mark every shell drew before, so nothing declared draws what it drew
+// before). The declaration is loaded through next/dynamic, the way the
+// hero loads its form, so the first paint on the server already carries
+// the right mark and the "S" never flashes. The generated /brand-icon
+// letter tile is for the tab and the share card and is never drawn here.
+//
 // The public API is the one the two shells' own headers had, so the pages
 // that already render <Header> (the auth pages, status, careers) compile
 // unchanged: loginUrl / signupUrl / session, and the openLoginPopup /
@@ -62,10 +74,12 @@
 // own pt-16 is unchanged from 1.13.0 either way).
 
 import React, { useCallback, useEffect, useId, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
+import { PLATFORM_NAME } from "@/app/config/platform";
 import t from "@/app/lib/i18n";
 import { BrandLogo } from "@/components/custom/brand-logo";
 import { Branding } from "@/components/custom/branding";
@@ -75,14 +89,19 @@ import {
   HeaderMenuNav,
 } from "@/components/custom/header-menu";
 import {
+  HEADER_MENU,
+  loadHeaderBrand,
   loadHeaderMenu,
+  resolveHeaderBrand,
   resolveHeaderMenu,
   type HeaderMenuAction,
   type HeaderMenuItem,
   type HeaderMenuResolvedGroup,
+  type ResolvedHeaderBrand,
   type ResolvedHeaderMenu,
 } from "@/components/custom/landing/header-menu";
 import type { LandingNavItem } from "@/components/custom/landing/landing-config";
+import { SITE_METADATA } from "@/components/custom/landing/site-metadata";
 import { ThemeToggle } from "@/components/custom/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -109,6 +128,57 @@ export interface HeaderProps {
    */
   nav?: LandingNavItem[];
 }
+
+/**
+ * The brand link's content, as resolved: the mark ("host" is the host
+ * shell's own brand-logo.tsx, `{ src }` an image, "none" nothing) and then
+ * the wordmark unless the home SDK turned it off.
+ */
+function BrandBlock({ brand }: { brand: ResolvedHeaderBrand }) {
+  return (
+    <>
+      {brand.logo === "host" ? (
+        <BrandLogo width={32} height={32} />
+      ) : brand.logo === "none" ? null : (
+        // A plain <img>: the path may be any origin, and a 32px mark needs
+        // no optimisation pipeline.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={brand.logo.src}
+          alt={brand.wordmark ? "" : PLATFORM_NAME}
+          width={32}
+          height={32}
+          className="h-8 w-8 shrink-0 object-contain"
+        />
+      )}
+      {brand.wordmark && <Branding className="text-xl" />}
+    </>
+  );
+}
+
+// With nothing registered in either registry there is nothing to load: the
+// slot is the host's own mark and wordmark, on the server and on the
+// client alike, byte-for-byte what the header drew before 1.21.0. With a
+// registration the declaration is resolved once per module through
+// next/dynamic, so it is server-rendered with the rest of the bar (the
+// lazy loader suspends until the modules are in, on both sides) and the
+// wrong mark never paints first.
+const UNDECLARED_BRAND = resolveHeaderBrand(null, null);
+
+function UndeclaredHeaderBrand() {
+  return <BrandBlock brand={UNDECLARED_BRAND} />;
+}
+
+const HeaderBrand: React.ComponentType =
+  HEADER_MENU.length === 0 && SITE_METADATA.length === 0
+    ? UndeclaredHeaderBrand
+    : dynamic(() =>
+        loadHeaderBrand().then((brand) => ({
+          default: function DeclaredHeaderBrand() {
+            return <BrandBlock brand={brand} />;
+          },
+        })),
+      );
 
 const AUTH_LINK =
   "text-[13px] font-medium text-foreground/70 transition-colors hover:text-foreground";
@@ -218,8 +288,7 @@ export function Header({
             className="flex shrink-0 items-center gap-2"
             onClick={close}
           >
-            <BrandLogo width={32} height={32} />
-            <Branding className="text-xl" />
+            <HeaderBrand />
           </Link>
 
           <HeaderMenuNav

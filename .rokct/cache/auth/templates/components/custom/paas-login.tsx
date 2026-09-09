@@ -33,10 +33,18 @@ import React from "react";
 
 const P_ID = "password";
 
-export function PaaSLogin() {
+/**
+ * The tenant portal login. The site it signs in against is the `site_name`
+ * query parameter when present (an explicit link to a portal), else the
+ * `tenantSite` the login route passed from the `x-rokct-tenant-site`
+ * header middleware.ts set for a resolved tenant host (auth_sdk 1.7.0),
+ * else nothing - in which case the visitor is sent to the landing page.
+ * The login posts to `https://${site_name}` and nowhere else.
+ */
+export function PaaSLogin({ tenantSite = null }: { tenantSite?: string | null }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const siteName = searchParams.get("site_name");
+  const siteName = searchParams.get("site_name") || tenantSite || null;
 
   const [email, setEmail] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
@@ -96,7 +104,7 @@ export function PaaSLogin() {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="name@company.co"
                 required
                 className="bg-gray-800 border-gray-700 text-white"
               />

@@ -1,5 +1,182 @@
 # Changelog
 
+## 1.12.0
+
+Requires base_sdk >= 1.20.0 (`HeaderMenuAction.icon`) and auth_sdk >= 1.7.0
+(the register registries).
+
+* rokct.ai's register is injected through auth_sdk's register registry.
+  Ray, 2026-09-09: "register is not fitting for all, what rokct need is not
+  what all needs, any home sdk need to inject what it needs, just like dart
+  auth sdk has". auth_sdk 1.7.0 owns the register FLOW - first name, last
+  name, email, password, the sign-in - and moved everything rokct-specific
+  OUT of its `actions.ts` and `auth-form.tsx`: control provisioning under
+  the platform administrator's keys
+  (`control:provision_service_subscription` /
+  `control:provision_new_tenant`, the `adminCredentials` read), the plan
+  select and the `?plan=` prefill, the industry catalogue
+  (`getIndustries()`), the country and currency lookup
+  (`get_pricing_metadata`), the voucher, the service-plan domain and the
+  plan-dependent auto-login rule. Until this SDK put them back, a rokct.ai
+  shell on auth 1.7.0 had a generic account form and no provisioning.
+  * `components/custom/auth/agent-register-config.ts` (new) default-exports
+    the `RegisterConfig` for `// @rokct-sdk-register-start`
+    (`components/custom/auth/register-registry.ts`): `enabled: true`, the
+    copy `register/page.tsx` carried ("Create Account", "Join thousands of
+    companies using {PLATFORM_NAME}", "Get Started", "Already have an
+    account?", "Sign in"), and the fields `auth-form.tsx` carried, in its
+    order, labelled through the shell's `t` under the same `auth.*` keys:
+    `plan` (a select over `getSubscriptionPlans()`, labelled
+    `auth.plan_suffix`, `fromQuery: "plan"` for base's
+    `LANDING_CONFIG.planSignupUrl` link, "Free" when the URL names none),
+    `industry` (a select over `getIndustries()`, required, the form's nine
+    fallback names when the read answers nothing), `company_name`
+    (required), `country` (required), `voucher_code` and `domain`. No
+    post-account steps: rokct.ai's flow had none.
+  * `app/(auth)/agent-register-provision.ts` (new) default-exports the
+    `RegisterProvisioner` for `// @rokct-sdk-register-provision-start`
+    (`app/(auth)/register-provision.ts`): the removed `register()` control
+    flow in the same order with the same answers - country and currency
+    from `get_pricing_metadata` ("South Africa" when the field is empty,
+    "USD" when the site names no currency), "System not initialized.
+    Administrator must login first." without an administrator, with a
+    company name `control:provision_service_subscription` (Service plan:
+    user, domain, one line) or `control:provision_new_tenant` (tenant
+    plan) against `ROKCT_BASE_URL` with the administrator's keys as an
+    `Authorization` header and the 60s provisioning timeout, "Service
+    Provisioning failed" / "Tenant Provisioning failed" on a non-2xx
+    answer, "Provisioning exception occurred." on anything else - and the
+    auto-login rule as the outcome's `signIn`: a Service plan signs in as
+    a normal PaaS login, a tenant AI plan as an onboarding login
+    (`extra: { is_onboarding: "true" }`), a tenant non-AI plan not at all
+    (`signIn: false`; the site is still being set up). auth adds `is_paas`
+    and does the signing in. The provisioner names no `siteName` on
+    `signIn`, as the old `loginParams` named none.
+  * `app/(auth)/agent-register-helpers.ts` (new): the pieces of that flow
+    as they were, moved rather than rewritten - `PROVISIONING_TIMEOUT_MS`,
+    `resolveRegisterLocale()` (the raw per-method `get_pricing_metadata`
+    fetch; the control site registers no gateway cmd for it),
+    `provisionServiceSubscription()` and `provisionNewTenant()` (the two
+    `platformCall`s with their payloads), `lookupPlan()` (the
+    `getSubscriptionPlans()` read the old auto-login step did), and the
+    two rules `isServicePlan()` / `isAiPlan()`.
+    `app/(auth)/agent-register-actions.ts` (new, "use server") is
+    `getIndustries()` exactly as `actions.ts` exported it - the Industry
+    Type catalogue under the administrator's keys - because the config's
+    option loader calls it from the client.
+  * Two things the registry cannot say, so they moved to the server. The
+    domain field used to appear only once a Service (hosting) plan was
+    selected and the form sent a hidden `is_service_plan` flag with it; a
+    `RegisterField` has no visibility rule, so `domain` is asked as an
+    optional field and the provisioner decides service-or-tenant from the
+    plan catalogue with the rule the form used (`plan_type` "Service", or
+    a name involving hosting; a flag a form still sends is honoured). The
+    voucher sat behind a "Use voucher" toggle; it is an optional field.
+    The country's default used to be the visitor's branding country
+    (`getGuestBranding().countryName`); a `RegisterField` has no async
+    default, so the field starts empty and the provisioner's "South
+    Africa" fallback applies.
+  * The provisioner touches no database. The local user row that maps a
+    registered email to its site (auth's `tenantLink.linkRegistration`)
+    is auth's write, not this SDK's: the provisioner hands the provisioned
+    site back as the outcome's `siteName` for auth to record. No
+    credential value is written anywhere; the administrator comes from
+    `loadTenantLink().adminCredentials()` (the GlobalSettings row on a
+    multi-tenant shell, `ROKCT_ADMIN_API_KEY` / `ROKCT_ADMIN_API_SECRET`
+    on a single-tenant one).
+  * `manifest.json`: four new installs, two new integrations
+    (`agent-register-config`, `agent-register-provision`), new `requires`
+    (`app/(auth)/tenant-link.ts`, `app/(auth)/register-provision.ts`,
+    `components/custom/auth/register-registry.ts`,
+    `lib/actions/getSubscriptionPlans.ts`) with their auth_sdk floors in
+    `_comment`. Against auth_sdk <= 1.6.0 the two registry files are
+    absent, the installer prints 'Integration target not found' and skips
+    the lines, and the shell keeps auth 1.6.0's inline register page.
+* The Chrome glyph is back on the header's "Add ROK Extension" button
+  (Ray, 2026-09-09: "rokct got its header back but it think it lost its
+  chrome icon"; the 1.11.0 known gap). base_sdk 1.20.0 added
+  `HeaderMenuAction.icon` and the `chrome` glyph (lucide's own mark, no
+  hot-linked image), so `agent-header-menu.ts` sets `icon: "chrome"` on
+  the `add-extension` action. Nothing else about the menu changes.
+* `tests/` (new): `test_manifest.py` in auth/nextjs's style - the manifest
+  and its two register integrations, the floors, the new files' words -
+  and two node suites it runs against staged copies with the host modules
+  stubbed: `register-config.test.mts` (the config registers enabled with
+  rokct's fields and copy; the header menu's `add-extension` carries
+  `icon: "chrome"`) and `register-provision.test.mts` (the provisioner is
+  the default export; no administrator stops it; a Service plan
+  provisions a subscription and signs in; a tenant AI plan provisions a
+  tenant and signs in for onboarding; a tenant non-AI plan does not sign
+  in; a non-2xx answer is the provisioning failure; the site comes back as
+  `siteName`).
+
+## 1.11.0
+
+* rokct.ai lists neither Hosting nor paas plans: Hosting plans belong to the
+  hosting shell, paas plans to the delivery-platform storefront. Ray,
+  2026-09-09, once the delivery-platform storefront was ruled the seller of
+  the delivery platform and its paas plans: "means paas plans leave rokct
+  too". Same mechanism as 1.10.0 - each shell filters the shared
+  `Subscription Plan` catalog by `plan_category` from its home SDK, the
+  backend never learns about shells and no plan id or name is written down.
+  * `components/custom/landing/agent-plans-query.ts`: the one filter laid
+    over base's generic `LANDING_CONFIG.plansQuery` payload is now
+    `[["plan_category", "not in", ["Hosting", "paas"]]]` (a `not in` list
+    instead of `!=` one value). The category strings are spelled as the
+    backend fixtures spell them - `Hosting`, `paas` - because the server
+    compares them verbatim.
+  * `agent-landing-config.ts`: `pricing.hiddenCategories` is
+    `["lms", "hosting", "paas"]`. The frontend's `hiddenCategories` compare
+    case-insensitively (pricing.tsx lower-cases both the config ids and the
+    plan's category), so the client-side belt catches a paas row whatever
+    its case, as it does a hosting row.
+  * The rule, for the next shell: a product shell shows only its own plan
+    categories, registered in base's plans-query registry by that shell's
+    home SDK, never by editing the backend.
+  * The base_sdk floor is unchanged at 1.18.0.
+* Known gap, not fixed here (Ray, 2026-09-09: "rokct got its header back
+  but it think it lost its chrome icon"). In rokctai_frontend's hand-written
+  header the Chrome Web Store mark sat on the "Add ROK Extension" ACTION
+  button (a 16px hot-linked third-party CDN image, never an asset in the
+  repo); the Browser Extension card in the panel drew FiBox, which is the
+  `box` icon 1.9.0 ported. base_sdk 1.18.0's `HeaderMenuAction` has no
+  `icon` slot and its closed `HeaderMenuIcon` set has no Chrome glyph, so
+  `agent-header-menu.ts` cannot carry it without a base change; a
+  hot-linked trademark image is not brought back. Follow-up: base adds
+  `icon` to actions and a `chrome` glyph, then this SDK sets it on
+  `add-extension`.
+
+## 1.10.0
+
+* rokct.ai no longer shows the platform's hosting plans. Ray, 2026-09-09:
+  the hosting shell is "just a seperate frontend for rokctapp, but it points
+  to control site. just hosting focused and filter subscriptions to show
+  only hosting related" - and "this means rokctai_frontend will also filter
+  out hosting related subscriptions". One control backend serves several
+  storefront shells, so each shell filters the shared `Subscription Plan`
+  catalog by `plan_category` from its home SDK; the backend never learns
+  about shells and no plan id or name is written down anywhere.
+  * New `components/custom/landing/agent-plans-query.ts` default-exports a
+    `LandingPlansQuery` for base_sdk's plans-query registry
+    (`components/custom/landing/plans-query.ts`, base_sdk >= 1.9.0): base's
+    generic `LANDING_CONFIG.plansQuery` - same doctype, fields and order -
+    with one filter laid over its payload,
+    `[["plan_category", "!=", "Hosting"]]`. The manifest registers it with
+    one line at `// @rokct-sdk-plans-query-start`, so the filter runs on the
+    server and the hosting rows are never fetched. A host whose
+    `landing-config.ts` sets `plansQuery` to `null` still prefetches no
+    plans: the module exports `null` in that case.
+  * `agent-landing-config.ts`: `pricing.hiddenCategories` is
+    `["lms", "hosting"]` (pricing.tsx lower-cases both sides before it
+    compares), the client-side belt to that server-side brace, so a plan
+    row that reaches the section by any other path is dropped too.
+  * `pricing.categoryStyles.hosting` stays where it is: an unused surface
+    is flagged, never removed, and the hosting shell's home SDK registers
+    the opposite query (Hosting only) against the same catalog.
+  * The base_sdk floor is unchanged at 1.18.0; the plans-query registry
+    has been in base since 1.9.0 and `plans-query.ts` is now listed in
+    `requires` beside the other registries this SDK writes into.
+
 ## 1.9.0
 
 * The registered header menu fills base_sdk 1.18.0's mega-panel fields, so
@@ -272,61 +449,4 @@
   * `components/custom/landing/agent-opportunities.tsx` is the hero
     section: the intent pass and the tenders/grants/equity results panel
     that used to sit inside the shell's `components/custom/hero.tsx`,
-    behaviour unchanged, with the type filter moved from the input bar
-    into the panel header (the input now belongs to the hero). Its `meta`
-    export adds the "Funding is / Grants are / Tenders are" headline words.
-  * A new `integrations` entry registers it: one line after
-    `// @rokct-sdk-hero-sections-start` in base_sdk's
-    `components/custom/landing/hero-sections.ts`
-    (`{ id: "agent-opportunities", load: () => import("@/components/custom/landing/agent-opportunities") }`),
-    the same marker contract as the nav and compose-flag entries. That
-    registry file is listed under `requires`; base_sdk composes first.
-  * `app/lib/intent-engine.ts` (`analyzeIntent`, imported only by the
-    opportunities search) and `components/custom/chat-section.tsx` (the
-    "NEW · Chat" landing section that links to `/chat`, which this SDK
-    already owns) install as flat entries, byte-identical to the shell
-    copies the composer now overwrites. The shell's
-    `app/(chat)/opengraph-image.png` and `twitter-image.png` join the
-    existing `templates/app/(chat)` tree, which the directory install
-    already walks, so the whole `(chat)` group is SDK-owned.
-  * `app/actions/ai/opportunities.ts` (`searchPublicOpportunities`, a
-    `"use server"` action landed by the existing `templates/app/actions/ai`
-    directory install) fronts `OpportunityPublicService.search` for the
-    section: the service calls base_sdk's platform gateway, server-only
-    since base_sdk 1.3.0, so a client component cannot import it - the
-    shell's own client-side hero did, and `next build` of the composed
-    rokctapp shell failed on that chain (`server-only` and postgres
-    `fs`/`net` reached from a Client Component). The section imports only
-    the `Opportunity` type from the service.
-  * `requires` adds `components/ui/carousel.tsx` and
-    `app/config/platform.ts` for the chat section.
-
-## 1.2.0
-
-* `app/actions/ai/onboarding.ts` commits the onboarding plan to the tenant
-  site through `platformCall` from `@/app/services/base/platform-gateway`
-  (base_sdk >= 1.3.0) instead of a hand-rolled `fetch` of the gateway URL.
-  The cmd (`api.plan_builder.commit_onboarding_answers`) and payload are
-  unchanged; the site and API credentials still come from the user row (the
-  session is not consulted: explicit `baseUrl`, explicit `Authorization`
-  header when the row carries keys, `requireAuth: false`, `session: null`).
-  `throwOnError` maps a non-2xx answer to the same "Failed to commit
-  onboarding profile" result the raw fetch fell back to, and a connection
-  failure to the same `String(error)` result as before. No install,
-  integration or requirement changes; `requires` already named
-  `app/services/base/platform-gateway.ts`.
-
-## 1.1.0
-
-* Adds `app/services/public/opportunities.ts` (`OpportunityPublicService`,
-  `Opportunity`) as a flat template in the one top-level `installs` list.
-  The landing hero in the RokctAI_frontend shell
-  (`components/custom/hero.tsx`) imports it for its opportunity search; the
-  shell's own copy was removed as an SDK-owned file in RokctAI_frontend#130
-  and the restore in RokctAI_frontend#135 is superseded by this entry (Ray's
-  ruling: the file belongs to agent_sdk). Code is unchanged apart from the
-  header note naming this SDK as the provider.
-* `platformCall` resolves through base_sdk's
-  `app/services/base/platform-gateway.ts`, already listed under `requires`.
-* No `app_type` persona block: the file installs for every host that
-  composes agent_sdk, the same as the rest of this half.
+    behaviour unchanged, with the type filter moved fro

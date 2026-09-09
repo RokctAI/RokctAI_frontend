@@ -14,7 +14,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 // rokct.ai's header menu, for base_sdk's header-menu registry
-// (components/custom/landing/header-menu.ts, base_sdk >= 1.18.0), which the
+// (components/custom/landing/header-menu.ts, base_sdk >= 1.20.0), which the
 // shared header renders inside itself: inline beside the logo from the `lg`
 // breakpoint up, behind a burger below it.
 //
@@ -164,6 +164,10 @@ const AGENT_HEADER_MENU: HeaderMenu = {
       href: CHROME_WEB_STORE,
       variant: "primary",
       external: true,
+      // The Chrome mark the hand-written header drew on this button (since
+      // 1.12.0; HeaderMenuAction.icon and the "chrome" glyph are base_sdk
+      // 1.20.0's, lucide's own mark rather than a hot-linked image).
+      icon: "chrome",
     },
   ],
 };

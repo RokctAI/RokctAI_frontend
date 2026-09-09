@@ -1,0 +1,288 @@
+# Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+"""Contract tests for agent/nextjs's manifest and what it injects into
+auth_sdk's register registries and base_sdk's header (agent_sdk 1.12.0),
+in auth/nextjs's style.
+
+Run from the repository root:
+
+    python3 -m unittest discover -s agent/nextjs/tests -v
+
+Stdlib only. The behaviour tests are node's own (tests/*.test.mts), run
+here against staged copies of the injected modules with the host, auth and
+base modules they import replaced by tests/stubs, under
+`node --experimental-strip-types --test` (node 22.6+).
+"""
+
+import json
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+import unittest
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+SDK_ROOT = os.path.abspath(os.path.join(HERE, os.pardir))
+MANIFEST = os.path.join(SDK_ROOT, "manifest.json")
+TEMPLATES = os.path.join(SDK_ROOT, "templates")
+AUTH_GROUP = os.path.join(TEMPLATES, "app", "(auth)")
+STUBS = os.path.join(HERE, "stubs")
+
+CONFIG = os.path.join(TEMPLATES, "components", "custom", "auth", "agent-register-config.ts")
+PROVISION = os.path.join(AUTH_GROUP, "agent-register-provision.ts")
+HELPERS = os.path.join(AUTH_GROUP, "agent-register-helpers.ts")
+ACTIONS = os.path.join(AUTH_GROUP, "agent-register-actions.ts")
+HEADER_MENU = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-header-menu.ts")
+
+# The modules the node suites run against, staged into one directory.
+STAGED = {
+    "agent-register-config.ts": CONFIG,
+    "agent-register-provision.ts": PROVISION,
+    "agent-register-helpers.ts": HELPERS,
+    "agent-header-menu.ts": HEADER_MENU,
+}
+NODE_SUITES = ["register-config.test.mts", "register-provision.test.mts"]
+
+# The two registry lines this SDK injects, exactly as auth_sdk's README
+# spells the contract: one self-contained line, a dynamic import, no
+# import statement of its own.
+REGISTER_LINE = re.compile(
+    r'^  \{ id: "agent-register-config", load: \(\) => import\("@/components/custom/auth/agent-register-config"\) \},$'
+)
+PROVISION_LINE = re.compile(
+    r'^  \{ id: "agent-register-provision", load: \(\) => import\("@/app/\(auth\)/agent-register-provision"\) \},$'
+)
+
+# Words no copy or comment of this SDK's new files may carry.
+FORBIDDEN_WORDS = re.compile(r"\b(lorem|sample|demo|example)\b", re.I)
+NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS]
+
+IMPORT_RE = re.compile(r'(from\s+|import\()\s*"([^"]+)"')
+
+
+def load_manifest():
+    with open(MANIFEST, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def read(path):
+    with open(path, encoding="utf-8") as f:
+        return f.read()
+
+
+def stage_module(src, dst):
+    """Copy a template with its `@/` imports pointed at ./stubs and its
+    relative imports given the .ts extension node wants."""
+    def rewrite(match):
+        prefix, spec = match.group(1), match.group(2)
+        if spec.startswith("@/"):
+            spec = "./stubs/" + spec[2:] + ".ts"
+        elif spec.startswith("./") and not spec.endswith(".ts"):
+            spec = spec + ".ts"
+        return f'{prefix}"{spec}"'
+    with open(dst, "w", encoding="utf-8") as f:
+        f.write(IMPORT_RE.sub(rewrite, read(src)))
+
+
+class TestManifest(unittest.TestCase):
+    def setUp(self):
+        self.manifest = load_manifest()
+
+    def test_identity_and_version(self):
+        self.assertEqual(self.manifest["name"], "agent_sdk")
+        self.assertRegex(self.manifest["version"], r"^\d+\.\d+\.\d+$")
+
+    def test_every_install_source_exists(self):
+        for entry in self.manifest["installs"]:
+            src = os.path.join(SDK_ROOT, entry["from"])
+            self.assertTrue(os.path.exists(src), f"missing install source {entry['from']}")
+
+    def test_install_targets_are_unique(self):
+        targets = [e["to"] for e in self.manifest["installs"]]
+        self.assertEqual(len(targets), len(set(targets)), "duplicate install target")
+
+    def test_requires_are_not_installed(self):
+        targets = {e["to"] for e in self.manifest["installs"]}
+        for req in self.manifest["requires"]:
+            self.assertNotIn(req, targets, f"{req} is both required and installed")
+
+    def test_register_modules_are_installed(self):
+        by_from = {e["from"]: e["to"] for e in self.manifest["installs"]}
+        expected = {
+            "templates/components/custom/auth/agent-register-config.ts": "components/custom/auth/agent-register-config.ts",
+            "templates/app/(auth)/agent-register-provision.ts": "app/(auth)/agent-register-provision.ts",
+            "templates/app/(auth)/agent-register-helpers.ts": "app/(auth)/agent-register-helpers.ts",
+            "templates/app/(auth)/agent-register-actions.ts": "app/(auth)/agent-register-actions.ts",
+        }
+        for src, dst in expected.items():
+            self.assertEqual(by_from.get(src), dst, src)
+
+    def test_register_integrations_target_auth_registries(self):
+        by_target = {}
+        for entry in self.manifest["integrations"]:
+            by_target.setdefault(entry["target"], []).append(entry)
+        config = by_target.get("components/custom/auth/register-registry.ts", [])
+        self.assertEqual(len(config), 1)
+        self.assertEqual(config[0]["placeholder"], "// @rokct-sdk-register-start")
+        self.assertRegex(config[0]["replacement"], REGISTER_LINE)
+        provision = by_target.get("app/(auth)/register-provision.ts", [])
+        self.assertEqual(len(provision), 1)
+        self.assertEqual(provision[0]["placeholder"], "// @rokct-sdk-register-provision-start")
+        self.assertRegex(provision[0]["replacement"], PROVISION_LINE)
+        # The header menu registration is unchanged: one line, same id.
+        header = by_target.get("components/custom/landing/header-menu.ts", [])
+        self.assertEqual(len(header), 1)
+        self.assertIn('id: "agent-header-menu"', header[0]["replacement"])
+
+    def test_auth_contract_files_are_declared_prerequisites(self):
+        for req in (
+            "app/(auth)/tenant-link.ts",
+            "app/(auth)/register-provision.ts",
+            "components/custom/auth/register-registry.ts",
+            "lib/actions/getSubscriptionPlans.ts",
+            "app/services/base/platform-gateway.ts",
+            "components/custom/landing/header-menu.ts",
+            "app/lib/i18n/index.ts",
+            "app/config/platform.ts",
+        ):
+            self.assertIn(req, self.manifest["requires"])
+
+    def test_floors_are_stated(self):
+        comment = self.manifest["_comment"]
+        self.assertIn("base_sdk >= 1.20.0", comment["about"])
+        self.assertIn("auth_sdk >= 1.7.0", comment["about"])
+        self.assertIn("base_sdk >= 1.20.0", comment["components/custom/landing/header-menu.ts"])
+        self.assertIn("auth_sdk >= 1.7.0", comment["components/custom/auth/register-registry.ts"])
+        self.assertIn("auth_sdk >= 1.7.0", comment["app/(auth)/register-provision.ts"])
+        self.assertIn("auth_sdk >= 1.6.0", comment["app/(auth)/tenant-link.ts"])
+
+    def test_changelog_leads_with_the_manifest_version(self):
+        changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
+        heads = re.findall(r"^## (\d+\.\d+\.\d+)$", changelog, re.M)
+        self.assertTrue(heads, "CHANGELOG.md has no version heading")
+        self.assertEqual(heads[0], self.manifest["version"])
+
+    def test_new_files_carry_no_placeholder_words(self):
+        for path in NEW_FILES:
+            with self.subTest(file=os.path.relpath(path, SDK_ROOT)):
+                self.assertIsNone(FORBIDDEN_WORDS.search(read(path)))
+
+
+class TestRegisterInjection(unittest.TestCase):
+    """What the two registered modules are made of."""
+
+    def test_config_is_client_safe(self):
+        src = read(CONFIG)
+        self.assertIn("export default AGENT_REGISTER_CONFIG;", src)
+        self.assertIn("enabled: true,", src)
+        specs = [m.group(2) for m in IMPORT_RE.finditer(src)]
+        self.assertEqual(
+            sorted(specs),
+            sorted([
+                "@/components/custom/auth/register-registry",
+                "@/app/lib/i18n",
+                "@/app/config/platform",
+                "@/lib/actions/getSubscriptionPlans",
+                "@/app/(auth)/agent-register-actions",
+            ]),
+        )
+        # The registry is reached for its types only; the two server
+        # modules are "use server" files, references on the client.
+        self.assertRegex(src, r'import type \{[^}]*\} from "@/components/custom/auth/register-registry";')
+        for server in (ACTIONS,):
+            self.assertRegex(read(server), re.compile(r'^"use server";$', re.M))
+        # No server-only module is imported.
+        for spec in specs:
+            for gone in ("platform-gateway", "tenant-link", "agent-register-helpers", "agent-register-provision", "@/db"):
+                self.assertNotIn(gone, spec, f"config imports {spec}")
+
+    def test_config_declares_the_fields_and_the_copy(self):
+        src = read(CONFIG)
+        for name in ("plan", "industry", "company_name", "country", "voucher_code", "domain"):
+            self.assertIn(f'name: "{name}"', src)
+        self.assertIn('fromQuery: "plan"', src)
+        self.assertIn('t("auth.selected_plan")', src)
+        self.assertIn('t("auth.label_industry")', src)
+        self.assertIn('t("auth.label_company_name")', src)
+        self.assertIn('t("auth.label_country")', src)
+        self.assertIn('t("auth.label_voucher_code")', src)
+        self.assertIn('t("auth.label_domain")', src)
+        self.assertIn('title: "Create Account"', src)
+        self.assertIn('cta: "Get Started"', src)
+        self.assertIn("steps: [],", src)
+
+    def test_provisioner_is_the_removed_control_flow(self):
+        provision = read(PROVISION)
+        helpers = read(HELPERS)
+        self.assertIn("export default agentRegisterProvisioner;", provision)
+        self.assertIn("provision(submission: RegisterSubmission): Promise<RegisterOutcome>", provision)
+        self.assertIn("loadTenantLink()", provision)
+        self.assertIn("adminCredentials()", provision)
+        self.assertIn("System not initialized. Administrator must login first.", provision)
+        self.assertIn('extra: { is_onboarding: "true" }', provision)
+        self.assertIn('"control:provision_service_subscription"', helpers)
+        self.assertIn('"control:provision_new_tenant"', helpers)
+        self.assertIn("get_pricing_metadata", helpers)
+        self.assertIn("PROVISIONING_TIMEOUT_MS = 60000", helpers)
+        self.assertIn('"frappe.client.get_list"', read(ACTIONS))
+        self.assertIn('doctype: "Industry Type"', read(ACTIONS))
+
+    def test_provisioner_touches_no_database_and_writes_no_credential(self):
+        for path in (PROVISION, HELPERS, ACTIONS):
+            src = read(path)
+            with self.subTest(file=os.path.basename(path)):
+                for gone in ("@/db", "drizzle", "linkRegistration", "rememberLogin"):
+                    self.assertNotIn(gone, src)
+                # Keys arrive through the tenant link and leave as a header.
+                self.assertNotRegex(src, r'api(Key|Secret)\s*[:=]\s*"')
+                self.assertNotRegex(src, r'token [A-Za-z0-9]+:[A-Za-z0-9]+')
+                envs = set(re.findall(r"process\.env\.([A-Z_]+)", src))
+                self.assertLessEqual(envs, {"ROKCT_BASE_URL"})
+
+    def test_header_action_carries_the_chrome_glyph(self):
+        src = read(HEADER_MENU)
+        self.assertEqual(src.count('icon: "chrome"'), 1)
+        start = src.index('id: "add-extension"')
+        end = src.index("}", start)
+        self.assertIn('icon: "chrome"', src[start:end])
+        # Only the action gained a glyph; the group cards keep theirs.
+        self.assertEqual(src.count('icon: "box"'), 1)
+        self.assertEqual(src.count('icon: "globe"'), 1)
+        self.assertEqual(src.count('icon: "smartphone"'), 1)
+
+    def test_behaviour_under_node(self):
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute the register modules")
+        with tempfile.TemporaryDirectory() as tmp:
+            for name, path in STAGED.items():
+                stage_module(path, os.path.join(tmp, name))
+            shutil.copytree(STUBS, os.path.join(tmp, "stubs"))
+            for suite in NODE_SUITES:
+                shutil.copy(os.path.join(HERE, suite), os.path.join(tmp, suite))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 *[os.path.join(tmp, suite) for suite in NODE_SUITES]],
+                capture_output=True, text=True, timeout=120, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 20)
+
+
+if __name__ == "__main__":
+    unittest.main()

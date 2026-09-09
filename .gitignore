@@ -87,12 +87,21 @@ migrate_working_dir/
 /ai/local/projects/actions.ts
 /ai/local/tasks/actions.ts
 /app/(auth)/actions.ts
+/app/(auth)/agent-register-actions.ts
+/app/(auth)/agent-register-helpers.ts
+/app/(auth)/agent-register-provision.ts
 /app/(auth)/api/auth/\[...nextauth\]/route.ts
 /app/(auth)/auth.config.ts
 /app/(auth)/auth.ts
 /app/(auth)/forgot-password/page.tsx
+/app/(auth)/login/login-view.tsx
 /app/(auth)/login/page.tsx
+/app/(auth)/register-link.ts
+/app/(auth)/register-provision-default.ts
+/app/(auth)/register-provision.ts
 /app/(auth)/register/page.tsx
+/app/(auth)/register/register-view.tsx
+/app/(auth)/tenant-host.ts
 /app/(auth)/tenant-link-database.ts
 /app/(auth)/tenant-link-single.ts
 /app/(auth)/tenant-link.ts
@@ -631,6 +640,7 @@ migrate_working_dir/
 /app/services/base/platform-gateway.ts
 /app/services/base/session.ts
 /app/services/base/telemetry.ts
+/app/services/base/tenant-host-control.ts
 /app/services/base/tenant-hosts.ts
 /app/services/control/global_settings.ts
 /app/services/platform/orders/orders.ts
@@ -644,6 +654,8 @@ migrate_working_dir/
 /components/custom/all-features-section.tsx
 /components/custom/app-sidebar.tsx
 /components/custom/auth-form.tsx
+/components/custom/auth/agent-register-config.ts
+/components/custom/auth/register-registry.ts
 /components/custom/beta-toggle.tsx
 /components/custom/chat.tsx
 /components/custom/floating-nav.tsx
@@ -658,6 +670,7 @@ migrate_working_dir/
 /components/custom/landing/agent-hero-form.tsx
 /components/custom/landing/agent-landing-config.ts
 /components/custom/landing/agent-opportunities.tsx
+/components/custom/landing/agent-plans-query.ts
 /components/custom/landing/agent-site-metadata.ts
 /components/custom/landing/footer-chrome-config.ts
 /components/custom/landing/header-menu.ts

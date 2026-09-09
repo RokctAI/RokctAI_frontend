@@ -24,6 +24,7 @@ export {
 export {
   PLATFORM_GATEWAY_METHOD,
   PLATFORM_GATEWAY_PATH,
+  PLATFORM_METHOD_PATH,
 } from './gateway-constants';
 // Everything below is server-only (session + request headers); client
 // code imports './telemetry' and './gateway-constants' directly.
@@ -45,14 +46,44 @@ export {
   type PlatformSessionUser,
 } from './session';
 export {
+  NON_PUBLIC_HOSTS,
+  NON_PUBLIC_HOST_SUFFIXES,
   envBaseUrl,
   hasTenantHostLookup,
   hostFromHeaders,
+  isPublicHost,
   lookupTenantHost,
+  normaliseHost,
   normalizeSiteUrl,
+  requestHost,
   resetTenantHostMap,
   sameSite,
   setTenantHostResolver,
   tenantHostMap,
+  type HeaderReader,
   type TenantHostResolver,
 } from './tenant-hosts';
+// Edge-safe (pure kernel imports + global fetch): middleware may import
+// './tenant-host-control' directly.
+export {
+  TENANT_HOST_NEGATIVE_TTL_MS,
+  TENANT_HOST_POSITIVE_TTL_MS,
+  TENANT_HOST_RESOLVE_METHOD,
+  TENANT_HOST_TIMEOUT_MS,
+  TENANT_SITE_HEADER,
+  cachedTenantSite,
+  controlBaseUrl,
+  controlTenantHostResolver,
+  ownHosts,
+  registerControlTenantHostResolver,
+  resetControlTenantHostResolver,
+  resetTenantHostCache,
+  resolveTenantSiteByHost,
+  resolveTenantSiteForRequest,
+  setTenantHostFetch,
+  tenantHostLookupEnabled,
+  tenantHostNegativeTtlMs,
+  tenantHostPositiveTtlMs,
+  tenantHostTimeoutMs,
+  type TenantHostFetch,
+} from './tenant-host-control';
