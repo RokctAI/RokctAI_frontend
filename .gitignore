@@ -667,6 +667,7 @@ migrate_working_dir/
 /components/custom/landing-content.tsx
 /components/custom/landing/agent-card-row.ts
 /components/custom/landing/agent-header-menu.ts
+/components/custom/landing/agent-hero-copy.ts
 /components/custom/landing/agent-hero-form.tsx
 /components/custom/landing/agent-landing-config.ts
 /components/custom/landing/agent-network-strip.ts
@@ -829,5 +830,7 @@ migrate_working_dir/
 /lib/mock-conversations.ts
 /lib/platform/validators/orders/orders.ts
 /middleware.ts
+/public/brand/marks/chrome-web-store.svg
+/public/brand/marks/google-play.svg
 /types/next-auth.d.ts
 # @rokct-composed-end

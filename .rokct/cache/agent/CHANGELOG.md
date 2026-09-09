@@ -1,5 +1,71 @@
 # Changelog
 
+## 1.15.0
+
+Requires base_sdk >= 1.25.0 (an image icon, `{ src, alt }`, on
+HeaderMenuAction.icon) and auth_sdk >= 1.7.0 as before. An older
+HeaderMenuAction.icon takes only the named glyphs and rejects the object at
+build time, so this version must not be composed over base_sdk <= 1.24.0.
+
+* The Chrome Web Store mark is back on rokct.ai, served by the shell
+  itself. The old host header drew it on "Add ROK Extension" as a 16px
+  `next/image` hot-linked from a third party's CDN
+  (cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg, alt
+  "Chrome"), and the 1.14.0 restore left it out for that reason, drawing
+  lucide's "chrome" glyph instead (1.12.0). Ray, 2026-09-09: "i dont think
+  merlin owns [that icon] so use it but bring it local". So:
+  * `templates/public/brand/marks/chrome-web-store.svg` - the same drawing
+    (29x26 viewBox, 13 paths, a radial gradient, a mask and a clip, every
+    reference a fragment of the file itself; no script, no foreign
+    object, no font, no external href), installed to `public/brand/marks/`
+    through the `templates/public/brand` -> `public/brand` mapping lms_sdk
+    installs its Android and Windows marks through. No CDN.
+  * `agent-header-menu.ts`: add-extension's icon is
+    `{ src: "/brand/marks/chrome-web-store.svg", alt: "Chrome Web Store" }`
+    through base_sdk 1.25.0's image icon on an action, drawn as a plain
+    `<img>` in the 20px glyph slot before the label, in the bar and in the
+    burger panel. The named glyph is gone from this file.
+  * `agent-hero-copy.ts` (new; the hero's "Available in the / Chrome Web
+    Store" badge was drawing the same lucide glyph): this SDK's first hero
+    copy, registered with one line at base's `// @rokct-sdk-hero-copy-start`
+    marker. It lays ONE field over `HERO_CONFIG`: base's own badges, in
+    base's order and gating, with the Chrome Web Store badge's `icon` as
+    that same file (`withLocalMarks`, keyed by base's badge ids). The App
+    Store badge keeps its Apple glyph and no word is restated. No
+    dark-mode inversion: the marks are multi-colour drawings, drawn as
+    they are in both themes, unlike lms_sdk's single-colour tracings.
+  * `templates/public/brand/marks/google-play.svg` - the Google Play badge
+    too. Ray, 2026-09-09, on supacharge's marks: "we already have nice
+    icons in buttons in hero of rokct but supacharge is getting bad ones.
+    we use what these platforms use for familiarity". base 1.23.0 had
+    stripped that badge's CDN icon and left it without one, so rokct's
+    "GET IT ON / Google Play" badge was not drawn at all. The file is the
+    coloured Play triangle in Google's own brand colours (#4285F4,
+    #34A853, #FBBC04, #EA4335; 25x26 viewBox, 4 paths, 994 bytes, nothing
+    unsafe, no host) - the drawing rokct's hero showed before the strip -
+    and the hero copy sets it as that badge's icon, so all three of
+    rokct's badges now draw their platforms' own marks.
+  * Manifest: `hero-config.ts` and `hero-copy.ts` join `requires`; base
+    floor 1.25.0.
+* Not touched: base's own Chrome badge default (lucide's glyph, for every
+  other shell) and `agent-landing-config.ts`'s section images, which still
+  hot-link from that CDN - known placeholders under Ray's 15:02Z ruling,
+  out of this release.
+* Tests (`tests/test_manifest.py`, 25 python):
+  `test_header_action_carries_the_local_chrome_mark`,
+  `test_chrome_mark_is_installed_locally` and
+  `test_google_play_mark_is_installed_locally` (each file parses, carries
+  nothing unsafe and references no host; the Play mark in Google's four
+  colours),
+  `test_hero_copy_is_registered_where_base_looks`,
+  `test_header_and_hero_surfaces_name_no_third_party_host` (no
+  `cdn.getmerlin.in`, no host but the store, in the header menu, the hero
+  copy and the marks directory), the floor assertions; node suite
+  `hero-copy.test.mts` (the badge
+  mapping, the untouched list, the header and hero naming one file) with
+  `stubs/components/custom/landing/hero-config.ts`, and the header-menu
+  case in `register-config.test.mts` updated.
+
 ## 1.14.0
 
 Requires base_sdk >= 1.24.0 (HeaderBrand.badge, HeaderBrand.collapse and

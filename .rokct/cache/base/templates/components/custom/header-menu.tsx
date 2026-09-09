@@ -60,6 +60,7 @@ import {
 import type {
   HeaderMenuAction,
   HeaderMenuIcon,
+  HeaderMenuImage,
   HeaderMenuItem,
   HeaderMenuResolvedGroup,
 } from "@/components/custom/landing/header-menu";
@@ -142,6 +143,19 @@ const MENU_ICONS: Record<HeaderMenuIcon, LucideIcon> = {
 
 /** An item with a description or an icon is drawn as a card, not a link. */
 const isCard = (item: HeaderMenuItem) => !!(item.description || item.icon);
+
+/**
+ * What an action draws before its label (1.25.0): the named glyph, the
+ * declared image when it has a src, or nothing. An image with an empty
+ * src is nothing, never a broken picture.
+ */
+function actionIcon(
+  icon: HeaderMenuAction["icon"],
+): { glyph: LucideIcon } | { image: HeaderMenuImage } | null {
+  if (!icon) return null;
+  if (typeof icon === "string") return { glyph: MENU_ICONS[icon] };
+  return icon.src.trim() ? { image: icon } : null;
+}
 
 /**
  * How long the pointer may be off the mega menu before it closes, in ms.
@@ -506,11 +520,26 @@ export function HeaderMenuActions({
         );
         // 1.20.0: the glyph before the label (rokct.ai's Chrome mark on its
         // extension button), the size the panel's cards draw theirs at; no
-        // icon named renders the label alone, as before.
-        const Icon = action.icon ? MENU_ICONS[action.icon] : null;
+        // icon named renders the label alone, as before. 1.25.0: an image
+        // the shell serves itself draws in the same slot, as a plain <img>
+        // the way the header draws a declared brand image (Ray, 2026-09-09:
+        // "use it but bring it local").
+        const icon = actionIcon(action.icon);
+        const Icon = icon && "glyph" in icon ? icon.glyph : null;
+        const image = icon && "image" in icon ? icon.image : null;
         const content = (
           <>
             {Icon && <Icon aria-hidden="true" className="h-5 w-5 shrink-0" />}
+            {image && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={image.src}
+                alt={image.alt}
+                width={20}
+                height={20}
+                className="h-5 w-5 shrink-0 object-contain"
+              />
+            )}
             <span>{action.label}</span>
           </>
         );

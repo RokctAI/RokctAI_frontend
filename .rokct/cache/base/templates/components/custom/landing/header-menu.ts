@@ -82,6 +82,13 @@
 // the still brand it drew before. An action may also be `secondary`, the
 // filled muted button that header drew its "Chat with ROK" as.
 //
+// Since 1.25.0 an action's icon may also be an IMAGE the shell serves
+// itself (`{ src, alt }`, the shape a hero badge's icon takes) beside the
+// named glyphs. Ray, 2026-09-09, on the Chrome Web Store mark rokct.ai's
+// old header hot-linked from a third party's CDN: "use it but bring it
+// local" - so the home SDK installs the file under public/ and names its
+// path here; base never names a third-party host.
+//
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as
 // ./hero-sections.ts, ./hero-copy.ts, ./hero-form.ts, ./plans-query.ts and
@@ -146,6 +153,19 @@ export type HeaderMenuIcon =
   | "wrench"
   | "file-text"
   | "chrome";
+
+/**
+ * An image icon on an action (since 1.25.0): a path the shell serves
+ * itself (`/brand/marks/chrome-web-store.svg`, installed by its home SDK)
+ * or an absolute URL, and the alt text. The same shape a hero badge's
+ * `icon` takes (./hero-config.ts). An empty `src` draws nothing, so an
+ * action never shows a broken image. Drawn as a plain <img> at the glyph
+ * slot's size (20px), as the header draws a declared brand image.
+ */
+export interface HeaderMenuImage {
+  src: string;
+  alt: string;
+}
 
 /**
  * What the header's brand slot draws, as the home SDK declares it (since
@@ -306,10 +326,12 @@ export interface HeaderMenuAction {
   external?: boolean;
   /**
    * A glyph drawn before the label (since 1.20.0), named from the same
-   * closed set as an item's: rokct.ai's extension button carries "chrome".
+   * closed set as an item's, or (since 1.25.0) an image the shell serves
+   * itself - rokct.ai's extension button carries the Chrome Web Store mark
+   * its old header hot-linked, now at `/brand/marks/chrome-web-store.svg`.
    * Without one the button is label only, as before.
    */
-  icon?: HeaderMenuIcon;
+  icon?: HeaderMenuIcon | HeaderMenuImage;
 }
 
 /** The shape of a registered menu module. */
