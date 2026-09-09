@@ -68,12 +68,31 @@
 // agent_sdk `requires` file), whose `code` and `style` the old header
 // spread onto its span. "Chat with ROK" is `secondary`, the filled muted
 // button the old nav drew it as, not the outlined `ghost`.
+//
+// Since 1.15.0 (base_sdk 1.25.0) the extension button draws the Chrome
+// Web Store MARK the old header drew, from this SDK's own public file
+// rather than the third party's CDN the old header hot-linked it from.
+// Ray, 2026-09-09: "i dont think merlin owns [the icon] so use it but
+// bring it local". The file is templates/public/brand/marks/
+// chrome-web-store.svg, installed to public/brand/marks/, and the hero's
+// Chrome Web Store badge (./agent-hero-copy.ts) names the same path.
 
 import type { HeaderMenu } from "@/components/custom/landing/header-menu";
 import { getBrandingSync } from "@/app/config/platform";
 import t from "@/app/lib/i18n";
 
 const CHROME_WEB_STORE = "https://chromewebstore.google.com/";
+
+/**
+ * The Chrome Web Store mark on the extension button (1.15.0): the SVG this
+ * SDK installs under public/brand/marks/, the drawing the old header
+ * hot-linked, served by the shell itself. ./agent-hero-copy.ts names the
+ * same file for the hero's badge; keep the two literals identical.
+ */
+const CHROME_WEB_STORE_MARK = {
+  src: "/brand/marks/chrome-web-store.svg",
+  alt: "Chrome Web Store",
+};
 
 /** `t(key)`, or `fallback` when the dictionary has no such key. */
 function word(key: string, fallback: string): string {
@@ -204,10 +223,11 @@ const AGENT_HEADER_MENU: HeaderMenu = {
       href: CHROME_WEB_STORE,
       variant: "primary",
       external: true,
-      // The Chrome mark the hand-written header drew on this button (since
-      // 1.12.0; HeaderMenuAction.icon and the "chrome" glyph are base_sdk
-      // 1.20.0's, lucide's own mark rather than a hot-linked image).
-      icon: "chrome",
+      // The Chrome Web Store mark the hand-written header drew on this
+      // button, as a local file (1.15.0; an image icon on an action is
+      // base_sdk 1.25.0's). 1.12.0 to 1.14.0 drew lucide's "chrome" glyph
+      // here because the old header's file was a third-party hot-link.
+      icon: CHROME_WEB_STORE_MARK,
     },
   ],
 };

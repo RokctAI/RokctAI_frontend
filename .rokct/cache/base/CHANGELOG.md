@@ -1,5 +1,36 @@
 # Changelog
 
+## 1.25.0
+
+* A header action may carry an IMAGE icon the shell serves itself. Ray,
+  2026-09-09, on the Chrome Web Store mark rokct.ai's old host header
+  hot-linked from a third party's CDN for its "Add ROK Extension" button
+  (and which the 1.24.0 restore left out for that reason): "i dont think
+  merlin owns [the icon] so use it but bring it local". Base never names a
+  third-party host, so the home SDK installs the file under `public/` and
+  names its path:
+  * `HeaderMenuImage` (`components/custom/landing/header-menu.ts`):
+    `{ src, alt }`, the shape a hero badge's `icon` already takes in
+    `hero-config.ts`. `HeaderMenuAction.icon` is now
+    `HeaderMenuIcon | HeaderMenuImage`; a link's and a resolved item's
+    icon stay the closed glyph set.
+  * `components/custom/header-menu.tsx`: `actionIcon()` answers the named
+    glyph, the image when it has a src, or nothing; `HeaderMenuActions`
+    draws the image as a plain `<img>` (the way `header.tsx` draws a
+    declared brand image) at the glyph slot's 20px, `object-contain`,
+    before the label, in both the bar and the stacked mobile layout. No
+    `next/image`, no dark-mode filter: the mark is a multi-colour drawing
+    and the old header drew it as it was in both themes. A named glyph
+    renders as it did in 1.20.0; an action without an icon, or with an
+    empty src, renders the label alone - a shell that declares no image
+    renders identical DOM to 1.24.0.
+  * Tests: `test_header_menu_action_carries_an_image_icon`, the 1.20.0
+    glyph test updated for the widened type, and two node cases in
+    `header-brand.test.mts` (`resolveHeaderMenu` carries an image icon
+    verbatim, beside a glyph and beside none).
+  * Downstream: agent_sdk 1.15.0 installs `/brand/marks/chrome-web-store.svg`
+    and sets it on rokct.ai's extension action; it needs this floor.
+
 ## 1.24.0
 
 * The header's mega menu no longer closes before the pointer reaches it.

@@ -777,9 +777,10 @@ class TestRegistryMarkers(unittest.TestCase):
         src = read(os.path.join(LANDING, "header-menu.ts"))
         action = src[src.index("export interface HeaderMenuAction {"):]
         action = action[:action.index("}")]
-        self.assertIn("icon?: HeaderMenuIcon;", action)
-        # A link, the resolved item and now an action each name an icon.
-        self.assertEqual(src.count("icon?: HeaderMenuIcon;"), 3)
+        # 1.25.0: the action's slot also takes an image (see the next test).
+        self.assertIn("icon?: HeaderMenuIcon | HeaderMenuImage;", action)
+        # A link and the resolved item name a glyph; the action a glyph or an image.
+        self.assertEqual(src.count("icon?: HeaderMenuIcon;"), 2)
         self.assertIn('| "chrome";', src)
         partials = read(os.path.join(SDK_ROOT, "templates", "components", "custom", "header-menu.tsx"))
         self.assertIn("  chrome: Chrome,", partials)
@@ -788,12 +789,57 @@ class TestRegistryMarkers(unittest.TestCase):
         # With an icon it is drawn before the label; without one the guard
         # leaves the label alone - one content node used by both the
         # external <a> and the internal <Link>.
-        self.assertIn("const Icon = action.icon ? MENU_ICONS[action.icon] : null;", actions)
+        self.assertIn("const icon = actionIcon(action.icon);", actions)
+        self.assertIn('const Icon = icon && "glyph" in icon ? icon.glyph : null;', actions)
         self.assertIn('{Icon && <Icon aria-hidden="true" className="h-5 w-5 shrink-0" />}', actions)
         self.assertLess(actions.index("{Icon && <Icon"), actions.index("<span>{action.label}</span>"))
         self.assertEqual(actions.count("{content}"), 2)
         self.assertNotIn("{action.label}\n", actions)
         # No CDN or third-party asset for the mark.
+        self.assertNotIn("http", actions)
+
+    def test_header_menu_action_carries_an_image_icon(self):
+        # base_sdk 1.25.0 (Ray, 2026-09-09, on the Chrome Web Store mark
+        # rokct.ai's old header hot-linked from a third party's CDN: "use it
+        # but bring it local"): an action's icon may be an image the shell
+        # serves itself, `{ src, alt }` - the shape a hero badge's icon
+        # takes - drawn as a plain <img> in the glyph's 20px slot, before
+        # the label. A named glyph draws as it did; an action without an
+        # icon, or with an empty src, renders the label alone.
+        src = read(os.path.join(LANDING, "header-menu.ts"))
+        image = src[src.index("export interface HeaderMenuImage {"):]
+        image = image[:image.index("}")]
+        self.assertIn("src: string;", image)
+        self.assertIn("alt: string;", image)
+        # The same shape the hero's badge takes.
+        config = read(os.path.join(LANDING, "hero-config.ts"))
+        self.assertIn('icon?: { src: string; alt: string } | "app-store" | "chrome";', config)
+        # Only the action takes an image; items keep the closed glyph set.
+        link = src[src.index("export interface HeaderMenuLink {"):]
+        link = link[:link.index("}")]
+        self.assertIn("icon?: HeaderMenuIcon;", link)
+        self.assertNotIn("HeaderMenuImage", link)
+        partials = read(os.path.join(SDK_ROOT, "templates", "components", "custom", "header-menu.tsx"))
+        self.assertRegex(partials, r'import type \{[^}]*\bHeaderMenuImage\b[^}]*\} from "@/components/custom/landing/header-menu";')
+        resolver = partials[partials.index("function actionIcon("):partials.index("const HOVER_CLOSE_DELAY_MS")]
+        self.assertIn('if (typeof icon === "string") return { glyph: MENU_ICONS[icon] };', resolver)
+        self.assertIn("return icon.src.trim() ? { image: icon } : null;", resolver)
+        actions = partials[partials.index("export function HeaderMenuActions("):partials.index("export interface HeaderMenuRowProps")]
+        self.assertIn('const image = icon && "image" in icon ? icon.image : null;', actions)
+        self.assertIn("{image && (", actions)
+        img = actions[actions.index("<img\n"):actions.index("/>", actions.index("<img\n"))]
+        self.assertIn("src={image.src}", img)
+        self.assertIn("alt={image.alt}", img)
+        self.assertIn("width={20}", img)
+        self.assertIn("height={20}", img)
+        self.assertIn('className="h-5 w-5 shrink-0 object-contain"', img)
+        # Before the label, after the glyph slot, and never both at once.
+        self.assertLess(actions.index("{Icon && <Icon"), actions.index("{image && ("))
+        self.assertLess(actions.index("{image && ("), actions.index("<span>{action.label}</span>"))
+        # A plain <img>, as the header draws a declared brand image; no
+        # next/image, no CDN, no dark-mode filter (the mark is multi-colour).
+        self.assertNotIn("next/image", partials)
+        self.assertNotIn("invert", partials)
         self.assertNotIn("http", actions)
 
     def test_site_metadata_declares_the_icon(self):

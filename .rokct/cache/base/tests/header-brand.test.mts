@@ -32,6 +32,7 @@ import {
   loadHeaderBrand,
   resolveHeaderBrand,
   resolveHeaderBrandCollapse,
+  resolveHeaderMenu,
 } from './header-menu.ts';
 import { setRegisteredIcon } from './landing-site-metadata.ts';
 
@@ -212,5 +213,35 @@ describe('resolveHeaderBrand: badge and collapse (1.24.0)', () => {
     assert.equal(resolveHeaderBrandCollapse(false), null);
     assert.equal(resolveHeaderBrandCollapse(undefined), null);
     assert.equal(resolveHeaderBrandCollapse(null), null);
+  });
+});
+
+// base_sdk 1.25.0: an action's icon may be an image the shell serves itself
+// (Ray, 2026-09-09: "use it but bring it local"); the resolver carries it
+// through untouched, beside a named glyph and beside no icon at all.
+describe('resolveHeaderMenu: action icons (1.25.0)', () => {
+  const image = { src: '/brand/marks/chrome-web-store.svg', alt: 'Chrome Web Store' };
+  const menu = {
+    actions: [
+      { id: 'plain', label: 'Plain', href: '/plain' },
+      { id: 'glyph', label: 'Glyph', href: '/glyph', icon: 'chrome' as const },
+      { id: 'image', label: 'Image', href: 'https://chromewebstore.google.com/', external: true, icon: image },
+    ],
+  };
+
+  it('an image icon is carried verbatim; a glyph and no icon as before', () => {
+    const resolved = resolveHeaderMenu(menu, []);
+    assert.equal(resolved.actions.length, 3);
+    assert.equal(resolved.actions[0].icon, undefined);
+    assert.equal(resolved.actions[1].icon, 'chrome');
+    assert.deepEqual(resolved.actions[2].icon, image);
+    assert.equal(resolved.actions[2].external, true);
+  });
+
+  it('the actions are a copy, in the declared order', () => {
+    const resolved = resolveHeaderMenu(menu, []);
+    assert.notEqual(resolved.actions, menu.actions);
+    assert.deepEqual(resolved.actions.map((a) => a.id), ['plain', 'glyph', 'image']);
+    assert.deepEqual(resolveHeaderMenu(null, []).actions, []);
   });
 });

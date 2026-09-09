@@ -48,6 +48,12 @@ ACTIONS = os.path.join(AUTH_GROUP, "agent-register-actions.ts")
 HEADER_MENU = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-header-menu.ts")
 # 1.13.0: rokct.ai's say over base_sdk 1.23.0's network strip.
 NETWORK_STRIP = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-network-strip.ts")
+# 1.15.0: the Chrome Web Store mark, served by the shell itself.
+HERO_COPY = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-hero-copy.ts")
+CHROME_MARK = os.path.join(TEMPLATES, "public", "brand", "marks", "chrome-web-store.svg")
+CHROME_MARK_PATH = "/brand/marks/chrome-web-store.svg"
+GOOGLE_PLAY_MARK = os.path.join(TEMPLATES, "public", "brand", "marks", "google-play.svg")
+GOOGLE_PLAY_MARK_PATH = "/brand/marks/google-play.svg"
 
 # The modules the node suites run against, staged into one directory.
 STAGED = {
@@ -56,8 +62,14 @@ STAGED = {
     "agent-register-helpers.ts": HELPERS,
     "agent-header-menu.ts": HEADER_MENU,
     "agent-network-strip.ts": NETWORK_STRIP,
+    "agent-hero-copy.ts": HERO_COPY,
 }
-NODE_SUITES = ["register-config.test.mts", "register-provision.test.mts", "network-strip.test.mts"]
+NODE_SUITES = [
+    "register-config.test.mts",
+    "register-provision.test.mts",
+    "network-strip.test.mts",
+    "hero-copy.test.mts",
+]
 
 # The two registry lines this SDK injects, exactly as auth_sdk's README
 # spells the contract: one self-contained line, a dynamic import, no
@@ -71,11 +83,16 @@ PROVISION_LINE = re.compile(
 
 # Words no copy or comment of this SDK's new files may carry.
 FORBIDDEN_WORDS = re.compile(r"\b(lorem|sample|demo|example)\b", re.I)
-NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS, NETWORK_STRIP]
+NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS, NETWORK_STRIP, HERO_COPY]
 
 # 1.13.0: the network-strip registry line, in base's one-line contract.
 NETWORK_STRIP_LINE = re.compile(
     r'^  \{ id: "agent-network-strip", load: \(\) => import\("@/components/custom/landing/agent-network-strip"\) \},$'
+)
+
+# 1.15.0: the hero-copy registry line, in base's one-line contract.
+HERO_COPY_LINE = re.compile(
+    r'^  \{ id: "agent-hero", load: \(\) => import\("@/components/custom/landing/agent-hero-copy"\) \},$'
 )
 
 IMPORT_RE = re.compile(r'(from\s+|import\()\s*"([^"]+)"')
@@ -180,6 +197,13 @@ class TestManifest(unittest.TestCase):
         self.assertIn("base_sdk >= 1.24.0", read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.13.0")[0])
         self.assertIn("1.24.0", comment["about"])
         self.assertIn("1.24.0", comment["components/custom/landing/header-menu.ts"])
+        # 1.15.0: an image icon on a header action raises it to base_sdk 1.25.0.
+        self.assertIn("base_sdk >= 1.25.0", read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.14.0")[0])
+        self.assertIn("1.25.0", comment["about"])
+        self.assertIn("1.25.0", comment["components/custom/landing/header-menu.ts"])
+        self.assertIn("1.25.0", comment["components/custom/header-menu.tsx"])
+        self.assertIn("base_sdk >= 1.23.0", comment["components/custom/landing/hero-config.ts"])
+        self.assertIn("base_sdk >= 1.23.0", comment["components/custom/landing/hero-copy.ts"])
         self.assertIn("auth_sdk >= 1.7.0", comment["components/custom/auth/register-registry.ts"])
         self.assertIn("auth_sdk >= 1.7.0", comment["app/(auth)/register-provision.ts"])
         self.assertIn("auth_sdk >= 1.6.0", comment["app/(auth)/tenant-link.ts"])
@@ -267,16 +291,118 @@ class TestRegisterInjection(unittest.TestCase):
                 envs = set(re.findall(r"process\.env\.([A-Z_]+)", src))
                 self.assertLessEqual(envs, {"ROKCT_BASE_URL"})
 
-    def test_header_action_carries_the_chrome_glyph(self):
+    def test_header_action_carries_the_local_chrome_mark(self):
+        # 1.15.0 (Ray, 2026-09-09, on the mark the old header hot-linked
+        # from a third party's CDN: "use it but bring it local"): the
+        # extension action draws the SVG this SDK installs, through base_sdk
+        # 1.25.0's image icon; lucide's "chrome" glyph (1.12.0) is gone.
         src = read(HEADER_MENU)
-        self.assertEqual(src.count('icon: "chrome"'), 1)
+        self.assertIn(f'src: "{CHROME_MARK_PATH}",', src)
+        self.assertIn('alt: "Chrome Web Store",', src)
+        self.assertNotIn('icon: "chrome"', src)
         start = src.index('id: "add-extension"')
         end = src.index("}", start)
-        self.assertIn('icon: "chrome"', src[start:end])
-        # Only the action gained a glyph; the group cards keep theirs.
+        self.assertIn("icon: CHROME_WEB_STORE_MARK,", src[start:end])
+        # Only the action carries the mark; the group cards keep their glyphs.
+        self.assertEqual(src.count("icon: CHROME_WEB_STORE_MARK"), 1)
         self.assertEqual(src.count('icon: "box"'), 1)
         self.assertEqual(src.count('icon: "globe"'), 1)
         self.assertEqual(src.count('icon: "smartphone"'), 1)
+        # The header and the hero name the same file.
+        self.assertEqual(read(HERO_COPY).count(f'src: "{CHROME_MARK_PATH}",'), 1)
+
+    def assert_clean_mark(self, path, view_box):
+        """A plain SVG the shell serves itself: parses, carries nothing
+        unsafe, references no host - every reference a fragment of itself."""
+        self.assertTrue(os.path.exists(path), path)
+        svg = read(path)
+        self.assertLess(len(svg.encode("utf-8")), 8192)
+        import xml.etree.ElementTree as ET
+        root = ET.fromstring(svg)
+        self.assertEqual(root.tag, "{http://www.w3.org/2000/svg}svg")
+        self.assertEqual(root.get("viewBox"), view_box)
+        tags = {el.tag.split("}")[-1] for el in root.iter()}
+        for unsafe in ("script", "foreignObject", "image", "font", "font-face", "style", "a", "use"):
+            self.assertNotIn(unsafe, tags, f"{os.path.basename(path)} carries <{unsafe}>")
+        for el in root.iter():
+            for name, value in el.attrib.items():
+                self.assertFalse(name.endswith("href"), f"{el.tag} {name}")
+                if "url(" in value:
+                    self.assertRegex(value, r"^url\(#[A-Za-z0-9_]+\)$")
+        self.assertEqual(re.findall(r"https?://", svg), ["http://"])  # the xmlns only
+        self.assertNotIn("getmerlin", svg)
+        return svg
+
+    def test_chrome_mark_is_installed_locally(self):
+        # The file itself: a plain SVG under public/brand/marks/, installed
+        # through the same public/brand mapping lms_sdk's marks use.
+        manifest = load_manifest()
+        self.assertIn(("templates/public/brand", "public/brand"), [(i["from"], i["to"]) for i in manifest["installs"]])
+        self.assert_clean_mark(CHROME_MARK, "0 0 29 26")
+
+    def test_google_play_mark_is_installed_locally(self):
+        # Ray, 2026-09-09: "we use what these platforms use for
+        # familiarity" - the coloured Play triangle in Google's own brand
+        # colours, the drawing rokct's hero showed before base 1.23.0
+        # stripped its CDN source, as a local file.
+        svg = self.assert_clean_mark(GOOGLE_PLAY_MARK, "0 0 25 26")
+        fills = set(re.findall(r'fill="(#[0-9A-Fa-f]{6})"', svg))
+        self.assertEqual(fills, {"#EA4335", "#FBBC04", "#4285F4", "#34A853"})
+        self.assertEqual(svg.count("<path"), 4)
+
+    def test_hero_copy_is_registered_where_base_looks(self):
+        # 1.15.0: the same mark on the hero's Chrome Web Store badge, as
+        # data through base's HeroCopy override, one field over the defaults.
+        manifest = load_manifest()
+        targets = {i["to"] for i in manifest["installs"]}
+        self.assertIn("components/custom/landing/agent-hero-copy.ts", targets)
+        lines = [
+            i for i in manifest["integrations"]
+            if i["target"] == "components/custom/landing/hero-copy.ts"
+        ]
+        self.assertEqual(len(lines), 1)
+        self.assertEqual(lines[0]["placeholder"], "// @rokct-sdk-hero-copy-start")
+        self.assertRegex(lines[0]["replacement"], HERO_COPY_LINE)
+        self.assertIn("components/custom/landing/hero-copy.ts", manifest["requires"])
+        self.assertIn("components/custom/landing/hero-config.ts", manifest["requires"])
+        src = read(HERO_COPY)
+        self.assertIn('import type { HeroCopy } from "@/components/custom/landing/hero-copy";', src)
+        self.assertIn("HERO_CONFIG,", src)
+        self.assertIn("badges: withLocalMarks(HERO_CONFIG.badges),", src)
+        # Only the badges' icons change; the words are not restated.
+        body = src[src.index("const AGENT_HERO_COPY"):src.index("export default")]
+        for field in ("headlineWords", "headlineSuffix", "placeholders", "trustLine", "backgroundImage"):
+            self.assertNotIn(field, body)
+        marks = src[src.index("export const LOCAL_MARKS"):src.index("};", src.index("export const LOCAL_MARKS"))]
+        self.assertIn("chrome: CHROME_WEB_STORE_MARK,", marks)
+        self.assertIn('"google-play": GOOGLE_PLAY_MARK,', marks)
+        self.assertNotIn("app-store", marks)  # the App Store badge keeps base's Apple glyph
+        self.assertIn(f'src: "{GOOGLE_PLAY_MARK_PATH}",', src)
+        self.assertIn('alt: "Google Play",', src)
+        self.assertIn("return mark ? { ...badge, icon: mark } : badge;", src)
+        # Multi-colour marks: no dark-mode inversion, and this SDK ships no CSS.
+        self.assertNotIn("invert", src)
+        self.assertFalse([i for i in manifest["installs"] if i["from"].endswith(".css")])
+
+    def test_header_and_hero_surfaces_name_no_third_party_host(self):
+        # The header menu, the hero copy and the marks directory name no
+        # host but the store the button opens; cdn.getmerlin.in, which the
+        # old header hot-linked the mark from, appears nowhere in them.
+        # (agent-landing-config.ts still hot-links its section images from
+        # that CDN - known placeholders under Ray's 15:02Z ruling, out of
+        # this release's scope and not asserted here.)
+        # The store the button opens, the SVG namespace, the licence header.
+        allowed = {"chromewebstore.google.com", "www.w3.org", "www.gnu.org"}
+        paths = [HEADER_MENU, HERO_COPY]
+        marks = os.path.dirname(CHROME_MARK)
+        paths += [os.path.join(marks, f) for f in sorted(os.listdir(marks))]
+        for path in paths:
+            with self.subTest(file=os.path.relpath(path, SDK_ROOT)):
+                src = read(path)
+                self.assertNotIn("getmerlin", src)
+                self.assertNotIn("cdn.", src)
+                for host in re.findall(r"https?://([A-Za-z0-9.-]+)", src):
+                    self.assertIn(host, allowed, host)
 
     def test_header_menu_declares_the_old_brand(self):
         # 1.14.0 (Ray, 2026-09-09: "header lost functions the old rokct

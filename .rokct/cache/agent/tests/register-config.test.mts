@@ -136,12 +136,13 @@ describe('the industry options', () => {
 });
 
 describe('the header menu', () => {
-  it('draws the chrome glyph on the Add ROK Extension action and nothing else changes', () => {
+  it('draws the local Chrome Web Store mark on the Add ROK Extension action and nothing else changes', () => {
     const actions = menu.actions ?? [];
     assert.deepEqual(actions.map((a) => a.id), ['chat-rokct', 'add-extension']);
     const extension = actions.find((a) => a.id === 'add-extension');
     assert.ok(extension);
-    assert.equal(extension.icon, 'chrome');
+    // 1.15.0: the shell's own file, not lucide's glyph and not a hot-link.
+    assert.deepEqual(extension.icon, { src: '/brand/marks/chrome-web-store.svg', alt: 'Chrome Web Store' });
     assert.equal(extension.variant, 'primary');
     assert.equal(extension.external, true);
     assert.equal(extension.label, 'Add ROK Extension');
