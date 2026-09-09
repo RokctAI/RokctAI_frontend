@@ -14,14 +14,70 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getGuestClient } from "@/app/lib/client";
 import { platformCall } from "@/app/services/base/platform-gateway";
 import { GlobalSettingsService } from "@/app/services/control/global_settings";
 
-export class VersionsService {
-  static async getPublicVersions() {
-    const frappe = getGuestClient();
+/**
+ * What the footer's status pill is entitled to claim.
+ *
+ * - `"online"`  — the platform gateway was asked, and it answered.
+ * - `"offline"` — it was asked and did not answer: unreachable, non-2xx,
+ *   timed out, or there is no base URL configured to ask at.
+ * - `"hidden"`  — we were told not to ask at all
+ *   (`ROKCT_STATUS_SOURCE=off` / `none`), so no pill is rendered.
+ *
+ * There is deliberately no state that renders nothing *because a probe
+ * failed*. Vanishing belongs to the explicit off switch alone, so "told
+ * not to ask" stays distinguishable from "asked and got nothing" — an
+ * outage can never be mistaken for a build that simply shows no pill.
+ */
+export type PlatformStatus = "online" | "offline" | "hidden";
 
+/**
+ * The explicit off switch, mirroring base_sdk's footer chrome config:
+ * `ROKCT_STATUS_SOURCE=off` (or `none`) suppresses the pill entirely,
+ * for deployments that do not want to advertise platform liveness.
+ */
+function isStatusReportingOff(): boolean {
+  const source = process.env.ROKCT_STATUS_SOURCE?.trim().toLowerCase();
+  return source === "off" || source === "none";
+}
+
+export class VersionsService {
+  /**
+   * Liveness of the control plane, for the footer's status pill.
+   *
+   * ONE gateway call, made with `throwOnError: true` so that a missing
+   * base URL, a non-2xx, a timeout and a network failure all surface as
+   * a thrown `PlatformGatewayError` rather than the gateway's default
+   * silent `null`. `"online"` is therefore reachable only when the
+   * platform actually answered: the pill can no longer be green by
+   * default, or green because some object happened to exist.
+   */
+  static async getPlatformStatus(): Promise<PlatformStatus> {
+    if (isStatusReportingOff()) return "hidden";
+
+    try {
+      await platformCall("control:get_versions", undefined, {
+        baseUrl: process.env.ROKCT_BASE_URL,
+        method: "GET",
+        requireAuth: false,
+        throwOnError: true,
+        timeout: 5000,
+        // Only a success is cached, and briefly: a stale "online" should
+        // expire fast, and a throw is never cached, so an outage shows up
+        // on the very next render.
+        fetchOptions: { next: { revalidate: 60 } },
+      });
+      return "online";
+    } catch {
+      // Asked, got nothing. This is the honest red state, never a
+      // silently-absent pill.
+      return "offline";
+    }
+  }
+
+  static async getPublicVersions() {
     const settings = await GlobalSettingsService.getGlobalSettings();
     const isDebug = settings?.isDebugMode ?? false;
 
@@ -46,7 +102,10 @@ export class VersionsService {
         baseUrl:
           process.env.NEXT_PUBLIC_FRAPPE_URL || process.env.ROKCT_BASE_URL,
       }),
-      frappe.call({ method: "rpanel.api.get_version" }),
+      platformCall("rpanel.api.get_version", undefined, {
+        baseUrl:
+          process.env.NEXT_PUBLIC_FRAPPE_URL || process.env.ROKCT_BASE_URL,
+      }),
     ]);
 
     // platformCall already unwraps Frappe's `message` envelope.
@@ -55,8 +114,8 @@ export class VersionsService {
     const paasVer =
       paasRes.status === "fulfilled" && paasRes.value ? paasRes.value : null;
     const rpanelVer =
-      rpanelRes.status === "fulfilled"
-        ? rpanelRes.value.message || rpanelRes.value
+      rpanelRes.status === "fulfilled" && rpanelRes.value
+        ? rpanelRes.value
         : null;
 
     // Merge datas

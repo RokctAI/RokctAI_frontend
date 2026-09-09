@@ -32,6 +32,7 @@ import {
 import t from "@/app/lib/i18n";
 import { Button } from "@/components/ui/button";
 import versionData from "@/version.json";
+import type { PlatformStatus } from "@/app/services/public/versions";
 
 async function PublicRoadmapLink() {
   try {
@@ -58,15 +59,22 @@ export async function Footer() {
     if (Array.isArray(fetchedTerms)) terms = fetchedTerms;
   } catch (e) {}
 
-  let isOnline = false;
+  // Default to the pessimistic state: a status indicator must never claim
+  // health it has not confirmed. `getPlatformStatus()` probes the gateway
+  // with `throwOnError`, so "online" can only come back when the platform
+  // actually answered.
+  let status: PlatformStatus = "offline";
 
   try {
     const { VersionsService } = await import("@/app/services/public/versions");
-    const versions = await VersionsService.getPublicVersions();
-    if (versions) {
-      isOnline = true;
-    }
-  } catch (e) {}
+    status = await VersionsService.getPlatformStatus();
+  } catch (e) {
+    // The probe itself could not even be run (the service failed to load).
+    // That is still "we do not know it is up", which reads as offline —
+    // it must never fall through to a green pill, and it must not make the
+    // pill disappear either.
+    status = "offline";
+  }
 
   let hasCareers = false;
   try {
@@ -133,6 +141,9 @@ export async function Footer() {
   };
 
   const version = versionData.frontend;
+  const isOnline = status === "online";
+  // Only the explicit off switch removes the pill. A failed probe shows red.
+  const showStatusPill = status !== "hidden";
 
   return (
     <footer className="bg-white dark:bg-black text-black dark:text-white pt-24 pb-12 border-t border-gray-200 dark:border-white/5">
@@ -341,17 +352,19 @@ export async function Footer() {
             © Copyright {new Date().getFullYear()} - {LEGAL_COMPANY_NAME}
           </p>
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 px-2 py-1 md:px-3 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10">
-              <div
-                className={`w-2 h-2 rounded-full ${isOnline ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"}`}
-              />
-              <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">
-                <span className="hidden md:inline">
-                  {t("system.status_prefix")}{" "}
+            {showStatusPill && (
+              <div className="flex items-center gap-2 px-2 py-1 md:px-3 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10">
+                <div
+                  className={`w-2 h-2 rounded-full ${isOnline ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"}`}
+                />
+                <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">
+                  <span className="hidden md:inline">
+                    {t("system.status_prefix")}{" "}
+                  </span>
+                  {isOnline ? t("system.online") : t("system.offline")}
                 </span>
-                {isOnline ? t("system.online") : t("system.offline")}
-              </span>
-            </div>
+              </div>
+            )}
             <span className="hidden md:inline text-xs font-mono font-bold text-gray-700 uppercase">
               {t("system.version")} {version}
             </span>
