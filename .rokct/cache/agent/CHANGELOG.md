@@ -1,5 +1,87 @@
 # Changelog
 
+## 1.8.0
+
+* rokct.ai's header menu is registered into base_sdk's shared header. Ray,
+  2026-09-09: rokct.ai and supacharge.app must use ONE header, the same
+  component, with the menu inside it. base_sdk 1.14.0 ships that header and
+  its `header-menu.ts` registry (anchors, links, `groups`, `actions`); what
+  it cannot know is rokct.ai's WORDS, which lived only in
+  rokctai_frontend's hand-written `components/custom/header.tsx` and the
+  `PLATFORM_FEATURES` registry in `app/config/features.ts` it drew its mega
+  menu from. New `components/custom/landing/agent-header-menu.ts`
+  default-exports those words as a `HeaderMenu`, entry for entry, and the
+  manifest registers it with one line at `// @rokct-sdk-header-menu-start`.
+  * `pricing` is an ANCHOR, not a link: `copied-pricing.tsx` registers
+    `{ id: "pricing", label: "Pricing" }` in its `meta.nav`, so base lifts
+    the label from the live nav and drops the entry on a render where the
+    section is not on the page, which a hand-written `#pricing` could not.
+    Affiliate (`/affiliate`) and Teams (`/teams`) are routes the page has no
+    section for, so they are fixed `links`.
+  * The Product dropdown's five columns are `groups`: Product (Browser
+    Extension, external to the Chrome Web Store; Web App `/dashboard`;
+    Mobile Apps, SOON), AI Chat (Chat with ROK `/chat`), Productivity (AI
+    ERP SOON, Tender Assist NEW, Telephony), Tools (Fraud Detector, Loan
+    Management, Tenders NEW, Funding NEW) and Summary (YouTube Summarizer,
+    Article Summarizer). Unreleased features keep their `#` hrefs; base
+    renders a SOON entry non-navigable, so none of those is followed.
+    `features.ts` marks Mobile Apps `label: "none"`; it is SOON here on
+    Ray's instruction for this menu.
+  * `actions`: Chat with ROK (`/chat`, ghost) and Add ROK Extension (Chrome
+    Web Store, primary, external) - the two buttons at the right-hand end of
+    the old header.
+  * Labels come from the shell's own dictionary through `t`
+    (`app/lib/i18n`, already a `requires` file; rokctai_frontend's en.json
+    carries every `features.*` and `header.*` key used), read once at module
+    load since `t` is a synchronous lookup over static JSON and the
+    header-menu contract wants already-translated strings. A `word(key,
+    fallback)` helper keeps the English beside each key so a shell whose
+    dictionary lacks a key shows the word rather than the key.
+* `components/custom/floating-nav.tsx` draws its new/soon pill with base's
+  ONE `components/custom/menu-label.tsx` (`MenuLabel`: bg-primary with black
+  text, Ray: "use primary color and text in black") instead of its own
+  `bg-primary text-primary-foreground` span, so the nav and the header the
+  menu now lives in cannot show two different pills.
+* `components/custom/landing/agent-hero-form.tsx`: the send button's active
+  state paints `bg-primary text-black hover:bg-primary/90` instead of the
+  hard-coded `bg-yellow-400 … hover:bg-yellow-500`, so rokct.ai's brand
+  colour lives in the shell's `--primary` token like everything base renders
+  since 1.14.0 (the hero's rotating word, the menu label). It was the only
+  brand yellow left in this SDK's templates: the remaining `yellow-*`
+  classes (`components/tasks/deal-task.tsx` priority border,
+  `components/notes/note-card.tsx` sticky-note palette,
+  `components/flights/boarding-pass.tsx` ticket, `components/custom/
+  weather.tsx` sun, `components/overviews/project-overview.tsx` on-hold
+  status) are semantic colours, not the brand, and are unchanged.
+* New `components/custom/landing/agent-site-metadata.ts`: rokct.ai's site
+  metadata - siteName, url, `<title>`, tagline, description, keywords,
+  `en_ZA`, and `/images/logo.svg` as the logo base draws into its generated
+  Open Graph / Twitter preview image - default-exported for base_sdk
+  1.15.0's site-metadata registry and registered with one integrations line
+  at `// @rokct-sdk-site-metadata-start` in
+  `components/custom/landing/site-metadata.ts`.
+  * That registry is OPTIONAL in this release's base floor. Against
+    base_sdk 1.14.0 the target file does not exist and
+    `sdk_installer_base.py update_integrations()` prints "Integration
+    target not found" and skips the line, so the module installs and sits
+    unused; for the same reason it declares the shape it fills
+    (`AgentSiteMetadata`, the `SiteMetadataCopy` fields) instead of
+    importing base's type, because an `import type` of a file that is not
+    on disk is a compile error and a shell on 1.14.0 must still build.
+* `templates/app/(chat)/opengraph-image.png` and `twitter-image.png` are
+  removed. They were the Vercel "Gemini Chatbot Starter Template" cards
+  1.6.0 took over from the shell with the rest of the `(chat)` tree; with
+  nothing at those App Router conventions, base's generated preview image
+  (drawn from the metadata above once base 1.15.0 is composed) wins. The
+  `(chat)` directory install is unchanged - it walks whatever is there, so
+  there was no per-file install line to remove.
+* base_sdk floor: >= 1.14.0. `requires` lists
+  `components/custom/landing/header-menu.ts`,
+  `components/custom/header-menu.tsx`, `components/custom/menu-label.tsx`
+  and `components/custom/landing/site-metadata.ts` (the last one optional,
+  as above), and the manifest's per-file notes say which base version
+  carries each.
+
 ## 1.7.0
 
 * Cuts rokct.ai's landing page height on a phone by laying its feature cards

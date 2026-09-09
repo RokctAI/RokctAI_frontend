@@ -16,8 +16,8 @@
 
 "use client";
 
-// The generic landing host's client orchestrator: the host header and the
-// header menu a home SDK registered under it, the hero, then every section
+// The generic landing host's client orchestrator: the shared header with
+// the menu a home SDK registered inside it, the hero, then every section
 // the composed SDKs registered in
 // ./landing/page-sections.ts, loaded with a dynamic import and rendered in
 // ascending `meta.order`, skipping any whose `meta.renders` turns this page
@@ -33,11 +33,10 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import type { LandingPlan } from "@/app/actions/base/landing";
 import { Header } from "@/components/custom/header";
-import { HeaderMenuRow } from "@/components/custom/header-menu";
 import { Hero } from "@/components/custom/hero";
 import {
   loadHeaderMenu,
-  resolveHeaderMenuItems,
+  resolveHeaderMenu,
   type HeaderMenu,
 } from "@/components/custom/landing/header-menu";
 import {
@@ -146,8 +145,8 @@ export function LandingContent({
   }, []);
 
   // The registered header menu, loaded once on the client beside the
-  // sections. Nothing registered answers null and the header keeps the shape
-  // it has always had.
+  // sections. Nothing registered answers null and the header renders no
+  // navigation: logo, theme toggle and the auth links only.
   useEffect(() => {
     let cancelled = false;
     loadHeaderMenu().then((menu) => {
@@ -183,35 +182,25 @@ export function LandingContent({
   // The header menu comes off `navItems`, the very list the floating nav
   // renders, so a header link and a nav tick can never disagree about what
   // is on the page: an anchor whose section was turned down by `meta.renders`
-  // is not in `navItems` and so is not in the menu either.
-  const headerMenuItems = useMemo(
-    () => resolveHeaderMenuItems(headerMenu, navItems),
+  // is not in `navItems` and so is not in the menu either (nor in a group).
+  const menu = useMemo(
+    () => resolveHeaderMenu(headerMenu, navItems),
     [headerMenu, navItems],
-  );
-
-  const header = (
-    <Header
-      loginUrl={LANDING_CONFIG.loginUrl}
-      signupUrl={LANDING_CONFIG.signupUrl}
-      session={session}
-    />
   );
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black">
-      {/* With a menu, the header and the menu row pin as one group, so the
-          row needs no knowledge of the host header's height - and the host
-          header's own `sticky top-0` is harmless inside an already-pinned
-          parent. With NO menu the header is rendered bare, exactly the
-          element tree this host produced before the registry existed. */}
-      {headerMenuItems.length > 0 ? (
-        <div className="sticky top-0 z-50">
-          {header}
-          <HeaderMenuRow items={headerMenuItems} />
-        </div>
-      ) : (
-        header
-      )}
+      {/* The header carries the menu itself (inline from lg up, behind its
+          burger below) and pins itself, so there is no wrapper and no row
+          under it: one element tree whether or not a menu is registered. */}
+      <Header
+        loginUrl={LANDING_CONFIG.loginUrl}
+        signupUrl={LANDING_CONFIG.signupUrl}
+        session={session}
+        menuItems={menu.items}
+        groups={menu.groups}
+        actions={menu.actions}
+      />
       <main className="flex-1">
         <RegisteredSections
           sections={overlays}

@@ -238,18 +238,11 @@ jobs:
           # else, and the job fails if an entry stops drifting - so the list can
           # only shrink, never quietly outlive its purpose.
           PENDING=(
-            "app/landing/page.tsx"
-            "components/custom/all-features-section.tsx"
             "components/custom/chat-section.tsx"
             "components/custom/copied-pricing.tsx"
             "components/custom/faq-section.tsx"
-            "components/custom/floating-nav.tsx"
-            "components/custom/hero.tsx"
-            "components/custom/landing-content.tsx"
             "components/custom/logos.tsx"
-            "components/custom/pricing.tsx"
             "components/custom/social-section.tsx"
-            "components/custom/testimonials-section.tsx"
             "components/custom/workflow-section.tsx"
           )
           PENDING_LIST="$(printf '%s\n' "${PENDING[@]}")"

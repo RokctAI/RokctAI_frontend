@@ -21,10 +21,11 @@
 // injected". The footer half a home SDK can already answer by itself - its
 // own footer section owns that markup, the way lms_sdk's
 // lms-footer-section.tsx renders its own link row. The HEADER half it
-// cannot: components/custom/header.tsx is a `requires` file, the host
-// shell's own (see base/nextjs/manifest.json), so no SDK may ship it and a
-// home SDK has nowhere to put a header link. The landing host is the one
-// thing that renders that header, so the seam belongs here.
+// cannot: a home SDK has nowhere to put a header link, because the header
+// is generic chrome every shell shares (base_sdk ships
+// components/custom/header.tsx since 1.14.0; before that it was the host
+// shell's own `requires` file). The landing host is the one thing that
+// renders that header, so the seam belongs here.
 //
 // A home SDK installs a module whose default export is a HeaderMenu and
 // registers it with ONE line at the marker below through its manifest
@@ -34,10 +35,16 @@
 //
 // [loadHeaderMenu] answers the FIRST entry that loads (one page, one header
 // menu, exactly as ./hero-form.ts picks one form and ./plans-query.ts picks
-// one query). With NOTHING registered it answers `null` and the host
-// renders the header exactly as it did before this registry existed - no
-// menu row, no wrapper element - so rokctai_frontend, whose header carries
-// its own mega menu out of app/config/features.ts, is untouched.
+// one query). With NOTHING registered it answers `null`, the resolved menu
+// is empty and the header (components/custom/header.tsx, shipped by
+// base_sdk since 1.14.0) renders no navigation at all: logo, theme toggle
+// and the auth links only.
+//
+// Since 1.14.0 the menu lives INSIDE that header - inline beside the logo
+// from the `lg` breakpoint up, behind a burger button below it - rather
+// than in a row under the host's own header, and a HeaderMenu may also
+// name `groups` (a label that opens a dropdown of links) and `actions`
+// (call-to-action buttons at the right-hand end of the bar).
 //
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as
@@ -64,6 +71,8 @@ import type {
  * business.
  */
 export interface HeaderMenuLink {
+  /** Optional stable key; the href stands in when absent. */
+  id?: string;
   label: string;
   href: string;
   /** The same vocabulary a floating-nav entry uses: "new" or "soon". */
@@ -96,6 +105,54 @@ export interface HeaderMenuLink {
 export interface HeaderMenu {
   anchors?: string[];
   links?: HeaderMenuLink[];
+  /**
+   * Labelled dropdowns, rendered after the flat entries. Optional and new in
+   * 1.14.0; a menu that names only `anchors`/`links` is resolved exactly as
+   * it was before.
+   */
+  groups?: HeaderMenuGroup[];
+  /**
+   * Call-to-action buttons at the right-hand end of the header bar, ahead
+   * of the theme toggle and the auth links. Optional and new in 1.14.0.
+   */
+  actions?: HeaderMenuAction[];
+}
+
+/**
+ * One entry of a group: a fixed link, or `{ anchor }` naming a SECTION id
+ * that is resolved against the live nav the same way a top-level anchor is
+ * (and dropped the same way when its section is not on the page).
+ */
+export type HeaderMenuGroupItem = HeaderMenuLink | { anchor: string };
+
+/**
+ * A labelled dropdown in the header: the label opens a list of links. The
+ * label and badge are the group's own (a group is not a section, so there
+ * is no `meta.nav` entry to lift them from); its items follow the anchor
+ * and link rules above. A group whose every item was dropped is dropped
+ * with them, so a label never opens an empty list.
+ */
+export interface HeaderMenuGroup {
+  /** Stable, unique in the menu. */
+  id: string;
+  label: string;
+  badge?: LandingNavBadge;
+  items: HeaderMenuGroupItem[];
+}
+
+/**
+ * A call-to-action button in the header bar (rokct.ai's "Add the Chrome
+ * extension" is the model). `primary` paints the platform's primary colour;
+ * `ghost` is an outlined button. Taken at face value like a link.
+ */
+export interface HeaderMenuAction {
+  /** Stable, unique in the menu. */
+  id: string;
+  label: string;
+  href: string;
+  variant?: "primary" | "ghost";
+  /** Open in a new tab with rel="noopener noreferrer". */
+  external?: boolean;
 }
 
 /** The shape of a registered menu module. */
@@ -119,7 +176,7 @@ export const HEADER_MENU: HeaderMenuEntry[] = [
  * live nav, or a fixed link.
  */
 export interface HeaderMenuItem {
-  /** Unique on the row: the section id, or the link's href. */
+  /** Unique on the row: the section id, or the link's id, else its href. */
   key: string;
   label: string;
   href: string;
@@ -158,7 +215,7 @@ export function resolveHeaderMenuItems(
 
   for (const link of menu.links ?? []) {
     items.push({
-      key: link.href,
+      key: link.id ?? link.href,
       label: link.label,
       href: link.href,
       badge: link.badge,
@@ -167,6 +224,75 @@ export function resolveHeaderMenuItems(
   }
 
   return items;
+}
+
+/** A group with its items resolved: ready to render as a dropdown. */
+export interface HeaderMenuResolvedGroup {
+  id: string;
+  label: string;
+  badge?: LandingNavBadge;
+  items: HeaderMenuItem[];
+}
+
+/** Everything the header renders, resolved against the page's live nav. */
+export interface ResolvedHeaderMenu {
+  /** The flat entries, as [resolveHeaderMenuItems] answers them. */
+  items: HeaderMenuItem[];
+  /** The dropdowns, each with at least one item. */
+  groups: HeaderMenuResolvedGroup[];
+  /** The call-to-action buttons, in the order the home SDK named them. */
+  actions: HeaderMenuAction[];
+}
+
+const EMPTY_HEADER_MENU: ResolvedHeaderMenu = { items: [], groups: [], actions: [] };
+
+/**
+ * The whole menu the header should render: [resolveHeaderMenuItems]'s flat
+ * list, then every group with at least one item left after its anchors were
+ * resolved by the same drop-missing rule, then the actions as declared.
+ * A `null` menu resolves to three empty lists and the header renders no
+ * navigation.
+ */
+export function resolveHeaderMenu(
+  menu: HeaderMenu | null,
+  nav: LandingNavItem[],
+): ResolvedHeaderMenu {
+  if (!menu) return EMPTY_HEADER_MENU;
+
+  const byId = new Map(nav.map((item) => [item.id, item]));
+  const groups: HeaderMenuResolvedGroup[] = [];
+
+  for (const group of menu.groups ?? []) {
+    const items: HeaderMenuItem[] = [];
+    for (const entry of group.items) {
+      if ("anchor" in entry) {
+        const nav = byId.get(entry.anchor);
+        if (!nav) continue;
+        items.push({
+          key: entry.anchor,
+          label: nav.label,
+          href: `#${nav.id}`,
+          badge: nav.badge,
+        });
+      } else {
+        items.push({
+          key: entry.id ?? entry.href,
+          label: entry.label,
+          href: entry.href,
+          badge: entry.badge,
+          external: entry.external,
+        });
+      }
+    }
+    if (items.length === 0) continue;
+    groups.push({ id: group.id, label: group.label, badge: group.badge, items });
+  }
+
+  return {
+    items: resolveHeaderMenuItems(menu, nav),
+    groups,
+    actions: [...(menu.actions ?? [])],
+  };
 }
 
 /**

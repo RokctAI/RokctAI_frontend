@@ -21,14 +21,19 @@
 // from the page (base_sdk's landing-content.tsx builds them from its config
 // and the registered sections), so this file names no section of its own.
 // An entry that carries base_sdk's optional `badge` ("new" / "soon") gets
-// the little pill rokct.ai wears in its header menu, in the shell's own
-// `primary` token rather than a fixed colour: rokct's accent is yellow,
-// Supacharge's (lms_sdk's copy of this nav) is orange.
+// the little pill rokct.ai wears in its header menu - since 1.8.0 the SAME
+// component, base_sdk >= 1.14.0's components/custom/menu-label.tsx
+// (bg-primary with black text, Ray, 2026-09-09: "use primary color and
+// text in black"), so the nav and the header cannot show two different
+// pills. It paints the shell's own `primary` token rather than a fixed
+// colour: rokct's accent is yellow, Supacharge's (lms_sdk's copy of this
+// nav) is orange.
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import type { LandingNavItem } from "@/components/custom/landing/landing-config";
+import { MenuLabel } from "@/components/custom/menu-label";
 import type {
   PageSectionMeta,
   PageSectionProps,
@@ -83,9 +88,7 @@ export function FloatingNav({ items }: { items: LandingNavItem[] }) {
             <span className="absolute left-full ml-4 inline-flex items-center gap-1.5 px-2 py-1 bg-zinc-900 dark:bg-zinc-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-medium">
               {item.label}
               {item.badge ? (
-                <span className="shrink-0 rounded-full bg-primary text-primary-foreground px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-tighter">
-                  {item.badge}
-                </span>
+                <MenuLabel badge={item.badge} />
               ) : null}
             </span>
           </button>

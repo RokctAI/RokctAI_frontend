@@ -364,7 +364,7 @@ export default function AgentHeroForm({
             disabled={isBusy}
             className={`mr-1.5 p-3 rounded-[20px] transition-all active:scale-95 disabled:opacity-50 ${
               query.trim().length > 0
-                ? "bg-yellow-400 text-black hover:bg-yellow-500"
+                ? "bg-primary text-black hover:bg-primary/90"
                 : "bg-zinc-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700"
             }`}
           >

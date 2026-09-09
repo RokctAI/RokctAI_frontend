@@ -228,7 +228,7 @@ export function Hero({
         </motion.div>
 
         {/* Main Headline */}
-        <div className="mb-12 h-[1.2em] flex items-center justify-center">
+        <div className="mb-12 h-[1.2em] flex items-end md:items-center justify-center">
           {word && (
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
@@ -244,7 +244,7 @@ export function Hero({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -30 }}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="font-serif italic font-extrabold text-yellow-400 text-4xl md:text-5xl lg:text-6xl"
+                    className="font-serif italic font-extrabold text-primary text-4xl md:text-5xl lg:text-6xl"
                   >
                     {word.text}
                   </motion.span>
