@@ -1,5 +1,44 @@
 # Changelog
 
+## 1.19.0
+
+* The host the shell SHOWS follows the REQUEST first. The generated
+  favicon's letter (1.17.0) and the host line on the generated
+  link-preview card (1.15.0) were both derived from the configured site
+  url, so a white-label or custom domain in front of the same deployment
+  showed the platform's letter and host rather than its own. Now both
+  come from one helper, `resolveDisplayHost(copy, headers)` in
+  `app/lib/site-metadata.ts`, and the request wins when it is a public
+  host.
+  * The rule: the request host - `x-forwarded-host` (its first value
+    when a proxy chain appended) else `host`, the port dropped, a
+    leading `www.` removed, lower-cased - UNLESS it is a non-public
+    host, in which case the configured site's host (`NEXT_PUBLIC_SITE_URL`,
+    else the copy's `url`), then the site name (or title). Non-public
+    means: empty; exactly `localhost`, `127.0.0.1`, `[::1]`, `::1` or
+    `0.0.0.0`; or ending in `.vercel.app`, `.local` or `.internal`
+    (`NON_PUBLIC_HOSTS`, `NON_PUBLIC_HOST_SUFFIXES`). So a custom
+    domain gets its own letter and host line, and a preview deployment
+    or a local run keeps the configured site's. Also exported:
+    `normaliseHost()`, `isPublicHost()`, `requestHost()`, `siteHost()`,
+    and the `HeaderReader` type (anything with `get`, so a request's
+    `Headers` and next/headers' `headers()` both fit).
+  * `app/brand-icon/route.tsx`: the letter is
+    `resolveDisplayHost(copy, request.headers)`'s first letter or digit,
+    else the site name's, else `R` - the same remaining fallbacks as
+    1.17.0. Colour, size, ring and caching are unchanged; the route's own
+    `hostOf` and `requestOrigin` helpers are gone with the old order.
+  * `app/opengraph-image.tsx` (and so `app/twitter-image.tsx`): the
+    card's host line is `resolveDisplayHost(copy, headers)` with the same
+    `headers()` the route already read for the request origin, so nothing
+    that was static becomes dynamic. Assets are still fetched from the
+    request origin first and from the configured site url only when
+    there is no request. `www.` is now stripped from the printed host.
+  * `tests/test_manifest.py` checks the helper exists, reads
+    `x-forwarded-host` then `host`, checks the request before the
+    configured site, lists every excluded host and suffix, and that
+    both routes call it.
+
 ## 1.18.0
 
 * The header's `groups` open as ONE panel again - the mega menu. Ray,

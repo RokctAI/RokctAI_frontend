@@ -215,6 +215,31 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertIn("icon?: string;", src)
         self.assertIn("themeColor?: string;", src)
 
+    def test_display_host_prefers_the_request_host(self):
+        # base_sdk 1.19.0: the favicon letter and the card's host line
+        # follow the REQUEST host first (a white-label / custom domain
+        # gets its own), falling back to the configured site url only for
+        # a non-public host - local, loopback, a preview deployment.
+        lib = read(os.path.join(SDK_ROOT, "templates", "app", "lib", "site-metadata.ts"))
+        self.assertIn("export function resolveDisplayHost(", lib)
+        self.assertIn('headers.get("x-forwarded-host")', lib)
+        self.assertIn('headers.get("host")', lib)
+        # The request host is checked first; the configured site only after.
+        self.assertLess(lib.index("if (isPublicHost(fromRequest)) return fromRequest;"),
+                        lib.index("return siteHost(copy) ||"))
+        for non_public in ("localhost", "127.0.0.1", "[::1]", "0.0.0.0"):
+            self.assertIn(f'"{non_public}"', lib, f"{non_public} is not excluded")
+        for suffix in (".vercel.app", ".local", ".internal"):
+            self.assertIn(f'"{suffix}"', lib, f"{suffix} is not excluded")
+        # Both consumers go through the one helper, so the tile's letter and
+        # the card's host line never disagree.
+        route = read(os.path.join(SDK_ROOT, BRAND_ICON_INSTALL[0]))
+        self.assertIn("resolveDisplayHost(copy, request.headers)", route)
+        self.assertNotIn("resolveSiteUrl", route)
+        card = read(os.path.join(SDK_ROOT, "templates", "app", "opengraph-image.tsx"))
+        self.assertIn("resolveDisplayHost(copy, h)", card)
+        self.assertNotIn("function displayHost(", card)
+
     def test_metadata_shell_falls_back_to_the_brand_icon(self):
         lib = read(os.path.join(SDK_ROOT, "templates", "app", "lib", "site-metadata.ts"))
         self.assertIn('export const GENERATED_BRAND_ICON = "/brand-icon";', lib)
