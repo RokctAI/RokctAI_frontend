@@ -1,5 +1,79 @@
 # Changelog
 
+## 1.7.0
+
+* Cuts rokct.ai's landing page height on a phone by laying its feature cards
+  out as ONE swipeable row instead of a column of ten. Ray, 2026-09-09, after
+  the same change landed on supacharge.app: "why rokctai didnt benefit from
+  the change?"
+* It did not benefit because the sections are NOT SHARED. base_sdk holds only
+  the landing HOST - the page, the orchestrator, the `page-sections.ts`
+  registry and the hero - and every content section belongs to the home SDK
+  (`base/nextjs/templates/components/custom/landing/page-sections.ts` says so
+  in as many words). Supacharge's cards are lms_sdk's components and
+  rokct.ai's are this SDK's, so lms_sdk 1.8.0 could not reach them however it
+  was written. This is that change made here, in this SDK's own files.
+* `components/custom/landing/agent-card-row.ts` is the mechanism: one
+  exported class string, `AGENT_CARD_ROW`, that a card grid adds to the grid
+  it already has - not a special case written into each section. Every
+  utility in it is behind Tailwind's `max-sm:`, so the whole row compiles
+  into a single `@media not all and (min-width: 640px)` block and there is no
+  declaration outside it that could reach a larger screen.
+  * A class string rather than lms_sdk's `.sc-row` stylesheet rule, because
+    that SDK already ships `landing/lms-theme.css` for Supacharge's tokens
+    and this one ships no CSS at all. Every section here is Tailwind; the row
+    is Tailwind too, rather than becoming this SDK's first and only
+    stylesheet plus an import seam to carry it.
+  * Sized and snapped like the plan scroller `pricing.tsx` already runs a
+    section away - `snap-x snap-mandatory` over a card at 85% of the row with
+    centre snap - so rokct.ai has ONE scroller pattern rather than a second
+    one that looks almost like the first.
+  * Two deliberate departures from `pricing.tsx`. The scrollbar is actually
+    hidden here: `pricing.tsx` asks for that with a `no-scrollbar` class that
+    is defined nowhere in this SDK or the shell, so only its inline
+    `scrollbarWidth` reaches Firefox while webkit still draws base_sdk's
+    yellow thumb (`app/styles/rokct-scroll.css`) under the row;
+    `[&::-webkit-scrollbar]:hidden` is the rule that class is missing. And
+    there is no `scroll-snap-stop: always` - lms_sdk's row pins every swipe
+    to one card, `pricing.tsx` does not, and with ten feature cards a fling
+    that can cross several beats nine separate swipes.
+* `all-features-section.tsx` is the ONLY section that takes it, because it
+  was the only stacked card grid on the page. Ten cards, each a 120px image
+  over a title, is about 2 200px of column - roughly a third of the whole
+  landing page and by far the tallest thing on it; as a row it is one card
+  high. Its grid drops the `grid-cols-1` it no longer needs and pins
+  `sm:grid-cols-1` in its place, because its first column break is `md:` and
+  that `grid-cols-1` was also holding the 640-767px band.
+* Left alone, and why: `chat-section`, `social-section` and `workflow-section`
+  are already embla carousels one card wide on a phone; `pricing` is already
+  a horizontal snap scroller; `logos` and `testimonials-section` are already
+  marquees; `copied-pricing` is a fixed-height card fan you click through,
+  not a stack; `faq-section` is a collapsed accordion, already short, and a
+  row of expanding panels would fight itself; `floating-nav` is chrome and
+  `agent-opportunities` is a list of result rows, not cards. Converting any
+  of them would have made the page worse, not shorter.
+* Desktop and tablet are untouched, and mechanically so: compiled with the
+  shell's own Tailwind 3.4.19, every declaration on the grid is identical
+  before and after at 640, 700, 767, 768, 900, 1024, 1100, 1280, 1440 and
+  1920px. No base_sdk change and no new seam - the floor is unchanged at
+  `>= 1.10.0`.
+
+## 1.6.0
+
+* rokctapp's floating nav renders base_sdk 1.10.0's optional nav badge.
+  `LandingNavItem` grew `badge?: "new" | "soon"`; `floating-nav.tsx` now
+  draws it as a pill in the hover tooltip beside the label, in the shape
+  rokct.ai's header menu has always used (9px, bold, uppercase, tight
+  tracking, full radius) and the shell's own `primary` token rather than
+  the header's hard-coded `bg-yellow-400` - the same nav in lms_sdk is
+  Supacharge orange, and neither should be nailed to the other's accent.
+  The badge word joins the button's `aria-label`, since the pill only
+  appears on hover.
+* No section of this SDK sets a badge, so rokctapp's landing page is
+  unchanged: every entry is still `{ id, label }` and renders exactly as
+  before. This is the renderer, so that a rokctapp section CAN say it.
+* Requires base_sdk >= 1.10.0 for the field to exist.
+
 ## 1.5.0
 
 * Holds the hero's chat box and registers it into base_sdk 1.7.0's hero form

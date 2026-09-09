@@ -14,18 +14,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { eq } from "drizzle-orm";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-import { db } from "@/db";
-import { user } from "@/db/schema";
 import {
   PlatformGatewayError,
   platformCall,
 } from "@/app/services/base/platform-gateway";
 
 import { authConfig } from "./auth.config";
+import { loadTenantLink } from "./tenant-link";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -38,12 +36,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           let baseUrl = process.env.ROKCT_BASE_URL;
           let siteName = (credentials?.site_name as string) || null;
 
-          // Check DB for stored site_name (we need dbUser later anyway)
-          const dbUser = await db
-            .select()
-            .from(user)
-            .where(eq(user.email, email as string))
-            .limit(1);
+          // Where this email's site comes from when the form named none is
+          // the host's choice, not this file's: ./tenant-link.ts resolves it
+          // through the first registered TenantLink, and its default is the
+          // same drizzle lookup this block used to do inline (we need the
+          // record later anyway, to decide whether there is anything to
+          // remember the login against).
+          const tenantLink = await loadTenantLink();
+          const link = await tenantLink.resolveLink(email as string);
 
           if (siteName) {
             // Ensure protocol is present for the URL construction
@@ -51,8 +51,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               ? siteName
               : `https://${siteName}`;
           } else {
-            if (dbUser.length > 0 && dbUser[0].siteName) {
-              siteName = dbUser[0].siteName;
+            if (link && link.siteName) {
+              siteName = link.siteName;
               baseUrl = siteName.startsWith("http")
                 ? siteName
                 : `https://${siteName}`;
@@ -253,16 +253,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             }
           }
 
-          // 3. Update User in DB with latest keys and site (Persistence)
-          if (dbUser.length > 0) {
-            await db
-              .update(user)
-              .set({
-                apiKey: apiKey, // Might be null for tenants
-                apiSecret: apiSecret, // Might be null for tenants
-                siteName: siteName || new URL(baseUrl).hostname,
-              })
-              .where(eq(user.email, email as string));
+          // 3. Remember the latest keys and site against the resolved link
+          // (Persistence). Still conditional on a record existing, for the
+          // same reason the drizzle version was: a login never creates one.
+          if (link) {
+            await tenantLink.rememberLogin(email as string, {
+              apiKey: apiKey, // Might be null for tenants
+              apiSecret: apiSecret, // Might be null for tenants
+              siteName: siteName || new URL(baseUrl).hostname,
+            });
           }
 
           // 5. Return User Details

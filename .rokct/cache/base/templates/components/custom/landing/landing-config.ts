@@ -24,10 +24,26 @@
 // and the plans query a home SDK substitutes for the default below stays in
 // ./plans-query.ts.
 
+/**
+ * How a nav entry may be flagged: "new" for something just shipped, "soon"
+ * for something announced but not live yet. The words are the vocabulary,
+ * not the wording - each shell renders and translates them its own way.
+ */
+export type LandingNavBadge = "new" | "soon";
+
 /** One entry of the floating section nav: the DOM id it scrolls to and its tooltip. */
 export interface LandingNavItem {
   id: string;
   label: string;
+  /**
+   * An optional flag beside the label. Absent - the overwhelming case - is
+   * a plain entry, so every `{ id, label }` a section already registers
+   * stays valid untouched. The badge travels with the entry the section
+   * owns, because the floating nav's list IS what the home SDK registered:
+   * there is no second registry to keep in step, and a section that stops
+   * being new only edits its own `meta.nav`.
+   */
+  badge?: LandingNavBadge;
 }
 
 /**

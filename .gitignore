@@ -93,6 +93,9 @@ migrate_working_dir/
 /app/(auth)/forgot-password/page.tsx
 /app/(auth)/login/page.tsx
 /app/(auth)/register/page.tsx
+/app/(auth)/tenant-link-database.ts
+/app/(auth)/tenant-link-single.ts
+/app/(auth)/tenant-link.ts
 /app/(chat)/api/chat/route.ts
 /app/(chat)/api/error/route.ts
 /app/(chat)/api/files/upload/route.ts
@@ -125,6 +128,7 @@ migrate_working_dir/
 /app/actions/base/admin/settings.ts
 /app/actions/base/admin/system.ts
 /app/actions/base/landing.ts
+/app/actions/base/status.ts
 /app/actions/booking/booking.ts
 /app/actions/comms/whatsapp.ts
 /app/actions/gateways/admin/finance.ts
@@ -635,10 +639,15 @@ migrate_working_dir/
 /components/custom/auth-form.tsx
 /components/custom/beta-toggle.tsx
 /components/custom/chat.tsx
+/components/custom/footer-chrome.tsx
+/components/custom/header-menu.tsx
 /components/custom/image-upload.tsx
+/components/custom/landing/agent-card-row.ts
 /components/custom/landing/agent-hero-form.tsx
 /components/custom/landing/agent-landing-config.ts
 /components/custom/landing/agent-opportunities.tsx
+/components/custom/landing/footer-chrome-config.ts
+/components/custom/landing/header-menu.ts
 /components/custom/landing/hero-config.ts
 /components/custom/landing/hero-copy.ts
 /components/custom/landing/hero-form.ts
