@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.9.0
+
+* The registered header menu fills base_sdk 1.18.0's mega-panel fields, so
+  rokct.ai gets its mega menu back. Ray, 2026-09-09: "no mega menu anymore"
+  on rokct.ai is a regression; rokct keeps everything its old header had.
+  base_sdk 1.14.0 to 1.16.0 opened a dropdown PER group, so the five columns
+  1.8.0 registered became five narrow menus on the bar; 1.18.0 opens them
+  as ONE panel under the first group's label and draws an item with a
+  `description` or an `icon` as a card.
+  * `components/custom/landing/agent-header-menu.ts`: Product stays the
+    first group, so "Product" is the one desktop trigger as it was in the
+    hand-written header. Its three platform entries carry what the old
+    panel's left-hand cards showed: Browser Extension `icon: "box"` with
+    `header.chrome_support` ("Supports Chrome"), Web App `icon: "globe"`
+    with `header.browser_support` ("Open in browser"), Mobile Apps `icon:
+    "smartphone"` with `header.mobile_support` ("iOS and Android") - the
+    FiBox / FiGlobe / FiSmartphone tiles and their blurbs, read through
+    `word(key, fallback)` like every other label. AI Chat, Productivity,
+    Tools and Summary are unchanged and render as the four headed columns
+    beside the cards, exactly the old right-hand grid.
+  * The base_sdk floor is 1.18.0: `description` and `icon` are extra
+    properties on a `HeaderMenuLink` literal, which TypeScript rejects
+    against an older `HeaderMenu`, so 1.9.0 must not be composed over
+    base_sdk <= 1.17.0. The manifest `_comment` entries for
+    `components/custom/landing/header-menu.ts` and
+    `components/custom/header-menu.tsx` say so.
+
 ## 1.8.0
 
 * rokct.ai's header menu is registered into base_sdk's shared header. Ray,

@@ -20,9 +20,11 @@
 // and action buttons a home SDK asked for, in the two shapes the header
 // (components/custom/header.tsx) renders them in.
 //
-//  - [HeaderMenuNav]  the inline desktop list: flat links, then each group
-//                     as a label that opens a dropdown on hover, focus and
-//                     click (Escape and an outside click close it).
+//  - [HeaderMenuNav]  the inline desktop list: flat links, then the groups
+//                     as ONE trigger (the first group's label) that opens a
+//                     panel under the bar on hover, focus and click (Escape
+//                     and an outside click close it) - the mega menu
+//                     rokct.ai's own header drew before base shipped one.
 //  - [HeaderMenuList] the stacked mobile list the burger panel shows: every
 //                     link one under the other, each group as a headed
 //                     list.
@@ -41,10 +43,22 @@
 
 import React, { useCallback, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import {
+  ArrowUpRight,
+  Box,
+  ChevronDown,
+  FileText,
+  Globe,
+  MessageSquare,
+  Smartphone,
+  Wrench,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 
 import type {
   HeaderMenuAction,
+  HeaderMenuIcon,
   HeaderMenuItem,
   HeaderMenuResolvedGroup,
 } from "@/components/custom/landing/header-menu";
@@ -62,12 +76,15 @@ function MenuLink({
   item,
   className,
   onNavigate,
+  children,
 }: {
   item: HeaderMenuItem;
   className?: string;
   onNavigate?: () => void;
+  /** What to render inside; the label and its badge when absent. */
+  children?: React.ReactNode;
 }) {
-  const body = (
+  const body = children ?? (
     <>
       <span>{item.label}</span>
       {item.badge && <MenuLabel badge={item.badge} />}
@@ -107,15 +124,106 @@ const INLINE_LINK =
   "flex items-center gap-1.5 whitespace-nowrap text-foreground/70 transition-colors hover:text-foreground";
 
 /**
- * A group on the desktop bar: a button that discloses its links. Opens on
- * hover, on focus and on click; closes on Escape (focus returns to the
- * button), on a click outside, and when focus leaves it.
+ * The closed set of glyphs an item may name (HeaderMenuIcon). Named imports,
+ * so the header bundles these seven and not the whole of lucide-react.
  */
-function DesktopGroup({ group }: { group: HeaderMenuResolvedGroup }) {
+const MENU_ICONS: Record<HeaderMenuIcon, LucideIcon> = {
+  box: Box,
+  globe: Globe,
+  smartphone: Smartphone,
+  "message-square": MessageSquare,
+  zap: Zap,
+  wrench: Wrench,
+  "file-text": FileText,
+};
+
+/** An item with a description or an icon is drawn as a card, not a link. */
+const isCard = (item: HeaderMenuItem) => !!(item.description || item.icon);
+
+const PANEL_LINK =
+  "flex items-center gap-2 text-[13.5px] font-medium text-muted-foreground transition-colors hover:text-foreground";
+
+/**
+ * One card of the panel's lead column - rokct.ai's Browser Extension / Web
+ * App / Mobile Apps tiles: an icon box, the label with its badge, one line
+ * of blurb, and an arrow that shows on hover.
+ */
+function MenuCard({ item, onNavigate }: { item: HeaderMenuItem; onNavigate?: () => void }) {
+  const Icon = item.icon ? MENU_ICONS[item.icon] : null;
+  return (
+    <MenuLink
+      item={item}
+      className="group flex items-center justify-between rounded-xl border border-border p-3 transition-colors hover:bg-foreground/5"
+      onNavigate={onNavigate}
+    >
+      <span className="flex items-center gap-4">
+        {Icon && (
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-foreground/5 text-foreground">
+            <Icon aria-hidden="true" className="h-5 w-5" />
+          </span>
+        )}
+        <span className="flex flex-col">
+          <span className="flex items-center gap-2 text-[14px] font-semibold leading-tight text-foreground">
+            <span>{item.label}</span>
+            {item.badge && <MenuLabel badge={item.badge} />}
+          </span>
+          {item.description && (
+            <span className="mt-0.5 text-[12px] text-muted-foreground">
+              {item.description}
+            </span>
+          )}
+        </span>
+      </span>
+      <ArrowUpRight
+        aria-hidden="true"
+        className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+      />
+    </MenuLink>
+  );
+}
+
+/** A column's rows: cards for items that carry a blurb or icon, links otherwise. */
+function PanelItems({
+  items,
+  onNavigate,
+}: {
+  items: HeaderMenuItem[];
+  onNavigate?: () => void;
+}) {
+  return (
+    <ul className={items.some(isCard) ? "flex flex-col gap-3" : "space-y-4"}>
+      {items.map((item) => (
+        <li key={item.key}>
+          {isCard(item) ? (
+            <MenuCard item={item} onNavigate={onNavigate} />
+          ) : (
+            <MenuLink item={item} className={PANEL_LINK} onNavigate={onNavigate} />
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * The groups on the desktop bar: ONE button - the first group's label - that
+ * discloses a panel the width of the bar, anchored under it. Inside, the
+ * first group's items form the lead column (300px, no repeated heading) and
+ * every other group a headed column in a grid beside it: the layout of
+ * rokct.ai's hand-written mega menu, in the shell's theme tokens.
+ *
+ * Opens on hover, on focus and on click; closes on Escape (focus returns to
+ * the button), on a click outside, when focus leaves it, and on a click on
+ * any of its links. The panel is `absolute` against the bar, whose
+ * backdrop-filter makes it the containing block (see header.tsx), so it
+ * spans the bar's full width and needs no knowledge of its height.
+ */
+function DesktopMegaMenu({ groups }: { groups: HeaderMenuResolvedGroup[] }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelId = useId();
+  const [lead, ...columns] = groups;
 
   useEffect(() => {
     if (!open) return;
@@ -140,10 +248,12 @@ function DesktopGroup({ group }: { group: HeaderMenuResolvedGroup }) {
     }
   }, []);
 
+  const close = useCallback(() => setOpen(false), []);
+
   return (
     <div
       ref={rootRef}
-      className="relative"
+      className="flex h-full items-center"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       onKeyDown={onKeyDown}
@@ -158,8 +268,8 @@ function DesktopGroup({ group }: { group: HeaderMenuResolvedGroup }) {
         onFocus={() => setOpen(true)}
         className={cn(INLINE_LINK, "gap-1")}
       >
-        <span>{group.label}</span>
-        {group.badge && <MenuLabel badge={group.badge} />}
+        <span>{lead.label}</span>
+        {lead.badge && <MenuLabel badge={lead.badge} />}
         <ChevronDown
           aria-hidden="true"
           className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")}
@@ -170,19 +280,26 @@ function DesktopGroup({ group }: { group: HeaderMenuResolvedGroup }) {
       <div
         id={panelId}
         hidden={!open}
-        className="absolute left-0 top-full z-50 pt-2"
+        className="absolute inset-x-0 top-full z-50 border-b border-border bg-background shadow-2xl"
       >
-        <ul className="min-w-[12rem] rounded-xl border border-border bg-background p-2 shadow-lg">
-          {group.items.map((item) => (
-            <li key={item.key}>
-              <MenuLink
-                item={item}
-                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-foreground/80 transition-colors hover:bg-foreground/5 hover:text-foreground"
-                onNavigate={() => setOpen(false)}
-              />
-            </li>
-          ))}
-        </ul>
+        <div className="mx-auto flex max-w-6xl gap-12 px-4 py-8">
+          <div className="w-[300px] shrink-0">
+            <PanelItems items={lead.items} onNavigate={close} />
+          </div>
+          {columns.length > 0 && (
+            <div className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-8">
+              {columns.map((group) => (
+                <section key={group.id} aria-label={group.label}>
+                  <h4 className="mb-6 flex items-center gap-2 text-[15px] font-semibold text-foreground">
+                    <span>{group.label}</span>
+                    {group.badge && <MenuLabel badge={group.badge} />}
+                  </h4>
+                  <PanelItems items={group.items} onNavigate={close} />
+                </section>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -199,8 +316,9 @@ export interface HeaderMenuNavProps {
 }
 
 /**
- * The inline list for the desktop bar. Renders nothing when there is
- * nothing to list, so the header can mount it without deciding anything.
+ * The inline list for the desktop bar: the groups' one trigger first (the
+ * old rokct.ai bar led with Product), then the flat links. Renders nothing when there is nothing to list, so the
+ * header can mount it without deciding anything.
  */
 export function HeaderMenuNav({
   items,
@@ -215,11 +333,9 @@ export function HeaderMenuNav({
       aria-label={ariaLabel}
       className={cn("items-center gap-5 text-sm", className)}
     >
+      {groups.length > 0 && <DesktopMegaMenu groups={groups} />}
       {items.map((item) => (
         <MenuLink key={item.key} item={item} className={INLINE_LINK} />
-      ))}
-      {groups.map((group) => (
-        <DesktopGroup key={group.id} group={group} />
       ))}
     </nav>
   );
