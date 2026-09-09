@@ -4,7 +4,7 @@
   "app_type": "rokctapp",
   "protocol": {
     "git": "https://github.com/RokctAI/The-Rokct-Protocol",
-    "ref": "efdef54ae45defffabab86efa09d657aa31255e0",
+    "ref": "2468f0a0ec20b9fc5dc2a9c8c36ef149bbb9d50e",
     "vendored": ".rokct/cache/_composer",
     "files": {
       "sdk_composer.py": "4188e85c1b8be88d5f16bb4a63e46ba0789b685ce8d674d28b048cf4de60043f",
@@ -43,10 +43,10 @@
       "git": "https://github.com/RokctAI/Users",
       "path": "../Users/auth/nextjs",
       "ref": "main",
-      "commit": "3a7f6064dcff140a0509807f5250f3a11837109e",
-      "version": "1.7.0",
+      "commit": "0e865f21f1df66dcd95b63bd1d34080d50f0fd8b",
+      "version": "1.7.1",
       "install_py_sha256": "b9b0d4156a68d46f528be2b885eed17cc7dba21f6b4b48b2991ba2c3274ae21b",
-      "content_sha256": "d532718c9d70ba8729c664f6083fcb56a480a524edf69ecb1e53487b19b35836"
+      "content_sha256": "1c758cdec101e100f88121eee2f2e5624653bf0f03186ba34f7fc09ed86001c5"
     },
     {
       "name": "users_sdk",
@@ -55,7 +55,7 @@
       "git": "https://github.com/RokctAI/Users",
       "path": "../Users/users/nextjs",
       "ref": "main",
-      "commit": "3a7f6064dcff140a0509807f5250f3a11837109e",
+      "commit": "0e865f21f1df66dcd95b63bd1d34080d50f0fd8b",
       "version": "1.1.0",
       "install_py_sha256": "3a1855f895916342fe2e421bdf54e4201e0c97490e4eba68259a3b653af597e2",
       "content_sha256": "3b6b8656283e13482aa4c1db429dcf878d2bcb291695b84d43b19528f2184f4c"
@@ -235,7 +235,7 @@
       "git": "https://github.com/RokctAI/agent",
       "path": "../agent/agent/nextjs",
       "ref": "main",
-      "commit": "f81b0ef8c7ee68acd8af4bf3c184c3d112ab356d",
+      "commit": "040e2b7ccd6ef5bff98ba1fed7809a5a65976aed",
       "version": "1.12.0",
       "install_py_sha256": "c629e669d7aeba008b2e1c23a845eb65628f09e8538f738abbfa1385bf1088a3",
       "content_sha256": "2e5daee99e45839bb5893ae4323791a879be287a272945e4a33425f2676694d4"

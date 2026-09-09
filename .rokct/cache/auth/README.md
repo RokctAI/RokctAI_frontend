@@ -195,7 +195,7 @@ visitors to `/login`, the same place a tenant host's `/register` goes.
 
 ## Tests
 
-```
+```bash
 python3 -m unittest discover -s auth/nextjs/tests -v
 ```
 

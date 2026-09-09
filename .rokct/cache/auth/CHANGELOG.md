@@ -1,3 +1,19 @@
+## 1.7.1
+
+* **`middleware.ts` type-checks again.** 1.7.0 imported `NextRequest` with
+  `import type` and then constructed one (`new NextRequest(request, {
+  headers })`) on the tenant-host branch: a type-only import is erased at
+  runtime, so that branch threw `ReferenceError: NextRequest is not
+  defined` the first time a tenant host resolved, and `tsc --noEmit` on a
+  composed host failed with five errors (TS1361 on the constructor, TS2345
+  / TS2339 around the gate). `NextRequest` is now a value import, and the
+  NextAuth gate is typed as the `NextMiddleware` it is called as -
+  next-auth 5.0.0-beta.30's `auth` carries no `(NextRequest,
+  NextFetchEvent)` overload, so TypeScript had been resolving the call to
+  the `Promise<Session | null>` one and reading the pass-through's
+  `headers` off a `Session`. Behaviour is otherwise unchanged; no file
+  other than `middleware.ts` moves.
+
 ## 1.7.0
 
 Requires base_sdk >= 1.20.0 (`app/services/base/tenant-host-control.ts`).

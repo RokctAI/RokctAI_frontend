@@ -39,8 +39,8 @@
 // and the global fetch. See app/(auth)/tenant-host.ts for the decision.
 
 import NextAuth from "next-auth";
-import { NextResponse, type NextRequest } from "next/server";
-import type { NextFetchEvent } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import type { NextFetchEvent, NextMiddleware } from "next/server";
 
 import { authConfig } from "@/app/(auth)/auth.config";
 import {
@@ -52,7 +52,11 @@ import {
   resolveTenantSiteForRequest,
 } from "@/app/services/base/tenant-host-control";
 
-const withAuth = NextAuth(authConfig).auth;
+// NextAuth's `auth` is typed for its Route Handler / Server Component
+// callers; the (NextRequest, NextFetchEvent) middleware call it also
+// serves has no overload of its own, so name it as the middleware it is
+// here: its answer is a Response (or nothing) - never a Session.
+const withAuth = NextAuth(authConfig).auth as unknown as NextMiddleware;
 
 export default async function middleware(
   request: NextRequest,
