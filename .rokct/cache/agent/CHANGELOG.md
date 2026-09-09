@@ -1,5 +1,114 @@
 # Changelog
 
+## 1.14.0
+
+Requires base_sdk >= 1.24.0 (HeaderBrand.badge, HeaderBrand.collapse and
+the "secondary" HeaderMenuAction.variant) and auth_sdk >= 1.7.0 as
+before. An older HeaderBrand rejects the extra properties at build time,
+so this version must not be composed over base_sdk <= 1.23.0.
+
+* The header's brand is the old header's brand again. Ray, 2026-09-09, on
+  rokct.ai after PR #147 (base_sdk 1.21.0, agent_sdk 1.12.0): "header lost
+  functions the old rokct header had"; the standing ruling is that
+  rokct.ai keeps EVERYTHING its old host header (rokctai_frontend's
+  hand-written `components/custom/header.tsx` before its PR #143) had.
+  Set against that file, the shared header rendered the menu, the panel,
+  the badges, the Chrome CTA, the burger and the auth state, but had
+  dropped what the old header did with its BRAND. `agent-header-menu.ts`
+  now declares it, through base_sdk 1.24.0's `HeaderMenu.brand`:
+  * `badge: true` - the mark with its BETA strip (the old header's
+    `<BrandLogo width={44} height={44} showBadge={true} />`).
+  * `collapse: { delayMs: 1500, code: brandingCode }` - the wordmark at
+    60px that slid away 1.5s after load, leaving the mark, the visitor's
+    COUNTRY CODE and a chevron; the desktop nav fading with it and coming
+    back on hover or scroll. `brandingCode()` reads the code and its
+    inline style from `getBrandingSync()` (app/config/platform.ts, already
+    a `requires` file), the same cache the old header read, on the client
+    after mount; an empty cache collapses to the mark alone, as before.
+  * `chat-rokct` is `variant: "secondary"`: the old nav drew "Chat with
+    ROK" as a filled muted button (`bg-zinc-700`), not an outline; base
+    paints it in the shell's secondary tokens.
+* Not restored, on purpose: the old header's bar width
+  (`max-w-screen-2xl`), its mobile panel's `text-2xl` links, its panel's
+  fade-and-slide, the mobile CTA's `#4f46e5` and the Chrome Web Store
+  icon hot-linked from a third party's CDN - shared chrome, hard-coded
+  colours, or a third-party asset; see base_sdk 1.24.0's CHANGELOG. The
+  extension CTA still opens rokct's own Chrome Web Store listing, the
+  target the old header had; no other store link was added.
+* `tests/test_manifest.py`: `test_header_menu_declares_the_old_brand`
+  ties the declaration (badge, collapse with its delay and resolver,
+  the secondary variant, the resolver's source) to the module, and the
+  floors test names base_sdk 1.24.0.
+
+## 1.13.0
+
+Requires base_sdk >= 1.23.0 (the network-strip registry) and auth_sdk >=
+1.7.0 as before. Against a base between 1.20.0 and 1.22.0 the shell still
+composes - the registry line is skipped with a warning and the module
+sits unused - but rokct.ai is not complete without the strip.
+
+* Telephony plans leave rokct.ai (they sell on the telephony shell),
+  2026-09-09. The one server-side filter in
+  `components/custom/landing/agent-plans-query.ts` is now
+  `[["plan_category", "not in", ["Hosting", "paas", "Telephony"]]]`,
+  spelled as the backend fixtures spell the category, and
+  `pricing.hiddenCategories` in `agent-landing-config.ts` names
+  `"telephony"` beside `"lms"`, `"hosting"` and `"paas"` (the frontend
+  compares case-insensitively). The `telephony` entry in
+  `pricing.categoryStyles` stays: an unused surface is flagged, never
+  removed. rokct.ai now lists only its own plan categories; every product
+  category is registered in base's plans-query registry by that product's
+  home SDK, never by editing the backend.
+* The Merlin logo wall is off: `AGENT_LANDING_CONFIG.logos` is `null`
+  (Ray, 2026-09-09: "everything served from another company cdn tells
+  you is placeholder"). `components/custom/logos.tsx` stays in the tree
+  and registered, and renders nothing on `null` - an unused surface is
+  flagged, never removed; the network strip takes the slot under the
+  hero.
+* rokct.ai says where base_sdk 1.23.0's NETWORK STRIP goes. Ray,
+  2026-09-09: rokct.ai must not list his other products as choices (each
+  has moved to its own shell), but a founder landing on rokct.ai's free
+  opportunities pages must still learn about them - a clickable logo
+  strip, headed "Trusted by" in his words ("these products already trust
+  rokct as they run on it"). He also asked: "rokct already has a section
+  called logos, but is it enough?" It is not. `components/custom/logos.tsx`
+  is a marquee of Walmart, Cisco, Netflix, Pinterest, Zoom, Sony, Ebay and
+  Uber images hotlinked from a third party's CDN (`cdn.getmerlin.in`, a
+  chat template's leftover, `AGENT_LANDING_CONFIG.logos`), headed "Trusted
+  by professionals at", none of them a link, on /landing only (order 20,
+  after the chat section). It stays as it is: an unused surface is
+  flagged, never removed.
+  * `components/custom/landing/agent-network-strip.ts` (new)
+    default-exports this shell's `NetworkStripConfig` for
+    `// @rokct-sdk-network-strip-start`
+    (`components/custom/landing/network-strip.ts`, base_sdk 1.23.0):
+    `placement: { landing: "afterHero", footer: true }` and nothing else -
+    base's heading (Ray's wording), the list's order, nothing hidden.
+    rokct.ai itself is left out by base, which matches the shell's host
+    (`NEXT_PUBLIC_SITE_URL`, else the `url` agent-site-metadata.ts
+    registers, `https://rokct.ai`) against its one list
+    (`network-sites.ts`: rokct.ai, Supacharge, juvo; hosting and telephony
+    hidden until Ray picks their domains). The shape is written out here
+    rather than imported, as agent-site-metadata.ts does, so an older
+    base still compiles.
+  * WHERE. `afterHero` puts the strip right under the hero on /landing -
+    the slot a trusted-by row takes, above this SDK's logos marquee.
+    `footer: true` puts it above base's `FooterChromeRow`, which is how
+    the pages outside /landing get it. Two host facts, flagged rather than
+    fixed here: rokctai_frontend's `components/custom/footer.tsx` (the
+    footer `app/layout.tsx` renders on EVERY page) still keeps its own
+    copy of the copyright row and does not render `FooterChromeRow`, so
+    it must adopt the row (or render `<NetworkStrip surface="footer" />`
+    itself) before the strip reaches those pages; and the hero's
+    opportunity results link to `/opportunities/<type>/<slug>`, a route
+    neither this SDK nor the shell installs today.
+  * No ad network, no click tracking: the module names no URL at all; a
+    link is the site's origin from base's list and nothing more.
+  * `tests/test_manifest.py` asserts the install, the integration line
+    and its base marker, the placement, that the module names no URL and
+    no tracking word, and stages it under node
+    (`tests/network-strip.test.mts`) to execute the default export.
+
 ## 1.12.0
 
 Requires base_sdk >= 1.20.0 (`HeaderMenuAction.icon`) and auth_sdk >= 1.7.0

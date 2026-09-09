@@ -143,6 +143,14 @@ const MENU_ICONS: Record<HeaderMenuIcon, LucideIcon> = {
 /** An item with a description or an icon is drawn as a card, not a link. */
 const isCard = (item: HeaderMenuItem) => !!(item.description || item.icon);
 
+/**
+ * How long the pointer may be off the mega menu before it closes, in ms.
+ * Hover intent (1.24.0): a pointer crossing from the trigger to the panel,
+ * or brushing past the edge of either, is not a leave; only staying away
+ * this long is. The timer is cancelled the moment the pointer is back.
+ */
+const HOVER_CLOSE_DELAY_MS = 200;
+
 const PANEL_LINK =
   "flex items-center gap-2 text-[13.5px] font-medium text-muted-foreground transition-colors hover:text-foreground";
 
@@ -220,13 +228,51 @@ function PanelItems({
  * any of its links. The panel is `absolute` against the bar, whose
  * backdrop-filter makes it the containing block (see header.tsx), so it
  * spans the bar's full width and needs no knowledge of its height.
+ *
+ * The pointer's leave is DEBOUNCED (1.24.0). Ray, on supacharge.app: "it
+ * is impossible to choose links if mega menu is open, it leaves no moment
+ * to move mouse". Two things made that so: the wrapper was as tall as the
+ * bar's text (the nav sat centred in the bar with no height of its own)
+ * while the panel hangs from the bar's bottom edge, so the pointer crossed
+ * a dead strip of bar between the two, and a leave closed the panel on the
+ * spot. Now the nav is `h-full`, so this wrapper - button and panel are
+ * both inside it - spans the bar and meets the panel edge to edge, and a
+ * leave only starts a [HOVER_CLOSE_DELAY_MS] timer that re-entering, focus
+ * or a click cancels. Escape, an outside click and focus leaving still
+ * close at once.
  */
 function DesktopMegaMenu({ groups }: { groups: HeaderMenuResolvedGroup[] }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panelId = useId();
   const [lead, ...columns] = groups;
+
+  const cancelClose = useCallback(() => {
+    if (closeTimer.current !== null) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  }, []);
+
+  /** Open now, and forget any leave that was about to close. */
+  const openNow = useCallback(() => {
+    cancelClose();
+    setOpen(true);
+  }, [cancelClose]);
+
+  /** Close once the pointer has stayed away for the hover-intent delay. */
+  const closeSoon = useCallback(() => {
+    cancelClose();
+    closeTimer.current = setTimeout(() => {
+      closeTimer.current = null;
+      setOpen(false);
+    }, HOVER_CLOSE_DELAY_MS);
+  }, [cancelClose]);
+
+  // A pending close must not fire into an unmounted component.
+  useEffect(() => cancelClose, [cancelClose]);
 
   useEffect(() => {
     if (!open) return;
@@ -237,28 +283,46 @@ function DesktopMegaMenu({ groups }: { groups: HeaderMenuResolvedGroup[] }) {
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [open]);
 
-  const onKeyDown = useCallback((event: React.KeyboardEvent) => {
-    if (event.key === "Escape") {
-      event.stopPropagation();
-      setOpen(false);
-      buttonRef.current?.focus();
-    }
-  }, []);
+  const close = useCallback(() => {
+    cancelClose();
+    setOpen(false);
+  }, [cancelClose]);
 
-  const onBlur = useCallback((event: React.FocusEvent) => {
-    if (!rootRef.current?.contains(event.relatedTarget as Node | null)) {
-      setOpen(false);
-    }
-  }, []);
+  const onKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        // Focus FIRST: focus() dispatches the button's onFocus (which
+        // opens) synchronously, so closing after it is what sticks. The
+        // other order re-opened the panel whenever Escape was pressed on
+        // one of its links.
+        buttonRef.current?.focus();
+        close();
+      }
+    },
+    [close],
+  );
 
-  const close = useCallback(() => setOpen(false), []);
+  const onBlur = useCallback(
+    (event: React.FocusEvent) => {
+      if (!rootRef.current?.contains(event.relatedTarget as Node | null)) {
+        close();
+      }
+    },
+    [close],
+  );
+
+  const toggle = useCallback(() => {
+    cancelClose();
+    setOpen((v) => !v);
+  }, [cancelClose]);
 
   return (
     <div
       ref={rootRef}
       className="flex h-full items-center"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={openNow}
+      onMouseLeave={closeSoon}
       onKeyDown={onKeyDown}
       onBlur={onBlur}
     >
@@ -267,8 +331,8 @@ function DesktopMegaMenu({ groups }: { groups: HeaderMenuResolvedGroup[] }) {
         type="button"
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen((v) => !v)}
-        onFocus={() => setOpen(true)}
+        onClick={toggle}
+        onFocus={openNow}
         className={cn(INLINE_LINK, "gap-1")}
       >
         <span>{lead.label}</span>
@@ -320,8 +384,15 @@ export interface HeaderMenuNavProps {
 
 /**
  * The inline list for the desktop bar: the groups' one trigger first (the
- * old rokct.ai bar led with Product), then the flat links. Renders nothing when there is nothing to list, so the
- * header can mount it without deciding anything.
+ * old rokct.ai bar led with Product), then the flat links. Renders nothing
+ * when there is nothing to list, so the header can mount it without
+ * deciding anything.
+ *
+ * `h-full`: the bar (header.tsx, `h-16`) centres this nav, and the mega
+ * menu's wrapper fills the nav, so the nav taking the bar's full height is
+ * what puts the wrapper's bottom edge on the panel's top edge - no strip
+ * of bar between them for the pointer to leave across. Inside the legacy
+ * [HeaderMenuRow] the parent has no set height and `h-full` is inert.
  */
 export function HeaderMenuNav({
   items,
@@ -334,7 +405,7 @@ export function HeaderMenuNav({
   return (
     <nav
       aria-label={ariaLabel}
-      className={cn("items-center gap-5 text-sm", className)}
+      className={cn("h-full items-center gap-5 text-sm", className)}
     >
       {groups.length > 0 && <DesktopMegaMenu groups={groups} />}
       {items.map((item) => (
@@ -419,15 +490,19 @@ export function HeaderMenuActions({
   return (
     <>
       {actions.map((action) => {
-        const primary = (action.variant ?? "primary") === "primary";
+        const variant = action.variant ?? "primary";
         const className = cn(
           "inline-flex items-center justify-center gap-2 font-medium transition-colors",
           layout === "bar"
             ? "rounded-md px-3 py-1.5 text-[13px]"
             : "w-full rounded-2xl py-4 text-lg font-bold",
-          primary
+          // 1.24.0: `secondary` is the filled muted button rokct.ai's old
+          // header drew its "Chat with ROK" as, in the shell's own tokens.
+          variant === "primary"
             ? "bg-primary text-black hover:opacity-90"
-            : "border border-border text-foreground hover:bg-foreground/5",
+            : variant === "secondary"
+              ? "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+              : "border border-border text-foreground hover:bg-foreground/5",
         );
         // 1.20.0: the glyph before the label (rokct.ai's Chrome mark on its
         // extension button), the size the panel's cards draw theirs at; no

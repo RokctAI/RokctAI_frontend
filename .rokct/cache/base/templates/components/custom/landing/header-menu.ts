@@ -72,6 +72,16 @@
 // even when named. [resolveHeaderBrand] is the pure rule and
 // [loadHeaderBrand] the loader the header renders through.
 //
+// Since 1.24.0 the brand declaration also says whether the host's mark
+// draws its badge (`badge`: rokct.ai's BETA strip) and whether the brand
+// COLLAPSES the way rokct.ai's old header did (`collapse`: the large
+// wordmark slides away after load, the mark keeps the visitor's country
+// code and a chevron, and the desktop nav fades until the pointer is over
+// the bar or the page is scrolled). Ray, 2026-09-09: rokct.ai keeps
+// everything its old host header had; a shell that declares neither draws
+// the still brand it drew before. An action may also be `secondary`, the
+// filled muted button that header drew its "Chat with ROK" as.
+//
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as
 // ./hero-sections.ts, ./hero-copy.ts, ./hero-form.ts, ./plans-query.ts and
@@ -164,6 +174,52 @@ export interface HeaderBrand {
    * turns it off.
    */
   wordmark?: boolean;
+  /**
+   * Whether the host's brand-logo.tsx draws its badge on the mark (since
+   * 1.24.0): rokct.ai's BETA strip, which its old header always showed.
+   * Default false. A shell whose brand-logo.tsx has no badge accepts the
+   * prop and draws nothing, so the flag is safe on every shell.
+   */
+  badge?: boolean;
+  /**
+   * The COLLAPSING brand rokct.ai's old header had (since 1.24.0; Ray,
+   * 2026-09-09: rokct.ai keeps everything its old host header had). `true`
+   * takes the defaults; an object tunes them; nothing declared keeps the
+   * still brand every shell drew before. See HeaderBrandCollapse.
+   */
+  collapse?: boolean | HeaderBrandCollapse;
+}
+
+/**
+ * How the brand slot moves after the page loads, rokct.ai's old
+ * components/custom/header.tsx as the model:
+ *
+ *  - the mark is drawn at 44px (with its badge when `badge` is on) and the
+ *    wordmark large beside it; `delayMs` after mount the wordmark slides
+ *    away, a chevron appears after the mark, and the country code the
+ *    resolver answers (rokct.ai: the visitor's code from its branding
+ *    cache) slides in beside it;
+ *  - the desktop nav fades with the wordmark and comes back while the
+ *    pointer is over the header or the page is scrolled; the actions, the
+ *    theme toggle and the auth links stay.
+ *
+ * `code` runs on the client only, once, after mount; it may answer the
+ * bare text, or the text with the inline style the host wants on it (the
+ * scale and baseline offset rokct.ai's branding carries). Nothing, or an
+ * empty string, draws no code and the mark collapses on its own.
+ */
+export interface HeaderBrandCollapse {
+  /** Milliseconds after mount before the wordmark slides away. Default 1500. */
+  delayMs?: number;
+  /** The text beside the collapsed mark, resolved on the client. */
+  code?: () => HeaderBrandCode | string | null | undefined;
+}
+
+/** What [HeaderBrandCollapse.code] may answer: the text and its inline style. */
+export interface HeaderBrandCode {
+  text: string;
+  /** Inline CSS on the text (React's CSSProperties shape), merged over the header's own. */
+  style?: Record<string, string | number>;
 }
 
 /**
@@ -236,14 +292,16 @@ export interface HeaderMenuGroup {
 /**
  * A call-to-action button in the header bar (rokct.ai's "Add the Chrome
  * extension" is the model). `primary` paints the platform's primary colour;
- * `ghost` is an outlined button. Taken at face value like a link.
+ * `ghost` is an outlined button; `secondary` (since 1.24.0) is the filled
+ * muted button rokct.ai's old header drew its "Chat with ROK" as, in the
+ * shell's secondary tokens. Taken at face value like a link.
  */
 export interface HeaderMenuAction {
   /** Stable, unique in the menu. */
   id: string;
   label: string;
   href: string;
-  variant?: "primary" | "ghost";
+  variant?: "primary" | "ghost" | "secondary";
   /** Open in a new tab with rel="noopener noreferrer". */
   external?: boolean;
   /**
@@ -428,6 +486,35 @@ export interface ResolvedHeaderBrand {
   logo: ResolvedHeaderBrandLogo;
   /** Whether the wordmark renders; true unless the home SDK said otherwise. */
   wordmark: boolean;
+  /** Whether the host's mark draws its badge; false unless declared (1.24.0). */
+  badge: boolean;
+  /** The collapsing brand, with its defaults filled in; null for a still brand (1.24.0). */
+  collapse: ResolvedHeaderBrandCollapse | null;
+}
+
+/** [HeaderBrandCollapse] with every default filled in. */
+export interface ResolvedHeaderBrandCollapse {
+  delayMs: number;
+  code: (() => HeaderBrandCode | string | null | undefined) | null;
+}
+
+/** The wordmark slides away this long after mount unless the home SDK said otherwise. */
+export const DEFAULT_BRAND_COLLAPSE_DELAY_MS = 1500;
+
+/**
+ * The collapse declaration with its defaults filled in: `true` is the
+ * defaults, an object overrides them, `false` or nothing is a still brand.
+ */
+export function resolveHeaderBrandCollapse(
+  collapse: boolean | HeaderBrandCollapse | null | undefined,
+): ResolvedHeaderBrandCollapse | null {
+  if (!collapse) return null;
+  const declared = collapse === true ? {} : collapse;
+  const delayMs =
+    typeof declared.delayMs === "number" && Number.isFinite(declared.delayMs) && declared.delayMs >= 0
+      ? declared.delayMs
+      : DEFAULT_BRAND_COLLAPSE_DELAY_MS;
+  return { delayMs, code: typeof declared.code === "function" ? declared.code : null };
 }
 
 /**
@@ -460,23 +547,27 @@ export function isGeneratedBrandIcon(path: string): boolean {
  *  - `"auto"` (or nothing) answers the copy's `icon` when it is a real one,
  *    else "host": the host shell's own brand-logo.tsx.
  *
- * The generated tile is never the answer, whatever was declared.
+ * The generated tile is never the answer, whatever was declared. `badge`
+ * and `collapse` (1.24.0) are carried through with their defaults filled
+ * in, whichever branch answers the logo.
  */
 export function resolveHeaderBrand(
   brand: HeaderBrand | null | undefined,
   copy: Pick<SiteMetadataCopy, "icon"> | null | undefined,
 ): ResolvedHeaderBrand {
   const wordmark = brand?.wordmark !== false;
+  const badge = brand?.badge === true;
+  const collapse = resolveHeaderBrandCollapse(brand?.collapse);
   const declared = brand?.logo?.trim() ?? "";
-  if (declared === "none") return { logo: "none", wordmark };
+  if (declared === "none") return { logo: "none", wordmark, badge, collapse };
   if (declared && declared !== "auto" && !isGeneratedBrandIcon(declared)) {
-    return { logo: { src: declared }, wordmark };
+    return { logo: { src: declared }, wordmark, badge, collapse };
   }
   const icon = copy?.icon?.trim() ?? "";
   if (icon && !isGeneratedBrandIcon(icon)) {
-    return { logo: { src: icon }, wordmark };
+    return { logo: { src: icon }, wordmark, badge, collapse };
   }
-  return { logo: "host", wordmark };
+  return { logo: "host", wordmark, badge, collapse };
 }
 
 /** True when the declaration needs the registered copy to resolve. */

@@ -76,6 +76,15 @@ HEADER_MENU_REGISTRY = os.path.join(LANDING, "header-menu.ts")
 HEADER = os.path.join(SDK_ROOT, "templates", "components", "custom", "header.tsx")
 HEADER_BRAND_TESTS = os.path.join(HERE, "header-brand.test.mts")
 
+# base_sdk 1.23.0: the network strip - the other sites of the Rokct network
+# under "Trusted by", on every shell minus itself.
+NETWORK_SITES = os.path.join(LANDING, "network-sites.ts")
+NETWORK_STRIP_REGISTRY = os.path.join(LANDING, "network-strip.ts")
+NETWORK_STRIP = os.path.join(SDK_ROOT, "templates", "components", "custom", "network-strip.tsx")
+FOOTER_CHROME = os.path.join(SDK_ROOT, "templates", "components", "custom", "footer-chrome.tsx")
+LANDING_CONTENT = os.path.join(SDK_ROOT, "templates", "components", "custom", "landing-content.tsx")
+NETWORK_STRIP_TESTS = os.path.join(HERE, "network-strip.test.mts")
+
 # The kernel writes `from './x'`; node's ESM loader wants `from './x.ts'`.
 RELATIVE_IMPORT_RE = re.compile(r"(from\s+')(\./[a-z0-9-]+)(')")
 
@@ -123,6 +132,51 @@ declare module "node:path" {
 }
 declare const process: { env: Record<string, string | undefined>; cwd(): string };
 """
+
+
+# base_sdk 1.22.0: the theme seam base ships, defaulting to dark (Ray,
+# 2026-09-09: "default to dark mode").
+THEME_PROVIDER_TEMPLATE = os.path.join(
+    SDK_ROOT, "templates", "components", "custom", "theme-provider.tsx"
+)
+THEME_PROVIDER_TARGET = "components/custom/theme-provider.tsx"
+
+# What the theme-provider stage stands in for `react` and `next-themes`: the
+# prop shape next-themes 0.4.x exports from its package root, and just enough
+# JSX for a function component to type-check under `jsx: preserve`.
+TSC_THEME_STAGE_STUBS = """
+declare namespace JSX {
+  interface Element {}
+  interface ElementChildrenAttribute { children: {} }
+  interface IntrinsicElements { [name: string]: unknown }
+}
+declare module "react" {
+  export type ReactNode = unknown;
+  export function createElement(...args: unknown[]): JSX.Element;
+}
+declare module "next-themes" {
+  import type { ReactNode } from "react";
+  export type Attribute = `data-${string}` | "class";
+  export interface ThemeProviderProps {
+    children?: ReactNode;
+    themes?: string[];
+    forcedTheme?: string;
+    enableSystem?: boolean;
+    disableTransitionOnChange?: boolean;
+    enableColorScheme?: boolean;
+    storageKey?: string;
+    defaultTheme?: string;
+    attribute?: Attribute | Attribute[];
+    nonce?: string;
+  }
+  export function ThemeProvider(props: ThemeProviderProps): JSX.Element;
+}
+"""
+
+TSC_THEME_STAGE_CONFIG = {
+    "compilerOptions": dict(TSC_STAGE_CONFIG["compilerOptions"], jsx="preserve"),
+    "include": ["*.tsx", "*.d.ts"],
+}
 
 
 def load_manifest():
@@ -455,6 +509,60 @@ class TestManifest(unittest.TestCase):
         self.assertEqual(heads[0], self.manifest["version"])
 
 
+    def test_theme_provider_is_installed_and_defaults_to_dark(self):
+        """1.22.0 (Ray, 2026-09-09: "default to dark mode"): base ships the
+        theme seam, and its default is dark. The install lands on the path
+        both shells already import from their root layout, the template is
+        a client wrapper over next-themes whose `defaultTheme` falls back to
+        "dark" and whose `attribute` falls back to "class" (Tailwind's
+        darkMode signal), next-themes is a declared dependency, and the
+        host layout note states the contract."""
+        installs = {e["from"]: e["to"] for e in self.manifest["installs"]}
+        self.assertEqual(
+            installs.get("templates/components/custom/theme-provider.tsx"),
+            THEME_PROVIDER_TARGET,
+        )
+        self.assertNotIn(THEME_PROVIDER_TARGET, self.manifest["requires"])
+        self.assertIn("next-themes", self.manifest["dependencies"])
+
+        src = read(THEME_PROVIDER_TEMPLATE)
+        self.assertRegex(src, re.compile(r'^"use client";$', re.M), "the provider must be a client component")
+        self.assertRegex(src, re.compile(r'^export const DEFAULT_THEME = "dark";$', re.M))
+        self.assertRegex(src, re.compile(r'^export const THEME_ATTRIBUTE = "class";$', re.M))
+        self.assertRegex(src, r"\bdefaultTheme = DEFAULT_THEME\b", "defaultTheme must fall back to DEFAULT_THEME")
+        self.assertRegex(src, r"\battribute = THEME_ATTRIBUTE\b", "attribute must fall back to THEME_ATTRIBUTE")
+        self.assertNotRegex(src, r'defaultTheme = "(light|system)"')
+        self.assertNotRegex(src, r'defaultTheme="(light|system)"')
+        self.assertIn('from "next-themes";', src)
+        self.assertNotIn("next-themes/dist/types", src, "0.4.x exports the props type from the package root")
+        self.assertIn("export default ThemeProvider;", src)
+
+        note = self.manifest["_comment"].get("app/layout.tsx", "")
+        self.assertIn("theme-provider", note)
+        self.assertIn("dark", note)
+
+    def test_theme_provider_type_checks_under_tsc(self):
+        """The staged template under tsc, strict and isolatedModules with
+        `jsx: preserve`, against next-themes 0.4.x's prop shape: the
+        destructured defaults must fit `ThemeProviderProps` (an `attribute`
+        that is not an Attribute, or a props type imported from a path the
+        package does not export, fails here the way a shell build would).
+        Skips when no tsc is reachable."""
+        tsc = os.environ.get("ROKCT_TSC") or shutil.which("tsc")
+        if not tsc or not os.path.exists(tsc):
+            raise unittest.SkipTest("no tsc reachable (set ROKCT_TSC to a tsc binary)")
+        with tempfile.TemporaryDirectory() as tmp:
+            shutil.copy(THEME_PROVIDER_TEMPLATE, os.path.join(tmp, "theme-provider.tsx"))
+            with open(os.path.join(tmp, "stubs.d.ts"), "w", encoding="utf-8") as f:
+                f.write(TSC_THEME_STAGE_STUBS)
+            with open(os.path.join(tmp, "tsconfig.json"), "w", encoding="utf-8") as f:
+                json.dump(TSC_THEME_STAGE_CONFIG, f)
+            run = subprocess.run(
+                [tsc, "-p", tmp], capture_output=True, text=True, timeout=300, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+
+
 class TestRegistryMarkers(unittest.TestCase):
     def markers(self, fname):
         return MARKER_RE.findall(read(os.path.join(LANDING, fname)))
@@ -510,7 +618,8 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertIn("export async function loadHeaderBrand(): Promise<ResolvedHeaderBrand>", src)
         header = read(HEADER)
         self.assertIn("loadHeaderBrand", header)
-        self.assertIn("<HeaderBrand />", header)
+        # 1.24.0: the brand slot takes the collapse state; a still brand ignores it.
+        self.assertIn("<HeaderBrand collapsed={collapsed} />", header)
         self.assertIn("<BrandLogo width={32} height={32} />", header)
         self.assertIn('<Branding className="text-xl" />', header)
         code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", header))
@@ -579,6 +688,86 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertNotIn("function DesktopGroup(", partials)
         for hard_coded in ("yellow-", "zinc-", "gray-", "#0a0a0a"):
             self.assertNotIn(hard_coded, partials, f"header-menu.tsx paints a hard-coded colour: {hard_coded}")
+
+    def test_header_menu_hover_intent(self):
+        # base_sdk 1.24.0 (Ray, on supacharge.app: "it is impossible to
+        # choose links if mega menu is open, it leaves no moment to move
+        # mouse"): the pointer's leave is debounced, and the desktop nav is
+        # as tall as the bar so the hover wrapper meets the panel edge to
+        # edge - no dead strip between the trigger and the panel.
+        partials = read(os.path.join(SDK_ROOT, "templates", "components", "custom", "header-menu.tsx"))
+        self.assertIn("const HOVER_CLOSE_DELAY_MS = 200;", partials)
+        menu = partials[partials.index("function DesktopMegaMenu("):partials.index("export interface HeaderMenuNavProps")]
+        # Leave arms the timer; enter, focus and click disarm it.
+        self.assertIn("onMouseLeave={closeSoon}", menu)
+        self.assertIn("onMouseEnter={openNow}", menu)
+        self.assertIn("onFocus={openNow}", menu)
+        self.assertIn("onClick={toggle}", menu)
+        self.assertNotIn("onMouseLeave={() => setOpen(false)}", menu)
+        self.assertIn("closeTimer.current = setTimeout(", menu)
+        self.assertIn("}, HOVER_CLOSE_DELAY_MS);", menu)
+        self.assertIn("clearTimeout(closeTimer.current);", menu)
+        # A pending close is cleared on unmount.
+        self.assertIn("useEffect(() => cancelClose, [cancelClose]);", menu)
+        # Escape focuses the trigger BEFORE closing: the trigger's onFocus
+        # opens, and the other order re-opened the panel.
+        escape = menu[menu.index('if (event.key === "Escape")'):]
+        escape = escape[:escape.index("}\n")]
+        self.assertLess(escape.index("buttonRef.current?.focus();"), escape.index("close();"))
+        # The wrapper still carries the pointer handlers and fills the nav,
+        # and the nav fills the bar.
+        self.assertIn('className="flex h-full items-center"', menu)
+        nav = partials[partials.index("export function HeaderMenuNav("):partials.index("export interface HeaderMenuListProps")]
+        self.assertIn('className={cn("h-full items-center gap-5 text-sm", className)}', nav)
+
+    def test_header_brand_badge_and_collapse(self):
+        # base_sdk 1.24.0 (Ray, 2026-09-09: "header lost functions the old
+        # rokct header had"): the brand declaration may badge the host's
+        # mark and collapse the wordmark the way rokct.ai's old header did,
+        # an action may be `secondary`, and a shell that declares nothing
+        # keeps the still brand's literal markup.
+        src = read(HEADER_MENU_REGISTRY)
+        brand = src[src.index("export interface HeaderBrand {"):src.index("export interface HeaderBrandCollapse {")]
+        self.assertIn("  badge?: boolean;", brand)
+        self.assertIn("  collapse?: boolean | HeaderBrandCollapse;", brand)
+        collapse = src[src.index("export interface HeaderBrandCollapse {"):src.index("export interface HeaderBrandCode {")]
+        self.assertIn("  delayMs?: number;", collapse)
+        self.assertIn("  code?: () => HeaderBrandCode | string | null | undefined;", collapse)
+        self.assertIn("export const DEFAULT_BRAND_COLLAPSE_DELAY_MS = 1500;", src)
+        self.assertIn("export function resolveHeaderBrandCollapse(", src)
+        resolved = src[src.index("export interface ResolvedHeaderBrand {"):src.index("export interface ResolvedHeaderBrandCollapse {")]
+        self.assertIn("  badge: boolean;", resolved)
+        self.assertIn("  collapse: ResolvedHeaderBrandCollapse | null;", resolved)
+        # Every branch of the resolver carries both fields.
+        self.assertEqual(src.count("wordmark, badge, collapse }"), 4)
+        action = src[src.index("export interface HeaderMenuAction {"):]
+        action = action[:action.index("}")]
+        self.assertIn('variant?: "primary" | "ghost" | "secondary";', action)
+        header = read(HEADER)
+        # The still brand is untouched: the 1.21.0 literals stay, and the
+        # collapse machinery is reached only through a declaration.
+        self.assertIn("<BrandLogo width={32} height={32} />", header)
+        self.assertIn('<Branding className="text-xl" />', header)
+        self.assertIn("function CollapsingBrand(", header)
+        self.assertIn("function useBrandCollapse(", header)
+        self.assertIn("if (brand.collapse) return <CollapsingBrand brand={brand} collapsed={collapsed} />;", header)
+        self.assertIn("showBadge={brand.badge}", header)
+        self.assertIn('<Branding className="text-[60px] tracking-tighter leading-none" />', header)
+        self.assertIn("navVisible: !collapse || !collapsed || hovered || scrolled,", header)
+        self.assertIn("setTimeout(() => setCollapsed(true), collapse.delayMs)", header)
+        self.assertIn("window.scrollY > 10", header)
+        self.assertIn("<HeaderBrand collapsed={collapsed} />", header)
+        # The chevron and the fading nav wrapper exist only for a collapsing brand.
+        self.assertIn("{collapse ? (", header)
+        self.assertIn("<ChevronRight", header)
+        self.assertRegex(header, r"import \{[^}]*\bChevronRight\b[^}]*\} from \"lucide-react\";")
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", header))
+        for hard_coded in ("yellow-", "zinc-", "gray-", "#0a0a0a", "#4f46e5"):
+            self.assertNotIn(hard_coded, code, f"header.tsx paints a hard-coded colour: {hard_coded}")
+        partials = read(os.path.join(SDK_ROOT, "templates", "components", "custom", "header-menu.tsx"))
+        actions = partials[partials.index("export function HeaderMenuActions("):partials.index("export interface HeaderMenuRowProps")]
+        self.assertIn('const variant = action.variant ?? "primary";', actions)
+        self.assertIn('"bg-secondary text-secondary-foreground hover:bg-secondary/80"', actions)
 
     def test_header_menu_action_carries_an_icon(self):
         # base_sdk 1.20.0 (Ray, 2026-09-09: rokct "lost its chrome icon"):
@@ -671,6 +860,167 @@ class TestRegistryMarkers(unittest.TestCase):
             'import { PLATFORM_NAME } from "@/app/config/platform"',
         ):
             self.assertIn(needle, src)
+
+    # -- 1.23.0: no third-party default ---------------------------------------
+
+    # Hosts a base default may name: the network's own sites, the licence,
+    # the social origins the admin settings page links, and the hosts the
+    # documentation comments use as examples of a tenant or a site.
+    FIRST_PARTY_HOSTS = {
+        "rokct.ai", "supacharge.app", "juvo.app", "www.gnu.org",
+        "twitter.com", "linkedin.com", "instagram.com", "facebook.com",
+        "tenant-a.rokct.ai", "example.app", "tenant.localhost",
+    }
+
+    def test_no_base_default_references_a_third_party_cdn(self):
+        """Ray, 2026-09-09: "everything served from another company cdn
+        tells you is placeholder". No template or kernel default may name a
+        host outside the allowlist above - in particular no cdn.* host."""
+        url_re = re.compile(r"https?://([A-Za-z0-9.-]+)")
+        offenders = []
+        for root in (os.path.join(SDK_ROOT, "templates"), os.path.join(SDK_ROOT, "src")):
+            for dirpath, _, files in os.walk(root):
+                for fname in files:
+                    if not fname.endswith((".ts", ".tsx", ".css", ".mts", ".json")):
+                        continue
+                    path = os.path.join(dirpath, fname)
+                    for host in url_re.findall(read(path)):
+                        if host.lower() not in self.FIRST_PARTY_HOSTS:
+                            offenders.append(f"{os.path.relpath(path, SDK_ROOT)}: {host}")
+        self.assertEqual(offenders, [], "third-party hosts in base defaults:\n" + "\n".join(offenders))
+        for host in ("cdn.getmerlin.in", "getmerlin"):
+            self.assertNotIn(host, " ".join(offenders))
+
+    def test_hero_defaults_carry_no_placeholder(self):
+        config = read(os.path.join(LANDING, "hero-config.ts"))
+        self.assertIn('backgroundImage: "",', config)
+        self.assertIn("trustLine: [],", config)
+        # The comments may recount what left; the code may not carry it.
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", config))
+        self.assertNotIn("20M+", code)
+        self.assertNotIn("cdn.", code)
+        self.assertIn('icon: "chrome",', config)
+        self.assertIn('icon?: { src: string; alt: string } | "app-store" | "chrome";', config)
+        # The Google Play badge names no icon at all.
+        start = config.index("const GOOGLE_PLAY_BADGE")
+        end = config.index("};", start)
+        self.assertNotIn("icon:", config[start:end])
+        # The hero draws only a badge with an icon, and knows the chrome glyph.
+        hero = read(os.path.join(SDK_ROOT, "templates", "components", "custom", "hero.tsx"))
+        self.assertIn("export function hasBadgeIcon(", hero)
+        self.assertIn("hero.badges.filter(hasBadgeIcon)", hero)
+        self.assertIn("{badges.length > 0 && (", hero)
+        self.assertIn("{badges.map((badge) => (", hero)
+        self.assertNotIn("{hero.badges.map(", hero)
+        self.assertIn('import { Chrome } from "lucide-react";', hero)
+        self.assertIn('if (icon === "chrome") {', hero)
+
+    # -- 1.23.0: the network strip ------------------------------------------
+
+    def test_network_strip_is_installed(self):
+        targets = {i["to"] for i in load_manifest()["installs"]}
+        for path in (
+            "components/custom/landing/network-sites.ts",
+            "components/custom/landing/network-strip.ts",
+            "components/custom/network-strip.tsx",
+        ):
+            self.assertIn(path, targets, f"{path} is not installed")
+
+    def test_network_strip_registry_contract(self):
+        src = read(NETWORK_STRIP_REGISTRY)
+        self.assertIn("// @rokct-sdk-network-strip-start", src)
+        self.assertIn("// @rokct-sdk-network-strip-end", src)
+        for needle in (
+            "export interface NetworkStripConfig",
+            "export type NetworkStripLandingPlacement = \"afterHero\" | \"beforeFooter\" | \"none\";",
+            "export const NETWORK_STRIP: NetworkStripEntry[]",
+            "export function resolveNetworkStrip(",
+            "export function networkStripRendersAt(",
+            "export async function loadNetworkStrip(): Promise<NetworkStripConfig | null>",
+            'export const DEFAULT_NETWORK_STRIP_HEADING = "Trusted by";',
+        ):
+            self.assertIn(needle, src)
+        # Footer on and landing off with nothing registered.
+        self.assertRegex(src, re.compile(r'landing:\s*"none",\s*footer:\s*true', re.S))
+
+    def test_network_sites_list_shape(self):
+        src = read(NETWORK_SITES)
+        self.assertIn("export const NETWORK_SITES: readonly NetworkSite[]", src)
+        for origin in ("https://rokct.ai", "https://supacharge.app", "https://juvo.app"):
+            self.assertIn(f'url: "{origin}"', src)
+        for pending in ("hosting", "telephony"):
+            self.assertRegex(src, re.compile(rf'key: "{pending}".*?url: null.*?shown: false', re.S), pending)
+        # The same host normalisation as resolveDisplayHost: the kernel's.
+        self.assertIn('import { normaliseHost } from "@/app/services/base/tenant-hosts";', src)
+        self.assertIn("export function resolveNetworkSites(", src)
+        self.assertIn("export function networkSiteHost(", src)
+
+    def test_network_strip_component_never_tracks(self):
+        src = read(NETWORK_STRIP)
+        self.assertIn('"use client";', src)
+        self.assertIn('rel="noopener"', src)
+        self.assertIn("href={site.url}", src)
+        body = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", src))
+        for tracker in ("utm_", "?ref", "&ref", "onClick", "sendBeacon", "gtag", "dataLayer", "fbq", "analytics"):
+            self.assertNotIn(tracker, body, f"the strip must not carry {tracker}")
+        # The shell's own host comes from the configured site, through the
+        # list's normalisation, never from app/lib/site-metadata.ts (node:fs).
+        self.assertIn("process.env.NEXT_PUBLIC_SITE_URL", src)
+        self.assertIn("loadSiteMetadata()", src)
+        self.assertNotIn("@/app/lib/site-metadata", src)
+        self.assertIn('from "next/dynamic"', src)
+
+    def test_network_strip_surfaces_are_wired(self):
+        # The footer hook: base has no footer component, the copyright row
+        # is what every shell footer ends with, so the strip lands above it.
+        footer = read(FOOTER_CHROME)
+        self.assertIn('import { NetworkStrip } from "@/components/custom/network-strip";', footer)
+        self.assertIn('{networkStrip && <NetworkStrip surface="footer" />}', footer)
+        self.assertIn("networkStrip = true,", footer)
+        # The two landing surfaces, inside the block hidden during search.
+        landing = read(LANDING_CONTENT)
+        self.assertIn('<NetworkStrip surface="afterHero" />', landing)
+        self.assertIn('<NetworkStrip surface="beforeFooter" />', landing)
+        hidden = landing.index('display: searchActive ? "none" : undefined')
+        self.assertLess(hidden, landing.index('<NetworkStrip surface="afterHero" />'))
+        self.assertLess(landing.index('<NetworkStrip surface="beforeFooter" />'),
+                        landing.index("<div id={LANDING_CONFIG.nav.footer.id} />"))
+
+    def test_network_strip_behaviour_under_node(self):
+        """The list, the host rule and the placement rule executed: the
+        list's shape, self-exclusion by host, never a tracking parameter,
+        and a "none" landing placement hiding both landing surfaces."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute network-strip.ts")
+        with tempfile.TemporaryDirectory() as tmp:
+            for fname in os.listdir(KERNEL):
+                if fname.endswith(".ts"):
+                    staged = RELATIVE_IMPORT_RE.sub(r"\1\2.ts\3", read(os.path.join(KERNEL, fname)))
+                    with open(os.path.join(tmp, fname), "w", encoding="utf-8") as f:
+                        f.write(staged)
+            sites = read(NETWORK_SITES).replace(
+                'from "@/app/services/base/tenant-hosts"', 'from "./tenant-hosts.ts"'
+            )
+            self.assertNotIn('from "@/', sites, "network-sites.ts imports something the stage does not cover")
+            with open(os.path.join(tmp, "network-sites.ts"), "w", encoding="utf-8") as f:
+                f.write(sites)
+            registry = read(NETWORK_STRIP_REGISTRY).replace(
+                'from "@/components/custom/landing/network-sites"', 'from "./network-sites.ts"'
+            )
+            self.assertNotIn('from "@/', registry, "network-strip.ts imports something the stage does not cover")
+            with open(os.path.join(tmp, "network-strip.ts"), "w", encoding="utf-8") as f:
+                f.write(registry)
+            shutil.copy(NETWORK_STRIP_TESTS, os.path.join(tmp, "network-strip.test.mts"))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 os.path.join(tmp, "network-strip.test.mts")],
+                capture_output=True, text=True, timeout=120, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 18)
 
 
 if __name__ == "__main__":

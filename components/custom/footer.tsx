@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import t from "@/app/lib/i18n";
 import { Button } from "@/components/ui/button";
+import { NetworkStrip } from "@/components/custom/network-strip";
 import versionData from "@/version.json";
 
 async function PublicRoadmapLink() {
@@ -334,6 +335,10 @@ export async function Footer() {
             </div>
           </div>
         </div>
+
+        {/* The Rokct network - the other shells, minus this one
+            (base_sdk network strip, footer placement). */}
+        <NetworkStrip surface="footer" />
 
         {/* Footer Bottom */}
         <div className="flex flex-row justify-between items-center pt-12 border-t border-gray-200 dark:border-white/5 gap-6">

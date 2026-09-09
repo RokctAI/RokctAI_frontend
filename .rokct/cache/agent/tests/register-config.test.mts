@@ -148,7 +148,22 @@ describe('the header menu', () => {
     const chat = actions.find((a) => a.id === 'chat-rokct');
     assert.ok(chat);
     assert.equal(chat.icon, undefined);
-    assert.equal(chat.variant, 'ghost');
+    // 1.14.0: the filled muted button the old nav drew it as.
+    assert.equal(chat.variant, 'secondary');
+  });
+
+  it('declares the old header\'s brand: the BETA-badged mark that collapses (1.14.0)', () => {
+    const brand = menu.brand;
+    assert.ok(brand);
+    assert.equal(brand.badge, true);
+    assert.equal(brand.logo, undefined);
+    assert.equal(brand.wordmark, undefined);
+    assert.ok(typeof brand.collapse === 'object' && brand.collapse !== null);
+    const collapse = brand.collapse as { delayMs?: number; code?: () => unknown };
+    assert.equal(collapse.delayMs, 1500);
+    assert.equal(typeof collapse.code, 'function');
+    // The stub's branding cache is empty (as on a first visit): no code.
+    assert.equal(collapse.code?.(), null);
   });
 
   it('keeps its anchors, links and groups', () => {

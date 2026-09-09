@@ -669,6 +669,7 @@ migrate_working_dir/
 /components/custom/landing/agent-header-menu.ts
 /components/custom/landing/agent-hero-form.tsx
 /components/custom/landing/agent-landing-config.ts
+/components/custom/landing/agent-network-strip.ts
 /components/custom/landing/agent-opportunities.tsx
 /components/custom/landing/agent-plans-query.ts
 /components/custom/landing/agent-site-metadata.ts
@@ -679,6 +680,8 @@ migrate_working_dir/
 /components/custom/landing/hero-form.ts
 /components/custom/landing/hero-sections.ts
 /components/custom/landing/landing-config.ts
+/components/custom/landing/network-sites.ts
+/components/custom/landing/network-strip.ts
 /components/custom/landing/page-sections.ts
 /components/custom/landing/plans-query.ts
 /components/custom/landing/site-metadata.ts
@@ -693,6 +696,7 @@ migrate_working_dir/
 /components/custom/nav/merchant-nav.tsx
 /components/custom/nav/nav-user.tsx
 /components/custom/nav/team-switcher.tsx
+/components/custom/network-strip.tsx
 /components/custom/overview.tsx
 /components/custom/paas-login.tsx
 /components/custom/preview-attachment.tsx

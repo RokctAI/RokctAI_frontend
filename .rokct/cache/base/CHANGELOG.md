@@ -1,5 +1,242 @@
 # Changelog
 
+## 1.24.0
+
+* The header's mega menu no longer closes before the pointer reaches it.
+  Ray, on supacharge.app, 2026-09-09: "it is impossible to choose links if
+  mega menu is open, it leaves no moment to move mouse". Two faults in
+  `components/custom/header-menu.tsx`'s `DesktopMegaMenu`, both fixed at
+  the source, so every composed shell gets the same menu:
+  * A DEAD STRIP between trigger and panel. The bar (`header.tsx`, `h-16`)
+    centres the desktop nav, which had no height of its own, so the menu's
+    hover wrapper - the element carrying `onMouseEnter`/`onMouseLeave` -
+    was as tall as the bar's text (bottom edge at 42px) while the panel
+    hangs from the bar's bottom edge (top at 64px). Moving straight down
+    from the word to the panel crossed 22px of bar that belonged to
+    neither, and the leave closed the panel on the spot. `HeaderMenuNav`
+    is now `h-full`, so the wrapper spans the bar and meets the panel edge
+    to edge (the measured gap is 0px); inside the legacy `HeaderMenuRow`
+    the parent has no set height and the class is inert. No visual change:
+    the trigger sits where it did, the panel draws where it did.
+  * NO HOVER INTENT. A leave closed at once. It now starts a
+    `HOVER_CLOSE_DELAY_MS` (200ms) timer that re-entering the wrapper or
+    the panel, focusing the trigger or clicking it cancels, so brushing an
+    edge or overshooting a corner is not a close. Escape, a click outside,
+    focus leaving the menu and a click on one of its links still close at
+    once; the timer is cleared on unmount. Touch and the burger panel's
+    stacked list are untouched.
+  * Also fixed while here: Escape pressed on one of the panel's links
+    returned focus to the trigger and re-opened the panel, because the
+    trigger's `onFocus` (which opens) fired after the close. The handler
+    now focuses first and closes second.
+  * Tests: `test_header_menu_hover_intent` ties the wrapper's leave to the
+    delayed close and its enter to the cancel, the nav to `h-full`, and the
+    Escape handler to the focus-then-close order.
+* The header's brand may BADGE and COLLAPSE again. Ray, 2026-09-09, on
+  rokct.ai after its re-pin to base_sdk 1.21.0: "header lost functions the
+  old rokct header had"; the standing ruling is that rokct.ai keeps
+  everything its old host header (rokctai_frontend's hand-written
+  `components/custom/header.tsx`, 668 lines, before its PR #143) had. Set
+  against that file, the shared header had dropped three things around
+  the brand and one button style; all four are back, each behind the home
+  SDK's declaration so a shell that declares nothing (Supacharge) renders
+  byte-for-byte what it did:
+  * `HeaderBrand.badge` (`components/custom/landing/header-menu.ts`):
+    the host's `brand-logo.tsx` is drawn with `showBadge` - rokct.ai's
+    BETA strip, which its old header always passed (`showBadge={true}`).
+    Every shell's brand-logo.tsx accepts the prop (the `requires` contract;
+    Supacharge's and delivery's accept it and draw nothing).
+  * `HeaderBrand.collapse` (`true`, or a `HeaderBrandCollapse`): the old
+    header's brand motion - the mark at 44px, the wordmark at
+    `text-[60px] tracking-tighter` in a 250px slot that closes 1500ms
+    after mount (`delayMs`), a chevron after the mark once it has, and the
+    visitor's COUNTRY CODE sliding in beside the mark at the same moment
+    (`code`, a client-side resolver the home SDK supplies, answering the
+    text or `{ text, style }`; rokct.ai reads its branding cache exactly
+    as the old header's `getBrandingSync()` did). The desktop nav fades
+    with the wordmark and comes back while the pointer is over the header
+    or the page is scrolled past 10px - the old `navVisible` rule verbatim.
+    `resolveHeaderBrand` carries `badge` and `collapse` (defaults filled
+    by the new `resolveHeaderBrandCollapse`) on `ResolvedHeaderBrand`;
+    `header.tsx` renders a collapsing brand through `CollapsingBrand`, runs
+    the timer and the scroll/hover listeners only when one is declared
+    (`useBrandCollapse`), and wraps the nav in the fading element only
+    then. Colours are theme tokens (`text-foreground`,
+    `text-muted-foreground`), not the old header's zinc/gray.
+  * `HeaderMenuAction.variant` gains `"secondary"`: the filled muted
+    button (`bg-secondary text-secondary-foreground`) the old header drew
+    its "Chat with ROK" nav button as (`bg-zinc-700`), beside `primary`
+    and the outlined `ghost`. `header-menu.tsx`'s `HeaderMenuActions`
+    paints it in both layouts.
+  * Not restored, on purpose, and listed here so nobody hunts for them:
+    the old bar's `max-w-screen-2xl px-6 md:px-12` container (shared
+    chrome; 32px wider at 1280 than the `max-w-6xl` bar every shell has),
+    the old mobile panel's `text-2xl` link size (the shared panel lists
+    more and uses `text-lg`), the old panel's 200ms fade-and-slide (the
+    shared panel toggles `hidden` so `aria-controls` always resolves), the
+    old mobile CTA's hard-coded `#4f46e5` (theme tokens only) and the
+    Chrome Web Store icon hot-linked from a third party's CDN (the lucide
+    `chrome` glyph since 1.20.0).
+  * Tests: `test_header_brand_badge_and_collapse` ties the registry's
+    fields, the header's `CollapsingBrand` / `useBrandCollapse` and the
+    still-brand literals to the source, and `header-brand.test.mts`
+    executes `resolveHeaderBrandCollapse` and the carried defaults.
+
+## 1.23.0
+
+* The NETWORK STRIP: the other sites of the Rokct network, each a link,
+  under a "Trusted by" heading, on every composed shell minus itself.
+  Ray, 2026-09-09: rokct.ai must not list his other products as choices
+  (each has moved to its own shell), but a founder landing on rokct.ai's
+  free opportunities pages must still learn about them - a clickable logo
+  strip, and the heading is his wording ("these products already trust
+  rokct as they run on it"). He also asked whether rokct's existing
+  `logos` section is enough. It is not: agent_sdk's `logos.tsx` is a
+  marquee of Walmart, Cisco, Netflix, Pinterest, Zoom, Sony, Ebay and
+  Uber images hotlinked from a third party's CDN (a chat template's
+  leftover), none of them a link, on the landing page only. That section
+  is left in place (an unused surface is flagged, never removed).
+  * `components/custom/landing/network-sites.ts` is the ONE list:
+    rokct.ai (https://rokct.ai), Supacharge (https://supacharge.app,
+    `wordmark: true` until Ray designs an icon) and juvo
+    (https://juvo.app), plus `hosting` and `telephony` with `url: null`
+    and `shown: false` until Ray picks their domains (Ray, 2026-09-09:
+    "hosting will get a name when i decide on domain"). An entry is
+    `{ key, name, url, logo?, logoDark?, wordmark?, shown? }`; the logos
+    are read from each site's own `/images/logo_dark.svg` (the black
+    glyph, for the light page) and `/images/logo.svg` (the white glyph,
+    for the dark page; the shells name the two after the TILE their
+    brand-logo.tsx draws them on, not the page), so a mark changes in
+    one place, on its own site. `resolveNetworkSites
+    (sites, { selfHost, order, hidden })` is the pure rule: every shown
+    entry with a URL, minus the shell whose host matches `selfHost`
+    (`networkSiteHost()` normalises a URL's host exactly as
+    `resolveDisplayHost` does, through the kernel's `normaliseHost`:
+    port dropped, `www.` dropped, lower-cased), minus the hidden keys, the
+    named order first and the rest in list order. `hasTrackingParameters()`
+    names the line no link may cross: no entry carries, and no rule adds,
+    a query string or a fragment.
+  * `components/custom/landing/network-strip.ts` is an eighth one-marker
+    registry, `// @rokct-sdk-network-strip-start`, single-answer and
+    home-SDK-owned like `header-menu.ts`: a home SDK registers a module
+    whose default export is a `NetworkStripConfig` - `heading`, `order`,
+    `hidden` (site keys), `placement: { landing?: "afterHero" |
+    "beforeFooter" | "none"; footer?: boolean }` - with one line,
+    `{ id: "<sdk>-network-strip", load: () => import("@/components/custom/
+    landing/<file>") }`. `resolveNetworkStrip(config, selfHost)` lays it
+    over the defaults - heading "Trusted by", list order, nothing hidden,
+    `footer: true`, `landing: "none"` - and `networkStripRendersAt(strip,
+    surface)` is the one test of where the strip draws: the footer while
+    `footer` is on, a landing surface only when `landing` names it, never
+    with no site left. Nothing registered is the default, so lms_sdk, the
+    hosting and the delivery home SDKs need no change to get the strip in
+    their footer row minus themselves.
+  * `components/custom/network-strip.tsx` draws it: `<NetworkStrip
+    surface="afterHero" | "beforeFooter" | "footer" />`, the heading as
+    an eyebrow and one link per site - the logo when the site has one
+    (its dark twin under `dark:`, the name as text if the image will not
+    load) else the name as text - each `href` the site's own origin with
+    `rel="noopener"`, no query string, no click handler, no ad network.
+    Generic chrome in the footer row's mould: neutral alphas only, no
+    product name, no brand hue. The shell it draws on is left out by host
+    - `NEXT_PUBLIC_SITE_URL` first, else the `url` registered in
+    `site-metadata.ts` - the CONFIGURED site, not the request host, since
+    a white-label domain in front of the same deployment is still the
+    same product. The config and the host are resolved once per module
+    and rendered through `next/dynamic`, as the header renders its brand,
+    so the strip is server-rendered with the page and never pops in.
+  * WHERE it hooks in. Base has no footer component to hook: the shells
+    own their footers (rokctai_frontend's host `footer.tsx`, lms_sdk's
+    `lms-footer-section.tsx`) and base ships only the copyright row they
+    end with (`footer-chrome.tsx`, 1.12.0). So that row is the footer
+    hook: `FooterChromeRow` draws `<NetworkStrip surface="footer" />`
+    above itself, inside one fragment, and gains `networkStrip?: boolean`
+    (default true) for a footer that places the strip itself. The
+    landing page's two surfaces are `landing-content.tsx`'s: right under
+    the hero and right before the footer anchor, both inside the block
+    that hides while the hero shows search results.
+  * rokct.ai: agent_sdk 1.13.0 registers `placement: { landing:
+    "afterHero", footer: true }`, so the strip sits under the hero on
+    /landing and in every footer that renders the row. rokctai_frontend's
+    host `footer.tsx` does not yet render `FooterChromeRow` (it keeps its
+    own copy of the copyright row) and must adopt it - or render
+    `<NetworkStrip surface="footer" />` itself - for the strip to reach
+    the pages outside /landing; that is a host edit, flagged here.
+    supacharge.app: lms_sdk registers nothing and the footer section's
+    row shows rokct.ai and juvo, never Supacharge.
+  * Base's own third-party defaults come out with it. Ray, 2026-09-09:
+    "everything served from another company cdn tells you is placeholder".
+    `components/custom/landing/hero-config.ts` named four assets from a
+    chat template's CDN (`cdn.getmerlin.in`): the gradient behind the
+    hero (a 502 today, and at 30% opacity in dark mode - the default now),
+    the Chrome Web Store and Google Play badge icons, and the claim
+    "Trusted by 20M+ users" beside them. `backgroundImage` is `""` (the
+    hero already hides the block on an empty string), `trustLine` is `[]`
+    (the network strip is what stands under the hero now), the Chrome
+    badge's icon is the new built-in `"chrome"` glyph (lucide's own mark,
+    the one the header's extension button draws since 1.20.0) and the
+    Google Play badge has no icon. `HeroBadge.icon` is optional and
+    `hero.tsx` draws only a badge that has one (`hasBadgeIcon`: a built-in
+    glyph, or an image with a `src`), because below `md` a badge shows its
+    icon alone and would otherwise be an empty pill - so the Google Play
+    badge waits for a home SDK's hero copy to give it an icon rather than
+    base inventing one. Every home-SDK override path is unchanged: a
+    registered `HeroCopy` may still set a background, a trust line and
+    image icons of its own.
+  * `tests/test_manifest.py` asserts that no default under `templates/`
+    or `src/` references a third-party host (an allowlist of the
+    network's own sites, the licence URL, the social origins the admin
+    settings page links and the documentation examples), the four hero
+    defaults, and the badge rule.
+  * `tests/test_manifest.py` also asserts the installs, the registry's
+    marker and contract, the two landing surfaces and the footer hook,
+    that the component names no tracking parameter, and stages the list,
+    the registry and the kernel under node (22.6+, type-stripping) to
+    execute `tests/network-strip.test.mts`: the list's shape (unique keys, https
+    origins with no query string, `url: null` only with `shown: false`),
+    self-exclusion by host (`https://www.rokct.ai:443/` leaves rokct out;
+    supacharge's host leaves Supacharge out; no host leaves every site
+    in), the order and hidden rules, that a link is never given a
+    tracking parameter, and that `landing: "none"` hides both landing
+    surfaces while `footer: false` hides the footer.
+
+## 1.22.0
+
+* The shells default to DARK. Ray, 2026-09-09: "default to dark mode".
+  base_sdk never shipped the theme seam: each shell carried its own
+  pass-through `components/custom/theme-provider.tsx` over next-themes and
+  its root layout chose the default alone - supacharge-web's `app/layout.tsx`
+  with `defaultTheme="dark"`, rokctai_frontend's with `defaultTheme="system"`
+  and `enableSystem`, so rokct.ai opened in whatever the visitor's OS said.
+  The rule now lives in base, once, for every shell the composer lands it on.
+  * `components/custom/theme-provider.tsx` is a new `installs` entry (the
+    composer overwrites the shell copies, as it did the header in 1.14.0): a
+    client wrapper over next-themes' `ThemeProvider` whose defaults are
+    `defaultTheme="dark"` and `attribute="class"` (the signal Tailwind's
+    `darkMode: ["class"]` reads), exported alongside as `DEFAULT_THEME` and
+    `THEME_ATTRIBUTE`. A first visit with no stored preference paints dark
+    whatever the OS says; a preference the visitor already expressed through
+    the header's toggle (next-themes' `theme` key in localStorage) is
+    honoured exactly as before, and the toggle keeps flipping light and dark.
+    Every other next-themes prop (`enableSystem`, `disableTransitionOnChange`,
+    `storageKey`) is the host's to pass; with `enableSystem` on, "system"
+    stays a value a toggle may select, it is only no longer what an
+    unexpressed preference resolves to. The props type is imported from the
+    "next-themes" package root (0.4.x ships no `dist/types` entry point).
+  * `next-themes` `^0.4.6` joins the manifest's `dependencies` - both shells
+    already pin it.
+  * The `requires` note for `app/layout.tsx` states the contract: mount
+    `<ThemeProvider>` from `@/components/custom/theme-provider`, pass no
+    `defaultTheme` (or `"dark"`), keep `suppressHydrationWarning` on `<html>`.
+    A layout passing `"light"` or `"system"` overrides the platform rule and
+    is a host regression to fix in the shell. Follow-up: rokctai_frontend's
+    `app/layout.tsx` lines 69-74 pass `defaultTheme="system"` today.
+  * Tests: `test_theme_provider_is_installed_and_defaults_to_dark` ties the
+    install to the template and asserts the dark default, the class
+    attribute, the next-themes dependency and the layout contract;
+    `test_theme_provider_type_checks_under_tsc` type-checks the staged
+    template against next-themes' prop shape when a tsc is reachable.
+
 ## 1.21.0
 
 * The home SDK declares what the header's brand slot draws. Ray,

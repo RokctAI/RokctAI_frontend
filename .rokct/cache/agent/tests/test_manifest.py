@@ -46,6 +46,8 @@ PROVISION = os.path.join(AUTH_GROUP, "agent-register-provision.ts")
 HELPERS = os.path.join(AUTH_GROUP, "agent-register-helpers.ts")
 ACTIONS = os.path.join(AUTH_GROUP, "agent-register-actions.ts")
 HEADER_MENU = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-header-menu.ts")
+# 1.13.0: rokct.ai's say over base_sdk 1.23.0's network strip.
+NETWORK_STRIP = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-network-strip.ts")
 
 # The modules the node suites run against, staged into one directory.
 STAGED = {
@@ -53,8 +55,9 @@ STAGED = {
     "agent-register-provision.ts": PROVISION,
     "agent-register-helpers.ts": HELPERS,
     "agent-header-menu.ts": HEADER_MENU,
+    "agent-network-strip.ts": NETWORK_STRIP,
 }
-NODE_SUITES = ["register-config.test.mts", "register-provision.test.mts"]
+NODE_SUITES = ["register-config.test.mts", "register-provision.test.mts", "network-strip.test.mts"]
 
 # The two registry lines this SDK injects, exactly as auth_sdk's README
 # spells the contract: one self-contained line, a dynamic import, no
@@ -68,7 +71,12 @@ PROVISION_LINE = re.compile(
 
 # Words no copy or comment of this SDK's new files may carry.
 FORBIDDEN_WORDS = re.compile(r"\b(lorem|sample|demo|example)\b", re.I)
-NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS]
+NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS, NETWORK_STRIP]
+
+# 1.13.0: the network-strip registry line, in base's one-line contract.
+NETWORK_STRIP_LINE = re.compile(
+    r'^  \{ id: "agent-network-strip", load: \(\) => import\("@/components/custom/landing/agent-network-strip"\) \},$'
+)
 
 IMPORT_RE = re.compile(r'(from\s+|import\()\s*"([^"]+)"')
 
@@ -163,8 +171,15 @@ class TestManifest(unittest.TestCase):
     def test_floors_are_stated(self):
         comment = self.manifest["_comment"]
         self.assertIn("base_sdk >= 1.20.0", comment["about"])
+        # 1.13.0: the network-strip registry raises the floor.
+        self.assertIn("base_sdk >= 1.23.0", read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.12.0")[0])
+        self.assertIn("1.23.0", comment["about"])
         self.assertIn("auth_sdk >= 1.7.0", comment["about"])
-        self.assertIn("base_sdk >= 1.20.0", comment["components/custom/landing/header-menu.ts"])
+        self.assertIn("base_sdk >= 1.23.0", comment["components/custom/landing/header-menu.ts"])
+        # 1.14.0: the brand declaration and the secondary variant raise it again.
+        self.assertIn("base_sdk >= 1.24.0", read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.13.0")[0])
+        self.assertIn("1.24.0", comment["about"])
+        self.assertIn("1.24.0", comment["components/custom/landing/header-menu.ts"])
         self.assertIn("auth_sdk >= 1.7.0", comment["components/custom/auth/register-registry.ts"])
         self.assertIn("auth_sdk >= 1.7.0", comment["app/(auth)/register-provision.ts"])
         self.assertIn("auth_sdk >= 1.6.0", comment["app/(auth)/tenant-link.ts"])
@@ -262,6 +277,83 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertEqual(src.count('icon: "box"'), 1)
         self.assertEqual(src.count('icon: "globe"'), 1)
         self.assertEqual(src.count('icon: "smartphone"'), 1)
+
+    def test_header_menu_declares_the_old_brand(self):
+        # 1.14.0 (Ray, 2026-09-09: "header lost functions the old rokct
+        # header had"): the BETA-badged, collapsing brand and the filled
+        # "Chat with ROK" the old header had, declared through base_sdk
+        # 1.24.0's HeaderMenu.brand and the secondary variant.
+        src = read(HEADER_MENU)
+        brand = src[src.index("  brand: {"):src.index('  anchors: ["pricing"],')]
+        self.assertIn("badge: true,", brand)
+        self.assertIn("collapse: { delayMs: 1500, code: brandingCode },", brand)
+        # The code comes from the shell's branding cache, as the old header
+        # read it, and never from a network call of this module's own.
+        self.assertIn('import { getBrandingSync } from "@/app/config/platform";', src)
+        resolver = src[src.index("function brandingCode("):src.index("const AGENT_HEADER_MENU")]
+        self.assertIn("getBrandingSync()", resolver)
+        self.assertIn("branding?.code?.trim()", resolver)
+        self.assertIn("return { text, style: branding?.style };", resolver)
+        self.assertNotIn("fetch(", src)
+        self.assertNotIn("localStorage", src)
+        start = src.index('id: "chat-rokct",\n      label: word("features.chat_rokct", "Chat with ROK"),\n      href: "/chat",')
+        end = src.index("}", start)
+        self.assertIn('variant: "secondary"', src[start:end])
+        self.assertNotIn('variant: "ghost"', src)
+
+    def test_product_plan_categories_leave_rokct(self):
+        # 1.13.0: Telephony joins Hosting and paas in the one server-side
+        # filter, and the client-side belt names it too.
+        query = read(os.path.join(TEMPLATES, "components", "custom", "landing", "agent-plans-query.ts"))
+        self.assertIn('const TELEPHONY_CATEGORY = "Telephony";', query)
+        self.assertRegex(query, re.compile(
+            r"EXCLUDED_CATEGORIES: readonly string\[\] = \[\s*HOSTING_CATEGORY,\s*PAAS_CATEGORY,\s*TELEPHONY_CATEGORY,\s*\]", re.S))
+        self.assertIn('"not in"', query)
+        config = read(os.path.join(TEMPLATES, "components", "custom", "landing", "agent-landing-config.ts"))
+        self.assertIn('hiddenCategories: ["lms", "hosting", "paas", "telephony"],', config)
+        # The unused tab style is flagged, never removed.
+        self.assertIn("      telephony: `", config)
+
+    def test_landing_config_registers_no_logos(self):
+        # 1.13.0: the third-party logo wall is off; the section stays.
+        config = read(os.path.join(TEMPLATES, "components", "custom", "landing", "agent-landing-config.ts"))
+        self.assertIn("  logos: null,", config)
+        code = re.sub(r"^\s*//.*$", "", config, flags=re.M)
+        self.assertNotIn("getmerlin", code.split("logos: null")[0].split("const AGENT_LANDING_CONFIG")[-1])
+        for brand in ("Walmart", "Cisco", "Netflix", "Pinterest", "Zoom", "Sony", "Ebay", "Uber"):
+            self.assertNotIn(brand, code)
+        logos = os.path.join(TEMPLATES, "components", "custom", "logos.tsx")
+        self.assertTrue(os.path.exists(logos), "logos.tsx is flagged, never removed")
+        self.assertIn("if (!config || config.logos.length === 0) return null;", read(logos))
+        manifest = load_manifest()
+        self.assertIn("components/custom/logos.tsx", {i["to"] for i in manifest["installs"]})
+
+    def test_network_strip_is_registered_where_base_looks(self):
+        manifest = load_manifest()
+        targets = {i["to"] for i in manifest["installs"]}
+        self.assertIn("components/custom/landing/agent-network-strip.ts", targets)
+        lines = [
+            i for i in manifest["integrations"]
+            if i["target"] == "components/custom/landing/network-strip.ts"
+        ]
+        self.assertEqual(len(lines), 1)
+        self.assertEqual(lines[0]["placeholder"], "// @rokct-sdk-network-strip-start")
+        self.assertRegex(lines[0]["replacement"], NETWORK_STRIP_LINE)
+        self.assertIn("components/custom/landing/network-strip.ts", manifest["requires"])
+        self.assertIn("base_sdk >= 1.23.0", manifest["_comment"]["components/custom/landing/network-strip.ts"])
+
+    def test_network_strip_says_where_and_nothing_more(self):
+        src = read(NETWORK_STRIP)
+        self.assertIn('landing: "afterHero"', src)
+        self.assertIn("footer: true", src)
+        body = re.sub(r"/\*.*?\*/", "", src, flags=re.S)
+        body = re.sub(r"^\s*//.*$", "", body, flags=re.M)
+        # No URL, no tracking word: the links are base's list, verbatim.
+        self.assertNotIn("http", body)
+        for tracker in ("utm", "ref=", "onClick", "gtag", "analytics"):
+            self.assertNotIn(tracker, body)
+        # Imports nothing, so an older base still compiles the shell.
+        self.assertNotIn("import ", body)
 
     def test_behaviour_under_node(self):
         node = shutil.which("node")

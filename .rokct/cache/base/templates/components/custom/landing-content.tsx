@@ -27,13 +27,17 @@
 // with nothing registered renders the hero alone. A negative order renders
 // before the hero (a fixed overlay such as a floating nav) and stays visible
 // while the hero shows search results; everything else renders after the
-// hero and hides with it.
+// hero and hides with it. Since 1.23.0 the network strip
+// (components/custom/network-strip.tsx) has two surfaces here too - right
+// under the hero and right before the footer anchor - and draws on the
+// one the home SDK's registered placement names, or on neither.
 
 import React, { useEffect, useMemo, useState } from "react";
 
 import type { LandingPlan } from "@/app/actions/base/landing";
 import { Header } from "@/components/custom/header";
 import { Hero } from "@/components/custom/hero";
+import { NetworkStrip } from "@/components/custom/network-strip";
 import {
   loadHeaderMenu,
   resolveHeaderMenu,
@@ -214,12 +218,18 @@ export function LandingContent({
           onResultsChange={setSearchActive}
         />
         <div style={{ display: searchActive ? "none" : undefined }}>
+          {/* The network strip's two landing surfaces (since 1.23.0): the
+              strip draws on the one its registered placement names, or on
+              neither - the default - and hides with the sections while the
+              hero shows search results. */}
+          <NetworkStrip surface="afterHero" />
           <RegisteredSections
             sections={flow}
             plans={plans}
             nav={navItems}
             session={session}
           />
+          <NetworkStrip surface="beforeFooter" />
         </div>
         <div id={LANDING_CONFIG.nav.footer.id} />
       </main>
