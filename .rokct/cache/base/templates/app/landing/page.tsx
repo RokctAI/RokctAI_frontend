@@ -29,10 +29,22 @@
 import "@/app/styles/rokct-scroll.css";
 
 import { getLandingPlans, type LandingPlan } from "@/app/actions/base/landing";
+import { buildPageMetadata } from "@/app/lib/site-metadata";
 import { getPlatformSession } from "@/app/services/base/session";
 import { LandingContent } from "@/components/custom/landing-content";
 
 export const dynamic = "force-dynamic";
+
+// The page an anonymous visitor is redirected to carries the link-preview
+// tags itself (title, description, Open Graph and Twitter cards) from the
+// copy the home SDK registered in components/custom/landing/site-metadata.ts,
+// so a shared /landing link unfurls right even before the host layout
+// adopts buildSiteMetadata(). The page form keeps the title absolute, so a
+// layout that already applies the `%s — <siteName>` template does not
+// suffix it twice.
+export async function generateMetadata() {
+  return buildPageMetadata();
+}
 
 export default async function LandingPage() {
   const session = await getPlatformSession();

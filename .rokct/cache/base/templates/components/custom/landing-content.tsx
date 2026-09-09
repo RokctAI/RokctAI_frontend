@@ -16,21 +16,29 @@
 
 "use client";
 
-// The generic landing host's client orchestrator: the host header, the
-// hero, then every section the composed SDKs registered in
+// The generic landing host's client orchestrator: the shared header with
+// the menu a home SDK registered inside it, the hero, then every section
+// the composed SDKs registered in
 // ./landing/page-sections.ts, loaded with a dynamic import and rendered in
-// ascending `meta.order`. This file names no section of its own - base_sdk
-// carries the host and the hero only; the sections of a product's landing
-// page belong to its home SDK - so a shell with nothing registered renders
-// the hero alone. A negative order renders before the hero (a fixed overlay
-// such as a floating nav) and stays visible while the hero shows search
-// results; everything else renders after the hero and hides with it.
+// ascending `meta.order`, skipping any whose `meta.renders` turns this page
+// down and leaving those out of the floating nav with it. This file names
+// no section of its own - base_sdk carries the host and the hero only; the
+// sections of a product's landing page belong to its home SDK - so a shell
+// with nothing registered renders the hero alone. A negative order renders
+// before the hero (a fixed overlay such as a floating nav) and stays visible
+// while the hero shows search results; everything else renders after the
+// hero and hides with it.
 
 import React, { useEffect, useMemo, useState } from "react";
 
 import type { LandingPlan } from "@/app/actions/base/landing";
 import { Header } from "@/components/custom/header";
 import { Hero } from "@/components/custom/hero";
+import {
+  loadHeaderMenu,
+  resolveHeaderMenu,
+  type HeaderMenu,
+} from "@/components/custom/landing/header-menu";
 import {
   LANDING_CONFIG,
   type LandingNavItem,
@@ -95,6 +103,7 @@ export function LandingContent({
 }) {
   const [searchActive, setSearchActive] = useState(false);
   const [sections, setSections] = useState<LoadedSection[]>([]);
+  const [headerMenu, setHeaderMenu] = useState<HeaderMenu | null>(null);
 
   // Load the registered sections once, on the client, and keep them in
   // page order. A section that fails to load is logged and skipped; the
@@ -135,27 +144,62 @@ export function LandingContent({
     };
   }, []);
 
-  const overlays = useMemo(
-    () => sections.filter((s) => s.order < 0),
-    [sections],
+  // The registered header menu, loaded once on the client beside the
+  // sections. Nothing registered answers null and the header renders no
+  // navigation: logo, theme toggle and the auth links only.
+  useEffect(() => {
+    let cancelled = false;
+    loadHeaderMenu().then((menu) => {
+      if (!cancelled) setHeaderMenu(menu);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // The sections that belong on this page. A section's `meta.renders` is
+  // asked once, here, and everything below - what the page draws and what
+  // the floating nav lists - comes off the same answer, so the two can
+  // never disagree and a nav tick always has a section to scroll to.
+  // A section that declares no predicate always belongs.
+  const present = useMemo(
+    () => sections.filter((s) => s.meta.renders?.({ plans, session }) ?? true),
+    [sections, plans, session],
   );
-  const flow = useMemo(() => sections.filter((s) => s.order >= 0), [sections]);
+
+  const overlays = useMemo(() => present.filter((s) => s.order < 0), [present]);
+  const flow = useMemo(() => present.filter((s) => s.order >= 0), [present]);
 
   const navItems = useMemo<LandingNavItem[]>(
     () => [
       LANDING_CONFIG.nav.hero,
-      ...sections.flatMap((s) => s.nav),
+      ...present.flatMap((s) => s.nav),
       LANDING_CONFIG.nav.footer,
     ],
-    [sections],
+    [present],
+  );
+
+  // The header menu comes off `navItems`, the very list the floating nav
+  // renders, so a header link and a nav tick can never disagree about what
+  // is on the page: an anchor whose section was turned down by `meta.renders`
+  // is not in `navItems` and so is not in the menu either (nor in a group).
+  const menu = useMemo(
+    () => resolveHeaderMenu(headerMenu, navItems),
+    [headerMenu, navItems],
   );
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-black">
+      {/* The header carries the menu itself (inline from lg up, behind its
+          burger below) and pins itself, so there is no wrapper and no row
+          under it: one element tree whether or not a menu is registered. */}
       <Header
         loginUrl={LANDING_CONFIG.loginUrl}
         signupUrl={LANDING_CONFIG.signupUrl}
         session={session}
+        menuItems={menu.items}
+        groups={menu.groups}
+        actions={menu.actions}
       />
       <main className="flex-1">
         <RegisteredSections

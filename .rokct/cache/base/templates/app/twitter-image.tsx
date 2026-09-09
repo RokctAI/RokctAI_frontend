@@ -14,28 +14,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getSubscriptionPlans } from "@/lib/actions/getSubscriptionPlans";
-import { LandingContent } from "@/components/custom/landing-content";
-import { auth } from "@/app/(auth)/auth";
+// The Twitter card image is the Open Graph one: same copy, same drawing
+// (see ./opengraph-image.tsx). The segment config is restated here rather
+// than re-exported because Next reads `runtime` from this file's own
+// source; the metadata exports are the same values by import.
 
-export const dynamic = "force-dynamic";
+import OpenGraphImage, {
+  alt as openGraphAlt,
+  contentType as openGraphContentType,
+  size as openGraphSize,
+} from "./opengraph-image";
 
-export default async function LandingPage() {
-  const session = await auth();
-  let plans: any[] = [];
+export const runtime = "nodejs";
+export const size = openGraphSize;
+export const contentType = openGraphContentType;
+export const alt = openGraphAlt;
 
-  try {
-    const response = await getSubscriptionPlans();
-    if (response.success && response.data) {
-      plans = response.data;
-    }
-  } catch (e) {
-    console.error("Prefetch error:", e);
-  }
-
-  return (
-    <>
-      <LandingContent plans={plans} session={session} />
-    </>
-  );
-}
+export default OpenGraphImage;

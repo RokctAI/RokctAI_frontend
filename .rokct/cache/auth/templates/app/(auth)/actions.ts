@@ -17,10 +17,7 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { eq } from "drizzle-orm";
 
-import { db } from "@/db";
-import { user, globalSettings } from "@/db/schema";
 // Added at seed time: the source file called getSubscriptionPlans without
 // importing it (masked upstream by `typescript.ignoreBuildErrors`).
 import { getSubscriptionPlans } from "@/lib/actions/getSubscriptionPlans";
@@ -29,6 +26,7 @@ import {
   platformCall,
 } from "@/app/services/base/platform-gateway";
 import { signIn, auth } from "./auth";
+import { loadTenantLink } from "./tenant-link";
 
 // Provisioning creates a control-plane user or queues a tenant site, so it
 // runs well past the gateway client's 10s default; the raw fetch it replaces
@@ -160,10 +158,14 @@ export async function register(
     const baseUrl = process.env.ROKCT_BASE_URL;
     if (!baseUrl) throw new Error("ROKCT_BASE_URL is not set");
 
-    // Retrieve Admin Keys from GlobalSettings (set via Admin Login)
-    const settings = await db.select().from(globalSettings).limit(1);
-    const adminKey = settings.length > 0 ? settings[0].adminApiKey : null;
-    const adminSecret = settings.length > 0 ? settings[0].adminApiSecret : null;
+    // Retrieve the administrator this registration provisions under.
+    // ./tenant-link.ts decides where those come from; its default is the same
+    // GlobalSettings row this read used to go to directly (set via Admin
+    // Login), and a single-tenant shell reads its own deployment secrets.
+    const tenantLink = await loadTenantLink();
+    const admin = await tenantLink.adminCredentials();
+    const adminKey = admin ? admin.apiKey : null;
+    const adminSecret = admin ? admin.apiSecret : null;
 
     if (!adminKey || !adminSecret) {
       return {
@@ -265,7 +267,8 @@ export async function register(
       }
     }
 
-    // 3. Save User to Local DB (Persistence)
+    // 3. Link the new user to the site provisioned for them (Persistence).
+    // A link with nowhere to write makes this a no-op; see ./tenant-link.ts.
     const initialOnboardingData = {
       user_fullname: `${firstName} ${lastName}`,
       company_name: companyName,
@@ -276,28 +279,10 @@ export async function register(
       primary_base: country,
     };
 
-    const existingUser = await db
-      .select()
-      .from(user)
-      .where(eq(user.email, email))
-      .limit(1);
-
-    if (existingUser.length === 0) {
-      await db.insert(user).values({
-        id: email,
-        email: email,
-        siteName: siteName,
-        onboardingData: initialOnboardingData,
-      });
-    } else {
-      await db
-        .update(user)
-        .set({
-          siteName: siteName,
-          onboardingData: initialOnboardingData,
-        })
-        .where(eq(user.email, email));
-    }
+    await tenantLink.linkRegistration(email, {
+      siteName: siteName,
+      onboardingData: initialOnboardingData,
+    });
 
     // 4. Auto-Login
     try {
@@ -357,10 +342,11 @@ export async function getIndustries(): Promise<string[]> {
     const baseUrl = process.env.ROKCT_BASE_URL;
     if (!baseUrl) return [];
 
-    // Retrieve Admin Keys
-    const settings = await db.select().from(globalSettings).limit(1);
-    const adminKey = settings.length > 0 ? settings[0].adminApiKey : null;
-    const adminSecret = settings.length > 0 ? settings[0].adminApiSecret : null;
+    // Retrieve Admin Keys through the same seam the register path uses.
+    const tenantLink = await loadTenantLink();
+    const admin = await tenantLink.adminCredentials();
+    const adminKey = admin ? admin.apiKey : null;
+    const adminSecret = admin ? admin.apiSecret : null;
 
     if (!adminKey || !adminSecret) return [];
 

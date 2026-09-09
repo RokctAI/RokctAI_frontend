@@ -35,6 +35,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Branding } from "@/components/custom/branding";
 import { AuthForm } from "@/components/custom/auth-form";
+import { BrandLogo } from "@/components/custom/brand-logo";
 import { Header } from "@/components/custom/header";
 import React from "react";
 import {
@@ -44,10 +45,58 @@ import {
   VOUCHER_OFFSET_Y,
 } from "@/app/config/platform";
 
-function RegisterPageInner() {
-  const router = useRouter();
+/**
+ * The ONLY thing on this page that reads useSearchParams().
+ *
+ * useSearchParams() in a client component makes Next bail the enclosing
+ * Suspense boundary out to client rendering during static prerendering:
+ * the boundary's fallback is all that reaches the HTML. When the whole page
+ * sat inside that boundary (and the fallback was `null`), /register shipped
+ * a literally empty document - no <form>, no <input>, nothing until the JS
+ * bundle executed.
+ *
+ * Confining the hook to this null-rendering leaf confines the bailout to it,
+ * so the registration form itself server-renders as ordinary HTML.
+ */
+function PlanFromQuery({ onPlan }: { onPlan: (plan: string | null) => void }) {
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan");
+
+  useEffect(() => {
+    onPlan(plan);
+  }, [plan, onPlan]);
+
+  return null;
+}
+
+/** Card-shaped placeholder, matching the real card's box so the page does
+ *  not jump. It is a safety net only: nothing in RegisterPageInner suspends
+ *  today, but a future hook that bails to client rendering would land here
+ *  instead of blanking the route again. */
+function RegisterSkeleton() {
+  return (
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col items-center justify-center bg-background p-4">
+        <div className="w-full max-w-md space-y-8">
+          <div className="flex flex-col items-center text-center">
+            <div className="h-9 w-56 rounded-md bg-muted animate-pulse" />
+            <div className="mt-3 h-4 w-64 rounded bg-muted animate-pulse" />
+          </div>
+          <div className="bg-card border border-border rounded-2xl shadow-xl p-8 space-y-4">
+            <div className="h-10 w-full rounded-md bg-muted animate-pulse" />
+            <div className="h-10 w-full rounded-md bg-muted animate-pulse" />
+            <div className="h-10 w-full rounded-md bg-muted animate-pulse" />
+            <div className="h-10 w-full rounded-lg bg-muted animate-pulse" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RegisterPageInner() {
+  const router = useRouter();
+  const [plan, setPlan] = useState<string | null>(null);
   const [industries, setIndustries] = useState<string[]>([]);
   const [plans, setPlans] = useState<any[]>([]);
   const [isServicePlan, setIsServicePlan] = useState(false);
@@ -97,25 +146,38 @@ function RegisterPageInner() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <Suspense fallback={null}>
+        <PlanFromQuery onPlan={setPlan} />
+      </Suspense>
+
       <Header
         openLoginPopup={() => handleNavigation("/login")}
         openSignupPopup={() => handleNavigation("/register")}
       />
 
-      <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="flex-1 flex flex-col items-center justify-center bg-background p-4">
         <div className="w-full max-w-md space-y-8">
           {/* Header */}
           <div className="flex flex-col items-center text-center">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+            {/*
+              The host's own mark, same seam the login page uses:
+              `components/custom/brand-logo.tsx` is in this SDK's manifest
+              `requires`, so each shell shows its own logo with no
+              per-shell branching here.
+            */}
+            <div className="mb-4">
+              <BrandLogo width={56} height={56} />
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
               Create Account
             </h1>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-sm text-muted-foreground">
               Join thousands of companies using{" "}
               <span className="font-bold">{PLATFORM_NAME}</span>
             </p>
           </div>
 
-          <div className="bg-white dark:bg-black/40 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-8">
+          <div className="bg-card border border-border backdrop-blur-sm rounded-2xl shadow-xl p-8">
             <AuthForm
               action={formAction}
               mode="signup"
@@ -127,7 +189,7 @@ function RegisterPageInner() {
               plans={plans}
             >
               <div className="grid gap-2 pt-2">
-                <SubmitButton className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-2.5 rounded-lg shadow-md transition-all duration-200 ease-in-out transform hover:scale-[1.02]">
+                <SubmitButton className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 rounded-lg shadow-md transition-all duration-200 ease-in-out transform hover:scale-[1.02]">
                   Get Started
                 </SubmitButton>
                 {state?.status === "failed" && (
@@ -144,10 +206,12 @@ function RegisterPageInner() {
             </AuthForm>
 
             <div className="mt-6 text-center text-sm">
-              <span className="text-gray-500">Already have an account? </span>
+              <span className="text-muted-foreground">
+                Already have an account?{" "}
+              </span>
               <Link
                 href="/login"
-                className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 hover:underline"
+                className="font-semibold text-primary hover:text-primary/80 hover:underline"
               >
                 Sign in
               </Link>
@@ -159,12 +223,9 @@ function RegisterPageInner() {
   );
 }
 
-// Added at seed time: useSearchParams() must sit under a Suspense boundary
-// for static prerendering of /register (the source repo's root layout was
-// request-dynamic, which masked this).
 export default function RegisterPage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<RegisterSkeleton />}>
       <RegisterPageInner />
     </Suspense>
   );

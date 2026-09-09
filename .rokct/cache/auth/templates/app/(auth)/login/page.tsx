@@ -23,6 +23,7 @@ import { PLATFORM_NAME, getGuestBranding } from "@/app/config/platform";
 import { toast } from "sonner";
 import { login, ActionState } from "@/app/(auth)/actions";
 import { AuthForm } from "@/components/custom/auth-form";
+import { BrandLogo } from "@/components/custom/brand-logo";
 import { SubmitButton } from "@/components/custom/submit-button";
 import { Header } from "@/components/custom/header";
 import React from "react";
@@ -56,74 +57,45 @@ export default function LoginPage() {
         openLoginPopup={() => handleNavigation("/login")}
         openSignupPopup={() => handleNavigation("/register")}
       />
-      <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="flex-1 flex flex-col items-center justify-center bg-background p-4">
         <div className="w-full max-w-md space-y-8">
           {/* Header Section */}
           <div className="flex flex-col items-center text-center">
-            <div className="mb-4 bg-gradient-to-tr from-indigo-500 to-purple-500 p-3 rounded-xl shadow-lg">
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-white"
-              >
-                <path
-                  d="M12 2L2 7L12 12L22 7L12 2Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M2 17L12 22L22 17"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M2 12L12 17L22 12"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+            {/*
+              The host's own mark. `components/custom/brand-logo.tsx` is a
+              seam every shell already owns (it is in this SDK's manifest
+              `requires`), so each product shows its own logo here with no
+              per-shell branching in the SDK.
+            */}
+            <div className="mb-4">
+              <BrandLogo width={56} height={56} />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
               Welcome to {PLATFORM_NAME}
             </h1>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-sm text-muted-foreground">
               Sign in to your account to continue
             </p>
           </div>
 
           {/* Login Card */}
-          <div className="bg-white dark:bg-black/40 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-8">
+          <div className="bg-card border border-border backdrop-blur-sm rounded-2xl shadow-xl p-8">
             <AuthForm action={handleSubmit} defaultEmail={email} mode="login">
-              <SubmitButton className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-2.5 rounded-lg shadow-md transition-all duration-200 ease-in-out transform hover:scale-[1.02] hover:from-indigo-700 hover:to-purple-700">
+              <SubmitButton className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 rounded-lg shadow-md transition-all duration-200 ease-in-out transform hover:scale-[1.02]">
                 Sign In
               </SubmitButton>
             </AuthForm>
 
+            {/*
+              No "Or continue with" divider: this form ships no OAuth/social
+              provider buttons, so the divider labelled an empty list. Bring
+              it back in the same commit that adds the first provider button.
+            */}
             <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200 dark:border-gray-700" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="bg-white dark:bg-black px-2 text-gray-500">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 text-center text-sm">
+              <div className="text-center text-sm">
                 <Link
                   href="/register"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+                  className="font-semibold text-primary hover:text-primary/80"
                 >
                   Create an account
                 </Link>
@@ -131,7 +103,7 @@ export default function LoginPage() {
               <div className="mt-2 text-center text-xs">
                 <Link
                   href={"/forgot" + "-password"}
-                  className="text-gray-500 hover:text-gray-900 dark:hover:text-gray-300"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   Forgot password?
                 </Link>

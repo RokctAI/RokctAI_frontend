@@ -1,3 +1,173 @@
+## 1.6.0
+
+* **Login and register no longer decide for themselves that the answer is a
+  local Postgres row.** Three things the credentials flow needs have nothing to
+  do with authenticating anybody: which tenant site an email signs in against
+  when the form named none, where the keys and site a login produced get
+  remembered, and which platform administrator a registration provisions
+  under. All three were hardcoded to the drizzle store this SDK installs -
+  `db.select()` on `User` inside `Credentials.authorize()`, `db.update()` after
+  it, `db.select()` on `GlobalSettings` in `register()` and `getIndustries()`,
+  and the insert/update on `User` that register ends with. They now go through
+  `app/(auth)/tenant-link.ts`, a one-marker first-wins registry in the shape
+  base_sdk's `hero-form.ts` and `plans-query.ts` established: an SDK installs a
+  module whose default export is a `TenantLink` and registers it with one line
+  at `// @rokct-sdk-tenant-link-start`,
+  `{ id: "<sdk>-tenant-link", load: () => import("@/app/(auth)/<file>") },`.
+  `loadTenantLink()` answers the first entry that loads.
+* **The Postgres path is the DEFAULT and is not going anywhere.** It moved
+  verbatim into `app/(auth)/tenant-link-database.ts` - the same queries, in the
+  same order, with the same conditions, including the detail that a login only
+  ever UPDATEs a row that already exists. With nothing registered and
+  `ROKCT_TENANT_LINK` unset that is what answers, so **rokctai_frontend is
+  unchanged**: it still looks every login's site up in Postgres, still writes
+  the refreshed keys back, still reads its admin keys off `GlobalSettings`, and
+  still needs a live database for `db:migrate` before `next build`. The local
+  store is the multi-tenancy feature - it maps a user to the base URL they came
+  from - and the seam exists so a single-tenant shell can opt out, never so
+  this path can be deleted.
+* **A single-tenant shell can now be database-free, with one line of its own
+  config.** `ROKCT_TENANT_LINK=single-tenant` selects
+  `app/(auth)/tenant-link-single.ts`, which imports neither `@/db` nor drizzle
+  nor postgres. Both built-ins are reached by dynamic import precisely so that
+  selecting one does not evaluate the other. It answers the site from
+  base_sdk's kernel resolver - `envBaseUrl()` in
+  `app/services/base/tenant-hosts.ts`, the
+  `ROKCT_BASE_URL` -> `NEXT_PUBLIC_ROKCT_BASE_URL` -> `NEXT_PUBLIC_FRAPPE_URL`
+  chain every other service in the shell already reads, rather than a second
+  mechanism of this SDK's own - and makes the two local writes deliberate
+  no-ops: `User.siteName` and `User.onboardingData` exist so a deployment with
+  many backends can remember which one a user belongs to, and where there is
+  exactly one the row would record a constant. The authoritative user record
+  lives on the tenant site either way. A host sets the variable the
+  compile-time way, through `env` in its own `next.config.mjs`, because that
+  file is host-owned and therefore survives a compose - an SDK-installed file
+  does not, as `scripts/compose.sh reconcile_tracked_host_files()` documents.
+* **Administrator credentials for a database-free register come from the
+  deployment, not from the gateway.** `tenant-link-single.ts` reads
+  `ROKCT_ADMIN_API_KEY` / `ROKCT_ADMIN_API_SECRET`. Registration is a guest
+  call with no session, so an unauthenticated gateway cmd that handed out
+  administrator credentials would be a credential oracle open to the internet;
+  and the `GlobalSettings` row the default reads is itself only a cache of "an
+  administrator signed in here once". Unset means "not initialized" and
+  registration stops with exactly the message an empty `GlobalSettings` row
+  produces today, rather than calling the control plane unauthenticated.
+* **A shell with no database no longer reports a misconfiguration as "invalid
+  credentials".** The site lookup sat inside the `try` whose `catch` returns
+  `null`, so on a deployment with `POSTGRES_URL` unset every single login
+  failed as a rejected password while the real error - the connection - was
+  only ever a server log line. With the single-tenant link selected there is no
+  connection to fail, and the first thing that can go wrong is the gateway
+  login call itself.
+* **New requirement: `app/services/base/tenant-hosts.ts`** (base_sdk's kernel
+  resolver, for `envBaseUrl()`). Added to the manifest's `requires`, not its
+  `installs`: every composed shell already has it, because base_sdk installs
+  its whole `src/services` surface there and composes before this SDK.
+* `install.py` is unchanged, so the composer's pinned installer digest is
+  unchanged.
+
+## 1.5.0
+
+* **`/register` shipped a literally blank page, and this fixes it.** The whole
+  page sat inside `<Suspense fallback={null}>` because `RegisterPageInner`
+  calls `useSearchParams()` to read `?plan=`. A client component that reads
+  `useSearchParams()` makes Next bail its enclosing Suspense boundary out to
+  client rendering during static prerendering, so the only thing that reached
+  the HTML was that boundary's fallback - and the fallback was `null`. The
+  served document for `/register` contained zero `<form>` elements, zero
+  `<input>` elements, a `<div hidden></div>` and a
+  `BAILOUT_TO_CLIENT_SIDE_RENDERING` template: a blank white page until the JS
+  bundle downloaded and executed, and a blank page forever if it did not.
+  `useSearchParams()` is now confined to `PlanFromQuery`, a leaf that renders
+  `null` and hands the value up, wrapped in its own boundary. The bailout is
+  confined with it, so the registration form server-renders as ordinary HTML.
+  The page-level boundary is kept but its fallback is now a real card-shaped
+  skeleton rather than `null`, so a future hook that bails lands on a
+  placeholder instead of blanking the route again.
+  `components/custom/auth-form.tsx` gained a one-line
+  `useEffect` that syncs `activePlan` when `selectedPlan` arrives after the
+  first render - `useState(selectedPlan || "Free")` reads its initial value
+  once, so without it the deep link `/register?plan=X` would have silently
+  stopped preselecting the plan.
+* **The auth screens are theme-token driven, so every shell themes itself.**
+  Login and register hardcoded Rokct's indigo/purple: `bg-gradient-to-r
+  from-indigo-600 to-purple-600` on both submit buttons, an indigo/purple
+  gradient behind the login logo, `text-indigo-600` links, and the
+  `border-indigo-500/20 ring-indigo-500/10 focus-visible:ring-indigo-500`
+  voucher field in `auth-form.tsx`. A host's `--primary` was already correct
+  and already served - it was simply painted over, because a gradient is a
+  `background-image` and renders on top of `.bg-primary`'s
+  `background-color`. Every one of those is now the token: `bg-primary` /
+  `hover:bg-primary/90` / `text-primary-foreground` on the buttons (the
+  gradient is gone, not restyled - leaving it would overpaint again),
+  `text-primary` on links and the voucher label, `border-primary/20` and
+  `focus-visible:ring-ring` on the voucher input. The surrounding chrome moved
+  off raw greys onto `bg-background`, `bg-card`, `border-border`,
+  `text-foreground` and `text-muted-foreground` for the same reason: the
+  hardcoded `bg-gray-50` / `bg-white` / `text-gray-900` card ignored the host's
+  own light/dark tokens.
+  `components/custom/submit-button.tsx` no longer forces `text-white` on every
+  submit button; `components/ui/button.tsx`'s default variant already supplies
+  `text-primary-foreground`, and the hardcoded white made a light-primary shell
+  unreadable.
+  **This is a visible change to rokct.ai as well as to supacharge.app.**
+  rokctai_frontend composes auth_sdk too, so its login and register now render
+  in its own `--primary` instead of the indigo/purple gradient. That is the
+  point of the change - each shell themes itself - but it is not confined to
+  one product.
+* **New requirement: `components/custom/brand-logo.tsx`.** The login page drew
+  an inline Lucide "layers" glyph on an indigo gradient - a mark belonging to
+  no product - and the register page had no mark at all. Both now render
+  `<BrandLogo width={56} height={56} />`. This invents no mechanism: the
+  component is an existing host seam that `rokctai_frontend` and
+  `supacharge-web` both already ship with an identical prop signature
+  (`width`, `height`, `className`, `variant`, `showBadge`, `isCircle`,
+  `priority`), so it is added to the manifest's `requires` rather than to its
+  `installs`, and each shell shows its own mark with no branching in the SDK.
+* **`/forgot-password` is no longer white-on-white.** The placeholder page set
+  `text-white` on a container with no background of its own, so it was legible
+  only because every shell happened to render it on a dark body. It is now
+  `bg-background text-foreground`, which is what makes it survive a host whose
+  light theme is actually reachable - `/login` links straight to it.
+* **The "Or continue with" divider is gone from the login card.** It labelled
+  an empty list: this form ships no OAuth or social provider buttons, so the
+  divider sat directly above the "Create an account" link. Restore it in the
+  same commit that adds the first provider button.
+* The install surface and `install.py` are untouched - `install.py`'s sha256 is
+  unchanged, so the protocol's `supacharge.json` / `rokctapp.json` pins still
+  hold. `manifest.json` changes only in `version` and in one added `requires`
+  entry; no `installs` entry is added, moved or removed.
+
+## 1.4.1
+
+* **`db/index.ts` no longer needs a database to BUILD.** The module read
+  `POSTGRES_URL` and constructed the postgres client at import time, throwing
+  `POSTGRES_URL environment variable is not set` from module scope. `next build`
+  imports it while collecting page data for the auth handler
+  (`app/(auth)/api/auth/[...nextauth]/route.ts` -> `app/(auth)/auth.ts` ->
+  `@/db`), so any host composing auth_sdk without `POSTGRES_URL` in its BUILD
+  environment died with `Failed to collect page data for
+  /api/auth/[...nextauth]` - even though nothing needs a database to compile.
+  This took supacharge-web's production deploy red on Vercel, where the
+  variable is a runtime value and is not present at build time.
+  The connection is now created lazily on first use and memoised, so the client
+  is still constructed exactly once per process and pooling is unchanged. The
+  exported `db` is a transparent proxy around it: callers keep writing
+  `db.select()...` / `db.insert()...` with no change at any call site
+  (`app/(auth)/auth.ts`, `app/(auth)/actions.ts`,
+  `app/services/control/global_settings.ts`).
+  **Runtime behaviour is deliberately identical:** the guard still exists and
+  still throws the same `Error` with the same message - on the first query
+  instead of on import. There is no default connection string and no silent
+  fallback; a request that touches the database with `POSTGRES_URL` unset fails
+  exactly as loudly as before. Hosts no longer need to feed the build a
+  throwaway connection string to get a green build, which is what was masking
+  the missing variable in the first place.
+* Auth logic, the install surface and `install.py` are untouched (`install.py`
+  sha256 is unchanged, so the protocol's `supacharge.json` / `rokctapp.json`
+  pins still hold). The only changed file is
+  `auth/nextjs/templates/db/index.ts`.
+
 ## 1.4.0
 
 * **The templates type-check under a host that does not set

@@ -14,7 +14,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Metadata } from "next";
 import React from "react";
 import { Toaster } from "sonner";
 import localFont from "next/font/local";
@@ -30,7 +29,7 @@ import { VisitorTracker } from "@/components/custom/visitor-tracker";
 
 import "./globals.css";
 
-import { PLATFORM_NAME } from "@/app/config/constants";
+import { buildSiteMetadata } from "@/app/lib/site-metadata";
 
 const geistSans = localFont({
   src: "../public/fonts/geist.woff2",
@@ -44,16 +43,17 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://gemini.vercel.ai"),
-  title: PLATFORM_NAME,
-  description: `Next.js chatbot template using the AI SDK and Gemini, powered by ${PLATFORM_NAME}.`,
-  icons: {
-    icon: "/images/logo.svg",
-    shortcut: "/images/logo.svg",
-    apple: "/images/logo.svg",
-  },
-};
+// Link-preview metadata comes from the registry: base_sdk installs
+// app/lib/site-metadata.ts and the home SDK registers the copy in
+// components/custom/landing/site-metadata.ts. Only the icons are host-owned.
+export const generateMetadata = () =>
+  buildSiteMetadata({
+    icons: {
+      icon: "/images/logo.svg",
+      shortcut: "/images/logo.svg",
+      apple: "/images/logo.svg",
+    },
+  });
 
 export default async function RootLayout({
   children,

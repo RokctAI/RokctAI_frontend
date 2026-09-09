@@ -17,10 +17,19 @@
 "use client";
 
 // The landing page's feature grid. Copy and tiles: AGENT_LANDING_CONFIG.features.
+//
+// Ten cards, each an image over a title, so stacked this is ten screens of
+// thumb - far and away the tallest thing on rokct.ai's landing page, and the
+// only card section on it that was still a column. Below 640px it is one
+// swipeable row instead (AGENT_CARD_ROW, landing/agent-card-row.ts, sized
+// and snapped like the plan scroller in pricing.tsx); from 640px up it is
+// the grid it always was, which is what `sm:grid-cols-1` in place of the old
+// `grid-cols-1` holds on to for the 640-767px band.
 
 import React from "react";
 import Image from "next/image";
 
+import { AGENT_CARD_ROW } from "@/components/custom/landing/agent-card-row";
 import { AGENT_LANDING_CONFIG } from "@/components/custom/landing/agent-landing-config";
 import type { PageSectionMeta } from "@/components/custom/landing/page-sections";
 
@@ -43,7 +52,9 @@ export function AllFeaturesSection({ id }: { id?: string }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <div
+          className={`grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 ${AGENT_CARD_ROW}`}
+        >
           {config.items.map((feature) => (
             <div
               key={feature.name}

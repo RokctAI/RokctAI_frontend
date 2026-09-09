@@ -20,11 +20,20 @@
 // active one widened, scrolling to the section on click. The entries come
 // from the page (base_sdk's landing-content.tsx builds them from its config
 // and the registered sections), so this file names no section of its own.
+// An entry that carries base_sdk's optional `badge` ("new" / "soon") gets
+// the little pill rokct.ai wears in its header menu - since 1.8.0 the SAME
+// component, base_sdk >= 1.14.0's components/custom/menu-label.tsx
+// (bg-primary with black text, Ray, 2026-09-09: "use primary color and
+// text in black"), so the nav and the header cannot show two different
+// pills. It paints the shell's own `primary` token rather than a fixed
+// colour: rokct's accent is yellow, Supacharge's (lms_sdk's copy of this
+// nav) is orange.
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import type { LandingNavItem } from "@/components/custom/landing/landing-config";
+import { MenuLabel } from "@/components/custom/menu-label";
 import type {
   PageSectionMeta,
   PageSectionProps,
@@ -66,7 +75,7 @@ export function FloatingNav({ items }: { items: LandingNavItem[] }) {
             key={item.id}
             onClick={() => scrollToSection(item.id)}
             className="group relative flex items-center py-1.5 px-2"
-            aria-label={`Scroll to ${item.label}`}
+            aria-label={`Scroll to ${item.label}${item.badge ? ` (${item.badge})` : ""}`}
           >
             <motion.div
               animate={{ width: isActive ? 32 : 16 }}
@@ -76,8 +85,11 @@ export function FloatingNav({ items }: { items: LandingNavItem[] }) {
                   : "bg-zinc-400 dark:bg-zinc-500 opacity-50 group-hover:opacity-100 group-hover:w-[24px]"
               }`}
             />
-            <span className="absolute left-full ml-4 px-2 py-1 bg-zinc-900 dark:bg-zinc-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-medium">
+            <span className="absolute left-full ml-4 inline-flex items-center gap-1.5 px-2 py-1 bg-zinc-900 dark:bg-zinc-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-medium">
               {item.label}
+              {item.badge ? (
+                <MenuLabel badge={item.badge} />
+              ) : null}
             </span>
           </button>
         );
