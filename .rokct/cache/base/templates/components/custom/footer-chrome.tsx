@@ -27,10 +27,18 @@
 // neutral black/white alphas that sit on whatever ground the footer has.
 // The status dot's three state colours are the deliberate exception and are
 // overridable - see FOOTER_CHROME_STATUS_COLORS.
+//
+// Since 1.23.0 the row is also where the NETWORK STRIP lands by default
+// (components/custom/network-strip.tsx: the other sites of the Rokct
+// network, each a link, under "Trusted by"). It is drawn ABOVE the row,
+// inside the same fragment, so every footer that already ends with this
+// row shows the network minus itself with no edit; `networkStrip={false}`
+// is for a footer that places the strip itself.
 
 import React from "react";
 
 import { getPlatformStatus } from "@/app/actions/base/status";
+import { NetworkStrip } from "@/components/custom/network-strip";
 import {
   FOOTER_CHROME_CONFIG,
   FOOTER_CHROME_LABELS,
@@ -50,12 +58,19 @@ export interface FooterChromeRowProps {
    * dashboard - rokct.ai's footer reads it once per render too.
    */
   refreshMs?: number;
+  /**
+   * Whether the network strip is drawn above the row (since 1.23.0).
+   * Default true; the strip still draws only where the home SDK's
+   * registered placement keeps `footer` on, and never lists this shell.
+   */
+  networkStrip?: boolean;
 }
 
 export function FooterChromeRow({
   config = FOOTER_CHROME_CONFIG,
   className = "",
   refreshMs = 0,
+  networkStrip = true,
 }: FooterChromeRowProps) {
   const [status, setStatus] = React.useState<PlatformStatus | null>(null);
 
@@ -112,47 +127,50 @@ export function FooterChromeRow({
           : labels.checking;
 
   return (
-    <div
-      className={`flex flex-row justify-between items-center gap-6 ${className}`}
-    >
-      {holder ? (
-        <p className="text-sm opacity-70">
-          © Copyright {year} - {holder}
-        </p>
-      ) : (
-        <span />
-      )}
-      <div className="flex items-center gap-6">
-        {showStatus && (
-          <div
-            className="flex items-center gap-2 px-2 py-1 md:px-3 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10"
-            role="status"
-            aria-live="polite"
-          >
-            <span
-              aria-hidden="true"
-              className="w-2 h-2 rounded-full shrink-0"
-              style={{
-                backgroundColor: dotColor,
-                boxShadow:
-                  state && state !== "unconfigured"
-                    ? `0 0 8px ${dotColor}`
-                    : undefined,
-              }}
-            />
-            <span className="text-[10px] font-bold uppercase tracking-tight opacity-70">
-              <span className="hidden md:inline">{labels.statusPrefix} </span>
-              {stateLabel}
+    <>
+      {networkStrip && <NetworkStrip surface="footer" />}
+      <div
+        className={`flex flex-row justify-between items-center gap-6 ${className}`}
+      >
+        {holder ? (
+          <p className="text-sm opacity-70">
+            © Copyright {year} - {holder}
+          </p>
+        ) : (
+          <span />
+        )}
+        <div className="flex items-center gap-6">
+          {showStatus && (
+            <div
+              className="flex items-center gap-2 px-2 py-1 md:px-3 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10"
+              role="status"
+              aria-live="polite"
+            >
+              <span
+                aria-hidden="true"
+                className="w-2 h-2 rounded-full shrink-0"
+                style={{
+                  backgroundColor: dotColor,
+                  boxShadow:
+                    state && state !== "unconfigured"
+                      ? `0 0 8px ${dotColor}`
+                      : undefined,
+                }}
+              />
+              <span className="text-[10px] font-bold uppercase tracking-tight opacity-70">
+                <span className="hidden md:inline">{labels.statusPrefix} </span>
+                {stateLabel}
+              </span>
+            </div>
+          )}
+          {version && (
+            <span className="hidden md:inline text-xs font-mono font-bold uppercase opacity-70">
+              {labels.version} {version}
             </span>
-          </div>
-        )}
-        {version && (
-          <span className="hidden md:inline text-xs font-mono font-bold uppercase opacity-70">
-            {labels.version} {version}
-          </span>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

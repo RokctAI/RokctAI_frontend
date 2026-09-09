@@ -30,6 +30,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { Chrome } from "lucide-react";
 
 import { BrandLogo } from "@/components/custom/brand-logo";
 import { Branding } from "@/components/custom/branding";
@@ -78,7 +79,19 @@ const HeroForm: React.ComponentType<HeroFormProps> | null =
         loadHeroForm().then((Form) => ({ default: Form ?? NoHeroForm })),
       );
 
+/** True when the badge has something to draw: a built-in glyph or an image with a src. */
+export function hasBadgeIcon(badge: Pick<HeroBadge, "icon">): boolean {
+  const icon = badge.icon;
+  if (!icon) return false;
+  if (typeof icon === "string") return icon === "app-store" || icon === "chrome";
+  return icon.src.trim().length > 0;
+}
+
 function BadgeIcon({ icon }: { icon: HeroBadge["icon"] }) {
+  if (!icon) return null;
+  if (icon === "chrome") {
+    return <Chrome className="w-6 h-6" aria-hidden="true" />;
+  }
   if (icon === "app-store") {
     return (
       <svg viewBox="0 0 384 512" fill="currentColor" className="w-7 h-7">
@@ -86,6 +99,7 @@ function BadgeIcon({ icon }: { icon: HeroBadge["icon"] }) {
       </svg>
     );
   }
+  if (!icon.src.trim()) return null;
   return <Image src={icon.src} alt={icon.alt} width={24} height={24} />;
 }
 
@@ -102,6 +116,9 @@ export function Hero({
     HERO_COPY.length === 0 ? HERO_CONFIG : null,
   );
   const hero = copy ?? PENDING_HERO;
+  // 1.23.0: a badge without an icon is not drawn (below `md` it would be an
+  // empty pill), so a badge waits for its icon rather than inventing one.
+  const badges = useMemo(() => hero.badges.filter(hasBadgeIcon), [hero.badges]);
   const [wordIndex, setWordIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
   // What the registered form reports back: whether the visitor is using it,
@@ -279,8 +296,8 @@ export function Hero({
           />
         )}
 
-        {/* Social Proof & Platform badges */}
-        {hero.badges.length > 0 && (
+        {/* Social Proof & Platform badges (1.23.0: a badge without an icon is not drawn) */}
+        {badges.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -301,7 +318,7 @@ export function Hero({
             )}
 
             <div className="flex flex-wrap justify-center items-center gap-4">
-              {hero.badges.map((badge) => (
+              {badges.map((badge) => (
                 <Link
                   key={badge.id}
                   href={badge.href}

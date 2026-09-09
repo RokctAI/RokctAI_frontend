@@ -55,8 +55,22 @@
 // "soon" entry non-navigable, so the "#" hrefs on unreleased features are
 // never followed. The two Chrome Web Store entries are `external` and open
 // in a new tab.
+//
+// Since 1.14.0 (base_sdk 1.24.0) the menu also declares the BRAND the old
+// header drew (Ray, 2026-09-09: "header lost functions the old rokct header
+// had"; rokct.ai keeps everything its old host header had): the mark with
+// its BETA strip (`badge`, the old `<BrandLogo showBadge={true} />`), and
+// the COLLAPSING brand - the large wordmark that slid away 1.5s after load
+// leaving the mark, the visitor's country code and a chevron, with the nav
+// fading until the pointer was over the bar or the page scrolled. The code
+// comes from the same place the old header read it: `getBrandingSync()`,
+// the shell's client-side branding cache (app/config/platform.ts, an
+// agent_sdk `requires` file), whose `code` and `style` the old header
+// spread onto its span. "Chat with ROK" is `secondary`, the filled muted
+// button the old nav drew it as, not the outlined `ghost`.
 
 import type { HeaderMenu } from "@/components/custom/landing/header-menu";
+import { getBrandingSync } from "@/app/config/platform";
 import t from "@/app/lib/i18n";
 
 const CHROME_WEB_STORE = "https://chromewebstore.google.com/";
@@ -67,7 +81,31 @@ function word(key: string, fallback: string): string {
   return value && value !== key ? value : fallback;
 }
 
+/**
+ * The country code beside the collapsed mark, as the old header found it:
+ * the branding cache the shell keeps on the client, read once after
+ * mount. An empty cache (a first visit) answers nothing and
+ * the mark collapses alone, exactly as before; the cache carries the
+ * inline style (scale, baseline offset) the shell wants on the code.
+ */
+function brandingCode(): { text: string; style?: Record<string, string | number> } | null {
+  const branding = getBrandingSync() as
+    | { code?: string | null; style?: Record<string, string | number> }
+    | null
+    | undefined;
+  const text = branding?.code?.trim();
+  if (!text) return null;
+  return { text, style: branding?.style };
+}
+
 const AGENT_HEADER_MENU: HeaderMenu = {
+  brand: {
+    // The host's own mark (rokctai_frontend's brand-logo.tsx) with its
+    // BETA strip, and the old header's brand motion, defaults as it had
+    // them (1500ms).
+    badge: true,
+    collapse: { delayMs: 1500, code: brandingCode },
+  },
   anchors: ["pricing"],
   links: [
     { id: "affiliate", label: word("features.affiliate", "Affiliate"), href: "/affiliate" },
@@ -156,7 +194,9 @@ const AGENT_HEADER_MENU: HeaderMenu = {
       id: "chat-rokct",
       label: word("features.chat_rokct", "Chat with ROK"),
       href: "/chat",
-      variant: "ghost",
+      // The filled muted button the old nav drew it as (1.14.0; the
+      // variant is base_sdk 1.24.0's).
+      variant: "secondary",
     },
     {
       id: "add-extension",

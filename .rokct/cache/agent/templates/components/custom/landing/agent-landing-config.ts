@@ -212,19 +212,13 @@ const ACTIVE_TAB =
   "data-[state=active]:text-white dark:data-[state=active]:text-black";
 
 export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
-  logos: {
-    eyebrow: "Trusted by professionals at",
-    logos: [
-      { name: "Walmart", url: `${CDN}/Walmart_1_0cd05c542e.png` },
-      { name: "Cisco", url: `${CDN}/Cisco_1_ab0ee6173d.png` },
-      { name: "Netflix", url: `${CDN}/Netflix_1_dabb0f82d5.png` },
-      { name: "Pinterest", url: `${CDN}/Pinterest_1_25eeb74ab0.png` },
-      { name: "Zoom", url: `${CDN}/Zoom_1_b5d03a6d69.png` },
-      { name: "Sony", url: `${CDN}/Sony_1_e475b6ed27.png` },
-      { name: "Ebay", url: `${CDN}/Ebay_1_dbfa7af44d.png` },
-      { name: "Uber", url: `${CDN}/Uber_1_338311f3dc.png` },
-    ],
-  },
+  // 1.13.0: the logo wall is OFF (Ray, 2026-09-09: "everything served from
+  // another company cdn tells you is placeholder"). The eight marks this
+  // slot showed were hotlinked from a chat template's CDN; base_sdk 1.23.0's
+  // network strip - the products that run on rokct, under "Trusted by" -
+  // stands under the hero instead. logos.tsx stays registered and renders
+  // nothing on null: an unused surface is flagged, never removed.
+  logos: null,
 
   social: {
     badge: `${PLATFORM_NAME} Chrome Extension`,
@@ -369,7 +363,7 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
     },
     defaultCategoryStyle:
       "text-slate-600 border-slate-200 hover:border-slate-500 hover:text-slate-500 data-[state=active]:bg-slate-600 data-[state=active]:text-white dark:text-slate-400 dark:border-slate-800",
-    hiddenCategories: ["lms", "hosting", "paas"],
+    hiddenCategories: ["lms", "hosting", "paas", "telephony"],
     hideFreePlansIn: ["rokct"],
     featureTokens: { model: modelLabel(AI_MODELS.PAID.id) },
     localize: () =>

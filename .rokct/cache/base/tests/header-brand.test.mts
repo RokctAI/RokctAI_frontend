@@ -25,11 +25,13 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
+  DEFAULT_BRAND_COLLAPSE_DELAY_MS,
   HEADER_MENU,
   headerBrandNeedsCopy,
   isGeneratedBrandIcon,
   loadHeaderBrand,
   resolveHeaderBrand,
+  resolveHeaderBrandCollapse,
 } from './header-menu.ts';
 import { setRegisteredIcon } from './landing-site-metadata.ts';
 
@@ -168,5 +170,47 @@ describe('loadHeaderBrand: through the registries', () => {
       console.error = original;
     }
     assert.equal(errors.length, 1);
+  });
+});
+
+// base_sdk 1.24.0: the badge and the collapsing brand rokct.ai's old
+// header had, off unless declared.
+describe('resolveHeaderBrand: badge and collapse (1.24.0)', () => {
+  it('nothing declared: no badge, a still brand', () => {
+    const brand = resolveHeaderBrand(null, null);
+    assert.equal(brand.badge, false);
+    assert.equal(brand.collapse, null);
+    assert.equal(resolveHeaderBrand({ logo: 'none' }, null).badge, false);
+    assert.equal(resolveHeaderBrand({ logo: '/m.svg', collapse: false }, null).collapse, null);
+  });
+
+  it('badge: true is carried whichever branch answers the logo', () => {
+    assert.equal(resolveHeaderBrand({ badge: true }, null).badge, true);
+    assert.equal(resolveHeaderBrand({ badge: true, logo: 'none' }, null).badge, true);
+    assert.equal(resolveHeaderBrand({ badge: true, logo: '/m.svg' }, null).badge, true);
+    assert.equal(resolveHeaderBrand({ badge: true }, { icon: '/i.png' }).badge, true);
+  });
+
+  it('collapse: true takes the defaults; an object overrides them', () => {
+    const defaults = resolveHeaderBrand({ collapse: true }, null).collapse;
+    assert.ok(defaults);
+    assert.equal(defaults.delayMs, DEFAULT_BRAND_COLLAPSE_DELAY_MS);
+    assert.equal(defaults.delayMs, 1500);
+    assert.equal(defaults.code, null);
+    const code = () => 'ZA';
+    const tuned = resolveHeaderBrandCollapse({ delayMs: 250, code });
+    assert.ok(tuned);
+    assert.equal(tuned.delayMs, 250);
+    assert.equal(tuned.code, code);
+    assert.equal(tuned.code(), 'ZA');
+  });
+
+  it('a bad delay falls back to the default; false and nothing are still', () => {
+    assert.equal(resolveHeaderBrandCollapse({ delayMs: -1 })?.delayMs, DEFAULT_BRAND_COLLAPSE_DELAY_MS);
+    assert.equal(resolveHeaderBrandCollapse({ delayMs: Number.NaN })?.delayMs, DEFAULT_BRAND_COLLAPSE_DELAY_MS);
+    assert.equal(resolveHeaderBrandCollapse({ delayMs: 0 })?.delayMs, 0);
+    assert.equal(resolveHeaderBrandCollapse(false), null);
+    assert.equal(resolveHeaderBrandCollapse(undefined), null);
+    assert.equal(resolveHeaderBrandCollapse(null), null);
   });
 });

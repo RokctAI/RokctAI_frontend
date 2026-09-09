@@ -57,6 +57,17 @@
 // the right mark and the "S" never flashes. The generated /brand-icon
 // letter tile is for the tab and the share card and is never drawn here.
 //
+// Since 1.24.0 the declaration may also switch on the two things rokct.ai's
+// old header did with its brand that 1.21.0 dropped (Ray, 2026-09-09:
+// "header lost functions the old rokct header had"; rokct.ai keeps
+// everything its old host header had): `brand.badge` draws the host's mark
+// with its badge (rokct.ai's BETA strip), and `brand.collapse` is the
+// collapsing brand - 44px mark and a large wordmark that slides away after
+// load, leaving the mark, the visitor's country code and a chevron, while
+// the desktop nav fades until the pointer is over the bar or the page is
+// scrolled. Both are off unless declared, so a shell that registers
+// neither (Supacharge) renders byte-for-byte what it did.
+//
 // The public API is the one the two shells' own headers had, so the pages
 // that already render <Header> (the auth pages, status, careers) compile
 // unchanged: loginUrl / signupUrl / session, and the openLoginPopup /
@@ -77,7 +88,7 @@ import React, { useCallback, useEffect, useId, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { ChevronRight, Menu, X } from "lucide-react";
 
 import { PLATFORM_NAME } from "@/app/config/platform";
 import t from "@/app/lib/i18n";
@@ -94,6 +105,7 @@ import {
   loadHeaderMenu,
   resolveHeaderBrand,
   resolveHeaderMenu,
+  type HeaderBrandCode,
   type HeaderMenuAction,
   type HeaderMenuItem,
   type HeaderMenuResolvedGroup,
@@ -129,29 +141,116 @@ export interface HeaderProps {
   nav?: LandingNavItem[];
 }
 
+/** The mark alone, at `size` px: the host's own brand-logo.tsx or the declared image. */
+function BrandMark({ brand, size }: { brand: ResolvedHeaderBrand; size: 32 | 44 }) {
+  if (brand.logo === "none") return null;
+  if (brand.logo === "host") {
+    // The literal 32px call is the undeclared shell's mark, unchanged since
+    // 1.21.0; the badge (1.24.0) and the collapsing brand's 44px are only
+    // ever reached through a declaration.
+    if (size === 32 && !brand.badge) return <BrandLogo width={32} height={32} />;
+    return <BrandLogo width={size} height={size} showBadge={brand.badge} />;
+  }
+  // A plain <img>: the path may be any origin, and a small mark needs no
+  // optimisation pipeline.
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={brand.logo.src}
+      alt={brand.wordmark ? "" : PLATFORM_NAME}
+      width={size}
+      height={size}
+      className={cn("shrink-0 object-contain", size === 44 ? "h-11 w-11" : "h-8 w-8")}
+    />
+  );
+}
+
 /**
  * The brand link's content, as resolved: the mark ("host" is the host
  * shell's own brand-logo.tsx, `{ src }` an image, "none" nothing) and then
- * the wordmark unless the home SDK turned it off.
+ * the wordmark unless the home SDK turned it off. A brand that collapses
+ * (1.24.0) renders through [CollapsingBrand] instead.
  */
-function BrandBlock({ brand }: { brand: ResolvedHeaderBrand }) {
+function BrandBlock({
+  brand,
+  collapsed = false,
+}: {
+  brand: ResolvedHeaderBrand;
+  /** Only read by a collapsing brand: whether the wordmark has slid away. */
+  collapsed?: boolean;
+}) {
+  if (brand.collapse) return <CollapsingBrand brand={brand} collapsed={collapsed} />;
   return (
     <>
-      {brand.logo === "host" ? (
-        <BrandLogo width={32} height={32} />
-      ) : brand.logo === "none" ? null : (
-        // A plain <img>: the path may be any origin, and a 32px mark needs
-        // no optimisation pipeline.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={brand.logo.src}
-          alt={brand.wordmark ? "" : PLATFORM_NAME}
-          width={32}
-          height={32}
-          className="h-8 w-8 shrink-0 object-contain"
-        />
-      )}
+      <BrandMark brand={brand} size={32} />
       {brand.wordmark && <Branding className="text-xl" />}
+    </>
+  );
+}
+
+/** [HeaderBrandCollapse.code]'s answer, normalised: the text and its style, or nothing. */
+function toBrandCode(answer: HeaderBrandCode | string | null | undefined): HeaderBrandCode | null {
+  if (!answer) return null;
+  if (typeof answer === "string") return answer.trim() ? { text: answer } : null;
+  return answer.text?.trim() ? answer : null;
+}
+
+/**
+ * rokct.ai's collapsing brand (1.24.0), its old header's markup in theme
+ * tokens: the mark at 44px, then a 250px slot holding the large wordmark
+ * that closes once `collapsed` is set (the header sets it `delayMs` after
+ * mount), and beside the mark a slot for the country code that opens at
+ * the same moment. The code is asked of the declaration once, on the
+ * client, after mount - rokct.ai answers it from its branding cache, so a
+ * first visit with an empty cache collapses to the mark alone, as before.
+ */
+function CollapsingBrand({
+  brand,
+  collapsed,
+}: {
+  brand: ResolvedHeaderBrand;
+  collapsed: boolean;
+}) {
+  const resolveCode = brand.collapse?.code ?? null;
+  const [code, setCode] = useState<HeaderBrandCode | null>(null);
+
+  useEffect(() => {
+    if (!resolveCode) return;
+    setCode(toBrandCode(resolveCode()));
+  }, [resolveCode]);
+
+  const showCode = collapsed && code !== null;
+
+  return (
+    <>
+      <span className="relative flex h-11 items-center">
+        <BrandMark brand={brand} size={44} />
+        <span
+          aria-hidden={!showCode}
+          className="flex h-11 items-start overflow-hidden whitespace-nowrap transition-all duration-500"
+          style={{ maxWidth: showCode ? "120px" : "0px", opacity: showCode ? 1 : 0 }}
+        >
+          {code && (
+            <span
+              className="ml-1 inline-block self-start text-[36px] font-medium text-foreground transition-all duration-500 ease-in-out"
+              style={{ marginTop: "-2px", ...(code.style as React.CSSProperties | undefined) }}
+            >
+              {code.text}
+            </span>
+          )}
+        </span>
+      </span>
+      {brand.wordmark && (
+        <span
+          aria-hidden={collapsed}
+          className="flex items-center overflow-hidden transition-all duration-500 ease-in-out"
+          style={{ width: collapsed ? "0px" : "250px", opacity: collapsed ? 0 : 1 }}
+        >
+          <span className="flex items-center pl-2 pt-0.5">
+            <Branding className="text-[60px] tracking-tighter leading-none" />
+          </span>
+        </span>
+      )}
     </>
   );
 }
@@ -164,21 +263,81 @@ function BrandBlock({ brand }: { brand: ResolvedHeaderBrand }) {
 // lazy loader suspends until the modules are in, on both sides) and the
 // wrong mark never paints first.
 const UNDECLARED_BRAND = resolveHeaderBrand(null, null);
+const BRAND_DECLARED = HEADER_MENU.length > 0 || SITE_METADATA.length > 0;
 
 function UndeclaredHeaderBrand() {
   return <BrandBlock brand={UNDECLARED_BRAND} />;
 }
 
-const HeaderBrand: React.ComponentType =
-  HEADER_MENU.length === 0 && SITE_METADATA.length === 0
-    ? UndeclaredHeaderBrand
-    : dynamic(() =>
-        loadHeaderBrand().then((brand) => ({
-          default: function DeclaredHeaderBrand() {
-            return <BrandBlock brand={brand} />;
-          },
-        })),
-      );
+interface HeaderBrandProps {
+  /** Whether a collapsing brand has collapsed; ignored by a still one. */
+  collapsed?: boolean;
+}
+
+const HeaderBrand: React.ComponentType<HeaderBrandProps> = !BRAND_DECLARED
+  ? UndeclaredHeaderBrand
+  : dynamic(() =>
+      loadHeaderBrand().then((brand) => ({
+        default: function DeclaredHeaderBrand({ collapsed }: HeaderBrandProps) {
+          return <BrandBlock brand={brand} collapsed={collapsed} />;
+        },
+      })),
+    );
+
+/**
+ * The header's own copy of the resolved brand, for the two things the bar
+ * around the brand link does with a collapsing declaration (1.24.0): run
+ * the collapse timer and fade the desktop nav. Nothing declared answers
+ * the still brand at once, so an undeclared shell schedules no work.
+ */
+function useHeaderBrand(): ResolvedHeaderBrand {
+  const [brand, setBrand] = useState<ResolvedHeaderBrand>(UNDECLARED_BRAND);
+  useEffect(() => {
+    if (!BRAND_DECLARED) return;
+    let cancelled = false;
+    loadHeaderBrand().then((resolved) => {
+      if (!cancelled) setBrand(resolved);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return brand;
+}
+
+/**
+ * rokct.ai's old header's brand motion (1.24.0), for a declared collapse:
+ * `collapsed` flips `delayMs` after mount; `navVisible` is the old rule
+ * verbatim - the nav shows until the brand collapses, and again while the
+ * pointer is over the header or the page is scrolled past 10px. Off (no
+ * listeners, no timer, nav always visible) for a still brand.
+ */
+function useBrandCollapse(brand: ResolvedHeaderBrand) {
+  const collapse = brand.collapse;
+  const [collapsed, setCollapsed] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!collapse) return;
+    const timer = setTimeout(() => setCollapsed(true), collapse.delayMs);
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [collapse]);
+
+  return {
+    collapse,
+    collapsed,
+    navVisible: !collapse || !collapsed || hovered || scrolled,
+    onMouseEnter: collapse ? () => setHovered(true) : undefined,
+    onMouseLeave: collapse ? () => setHovered(false) : undefined,
+  };
+}
 
 const AUTH_LINK =
   "text-[13px] font-medium text-foreground/70 transition-colors hover:text-foreground";
@@ -205,6 +364,9 @@ export function Header({
   const [loaded, setLoaded] = useState<ResolvedHeaderMenu | null>(null);
   const pathname = usePathname();
   const panelId = useId();
+  const brand = useHeaderBrand();
+  const { collapse, collapsed, navVisible, onMouseEnter, onMouseLeave } =
+    useBrandCollapse(brand);
 
   // Props win. Only a caller that passes none of the three gets the
   // registered menu loaded here.
@@ -276,26 +438,64 @@ export function Header({
     </>
   );
 
+  const brandLink = (
+    <Link
+      href="/"
+      className="flex shrink-0 items-center gap-2"
+      onClick={close}
+    >
+      <HeaderBrand collapsed={collapsed} />
+    </Link>
+  );
+
+  const desktopNav = (
+    <HeaderMenuNav
+      items={menuItems}
+      groups={groups}
+      className="hidden lg:flex"
+    />
+  );
+
   return (
-    <header className="sticky top-0 z-50 w-full">
+    <header
+      className="sticky top-0 z-50 w-full"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       {/* The blur sits on the bar, not on <header>: a backdrop-filter makes
           its element the containing block of every fixed descendant, and
           the mobile panel below must size itself to the viewport. */}
       <div className="border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-          <Link
-            href="/"
-            className="flex shrink-0 items-center gap-2"
-            onClick={close}
-          >
-            <HeaderBrand />
-          </Link>
+          {/* A collapsing brand (1.24.0) adds the chevron the old rokct.ai
+              header showed after its collapsed mark, and wraps the nav so it
+              can fade; a still brand renders the two exactly as before. */}
+          {collapse ? (
+            <div className="flex shrink-0 items-center">
+              {brandLink}
+              <ChevronRight
+                aria-hidden="true"
+                className="ml-1 h-3.5 w-3.5 text-muted-foreground transition-opacity duration-500"
+                style={{ opacity: collapsed ? 1 : 0 }}
+              />
+            </div>
+          ) : (
+            brandLink
+          )}
 
-          <HeaderMenuNav
-            items={menuItems}
-            groups={groups}
-            className="hidden lg:flex"
-          />
+          {collapse ? (
+            <div
+              className="hidden h-full items-center transition-opacity duration-500 lg:flex"
+              style={{
+                opacity: navVisible ? 1 : 0,
+                pointerEvents: navVisible ? "auto" : "none",
+              }}
+            >
+              {desktopNav}
+            </div>
+          ) : (
+            desktopNav
+          )}
 
           <div className="hidden items-center gap-3 lg:flex">
             <HeaderMenuActions actions={actions} />

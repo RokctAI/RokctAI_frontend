@@ -16,3 +16,11 @@
 // Test stand-in for the host shell's app/config/platform.
 
 export const PLATFORM_NAME = "rokct.ai";
+
+/**
+ * The shell's client-side branding cache, as agent-header-menu.ts reads it
+ * (1.14.0): nothing on the server, and nothing here.
+ */
+export function getBrandingSync(): { code?: string; style?: Record<string, string | number> } | null {
+  return null;
+}
