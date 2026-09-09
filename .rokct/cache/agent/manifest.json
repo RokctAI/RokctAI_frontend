@@ -1,6 +1,6 @@
 {
   "name": "agent_sdk",
-  "version": "1.5.0",
+  "version": "1.8.0",
   "installs": [
     { "from": "templates/app/handson/all/agent", "to": "app/handson/all/agent" },
     { "from": "templates/app/actions/handson/all/agent", "to": "app/actions/handson/all/agent" },
@@ -19,6 +19,9 @@
     { "from": "templates/components/custom/landing/agent-hero-form.tsx", "to": "components/custom/landing/agent-hero-form.tsx" },
     { "from": "templates/components/custom/chat-section.tsx", "to": "components/custom/chat-section.tsx" },
     { "from": "templates/components/custom/landing/agent-landing-config.ts", "to": "components/custom/landing/agent-landing-config.ts" },
+    { "from": "templates/components/custom/landing/agent-header-menu.ts", "to": "components/custom/landing/agent-header-menu.ts" },
+    { "from": "templates/components/custom/landing/agent-site-metadata.ts", "to": "components/custom/landing/agent-site-metadata.ts" },
+    { "from": "templates/components/custom/landing/agent-card-row.ts", "to": "components/custom/landing/agent-card-row.ts" },
     { "from": "templates/components/custom/floating-nav.tsx", "to": "components/custom/floating-nav.tsx" },
     { "from": "templates/components/custom/logos.tsx", "to": "components/custom/logos.tsx" },
     { "from": "templates/components/custom/social-section.tsx", "to": "components/custom/social-section.tsx" },
@@ -134,6 +137,16 @@
       "target": "components/custom/landing/page-sections.ts",
       "placeholder": "// @rokct-sdk-page-sections-start",
       "replacement": "  { id: \"testimonials-section\", load: () => import(\"@/components/custom/testimonials-section\") },"
+    },
+    {
+      "target": "components/custom/landing/header-menu.ts",
+      "placeholder": "// @rokct-sdk-header-menu-start",
+      "replacement": "  { id: \"agent-header-menu\", load: () => import(\"@/components/custom/landing/agent-header-menu\") },"
+    },
+    {
+      "target": "components/custom/landing/site-metadata.ts",
+      "placeholder": "// @rokct-sdk-site-metadata-start",
+      "replacement": "  { id: \"agent-site-metadata\", load: () => import(\"@/components/custom/landing/agent-site-metadata\") },"
     }
   ],
   "requires": [
@@ -178,6 +191,10 @@
     "components/custom/landing/hero-form.ts",
     "components/custom/landing/landing-config.ts",
     "components/custom/landing/page-sections.ts",
+    "components/custom/landing/header-menu.ts",
+    "components/custom/header-menu.tsx",
+    "components/custom/menu-label.tsx",
+    "components/custom/landing/site-metadata.ts",
     "app/actions/base/landing.ts",
     "lib/actions/getPricingMetadata.ts",
     "components/ui/button.tsx",
@@ -193,12 +210,16 @@
     "app/config/platform.ts"
   ],
   "_comment": {
-    "about": "Since 1.4.0 this half holds rokctapp's landing page sections (Ray, 2026-09-03: each home SDK holds its own landing page, like profile in Dart): base_sdk >= 1.5.0 carries only the generic landing host (app/landing/page.tsx, components/custom/landing-content.tsx, the page-sections.ts registry, the hero) and this SDK registers its floating nav, chat, logos, social, features, workflow, pricing, comparison, faq and testimonials sections into it, one integrations line each at the // @rokct-sdk-page-sections-start marker, in page order (the installer anchors each line after the previous one). Their copy is components/custom/landing/agent-landing-config.ts. base_sdk composes first. Since 1.5.0 it also holds the hero's chat box (Ray, 2026-09-08: \"chat box is for chat related stuff, i think if agent sdk is home it inject that chat\"): base_sdk 1.7.0's hero carries no input, only a form slot, components/custom/landing/hero-form.ts, a one-marker registry like the others; this SDK installs components/custom/landing/agent-hero-form.tsx - the search-style input, its typewriter placeholders, the submit and the hero-sections.ts results (which that box, not the hero, now loads and renders) - and registers it with one line at // @rokct-sdk-hero-form-start. The form types its props structurally rather than importing hero-form.ts, so against a base_sdk older than 1.7.0 (no hero-form.ts, integration skipped with a warning) the file is installed but unused and the shell still builds with the hero's own box.",
-    "components/custom/landing/landing-config.ts": "installed by base_sdk >= 1.5.0 (LandingNavItem for floating-nav.tsx, planSignupUrl for pricing.tsx)",
+    "about": "Since 1.4.0 this half holds rokctapp's landing page sections (Ray, 2026-09-03: each home SDK holds its own landing page, like profile in Dart): base_sdk >= 1.5.0 carries only the generic landing host (app/landing/page.tsx, components/custom/landing-content.tsx, the page-sections.ts registry, the hero) and this SDK registers its floating nav, chat, logos, social, features, workflow, pricing, comparison, faq and testimonials sections into it, one integrations line each at the // @rokct-sdk-page-sections-start marker, in page order (the installer anchors each line after the previous one). Their copy is components/custom/landing/agent-landing-config.ts. base_sdk composes first. Since 1.5.0 it also holds the hero's chat box (Ray, 2026-09-08: \"chat box is for chat related stuff, i think if agent sdk is home it inject that chat\"): base_sdk 1.7.0's hero carries no input, only a form slot, components/custom/landing/hero-form.ts, a one-marker registry like the others; this SDK installs components/custom/landing/agent-hero-form.tsx - the search-style input, its typewriter placeholders, the submit and the hero-sections.ts results (which that box, not the hero, now loads and renders) - and registers it with one line at // @rokct-sdk-hero-form-start. The form types its props structurally rather than importing hero-form.ts, so against a base_sdk older than 1.7.0 (no hero-form.ts, integration skipped with a warning) the file is installed but unused and the shell still builds with the hero's own box. Since 1.7.0 rokct.ai's own card section is ONE swipeable row below 640px rather than a column of cards (Ray, 2026-09-09: \"why rokctai didnt benefit from the change?\", after lms_sdk 1.8.0 did the same for supacharge.app). It did not benefit because the sections are NOT shared - base_sdk holds only the landing host, so each home SDK owns its own content sections and lms_sdk could not reach these. components/custom/landing/agent-card-row.ts is that change: one exported class string, AGENT_CARD_ROW, that a card grid adds to the grid it already has, every utility in it behind Tailwind's max-sm: so the whole row compiles into a single @media not all and (min-width: 640px) block and nothing outside it can reach a larger screen. all-features-section.tsx is the only section that takes it, because it was the only stacked card GRID on the page: chat, social and workflow are already carousels, pricing is already a snap scroller, logos and testimonials are marquees, copied-pricing is a fixed-height card fan and the FAQ is an accordion. Its grid drops the grid-cols-1 it no longer needs and pins sm:grid-cols-1 in its place, because its first column break is md: and that grid-cols-1 was also holding the 640-767px band. The row is sized and snapped like the plan scroller pricing.tsx already runs a section away (a card at 85%, centre snap), so the page has one scroller pattern rather than two. No base_sdk change: the floor is unchanged at >= 1.10.0 (LandingNavItem.badge, since 1.6.0) and this SDK ships no CSS file, which is why the row is Tailwind rather than a stylesheet. Since 1.8.0 rokct.ai's header WORDS are here too (Ray, 2026-09-09: rokct.ai and supacharge.app must use ONE header, the same component, with the menu inside it - base_sdk 1.14.0 ships that header, and what it does not know is rokct.ai's menu): components/custom/landing/agent-header-menu.ts default-exports a HeaderMenu built entry for entry from rokctai_frontend's hand-written components/custom/header.tsx and its app/config/features.ts registry - `pricing` as an ANCHOR resolved against copied-pricing.tsx's meta.nav id so it is dropped when the section is not on the page, Affiliate and Teams as fixed links, the Product dropdown's five columns (Product/platforms, AI Chat, Productivity, Tools, Summary) as `groups` with the same new/soon badges, and `Chat with ROK` (ghost) and `Add ROK Extension` (primary, Chrome Web Store, external) as `actions` - registered with one line at // @rokct-sdk-header-menu-start. Labels are read through the shell's `t` (app/lib/i18n, a requires file) with the English beside each key as the fallback. floating-nav.tsx's new/soon pill is base's ONE components/custom/menu-label.tsx, and the hero form's send button paints bg-primary instead of the hard-coded yellow-400, so rokct.ai's brand colour lives in the shell's --primary token like everything else base renders. components/custom/landing/agent-site-metadata.ts registers rokct.ai's <title>, description, tagline, keywords, locale and logo at base_sdk 1.15.0's // @rokct-sdk-site-metadata-start marker (components/custom/landing/site-metadata.ts); that registry is optional in the base floor - against 1.14.0 the installer prints 'Integration target not found' and skips the line, which is why the module declares the shape it fills instead of importing base's SiteMetadataCopy. templates/app/(chat)/opengraph-image.png and twitter-image.png are gone: they were the Vercel 'Gemini Chatbot Starter Template' cards, and with nothing at those App Router conventions base's generated preview image wins. The base_sdk floor is 1.14.0 since 1.8.0.",
+    "components/custom/landing/landing-config.ts": "installed by base_sdk >= 1.5.0 (LandingNavItem for floating-nav.tsx, planSignupUrl for pricing.tsx); >= 1.10.0 for LandingNavItem.badge, the optional new/soon flag floating-nav.tsx renders when a section sets it",
     "components/custom/landing/page-sections.ts": "installed by base_sdk >= 1.5.0 (the registry the integrations target; PageSectionMeta/PageSectionProps for the section templates)",
     "app/actions/base/landing.ts": "installed by base_sdk >= 1.5.0 (LandingPlan, the plan row type pricing.tsx reads)",
     "lib/actions/getPricingMetadata.ts": "host shell (currency localisation pricing.tsx asks for through agent-landing-config.ts pricing.localize; set it to null to drop it)",
     "components/ui/carousel.tsx": "host shell (chat-section.tsx, social-section.tsx and workflow-section.tsx)",
-    "ai/models.ts": "host shell (agent-landing-config.ts reads the paid model id for the {model} token in plan features; the chat surface reads it too)"
+    "ai/models.ts": "host shell (agent-landing-config.ts reads the paid model id for the {model} token in plan features; the chat surface reads it too)",
+    "components/custom/landing/header-menu.ts": "installed by base_sdk >= 1.14.0 (HeaderMenu, the shape agent-header-menu.ts fills, and the registry its integrations line targets; groups and actions exist from 1.14.0, and so does the header that renders them)",
+    "components/custom/header-menu.tsx": "installed by base_sdk >= 1.14.0 (the menu partials base's header renders this SDK's registered menu with)",
+    "components/custom/menu-label.tsx": "installed by base_sdk >= 1.14.0 (MenuLabel, the ONE new/soon pill; floating-nav.tsx renders it beside a badged entry so the nav and the header wear the same label)",
+    "components/custom/landing/site-metadata.ts": "installed by base_sdk >= 1.15.0 (the site-metadata registry the agent-site-metadata integration targets). OPTIONAL: against base_sdk 1.14.0 the file is absent, sdk_installer_base.py update_integrations() prints 'Integration target not found' and skips the line, and agent-site-metadata.ts - which imports nothing from base - installs and compiles unused"
   }
 }

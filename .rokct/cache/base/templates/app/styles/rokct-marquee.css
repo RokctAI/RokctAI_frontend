@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
+ * The platform marquee: the sideways auto-scroll rokct.ai's testimonials
+ * row runs on, carried by base_sdk since 1.14.0 so every composed shell
+ * can run it (Ray, 2026-09-09: Supacharge is to inherit rokct.ai's
+ * auto-scrolling testimonials).
+ *
+ * The keyframes existed only in rokctai_frontend's own tailwind.config.ts
+ * (`animate-marquee`: 60s linear infinite, translateX(0) to
+ * translateX(-33.33%)) - no SDK ships a Tailwind config, so a shell that
+ * did not write that entry itself had no animation. This file is the same
+ * motion as plain CSS under its own class, `.rokct-marquee`, on a track
+ * whose content is repeated three times (one third of the track is one
+ * copy, so the loop is seamless).
+ *
+ * components/custom/landing/testimonials-marquee.tsx imports this file
+ * itself, so a shell that renders that component needs no host edit; a
+ * host that wants the class elsewhere adds one line to its app/globals.css:
+ *
+ *   @import "./styles/rokct-marquee.css";
+ *
+ * The speed is a CSS variable so a home SDK retunes it on the track or on
+ * :root, e.g. `--rokct-marquee-duration: 45s`.
+ */
+
+@keyframes rokct-marquee {
+  to {
+    transform: translateX(-33.333%);
+  }
+}
+
+.rokct-marquee {
+  animation: rokct-marquee var(--rokct-marquee-duration, 60s) linear infinite;
+}
+
+/* The row pauses under the pointer, so a quote can be read. */
+.group:hover .rokct-marquee {
+  animation-play-state: paused;
+}
+
+/* No motion for a visitor who asked for none: the row stands still and
+   scrolls by hand instead. */
+@media (prefers-reduced-motion: reduce) {
+  .rokct-marquee {
+    animation: none;
+  }
+
+  .rokct-marquee-track {
+    overflow-x: auto;
+  }
+}

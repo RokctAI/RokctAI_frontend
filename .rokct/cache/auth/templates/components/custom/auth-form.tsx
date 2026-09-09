@@ -14,7 +14,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "@/components/ui/button";
@@ -55,6 +55,15 @@ export function AuthForm({
 }) {
   const [showVoucher, setShowVoucher] = useState(false);
   const [activePlan, setActivePlan] = useState(selectedPlan || "Free");
+
+  // `selectedPlan` is not always known on the first render: /register now
+  // reads `?plan=` in a Suspense-isolated leaf (so the form itself can
+  // server-render) and hands the value up immediately after mount. Without
+  // this sync the lazily-supplied plan would be dropped, because the
+  // initial value of useState is only ever read once.
+  useEffect(() => {
+    if (selectedPlan) setActivePlan(selectedPlan);
+  }, [selectedPlan]);
 
   return (
     <form action={action} className="flex flex-col gap-4 px-0 pt-8 relative">
@@ -275,7 +284,7 @@ export function AuthForm({
               <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-right-1">
                 <Label
                   htmlFor="voucher_code"
-                  className="text-indigo-600 font-medium dark:text-indigo-400 flex items-center gap-1"
+                  className="text-primary font-medium flex items-center gap-1"
                 >
                   <Ticket className="w-3 h-3" />
                   {t("auth.label_voucher_code")}
@@ -283,7 +292,7 @@ export function AuthForm({
                 <Input
                   id="voucher_code"
                   name="voucher_code"
-                  className="bg-muted text-md md:text-sm border-indigo-500/20 border ring-indigo-500/10 focus-visible:ring-indigo-500 shadow-sm"
+                  className="bg-muted text-md md:text-sm border-primary/20 border ring-primary/10 focus-visible:ring-ring shadow-sm"
                   type="text"
                   placeholder={t("auth.ph_voucher_code")}
                   autoFocus

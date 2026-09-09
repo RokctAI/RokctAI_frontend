@@ -1,5 +1,347 @@
 # Changelog
 
+## 1.15.0
+
+* Ships the LINK-PREVIEW shell: what a pasted link to a rokct shell unfurls
+  into - the `<title>`, the meta description, the Open Graph and Twitter
+  cards and a 1200x630 preview image. Ray, 2026-09-09: each home SDK
+  provides its link-preview details, the shell lives in base_sdk. The
+  audit that prompted it: `app/layout.tsx` is host-owned and in no SDK's
+  `installs` or `requires`, which is exactly how the two live shells drifted
+  - one unfurls with copy hand-written into its layout and `app/site.ts`
+  that describes a product it is not, the other with a starter template's
+  leftovers (`metadataBase` pointing at the template author's domain, the
+  template's description, and a template card as its only preview image).
+  Neither had a real 1200x630 image of its own.
+  * `components/custom/landing/site-metadata.ts` is a seventh one-marker
+    registry, `// @rokct-sdk-site-metadata-start`, alongside
+    `hero-sections.ts`, `hero-copy.ts`, `hero-form.ts`, `plans-query.ts`,
+    `page-sections.ts` and `header-menu.ts`. A home SDK registers one line,
+    `{ id: "<sdk>-site-metadata", load: () => import("@/components/custom/landing/<file>") },`
+    whose module default-exports a `SiteMetadataCopy` or any subset of
+    one: `title`, `description`, `tagline`, and optional `siteName`, `url`,
+    `keywords`, `ogImage`, `logo`, `locale`. `loadSiteMetadata()` merges the
+    entries in registry order (later wins per field, an `undefined` field
+    keeps the earlier value) over `{ title: PLATFORM_NAME, siteName:
+    PLATFORM_NAME, description: "", tagline: "" }`, and a module that fails
+    to load is logged and skipped, exactly as `loadHeroCopy()` does.
+  * `ogImage` and `logo` are two fields on purpose. `ogImage` is a
+    READY-MADE preview and counts only when it ends in `.png`, `.jpg`,
+    `.jpeg` or `.webp`; an SVG mark is not a preview image because the
+    crawlers that unfurl a link do not draw it. `logo` is that mark, and it
+    is what the generated image draws - so a home SDK with only a logo
+    still gets a proper card, and one with a designed 1200x630 asset gets
+    its own.
+  * `app/lib/site-metadata.ts` is the shell: `buildSiteMetadata(overrides?)`
+    loads the copy and returns the Next `Metadata` - `metadataBase` from
+    `NEXT_PUBLIC_SITE_URL` or the copy's `url` (absent, Next falls back to
+    `VERCEL_PROJECT_PRODUCTION_URL`), `title: { default, template: "%s — <siteName>" }`,
+    `description`, `applicationName`, `keywords`, `alternates.canonical`,
+    an Open Graph `website` block (`siteName`, `locale` defaulting to
+    `en_ZA`, the preview at 1200x630) and a `summary_large_image` Twitter
+    card. `overrides` are shallow-merged last, so the host keeps `icons`
+    and anything else that is its own.
+  * `app/opengraph-image.tsx` is the generated preview, drawn with the
+    `ImageResponse` that ships in `next/og` from the same copy: the
+    registered `logo` fetched from the site origin and inlined as a data
+    URI (SVG allowed), the site name large, the tagline under it, the host
+    small at the foot, on a dark neutral ground, in the bundled sans face -
+    no font fetch, no filesystem read. `app/twitter-image.tsx` is the same
+    picture. Next gives a file at this path priority over any config-based
+    image, so the route also HONOURS a ready-made `ogImage`: when one is a
+    real raster it fetches it and answers with those bytes instead of
+    drawing. Every fetch is best-effort - a logo that will not load leaves
+    a text-only card, never an error.
+  * `app/landing/page.tsx` exports `generateMetadata()` from
+    `buildPageMetadata()` - the same Metadata with the title absolute, so a
+    layout that already applies the `%s — <siteName>` template does not
+    suffix it twice - and the page anonymous visitors are redirected to
+    unfurls right on its own, before the host layout is touched. Nothing
+    else on the page changes.
+  * Two host steps, because `app/layout.tsx` is the host's and no SDK may
+    ship it (it is now a `requires` entry, with the reason in the manifest):
+    the layout replaces its literal `metadata` with the one-liner
+    `export const generateMetadata = () => buildSiteMetadata({ icons: {...} })`
+    (from `@/app/lib/site-metadata`, host-only keys as overrides); and
+    Supacharge neutralises `SITE_DESCRIPTION` in `app/site.ts` (and the
+    layout copy that reads it) so the words its home SDK registers are the
+    only words the shell speaks. With NOTHING registered a shell is named
+    after `PLATFORM_NAME` and unfurls with a card that says so and no
+    description - honest rather than wrong - so a shell composed before its
+    home SDK registers is no worse off than it was.
+
+## 1.14.0
+
+* SHIPS the header. Ray, 2026-09-09, on the two live shells: rokct.ai and
+  supacharge.app must use ONE header - the same component - with the menu
+  INSIDE it, links inline on desktop, and on a phone nothing in the bar but
+  a burger. `components/custom/header.tsx` is therefore an `installs` entry
+  now (`templates/components/custom/header.tsx`), no longer a `requires`
+  file the host shell had to write itself, and the composer lands it on
+  every shell. Its public API is the one both shells' own headers had -
+  `loginUrl`, `signupUrl`, `session`, and the `openLoginPopup` /
+  `openSignupPopup` handlers auth_sdk's login and register pages pass - so
+  the pages that already render `<Header>` compile unchanged; the menu
+  props (`menuItems`, `groups`, `actions`, `nav`) are new and all optional.
+  * A caller that passes none of `menuItems`/`groups`/`actions` gets the
+    registered menu loaded by the header itself (`loadHeaderMenu()`,
+    resolved with `resolveHeaderMenu(menu, nav ?? [])`), because rokct.ai
+    mounts the header on /login, /register, /careers and /status without
+    the landing host: the fixed links, the groups and the actions render on
+    every such page, and an anchor only where a `nav` with its section was
+    given. The landing host passes the menu it resolved against its live
+    nav; props win when present.
+  * An entry with `badge: "soon"` is not out yet, so it is not a link: it
+    renders as a span with `aria-disabled` and the not-allowed cursor,
+    label and `MenuLabel` intact, in the inline nav, the dropdowns and the
+    mobile panel alike (rokct.ai's own header treats a coming-soon feature
+    the same way). An action with `external: true` opens in a new tab with
+    `rel="noreferrer"`.
+  * From the `lg` breakpoint up the bar is logo, then
+    `nav[aria-label="Sections"]` with the flat links and the dropdown
+    groups (open on hover, focus and click; Escape and an outside click
+    close them), then the actions, the theme toggle and the auth links
+    (Dashboard when signed in, else Log in and the Sign up pill).
+  * Below `lg` the bar is logo and a burger (`aria-expanded`,
+    `aria-controls`), nothing else: every link, each group as a headed
+    list, the actions, the theme toggle and the auth buttons sit in a
+    full-screen panel under the bar. The panel closes on a tap on any of
+    its links, on Escape, on a route change and on the burger; the page
+    behind it does not scroll while it is open. A header with no menu
+    still shows the burger, because the auth links are behind it.
+  * The chrome is rokctai_frontend's (64px bar, blurred translucent
+    ground, bottom hairline) painted in the shell's theme tokens -
+    `bg-background/80`, `border-border`, `text-foreground`, `bg-primary` -
+    so rokct.ai renders it in its palette and Supacharge in its own. The
+    host still owns the brand mark, the wordmark and the theme control:
+    `brand-logo.tsx`, `branding.tsx` and `theme-toggle.tsx` stay
+    `requires` files (the last is newly listed; both shells carry it at
+    that path with the same `className` prop).
+  * It is `sticky`, not `fixed`, so no page under it needs a top padding
+    and the hero's own `pt-16` is unchanged from 1.13.0.
+* `HeaderMenu` (`components/custom/landing/header-menu.ts`) may now name
+  `groups` and `actions` beside `anchors` and `links`, which are exactly as
+  they were - lms_sdk's registration keeps working untouched.
+  * A `HeaderMenuGroup` is `{ id, label, badge?, items }`, a label that
+    opens a dropdown; each item is a fixed `HeaderMenuLink` or
+    `{ anchor: "<section id>" }`, resolved against the live nav by the
+    same drop-missing rule as a top-level anchor. A group whose every item
+    was dropped is dropped with them, so a label never opens an empty list.
+  * A `HeaderMenuAction` is `{ id, label, href, variant?: "primary" |
+    "ghost", external? }`, a call-to-action button at the right-hand end
+    of the bar (rokct.ai's Chrome-extension button is the model).
+  * `resolveHeaderMenu(menu, nav)` answers `{ items, groups, actions }`;
+    `resolveHeaderMenuItems` is still exported and unchanged. The marker
+    line is the same text. `HeaderMenuLink` carries an optional `id`, the
+    React key when present (the href stands in when absent).
+* ONE menu label. Every badge beside a menu word - the NEW on Supacharge's
+  Partners, a SOON - is `components/custom/menu-label.tsx` (`MenuLabel`,
+  `{ badge, className? }`): a `bg-primary` pill with `text-black` (Ray:
+  "use primary color and text in black" - not `text-primary-foreground`,
+  which a shell may set to white), the word uppercased by CSS from the
+  declared `"new"`/`"soon"` vocabulary. The header uses it in all three
+  places (inline nav, dropdown groups, mobile panel) and it is the label
+  for any footer link row a home SDK builds from the same nav entries. The
+  only badge base_sdk painted before this was `header-menu.tsx`'s neutral
+  black/white `HeaderMenuBadge`; it is gone.
+* `components/custom/header-menu.tsx` is the header's menu partials now:
+  `HeaderMenuNav` (the inline desktop list), `HeaderMenuList` (the stacked
+  mobile list) and `HeaderMenuActions`. `HeaderMenuRow`, the 1.13.0 bar
+  that sat UNDER the host's header, is kept as a thin wrapper around
+  `HeaderMenuNav` so an existing import still compiles, but the landing
+  host NO LONGER RENDERS IT: `components/custom/landing-content.tsx`
+  passes the resolved menu straight into `<Header>` and the sticky wrapper
+  with the row under the header is gone - one element tree whether or not
+  a menu is registered.
+* Carries the platform marquee, additive only (Ray, 2026-09-09: Supacharge
+  is to inherit rokct.ai's auto-scrolling testimonials).
+  * `app/styles/rokct-marquee.css`: the `.rokct-marquee` keyframes (60s
+    linear infinite, `translateX(0)` to `translateX(-33.333%)`, the
+    duration in `--rokct-marquee-duration`), paused under `.group:hover`,
+    and off under `prefers-reduced-motion: reduce` with the
+    `.rokct-marquee-track` left scrollable by hand. Until now that motion
+    existed only as `animate-marquee` in rokctai_frontend's own
+    `tailwind.config.ts`; no SDK ships a Tailwind config, so no other shell
+    could run it. Installed and importable exactly like `rokct-scroll.css`.
+  * `components/custom/landing/testimonials-marquee.tsx`:
+    `TestimonialsMarquee({ items, className?, fadeClassName?,
+    cardClassName? })`, agent_sdk's testimonials row element for element
+    (tripled list, `.group` wrapper, two edge fades, `w-max` track, 350px
+    cards with title, four-line quote, 40px portrait or initial, author and
+    role) with its class strings as the defaults, so with no overrides it
+    is DOM-identical to rokct.ai's row apart from `animate-marquee`
+    becoming `rokct-marquee`. It imports the stylesheet itself, so a
+    section that renders it needs no host edit. No consumer in base; a home
+    SDK's own testimonials section renders it.
+
+* Hero: a rotating headline phrase that wraps to two lines on a phone no
+  longer pushes the suffix down onto the primary button. The phrase sits in
+  a fixed `h-[1.2em]` box (`components/custom/hero.tsx`) that `items-center`
+  let overflow both ways, so the second line landed on the suffix; the box
+  is `items-end md:items-center` now, so below `md` the wrap grows upward
+  into the gap under the brand block and the suffix stays put. Desktop is
+  unchanged.
+* Hero: the rotating headline word is `text-primary`, not `text-yellow-400`
+  (Ray: the brand colour lives in the primary token, never hard-coded), so
+  each shell's word is its own primary. rokct.ai's `--primary` must be its
+  yellow for the word to stay yellow there; `rokct-scroll.css` is already
+  variable-driven and is untouched.
+
+## 1.13.0
+
+* Adds a HEADER MENU seam, and with it the half of Ray's report that nothing
+  had answered. Looking at the live site he said "menus in header and footer
+  are not injected". The FOOTER half a home SDK could always answer by
+  itself, because its own footer section owns that markup - lms_sdk's
+  `lms-footer-section.tsx` has rendered its link row since it shipped. The
+  HEADER half it could not: `components/custom/header.tsx` is a `requires`
+  file, the host shell's own, so no SDK may ship it and a home SDK had
+  nowhere to put a header link. The landing host is the one thing that
+  renders that header, so the seam belongs here.
+  * `components/custom/landing/header-menu.ts` is a sixth one-marker
+    registry, `// @rokct-sdk-header-menu-start`, alongside
+    `hero-sections.ts`, `hero-copy.ts`, `hero-form.ts`, `plans-query.ts` and
+    `page-sections.ts`. A home SDK registers one line,
+    `{ id: "<sdk>-header-menu", load: () => import("@/components/custom/landing/<file>") }`,
+    and `loadHeaderMenu()` answers the FIRST entry that loads - one page, one
+    header menu, exactly as `hero-form.ts` picks one form.
+  * A `HeaderMenu` names `anchors` - SECTION IDS, not hrefs - and optional
+    fixed `links`. `resolveHeaderMenuItems()` resolves the anchors against
+    the nav the host has ALREADY computed for this render, the list that has
+    been through every section's `meta.renders` predicate. So the label and
+    the badge come from the `meta.nav` entry the home SDK already owns and
+    are never restated in a second place, and an anchor whose section did not
+    render is DROPPED rather than linked to nothing. That last part is the
+    point: a hand-written list of hrefs would have reintroduced exactly the
+    dead-tick problem `PageSectionMeta.renders` was added in 1.11.0 to stop.
+  * `components/custom/header-menu.tsx` is the row, `HeaderMenuRow`, generic
+    chrome in the `footer-chrome.tsx` mould: neutral black/white alphas and
+    `currentColor` only, so it takes the ground and the ink of whatever
+    header it sits under in both themes, and the badge is stated in the
+    declared `"new"`/`"soon"` vocabulary without claiming a palette - the
+    same split the nav badge got, where base_sdk declared the words and each
+    nav rendered them in its own tokens. An empty list renders nothing, so a
+    host can mount it without deciding anything.
+  * With a menu, `components/custom/landing-content.tsx` pins the host header
+    and the row together inside one sticky wrapper, so the row needs no
+    knowledge of the host header's height and the host header's own
+    `sticky top-0` is harmless inside an already-pinned parent.
+  * With NOTHING registered `loadHeaderMenu()` answers `null`, the row
+    renders nothing and the host emits the bare `<Header>` element tree it
+    always did. rokctai_frontend, whose header carries its own mega menu out
+    of `app/config/features.ts`, is untouched - no SDK supplies its menu and
+    none of its files change.
+
+## 1.12.0
+
+* Adds the COPYRIGHT ROW every rokct shell ends its page with as shared
+  chrome, so each shell renders it instead of keeping a copy. rokct.ai has
+  carried this row for a while - the copyright line on the left, a status
+  pill and the version string on the right - but only as host-owned code in
+  rokctai_frontend's `components/custom/footer.tsx`, which no other shell can
+  reach. Ray asked for Supacharge to carry the same row; a second copy in
+  lms_sdk would have made it a third copy of generic chrome, so it moves
+  here, the way the scrollbar treatment did.
+  * `components/custom/footer-chrome.tsx` is the row: `FooterChromeRow`,
+    laid out exactly as rokct.ai's is (`© Copyright <year> - <holder>`, then
+    the pill, then `Version <v>` from `md` up). It is shell-agnostic by
+    construction - no product name, no company, no brand hue. The only
+    colours the markup names are neutral `black/5`/`white/5` alphas, which
+    sit on whatever ground the footer already has in either theme.
+  * `components/custom/landing/footer-chrome-config.ts` holds the wire and
+    the words. `FooterChromeConfig` carries the copyright holder, the
+    copyright year, the version and label overrides; the generic default
+    reads `NEXT_PUBLIC_COPYRIGHT_HOLDER` and `NEXT_PUBLIC_APP_VERSION`, so a
+    shell that sets those gets the row with no code. An absent holder hides
+    the copyright line and an absent version hides the version string rather
+    than either being invented.
+  * `app/actions/base/status.ts` probes the status: `getPlatformStatus()`,
+    one guest `platformCall` per probe through the single gateway, no
+    credentials. It is a server action and the cmds are fixed here rather
+    than passed in from the browser, because a client that could name the
+    cmd would turn the action into a guest proxy for the whole gateway.
+  * THE TENANT ANSWERS FIRST, control is the fallback. base_sdk's own tenant
+    endpoint `api.system.api_status` is `allow_guest=True` (core
+    `base/frappe/src/tenant/api/system/system.py`) and answers
+    `{status: "ok" | "maintenance", version, user}`, so a tenant can speak
+    for itself AND report its own maintenance window - the state a visitor to
+    that tenant actually cares about. `control:get_versions` (also
+    `allow_guest=True`, and what rokct.ai's footer reads today) answers when
+    the tenant cannot be reached or the deployment has no tenant of its own.
+    `ROKCT_STATUS_SOURCE` reorders or narrows that (`tenant`, `control`,
+    `control,tenant`, `off`), so which site answers is a deployment setting,
+    not a release.
+  * Four states, not two. `operational` and `offline` are rokct.ai's pair;
+    `maintenance` is added because the backend genuinely reports it rather
+    than being invented; and `unconfigured` - nothing to ask, because no
+    backend origin is set - hides the indicator instead of painting a red dot
+    a shell has no evidence for. A probe that could not run is skipped
+    without counting as a failure, so only a site that was asked and did not
+    answer makes the row say offline.
+  * The dot's three colours are the one thing treated as semantic rather
+    than themed: green/amber/red reads without a legend, and an orange dot on
+    an orange page says nothing. They are values, not literals in the markup
+    (`FOOTER_CHROME_STATUS_COLORS`), so a shell whose palette carries
+    semantic tokens hands those in instead - Supacharge passes
+    `var(--sc-success)` / `var(--sc-star)` / `var(--sc-danger)`.
+  * `ROKCT_CONTROL_BASE_URL` names the control plane for the control probe,
+    falling back to `ROKCT_BASE_URL`. A dedicated name because
+    `ROKCT_BASE_URL` means different things per shell: on rokctai_frontend it
+    IS the control site, on a single-tenant shell it is that tenant.
+  * Nothing existing changes. The landing host does not render the row yet
+    and rokctai_frontend's host `footer.tsx` is untouched, so this release is
+    additive for every current consumer; migrating rokct.ai onto the shared
+    row is a follow-up that needs Ray's word before any host code is
+    removed.
+
+## 1.11.0
+
+* A registered section can now say whether it BELONGS on the page, and the
+  floating nav follows that answer. `PageSectionMeta` grows an optional
+  `renders?: (ctx: PageSectionContext) => boolean`, where
+  `PageSectionContext` is `{plans, session}` - the same page facts the
+  section is handed in `PageSectionProps`, so the test that keeps a section
+  off the page is the very test the page asks before listing it as a stop.
+  * `components/custom/landing-content.tsx` asks it ONCE, in a `present`
+    memo over the loaded sections, and everything downstream - the overlay
+    list, the flow list and `navItems` - reads off that one list. That is
+    the point: a section and its nav tick come from a single answer and
+    cannot drift apart.
+  * It exists because a section that hides itself had no honest way to be a
+    nav stop. `meta.nav` is static and read at load, before the section
+    renders, so a section whose visibility depends on fetched data had to
+    choose between a permanent tick that sometimes scrolls nowhere and no
+    tick at all. lms_sdk's pricing section chose the latter and carried
+    `nav: []` with a comment explaining why; it can now carry a real
+    Pricing entry that appears exactly when there are plans to show.
+  * Absent predicate means the section always belongs, so this is additive:
+    every section registered before 1.11.0 renders in the same place and
+    contributes the same nav entries. rokctapp's landing is byte-identical.
+
+## 1.10.0
+
+* Gives a floating-nav entry somewhere to say it is NEW or coming SOON.
+  rokct.ai has carried those little pills in its header menu for a long
+  time; a landing page composed from the SDKs had no way to express one,
+  because `LandingNavItem` was `{ id, label }` and that is the only thing a
+  section can contribute to the nav.
+  * `components/custom/landing/landing-config.ts` adds one OPTIONAL field,
+    `badge?: "new" | "soon"` (the union is exported as `LandingNavBadge`).
+    Purely additive: every `{ id, label }` entry a section already registers
+    in `meta.nav` compiles and renders exactly as before.
+  * No new registry and no new marker. The badge rides on the nav entry the
+    section already owns, which follows the standing rule that base_sdk's
+    floating nav derives its list from what the home SDK registered - there
+    is no second list to keep in step, and a section that stops being new
+    edits only its own `meta.nav`.
+  * base_sdk defines the vocabulary, not the pixels. It ships no badge
+    markup: the floating nav itself belongs to the home SDK (agent_sdk's
+    `floating-nav.tsx`, lms_sdk's `lms-floating-nav.tsx`), and those two
+    already diverge on purpose - rokctapp's ticks and tooltip are zinc,
+    Supacharge's are `--sc-*` tokens. A shared badge would have to pick one
+    palette for both, and rokct's accent is yellow where Supacharge's is
+    orange, so each renderer paints the badge in its own theme token.
+
 ## 1.9.0
 
 * Gives the landing host's PLANS QUERY the seam its sections, its hero copy

@@ -24,8 +24,10 @@
 // testimonials sections), the way a Dart home SDK holds its own profile
 // screens. The orchestrator renders each registered module's default export
 // with PageSectionProps, in ascending `meta.order` (registry order breaks
-// ties); a module's `meta.nav` adds its floating-nav entries. A shell
-// composed with no registered section renders the hero alone.
+// ties); a module's `meta.nav` adds its floating-nav entries, and its
+// optional `meta.renders` says whether the section belongs on this page at
+// all - a section it turns down is neither rendered nor listed in the nav.
+// A shell composed with no registered section renders the hero alone.
 //
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as the
@@ -65,6 +67,19 @@ export interface PageSectionProps {
   nav: LandingNavItem[];
 }
 
+/**
+ * The page facts a section may decide on before it is rendered: the same
+ * values the page hands it in PageSectionProps. `meta.renders` reads them,
+ * so the test that keeps a section off the page is the very test the page
+ * asks before giving it a floating-nav tick.
+ */
+export interface PageSectionContext {
+  /** The plans the page prefetched; empty when there are none. */
+  plans: LandingPlan[];
+  /** The visitor's session as the page read it through the kernel seam, or null. */
+  session?: unknown;
+}
+
 export type PageSectionComponent = ComponentType<PageSectionProps>;
 
 /** The `meta.order` of a module that declares none. */
@@ -90,6 +105,16 @@ export interface PageSectionMeta {
   nav?: LandingNavItem[];
   /** The DOM id when the section has no nav entry; the entry id when absent. */
   anchor?: string;
+  /**
+   * Whether the section belongs on this page at all. A section that draws
+   * nothing for some visitors - no plan rows to price, a config slot left
+   * empty - says so here rather than returning null from its component,
+   * because the page asks this once and then both skips the section and
+   * drops its `nav` entries. That is what keeps a floating-nav tick honest:
+   * a stop is listed only when there is a section for it to scroll to.
+   * Absent: the section always belongs.
+   */
+  renders?: (ctx: PageSectionContext) => boolean;
 }
 
 /** The shape of a registered section's module. */
