@@ -158,6 +158,207 @@ def resolve_sdk_path(sdk_name):
     return None
 
 
+# ---------------------------------------------------------------------------
+# Home SDK (parity with core/utils/flutter/sdk_installer_base.py).
+#
+# A composed shell has exactly one SDK that owns its "home": the app/page.tsx
+# that serves `/`, the landing chrome it registers into base_sdk's landing
+# registries, the pages behind them. The Dart composer declares it with a
+# "home_sdk": true flag on the sdks[] entry of the composer profile; the
+# Next.js side had no such flag, so "home" was decided by list order alone -
+# the LAST installer to write app/page.tsx kept it, and base_sdk's
+# single-answer landing registries (header-menu, hero-form, plans-query,
+# site-metadata) answered whichever SDK's line happened to be injected first.
+# The flag makes that explicit, and the two rules below (only the home SDK
+# writes the paths it installs; only the home SDK injects at the
+# single-answer registries) make it hold whatever the compose order.
+# ---------------------------------------------------------------------------
+
+# Per-process memo for resolve_home_sdk() when it reads composer.json: the
+# answer cannot change while one installer runs, and both the file sync and
+# update_integrations() consult it.
+_HOME_SDK_UNSET = object()
+_HOME_SDK = _HOME_SDK_UNSET
+# rel_dest paths the home SDK's manifest installs, keyed by home SDK name.
+_HOME_OWNED_FILES = {}
+
+# Landing registries whose FIRST entry answers for the whole shell (see
+# base_sdk's components/custom/landing/*.ts). Only the home SDK injects at
+# these markers; other SDKs' lines there are skipped with a log line.
+# hero-copy and page-sections merge every contributor and are deliberately
+# not listed.
+SINGLE_ANSWER_MARKERS = (
+    "@rokct-sdk-header-menu-start",
+    "@rokct-sdk-hero-form-start",
+    "@rokct-sdk-plans-query-start",
+    "@rokct-sdk-site-metadata-start",
+)
+
+
+class HomeSdkConflict(RuntimeError):
+    """Raised when composer.json flags more than one home SDK."""
+
+
+def _read_composer_sdks():
+    """Enabled sdks[] entries of the host's composer.json (the composer
+    profile the shell was composed from), in compose order. [] when the
+    file is absent or unreadable."""
+    composer_path = os.path.join(PROJECT_ROOT, "composer.json")
+    if not os.path.exists(composer_path):
+        return []
+    try:
+        with open(composer_path, "r", encoding="utf-8-sig") as f:
+            config = json.load(f)
+    except Exception as e:
+        print(
+            f"[!] WARNING: unreadable composer.json {composer_path} ({e}); it cannot "
+            f"be used to resolve the home SDK"
+        )
+        return []
+    return [
+        s
+        for s in config.get("sdks", []) or []
+        if isinstance(s, dict) and s.get("name") and s.get("enabled", True)
+    ]
+
+
+def resolve_home_sdk(sdks=None):
+    """Name of the SDK flagged "home_sdk": true in the composer profile, or
+    None when no enabled entry carries the flag.
+
+    Reads ONLY the composer flag - unlike the Dart resolver there is no
+    manifest-claim or legacy-scan fallback and no "core_sdk" default: a
+    profile without the flag composes exactly as before (last writer wins,
+    single-answer registries append in order with a warning) so older
+    templates keep working.
+    Exactly one flagged entry names the home SDK; more than one is a
+    HomeSdkConflict, since that is precisely the ambiguity the flag exists
+    to settle.
+
+    `sdks` is the enabled sdks[] list to inspect; when omitted, the host's
+    composer.json is read (and the answer memoized for this process)."""
+    global _HOME_SDK
+    if sdks is None:
+        if _HOME_SDK is _HOME_SDK_UNSET:
+            _HOME_SDK = _resolve_home_sdk_from(_read_composer_sdks())
+        return _HOME_SDK
+    return _resolve_home_sdk_from(
+        [
+            s
+            for s in sdks
+            if isinstance(s, dict) and s.get("name") and s.get("enabled", True)
+        ]
+    )
+
+
+def _resolve_home_sdk_from(sdks):
+    flagged = [s["name"] for s in sdks if s.get("home_sdk") is True]
+    if len(flagged) > 1:
+        raise HomeSdkConflict(
+            f"composer.json flags {len(flagged)} SDKs as home_sdk "
+            f"({', '.join(flagged)}); exactly one sdks[] entry may carry "
+            f'"home_sdk": true. Unflag all but the intended home SDK.'
+        )
+    if not flagged:
+        print(
+            '[i] no home SDK: no sdks[] entry in composer.json carries "home_sdk": true; '
+            "home files land in install order (last writer wins) and single-answer "
+            "landing registries append in order, with a warning on a second contributor."
+        )
+        return None
+    return flagged[0]
+
+
+def _read_manifest(sdk_name):
+    """This SDK's manifest.json (resolved like the installer resolves the
+    SDK itself: sdk/<name>, then .rokct/cache/<name>), or None."""
+    sdk_path = resolve_sdk_path(sdk_name)
+    if not sdk_path:
+        return None
+    manifest_path = os.path.join(sdk_path, "manifest.json")
+    if not os.path.exists(manifest_path):
+        return None
+    try:
+        with open(manifest_path, "r", encoding="utf-8-sig") as f:
+            return json.load(f)
+    except Exception as e:
+        print(
+            f"[!] WARNING: unreadable manifest {manifest_path} for SDK {sdk_name} "
+            f"({e}); its installs cannot be treated as home-owned"
+        )
+        return None
+
+
+def _manifest_install_targets(manifest, sdk_path):
+    """Every host-relative file path the given manifest's installs (top
+    level plus this host's app_type flavor block) would write, with
+    directory entries expanded exactly as install_sdk_files() expands
+    them."""
+    current_app_type = resolve_app_type()
+    flavor_block = (
+        (manifest.get("app_type") or {}).get(current_app_type, {})
+        if current_app_type
+        else {}
+    )
+    targets = set()
+    for entry in list(manifest.get("installs") or []) + list(
+        flavor_block.get("installs") or []
+    ):
+        from_rel = entry.get("from") if isinstance(entry, dict) else None
+        to_rel = entry.get("to") if isinstance(entry, dict) else None
+        if not from_rel or not to_rel:
+            continue
+        src_path = os.path.join(sdk_path, from_rel)
+        if os.path.isdir(src_path):
+            for root, _, filenames in os.walk(src_path):
+                for filename in filenames:
+                    rel_to_src = os.path.relpath(os.path.join(root, filename), src_path)
+                    targets.add(
+                        os.path.normpath(os.path.join(to_rel, rel_to_src)).replace(
+                            "\\", "/"
+                        )
+                    )
+        elif os.path.exists(src_path):
+            targets.add(to_rel.replace("\\", "/"))
+    return targets
+
+
+def home_sdk_owned_files(home_sdk_name):
+    """Host-relative paths the home SDK installs - the files it owns. Other
+    SDKs never write these, whatever the compose order; an empty set when
+    there is no home SDK or it cannot be resolved (nothing is protected,
+    as before)."""
+    if home_sdk_name not in _HOME_OWNED_FILES:
+        owned = set()
+        sdk_path = resolve_sdk_path(home_sdk_name) if home_sdk_name else None
+        if sdk_path:
+            manifest = _read_manifest(home_sdk_name)
+            if manifest:
+                owned = _manifest_install_targets(manifest, sdk_path)
+        _HOME_OWNED_FILES[home_sdk_name] = owned
+    return _HOME_OWNED_FILES[home_sdk_name]
+
+
+def _recorded_file_owner(state, rel_dest, exclude):
+    """(name, recorded_hash) of the OTHER installed SDK whose state records
+    rel_dest - the SDK whose install output the file is - or (None, None)."""
+    for other_name, other_state in (state.get("packages") or {}).items():
+        if other_name == exclude:
+            continue
+        recorded = (other_state.get("files") or {}).get(rel_dest)
+        if recorded is not None:
+            return other_name, recorded
+    return None, None
+
+
+def _single_answer_marker(placeholder):
+    """The SINGLE_ANSWER_MARKERS entry this placeholder anchors to, or None."""
+    for marker in SINGLE_ANSWER_MARKERS:
+        if marker in (placeholder or ""):
+            return marker
+    return None
+
+
 def install_sdk_files(sdk_name):
     """Install a Next.js SDK's templates into the host app.
 
@@ -210,6 +411,16 @@ def install_sdk_files(sdk_name):
 
     print(f"\n[*] Installing SDK: {sdk_name} (v{version})")
 
+    # The home SDK owns every path its manifest installs. Other SDKs skip
+    # those paths outright and, when the home SDK itself runs, it takes over
+    # an unmodified copy another SDK installed earlier (this run or a
+    # previous compose) - so the flagged home lands whatever the compose
+    # order. A developer-modified copy is still never overwritten. With no
+    # home SDK flagged nothing is protected: last writer wins, as before.
+    home_sdk_name = resolve_home_sdk()
+    is_home_sdk = sdk_name == home_sdk_name
+    home_owned = set() if is_home_sdk else home_sdk_owned_files(home_sdk_name)
+
     # 1. Sync files
     for entry in installs:
         from_rel = entry.get("from")
@@ -240,10 +451,31 @@ def install_sdk_files(sdk_name):
             files_to_sync.append((src_path, dest_path, rel_dest))
 
         for file_src, file_dest, rel_dest in files_to_sync:
+            if rel_dest in home_owned:
+                print(f"  [~] skipped {rel_dest} (owned by home SDK {home_sdk_name})")
+                continue
+
             # Check if file already exists in host and was hand-modified since last install
             if os.path.exists(file_dest):
                 current_dest_hash = file_hash(file_dest)
                 last_known_hash = package_state.get("files", {}).get(rel_dest)
+                if last_known_hash is None and is_home_sdk:
+                    # Another SDK's recorded install output: the home SDK
+                    # takes an unmodified copy over (and the record moves
+                    # with it); a copy the developer edited since stays.
+                    previous_owner, recorded_hash = _recorded_file_owner(
+                        state, rel_dest, exclude=sdk_name
+                    )
+                    if previous_owner is not None:
+                        if recorded_hash == current_dest_hash:
+                            state["packages"][previous_owner]["files"].pop(
+                                rel_dest, None
+                            )
+                            print(
+                                f"  [*] {rel_dest}: installed earlier by {previous_owner}; "
+                                f"the home SDK {sdk_name} takes it over."
+                            )
+                        last_known_hash = recorded_hash
                 if last_known_hash and current_dest_hash != last_known_hash:
                     print(
                         f"  [!] WARNING: {rel_dest} has been modified by a developer. "
@@ -316,6 +548,11 @@ def install_sdk_files(sdk_name):
     )
     if integrations_config:
         package_state["integrations"] = integrations_config
+    else:
+        # A manifest that dropped its last integration (e.g. the line a
+        # single-answer registry rejected) must not keep re-applying the
+        # stale record from an earlier install.
+        package_state.pop("integrations", None)
 
     state["packages"][sdk_name] = package_state
     save_state(state)
@@ -393,6 +630,8 @@ def update_integrations():
                 (pkg_name, placeholder, replacement)
             )
 
+    by_target = filter_single_answer_registries(by_target, resolve_home_sdk())
+
     for target_rel, entries in by_target.items():
         target_abs = os.path.join(PROJECT_ROOT, target_rel)
         if not os.path.exists(target_abs):
@@ -427,3 +666,53 @@ def update_integrations():
             with open(target_abs, "w", encoding="utf-8") as f:
                 f.write(content)
             print(f"[*] Applied integration in: {target_rel}")
+
+
+def filter_single_answer_registries(by_target, home_sdk_name):
+    """Only the home SDK injects at base_sdk's single-answer landing
+    registries - the Dart rule (owner ruling 2026-09-09, 12:58Z: "cant do
+    like dart that if sdk is home can inject?").
+
+    `by_target` maps a target file to its (package, placeholder,
+    replacement) integration entries across every installed package. When
+    a home SDK is resolved, an entry from any OTHER package at a
+    SINGLE_ANSWER_MARKERS marker is dropped with a log line and the compose
+    continues - the registry would otherwise silently answer whichever line
+    landed first. Never a failure. With no home SDK resolved (profile
+    without the flag) nothing is dropped: entries append in install order
+    as before, with a warning when several packages meet at one marker, so
+    older templates keep composing exactly as they did.
+    """
+    if home_sdk_name is None:
+        contributors = {}
+        for target_rel, entries in by_target.items():
+            for pkg_name, placeholder, _ in entries:
+                marker = _single_answer_marker(placeholder)
+                if marker:
+                    contributors.setdefault((target_rel, marker), set()).add(pkg_name)
+        for (target_rel, marker), names in contributors.items():
+            if len(names) > 1:
+                print(
+                    f"  [!] WARNING: {marker} in {target_rel} is a single-answer registry "
+                    f"(the first entry answers) but {len(names)} packages register a line "
+                    f"there ({', '.join(sorted(names))}); no home SDK is flagged in "
+                    f"composer.json, so the first installed wins. Flag exactly one sdks[] "
+                    f'entry "home_sdk": true.'
+                )
+        return by_target
+
+    filtered = {}
+    for target_rel, entries in by_target.items():
+        kept = []
+        for pkg_name, placeholder, replacement in entries:
+            marker = _single_answer_marker(placeholder)
+            if marker and pkg_name != home_sdk_name:
+                print(
+                    f"  [~] skipped {marker} from {pkg_name}: registry owned by home SDK "
+                    f"{home_sdk_name}"
+                )
+                continue
+            kept.append((pkg_name, placeholder, replacement))
+        if kept:
+            filtered[target_rel] = kept
+    return filtered

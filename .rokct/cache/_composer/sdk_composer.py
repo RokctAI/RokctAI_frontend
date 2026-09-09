@@ -676,6 +676,124 @@ def resolve_composer_config():
     return True
 
 
+# ---------------------------------------------------------------------------
+# Home SDK - parity with the flutter composer (core/utils/flutter/
+# sdk_composer.py order_sdks_for_install / sdk_installer_base.py
+# resolve_home_sdk). The composer profile flags exactly one sdks[] entry
+# "home_sdk": true; that SDK owns the shell's home (app/page.tsx and the
+# single-answer landing registries it registers into). Before the flag the
+# Next.js side resolved "home" by list order alone, silently.
+# ---------------------------------------------------------------------------
+
+# Kernel entries the home SDK never moves ahead of: base_sdk installs the
+# landing registries (components/custom/landing/*.ts) the home SDK's
+# integrations anchor to, and telemetry_sdk is the hard-invariant seam owner
+# every profile lists first. The installer's ownership rule makes the home
+# win whatever the order; this keeps the install pass predictable and its
+# `requires` checks quiet.
+KERNEL_SDKS = ("telemetry_sdk", "base_sdk")
+
+# Local copy of sdk_installer_base.resolve_home_sdk()'s composer-flag rule -
+# kept here rather than imported, since the composer and installer base are
+# fetched and used independently by a host's compose wrapper.
+INSTALL_STATE_FILE = os.path.join(PROJECT_ROOT, ".rokct", "cache", "install_state.json")
+LEGACY_INSTALL_STATE_FILE = os.path.join(PROJECT_ROOT, ".rokct", "install_state.json")
+
+
+def resolve_home_sdk(sdks):
+    """Name of the enabled sdks[] entry flagged "home_sdk": true, or None
+    when none is (a profile without the flag composes as before). More
+    than one flagged entry is an error - exactly the ambiguity the flag
+    exists to settle - raised as ValueError naming the entries."""
+    flagged = [
+        s["name"]
+        for s in sdks
+        if isinstance(s, dict)
+        and s.get("name")
+        and s.get("enabled", True)
+        and s.get("home_sdk") is True
+    ]
+    if len(flagged) > 1:
+        raise ValueError(
+            f"composer.json flags {len(flagged)} SDKs as home_sdk ({', '.join(flagged)}); "
+            f'exactly one sdks[] entry may carry "home_sdk": true. Unflag all but the '
+            f"intended home SDK."
+        )
+    if not flagged:
+        print(
+            '[i] no home SDK: no sdks[] entry carries "home_sdk": true; installing in '
+            "composer.json order (last writer wins home files, single-answer landing "
+            "registries append in order with a warning on a second contributor)."
+        )
+        return None
+    return flagged[0]
+
+
+def order_sdks_for_install(sdks):
+    """Return the enabled sdks[] entries in the order they are cached and
+    installed: the entry flagged "home_sdk": true moved to the front,
+    directly after any KERNEL_SDKS entries listed ahead of it (telemetry
+    first, then base_sdk whose registries the home's integrations need);
+    everything else in composer.json order.
+
+    Ported from the flutter composer's order_sdks_for_install(). The
+    install-side ownership rule (sdk_installer_base.install_sdk_files: a
+    non-home SDK never writes a home-owned path, the home SDK takes over an
+    unmodified copy installed earlier) already makes the home win whatever
+    the order - this only makes the cache and install passes predictable
+    (the home SDK is extracted, installed and logged in the same place on
+    every profile) without moving it ahead of the kernel it requires."""
+    ordered = list(sdks)
+    home_idx = next(
+        (
+            idx
+            for idx, entry in enumerate(ordered)
+            if isinstance(entry, dict) and entry.get("home_sdk") is True
+        ),
+        None,
+    )
+    if home_idx is None:
+        return ordered
+    insert_at = 0
+    for idx in range(home_idx):
+        entry = ordered[idx]
+        if isinstance(entry, dict) and entry.get("name") in KERNEL_SDKS:
+            insert_at = idx + 1
+    if insert_at != home_idx:
+        ordered.insert(insert_at, ordered.pop(home_idx))
+    return ordered
+
+
+def record_home_sdk(home_sdk_name):
+    """Record the resolved home SDK ("home_sdk": name, or null) at the top
+    level of .rokct/cache/install_state.json - the one state file the
+    Next.js compose path writes (there is no separate lock); the installers
+    that run next round-trip the file, so the field survives them. Performs
+    the same legacy-location migration sdk_installer_base.load_state() does,
+    so writing first never strands an older .rokct/install_state.json."""
+    os.makedirs(os.path.dirname(INSTALL_STATE_FILE), exist_ok=True)
+    if os.path.exists(LEGACY_INSTALL_STATE_FILE) and not os.path.exists(
+        INSTALL_STATE_FILE
+    ):
+        shutil.move(LEGACY_INSTALL_STATE_FILE, INSTALL_STATE_FILE)
+    state = {"packages": {}}
+    if os.path.exists(INSTALL_STATE_FILE):
+        try:
+            with open(INSTALL_STATE_FILE, "r", encoding="utf-8") as f:
+                loaded = json.load(f)
+            if isinstance(loaded, dict):
+                state = loaded
+        except Exception as e:
+            print(
+                f"[!] WARNING: unreadable {INSTALL_STATE_FILE} ({e}); starting a fresh "
+                "install state."
+            )
+    state.setdefault("packages", {})
+    state["home_sdk"] = home_sdk_name
+    with open(INSTALL_STATE_FILE, "w", encoding="utf-8") as f:
+        json.dump(state, f, indent=2)
+
+
 def main():
     # Template-registry resolution first: a thin shell that names a registry
     # template in .rokct/config/app_type gets its composer.json materialized
@@ -701,6 +819,18 @@ def main():
             print(f"[!] Error reading composer.json: {e}.")
             sys.exit(1)
 
+    # The home SDK is a property of the whole profile, not of the subset a
+    # `sdk_composer.py <name>...` invocation installs: the installers read
+    # the same flag from composer.json to protect the home's files even
+    # when only another SDK is being (re)installed.
+    try:
+        home_sdk_name = resolve_home_sdk(sdks_to_install)
+    except ValueError as e:
+        print(f"[!] {e}", file=sys.stderr)
+        sys.exit(1)
+    if home_sdk_name is not None:
+        print(f"[i] home SDK: {home_sdk_name}")
+
     if len(sys.argv) >= 2:
         requested_names = sys.argv[1:]
         sdks_to_install = [s for s in sdks_to_install if s["name"] in requested_names]
@@ -708,6 +838,9 @@ def main():
     if not sdks_to_install:
         print("[-] No SDKs found to install.")
         sys.exit(1)
+
+    sdks_to_install = order_sdks_for_install(sdks_to_install)
+    record_home_sdk(home_sdk_name)
 
     resolve_and_cache_sdks(sdks_to_install)
 
