@@ -20,27 +20,28 @@
 // rokct.ai's hero is base's HERO_CONFIG as it stands - rokctapp's words,
 // the store badges gated by the shell's PLATFORM_FEATURES - so this SDK
 // registered no copy until 1.15.0 and has nothing to say about the words
-// now. What it says is where the Chrome Web Store badge's MARK comes from.
-// base_sdk 1.23.0 draws that badge with lucide's Chrome glyph, because the
+// now. What it says is where the badges' MARKS come from. base_sdk 1.23.0
+// drew the Chrome Web Store badge with lucide's Chrome glyph, because the
 // drawing the old host hero and header used was hot-linked from a third
 // party's CDN and base names no third-party host. Ray, 2026-09-09: "i dont
-// think merlin owns [the icon] so use it but bring it local" - so the
-// drawing is this SDK's own public file, templates/public/brand/marks/
-// chrome-web-store.svg (installed to public/brand/marks/), handed to base
-// through the `{ src, alt }` icon a HeroBadge already takes, exactly as
-// lms_sdk hands supacharge.app its Android and Windows marks. The header's
+// think merlin owns [the icon] so use it but bring it local" - so 1.15.0
+// served the drawing from this SDK's own public file and handed it to base
+// through the `{ src, alt }` icon a HeroBadge already takes. The header's
 // extension button (./agent-header-menu.ts) names the same file.
 //
-// The Google Play badge gets its mark the same way (Ray, 2026-09-09, on
-// supacharge's marks: "we already have nice icons in buttons in hero of
-// rokct ... we use what these platforms use for familiarity"): base 1.23.0
-// had left that badge without an icon, so the hero was not drawing it at
-// all; google-play.svg is the coloured Play triangle in Google's own
-// brand colours, the drawing rokct's hero showed before the strip, as a
-// local file. The App Store badge keeps base's Apple glyph; the gating
-// and the order are HERO_CONFIG's own. Both marks are multi-colour
-// drawings, drawn as they are in both themes - no dark-mode inversion,
-// which lms_sdk needs only because its marks are single-colour tracings.
+// Since 1.16.0 the files are base_sdk 1.26.0's: base installs the
+// platform marks - chrome-web-store.svg, google-play.svg, app-store.svg,
+// app-gallery.svg, windows.svg - under public/brand/marks/ on every host,
+// so this SDK ships none of them any more and only NAMES them. Naming the
+// path is how a home SDK opts in: the literals below are the paths base
+// serves, unchanged from 1.15.0, and the App Store badge now names
+// app-store.svg too (Ray, 2026-09-09: rokct.ai gets the same official App
+// Store file supacharge.app has) in place of base's built-in Apple glyph,
+// so all three of rokct.ai's badges draw their platforms' official marks
+// ("we use what these platforms use for familiarity"). The gating and the
+// order are HERO_CONFIG's own. No CSS here: base applies the dark-mode
+// treatment for the monochrome app-store.svg and windows.svg itself, keyed
+// on the src basename, and never filters a coloured mark.
 
 import type { HeroCopy } from "@/components/custom/landing/hero-copy";
 import {
@@ -49,7 +50,7 @@ import {
 } from "@/components/custom/landing/hero-config";
 
 /**
- * The Chrome Web Store mark, the SVG this SDK installs under
+ * The Chrome Web Store mark, the SVG base_sdk 1.26.0 installs under
  * public/brand/marks/. ./agent-header-menu.ts names the same file for the
  * extension button; keep the two literals identical.
  */
@@ -65,17 +66,27 @@ export const GOOGLE_PLAY_MARK: { src: string; alt: string } = {
 };
 
 /**
- * The marks this SDK serves, by the id base gives the badge in
- * HERO_CONFIG. A badge not named here keeps base's icon (the App Store
- * badge: base's own Apple glyph).
+ * The App Store mark, Apple's official file, the same way (1.16.0): the
+ * file supacharge.app's badge draws, in place of base's built-in glyph.
+ */
+export const APP_STORE_MARK: { src: string; alt: string } = {
+  src: "/brand/marks/app-store.svg",
+  alt: "App Store",
+};
+
+/**
+ * The marks this SDK names, by the id base gives the badge in
+ * HERO_CONFIG: base's own files under public/brand/marks/, one per badge
+ * rokct.ai's hero draws. A badge not named here keeps base's icon.
  */
 export const LOCAL_MARKS: Readonly<Record<string, { src: string; alt: string }>> = {
   chrome: CHROME_WEB_STORE_MARK,
   "google-play": GOOGLE_PLAY_MARK,
+  "app-store": APP_STORE_MARK,
 };
 
 /**
- * Base's badges with the store marks this SDK serves: the same entries,
+ * Base's badges with the store marks this SDK names: the same entries,
  * in the same order, every other field untouched.
  */
 export function withLocalMarks(badges: readonly HeroBadge[]): HeroBadge[] {

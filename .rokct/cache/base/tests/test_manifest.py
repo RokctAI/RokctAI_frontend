@@ -85,6 +85,30 @@ FOOTER_CHROME = os.path.join(SDK_ROOT, "templates", "components", "custom", "foo
 LANDING_CONTENT = os.path.join(SDK_ROOT, "templates", "components", "custom", "landing-content.tsx")
 NETWORK_STRIP_TESTS = os.path.join(HERE, "network-strip.test.mts")
 
+# base_sdk 1.26.0: the platform marks base serves itself (Ray, 2026-09-09:
+# "move to base, home sdk can choose to use them or not"), installed as a
+# directory to public/brand/marks/, and the registry with the one dark-mode
+# rule for the monochrome ones.
+BRAND_MARKS_INSTALL = ("templates/public/brand/marks", "public/brand/marks")
+BRAND_MARKS_REGISTRY_INSTALL = (
+    "templates/components/custom/landing/brand-marks.ts",
+    "components/custom/landing/brand-marks.ts",
+)
+BRAND_MARKS_DIR = os.path.join(SDK_ROOT, "templates", "public", "brand", "marks")
+BRAND_MARKS_REGISTRY = os.path.join(LANDING, "brand-marks.ts")
+BRAND_MARKS_TESTS = os.path.join(HERE, "brand-marks.test.mts")
+HERO = os.path.join(SDK_ROOT, "templates", "components", "custom", "hero.tsx")
+HEADER_MENU_PARTIALS = os.path.join(SDK_ROOT, "templates", "components", "custom", "header-menu.tsx")
+# name -> (bytes, mono): the five files, byte-exact as fetched from
+# agent_sdk 1.15.0 (chrome-web-store) and lms_sdk 1.16.0 (the rest).
+BRAND_MARKS = {
+    "chrome-web-store.svg": (4353, False),
+    "google-play.svg": (1181, False),
+    "app-gallery.svg": (1342, False),
+    "app-store.svg": (687, True),
+    "windows.svg": (218, True),
+}
+
 # The kernel writes `from './x'`; node's ESM loader wants `from './x.ts'`.
 RELATIVE_IMPORT_RE = re.compile(r"(from\s+')(\./[a-z0-9-]+)(')")
 
@@ -832,14 +856,16 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertIn("alt={image.alt}", img)
         self.assertIn("width={20}", img)
         self.assertIn("height={20}", img)
-        self.assertIn('className="h-5 w-5 shrink-0 object-contain"', img)
+        # 1.26.0: the slot's classes plus the dark-mode rule for a monochrome mark.
+        self.assertIn('className={cn("h-5 w-5 shrink-0 object-contain", markImageClass(image.src))}', img)
         # Before the label, after the glyph slot, and never both at once.
         self.assertLess(actions.index("{Icon && <Icon"), actions.index("{image && ("))
         self.assertLess(actions.index("{image && ("), actions.index("<span>{action.label}</span>"))
         # A plain <img>, as the header draws a declared brand image; no
-        # next/image, no CDN, no dark-mode filter (the mark is multi-colour).
+        # next/image, no CDN. 1.26.0: no filter of its own either - the only
+        # dark-mode handling is brand-marks.ts' markImageClass on the src.
         self.assertNotIn("next/image", partials)
-        self.assertNotIn("invert", partials)
+        self.assertNotIn("invert", partials.replace("dark:invert", ""))
         self.assertNotIn("http", actions)
 
     def test_site_metadata_declares_the_icon(self):
@@ -1067,6 +1093,155 @@ class TestRegistryMarkers(unittest.TestCase):
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
         self.assertGreaterEqual(int(passed.group(1)), 18)
+
+    # -- 1.26.0: the platform brand marks ------------------------------------
+
+    def test_brand_marks_are_installed(self):
+        """Ray, 2026-09-09: "move to base, home sdk can choose to use them or
+        not". The five marks are base's, installed as a directory so every
+        host serves /brand/marks/<name>.svg; each is the byte-exact file it
+        was fetched as, a viewBox'd SVG with no script, no href and no host
+        but the SVG namespace, and the two monochrome ones are currentColor."""
+        installs = load_manifest()["installs"]
+        pairs = {(i["from"], i["to"]) for i in installs}
+        self.assertIn(BRAND_MARKS_INSTALL, pairs)
+        self.assertIn(BRAND_MARKS_REGISTRY_INSTALL, pairs)
+        # ONLY the marks/ subdirectory: never a home SDK's public/brand.
+        self.assertNotIn("public/brand", {i["to"] for i in installs})
+        self.assertTrue(os.path.isdir(BRAND_MARKS_DIR))
+        self.assertEqual(sorted(os.listdir(BRAND_MARKS_DIR)), sorted(BRAND_MARKS))
+        for name, (size, mono) in BRAND_MARKS.items():
+            path = os.path.join(BRAND_MARKS_DIR, name)
+            self.assertEqual(os.path.getsize(path), size, name)
+            svg = read(path)
+            self.assertTrue(svg.lstrip().startswith("<svg"), name)
+            self.assertIn("viewBox=", svg, name)
+            self.assertNotIn("<script", svg.lower(), name)
+            self.assertNotIn("href", svg.lower(), name)
+            self.assertNotIn("<foreignObject", svg, name)
+            hosts = set(re.findall(r"https?://([A-Za-z0-9.-]+)", svg))
+            self.assertEqual(hosts, {"www.w3.org"}, f"{name}: {hosts}")
+            self.assertEqual("currentColor" in svg, mono, name)
+        # Google Play is the gilbarbara tracing in Google's four colours.
+        play = read(os.path.join(BRAND_MARKS_DIR, "google-play.svg"))
+        self.assertEqual(
+            set(c.upper() for c in re.findall(r"#[0-9A-Fa-f]{6}", play)),
+            {"#EA4335", "#FBBC04", "#4285F4", "#34A853"},
+        )
+        self.assertIn('fill="#CF0A2C"', read(os.path.join(BRAND_MARKS_DIR, "app-gallery.svg")))
+
+    def test_brand_marks_registry_contract(self):
+        """The typed registry a home SDK may use or ignore, and the ONE
+        dark-mode rule: `dark:invert` on exactly the image whose src is a
+        mono mark's path, applied by hero.tsx (a badge's image icon) and
+        header-menu.tsx (an action's image icon) through markImageClass.
+        Base's defaults draw none of the marks."""
+        src = read(BRAND_MARKS_REGISTRY)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", src))
+        self.assertNotIn("import ", code, "brand-marks.ts must stay import-free (staged verbatim)")
+        for name in (
+            "export interface BrandMark {",
+            "export type BrandMarkId =",
+            "export const BRAND_MARKS: Readonly<Record<BrandMarkId, BrandMark>> = {",
+            'export const BRAND_MARKS_DIR = "/brand/marks/";',
+            "export const MONO_MARK_SRCS: readonly string[]",
+            'export const MONO_MARK_CLASS = "dark:invert";',
+            "export function markPath(src: string): string {",
+            "export function isMonoMark(src: string | null | undefined): boolean {",
+            "export function markImageClass(src: string | null | undefined): string | undefined {",
+        ):
+            self.assertIn(name, src, name)
+        shape = src[src.index("export interface BrandMark {"):]
+        shape = shape[:shape.index("\n}")]
+        for field in ("readonly src: string;", "readonly alt: string;", "readonly mono: boolean;"):
+            self.assertIn(field, shape)
+        for mark_id, name, alt, mono in (
+            ("chromeWebStore", "chrome-web-store", "Chrome Web Store", "false"),
+            ("googlePlay", "google-play", "Google Play", "false"),
+            ("appGallery", "app-gallery", "AppGallery", "false"),
+            ("appStore", "app-store", "App Store", "true"),
+            ("windows", "windows", "Windows", "true"),
+        ):
+            entry = src[src.index(f"  {mark_id}: {{"):]
+            entry = entry[:entry.index("},")]
+            self.assertIn(f"src: `${{BRAND_MARKS_DIR}}{name}.svg`,", entry, mark_id)
+            self.assertIn(f'alt: "{alt}",', entry, mark_id)
+            self.assertIn(f"mono: {mono},", entry, mark_id)
+            self.assertTrue(os.path.exists(os.path.join(BRAND_MARKS_DIR, name + ".svg")), name)
+        # The rule is derived from the flags, not a second list.
+        self.assertIn(".filter((mark) => mark.mono)", src)
+        # Both consumers draw through it; neither carries a filter of its own.
+        hero = read(HERO)
+        self.assertIn('import { markImageClass } from "@/components/custom/landing/brand-marks";', hero)
+        badge = hero[hero.index("function BadgeIcon("):hero.index("export function Hero(")]
+        self.assertIn("className={markImageClass(icon.src)}", badge)
+        self.assertNotIn("invert", hero.replace("dark:invert", ""))
+        partials = read(HEADER_MENU_PARTIALS)
+        self.assertIn('import { markImageClass } from "@/components/custom/landing/brand-marks";', partials)
+        self.assertIn('cn("h-5 w-5 shrink-0 object-contain", markImageClass(image.src))', partials)
+        # No template or stylesheet of base's inverts by selector: the class
+        # on the element is the whole mechanism (a home SDK adds none either).
+        for root in (os.path.join(SDK_ROOT, "templates"),):
+            for dirpath, _, files in os.walk(root):
+                for fname in files:
+                    if fname.endswith(".css"):
+                        self.assertNotIn("invert", read(os.path.join(dirpath, fname)), fname)
+        # Base's defaults draw none of the marks: the glyphs stay.
+        config = read(os.path.join(LANDING, "hero-config.ts"))
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", config))
+        self.assertNotIn("/brand/marks/", code)
+        self.assertNotIn("brand-marks", code)
+        self.assertIn('icon: "chrome",', config)
+        self.assertIn('icon: "app-store",', config)
+        registry = read(HEADER_MENU_REGISTRY)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", registry))
+        self.assertNotIn("/brand/marks/", code)
+        self.assertNotIn("brand-marks", code)
+
+    def test_brand_marks_behaviour_under_node(self):
+        """The registry and the rule executed: the five entries, the two mono
+        srcs, isMonoMark true for exactly those paths (query/hash/space
+        tolerated, basename alone and absolute URLs never), markImageClass
+        `dark:invert` or undefined."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute brand-marks.ts")
+        with tempfile.TemporaryDirectory() as tmp:
+            shutil.copy(BRAND_MARKS_REGISTRY, os.path.join(tmp, "brand-marks.ts"))
+            shutil.copy(BRAND_MARKS_TESTS, os.path.join(tmp, "brand-marks.test.mts"))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 os.path.join(tmp, "brand-marks.test.mts")],
+                capture_output=True, text=True, timeout=120, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 14)
+
+    def test_brand_marks_type_check_under_tsc(self):
+        """The registry under tsc, strict and isolatedModules as the shells'
+        tsconfig is, and a BrandMark assignable to the { src, alt } a hero
+        badge's and a header action's icon take. Skips without a tsc."""
+        tsc = os.environ.get("ROKCT_TSC") or shutil.which("tsc")
+        if not tsc or not os.path.exists(tsc):
+            raise unittest.SkipTest("no tsc reachable (set ROKCT_TSC to a tsc binary)")
+        with tempfile.TemporaryDirectory() as tmp:
+            shutil.copy(BRAND_MARKS_REGISTRY, os.path.join(tmp, "brand-marks.ts"))
+            with open(os.path.join(tmp, "use.ts"), "w", encoding="utf-8") as f:
+                f.write(
+                    'import { BRAND_MARKS, markImageClass, type BrandMark } from "./brand-marks";\n'
+                    "const icon: { src: string; alt: string } = BRAND_MARKS.appStore;\n"
+                    "const mark: BrandMark = BRAND_MARKS.windows;\n"
+                    "const cls: string | undefined = markImageClass(icon.src);\n"
+                    "export const used = [icon, mark, cls, markImageClass(undefined)];\n"
+                )
+            with open(os.path.join(tmp, "tsconfig.json"), "w", encoding="utf-8") as f:
+                json.dump(TSC_STAGE_CONFIG, f)
+            run = subprocess.run(
+                [tsc, "-p", tmp], capture_output=True, text=True, timeout=300, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
 
 
 if __name__ == "__main__":

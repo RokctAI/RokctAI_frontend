@@ -1,5 +1,58 @@
 # Changelog
 
+## 1.16.0
+
+Requires base_sdk >= 1.26.0 (the platform marks under public/brand/marks/,
+which base now installs on every host) and auth_sdk >= 1.7.0 as before.
+Against base_sdk <= 1.25.0 the paths this SDK names resolve to no file and
+the three hero badges and the header's extension button draw a broken
+image, so this version must not be composed over an older base.
+
+* The store marks are base_sdk's, not this SDK's. base_sdk 1.26.0 installs
+  `public/brand/marks/chrome-web-store.svg`, `google-play.svg`,
+  `app-gallery.svg`, `app-store.svg` and `windows.svg` on every host - the
+  one set of official platform marks, shared by every home SDK - and a home
+  SDK opts into a file by naming its path as the image src. So:
+  * `templates/public/brand/marks/chrome-web-store.svg` and
+    `google-play.svg` (1.15.0) are gone, with the `templates/public/brand`
+    -> `public/brand` mapping they installed through: this SDK installs
+    nothing under `public/` any more. base's chrome-web-store.svg is this
+    SDK's 1.15.0 drawing; base's google-play.svg is lms_sdk 1.16.0's file
+    (the same four Google colours, the triangle centred in a square frame)
+    in place of this SDK's 994-byte one, so rokct.ai's Play badge draws
+    the one file every shell draws.
+  * `agent-hero-copy.ts` and `agent-header-menu.ts` keep the same path
+    literals (`/brand/marks/chrome-web-store.svg`,
+    `/brand/marks/google-play.svg`): nothing visible changes on the Chrome
+    Web Store badge, the Google Play badge or the "Add ROK Extension"
+    button.
+  * The App Store badge draws the official file too. Ray, 2026-09-09:
+    rokct.ai gets the same official App Store file supacharge.app has.
+    `agent-hero-copy.ts` adds `APP_STORE_MARK` (`{ src:
+    "/brand/marks/app-store.svg", alt: "App Store" }`) and names it under
+    `"app-store"` in `LOCAL_MARKS`, in place of base's built-in Apple
+    glyph, so all three of rokct.ai's badges now draw their platforms'
+    official marks ("we use what these platforms use for familiarity").
+  * No CSS. base applies the dark-mode treatment for the two monochrome
+    files, app-store.svg and windows.svg, itself, keyed on the src
+    basename, and never filters a coloured mark; a home SDK must not ship
+    its own rule for them, and this SDK never did.
+  * Manifest: the public/brand install entry is gone; base floor 1.26.0.
+* Not touched: `agent-landing-config.ts`'s section images, which still
+  hot-link from a third party's CDN - known placeholders under Ray's
+  15:02Z ruling, out of this release.
+* Tests (`tests/test_manifest.py`, 24 python):
+  `test_chrome_mark_is_installed_locally` and
+  `test_google_play_mark_is_installed_locally` become
+  `test_marks_are_base_sdks_not_this_sdks` (no `templates/public` in this
+  SDK, no install entry for it),
+  `test_hero_copy_is_registered_where_base_looks` asserts the App Store
+  entry and that every mark the hero and the header name is a
+  `/brand/marks/` path, `test_header_and_hero_surfaces_name_no_third_party_host`
+  keeps its no-`cdn.` rule over the header menu and the hero copy, the
+  floor assertions add 1.26.0; node suite `hero-copy.test.mts` asserts the
+  three badges and the header CTA draw base's files.
+
 ## 1.15.0
 
 Requires base_sdk >= 1.25.0 (an image icon, `{ src, alt }`, on

@@ -1,5 +1,50 @@
 # Changelog
 
+## 1.26.0
+
+* Base ships the platform brand marks itself. Ray, 2026-09-09, on the
+  store logos agent_sdk 1.15.0 (Chrome Web Store, Google Play) and lms_sdk
+  1.16.0 (Google Play, AppGallery, App Store, Windows) each installed under
+  their own `public/brand/marks/`: "move to base, home sdk can choose to
+  use them or not". So:
+  * `templates/public/brand/marks/` - `chrome-web-store.svg` (4353 B, the
+    agent_sdk drawing), `google-play.svg` (1181 B, lms_sdk's gilbarbara
+    tracing; the same four Google colours as agent's), `app-gallery.svg`
+    (1342 B, Huawei red), `app-store.svg` (687 B, Apple, `currentColor`),
+    `windows.svg` (218 B, four equal panes, `currentColor`) - installed as
+    a directory to `public/brand/marks/`, so every host that pins base
+    serves `/brand/marks/<name>.svg`. Only the `marks/` subdirectory is
+    base's; a home SDK's own `public/brand` mapping (lms's wordmarks) is
+    untouched. Each file: a `viewBox`, no `<script>`, no `href`, no host
+    but the SVG namespace (`test_brand_marks_are_installed`).
+  * `components/custom/landing/brand-marks.ts`, a typed registry a home
+    SDK may use or ignore: `BrandMark { src, alt, mono }`, `BRAND_MARKS`
+    keyed `chromeWebStore | googlePlay | appGallery | appStore | windows`,
+    and the dark-mode rule - `isMonoMark(src)` / `markImageClass(src)`.
+    Opting in is handing a mark to a hero badge's `icon` (hero-copy.ts)
+    or a header action's `icon` (header-menu.ts), typed
+    (`icon: BRAND_MARKS.chromeWebStore`) or as the bare path; nothing in
+    base draws one by default.
+  * Dark mode, once, in base: the two monochrome marks are `currentColor`
+    inside an `<img>`, an isolated document, so they resolve black in both
+    themes. `hero.tsx` (a badge's image icon) and `header-menu.tsx` (an
+    action's image icon) now add `dark:invert` to exactly the image whose
+    src path is `/brand/marks/app-store.svg` or `/brand/marks/windows.svg`
+    (`markImageClass`: trimmed, `?query`/`#hash` ignored, absolute URLs
+    never match). Coloured marks and every other image are never filtered.
+    A home SDK must NOT add its own invert for these paths: lms_sdk
+    1.16.0's `lms-theme.css` rule for the same two files is retired in
+    lms_sdk 1.17.0.
+  * Defaults unchanged: `HERO_CONFIG`'s badges keep the built-in "chrome"
+    and "app-store" glyphs, the Google Play badge still names no icon, the
+    header's actions name no image - a shell that declares nothing renders
+    1.25.0's DOM.
+  * Tests: `test_brand_marks_are_installed`,
+    `test_brand_marks_registry_contract`,
+    `test_brand_marks_behaviour_under_node` (`brand-marks.test.mts`) and
+    `test_brand_marks_type_check_under_tsc`; the 1.25.0 image-icon test
+    follows the class merge.
+
 ## 1.25.0
 
 * A header action may carry an IMAGE icon the shell serves itself. Ray,

@@ -674,6 +674,7 @@ migrate_working_dir/
 /components/custom/landing/agent-opportunities.tsx
 /components/custom/landing/agent-plans-query.ts
 /components/custom/landing/agent-site-metadata.ts
+/components/custom/landing/brand-marks.ts
 /components/custom/landing/footer-chrome-config.ts
 /components/custom/landing/header-menu.ts
 /components/custom/landing/hero-config.ts
@@ -830,7 +831,10 @@ migrate_working_dir/
 /lib/mock-conversations.ts
 /lib/platform/validators/orders/orders.ts
 /middleware.ts
+/public/brand/marks/app-gallery.svg
+/public/brand/marks/app-store.svg
 /public/brand/marks/chrome-web-store.svg
 /public/brand/marks/google-play.svg
+/public/brand/marks/windows.svg
 /types/next-auth.d.ts
 # @rokct-composed-end

@@ -160,7 +160,11 @@ export type HeaderMenuIcon =
  * or an absolute URL, and the alt text. The same shape a hero badge's
  * `icon` takes (./hero-config.ts). An empty `src` draws nothing, so an
  * action never shows a broken image. Drawn as a plain <img> at the glyph
- * slot's size (20px), as the header draws a declared brand image.
+ * slot's size (20px), as the header draws a declared brand image. Since
+ * 1.26.0 base serves the platform marks itself (./brand-marks.ts:
+ * BRAND_MARKS, `/brand/marks/<name>.svg`), so a home SDK may name one of
+ * those - typed, `icon: BRAND_MARKS.chromeWebStore`, or as the bare path -
+ * and the two monochrome marks are inverted on the dark shell by base.
  */
 export interface HeaderMenuImage {
   src: string;

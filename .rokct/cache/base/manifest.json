@@ -1,6 +1,6 @@
 {
   "name": "base_sdk",
-  "version": "1.25.0",
+  "version": "1.26.0",
   "installs": [
     {
       "from": "src/services",
@@ -95,6 +95,10 @@
       "to": "components/custom/landing/site-metadata.ts"
     },
     {
+      "from": "templates/components/custom/landing/brand-marks.ts",
+      "to": "components/custom/landing/brand-marks.ts"
+    },
+    {
       "from": "templates/components/custom/landing-content.tsx",
       "to": "components/custom/landing-content.tsx"
     },
@@ -117,6 +121,11 @@
     {
       "from": "templates/app/brand-icon/route.tsx",
       "to": "app/brand-icon/route.tsx"
+    },
+    {
+      "from": "templates/public/brand/marks",
+      "to": "public/brand/marks",
+      "_comment": "1.26.0: the platform marks base serves itself - chrome-web-store.svg, google-play.svg, app-gallery.svg, app-store.svg, windows.svg - the one set agent_sdk 1.15.0 and lms_sdk 1.16.0 each installed under their own public/brand/marks/ (Ray, 2026-09-09: \"move to base, home sdk can choose to use them or not\"). A directory install, file by file, of ONLY the marks/ subdirectory: a home SDK's own public/brand mapping (lms's wordmarks) is untouched. Registry and the dark-mode rule: components/custom/landing/brand-marks.ts."
     },
     {
       "from": "templates/app/styles/rokct-scroll.css",
