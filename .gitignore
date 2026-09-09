@@ -366,6 +366,7 @@ migrate_working_dir/
 /app/api/notes/route.ts
 /app/api/projects/route.ts
 /app/api/tasks/route.ts
+/app/brand-icon/route.tsx
 /app/handson/all/accounting/accounts/\[id\]/page.tsx
 /app/handson/all/accounting/accounts/bank-clearance/page.tsx
 /app/handson/all/accounting/accounts/budget/new/page.tsx

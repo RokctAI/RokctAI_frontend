@@ -1,5 +1,145 @@
 # Changelog
 
+## 1.18.0
+
+* The header's `groups` open as ONE panel again - the mega menu. Ray,
+  2026-09-09: "no mega menu anymore" on rokct.ai is a regression; rokct
+  keeps everything its old header had, and Supacharge inherits the same
+  header. 1.14.0 to 1.16.0 rendered each group as its own dropdown, so the
+  five columns agent_sdk 1.8.0 registered from rokctai_frontend's
+  `PLATFORM_FEATURES` became five `12rem` single-column menus on the bar.
+  * `components/custom/header-menu.tsx`: `HeaderMenuNav` renders the groups
+    as a single `DesktopMegaMenu` - one trigger, the FIRST group's label
+    (with its badge), that discloses a panel `absolute inset-x-0 top-full`
+    under the bar (the bar's backdrop-filter is its containing block, so it
+    spans the bar's width and needs no knowledge of its height): inside, a
+    `mx-auto max-w-6xl px-4 py-8` row with the first group's items as a
+    300px lead column without a repeated heading, and every other group as a
+    headed column (`h4`, 15px semibold) in a `repeat(auto-fit, minmax(9rem,
+    1fr))` grid beside it - the geometry of rokctai_frontend's hand-written
+    panel (`w-[300px]` cards left, four columns right). Same open/close
+    contract as the 1.14.0 dropdown: hover, focus and click open; Escape
+    (focus back on the button), an outside click, focus leaving it and a
+    click on any of its links close. Theme tokens only: `bg-background`,
+    `border-border`, `shadow-2xl`, `text-foreground`,
+    `text-muted-foreground`, `hover:bg-foreground/5`, and `MenuLabel` for
+    the new/soon pills. The trigger leads the row, ahead of the flat links,
+    as the old bar's Product did (Product | Pricing | Affiliate | Teams);
+    with no groups the row is the flat links alone, as before. The
+    per-group `DesktopGroup` is gone.
+  * `components/custom/landing/header-menu.ts`: `HeaderMenuLink` gains
+    `description?: string` (one line under the label) and `icon?:
+    HeaderMenuIcon`; `HeaderMenuIcon` is the closed set `"box" | "globe" |
+    "smartphone" | "message-square" | "zap" | "wrench" | "file-text"`,
+    resolved from lucide-react by name in header-menu.tsx (`MENU_ICONS`) so
+    the header bundles seven glyphs rather than the library. Both fields
+    are carried onto `HeaderMenuItem` by `resolveHeaderMenuItems` and
+    `resolveHeaderMenu` (an anchor has neither), and an item with either
+    renders as a card in the panel - icon box, label with badge, blurb,
+    an arrow on hover - the way rokct.ai's Browser Extension / Web App /
+    Mobile Apps tiles did; an item with neither is a 13.5px link. A "soon"
+    card is non-navigable like a "soon" link.
+  * Unchanged, so nothing composed today moves: the mobile panel
+    (`HeaderMenuList`, each group a headed section of stacked links), the
+    flat links, the actions, and the header's own markup. A menu with NO
+    groups renders byte-for-byte as in 1.16.0 (Supacharge's header until
+    lms_sdk registers groups). agent_sdk 1.9.0 fills the descriptions and
+    icons for rokct.ai.
+  * Not carried over from the old rokctai_frontend header: the Chrome Web
+    Store glyph inside the "Add ROK Extension" button (an external CDN
+    image; `HeaderMenuAction` has no icon field), the 200ms fade/slide of
+    the panel (it toggles with the `hidden` attribute like the 1.14.0
+    dropdown), and the 1.5s logo collapse with the nav fading until hover
+    or scroll, which 1.14.0 already dropped.
+
+## 1.17.0
+
+* A FALLBACK favicon for a shell that has none. Ray, 2026-09-09: "on
+  builds that dont have favicon like supacharge you can make it to take
+  first letter of domain", and "that letter should take color of primary
+  color". Additive, and a true fallback: nothing here replaces an icon a
+  host already has.
+  * `app/brand-icon/route.tsx` (new, installed) answers
+    `GET /brand-icon?s=<px>` with a PNG app tile drawn by `next/og`: `s`
+    square, 16..512, default 64; the card's `#0b0b0b` ground with the
+    same top-right highlight, corners rounded 22%; the letter centred at
+    about 62% of the square's height in the sans face next/og bundles
+    (regular is the only weight it ships, so `fontWeight: 700` is
+    honoured only where a bolder face is available). The letter is the
+    first character of the site host - `NEXT_PUBLIC_SITE_URL`, else the
+    copy's `url`, else the origin of the request - with a leading `www.`
+    stripped and uppercased; when the host gives no letter or digit the
+    site name's first character is used, and failing that `R`. The
+    letter is drawn in the shell's PRIMARY colour, never a hard-coded
+    brand: the registered `themeColor`, else the first `--primary:`
+    declaration inside the `:root` block of the host's `app/globals.css`
+    (read from disk once per process; the shadcn `H S% L%` triple, hex,
+    `rgb()`/`rgba()`, `hsl()`/`hsla()` and `oklch()` are understood and
+    normalised to hex for satori), else `#ffffff`. A primary with a
+    relative luminance under 0.18 keeps the letter and adds a ring of
+    the same primary at 40% alpha (2px at 64, scaling with the tile) so
+    it still reads on the dark ground. `Cache-Control: public,
+    max-age=86400`. `runtime = "nodejs"`, like the og routes.
+  * `buildSiteMetadata()` in `app/lib/site-metadata.ts` now builds
+    `icons`, in this order: an `icons` override wins outright and the
+    disk is not looked at; a host that ships an icon file Next serves by
+    file convention - `app/favicon.ico`, `app/icon.png|svg|ico`,
+    `app/apple-icon.png`, `public/favicon.ico`, checked with
+    `fs.existsSync` under `process.cwd()` at call time, server-side only
+    (`typeof window === "undefined"`, dynamic `node:fs` import, any
+    failure counts as absent) - gets NO `icons` key, so that file stays
+    the icon; a registered `copy.icon` is linked next (as the Apple touch
+    icon too when it is a raster); and with none of those the links are
+    `/brand-icon?s=64` (64x64) and `/brand-icon?s=192` (192x192) as
+    `icon` and `/brand-icon?s=180` as `apple`. Exported helpers:
+    `GENERATED_BRAND_ICON`, `HOST_ICON_FILES`, `hostIconExists()`,
+    `generatedIcons()`, `registeredIcons(icon)`, `resolveIcons(copy)`.
+  * `SiteMetadataCopy` in `components/custom/landing/site-metadata.ts`
+    gains `icon?: string` - a public path or absolute URL to a `.png`,
+    `.svg` or `.ico` - so a home SDK can ship a real icon later and
+    register it with the same one line as the rest of its copy, replacing
+    the generated tile without touching the host; and `themeColor?:
+    string` - any CSS colour - for a letter colour other than the
+    theme's `--primary`.
+  * `tests/test_manifest.py` checks the route is in `installs` and
+    references `themeColor` and `--primary`, that the registry declares
+    `icon` and `themeColor`, and that `app/lib/site-metadata.ts`
+    references `/brand-icon` and reads `copy.icon`.
+
+## 1.16.0
+
+* The generated link-preview card can show a STILL of the app. Ray,
+  2026-09-09: the 1200x630 preview should show a still from the app's
+  guided tour rather than only the wordmark. Additive: a shell whose
+  registered copy names no still draws the single-column card of 1.15.0
+  from exactly the same markup.
+  * `SiteMetadataCopy` in `components/custom/landing/site-metadata.ts`
+    gains `still?: string` - a public path or absolute URL to a PORTRAIT
+    `.png`, `.jpg`, `.jpeg` or `.webp` (a 1080x1920 tour screenshot is the
+    expected shape) - and `stillAnchor?: "top" | "bottom"`, default
+    `"bottom"`. Same extension rule as `ogImage`, same merge and load
+    rules as every other field.
+  * `app/opengraph-image.tsx` draws the two-column card when a still is
+    registered: `#0b0b0b` ground with the top-right radial highlight as
+    before; the left 45% (540px) a column with the registered logo at 64px
+    - or the site name when there is no logo - the tagline at 38px in 72%
+    white, and the host small at the bottom-left at 24px in 45% white; the
+    right 55% the still drawn 372px wide at its own aspect inside a phone
+    frame (`#1a1c1f`, 44px corners, 10px bezel, 34px inner corners, a
+    `0 30px 80px rgba(0,0,0,0.6)` shadow) centred in the column and
+    clipped by it. With `stillAnchor: "bottom"` the frame's top sits 72px
+    under the card's top edge and the phone bleeds off the bottom, so the
+    screen's header is what shows; with `"top"` the phone hangs from the
+    top edge - top bezel cut, its bottom 72px above the card's bottom edge
+    - for a screen that is a bottom sheet. The still is fetched by the same
+    origin-first rule as the logo and inlined as a data URI; its size is
+    read from its own header, which now covers JPEG (SOF) and WebP
+    (VP8/VP8L/VP8X) alongside PNG (IHDR) and SVG. Best-effort as before: a
+    still that will not load, or whose header gives no size, leaves the
+    single-column card; a ready-made `ogImage` still wins outright.
+  * `tests/test_manifest.py` checks that the registry declares `still` and
+    `stillAnchor` and that the route reads `copy.still`.
+
 ## 1.15.0
 
 * Ships the LINK-PREVIEW shell: what a pasted link to a rokct shell unfurls

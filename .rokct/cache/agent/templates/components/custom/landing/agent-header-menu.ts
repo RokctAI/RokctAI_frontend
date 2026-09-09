@@ -14,9 +14,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 // rokct.ai's header menu, for base_sdk's header-menu registry
-// (components/custom/landing/header-menu.ts, base_sdk >= 1.14.0), which the
+// (components/custom/landing/header-menu.ts, base_sdk >= 1.18.0), which the
 // shared header renders inside itself: inline beside the logo from the `lg`
 // breakpoint up, behind a burger below it.
+//
+// Since 1.9.0 (base_sdk 1.18.0) the groups are ONE panel under the first
+// group's label, as the old header drew them: Product is the lead group,
+// so "Product" is the trigger and its three platform entries carry the
+// `icon` and `description` the old panel's left-hand cards had (FiBox /
+// FiGlobe / FiSmartphone and header.chrome_support / browser_support /
+// mobile_support in the hand-written header); AI Chat, Productivity, Tools
+// and Summary are the four headed columns beside them.
 //
 // Ray, 2026-09-09: rokct.ai and supacharge.app must use ONE header, the same
 // component, with the menu inside it. base_sdk 1.14.0 ships that header;
@@ -75,13 +83,23 @@ const AGENT_HEADER_MENU: HeaderMenu = {
           label: word("features.browser_extension", "Browser Extension"),
           href: CHROME_WEB_STORE,
           external: true,
+          icon: "box",
+          description: word("header.chrome_support", "Supports Chrome"),
         },
-        { id: "web-app", label: word("features.web_app", "Web App"), href: "/dashboard" },
+        {
+          id: "web-app",
+          label: word("features.web_app", "Web App"),
+          href: "/dashboard",
+          icon: "globe",
+          description: word("header.browser_support", "Open in browser"),
+        },
         {
           id: "mobile-apps",
           label: word("features.mobile_apps", "Mobile Apps"),
           href: "#",
           badge: "soon",
+          icon: "smartphone",
+          description: word("header.mobile_support", "iOS and Android"),
         },
       ],
     },

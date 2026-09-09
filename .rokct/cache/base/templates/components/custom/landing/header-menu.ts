@@ -43,8 +43,19 @@
 // Since 1.14.0 the menu lives INSIDE that header - inline beside the logo
 // from the `lg` breakpoint up, behind a burger button below it - rather
 // than in a row under the host's own header, and a HeaderMenu may also
-// name `groups` (a label that opens a dropdown of links) and `actions`
-// (call-to-action buttons at the right-hand end of the bar).
+// name `groups` and `actions` (call-to-action buttons at the right-hand end
+// of the bar).
+//
+// Since 1.18.0 the groups open as ONE panel, the way rokct.ai's hand-written
+// header did before base shipped one (Ray, 2026-09-09: "no mega menu
+// anymore" is a regression; rokct keeps everything its old header had). The
+// FIRST group is the panel's lead: its label is the word on the single
+// desktop trigger and its items form the panel's first column, without a
+// repeated heading; every group after it is a headed column beside it. An
+// item may carry a `description` and an `icon`, and one that does renders
+// as a card (icon box, label, blurb) rather than a bare link - the three
+// platform cards of rokct.ai's Product panel. A menu with no groups renders
+// exactly as it did in 1.16.0.
 //
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as
@@ -79,7 +90,30 @@ export interface HeaderMenuLink {
   badge?: LandingNavBadge;
   /** Open in a new tab with rel="noopener noreferrer". */
   external?: boolean;
+  /**
+   * One line under the label, shown on the desktop panel only (since
+   * 1.18.0). An item with a description or an icon renders as a card.
+   */
+  description?: string;
+  /** The card's icon, named from the small set the header bundles. */
+  icon?: HeaderMenuIcon;
 }
+
+/**
+ * The icons a menu item may name (since 1.18.0). A closed set, resolved by
+ * components/custom/header-menu.tsx from lucide-react, so the header bundles
+ * a handful of glyphs and not the whole icon library: "box" (a product),
+ * "globe" (the web), "smartphone" (mobile), "message-square" (chat), "zap"
+ * (automation), "wrench" (tools), "file-text" (documents).
+ */
+export type HeaderMenuIcon =
+  | "box"
+  | "globe"
+  | "smartphone"
+  | "message-square"
+  | "zap"
+  | "wrench"
+  | "file-text";
 
 /**
  * What a home SDK supplies for the header.
@@ -106,9 +140,10 @@ export interface HeaderMenu {
   anchors?: string[];
   links?: HeaderMenuLink[];
   /**
-   * Labelled dropdowns, rendered after the flat entries. Optional and new in
-   * 1.14.0; a menu that names only `anchors`/`links` is resolved exactly as
-   * it was before.
+   * Labelled columns of links, rendered after the flat entries as ONE
+   * desktop panel under the first group's label (since 1.18.0; 1.14.0 to
+   * 1.16.0 opened a dropdown per group). Optional; a menu that names only
+   * `anchors`/`links` is resolved exactly as it was before.
    */
   groups?: HeaderMenuGroup[];
   /**
@@ -126,11 +161,11 @@ export interface HeaderMenu {
 export type HeaderMenuGroupItem = HeaderMenuLink | { anchor: string };
 
 /**
- * A labelled dropdown in the header: the label opens a list of links. The
- * label and badge are the group's own (a group is not a section, so there
- * is no `meta.nav` entry to lift them from); its items follow the anchor
- * and link rules above. A group whose every item was dropped is dropped
- * with them, so a label never opens an empty list.
+ * A labelled column of the header's panel. The label and badge are the
+ * group's own (a group is not a section, so there is no `meta.nav` entry to
+ * lift them from); its items follow the anchor and link rules above. A
+ * group whose every item was dropped is dropped with them, so a label never
+ * opens an empty list. The first group's label is the desktop trigger.
  */
 export interface HeaderMenuGroup {
   /** Stable, unique in the menu. */
@@ -182,6 +217,9 @@ export interface HeaderMenuItem {
   href: string;
   badge?: LandingNavBadge;
   external?: boolean;
+  /** Carried from the link (since 1.18.0); an anchor has neither. */
+  description?: string;
+  icon?: HeaderMenuIcon;
 }
 
 /**
@@ -220,13 +258,15 @@ export function resolveHeaderMenuItems(
       href: link.href,
       badge: link.badge,
       external: link.external,
+      description: link.description,
+      icon: link.icon,
     });
   }
 
   return items;
 }
 
-/** A group with its items resolved: ready to render as a dropdown. */
+/** A group with its items resolved: ready to render as a panel column. */
 export interface HeaderMenuResolvedGroup {
   id: string;
   label: string;
@@ -238,7 +278,7 @@ export interface HeaderMenuResolvedGroup {
 export interface ResolvedHeaderMenu {
   /** The flat entries, as [resolveHeaderMenuItems] answers them. */
   items: HeaderMenuItem[];
-  /** The dropdowns, each with at least one item. */
+  /** The panel's columns, each with at least one item; the first leads. */
   groups: HeaderMenuResolvedGroup[];
   /** The call-to-action buttons, in the order the home SDK named them. */
   actions: HeaderMenuAction[];
@@ -281,6 +321,8 @@ export function resolveHeaderMenu(
           href: entry.href,
           badge: entry.badge,
           external: entry.external,
+          description: entry.description,
+          icon: entry.icon,
         });
       }
     }

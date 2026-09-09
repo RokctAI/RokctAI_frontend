@@ -18,7 +18,7 @@
       "git": "https://github.com/RokctAI/core",
       "path": "../core/telemetry/nextjs",
       "ref": "main",
-      "commit": "9ceb96d96526b544ccbe4a94b1e94bdb2007ed2a",
+      "commit": "211aefb73d1930df34411cde8aadbb1bb27742c6",
       "version": "1.2.0",
       "install_py_sha256": "318d20eb7123ffaa549618d06b4530dfce5df9ba0b07df2328c0c6e1738e36c4",
       "content_sha256": "79628f311222b638a98c8357e0d947936ba4b7b247361545d88d2da5be767396"
@@ -29,10 +29,10 @@
       "git": "https://github.com/RokctAI/core",
       "path": "../core/base/nextjs",
       "ref": "main",
-      "commit": "9ceb96d96526b544ccbe4a94b1e94bdb2007ed2a",
-      "version": "1.15.0",
+      "commit": "211aefb73d1930df34411cde8aadbb1bb27742c6",
+      "version": "1.18.0",
       "install_py_sha256": "b6c434a1c05611d29f1018f68b9423383f7ecfbf9cc1efe74825ba6c4df98fff",
-      "content_sha256": "b3f102a7f40a696ef5c7f6fa29e2051541dd1d8e4e178f3d3dfda50c7b8d19e8"
+      "content_sha256": "67a52d47dfb0b8b2b3111f0e470b3fcb1202037ad0f21b96f7edde527bd4ef7a"
     },
     {
       "name": "auth_sdk",
@@ -84,7 +84,7 @@
       "git": "https://github.com/RokctAI/core",
       "path": "../core/comms/nextjs",
       "ref": "main",
-      "commit": "9ceb96d96526b544ccbe4a94b1e94bdb2007ed2a",
+      "commit": "211aefb73d1930df34411cde8aadbb1bb27742c6",
       "version": "1.1.0",
       "install_py_sha256": "c625d38498b473d9ab747111062e794e0be1872da08ac4e481d575f4e5d2c5a3",
       "content_sha256": "6b15e7672d9b0ed9842a696bfee3e9a0f526260476d190c2677d211c1f049645"
@@ -216,10 +216,10 @@
       "git": "https://github.com/RokctAI/agent",
       "path": "../agent/agent/nextjs",
       "ref": "main",
-      "commit": "2f32948262b50765742e5a1a9c12855517d6a861",
-      "version": "1.8.0",
+      "commit": "677d66c300a01698c9e44b0b51321acd9de3cfde",
+      "version": "1.9.0",
       "install_py_sha256": "c629e669d7aeba008b2e1c23a845eb65628f09e8538f738abbfa1385bf1088a3",
-      "content_sha256": "93a2b22d603f9c1a5609397e415355f9b848cf3e7d7f7976fa666b39c404e710"
+      "content_sha256": "ae1bbfaac6fbcd3af814384d60001fa5e7aca872d8d8102c383514463d47898b"
     }
   ]
 }

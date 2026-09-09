@@ -23,9 +23,11 @@
 // links inline on desktop, and on a phone the menu must not show in the
 // header at all except behind a burger. So:
 //
-//  - from the `lg` breakpoint up the bar is logo | section links and
-//    dropdown groups (nav[aria-label="Sections"]) | actions, theme toggle,
-//    auth - rokctai_frontend's chrome (fixed-height bar, blurred
+//  - from the `lg` breakpoint up the bar is logo | section links and the
+//    groups' one trigger (nav[aria-label="Sections"]; since 1.18.0 it opens
+//    ONE panel the width of the bar, anchored under it - the bar's
+//    backdrop-filter is that panel's containing block) | actions, theme
+//    toggle, auth - rokctai_frontend's chrome (fixed-height bar, blurred
 //    translucent ground, mega-menu hover) as the reference;
 //  - below `lg` the bar is logo | burger, nothing else: the links, the
 //    groups, the actions, the theme toggle and the auth buttons all sit in
@@ -96,7 +98,7 @@ export interface HeaderProps {
   openSignupPopup?: () => void;
   /** The flat menu entries, resolved by resolveHeaderMenu(). */
   menuItems?: HeaderMenuItem[];
-  /** The dropdown groups, resolved by resolveHeaderMenu(). */
+  /** The panel's groups (first leads), resolved by resolveHeaderMenu(). */
   groups?: HeaderMenuResolvedGroup[];
   /** The call-to-action buttons, as the home SDK declared them. */
   actions?: HeaderMenuAction[];
