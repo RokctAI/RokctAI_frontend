@@ -44,12 +44,17 @@ import {
 const keys = (sites: readonly NetworkSite[]) => sites.map((s) => s.key);
 
 describe('NETWORK_SITES: the list', () => {
-  it('names rokct.ai, Supacharge and juvo with their origins, hosting and telephony without', () => {
+  it('names rokct.ai, supacharge.school and juvo with their origins, hosting and telephony without', () => {
     const byKey = new Map(NETWORK_SITES.map((s) => [s.key, s]));
     assert.equal(byKey.get('rokct')?.url, 'https://rokct.ai');
     assert.equal(byKey.get('supacharge')?.url, 'https://supacharge.school');
     assert.equal(byKey.get('supacharge')?.wordmark, true);
     assert.equal(byKey.get('juvo')?.url, 'https://juvo.app');
+    // 1.32.1: each name is the declared brand string, verbatim (a wordmark
+    // site draws it AS the brand): never re-cased, never shortened.
+    assert.equal(byKey.get('rokct')?.name, 'rokct.ai');
+    assert.equal(byKey.get('supacharge')?.name, 'supacharge.school');
+    assert.equal(byKey.get('juvo')?.name, 'juvo');
     for (const pending of ['hosting', 'telephony']) {
       assert.equal(byKey.get(pending)?.url, null, pending);
       assert.equal(byKey.get(pending)?.shown, false, pending);

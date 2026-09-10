@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.32.1
+
+* The Supacharge network site is named `supacharge.school`. Ray,
+  2026-09-10, on rokct.ai's logos marquee: "logos in rokct are wrong.
+  wrong names". The site is a `wordmark` entry - its name is drawn AS the
+  brand, on rokct.ai's marquee and on every footer strip - and
+  `NETWORK_SITES` (`components/custom/landing/network-sites.ts`) named it
+  "Supacharge", a re-cased, shortened form of the brand string the product
+  declares (lms_sdk's site-metadata `siteName`, under Ray's 2026-09-10
+  ruling that the brand is written "supacharge.school", lowercase, wherever
+  it is written as the brand). The entry now carries that string verbatim,
+  and the rule sits on the `name` field: a name is the product's declared
+  brand string, never shortened, re-cased or otherwise normalised here.
+  `rokct.ai` and `juvo` are as Ray writes them and unchanged. Nothing else
+  moves: a shell never lists itself, and Supacharge's own strip is off
+  (lms_sdk's placement).
+* Tests: `test_network_sites_list_shape` and `network-strip.test.mts` pin
+  the three names verbatim and refuse "Supacharge".
+
 ## 1.32.0
 
 * The landing renders server-side. Ray, 2026-09-10: "hero i think should

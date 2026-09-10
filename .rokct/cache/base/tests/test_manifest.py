@@ -1310,6 +1310,13 @@ class TestRegistryMarkers(unittest.TestCase):
             self.assertIn(f'url: "{origin}"', src)
         for pending in ("hosting", "telephony"):
             self.assertRegex(src, re.compile(rf'key: "{pending}".*?url: null.*?shown: false', re.S), pending)
+        # 1.32.1 (Ray, 2026-09-10, rokct.ai's logos marquee: "wrong names"):
+        # a name is the brand string the product declares, verbatim - a
+        # wordmark site draws it AS the brand - never re-cased or shortened.
+        for key, name in (("rokct", "rokct.ai"), ("supacharge", "supacharge.school"), ("juvo", "juvo")):
+            self.assertRegex(src, re.compile(rf'key: "{key}",\s*name: "{re.escape(name)}",', re.S), key)
+        self.assertNotIn('name: "Supacharge"', src)
+        self.assertIn("never shortened,\n *   re-cased or otherwise normalised here", src)
         # The same host normalisation as resolveDisplayHost: the kernel's.
         self.assertIn('import { normaliseHost } from "@/app/services/base/tenant-hosts";', src)
         self.assertIn("export function resolveNetworkSites(", src)

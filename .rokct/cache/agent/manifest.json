@@ -1,6 +1,6 @@
 {
   "name": "agent_sdk",
-  "version": "1.18.0",
+  "version": "1.18.1",
   "installs": [
     {
       "from": "templates/app/handson/all/agent",

@@ -15,12 +15,11 @@
  */
 "use client";
 
-// The logos marquee's CLIENT half (since 1.18.0): the effect that reads
-// base's resolved network strip (loadResolvedNetworkStrip is exported by
-// base's "use client" components/custom/network-strip.tsx, so it is called
-// here, on the client, as it always was) and the broken-image fallback,
-// unchanged. Rendered by ./logos.tsx, the section's entry, which holds
-// `meta` where the server can read it.
+// The logos marquee's CLIENT half (since 1.18.0): the marquee and the
+// broken-image fallback. Rendered by ./logos.tsx, the section's entry,
+// which holds `meta` where the server can read it and - since 1.18.1 -
+// resolves the strip on the server and hands it here as data, so the
+// marquee is server-rendered with the page and never pops in after it.
 
 // The landing page's logo marquee - since 1.17.0 the ONE "Trusted by" row
 // on rokct.ai's landing page, and its items are the other sites of the
@@ -41,6 +40,20 @@
 // target _blank, rel noopener, nothing else: no query string, no click
 // handler, no measurement. The strip informs; it does not measure.
 //
+// Ray, 2026-09-10: "logos in rokct are wrong. wrong names and also it
+// lost sizings and feel old one had". The names are base's list, drawn
+// verbatim (base_sdk 1.32.1 carries each product's declared brand string;
+// nothing here re-cases, shortens or truncates one). The sizing: the old
+// marquee drew every logo as a picture filling the item box - 96x32 on a
+// phone, 160x48 from `md` - so each mark stood the box's full height. A
+// mark still does, in that same box. A wordmark site used to be drawn as
+// 18px text inside the picture's box, a third of the height of the marks
+// beside it; it is now drawn AS a mark: at the box's height (`text-2xl` in
+// the 32px box, `md:text-4xl` in the 48px box, the letter height the old
+// wordmark logos had), as wide as the name is, with the old box's width
+// as its minimum. A name is never shrunk to fit a box meant for a
+// picture.
+//
 // The eight marks this slot showed until 1.13.0 (Walmart, Cisco, Netflix,
 // Pinterest, Zoom, Sony, Ebay, Uber) were hotlinked from a chat template's
 // CDN and were never Ray's; 1.13.0 turned the wall off and 1.17.0 retires
@@ -50,33 +63,46 @@
 // "section" (base_sdk >= 1.27.0), so base's own afterHero / beforeFooter
 // surfaces draw nothing on /landing and base keeps the footer strip off
 // that route; every other page - the opportunities pages among them -
-// still gets the footer strip. This section asks base's rule for the
+// still gets the footer strip. The entry asks base's rule for the
 // "section" surface, so a placement that names another surface leaves
 // this section empty rather than drawing the strip twice.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
   logosTrack,
 } from "@/components/custom/landing/agent-logos";
-import {
-  networkStripRendersAt,
-  type ResolvedNetworkStrip,
-} from "@/components/custom/landing/network-strip";
 import type { LinkableNetworkSite } from "@/components/custom/landing/network-sites";
-import { loadResolvedNetworkStrip } from "@/components/custom/network-strip";
+import type { ResolvedNetworkStrip } from "@/components/custom/landing/network-strip";
 
 /** The item box the old marquee drew each mark in, unchanged. */
 const ITEM =
   "relative flex-shrink-0 h-8 w-24 md:h-12 md:w-40 flex items-center justify-center";
 /** The image fills the box, as next/image `fill` + object-contain did. */
 const MARK = "absolute inset-0 h-full w-full object-contain";
-const WORDMARK = "text-lg font-bold tracking-tight text-zinc-700 dark:text-zinc-300";
+/**
+ * A wordmark's box: the mark box's height, the mark box's width as a
+ * minimum, and as wide as the name needs beyond that.
+ */
+const WORDMARK_ITEM =
+  "relative flex-shrink-0 h-8 min-w-[6rem] md:h-12 md:min-w-[10rem] px-2 flex items-center justify-center";
+/** The name drawn as the mark: at the box's height, verbatim. */
+const WORDMARK =
+  "text-2xl md:text-4xl font-bold tracking-tight leading-none text-zinc-700 dark:text-zinc-300";
 
 function LogoLink({ site }: { site: LinkableNetworkSite }) {
   // A logo that will not load falls back to the name, so a site whose
-  // asset moved is still named and still linked.
+  // asset moved is still named and still linked. The marquee is
+  // server-rendered, so the browser may have tried (and failed) the image
+  // before React attached onError; the mount check catches that case.
   const [broken, setBroken] = useState(false);
+  const light = useRef<HTMLImageElement>(null);
+  const dark = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    for (const img of [light.current, dark.current]) {
+      if (img && img.complete && img.naturalWidth === 0) setBroken(true);
+    }
+  }, []);
   const drawLogo = Boolean(site.logo) && !site.wordmark && !broken;
   return (
     <a
@@ -85,12 +111,13 @@ function LogoLink({ site }: { site: LinkableNetworkSite }) {
       rel="noopener"
       aria-label={site.name}
       data-network-site={site.key}
-      className={ITEM}
+      className={drawLogo ? ITEM : WORDMARK_ITEM}
     >
       {drawLogo ? (
         <>
           {/* eslint-disable-next-line @next/next/no-img-element -- a sibling site's own asset; no optimisation pass, no remotePatterns entry */}
           <img
+            ref={light}
             src={site.logo}
             alt={site.name}
             className={`${MARK} ${site.logoDark ? "dark:hidden" : ""}`}
@@ -101,6 +128,7 @@ function LogoLink({ site }: { site: LinkableNetworkSite }) {
           {site.logoDark && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
+              ref={dark}
               src={site.logoDark}
               alt=""
               aria-hidden="true"
@@ -118,27 +146,16 @@ function LogoLink({ site }: { site: LinkableNetworkSite }) {
   );
 }
 
-export function Logos({ id }: { id?: string }) {
-  // The registered config and the shell's host, resolved by base once per
-  // module; this section is loaded on the client by the landing host, so
-  // it reads the same promise the footer strip reads.
-  const [strip, setStrip] = useState<ResolvedNetworkStrip | null>(null);
-  useEffect(() => {
-    let live = true;
-    loadResolvedNetworkStrip()
-      .then((resolved) => {
-        if (live) setStrip(resolved);
-      })
-      .catch((error) => {
-        console.error("[landing] the logos section could not resolve the network strip:", error);
-      });
-    return () => {
-      live = false;
-    };
-  }, []);
-
-  if (!strip || !networkStripRendersAt(strip, "section")) return null;
+export function Logos({
+  id,
+  strip,
+}: {
+  id?: string;
+  /** Base's strip, resolved by the entry on the server; drawn as it is. */
+  strip: ResolvedNetworkStrip;
+}) {
   const track = logosTrack(strip.sites);
+  if (track.length === 0) return null;
 
   return (
     <section

@@ -26,13 +26,32 @@
 // this default export is a server component; everything that needs the
 // browser lives in the sibling ./logos.client.tsx and is rendered
 // from here.
+//
+// Since 1.18.1 the entry also RESOLVES the strip, on the server: base's
+// registered network-strip config over its defaults, the list minus this
+// shell and the hidden keys (components/custom/landing/network-strip.ts,
+// the pure registry), and hands the result to the marquee as data. The
+// marquee is then in the page's first HTML with the rest of the landing,
+// as the old logos section was - 1.17.0 and 1.18.0 read the strip in a
+// client effect after hydration, so the row was absent from the served
+// page and popped in after it. base's own loadResolvedNetworkStrip is
+// exported by its "use client" components/custom/network-strip.tsx, which
+// a server component cannot call, so the same two steps are taken here.
 
 import React from "react";
 
+import { networkSiteHost } from "@/components/custom/landing/network-sites";
+import {
+  loadNetworkStrip,
+  networkStripRendersAt,
+  resolveNetworkStrip,
+  type ResolvedNetworkStrip,
+} from "@/components/custom/landing/network-strip";
 import type {
   PageSectionMeta,
   PageSectionProps,
 } from "@/components/custom/landing/page-sections";
+import { loadSiteMetadata } from "@/components/custom/landing/site-metadata";
 import { Logos } from "@/components/custom/logos.client";
 
 export { Logos } from "@/components/custom/logos.client";
@@ -44,6 +63,37 @@ export { Logos } from "@/components/custom/logos.client";
  */
 export const meta: PageSectionMeta = { order: 20, nav: [] };
 
-export default function LogosEntry({ id }: PageSectionProps) {
-  return <Logos id={id} />;
+/**
+ * This shell's own host, resolved as base's loadSelfHost
+ * (components/custom/network-strip.tsx) resolves it: NEXT_PUBLIC_SITE_URL
+ * first, else the `url` the registered site metadata carries, through the
+ * list's own normalisation. Null lists every site.
+ */
+async function loadSelfHost(): Promise<string | null> {
+  const fromEnv = networkSiteHost(process.env.NEXT_PUBLIC_SITE_URL);
+  if (fromEnv) return fromEnv;
+  return networkSiteHost((await loadSiteMetadata()).url);
+}
+
+/**
+ * What the marquee draws, resolved once per render on the server. Null
+ * when base's rule does not place the strip in the "section" surface or
+ * no site is left to draw - the section then renders nothing - and on an
+ * error, which is logged rather than thrown so the landing still renders.
+ */
+export async function loadLogosStrip(): Promise<ResolvedNetworkStrip | null> {
+  try {
+    const [config, selfHost] = await Promise.all([loadNetworkStrip(), loadSelfHost()]);
+    const strip = resolveNetworkStrip(config, selfHost);
+    return networkStripRendersAt(strip, "section") ? strip : null;
+  } catch (error) {
+    console.error("[landing] the logos section could not resolve the network strip:", error);
+    return null;
+  }
+}
+
+export default async function LogosEntry({ id }: PageSectionProps) {
+  const strip = await loadLogosStrip();
+  if (!strip) return null;
+  return <Logos id={id} strip={strip} />;
 }

@@ -1,9 +1,67 @@
 # Changelog
 
+## 1.18.1
+
+Requires base_sdk >= 1.32.0 and auth_sdk >= 1.7.0 as before. The names
+the marquee draws are base's list: base_sdk 1.32.1 carries the Supacharge
+entry's declared brand string, and a re-pin of both is what puts the right
+name on rokct.ai.
+
+* The logos marquee has its sizing and its feel back, and draws the
+  network's names verbatim. Ray, 2026-09-10: "logos in rokct are wrong.
+  wrong names and also it lost sizings and feel old one had". Live
+  rokct.ai (agent_sdk 1.17.0 over base_sdk 1.29.0) showed the row as
+  "Supacharge" and "juvo" in 18px text, resolved after hydration. Three
+  causes, two of them here:
+  * WRONG NAMES: base's `NETWORK_SITES` named the Supacharge site
+    "Supacharge" - a re-cased, shortened form of the brand string the
+    product declares ("supacharge.school", lowercase, Ray's 2026-09-10
+    ruling) - and the site is a `wordmark` entry, so the marquee drew that
+    form AS the brand. Fixed in base_sdk 1.32.1; this SDK never rewrites
+    a name (no case transform, no truncation - tested), so the fix reaches
+    the marquee on re-pin.
+  * LOST SIZING: the old marquee drew every logo as a picture filling the
+    item box (96x32 on a phone, 160x48 from `md`, `object-contain`), so
+    each mark stood the box's full height. 1.17.0 kept the box for marks
+    but drew a wordmark site as `text-lg` (18px) text inside it, a third
+    of the height of the marks beside it. `components/custom/
+    logos.client.tsx` now draws a wordmark AS a mark: `text-2xl` in the
+    32px box and `md:text-4xl` in the 48px box (the letter height the old
+    wordmark logos had), as wide as the name is, the old box's width as
+    its minimum (`min-w-[6rem] md:min-w-[10rem] px-2`). A mark keeps the
+    old box exactly (`h-8 w-24 md:h-12 md:w-40`, `object-contain`). The
+    section, eyebrow, track, gaps (`gap-8 md:gap-16`), grayscale at 70%
+    with full colour on hover, the 20s three-lane run and the paused-on-
+    hover rule are untouched.
+  * LOST FEEL: 1.17.0 read the strip in a client effect after hydration,
+    so the served page had no row and it popped in after; the old section
+    rendered with the page. `components/custom/logos.tsx`, the entry
+    (a server component since 1.18.0), now resolves the strip on the
+    server - `loadNetworkStrip()` and `resolveNetworkStrip()` from base's
+    pure registry, the shell's own host as base's `loadSelfHost` resolves
+    it (`NEXT_PUBLIC_SITE_URL`, else the registered site-metadata `url`,
+    restated because base's `loadResolvedNetworkStrip` lives in its
+    `"use client"` file) - asks `networkStripRendersAt(strip, "section")`
+    once, and renders the marquee with the result as a prop. The row is in
+    the first HTML, with alt texts, without JavaScript. The client half
+    keeps the broken-image fallback and adds base's mount check for an
+    image the browser failed before React attached `onError`.
+  * Manifest: version 1.18.1. No install, integration or floor changes.
+* The 1.18.0 entry above is rewrapped so no line starts with `#`
+  followed by text: markdownlint MD018 read the wrapped "core #215:" as a
+  heading and failed the host re-pin on `.rokct/cache/agent/CHANGELOG.md`.
+  Wording unchanged.
+* Tests: `test_logos_section_draws_the_network_sites` pins the entry's
+  server-side resolution (the registry calls, the host rule, the
+  `"section"` surface, the prop), the mark box, the wordmark box and type
+  size, the name drawn verbatim with no case transform or truncation, and
+  no effect-loaded strip; `test_section_entries_are_server_safe` accepts
+  an async default export.
+
 ## 1.18.0
 
-Requires base_sdk >= 1.32.0 (the landing rendered on the server, core
-#215: `app/landing/page.tsx` reads each registered section's `meta`
+Requires base_sdk >= 1.32.0 (the landing rendered on the server,
+core #215: `app/landing/page.tsx` reads each registered section's `meta`
 through `components/custom/landing/landing-page.ts`) and auth_sdk >= 1.7.0
 as before.
 

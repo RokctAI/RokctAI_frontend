@@ -478,17 +478,42 @@ class TestRegisterInjection(unittest.TestCase):
         using the logos section rokct had"; "logos should not lose function
         and its look"): logos.tsx keeps its marquee and draws base's
         resolved network sites, each a link, under base's heading."""
-        # 1.18.0: the marquee (the effect, the fallback) is the client half;
-        # the entry holds `meta` where base_sdk 1.32.0's server reads it.
+        # 1.18.0: the marquee (the fallback) is the client half; the entry
+        # holds `meta` where base_sdk 1.32.0's server reads it.
         logos = read(LOGOS_CLIENT)
         entry = read(LOGOS)
         self.assertIn('"use client";', logos)
         self.assertIsNone(USE_CLIENT_RE.search(entry))
         self.assertIn('import { Logos } from "@/components/custom/logos.client";', entry)
-        # The items and the heading are base's, resolved once per module.
-        self.assertIn('import { loadResolvedNetworkStrip } from "@/components/custom/network-strip";', logos)
-        self.assertIn('if (!strip || !networkStripRendersAt(strip, "section")) return null;', logos)
+        # 1.18.1: the items and the heading are base's, resolved by the
+        # ENTRY on the server (the pure registry, the shell's own host) and
+        # handed to the marquee as data, so the row is in the served HTML;
+        # the client half reads no effect-loaded strip any more.
+        for needle in (
+            'import { networkSiteHost } from "@/components/custom/landing/network-sites";',
+            "loadNetworkStrip,",
+            "networkStripRendersAt,",
+            "resolveNetworkStrip,",
+            'import { loadSiteMetadata } from "@/components/custom/landing/site-metadata";',
+            "networkSiteHost(process.env.NEXT_PUBLIC_SITE_URL)",
+            "networkSiteHost((await loadSiteMetadata()).url)",
+            "export async function loadLogosStrip(): Promise<ResolvedNetworkStrip | null> {",
+            "const strip = resolveNetworkStrip(config, selfHost);",
+            'return networkStripRendersAt(strip, "section") ? strip : null;',
+            "export default async function LogosEntry({ id }: PageSectionProps) {",
+            "const strip = await loadLogosStrip();",
+            "<Logos id={id} strip={strip} />",
+        ):
+            self.assertIn(needle, entry, needle)
+        self.assertNotIn("useEffect(() => {\n    let live", logos)
+        self.assertIn("strip: ResolvedNetworkStrip;", logos)
         self.assertIn("const track = logosTrack(strip.sites);", logos)
+        entry_body = re.sub(r"/\*.*?\*/", "", entry, flags=re.S)
+        entry_body = re.sub(r"^\s*//.*$", "", entry_body, flags=re.M)
+        self.assertNotIn("http", entry_body, "the entry names no URL of its own")
+        # Neither half calls base's client-only resolver any more.
+        for half in (entry_body, re.sub(r"^\s*//.*$", "", re.sub(r"/\*.*?\*/", "", logos, flags=re.S), flags=re.M)):
+            self.assertNotIn("loadResolvedNetworkStrip", half)
         self.assertIn("{strip.heading}", logos)
         self.assertIn('data-network-strip="section"', logos)
         # Each box is a link to the site's origin and nothing more.
@@ -515,6 +540,23 @@ class TestRegisterInjection(unittest.TestCase):
             "object-contain",
         ):
             self.assertIn(needle, logos, needle)
+        # 1.18.1 (Ray, 2026-09-10: "lost sizings and feel old one had"): a
+        # mark keeps the old picture box exactly; a wordmark is drawn AS a
+        # mark - the box's height as its type size, the old box's width as
+        # its minimum, as wide as the name is - and the name verbatim.
+        self.assertIn('const ITEM =\n  "relative flex-shrink-0 h-8 w-24 md:h-12 md:w-40 flex items-center justify-center";', logos)
+        self.assertIn('const MARK = "absolute inset-0 h-full w-full object-contain";', logos)
+        self.assertIn('const WORDMARK_ITEM =\n  "relative flex-shrink-0 h-8 min-w-[6rem] md:h-12 md:min-w-[10rem] px-2 flex items-center justify-center";', logos)
+        self.assertIn('const WORDMARK =\n  "text-2xl md:text-4xl font-bold tracking-tight leading-none text-zinc-700 dark:text-zinc-300";', logos)
+        self.assertIn("className={drawLogo ? ITEM : WORDMARK_ITEM}", logos)
+        self.assertIn("<span className={WORDMARK}>{site.name}</span>", logos)
+        self.assertIn("aria-label={site.name}", logos)
+        self.assertIn("alt={site.name}", logos)
+        wordmark_line = re.search(r'const WORDMARK =\n  "([^"]+)";', logos).group(1)
+        for transform in ("uppercase", "lowercase", "capitalize", "truncate", "text-lg", "text-sm"):
+            self.assertNotIn(transform, wordmark_line, transform)
+        for rewrite in ("toLowerCase(", "toUpperCase(", "site.name.replace(", "site.name.slice(", "site.name.split("):
+            self.assertNotIn(rewrite, logos, rewrite)
         self.assertIn("export const meta: PageSectionMeta = { order: 20, nav: [] };", entry)
         self.assertNotIn("export const meta", logos)
         # A logo draws with its dark twin, a wordmark or a broken image draws the name.
@@ -566,7 +608,9 @@ class TestRegisterInjection(unittest.TestCase):
                 # No directive: the server reads `meta` as data, not as a proxy.
                 self.assertIsNone(USE_CLIENT_RE.search(entry), f"{name}.tsx starts with \"use client\"")
                 self.assertIn("export const meta: PageSectionMeta = {", entry)
-                self.assertRegex(entry, re.compile(r"^export default (function \w+\(|\w+;)", re.M), "a default export")
+                # 1.18.1: the logos entry resolves its strip on the server, so
+                # its default export is async; a server component may be.
+                self.assertRegex(entry, re.compile(r"^export default (async )?(function \w+\(|\w+;)", re.M), "a default export")
                 # meta stays pure: nothing in the entry reaches the browser.
                 for word in ("window.", "document.", "localStorage", "sessionStorage", "navigator."):
                     self.assertNotIn(word, entry, f"{name}.tsx must not read {word}")

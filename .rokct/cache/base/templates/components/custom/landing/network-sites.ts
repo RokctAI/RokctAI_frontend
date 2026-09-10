@@ -43,7 +43,10 @@ import { normaliseHost } from "@/app/services/base/tenant-hosts";
  * - `key` is stable and unique; the home SDK's registry names it to hide
  *   or reorder the entry.
  * - `name` is the wordmark drawn when there is no logo, and the alt text
- *   when there is.
+ *   when there is. It is the brand string the product itself declares
+ *   (its home SDK's site-metadata `siteName`), verbatim: never shortened,
+ *   re-cased or otherwise normalised here (Ray, 2026-09-10), because a
+ *   `wordmark` site draws it AS the brand.
  * - `url` is the site's origin, or `null` for a product that has no
  *   domain yet (Ray, 2026-09-09: "hosting will get a name when i decide on
  *   domain") - such an entry is also `shown: false`, and stays in the list
@@ -51,8 +54,8 @@ import { normaliseHost } from "@/app/services/base/tenant-hosts";
  * - `logo` is an absolute URL, or a public path on the site that draws
  *   the strip, to the mark drawn instead of the name; `logoDark` its
  *   dark-theme twin when the site has one.
- * - `wordmark` says the site's name IS its logo (Supacharge until Ray
- *   designs an icon): the name is drawn as text even when a logo path is
+ * - `wordmark` says the site's name IS its logo (supacharge.school until
+ *   Ray designs an icon): the name is drawn as text even when a logo path is
  *   later added elsewhere.
  * - `shown` defaults to true; false keeps the entry off every strip.
  */
@@ -87,7 +90,7 @@ export const NETWORK_SITES: readonly NetworkSite[] = [
   },
   {
     key: "supacharge",
-    name: "Supacharge",
+    name: "supacharge.school",
     url: "https://supacharge.school",
     wordmark: true,
   },
