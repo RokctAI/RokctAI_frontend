@@ -66,6 +66,7 @@ import type { ComponentType } from "react";
 
 import type { LandingPlan } from "@/app/actions/base/landing";
 import type { LandingNavItem } from "@/components/custom/landing/landing-config";
+import type { SiteDataMode } from "@/lib/site-data/kinds";
 
 /** What the landing page hands every registered section. */
 export interface PageSectionProps {
@@ -79,6 +80,15 @@ export interface PageSectionProps {
   plans: LandingPlan[];
   /** The whole floating nav in page order (hero, every section's entries, footer), for a section that renders the nav itself. */
   nav: LandingNavItem[];
+  /**
+   * How the shell reads its data (since 1.35.0): the `"data"` mode its
+   * composer.json declares - "local" (data/ only, no backend), "backend"
+   * (the default; absent means this) or "hybrid". A section that draws
+   * backend-only surface (a sign-in row, prices) checks it, and one that
+   * serves content from data/ reads the folder through
+   * `@/lib/site-data/read-site-data`.
+   */
+  dataMode?: SiteDataMode;
 }
 
 /**
@@ -92,6 +102,12 @@ export interface PageSectionContext {
   plans: LandingPlan[];
   /** The visitor's session as the page read it through the kernel seam, or null. */
   session?: unknown;
+  /**
+   * The shell's data mode (since 1.35.0), as in PageSectionProps; absent
+   * is "backend". `meta.renders` keeps a backend-only section (pricing, a
+   * sign-in strip) off a "local" shell with `ctx.dataMode !== "local"`.
+   */
+  dataMode?: SiteDataMode;
 }
 
 export type PageSectionComponent = ComponentType<PageSectionProps>;

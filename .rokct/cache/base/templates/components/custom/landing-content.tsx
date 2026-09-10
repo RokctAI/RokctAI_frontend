@@ -89,6 +89,7 @@ export function LandingContent({
           session={session}
           menuItems={menu.items}
           groups={menu.groups}
+          megaLabel={menu.megaLabel}
           actions={menu.actions}
         />
         <main className="flex-1">

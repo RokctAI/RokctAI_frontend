@@ -137,6 +137,7 @@ migrate_working_dir/
 /app/actions/base/admin/settings.ts
 /app/actions/base/admin/system.ts
 /app/actions/base/landing.ts
+/app/actions/base/legal.ts
 /app/actions/base/status.ts
 /app/actions/booking/booking.ts
 /app/actions/comms/whatsapp.ts
@@ -689,6 +690,7 @@ migrate_working_dir/
 /components/custom/landing/hero-sections.ts
 /components/custom/landing/landing-config.ts
 /components/custom/landing/landing-page.ts
+/components/custom/landing/legal-links.ts
 /components/custom/landing/network-sites.ts
 /components/custom/landing/network-strip.ts
 /components/custom/landing/page-sections.ts
@@ -714,9 +716,11 @@ migrate_working_dir/
 /components/custom/pricing.tsx
 /components/custom/right-plane.tsx
 /components/custom/session-provider.tsx
+/components/custom/site-theme.tsx
 /components/custom/social-section.client.tsx
 /components/custom/submit-button.tsx
 /components/custom/testimonials-section.tsx
+/components/custom/theme-provider.client.tsx
 /components/custom/use-scroll-to-bottom.ts
 /components/custom/use-window-size.tsx
 /components/custom/weather.tsx
@@ -841,6 +845,12 @@ migrate_working_dir/
 /lib/dummy-flight-data.ts
 /lib/mock-conversations.ts
 /lib/platform/validators/orders/orders.ts
+/lib/site-data/generate.mjs
+/lib/site-data/generated.ts
+/lib/site-data/kinds.ts
+/lib/site-data/read-site-data.ts
+/lib/site-data/site-theme.ts
+/lib/site-data/validate.mjs
 /middleware.ts
 /public/brand/marks/app-gallery.svg
 /public/brand/marks/app-store.svg

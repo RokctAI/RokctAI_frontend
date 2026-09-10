@@ -37,6 +37,7 @@ import {
   SECTION_ENTRY_CONTRACT,
   arrangeLandingPage,
   describeMetaProblem,
+  dropBackendOnlyActions,
   fallbackSectionMeta,
   isClientReference,
   loadPageSections,
@@ -329,7 +330,7 @@ describe('arrangeLandingPage', () => {
 
   it('answers an empty menu when nothing is registered', () => {
     const page = arrangeLandingPage([section('a')], CTX, null);
-    assert.deepEqual(page.menu, { items: [], groups: [], actions: [] });
+    assert.deepEqual(page.menu, { items: [], groups: [], actions: [], megaLabel: null });
   });
 
   it('joins every present section\'s rootClass in page order, trimmed; "" when none', () => {
@@ -428,5 +429,31 @@ describe('resolveHeroWordmark', () => {
   it('answers the whole name for "stem" when it has no stem', () => {
     assert.deepEqual(resolveHeroWordmark('stem', 'acme'), { text: 'acme', name: 'acme' });
     assert.deepEqual(resolveHeroWordmark('stem', '.acme'), { text: '.acme', name: '.acme' });
+  });
+});
+
+// base_sdk 1.35.0: a "local" shell (composer.json "data": "local") has no
+// backend, so the header actions that lead to the sign-in / sign-up routes
+// are dropped from the resolved menu; every other mode keeps them all.
+describe('dropBackendOnlyActions (1.35.0)', () => {
+  const actions = [
+    { id: 'login', label: 'Sign in', href: LANDING_CONFIG.loginUrl },
+    { id: 'signup', label: 'Get started', href: LANDING_CONFIG.signupUrl, variant: 'primary' as const },
+    { id: 'contact', label: 'Contact', href: '/contact' },
+  ];
+
+  it('drops the sign-in and sign-up actions in local mode only', () => {
+    assert.deepEqual(dropBackendOnlyActions(actions, 'local').map((a) => a.id), ['contact']);
+    assert.deepEqual(dropBackendOnlyActions(actions, 'backend').map((a) => a.id), ['login', 'signup', 'contact']);
+    assert.deepEqual(dropBackendOnlyActions(actions, 'hybrid').map((a) => a.id), ['login', 'signup', 'contact']);
+    assert.deepEqual(dropBackendOnlyActions(actions, undefined).map((a) => a.id), ['login', 'signup', 'contact']);
+  });
+
+  it('is applied by the arrangement through ctx.dataMode', () => {
+    const menu = { items: [], groups: [], actions };
+    const local = arrangeLandingPage([section('a')], { plans: [], dataMode: 'local' }, menu);
+    assert.deepEqual(local.menu.actions.map((a) => a.id), ['contact']);
+    const backend = arrangeLandingPage([section('a')], { plans: [] }, menu);
+    assert.deepEqual(backend.menu.actions.map((a) => a.id), ['login', 'signup', 'contact']);
   });
 });

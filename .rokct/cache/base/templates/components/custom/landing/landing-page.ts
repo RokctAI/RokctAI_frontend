@@ -279,13 +279,42 @@ export function arrangeLandingPage(
     .map((s) => s.meta.rootClass?.trim() ?? "")
     .filter((c) => c.length > 0)
     .join(" ");
+  const menu = resolveHeaderMenu(headerMenu, navItems);
   return {
     overlays,
     flow,
     navItems,
-    menu: resolveHeaderMenu(headerMenu, navItems),
+    menu: { ...menu, actions: dropBackendOnlyActions(menu.actions, ctx.dataMode) },
     rootClass,
   };
+}
+
+/**
+ * The 1.35.0 `local` rule for the header's DECLARED call-to-action
+ * buttons (a home SDK's `HeaderMenu.actions`): a shell that declares
+ * `"data": "local"` has no backend, so an action that leads to the
+ * sign-in or sign-up route (the `loginUrl` / `signupUrl` of
+ * LANDING_CONFIG, the routes auth_sdk would serve) is dead surface and is
+ * dropped. Every other action stays; nothing changes for "backend" and
+ * "hybrid". Applied by [arrangeLandingPage] to the resolved menu, so the
+ * header component itself is untouched.
+ *
+ * TODO(base 1.36.0 merge): the header's OWN "Log in" / "Sign up" pair
+ * (components/custom/header.tsx, the `auth` element drawn for a visitor
+ * with no session from the `loginUrl` / `signupUrl` props that
+ * landing-content.tsx passes) is not a declared action, so this rule does
+ * not reach it, and those two files belong to the 1.36.0 header branch.
+ * When that branch merges, header.tsx skips the pair when
+ * `siteDataMode() === "local"` (lib/site-data/read-site-data.ts; or a
+ * `dataMode` prop landing-content.tsx passes from the page).
+ */
+export function dropBackendOnlyActions(
+  actions: ResolvedHeaderMenu["actions"],
+  dataMode: PageSectionContext["dataMode"],
+): ResolvedHeaderMenu["actions"] {
+  if (dataMode !== "local") return actions;
+  const backendOnly = new Set([LANDING_CONFIG.loginUrl, LANDING_CONFIG.signupUrl]);
+  return actions.filter((action) => !backendOnly.has(action.href));
 }
 
 /** What app/landing/page.tsx awaits: every registry loaded and the page arranged. */

@@ -53,6 +53,8 @@ import {
   type LoadedSection,
 } from "@/components/custom/landing/landing-page";
 import type { LandingNavItem } from "@/components/custom/landing/landing-config";
+import { siteDataMode } from "@/lib/site-data/read-site-data";
+import type { SiteDataMode } from "@/lib/site-data/kinds";
 
 export const dynamic = "force-dynamic";
 
@@ -80,11 +82,13 @@ function RegisteredSections({
   plans,
   nav,
   session,
+  dataMode,
 }: {
   sections: LoadedSection[];
   plans: LandingPlan[];
   nav: LandingNavItem[];
   session?: unknown;
+  dataMode: SiteDataMode;
 }) {
   return (
     <>
@@ -97,6 +101,7 @@ function RegisteredSections({
             session={session}
             plans={plans}
             nav={nav}
+            dataMode={dataMode}
           />
           {/* Empty anchors for the section's extra nav entries. */}
           {entries.slice(1).map((item) => (
@@ -110,13 +115,20 @@ function RegisteredSections({
 
 export default async function LandingPage() {
   const session = await getPlatformSession();
+  // The shell's data mode (1.35.0; composer.json "data", bundled at build
+  // time). A "local" shell has no backend: its plans are never fetched
+  // (the empty list every section already handles), and the arrangement
+  // drops the header's sign-in / sign-up buttons.
+  const dataMode = siteDataMode();
   let plans: LandingPlan[] = [];
-  try {
-    plans = await getLandingPlans();
-  } catch (e) {
-    console.error("[landing] prefetch error:", e);
+  if (dataMode !== "local") {
+    try {
+      plans = await getLandingPlans();
+    } catch (e) {
+      console.error("[landing] prefetch error:", e);
+    }
   }
-  const page = await resolveLandingPage({ plans, session });
+  const page = await resolveLandingPage({ plans, session, dataMode });
   return (
     <LandingContent
       session={session}
@@ -128,6 +140,7 @@ export default async function LandingPage() {
           plans={plans}
           nav={page.navItems}
           session={session}
+          dataMode={dataMode}
         />
       }
       hero={
@@ -142,6 +155,7 @@ export default async function LandingPage() {
           plans={plans}
           nav={page.navItems}
           session={session}
+          dataMode={dataMode}
         />
       }
     />

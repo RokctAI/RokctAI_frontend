@@ -90,10 +90,22 @@
 // its name, and an undotted icon-less name still folds to the 1.28.0 tile.
 //
 // Since 1.31.0 the code beside a stem is sized with the stem
-// ([BRAND_STEM_CODE_FONT_SIZE]: its 36px, or the stem's size where that
+// ([BRAND_STEM_CODE_FONT_SIZE]: its cap, or the stem's size where that
 // is smaller) and laid out as the stem is, so on a phone it sits on the
 // stem's baseline and is never larger than the wordmark - as the code is
 // never larger than the 44px mark it sits beside on rokct.ai.
+//
+// Since 1.36.0 the code beside a STEM is capped at the size rokct.ai's
+// ORIGINAL header rendered its code at: the superscript scale of its
+// branding (BRAND_CODE_SCALE, 0.28) of the 44px mark - BRAND_CODE_FONT_SIZE,
+// about 12px - not the 36px that header named inline and then overrode
+// with the branding cache's style (Ray, 2026-09-10: "za in supa is big,
+// look at one in rokct, original one"). The code beside a MARK or a tile
+// is byte-for-byte the 1.24.0 code - rokct.ai's renders exactly as it
+// did (Ray: "if i merge that one it will change country code in rokct to
+// wrong one"); only the stem branch, which no mark shell reaches, takes
+// the new cap. The trigger word of the groups panel may also be the
+// menu's own since 1.36.0 (`megaLabel`, carried through to HeaderMenuNav).
 //
 // The public API is the one the two shells' own headers had, so the pages
 // that already render <Header> (the auth pages, status, careers) compile
@@ -166,6 +178,12 @@ export interface HeaderProps {
   groups?: HeaderMenuResolvedGroup[];
   /** The call-to-action buttons, as the home SDK declared them. */
   actions?: HeaderMenuAction[];
+  /**
+   * The groups panel's trigger word, as resolveHeaderMenu() answers it
+   * (1.36.0): the menu's declared `megaLabel`, or null for the first
+   * group's label. Read only with `groups`.
+   */
+  megaLabel?: string | null;
   /**
    * The page's live nav, used only when the header loads the menu itself
    * (no menuItems/groups/actions given) to resolve anchors. A page without
@@ -364,10 +382,12 @@ function CollapsingBrand({
   // The stem rule is asked first: a dotted name never reaches the tile.
   const stem = brandFoldsToStem(brand, PLATFORM_NAME) ? brandStemOf(PLATFORM_NAME) : null;
   // Beside a stem (1.31.0) the code is laid out as the stem is - centred,
-  // leading-none, the same top padding - at the stem's size or the 36px
+  // leading-none, the same top padding - at the stem's size or the code's
   // cap, whichever is smaller (BRAND_STEM_CODE_FONT_SIZE, with the same
   // --brand-chars), so it sits on the stem's baseline and never outgrows
-  // it on a phone. Beside a mark or a tile it is the 1.24.0 code, untouched.
+  // it on a phone (1.36.0: that cap is the original header's superscript
+  // size, about 12px, no longer 36px). Beside a mark or a tile it is the
+  // 1.24.0 code, untouched: rokct.ai's renders exactly as it did.
   const codeClassName =
     stem !== null
       ? "ml-1 inline-block self-center pt-0.5 font-medium leading-none text-foreground transition-all duration-500 ease-in-out"
@@ -519,6 +539,7 @@ export function Header({
   openSignupPopup,
   menuItems: menuItemsProp,
   groups: groupsProp,
+  megaLabel: megaLabelProp,
   actions: actionsProp,
   nav,
 }: HeaderProps) {
@@ -552,6 +573,8 @@ export function Header({
   const menuItems = menuItemsProp ?? loaded?.items ?? [];
   const groups = groupsProp ?? loaded?.groups ?? [];
   const actions = actionsProp ?? loaded?.actions ?? [];
+  // 1.36.0: the trigger word rides with the groups it names.
+  const megaLabel = groupsProp !== undefined ? (megaLabelProp ?? null) : (loaded?.megaLabel ?? null);
 
   const user = (session as { user?: { email?: string; name?: string } } | null)
     ?.user;
@@ -614,6 +637,7 @@ export function Header({
     <HeaderMenuNav
       items={menuItems}
       groups={groups}
+      megaLabel={megaLabel}
       className="hidden lg:flex"
     />
   );

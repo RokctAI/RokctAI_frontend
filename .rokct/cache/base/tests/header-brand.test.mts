@@ -26,6 +26,9 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
 import {
+  BRAND_CODE_FONT_SIZE,
+  BRAND_CODE_SCALE,
+  BRAND_MARK_SIZE_PX,
   BRAND_STEM_CODE_FONT_SIZE,
   BRAND_STEM_FONT_SIZE,
   DEFAULT_BRAND_COLLAPSE_DELAY_MS,
@@ -37,9 +40,11 @@ import {
   headerBrandNeedsCopy,
   isGeneratedBrandIcon,
   loadHeaderBrand,
+  megaTriggerLabel,
   resolveHeaderBrand,
   resolveHeaderBrandCollapse,
   resolveHeaderMenu,
+  resolveHeaderMenuGroupLayout,
 } from './header-menu.ts';
 import { setRegisteredIcon } from './landing-site-metadata.ts';
 
@@ -499,42 +504,56 @@ describe('BRAND_STEM_CODE_FONT_SIZE: the code beside a stem never outgrows it (1
     return Math.min(cap, ((slope / 100) * vw + offset) / (chars * emPerChar));
   }
 
+  /** The cap in px: the original superscript scale of the 44px mark (1.36.0). */
+  const CAP = BRAND_MARK_SIZE_PX * BRAND_CODE_SCALE;
+
   /** What the rule computes: the code's font size in px for `chars` at `vw`. */
   function codePx(chars: number, vw: number): number {
-    const m = /^min\((\d+)px, (.+)\)$/.exec(BRAND_STEM_CODE_FONT_SIZE);
+    const m = /^min\(calc\((\d+)px \* ([\d.]+)\), (.+)\)$/.exec(BRAND_STEM_CODE_FONT_SIZE);
     assert.ok(m, BRAND_STEM_CODE_FONT_SIZE);
-    assert.equal(m[2], BRAND_STEM_FONT_SIZE);
-    return Math.min(Number(m[1]), stemPx(chars, vw));
+    assert.equal(m[3], BRAND_STEM_FONT_SIZE);
+    return Math.min(Number(m[1]) * Number(m[2]), stemPx(chars, vw));
   }
 
-  it('is the 36px code capped at the stem rule, pure CSS over the same --brand-chars', () => {
+  it('is the original superscript size capped at the stem rule, pure CSS over the same --brand-chars (1.36.0)', () => {
+    // rokct.ai's original header: a 44px mark, and the branding cache's
+    // 0.28em superscript laid over the code span - about 12px.
+    assert.equal(BRAND_MARK_SIZE_PX, 44);
+    assert.equal(BRAND_CODE_SCALE, 0.28);
+    assert.equal(BRAND_CODE_FONT_SIZE, 'calc(44px * 0.28)');
+    assert.ok(Math.abs(CAP - 12.32) < 1e-9, String(CAP));
     assert.equal(
       BRAND_STEM_CODE_FONT_SIZE,
-      'min(36px, min(60px, calc((20vw + 140px) / (var(--brand-chars) * 0.6))))',
+      'min(calc(44px * 0.28), min(60px, calc((20vw + 140px) / (var(--brand-chars) * 0.6))))',
     );
-    assert.equal(BRAND_STEM_CODE_FONT_SIZE, `min(36px, ${BRAND_STEM_FONT_SIZE})`);
+    assert.equal(BRAND_STEM_CODE_FONT_SIZE, `min(${BRAND_CODE_FONT_SIZE}, ${BRAND_STEM_FONT_SIZE})`);
+    assert.ok(!BRAND_STEM_CODE_FONT_SIZE.includes('36px'), 'the 36px fallback is gone from the stem branch');
   });
 
-  it('where the stem is 36px or larger the code keeps its 36px (5 letters at 60px; 17 characters at 1280)', () => {
+  it('where the stem is at least the cap the code is the cap: 5 letters at 60px; 17 characters at 1280, 768 and 390', () => {
     assert.equal(stemPx(5, 1280), 60);
-    assert.equal(codePx(5, 1280), 36);
-    assert.ok(stemPx(17, 1280) > 36, String(stemPx(17, 1280)));
-    assert.equal(codePx(17, 1280), 36);
-  });
-
-  it('where the stem is smaller the code is the stem\'s size (17 characters at 390 and 768)', () => {
-    for (const vw of [390, 768]) {
-      assert.ok(stemPx(17, vw) < 36, `${vw}: ${stemPx(17, vw)}`);
-      assert.equal(codePx(17, vw), stemPx(17, vw));
+    assert.equal(codePx(5, 1280), CAP);
+    for (const vw of [390, 768, 1280]) {
+      assert.ok(stemPx(17, vw) > CAP, `${vw}: ${stemPx(17, vw)}`);
+      assert.equal(codePx(17, vw), CAP);
     }
-    assert.ok(codePx(17, 390) > 20, 'still larger than the still brand\'s text-xl');
+    // Old (1.31.0) vs new at the three widths for a 17-character name:
+    // 1280: 36 -> 12.32; 768: 28.78 -> 12.32; 390: 21.37 -> 12.32.
+    assert.ok(Math.abs(stemPx(17, 1280) - 38.82) < 0.01, String(stemPx(17, 1280)));
+    assert.ok(Math.abs(stemPx(17, 768) - 28.78) < 0.01, String(stemPx(17, 768)));
+    assert.ok(Math.abs(stemPx(17, 390) - 21.37) < 0.01, String(stemPx(17, 390)));
   });
 
-  it('never larger than the stem, never larger than 36px, for any name at any width', () => {
-    for (const chars of [1, 5, 10, 17, 30]) {
+  it('where the stem is smaller than the cap the code is the stem\'s size (a name too long for the bar)', () => {
+    assert.ok(stemPx(60, 320) < CAP, String(stemPx(60, 320)));
+    assert.equal(codePx(60, 320), stemPx(60, 320));
+  });
+
+  it('never larger than the stem, never larger than the cap, for any name at any width', () => {
+    for (const chars of [1, 5, 10, 17, 30, 60]) {
       for (const vw of [320, 390, 768, 1024, 1280, 1920]) {
         assert.ok(codePx(chars, vw) <= stemPx(chars, vw), `${chars}@${vw}`);
-        assert.ok(codePx(chars, vw) <= 36, `${chars}@${vw}`);
+        assert.ok(codePx(chars, vw) <= CAP, `${chars}@${vw}`);
       }
     }
   });
@@ -571,5 +590,70 @@ describe('BRAND_STEM_CODE_FONT_SIZE: the code beside a stem never outgrows it (1
     const wordmark = header.slice(header.indexOf('function BrandStemWordmark('), header.indexOf('function BrandBlock('));
     assert.ok(!wordmark.includes('BRAND_STEM_CODE_FONT_SIZE'));
     assert.equal(header.match(/fontSize: BRAND_STEM_CODE_FONT_SIZE/g)?.length, 1);
+  });
+});
+
+describe('mega menu layout: a row group and the declared trigger word (1.36.0)', () => {
+  const nav = [
+    { id: 'sessions', label: 'Sessions' },
+    { id: 'subjects', label: 'Subjects' },
+  ];
+  const apps = {
+    id: 'apps',
+    label: 'Get the app',
+    layout: 'row' as const,
+    items: [
+      { id: 'a', label: 'A', href: '/a', description: 'one', icon: 'smartphone' as const },
+      { id: 'b', label: 'B', href: '/b', description: 'two', icon: 'smartphone' as const },
+      { id: 'c', label: 'C', href: '/c', description: 'three', icon: 'box' as const },
+    ],
+  };
+  const explore = { id: 'explore', label: 'Explore', items: [{ anchor: 'sessions' }, { anchor: 'subjects' }] };
+
+  it('resolveHeaderMenuGroupLayout: "row" when asked for, "column" for anything else', () => {
+    assert.equal(resolveHeaderMenuGroupLayout('row'), 'row');
+    assert.equal(resolveHeaderMenuGroupLayout('column'), 'column');
+    assert.equal(resolveHeaderMenuGroupLayout(undefined), 'column');
+    assert.equal(resolveHeaderMenuGroupLayout(null), 'column');
+    assert.equal(resolveHeaderMenuGroupLayout('grid' as unknown as 'row'), 'column');
+  });
+
+  it('a resolved group carries its layout, defaulted to "column"', () => {
+    const menu = resolveHeaderMenu({ groups: [apps, explore] }, nav);
+    assert.deepEqual(menu.groups.map((g) => [g.id, g.layout]), [['apps', 'row'], ['explore', 'column']]);
+    assert.equal(menu.groups[0].items.length, 3);
+  });
+
+  it('megaLabel wins over the first group\'s label; without it the first group\'s label is the trigger', () => {
+    const declared = resolveHeaderMenu({ megaLabel: 'Explore', groups: [apps, explore] }, nav);
+    assert.equal(declared.megaLabel, 'Explore');
+    assert.equal(megaTriggerLabel(declared), 'Explore');
+    assert.equal(declared.groups[0].label, 'Get the app');
+    const undeclared = resolveHeaderMenu({ groups: [apps, explore] }, nav);
+    assert.equal(undeclared.megaLabel, null);
+    assert.equal(megaTriggerLabel(undeclared), 'Get the app');
+    const blank = resolveHeaderMenu({ megaLabel: '   ', groups: [explore] }, nav);
+    assert.equal(blank.megaLabel, null);
+    assert.equal(megaTriggerLabel(blank), 'Explore');
+    assert.equal(megaTriggerLabel(resolveHeaderMenu({ megaLabel: 'Explore' }, nav)), null);
+    assert.equal(resolveHeaderMenu(null, nav).megaLabel, null);
+  });
+
+  it('the panel renders a row group\'s items in ONE row container and reads the declared word', () => {
+    const partials = readFileSync(new URL('./header-menu.tsx', import.meta.url), 'utf8');
+    const items = partials.slice(partials.indexOf('function PanelItems('), partials.indexOf('function DesktopMegaMenu('));
+    assert.ok(items.includes('data-layout={layout}'));
+    assert.ok(items.includes('? "flex flex-col gap-3 md:flex-row md:items-stretch"'));
+    assert.ok(items.includes('className={row ? "min-w-0 flex-1" : undefined}'));
+    const menu = partials.slice(partials.indexOf('function DesktopMegaMenu('), partials.indexOf('export interface HeaderMenuNavProps'));
+    assert.ok(menu.includes('const label = megaTriggerLabel({ groups, megaLabel });'));
+    assert.ok(menu.includes('<span>{label}</span>'));
+    assert.ok(!menu.includes('<span>{lead.label}</span>'));
+    assert.ok(menu.includes('<PanelItems items={lead.items} layout={lead.layout} onNavigate={close} />'));
+    assert.ok(menu.includes('<PanelItems items={group.items} layout={group.layout} onNavigate={close} />'));
+    // A row lead widens the lead column; a stacked lead keeps its 300px.
+    assert.ok(partials.includes('const LEAD_ROW_WIDTH = "w-[58%] shrink-0";'));
+    assert.ok(menu.includes(': "w-[300px] shrink-0";'));
+    assert.ok(partials.includes('{groups.length > 0 && <DesktopMegaMenu groups={groups} megaLabel={megaLabel} />}'));
   });
 });
