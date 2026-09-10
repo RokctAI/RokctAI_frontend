@@ -1,5 +1,66 @@
 # Changelog
 
+## 1.17.0
+
+Requires base_sdk >= 1.27.0 (the `"section"` landing placement of the
+network strip and its once-per-page rule) and auth_sdk >= 1.7.0 as before.
+Against base_sdk 1.23.0-1.26.0 the registry's placement type rejects
+`"section"` and `networkStripRendersAt` has no `"section"` surface, so this
+version must not be composed over an older base.
+
+* The logos section is rokct.ai's "Trusted by" row. Ray, 2026-09-09: "we
+  now have two trusted by instead of using the logos section rokct had",
+  and "logos should not lose function and its look". rokct.ai's landing
+  page showed base's strip under the hero (`landing: "afterHero"`) AND in
+  the host footer, which the shell's layout draws on `/landing` too
+  (`footer: true`). So:
+  * `components/custom/logos.tsx` keeps its marquee - the same section,
+    the same eyebrow, the same track (grayscale at 70%, full colour on
+    hover, the run paused while hovered, three lanes shifted by a third
+    every 20s through the host's `marquee` keyframes), the same item box -
+    and its items are base's resolved network sites
+    (`loadResolvedNetworkStrip` from `components/custom/network-strip.tsx`:
+    the shell itself left out by host, base's order, minus what
+    `agent-network-strip.ts` hides) under base's heading, "Trusted by". A
+    site with a logo draws it (its dark twin in dark mode; its name if the
+    image will not load), a wordmark site draws its name. Every box is a
+    link to the site's own origin, `target="_blank" rel="noopener"`, and
+    nothing else: no query string, no click handler, no measurement.
+  * `components/custom/landing/agent-logos.ts`, the pure track rule: a
+    lane repeats the list until it is at least eight items long
+    (`LOGOS_LANE_MIN`), the track is that lane three times
+    (`LOGOS_TRACK_LANES`), so a two-site list still fills a wide viewport
+    and the -33.33% shift loops seamlessly. Executed under node.
+  * `agent-network-strip.ts` registers `placement: { landing: "section",
+    footer: true }`. base's `afterHero` and `beforeFooter` surfaces draw
+    nothing on `/landing`, base's once-per-page rule keeps the footer
+    strip off that route, and every other page - the opportunities pages,
+    careers, legal, status - still gets the footer strip through
+    rokctai_frontend's `footer.tsx` (`<NetworkStrip surface="footer" />`
+    since host #148). One "Trusted by" per page.
+  * `AGENT_LANDING_CONFIG.logos` and the `LogosConfig` type are gone. The
+    block was `null` since 1.13.0; the list it used to hold - Walmart,
+    Cisco, Netflix, Pinterest, Zoom, Sony, Ebay, Uber, hotlinked from a
+    chat template's CDN - was never Ray's, and the section has no copy of
+    its own now: the items are base's list, the heading base's default.
+  * `mask-image-linear-gradient` on the track wrapper is kept as it was.
+    No stylesheet in the host or in base defines it - the fade has been a
+    no-op class since the section was written - so the look is unchanged;
+    flagged here, not fixed.
+  * Manifest: version 1.17.0; `agent-logos.ts` installed; requires
+    `components/custom/network-strip.tsx` and
+    `components/custom/landing/network-sites.ts` beside the registry;
+    base floor 1.27.0.
+* Tests: `test_logos_section_draws_the_network_sites` (the section reads
+  base's resolved strip, asks for the `"section"` surface, links each
+  site's origin with `target="_blank" rel="noopener"`, carries no
+  third-party host, no tracking word and no click handler, keeps the
+  marquee classes and the 20s run, and the config has no `logos` block),
+  `test_network_strip_says_where_and_nothing_more` names `"section"`,
+  `test_floors_are_stated` names 1.27.0, `network-strip.test.mts` asserts
+  the placement and `logos-track.test.mts` executes the lane and track
+  rule.
+
 ## 1.16.0
 
 Requires base_sdk >= 1.26.0 (the platform marks under public/brand/marks/,

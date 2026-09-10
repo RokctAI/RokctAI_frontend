@@ -27,6 +27,17 @@
 // goes - after the hero, before the footer anchor of the landing page, in
 // the footer row, or not at all.
 //
+// Since 1.27.0 the strip renders ONCE PER PAGE (Ray, 2026-09-09, on
+// rokct.ai showing two "Trusted by" rows: the shell's layout draws its
+// footer on every route, /landing included, so a landing placement and
+// `footer: true` both landed on the same page). The footer surface yields
+// on the landing route whenever the landing placement is not "none" - see
+// [networkStripRendersAt] and [isLandingRoute]. And a home SDK whose own
+// page section already has the look Ray wants for the row (rokct.ai's
+// logos marquee) names the landing placement "section": the section draws
+// the resolved strip itself, base's two landing surfaces stay empty and
+// the footer still yields on the landing route.
+//
 // A home SDK installs a module whose default export is a
 // NetworkStripConfig and registers it with ONE line at the marker below
 // through its manifest integrations:
@@ -58,11 +69,16 @@ import {
 
 /**
  * Where on the landing page the strip renders: right under the hero,
- * right before the footer anchor (after every registered section), or
- * nowhere on that page. The default is "none": the landing page's
- * sections are the home SDK's, and the strip joins them only when asked.
+ * right before the footer anchor (after every registered section), inside
+ * a page section the home SDK registered and draws itself ("section",
+ * since 1.27.0: that section reads the resolved strip through
+ * components/custom/network-strip.tsx's loadResolvedNetworkStrip and asks
+ * [networkStripRendersAt] for the "section" surface; base's two landing
+ * surfaces then draw nothing), or nowhere on that page. The default is
+ * "none": the landing page's sections are the home SDK's, and the strip
+ * joins them only when asked.
  */
-export type NetworkStripLandingPlacement = "afterHero" | "beforeFooter" | "none";
+export type NetworkStripLandingPlacement = "afterHero" | "beforeFooter" | "section" | "none";
 
 /** The surfaces the strip can be drawn on; the component names one per render. */
 export type NetworkStripSurface = NetworkStripLandingPlacement | "footer";
@@ -73,7 +89,9 @@ export interface NetworkStripPlacement {
   /**
    * Whether the footer row (components/custom/footer-chrome.tsx) carries
    * the strip above the copyright line; default true, so every shell's
-   * footer shows the network minus itself with nothing registered.
+   * footer shows the network minus itself with nothing registered. On the
+   * landing route the footer surface yields to a landing placement other
+   * than "none" (since 1.27.0): one strip per page.
    */
   footer?: boolean;
 }
@@ -148,17 +166,44 @@ export function resolveNetworkStrip(
 }
 
 /**
- * True when the strip belongs on `surface`: the footer when
- * `placement.footer` is on, a landing surface when it is the one
- * `placement.landing` names ("none" names neither), and never with no
- * site left to draw.
+ * The landing host's route (app/landing/page.tsx), the one page that has
+ * landing surfaces. The shell's layout footer is on it too, which is why
+ * [networkStripRendersAt] must know whether a render is on it.
+ */
+export const LANDING_ROUTE = "/landing";
+
+/**
+ * True when `pathname` (next/navigation's usePathname, or any path) is
+ * the landing route, trailing slashes ignored; false for null, an empty
+ * value and every other route, including the routes under it.
+ */
+export function isLandingRoute(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  const path = pathname.replace(/\/+$/, "") || "/";
+  return path === LANDING_ROUTE;
+}
+
+/**
+ * True when the strip belongs on `surface`: a landing surface when it is
+ * the one `placement.landing` names ("none" names neither, "section"
+ * names only the section a home SDK draws itself), the footer when
+ * `placement.footer` is on - except on the landing route while the
+ * landing placement is not "none", where the page already carries the
+ * strip (since 1.27.0: once per page) - and never with no site left to
+ * draw. `onLandingPage` is [isLandingRoute] of the current pathname; the
+ * default false is any other route, where the footer surface is the only
+ * one there is.
  */
 export function networkStripRendersAt(
   strip: Pick<ResolvedNetworkStrip, "sites" | "placement">,
   surface: NetworkStripSurface,
+  onLandingPage = false,
 ): boolean {
   if (strip.sites.length === 0) return false;
-  if (surface === "footer") return strip.placement.footer;
+  if (surface === "footer") {
+    if (!strip.placement.footer) return false;
+    return !(onLandingPage && strip.placement.landing !== "none");
+  }
   if (surface === "none") return false;
   return strip.placement.landing === surface;
 }

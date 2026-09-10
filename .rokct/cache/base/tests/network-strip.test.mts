@@ -33,7 +33,9 @@ import {
 } from './network-sites.ts';
 import {
   DEFAULT_NETWORK_STRIP_HEADING,
+  LANDING_ROUTE,
   NETWORK_STRIP,
+  isLandingRoute,
   loadNetworkStrip,
   networkStripRendersAt,
   resolveNetworkStrip,
@@ -205,6 +207,61 @@ describe('networkStripRendersAt: where the strip draws', () => {
     assert.deepEqual(strip.sites, []);
     for (const surface of ['afterHero', 'beforeFooter', 'footer'] as const) {
       assert.equal(networkStripRendersAt(strip, surface), false, surface);
+    }
+  });
+});
+
+describe('isLandingRoute: the one route with landing surfaces', () => {
+  it('is /landing, trailing slashes ignored', () => {
+    assert.equal(LANDING_ROUTE, '/landing');
+    for (const path of ['/landing', '/landing/', '/landing//']) {
+      assert.equal(isLandingRoute(path), true, path);
+    }
+  });
+
+  it('is no other route, not the routes under it, not null', () => {
+    for (const path of [null, undefined, '', '/', '/landing/x', '/opportunities/grants/abc', '/careers', '/landingpage']) {
+      assert.equal(isLandingRoute(path), false, String(path));
+    }
+  });
+});
+
+describe('networkStripRendersAt: once per page (1.27.0)', () => {
+  it('nothing registered: the footer strip draws on every route, the landing route included', () => {
+    const strip = resolveNetworkStrip(null, 'rokct.ai');
+    assert.equal(networkStripRendersAt(strip, 'footer', false), true);
+    assert.equal(networkStripRendersAt(strip, 'footer', true), true);
+    assert.equal(networkStripRendersAt(strip, 'section', true), false);
+  });
+
+  it('a landing placement makes the footer yield on the landing route only', () => {
+    for (const landing of ['afterHero', 'beforeFooter', 'section'] as const) {
+      const strip = resolveNetworkStrip({ placement: { landing, footer: true } }, 'rokct.ai');
+      assert.equal(networkStripRendersAt(strip, 'footer', true), false, `${landing} on /landing`);
+      assert.equal(networkStripRendersAt(strip, 'footer', false), true, `${landing} elsewhere`);
+      assert.equal(networkStripRendersAt(strip, 'footer'), true, `${landing} default`);
+    }
+  });
+
+  it('"section" draws on the section surface alone, and base\'s two landing surfaces stay empty', () => {
+    const strip = resolveNetworkStrip({ placement: { landing: 'section' } }, 'rokct.ai');
+    assert.deepEqual(strip.placement, { landing: 'section', footer: true });
+    assert.equal(networkStripRendersAt(strip, 'section'), true);
+    assert.equal(networkStripRendersAt(strip, 'section', true), true);
+    assert.equal(networkStripRendersAt(strip, 'afterHero'), false);
+    assert.equal(networkStripRendersAt(strip, 'beforeFooter'), false);
+    assert.equal(networkStripRendersAt(strip, 'none'), false);
+    // The section is on the landing page, so the footer yields there.
+    assert.equal(networkStripRendersAt(strip, 'footer', true), false);
+    assert.equal(networkStripRendersAt(strip, 'footer', false), true);
+  });
+
+  it('footer false stays off everywhere, and the landing route never turns a surface on', () => {
+    const strip = resolveNetworkStrip({ placement: { landing: 'none', footer: false } }, 'supacharge.app');
+    for (const onLanding of [true, false]) {
+      for (const surface of ['afterHero', 'beforeFooter', 'section', 'footer', 'none'] as const) {
+        assert.equal(networkStripRendersAt(strip, surface, onLanding), false, `${surface} onLanding=${onLanding}`);
+      }
     }
   });
 });

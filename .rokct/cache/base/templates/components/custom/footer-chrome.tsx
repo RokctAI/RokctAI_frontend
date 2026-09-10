@@ -33,7 +33,11 @@
 // network, each a link, under "Trusted by"). It is drawn ABOVE the row,
 // inside the same fragment, so every footer that already ends with this
 // row shows the network minus itself with no edit; `networkStrip={false}`
-// is for a footer that places the strip itself.
+// is for a footer that places the strip itself. Since 1.27.0 the strip
+// renders once per page: on the landing route this footer surface yields
+// whenever the home SDK's landing placement is not "none" (the page
+// already carries the strip), and nothing here needs to know - the strip
+// reads the route itself.
 
 import React from "react";
 
