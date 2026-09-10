@@ -48,6 +48,10 @@ ACTIONS = os.path.join(AUTH_GROUP, "agent-register-actions.ts")
 HEADER_MENU = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-header-menu.ts")
 # 1.13.0: rokct.ai's say over base_sdk 1.23.0's network strip.
 NETWORK_STRIP = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-network-strip.ts")
+# 1.17.0: the logos marquee carries the strip on /landing; its pure track rule.
+LOGOS = os.path.join(TEMPLATES, "components", "custom", "logos.tsx")
+LOGOS_TRACK = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-logos.ts")
+LANDING_CONFIG = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-landing-config.ts")
 # 1.15.0: the Chrome Web Store mark on the hero's badge and the header's
 # extension button. 1.16.0: the files are base_sdk 1.26.0's, installed
 # under public/brand/marks/ on every host; this SDK names their paths and
@@ -67,12 +71,14 @@ STAGED = {
     "agent-header-menu.ts": HEADER_MENU,
     "agent-network-strip.ts": NETWORK_STRIP,
     "agent-hero-copy.ts": HERO_COPY,
+    "agent-logos.ts": LOGOS_TRACK,
 }
 NODE_SUITES = [
     "register-config.test.mts",
     "register-provision.test.mts",
     "network-strip.test.mts",
     "hero-copy.test.mts",
+    "logos-track.test.mts",
 ]
 
 # The two registry lines this SDK injects, exactly as auth_sdk's README
@@ -87,7 +93,7 @@ PROVISION_LINE = re.compile(
 
 # Words no copy or comment of this SDK's new files may carry.
 FORBIDDEN_WORDS = re.compile(r"\b(lorem|sample|demo|example)\b", re.I)
-NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS, NETWORK_STRIP, HERO_COPY]
+NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS, NETWORK_STRIP, HERO_COPY, LOGOS_TRACK]
 
 # 1.13.0: the network-strip registry line, in base's one-line contract.
 NETWORK_STRIP_LINE = re.compile(
@@ -221,6 +227,13 @@ class TestManifest(unittest.TestCase):
         self.assertIn("auth_sdk >= 1.7.0", comment["components/custom/auth/register-registry.ts"])
         self.assertIn("auth_sdk >= 1.7.0", comment["app/(auth)/register-provision.ts"])
         self.assertIn("auth_sdk >= 1.6.0", comment["app/(auth)/tenant-link.ts"])
+        # 1.17.0: the "section" placement is base_sdk 1.27.0's.
+        self.assertIn("base_sdk >= 1.27.0", read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.16.0")[0])
+        self.assertIn("1.27.0", comment["about"])
+        self.assertIn("base_sdk >= 1.27.0", comment["components/custom/landing/network-strip.ts"])
+        for key in ("components/custom/network-strip.tsx", "components/custom/landing/network-sites.ts"):
+            self.assertIn(key, self.manifest["requires"], key)
+            self.assertIn("base_sdk >= 1.23.0", comment[key], key)
 
     def test_changelog_leads_with_the_manifest_version(self):
         changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
@@ -439,19 +452,64 @@ class TestRegisterInjection(unittest.TestCase):
         # The unused tab style is flagged, never removed.
         self.assertIn("      telephony: `", config)
 
-    def test_landing_config_registers_no_logos(self):
-        # 1.13.0: the third-party logo wall is off; the section stays.
-        config = read(os.path.join(TEMPLATES, "components", "custom", "landing", "agent-landing-config.ts"))
-        self.assertIn("  logos: null,", config)
+    def test_logos_section_draws_the_network_sites(self):
+        """1.17.0 (Ray, 2026-09-09: "we now have two trusted by instead of
+        using the logos section rokct had"; "logos should not lose function
+        and its look"): logos.tsx keeps its marquee and draws base's
+        resolved network sites, each a link, under base's heading."""
+        logos = read(LOGOS)
+        self.assertIn('"use client";', logos)
+        # The items and the heading are base's, resolved once per module.
+        self.assertIn('import { loadResolvedNetworkStrip } from "@/components/custom/network-strip";', logos)
+        self.assertIn('if (!strip || !networkStripRendersAt(strip, "section")) return null;', logos)
+        self.assertIn("const track = logosTrack(strip.sites);", logos)
+        self.assertIn("{strip.heading}", logos)
+        self.assertIn('data-network-strip="section"', logos)
+        # Each box is a link to the site's origin and nothing more.
+        self.assertIn("href={site.url}", logos)
+        self.assertIn('target="_blank"', logos)
+        self.assertIn('rel="noopener"', logos)
+        self.assertIn("data-network-site={site.key}", logos)
+        body = re.sub(r"/\*.*?\*/", "", logos, flags=re.S)
+        body = re.sub(r"^\s*//.*$", "", body, flags=re.M)
+        body = re.sub(r"\{/\*.*?\*/\}", "", body, flags=re.S)
+        self.assertNotIn("http", body, "no URL of its own: the links are base's list")
+        for tracker in ("utm_", "?ref", "&ref", "onClick", "sendBeacon", "gtag", "dataLayer", "fbq", "analytics"):
+            self.assertNotIn(tracker, body, f"the section must not carry {tracker}")
+        for brand in ("Walmart", "Cisco", "Netflix", "Pinterest", "Zoom", "Sony", "Ebay", "Uber", "getmerlin", "cdn."):
+            self.assertNotIn(brand, body)
+        # The look and the function: the same section, eyebrow, track and box.
+        for needle in (
+            "py-12 border-y border-zinc-100 dark:border-zinc-900 overflow-hidden",
+            "text-sm font-semibold uppercase tracking-widest text-zinc-500",
+            "mask-image-linear-gradient group",
+            "opacity-70 grayscale hover:grayscale-0 transition-all duration-500 whitespace-nowrap animate-marquee group-hover:[animation-play-state:paused]",
+            'style={{ animationDuration: "20s" }}',
+            "h-8 w-24 md:h-12 md:w-40 flex items-center justify-center",
+            "object-contain",
+        ):
+            self.assertIn(needle, logos, needle)
+        self.assertIn("export const meta: PageSectionMeta = { order: 20, nav: [] };", logos)
+        # A logo draws with its dark twin, a wordmark or a broken image draws the name.
+        self.assertIn("const drawLogo = Boolean(site.logo) && !site.wordmark && !broken;", logos)
+        self.assertIn("{site.name}", logos)
+        # The config holds no logo list any more; the third-party wall is gone.
+        config = read(LANDING_CONFIG)
+        self.assertNotIn("LogosConfig", config)
+        self.assertNotIn("logos:", config.split("const AGENT_LANDING_CONFIG")[-1].replace("// No `logos` block", ""))
         code = re.sub(r"^\s*//.*$", "", config, flags=re.M)
-        self.assertNotIn("getmerlin", code.split("logos: null")[0].split("const AGENT_LANDING_CONFIG")[-1])
         for brand in ("Walmart", "Cisco", "Netflix", "Pinterest", "Zoom", "Sony", "Ebay", "Uber"):
             self.assertNotIn(brand, code)
-        logos = os.path.join(TEMPLATES, "components", "custom", "logos.tsx")
-        self.assertTrue(os.path.exists(logos), "logos.tsx is flagged, never removed")
-        self.assertIn("if (!config || config.logos.length === 0) return null;", read(logos))
+        # Installed: the section, its pure track rule, and base's files required.
         manifest = load_manifest()
-        self.assertIn("components/custom/logos.tsx", {i["to"] for i in manifest["installs"]})
+        targets = {i["to"] for i in manifest["installs"]}
+        self.assertIn("components/custom/logos.tsx", targets)
+        self.assertIn("components/custom/landing/agent-logos.ts", targets)
+        for req in ("components/custom/network-strip.tsx", "components/custom/landing/network-sites.ts",
+                    "components/custom/landing/network-strip.ts"):
+            self.assertIn(req, manifest["requires"])
+        # The track rule imports nothing, so node executes it as it is.
+        self.assertNotIn("import ", re.sub(r"^\s*//.*$", "", read(LOGOS_TRACK), flags=re.M))
 
     def test_network_strip_is_registered_where_base_looks(self):
         manifest = load_manifest()
@@ -465,12 +523,18 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertEqual(lines[0]["placeholder"], "// @rokct-sdk-network-strip-start")
         self.assertRegex(lines[0]["replacement"], NETWORK_STRIP_LINE)
         self.assertIn("components/custom/landing/network-strip.ts", manifest["requires"])
-        self.assertIn("base_sdk >= 1.23.0", manifest["_comment"]["components/custom/landing/network-strip.ts"])
+        # 1.17.0: the registry note names the "section" floor, 1.27.0.
+        self.assertIn("base_sdk >= 1.27.0", manifest["_comment"]["components/custom/landing/network-strip.ts"])
 
     def test_network_strip_says_where_and_nothing_more(self):
         src = read(NETWORK_STRIP)
-        self.assertIn('landing: "afterHero"', src)
+        # 1.17.0: the logos section carries the strip on /landing; the
+        # footer row everywhere else. Never afterHero beside footer: that
+        # was the two "Trusted by" rows.
+        self.assertIn('landing: "section"', src)
         self.assertIn("footer: true", src)
+        self.assertNotIn('landing: "afterHero"', src)
+        self.assertIn('landing?: "afterHero" | "beforeFooter" | "section" | "none";', src)
         body = re.sub(r"/\*.*?\*/", "", src, flags=re.S)
         body = re.sub(r"^\s*//.*$", "", body, flags=re.M)
         # No URL, no tracking word: the links are base's list, verbatim.

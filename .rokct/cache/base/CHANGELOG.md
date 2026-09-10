@@ -1,5 +1,39 @@
 # Changelog
 
+## 1.27.0
+
+* The network strip renders once per page. Ray, 2026-09-09, on rokct.ai:
+  "we now have two trusted by". The shell's layout draws its footer on
+  every route, `/landing` included, so a registered landing placement
+  (`afterHero`) and `footer: true` both landed on the same page - the
+  placement rule knew the surface, not the page. So:
+  * `networkStripRendersAt(strip, surface, onLandingPage = false)`: the
+    footer surface yields on the landing route whenever the landing
+    placement is not `"none"` (the page already carries the strip). Every
+    other route keeps the footer strip; a shell that registers nothing
+    (landing `"none"`, footer on) sees no change anywhere.
+  * `isLandingRoute(pathname)` and `LANDING_ROUTE = "/landing"` in
+    `components/custom/landing/network-strip.ts` - the pure half;
+    `components/custom/network-strip.tsx` reads `usePathname()` itself,
+    so neither `FooterChromeRow` nor a host footer that renders
+    `<NetworkStrip surface="footer" />` needs to know. A render outside
+    the App Router (`null` pathname) counts as any other route.
+  * A fourth landing placement, `"section"`: a page section the home SDK
+    registered draws the strip itself, in its own look (rokct.ai's logos
+    marquee, agent_sdk 1.17.0), reading `loadResolvedNetworkStrip()` and
+    asking `networkStripRendersAt(strip, "section")`; base's `afterHero`
+    and `beforeFooter` surfaces then draw nothing and the footer still
+    yields on `/landing`. `NetworkStripSurface` gains the value with it.
+  * Nothing about the list, the links or the heading changes: a link is
+    still the site's origin, no parameter, no handler.
+* Tests: `network-strip.test.mts` covers `isLandingRoute`, the footer
+  yielding on the landing route only while a landing placement is set,
+  the `"section"` surface, and the unchanged defaults;
+  `test_network_strip_registry_contract` names the four placements and the
+  two new exports, `test_network_strip_component_never_tracks` holds that
+  the component reads the route through `usePathname` and asks the pure
+  rule, and `test_network_strip_renders_once_per_page` reads the rule.
+
 ## 1.26.0
 
 * Base ships the platform brand marks itself. Ray, 2026-09-09, on the

@@ -40,11 +40,21 @@
 // The config and the shell's host are resolved ONCE per module and
 // rendered through next/dynamic the way the header renders its brand, so
 // the strip is server-rendered with the page and never pops in after it.
+//
+// Once per page (since 1.27.0): the body reads the current pathname, so
+// the footer surface - drawn by the shell's layout footer on every route,
+// the landing route included - yields on /landing whenever the landing
+// placement is not "none", and a home SDK's own section may carry the
+// strip there instead (placement "section"; it reads
+// loadResolvedNetworkStrip below and asks networkStripRendersAt for the
+// "section" surface).
 
 import React, { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 
 import {
+  isLandingRoute,
   loadNetworkStrip,
   networkStripRendersAt,
   resolveNetworkStrip,
@@ -155,7 +165,10 @@ export function NetworkStripBody({
   surface,
   className = "",
 }: NetworkStripProps & { strip: ResolvedNetworkStrip }) {
-  if (!networkStripRendersAt(strip, surface)) return null;
+  // The route decides whether the footer surface yields (once per page);
+  // null - a render outside the App Router - is any other route.
+  const pathname = usePathname();
+  if (!networkStripRendersAt(strip, surface, isLandingRoute(pathname))) return null;
   const spacing =
     surface === "footer"
       ? "py-6"
@@ -192,7 +205,8 @@ const ResolvedNetworkStripBody: React.ComponentType<NetworkStripProps> = dynamic
 
 /**
  * The strip for one surface. Renders nothing where the resolved placement
- * does not name that surface, or when no site is left to draw.
+ * does not name that surface, on the landing route for the footer surface
+ * while the page carries the strip itself, or when no site is left to draw.
  */
 export function NetworkStrip(props: NetworkStripProps) {
   return <ResolvedNetworkStripBody {...props} />;

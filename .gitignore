@@ -670,6 +670,7 @@ migrate_working_dir/
 /components/custom/landing/agent-hero-copy.ts
 /components/custom/landing/agent-hero-form.tsx
 /components/custom/landing/agent-landing-config.ts
+/components/custom/landing/agent-logos.ts
 /components/custom/landing/agent-network-strip.ts
 /components/custom/landing/agent-opportunities.tsx
 /components/custom/landing/agent-plans-query.ts

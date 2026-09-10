@@ -14,9 +14,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// agent_sdk 1.13.0: rokct.ai's say over base_sdk 1.23.0's network strip.
-// Run by tests/test_manifest.py against a staged copy of
-// components/custom/landing/agent-network-strip.ts.
+// agent_sdk 1.13.0: rokct.ai's say over base_sdk 1.23.0's network strip;
+// 1.17.0: the landing placement is "section" - the logos marquee carries
+// the strip on /landing (base_sdk 1.27.0). Run by tests/test_manifest.py
+// against a staged copy of components/custom/landing/agent-network-strip.ts.
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
@@ -24,8 +25,13 @@ import { describe, it } from 'node:test';
 import config from './agent-network-strip.ts';
 
 describe('agent-network-strip: what rokct.ai registers', () => {
-  it('puts the strip under the hero on /landing and in the footer row', () => {
-    assert.deepEqual(config.placement, { landing: 'afterHero', footer: true });
+  it('hands /landing to the logos section and keeps the footer row everywhere else', () => {
+    assert.deepEqual(config.placement, { landing: 'section', footer: true });
+  });
+
+  it('never names afterHero or beforeFooter: base would draw the strip twice on /landing', () => {
+    assert.notEqual(config.placement?.landing, 'afterHero');
+    assert.notEqual(config.placement?.landing, 'beforeFooter');
   });
 
   it('leaves the heading, the order and the hidden keys to base', () => {

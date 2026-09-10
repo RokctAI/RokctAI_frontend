@@ -1004,7 +1004,9 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertIn("// @rokct-sdk-network-strip-end", src)
         for needle in (
             "export interface NetworkStripConfig",
-            "export type NetworkStripLandingPlacement = \"afterHero\" | \"beforeFooter\" | \"none\";",
+            "export type NetworkStripLandingPlacement = \"afterHero\" | \"beforeFooter\" | \"section\" | \"none\";",
+            'export const LANDING_ROUTE = "/landing";',
+            "export function isLandingRoute(pathname: string | null | undefined): boolean",
             "export const NETWORK_STRIP: NetworkStripEntry[]",
             "export function resolveNetworkStrip(",
             "export function networkStripRendersAt(",
@@ -1041,6 +1043,28 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertIn("loadSiteMetadata()", src)
         self.assertNotIn("@/app/lib/site-metadata", src)
         self.assertIn('from "next/dynamic"', src)
+        # 1.27.0: the route is read here, once, and handed to the pure rule.
+        self.assertIn('import { usePathname } from "next/navigation";', src)
+        self.assertIn("const pathname = usePathname();", src)
+        self.assertIn("networkStripRendersAt(strip, surface, isLandingRoute(pathname))", src)
+
+    def test_network_strip_renders_once_per_page(self):
+        """1.27.0 (Ray, 2026-09-09: rokct.ai showed two "Trusted by" rows -
+        the landing placement and the layout footer on the same page). The
+        pure rule takes the page: the footer surface yields on the landing
+        route while a landing placement is set; a "section" placement is a
+        home SDK's own section drawing the strip. Executed by
+        test_network_strip_behaviour_under_node; the shape is held here."""
+        src = read(NETWORK_STRIP_REGISTRY)
+        self.assertIn("  onLandingPage = false,\n): boolean {", src)
+        self.assertIn('return !(onLandingPage && strip.placement.landing !== "none");', src)
+        self.assertIn('if (surface === "none") return false;', src)
+        # The default with nothing registered is unchanged: footer on, landing off.
+        self.assertRegex(src, re.compile(r'landing:\s*"none",\s*footer:\s*true', re.S))
+        # The footer row and the landing host need no route logic of their own.
+        self.assertNotIn("usePathname", read(FOOTER_CHROME))
+        self.assertNotIn("usePathname", read(LANDING_CONTENT))
+        self.assertIn('{networkStrip && <NetworkStrip surface="footer" />}', read(FOOTER_CHROME))
 
     def test_network_strip_surfaces_are_wired(self):
         # The footer hook: base has no footer component, the copyright row
@@ -1092,7 +1116,7 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
-        self.assertGreaterEqual(int(passed.group(1)), 18)
+        self.assertGreaterEqual(int(passed.group(1)), 24)
 
     # -- 1.26.0: the platform brand marks ------------------------------------
 

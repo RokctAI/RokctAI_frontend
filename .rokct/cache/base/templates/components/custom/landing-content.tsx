@@ -30,7 +30,9 @@
 // hero and hides with it. Since 1.23.0 the network strip
 // (components/custom/network-strip.tsx) has two surfaces here too - right
 // under the hero and right before the footer anchor - and draws on the
-// one the home SDK's registered placement names, or on neither.
+// one the home SDK's registered placement names, or on neither: "none",
+// or (since 1.27.0) "section", where a registered section of the home
+// SDK's own draws the strip in its own look.
 
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -220,8 +222,9 @@ export function LandingContent({
         <div style={{ display: searchActive ? "none" : undefined }}>
           {/* The network strip's two landing surfaces (since 1.23.0): the
               strip draws on the one its registered placement names, or on
-              neither - the default - and hides with the sections while the
-              hero shows search results. */}
+              neither - the default, and "section", where one of the
+              registered sections below carries it - and hides with the
+              sections while the hero shows search results. */}
           <NetworkStrip surface="afterHero" />
           <RegisteredSections
             sections={flow}

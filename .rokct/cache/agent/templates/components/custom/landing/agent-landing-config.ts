@@ -15,9 +15,11 @@
  */
 
 // Copy for rokctapp's landing page sections (this SDK's floating-nav,
-// logos, social, all-features, workflow, pricing, copied-pricing, faq and
+// social, all-features, workflow, pricing, copied-pricing, faq and
 // testimonials templates), which register themselves into base_sdk's
 // generic landing host through components/custom/landing/page-sections.ts.
+// The logos section (logos.tsx) has no copy here since 1.17.0: its items
+// are base's network sites and its heading base's "Trusted by".
 //
 // Ray, 2026-09-03: each home SDK holds its own landing page, the way a Dart
 // home SDK holds its profile screens - so the words, images, links and
@@ -53,11 +55,6 @@ export interface LandingLink {
 export interface LandingImage {
   src: string;
   alt: string;
-}
-
-export interface LogosConfig {
-  eyebrow: string;
-  logos: { name: string; url: string }[];
 }
 
 export interface SocialCard {
@@ -191,7 +188,6 @@ export interface TestimonialsConfig {
 }
 
 export interface AgentLandingConfig {
-  logos: LogosConfig | null;
   social: SocialConfig | null;
   features: FeaturesConfig | null;
   workflow: WorkflowConfig | null;
@@ -212,14 +208,11 @@ const ACTIVE_TAB =
   "data-[state=active]:text-white dark:data-[state=active]:text-black";
 
 export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
-  // 1.13.0: the logo wall is OFF (Ray, 2026-09-09: "everything served from
-  // another company cdn tells you is placeholder"). The eight marks this
-  // slot showed were hotlinked from a chat template's CDN; base_sdk 1.23.0's
-  // network strip - the products that run on rokct, under "Trusted by" -
-  // stands under the hero instead. logos.tsx stays registered and renders
-  // nothing on null: an unused surface is flagged, never removed.
-  logos: null,
-
+  // No `logos` block since 1.17.0: 1.13.0 turned the third-party logo wall
+  // off (Ray, 2026-09-09: "everything served from another company cdn
+  // tells you is placeholder") and 1.17.0 made logos.tsx the landing
+  // page's "Trusted by" row, drawing base's network sites; the section
+  // has no copy of its own to hold here.
   social: {
     badge: `${PLATFORM_NAME} Chrome Extension`,
     heading: "Stay social, not drained",

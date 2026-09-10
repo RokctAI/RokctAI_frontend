@@ -23,10 +23,20 @@
 // Ray, 2026-09-09: rokct.ai must not list his other products as plans any
 // more (each has its own shell), but a founder who lands on rokct.ai's
 // free opportunities pages must still learn about them. So the strip sits
-// in TWO places on this shell: right under the hero on /landing - the slot
-// a "trusted by" row takes, above this SDK's own logos marquee - and in
-// the footer row (base's FooterChromeRow), which is how the pages outside
-// /landing get it once rokctai_frontend's footer renders that row.
+// in TWO places on this shell, once per page: on /landing it is this SDK's
+// own logos section (components/custom/logos.tsx - "rokct already has a
+// section called logos", and it keeps its marquee look and function: the
+// placement is "section", base_sdk >= 1.27.0, so base's own landing
+// surfaces draw nothing there), and on every other page - the
+// opportunities pages, careers, legal, status - it is the footer row
+// (base's FooterChromeRow, or rokctai_frontend's footer.tsx rendering
+// <NetworkStrip surface="footer" />), which base keeps off the landing
+// route because the page already carries the strip.
+//
+// Before 1.17.0 the placement was "afterHero" with the footer on, and the
+// shell's layout footer is on /landing too, so the landing page showed
+// TWO "Trusted by" rows (Ray, 2026-09-09: "we now have two trusted by
+// instead of using the logos section rokct had").
 //
 // Nothing else is said: the heading is base's default (Ray's wording), the
 // order is the list's, nothing is hidden - rokct.ai itself is left out by
@@ -42,9 +52,11 @@
 // found") and this module sits unused - which is why the shape is written
 // out here rather than imported from base's file, the way
 // agent-site-metadata.ts does it: an `import type` of a module that is
-// not on disk is a compile error.
+// not on disk is a compile error. The "section" placement is base_sdk
+// 1.27.0's: against 1.23.0-1.26.0 the registry's type rejects it, which is
+// the floor.
 
-/** The subset of base_sdk >= 1.23.0's NetworkStripConfig this module fills. */
+/** The subset of base_sdk >= 1.27.0's NetworkStripConfig this module fills. */
 export interface AgentNetworkStrip {
   /** Base's default, "Trusted by", when absent. */
   heading?: string;
@@ -53,14 +65,14 @@ export interface AgentNetworkStrip {
   /** Site keys left out on this shell; rokct.ai itself is always left out. */
   hidden?: string[];
   placement?: {
-    landing?: "afterHero" | "beforeFooter" | "none";
+    landing?: "afterHero" | "beforeFooter" | "section" | "none";
     footer?: boolean;
   };
 }
 
 const AGENT_NETWORK_STRIP: AgentNetworkStrip = {
   placement: {
-    landing: "afterHero",
+    landing: "section",
     footer: true,
   },
 };
