@@ -89,6 +89,12 @@
 // dotted name; a brand with an image still folds to that image whatever
 // its name, and an undotted icon-less name still folds to the 1.28.0 tile.
 //
+// Since 1.31.0 the code beside a stem is sized with the stem
+// ([BRAND_STEM_CODE_FONT_SIZE]: its 36px, or the stem's size where that
+// is smaller) and laid out as the stem is, so on a phone it sits on the
+// stem's baseline and is never larger than the wordmark - as the code is
+// never larger than the 44px mark it sits beside on rokct.ai.
+//
 // The public API is the one the two shells' own headers had, so the pages
 // that already render <Header> (the auth pages, status, careers) compile
 // unchanged: loginUrl / signupUrl / session, and the openLoginPopup /
@@ -121,6 +127,7 @@ import {
   HeaderMenuNav,
 } from "@/components/custom/header-menu";
 import {
+  BRAND_STEM_CODE_FONT_SIZE,
   BRAND_STEM_FONT_SIZE,
   HEADER_MENU,
   brandFoldsToLetter,
@@ -356,6 +363,19 @@ function CollapsingBrand({
   const showCode = collapsed && code !== null;
   // The stem rule is asked first: a dotted name never reaches the tile.
   const stem = brandFoldsToStem(brand, PLATFORM_NAME) ? brandStemOf(PLATFORM_NAME) : null;
+  // Beside a stem (1.31.0) the code is laid out as the stem is - centred,
+  // leading-none, the same top padding - at the stem's size or the 36px
+  // cap, whichever is smaller (BRAND_STEM_CODE_FONT_SIZE, with the same
+  // --brand-chars), so it sits on the stem's baseline and never outgrows
+  // it on a phone. Beside a mark or a tile it is the 1.24.0 code, untouched.
+  const codeClassName =
+    stem !== null
+      ? "ml-1 inline-block self-center pt-0.5 font-medium leading-none text-foreground transition-all duration-500 ease-in-out"
+      : "ml-1 inline-block self-start text-[36px] font-medium text-foreground transition-all duration-500 ease-in-out";
+  const codeStyle: React.CSSProperties =
+    stem !== null
+      ? ({ "--brand-chars": PLATFORM_NAME.trim().length, fontSize: BRAND_STEM_CODE_FONT_SIZE } as React.CSSProperties)
+      : { marginTop: "-2px" };
 
   return (
     <>
@@ -374,8 +394,8 @@ function CollapsingBrand({
         >
           {code && (
             <span
-              className="ml-1 inline-block self-start text-[36px] font-medium text-foreground transition-all duration-500 ease-in-out"
-              style={{ marginTop: "-2px", ...(code.style as React.CSSProperties | undefined) }}
+              className={codeClassName}
+              style={{ ...codeStyle, ...(code.style as React.CSSProperties | undefined) }}
             >
               {code.text}
             </span>

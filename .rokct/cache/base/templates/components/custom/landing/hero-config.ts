@@ -89,6 +89,20 @@ export interface HeroConfig {
    * ./hero-sections.ts: the input is then a plain call to action.
    */
   fallbackHref: (query: string, signupUrl: string) => string;
+  /**
+   * What the hero's wordmark slot shows (since 1.32.0). `"name"` - the
+   * default, and what every shell drew before the field existed - draws
+   * the host's own wordmark component (components/custom/branding.tsx).
+   * `"stem"` draws the platform name's stem as text instead - the part
+   * before the first dot, the same rule the header folds a dotted name
+   * to (header-menu.ts: brandStemOf; "acme.school" shows "acme"), or the
+   * whole name when it has no dot - with the full name on the element's
+   * aria-label and title. Resolved on the server (landing-page.ts:
+   * resolveHeroWordmark), so the first HTML already carries the stem; no
+   * brand string lives in base, and no shell changes until its home SDK's
+   * hero copy declares it.
+   */
+  brand?: "name" | "stem";
 }
 
 const CHROME_BADGE: HeroBadge = {
@@ -133,4 +147,5 @@ export const HERO_CONFIG: HeroConfig = {
     ...(PLATFORM_FEATURES[3]?.active ? [GOOGLE_PLAY_BADGE, APP_STORE_BADGE] : []),
   ],
   fallbackHref: (_query, signupUrl) => signupUrl,
+  brand: "name",
 };

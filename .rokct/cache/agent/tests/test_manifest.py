@@ -50,6 +50,8 @@ HEADER_MENU = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-
 NETWORK_STRIP = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-network-strip.ts")
 # 1.17.0: the logos marquee carries the strip on /landing; its pure track rule.
 LOGOS = os.path.join(TEMPLATES, "components", "custom", "logos.tsx")
+LOGOS_CLIENT = os.path.join(TEMPLATES, "components", "custom", "logos.client.tsx")
+CUSTOM = os.path.join(TEMPLATES, "components", "custom")
 LOGOS_TRACK = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-logos.ts")
 LANDING_CONFIG = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-landing-config.ts")
 # 1.15.0: the Chrome Web Store mark on the hero's badge and the header's
@@ -106,6 +108,20 @@ HERO_COPY_LINE = re.compile(
 )
 
 IMPORT_RE = re.compile(r'(from\s+|import\()\s*"([^"]+)"')
+
+# 1.18.0: a page-sections registry line, and the directive a section ENTRY
+# must not start with (base_sdk 1.32.0 reads its `meta` on the server).
+PAGE_SECTION_LINE = re.compile(
+    r'^  \{ id: "([a-z-]+)", load: \(\) => import\("@/components/custom/\1"\) \},$'
+)
+USE_CLIENT_RE = re.compile(r'^\s*["\']use client["\'];?\s*$', re.M)
+# The sections whose browser half moved to a .client.tsx sibling, and the
+# two with nothing client-only in them, which stay whole.
+SPLIT_SECTIONS = (
+    "floating-nav", "chat-section", "logos", "social-section",
+    "workflow-section", "pricing", "copied-pricing", "faq-section",
+)
+WHOLE_SECTIONS = ("all-features-section", "testimonials-section")
 
 
 def load_manifest():
@@ -234,6 +250,11 @@ class TestManifest(unittest.TestCase):
         for key in ("components/custom/network-strip.tsx", "components/custom/landing/network-sites.ts"):
             self.assertIn(key, self.manifest["requires"], key)
             self.assertIn("base_sdk >= 1.23.0", comment[key], key)
+        # 1.18.0: the server-rendered landing reads each entry's meta, base_sdk 1.32.0.
+        self.assertIn("base_sdk >= 1.32.0", read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.17.0")[0])
+        self.assertIn("1.32.0", comment["about"])
+        self.assertIn("base_sdk >= 1.32.0", comment["components/custom/landing/page-sections.ts"])
+        self.assertIn("base_sdk >= 1.32.0", comment["components/custom/landing/hero-config.ts"])
 
     def test_changelog_leads_with_the_manifest_version(self):
         changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
@@ -457,8 +478,13 @@ class TestRegisterInjection(unittest.TestCase):
         using the logos section rokct had"; "logos should not lose function
         and its look"): logos.tsx keeps its marquee and draws base's
         resolved network sites, each a link, under base's heading."""
-        logos = read(LOGOS)
+        # 1.18.0: the marquee (the effect, the fallback) is the client half;
+        # the entry holds `meta` where base_sdk 1.32.0's server reads it.
+        logos = read(LOGOS_CLIENT)
+        entry = read(LOGOS)
         self.assertIn('"use client";', logos)
+        self.assertIsNone(USE_CLIENT_RE.search(entry))
+        self.assertIn('import { Logos } from "@/components/custom/logos.client";', entry)
         # The items and the heading are base's, resolved once per module.
         self.assertIn('import { loadResolvedNetworkStrip } from "@/components/custom/network-strip";', logos)
         self.assertIn('if (!strip || !networkStripRendersAt(strip, "section")) return null;', logos)
@@ -489,7 +515,8 @@ class TestRegisterInjection(unittest.TestCase):
             "object-contain",
         ):
             self.assertIn(needle, logos, needle)
-        self.assertIn("export const meta: PageSectionMeta = { order: 20, nav: [] };", logos)
+        self.assertIn("export const meta: PageSectionMeta = { order: 20, nav: [] };", entry)
+        self.assertNotIn("export const meta", logos)
         # A logo draws with its dark twin, a wordmark or a broken image draws the name.
         self.assertIn("const drawLogo = Boolean(site.logo) && !site.wordmark && !broken;", logos)
         self.assertIn("{site.name}", logos)
@@ -504,12 +531,68 @@ class TestRegisterInjection(unittest.TestCase):
         manifest = load_manifest()
         targets = {i["to"] for i in manifest["installs"]}
         self.assertIn("components/custom/logos.tsx", targets)
+        self.assertIn("components/custom/logos.client.tsx", targets)
         self.assertIn("components/custom/landing/agent-logos.ts", targets)
         for req in ("components/custom/network-strip.tsx", "components/custom/landing/network-sites.ts",
                     "components/custom/landing/network-strip.ts"):
             self.assertIn(req, manifest["requires"])
         # The track rule imports nothing, so node executes it as it is.
         self.assertNotIn("import ", re.sub(r"^\s*//.*$", "", read(LOGOS_TRACK), flags=re.M))
+
+    def test_section_entries_are_server_safe(self):
+        """1.18.0 (base_sdk 1.32.0 renders the landing on the server and
+        reads each registered module's `meta` there): every page-sections
+        ENTRY this SDK registers carries no "use client" directive while
+        exporting `meta` and a default; what needs the browser is the
+        sibling <name>.client.tsx, which starts with the directive, holds
+        no `meta`, and is installed beside its entry."""
+        manifest = load_manifest()
+        targets = {i["to"]: i["from"] for i in manifest["installs"]}
+        entries = []
+        for integration in manifest["integrations"]:
+            if integration["target"] != "components/custom/landing/page-sections.ts":
+                continue
+            match = PAGE_SECTION_LINE.match(integration["replacement"])
+            self.assertIsNotNone(match, integration["replacement"])
+            entries.append(match.group(1))
+        self.assertEqual(sorted(entries), sorted(SPLIT_SECTIONS + WHOLE_SECTIONS))
+        for name in entries:
+            with self.subTest(section=name):
+                entry_path = os.path.join(CUSTOM, f"{name}.tsx")
+                sibling_path = os.path.join(CUSTOM, f"{name}.client.tsx")
+                self.assertEqual(targets.get(f"components/custom/{name}.tsx"),
+                                 f"templates/components/custom/{name}.tsx")
+                entry = read(entry_path)
+                # No directive: the server reads `meta` as data, not as a proxy.
+                self.assertIsNone(USE_CLIENT_RE.search(entry), f"{name}.tsx starts with \"use client\"")
+                self.assertIn("export const meta: PageSectionMeta = {", entry)
+                self.assertRegex(entry, re.compile(r"^export default (function \w+\(|\w+;)", re.M), "a default export")
+                # meta stays pure: nothing in the entry reaches the browser.
+                for word in ("window.", "document.", "localStorage", "sessionStorage", "navigator."):
+                    self.assertNotIn(word, entry, f"{name}.tsx must not read {word}")
+                self.assertNotIn("useState", entry)
+                self.assertNotIn("useEffect", entry)
+                self.assertNotIn("framer-motion", entry)
+                if name in SPLIT_SECTIONS:
+                    self.assertTrue(os.path.isfile(sibling_path), f"{name}.client.tsx")
+                    sibling = read(sibling_path)
+                    self.assertIsNotNone(USE_CLIENT_RE.search(sibling), f"{name}.client.tsx must start with \"use client\"")
+                    self.assertNotIn("export const meta", sibling)
+                    self.assertNotIn("export default", sibling)
+                    self.assertIn(f'from "@/components/custom/{name}.client";', entry)
+                    # Installed beside its entry, from the template of the same name.
+                    self.assertEqual(targets.get(f"components/custom/{name}.client.tsx"),
+                                     f"templates/components/custom/{name}.client.tsx")
+                else:
+                    self.assertFalse(os.path.exists(sibling_path), f"{name} has nothing client-only; no sibling")
+                    self.assertNotIn(f"components/custom/{name}.client.tsx", targets)
+        # The hero form and the opportunities section are loaded by base's
+        # client hero-view.tsx, never read by the server: they keep the directive.
+        for client_only in ("landing/agent-hero-form.tsx", "landing/agent-opportunities.tsx"):
+            self.assertIsNotNone(USE_CLIENT_RE.search(read(os.path.join(CUSTOM, client_only))), client_only)
+        # The two registry modules the server does read never carried it.
+        for server_read in (HEADER_MENU, HERO_COPY):
+            self.assertIsNone(USE_CLIENT_RE.search(read(server_read)), server_read)
 
     def test_network_strip_is_registered_where_base_looks(self):
         manifest = load_manifest()

@@ -1,5 +1,73 @@
 # Changelog
 
+## 1.18.0
+
+Requires base_sdk >= 1.32.0 (the landing rendered on the server, core
+#215: `app/landing/page.tsx` reads each registered section's `meta`
+through `components/custom/landing/landing-page.ts`) and auth_sdk >= 1.7.0
+as before.
+
+* Every landing section's ENTRY module is server-safe. Under base_sdk
+  1.32.0 the page imports each `PAGE_SECTIONS` entry on the server to read
+  `meta.order`, `meta.nav`, `meta.renders` and `meta.rootClass`. A module
+  that starts with `"use client"` hands the server only client-reference
+  proxies, so all four read undefined: the section's DOM id fell back to
+  the module name, the floating nav said "Scroll to <module>", the
+  header's `pricing` anchor (resolved against copied-pricing's `meta.nav`
+  id) did not resolve and so was dropped, and no `renders()` rule could
+  apply. The rule now, for every section this SDK registers:
+  * The entry (`components/custom/<name>.tsx`, the file the
+    page-sections integrations line imports) carries no `"use client"`,
+    exports `meta` as plain data and a default component that renders on
+    the server.
+  * Hooks, state, effects, browser APIs and framer motion live in the
+    sibling `components/custom/<name>.client.tsx`, which starts with
+    `"use client"` and is rendered by the entry's default export with the
+    props it needs (`id`; the prefetched `plans` for pricing; the whole
+    `nav` for the floating nav) - all data, never a function, across the
+    boundary. The entry re-exports the sibling's named component, so an
+    import of `{ Pricing }`, `{ FaqSection }` and the rest from the entry
+    path still resolves.
+  * Split that way: `floating-nav` (IntersectionObserver, scroll-to, the
+    framer tick), `chat-section` (carousel, framer cards), `logos` (the
+    effect that awaits `loadResolvedNetworkStrip()` - exported by base's
+    `"use client"` `network-strip.tsx`, so it stays a client call - and
+    the broken-image fallback), `social-section` and `workflow-section`
+    (carousels), `pricing` (billing toggle, currency selector, the
+    localisation effect, the category scroll and the tab state, now the
+    named client export `PricingSection`), `copied-pricing` (active-card
+    state, the framer deck) and `faq-section` (open-item state, the
+    framer accordion). Eight `.client.tsx` files, installed beside their
+    entries.
+  * Not split: `all-features-section` and `testimonials-section` have no
+    hook, no effect, no browser API and no framer element - `next/image`
+    renders on the server - so the whole section is the entry and there
+    is no sibling.
+  * Markup and behaviour are unchanged: the same elements, classes, ids
+    and nav labels, the same interactions after hydration. `meta.renders`
+    stays pure (no section declares one; none may read `window` or
+    `localStorage`).
+  * Checked and left alone: `agent-hero-form.tsx` and
+    `agent-opportunities.tsx` keep `"use client"` - base loads the hero
+    form through `next/dynamic` inside its client `hero-view.tsx`, and the
+    form loads the hero sections itself, so the server never reads a
+    `meta` from either; `agent-hero-copy.ts` and `agent-header-menu.ts`
+    (the two registry modules the server does read) never carried the
+    directive. This SDK registers no theme.
+  * Manifest: version 1.18.0; the eight `.client.tsx` siblings installed;
+    base floor 1.32.0 on the `page-sections.ts` and `hero-config.ts`
+    notes.
+* Tests: `test_section_entries_are_server_safe` (every installed
+  page-sections entry module has no `"use client"` directive, exports
+  `meta` and a default; every entry whose sibling exists imports it and
+  the sibling starts with `"use client"`, carries no `meta` and is
+  installed to the path beside its entry; no entry's `meta` names
+  `window`, `document` or `localStorage`; the eight split names and the
+  two unsplit ones are the ones listed here),
+  `test_logos_section_draws_the_network_sites` reads the marquee from
+  `logos.client.tsx` and the `meta` from `logos.tsx`, and
+  `test_floors_are_stated` names 1.32.0.
+
 ## 1.17.0
 
 Requires base_sdk >= 1.27.0 (the `"section"` landing placement of the

@@ -70,11 +70,25 @@ KERNEL = os.path.join(SDK_ROOT, "src", "services")
 KERNEL_TENANT_HOSTS = os.path.join(KERNEL, "tenant-hosts.ts")
 KERNEL_TENANT_HOST_CONTROL = os.path.join(KERNEL, "tenant-host-control.ts")
 TENANT_HOST_CONTROL_TESTS = os.path.join(HERE, "tenant-host-control.test.mts")
+# base_sdk 1.30.0: platformCall's one retry on the tenant's other origin.
+KERNEL_PLATFORM_GATEWAY = os.path.join(KERNEL, "platform-gateway.ts")
+PLATFORM_GATEWAY_TESTS = os.path.join(HERE, "platform-gateway.test.mts")
 SITE_METADATA_LIB = os.path.join(SDK_ROOT, "templates", "app", "lib", "site-metadata.ts")
 SITE_METADATA_ICONS_TESTS = os.path.join(HERE, "site-metadata-icons.test.mts")
 HEADER_MENU_REGISTRY = os.path.join(LANDING, "header-menu.ts")
 HEADER = os.path.join(SDK_ROOT, "templates", "components", "custom", "header.tsx")
 HEADER_BRAND_TESTS = os.path.join(HERE, "header-brand.test.mts")
+
+# base_sdk 1.32.0: the landing renders server-side (Ray, 2026-09-10: "hero
+# i think should be server side if not the whole landing").
+HERO_VIEW = os.path.join(SDK_ROOT, "templates", "components", "custom", "hero-view.tsx")
+LANDING_PAGE_RESOLVER = os.path.join(LANDING, "landing-page.ts")
+LANDING_PAGE = os.path.join(SDK_ROOT, "templates", "app", "landing", "page.tsx")
+LANDING_PAGE_TESTS = os.path.join(HERE, "landing-page.test.mts")
+LANDING_SSR_INSTALLS = {
+    "templates/components/custom/hero-view.tsx": "components/custom/hero-view.tsx",
+    "templates/components/custom/landing/landing-page.ts": "components/custom/landing/landing-page.ts",
+}
 
 # base_sdk 1.23.0: the network strip - the other sites of the Rokct network
 # under "Trusted by", on every shell minus itself.
@@ -361,7 +375,10 @@ class TestManifest(unittest.TestCase):
         self.assertIn("export const TENANT_SITE_HEADER = 'x-rokct-tenant-site';", src)
         self.assertIn("export const TENANT_HOST_POSITIVE_TTL_MS = 5 * 60 * 1000;", src)
         self.assertIn("export const TENANT_HOST_NEGATIVE_TTL_MS = 60 * 1000;", src)
+        # 1.30.0: stale-while-error keeps the last answer for a day.
+        self.assertIn("export const TENANT_HOST_STALE_TTL_MS = 24 * 60 * 60 * 1000;", src)
         for env in ("ROKCT_TENANT_HOST_TTL_MS", "ROKCT_TENANT_HOST_NEGATIVE_TTL_MS",
+                    "ROKCT_TENANT_HOST_STALE_TTL_MS",
                     "ROKCT_TENANT_HOST_TIMEOUT_MS", "ROKCT_TENANT_HOST_LOOKUP",
                     "NEXT_PUBLIC_SITE_URL"):
             self.assertIn(f"'{env}'", src, f"{env} is not read")
@@ -369,6 +386,15 @@ class TestManifest(unittest.TestCase):
         self.assertIn("export async function resolveTenantSiteByHost(", src)
         self.assertIn("export function registerControlTenantHostResolver(): boolean", src)
         self.assertIn("if (!isPublicHost(name)) return null;", src)
+        # 1.30.0: the pair (site name + backend origin) and its two helpers
+        # the gateway retries and guards credentials with. The identity
+        # half keeps answering the site name only.
+        self.assertIn("export interface TenantHostSite {", src)
+        self.assertIn("export async function resolveTenantHost(", src)
+        self.assertIn("export function alternateTenantOrigin(", src)
+        self.assertIn("export function sameTenantOrigin(", src)
+        self.assertIn("return (await resolveTenantHost(host))?.siteName ?? null;", src)
+        self.assertIn("return found.backendUrl ?? found.siteName;", src)
         # Edge-safe: only the pure kernel modules, no session, no next/headers.
         imports = re.findall(r"^(?:import .*|\}) from '([^']+)';$", src, re.M)
         self.assertEqual(sorted(set(imports)), ["./gateway-constants", "./telemetry", "./tenant-hosts"])
@@ -377,9 +403,17 @@ class TestManifest(unittest.TestCase):
         self.assertNotIn("Authorization", src)
         # The gateway registers it at load, so resolveTenantBaseUrl's
         # per-host step keeps working with no host wiring.
-        gateway = read(os.path.join(KERNEL, "platform-gateway.ts"))
-        self.assertIn("import { registerControlTenantHostResolver } from './tenant-host-control';", gateway)
+        gateway = read(KERNEL_PLATFORM_GATEWAY)
+        self.assertRegex(
+            gateway,
+            re.compile(r"^import \{\n(?:  \w+,\n)*  registerControlTenantHostResolver,\n(?:  \w+,\n)*\} from './tenant-host-control';$", re.M),
+        )
         self.assertIn("\nregisterControlTenantHostResolver();\n", gateway)
+        # 1.30.0: one retry on the other origin of the pair, guarded.
+        self.assertIn("const RETRY_STATUSES = new Set([502, 503, 504]);", gateway)
+        self.assertIn("const res = await fetchWithAlternate(cmd, baseUrl, alternate, send);", gateway)
+        self.assertIn("const credentialsApply = !sessionSite || sameTenantOrigin(sessionSite, baseUrl);", gateway)
+        self.assertNotIn("sameSite(", gateway, "the plain same-site guard was replaced by the pair-aware one")
         index = read(os.path.join(KERNEL, "index.ts"))
         self.assertIn("} from './tenant-host-control';", index)
         for name in ("resolveTenantSiteForRequest", "TENANT_SITE_HEADER", "requestHost", "isPublicHost"):
@@ -409,7 +443,42 @@ class TestManifest(unittest.TestCase):
         self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
-        self.assertGreaterEqual(int(passed.group(1)), 16)
+        self.assertGreaterEqual(int(passed.group(1)), 29)
+
+    def test_platform_gateway_behaviour_under_node(self):
+        # base_sdk 1.30.0, executed for real like the resolver: the kernel
+        # is staged with `.ts` imports, session.ts's host seam
+        # (`server-only`, `@/app/lib/session`) stood in by a null session
+        # (the tests pass their session explicitly), and
+        # tests/platform-gateway.test.mts runs under node's test runner.
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute platform-gateway")
+        with tempfile.TemporaryDirectory() as tmp:
+            for fname in os.listdir(KERNEL):
+                if not fname.endswith(".ts"):
+                    continue
+                staged = RELATIVE_IMPORT_RE.sub(r"\1\2.ts\3", read(os.path.join(KERNEL, fname)))
+                if fname == "session.ts":
+                    for needle in ("import 'server-only';\n",
+                                   "import { getCurrentSession } from '@/app/lib/session';"):
+                        self.assertIn(needle, staged, "session.ts no longer carries the seam the stage replaces")
+                    staged = staged.replace("import 'server-only';\n", "").replace(
+                        "import { getCurrentSession } from '@/app/lib/session';",
+                        "const getCurrentSession = async (): Promise<unknown> => null;",
+                    )
+                with open(os.path.join(tmp, fname), "w", encoding="utf-8") as f:
+                    f.write(staged)
+            shutil.copy(PLATFORM_GATEWAY_TESTS, os.path.join(tmp, "platform-gateway.test.mts"))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 os.path.join(tmp, "platform-gateway.test.mts")],
+                capture_output=True, text=True, timeout=120,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 19)
 
     def test_page_metadata_carries_no_icons(self):
         # base_sdk 1.20.0 (Ray, 2026-09-09: "rokct got a letter favicon and
@@ -953,6 +1022,62 @@ class TestRegistryMarkers(unittest.TestCase):
             self.assertNotIn("supacharge", code)
             self.assertNotIn("rokct.ai", code)
 
+    def test_header_code_follows_the_stem_wordmark(self):
+        """base_sdk 1.31.0 (Ray, 2026-09-10: "look at rokct header's
+        country code and then check supacharge's"): beside a mark the code
+        is 36px against a 44px mark on every viewport, always the smaller;
+        beside a stem wordmark, which BRAND_STEM_FONT_SIZE shrinks to fit
+        the bar, a 36px code outgrew the wordmark on a phone. The code
+        beside a stem is sized with the stem - its 36px, or the stem's
+        size where that is smaller - and laid out as the stem is, so it
+        sits on the stem's baseline. The code beside a mark or a tile is
+        the 1.24.0 code, literal for literal."""
+        src = read(HEADER_MENU_REGISTRY)
+        self.assertIn(
+            "export const BRAND_STEM_CODE_FONT_SIZE = `min(36px, ${BRAND_STEM_FONT_SIZE})`;",
+            src,
+        )
+        self.assertLess(src.index("export const BRAND_STEM_FONT_SIZE ="), src.index("export const BRAND_STEM_CODE_FONT_SIZE ="))
+        header = read(HEADER)
+        self.assertRegex(
+            header,
+            r"import \{[^}]*\bBRAND_STEM_CODE_FONT_SIZE\b[^}]*\bBRAND_STEM_FONT_SIZE\b[^}]*\} from \"@/components/custom/landing/header-menu\";",
+        )
+        collapsing = header[header.index("function CollapsingBrand("):header.index("const UNDECLARED_BRAND")]
+        # Chosen by the stem rule, after it is asked.
+        self.assertLess(
+            collapsing.index("const stem = brandFoldsToStem(brand, PLATFORM_NAME)"),
+            collapsing.index("const codeClassName ="),
+        )
+        self.assertIn(
+            '? "ml-1 inline-block self-center pt-0.5 font-medium leading-none text-foreground transition-all duration-500 ease-in-out"',
+            collapsing,
+        )
+        self.assertIn(
+            '? ({ "--brand-chars": PLATFORM_NAME.trim().length, fontSize: BRAND_STEM_CODE_FONT_SIZE } as React.CSSProperties)',
+            collapsing,
+        )
+        # Beside a mark or a tile: the 1.24.0 class and inline style.
+        self.assertIn(
+            ': "ml-1 inline-block self-start text-[36px] font-medium text-foreground transition-all duration-500 ease-in-out"',
+            collapsing,
+        )
+        self.assertIn(': { marginTop: "-2px" };', collapsing)
+        self.assertIn("className={codeClassName}", collapsing)
+        # The declaration's own style (rokct.ai's branding cache) still wins.
+        self.assertIn("style={{ ...codeStyle, ...(code.style as React.CSSProperties | undefined) }}", collapsing)
+        self.assertEqual(collapsing.count("text-[36px]"), 1)
+        self.assertEqual(collapsing.count('marginTop: "-2px"'), 1)
+        # The code slot around it is unchanged.
+        self.assertIn('style={{ maxWidth: showCode ? "120px" : "0px", opacity: showCode ? 1 : 0 }}', collapsing)
+        # Only the code reads the new size (the import and the one use): not
+        # the stem, not the tile, not the still brand.
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", header))
+        self.assertEqual(code.count("BRAND_STEM_CODE_FONT_SIZE"), 2)
+        wordmark = header[header.index("function BrandStemWordmark("):header.index("function BrandBlock(")]
+        self.assertNotIn("BRAND_STEM_CODE_FONT_SIZE", wordmark)
+        self.assertEqual(wordmark.count("fontSize"), 1)
+
     def test_header_menu_action_carries_an_icon(self):
         # base_sdk 1.20.0 (Ray, 2026-09-09: rokct "lost its chrome icon"):
         # an action may name a glyph from the same closed set as an item,
@@ -1137,8 +1262,9 @@ class TestRegistryMarkers(unittest.TestCase):
         start = config.index("const GOOGLE_PLAY_BADGE")
         end = config.index("};", start)
         self.assertNotIn("icon:", config[start:end])
-        # The hero draws only a badge with an icon, and knows the chrome glyph.
-        hero = read(os.path.join(SDK_ROOT, "templates", "components", "custom", "hero.tsx"))
+        # The hero draws only a badge with an icon, and knows the chrome glyph
+        # (1.32.0: the drawing is the client view's, hero-view.tsx).
+        hero = read(HERO_VIEW)
         self.assertIn("export function hasBadgeIcon(", hero)
         self.assertIn("hero.badges.filter(hasBadgeIcon)", hero)
         self.assertIn("{badges.length > 0 && (", hero)
@@ -1354,10 +1480,11 @@ class TestRegistryMarkers(unittest.TestCase):
             self.assertTrue(os.path.exists(os.path.join(BRAND_MARKS_DIR, name + ".svg")), name)
         # The rule is derived from the flags, not a second list.
         self.assertIn(".filter((mark) => mark.mono)", src)
-        # Both consumers draw through it; neither carries a filter of its own.
-        hero = read(HERO)
+        # Both consumers draw through it; neither carries a filter of its own
+        # (1.32.0: the hero's drawing is the client view's, hero-view.tsx).
+        hero = read(HERO_VIEW)
         self.assertIn('import { markImageClass } from "@/components/custom/landing/brand-marks";', hero)
-        badge = hero[hero.index("function BadgeIcon("):hero.index("export function Hero(")]
+        badge = hero[hero.index("function BadgeIcon("):hero.index("export function HeroView(")]
         self.assertIn("className={markImageClass(icon.src)}", badge)
         self.assertNotIn("invert", hero.replace("dark:invert", ""))
         partials = read(HEADER_MENU_PARTIALS)
@@ -1402,6 +1529,277 @@ class TestRegistryMarkers(unittest.TestCase):
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
         self.assertGreaterEqual(int(passed.group(1)), 14)
+
+    # -- 1.32.0: the landing renders server-side ----------------------------
+
+    def test_landing_ssr_files_are_installed(self):
+        manifest = load_manifest()
+        by_from = {e["from"]: e["to"] for e in manifest["installs"]}
+        for src, dst in LANDING_SSR_INSTALLS.items():
+            self.assertEqual(by_from.get(src), dst, f"{src} must install to {dst}")
+            self.assertTrue(os.path.exists(os.path.join(SDK_ROOT, src)), src)
+        self.assertIn("Since 1.32.0", manifest["_comment"]["about"])
+        self.assertIn("rootClass", manifest["_comment"]["about"])
+
+    def test_landing_page_loads_nothing_in_an_effect(self):
+        """The page does the registry work on the server; the wrapper and the
+        view load no section, no menu and no hero copy after mount. Until
+        1.31.0 all three were client effects, so the first HTML carried an
+        empty hero and no header links."""
+        def code(path):
+            return LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(path)))
+
+        page = code(LANDING_PAGE)
+        self.assertNotIn('"use client"', page)
+        self.assertNotIn("useEffect", page)
+        self.assertNotIn("useState", page)
+        self.assertIn("resolveLandingPage(", page)
+        self.assertIn('from "@/components/custom/landing/landing-page"', page)
+        self.assertIn("<Hero", page)
+        self.assertIn("rootClass={page.rootClass}", page)
+        self.assertIn("menu={page.menu}", page)
+
+        wrapper = code(LANDING_CONTENT)
+        self.assertIn('"use client"', wrapper)
+        self.assertNotIn("useEffect", wrapper)
+        for loader in ("PAGE_SECTIONS", "loadHeaderMenu", "loadHeroCopy", "resolveHeaderMenu", "entry.load("):
+            self.assertNotIn(loader, wrapper, f"landing-content.tsx must not {loader} on the client")
+        self.assertIn("useState(false)", wrapper)
+        self.assertIn("HeroResultsContext.Provider", wrapper)
+        self.assertIn("menuItems={menu.items}", wrapper)
+        self.assertIn("groups={menu.groups}", wrapper)
+        self.assertIn("actions={menu.actions}", wrapper)
+
+        hero = code(HERO)
+        self.assertNotIn('"use client"', hero)
+        self.assertNotIn("useEffect", hero)
+        self.assertNotIn("useState", hero)
+        self.assertIn("export async function Hero(", hero)
+        self.assertIn("await resolveHeroConfig()", hero)
+        self.assertIn("resolveHeroWordmark(hero.brand, PLATFORM_NAME)", hero)
+        # The one function-typed field never crosses the boundary as a prop.
+        self.assertIn("fallbackHref: _fallbackHref, ...copy", hero)
+
+        resolver = code(LANDING_PAGE_RESOLVER)
+        # Not a client module (the directive is what counts; the contract
+        # string the loader's warning carries names "use client" in prose).
+        self.assertFalse(resolver.lstrip().startswith(('"use client"', "'use client'")))
+        self.assertNotIn("useEffect", resolver)
+        for name in ("loadPageSections", "arrangeLandingPage", "resolveLandingPage",
+                     "resolveHeroConfig", "resolveHeroWordmark"):
+            self.assertIn(f"export async function {name}(", resolver) if name.startswith(("load", "resolveL", "resolveHeroC")) \
+                else self.assertIn(f"export function {name}(", resolver)
+        self.assertIn('console.error(`[landing] section "${entry.id}" failed to load:`, e)', resolver)
+        self.assertNotIn("@rokct-sdk-", read(LANDING_PAGE_RESOLVER), "landing-page.ts is not a registry")
+
+    def test_hero_view_renders_copy_from_props(self):
+        """The client view draws the copy it is handed: no copy state, no
+        pending "no words" frame, the copy registry read only inside the
+        form's next/dynamic loader (for fallbackHref), and the entrance
+        animation off on the h1 so the server's text shows before
+        hydration."""
+        raw = read(HERO_VIEW)
+        view = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", raw))
+        self.assertIn('"use client"', view)
+        self.assertIn("export function HeroView({", view)
+        self.assertIn("hero: HeroViewCopy;", view)
+        self.assertIn('export type HeroViewCopy = Omit<HeroConfig, "fallbackHref">;', view)
+        for gone in ("PENDING_HERO", "setCopy", "useState<HeroConfig", "copy ?? "):
+            self.assertNotIn(gone, view)
+        self.assertIn("[...hero.headlineWords, ...formWords]", view)
+        self.assertIn("<span>{hero.headlineSuffix}</span>", view)
+        self.assertIn("hero.trustLine.map(", view)
+        # loadHeroCopy appears once, inside the form's dynamic loader and
+        # before the component - never in an effect.
+        self.assertEqual(view.count("loadHeroCopy()"), 1)
+        self.assertLess(view.index("dynamic<HeroFormProps>("), view.index("loadHeroCopy()"))
+        self.assertLess(view.index("loadHeroCopy()"), view.index("export function HeroView("))
+        for effect in re.finditer(r"useEffect\(\(\) => \{(.*?)\}, \[", view, re.S):
+            self.assertNotIn("load", effect.group(1), "an effect in hero-view.tsx loads something")
+        # The h1 and the blocks around it carry the copy visibly from the first byte.
+        h1 = view.index("<motion.h1")
+        self.assertEqual(view[h1:].split("className", 1)[0].count("initial={false}"), 1)
+        self.assertGreaterEqual(view.count("initial={false}"), 3)
+        self.assertEqual(view.count('<AnimatePresence mode="wait" initial={false}>'), 2)
+        # The rotating word starts at index 0 on both sides; the branding
+        # cache is read after mount only.
+        self.assertIn("useState(0)", view)
+        self.assertIn('mounted && typeof window !== "undefined"', view)
+        # The stem wordmark: visible stem, full name for assistive tech.
+        self.assertIn("aria-label={wordmark.name}", view)
+        self.assertIn("title={wordmark.name}", view)
+        self.assertIn("{wordmark.text}", view)
+        self.assertIn("HeroResultsContext", view)
+
+    def test_hero_config_declares_the_brand_and_sections_the_root_class(self):
+        config = read(os.path.join(LANDING, "hero-config.ts"))
+        self.assertIn('brand?: "name" | "stem";', config)
+        self.assertIn('brand: "name",', config)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", config))
+        for host in ("supacharge", "rokct.ai", ".school", ".app"):
+            self.assertNotIn(host, code.lower(), f"hero-config.ts names {host}")
+        sections = read(os.path.join(LANDING, "page-sections.ts"))
+        self.assertIn("rootClass?: string;", sections)
+        resolver = read(LANDING_PAGE_RESOLVER)
+        self.assertIn("brandStemOf(name) ?? name", resolver)
+        self.assertIn("s.meta.rootClass?.trim()", resolver)
+        wrapper = read(LANDING_CONTENT)
+        self.assertIn("rootClass?: string;", wrapper)
+
+    def test_landing_page_behaviour_under_node(self):
+        """landing-page.ts executed beside the real registries: a failing
+        section skipped, meta.renders deciding page and nav alike, a stable
+        order, the header menu against the live nav, rootClass joined, the
+        hero copy overlaid and the brand rule with an acme.school fixture."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute landing-page.ts")
+        rewrites = {
+            'from "@/components/custom/landing/landing-config"': 'from "./landing-config.ts"',
+            'from "@/components/custom/landing/site-metadata"': 'from "./landing-site-metadata.ts"',
+            'from "@/components/custom/landing/header-menu"': 'from "./header-menu.ts"',
+            'from "@/components/custom/landing/hero-config"': 'from "./hero-config.ts"',
+            'from "@/components/custom/landing/hero-copy"': 'from "./hero-copy.ts"',
+            'from "@/components/custom/landing/page-sections"': 'from "./page-sections.ts"',
+            'from "@/app/actions/base/landing"': 'from "./landing-actions.ts"',
+            'from "@/app/config/features"': 'from "./features.ts"',
+            'from "@/app/config/platform"': 'from "./platform.ts"',
+        }
+        real = {
+            "landing-page.ts": LANDING_PAGE_RESOLVER,
+            "header-menu.ts": HEADER_MENU_REGISTRY,
+            "hero-config.ts": os.path.join(LANDING, "hero-config.ts"),
+            "hero-copy.ts": os.path.join(LANDING, "hero-copy.ts"),
+            "page-sections.ts": os.path.join(LANDING, "page-sections.ts"),
+        }
+        stubs = {
+            "landing-config.ts": (
+                "export type LandingNavBadge = 'new' | 'soon';\n"
+                "export interface LandingNavItem { id: string; label: string; badge?: LandingNavBadge }\n"
+                "export const LANDING_CONFIG = { loginUrl: '/login', signupUrl: '/register',\n"
+                "  nav: { hero: { id: 'hero', label: 'Hero' }, footer: { id: 'footer', label: 'Footer' } } };\n"
+            ),
+            "landing-site-metadata.ts": (
+                "export async function loadSiteMetadata() {\n"
+                '  return { title: "Shell", siteName: "Shell", description: "", tagline: "" };\n'
+                "}\n"
+            ),
+            "landing-actions.ts": "export interface LandingPlan { name: string }\n",
+            "features.ts": (
+                "export const PLATFORM_FEATURES = [\n"
+                "  { active: true, href: '/' }, { active: true, href: '/extension' },\n"
+                "  { active: false, href: '' }, { active: false, href: '' },\n"
+                "];\n"
+            ),
+            "platform.ts": "export const PLATFORM_NAME = 'acme.school';\n",
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            for fname, path in real.items():
+                staged = read(path)
+                for src, dst in rewrites.items():
+                    staged = staged.replace(src, dst)
+                self.assertNotIn('from "@/', staged, f"{fname} imports something the stage does not cover")
+                with open(os.path.join(tmp, fname), "w", encoding="utf-8") as f:
+                    f.write(staged)
+            for fname, body in stubs.items():
+                with open(os.path.join(tmp, fname), "w", encoding="utf-8") as f:
+                    f.write(body)
+            shutil.copy(LANDING_PAGE_TESTS, os.path.join(tmp, "landing-page.test.mts"))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 os.path.join(tmp, "landing-page.test.mts")],
+                capture_output=True, text=True, timeout=120, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 15)
+
+    def test_installed_section_entry_modules_are_server_safe(self):
+        """The registry is imported on the server since 1.32.0, so a section's
+        ENTRY module must not start with "use client": on the server every
+        export of such a module is a client reference proxy, `meta` reads
+        empty, and the loader skips the section with a warning. Scans every
+        entry base registers between the page-sections markers and every
+        installed template that exports a `meta`; base ships the host only,
+        so it registers no section of its own, and the scan is what holds
+        that any it ever installs keeps the contract (the interactive part in
+        a sibling <name>.client.tsx the entry renders)."""
+        manifest = load_manifest()
+        installed = {
+            e["to"]: os.path.join(SDK_ROOT, e["from"])
+            for e in manifest["installs"]
+            if os.path.isfile(os.path.join(SDK_ROOT, e["from"]))
+        }
+        sections = read(os.path.join(LANDING, "page-sections.ts"))
+        start = sections.index("// @rokct-sdk-page-sections-start")
+        end = sections.index("// @rokct-sdk-page-sections-end")
+        entries = re.findall(r'import\("@/([^"]+)"\)', sections[start:end])
+        self.assertEqual(entries, [], "base_sdk holds the host only; sections belong to the home SDK")
+        candidates = {}
+        for target in entries:
+            found = [t for t in installed if t in (target + ".tsx", target + ".ts")]
+            self.assertTrue(found, f"registered section {target} is not installed by base")
+            candidates[found[0]] = installed[found[0]]
+        for target, src in installed.items():
+            if src.endswith((".ts", ".tsx")) and re.search(r"^export const meta\b", read(src), re.M):
+                candidates[target] = src
+        for target, src in sorted(candidates.items()):
+            code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(src))).lstrip()
+            self.assertFalse(
+                code.startswith(('"use client"', "'use client'")),
+                f"{target} exports meta and starts with \"use client\": the server cannot read its meta "
+                "(it would render with default settings); move the client part to a sibling "
+                "<name>.client.tsx the entry renders",
+            )
+            self.assertIn("export default", code, f"{target} exports meta but no default component")
+        # No installed client component is ever a section entry: the ones
+        # that start with "use client" export no meta.
+        for target, src in installed.items():
+            if not src.endswith((".ts", ".tsx")):
+                continue
+            code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(src))).lstrip()
+            if code.startswith(('"use client"', "'use client'")):
+                self.assertNotIn("PageSectionMeta", code, f"{target} is a client module typed as a section")
+
+    def test_landing_loader_renders_a_client_reference_meta_with_defaults(self):
+        """The loader checks `meta` before reading it: a client reference
+        (React's tag, or its $$typeof/$$id own keys), a missing meta or any
+        non-plain-object still renders, with the fallback settings (order
+        100, the entry id, no nav entry, no rootClass) and one console.warn
+        naming the section and the contract - never skipped, so a shell on a
+        home SDK that has not split its entries keeps every section. The
+        contract is stated at the registry, in the manifest about and in the
+        CHANGELOG."""
+        resolver = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(LANDING_PAGE_RESOLVER)))
+        self.assertIn("export const SECTION_ENTRY_CONTRACT", resolver)
+        self.assertIn('Symbol.for("react.client.reference")', resolver)
+        self.assertIn('["$$typeof", "$$id"]', resolver)
+        self.assertIn("Reflect.ownKeys(", resolver)
+        self.assertIn("export function isClientReference(", resolver)
+        self.assertIn("export function describeMetaProblem(", resolver)
+        self.assertIn("Object.getPrototypeOf(meta)", resolver)
+        self.assertIn("const problem = describeMetaProblem(mod.meta);", resolver)
+        self.assertIn("export function fallbackSectionMeta(): PageSectionMeta {", resolver)
+        self.assertIn("return { order: DEFAULT_PAGE_SECTION_ORDER, nav: [] };", resolver)
+        self.assertIn('`[landing] section "${entry.id}" renders with default settings `', resolver)
+        self.assertIn("`no rootClass): ${problem}. ${SECTION_ENTRY_CONTRACT}`", resolver)
+        self.assertIn("meta = fallbackSectionMeta();", resolver)
+        self.assertNotIn("skipped", resolver)
+        self.assertLess(resolver.index("describeMetaProblem(mod.meta)"), resolver.index("const nav = meta.nav ??"))
+        for text in ('"use client"', "sibling <name>.client.tsx", "meta.renders(ctx) stays pure"):
+            self.assertIn(text, resolver)
+        registry = read(os.path.join(LANDING, "page-sections.ts"))
+        self.assertIn("`<name>.client.tsx`", registry)
+        about = load_manifest()["_comment"]["about"]
+        self.assertIn("<name>.client.tsx", about)
+        self.assertIn('"use client"', about)
+        self.assertIn("unsplit sections still render with default settings", about)
+        changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
+        head = changelog.split("## 1.29.0", 1)[0]
+        self.assertIn("`<name>.client.tsx`", head)
+        self.assertIn("describeMetaProblem", head)
+        self.assertIn("unsplit sections still render with default settings", head)
 
     def test_brand_marks_type_check_under_tsc(self):
         """The registry under tsc, strict and isolatedModules as the shells'

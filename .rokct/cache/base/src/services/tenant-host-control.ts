@@ -26,7 +26,8 @@
  * site owns that mapping, so this module asks it:
  *
  *   POST {ROKCT_BASE_URL}/api/v1/method/{TENANT_HOST_RESOLVE_METHOD}
- *   { "host": "<request host>" }  ->  { "site_name": "<site>" } | null
+ *   { "host": "<request host>" }
+ *     ->  { "site_name": "<site>", "backend_url"?: "https://<backend>" } | null
  *
  * a guest call (`allow_guest`, no credentials ever sent) to the control
  * site's own whitelisted method by its dotted name, since the control
@@ -34,6 +35,35 @@
  * lookup. The answer is cached in memory - positive for
  * [TENANT_HOST_POSITIVE_TTL_MS], negative for [TENANT_HOST_NEGATIVE_TTL_MS]
  * - and concurrent lookups of one host share a single request.
+ *
+ * Since base_sdk 1.30.0 a tenant may also have a BACKEND custom domain
+ * (Ray, 2026-09-10): besides the shell domain that opens its portal, a
+ * domain of its own that its backend answers on, so the tenant keeps
+ * working when the platform's own zone is down. Control returns it as
+ * `backend_url` (a scheme'd origin) only while it is Active. The two
+ * identities are kept apart:
+ *
+ *  - `site_name` stays the tenant's IDENTITY: [resolveTenantSiteByHost]
+ *    and [resolveTenantSiteForRequest] answer it, so the
+ *    `x-rokct-tenant-site` header auth_sdk's middleware forwards never
+ *    carries the backend origin.
+ *  - `backend_url` is WHERE the gateway talks to it: the registered
+ *    [controlTenantHostResolver] answers the backend origin when control
+ *    named one (else the site name, as before), and
+ *    [alternateTenantOrigin] / [sameTenantOrigin] let platform-gateway.ts
+ *    retry a failed call once on the other origin of the same pair and
+ *    send the session's credentials to either - never to a third origin.
+ *    A `backend_url` that is not a public host, is the control site, or
+ *    is malformed is dropped (the site name still answers).
+ *
+ * Also since 1.30.0, stale-while-error: every positive answer is kept
+ * for [TENANT_HOST_STALE_TTL_MS] (24 h) beyond the positive TTL, and
+ * when control is UNREACHABLE (a network error, a timeout, a 5xx) the
+ * last known answer for that host is served instead of "unknown host",
+ * re-asked after the negative TTL. A definitive answer - control reached
+ * and saying the host is nobody's, or a 4xx - replaces the stale one.
+ * Protection, not persistence: the cache is per process, so an instance
+ * that never saw a host while control was up still answers "storefront".
  *
  * What is NEVER asked: a host that is not a public one (localhost, a
  * loopback or unspecified address, `.vercel.app`, `.local`, `.internal` -
@@ -64,6 +94,8 @@
  *    entirely (the map still answers).
  *  - `ROKCT_TENANT_HOST_TTL_MS` - positive cache TTL, default 300000.
  *  - `ROKCT_TENANT_HOST_NEGATIVE_TTL_MS` - negative cache TTL, default 60000.
+ *  - `ROKCT_TENANT_HOST_STALE_TTL_MS` - how long a positive answer is kept
+ *    for stale-while-error, default 86400000; `0` switches it off.
  *  - `ROKCT_TENANT_HOST_TIMEOUT_MS` - per-lookup timeout, default 3000.
  */
 
@@ -87,8 +119,8 @@ declare const process: { env: Record<string, string | undefined> };
 
 /**
  * The control site's whitelisted lookup, by dotted name: `host` in,
- * `{site_name}` or `null` out. Guest-accessible. The ONE place the name
- * lives.
+ * `{site_name, backend_url?}` or `null` out. Guest-accessible. The ONE
+ * place the name lives.
  */
 export const TENANT_HOST_RESOLVE_METHOD =
   'control.control.api.subscription.resolve_site_by_host';
@@ -99,10 +131,20 @@ export const TENANT_HOST_POSITIVE_TTL_MS = 5 * 60 * 1000;
 /** How long an unknown host stays unknown without asking control again. */
 export const TENANT_HOST_NEGATIVE_TTL_MS = 60 * 1000;
 
+/**
+ * How long a resolved host's last answer is kept to serve while control
+ * is unreachable (base_sdk 1.30.0, stale-while-error).
+ */
+export const TENANT_HOST_STALE_TTL_MS = 24 * 60 * 60 * 1000;
+
 /** How long one lookup may take before it is abandoned as unknown. */
 export const TENANT_HOST_TIMEOUT_MS = 3000;
 
-/** The request header auth_sdk's middleware forwards a resolved site on. */
+/**
+ * The request header auth_sdk's middleware forwards a resolved site on.
+ * It carries the SITE NAME (the tenant's identity), never the backend
+ * origin.
+ */
 export const TENANT_SITE_HEADER = 'x-rokct-tenant-site';
 
 /**
@@ -119,13 +161,37 @@ export type TenantHostFetch = (
   init: RequestInit,
 ) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
 
-interface CacheEntry {
+/**
+ * A resolved tenant host: the site name control answered (the tenant's
+ * identity, what `x-rokct-tenant-site` carries) and, when the tenant has
+ * an Active backend domain, the origin its backend answers on.
+ */
+export interface TenantHostSite {
+  siteName: string;
+  /** A scheme'd origin (`https://<backend host>`); absent when none is Active. */
+  backendUrl?: string;
+}
+
+interface CacheEntry extends Omit<TenantHostSite, 'siteName'> {
   site: string | null;
   expires: number;
 }
 
+/** What one lookup came back with: an answer, or no way to know. */
+type LookupOutcome =
+  | { kind: 'answer'; site: TenantHostSite | null }
+  | { kind: 'unreachable' };
+
 const cache = new Map<string, CacheEntry>();
-const inflight = new Map<string, Promise<string | null>>();
+const inflight = new Map<string, Promise<TenantHostSite | null>>();
+/** Last positive answer per host, kept for the stale TTL (stale-while-error). */
+const stale = new Map<string, TenantHostSite & { expires: number }>();
+/**
+ * The other origin of every known pair, both ways: the site name's origin
+ * to the backend origin and back, keyed by lower-cased origin. Kept for
+ * the stale TTL so a retry still knows the pair while control is down.
+ */
+const alternates = new Map<string, { origin: string; expires: number }>();
 let fetchImpl: TenantHostFetch | undefined;
 let loggedFailure = false;
 
@@ -159,6 +225,11 @@ export function tenantHostNegativeTtlMs(): number {
     'ROKCT_TENANT_HOST_NEGATIVE_TTL_MS',
     TENANT_HOST_NEGATIVE_TTL_MS,
   );
+}
+
+/** The stale TTL: `ROKCT_TENANT_HOST_STALE_TTL_MS`, else the constant. */
+export function tenantHostStaleTtlMs(): number {
+  return envNumber('ROKCT_TENANT_HOST_STALE_TTL_MS', TENANT_HOST_STALE_TTL_MS);
 }
 
 /** The lookup timeout: `ROKCT_TENANT_HOST_TIMEOUT_MS`, else the constant. */
@@ -220,33 +291,160 @@ function usableSiteName(value: unknown): string | null {
   return host;
 }
 
+/**
+ * A backend origin as control returns it (`backend_url`): a scheme'd
+ * http(s) origin whose host is a public site name and not the control
+ * site's. Null (dropped, the site name still answers) for anything else.
+ * The origin alone is kept - no path, no query.
+ */
+function usableBackendUrl(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const normalized = normalizeSiteUrl(value);
+  if (!normalized) return null;
+  let url: URL;
+  try {
+    url = new URL(normalized);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
+  const host = normaliseHost(url.host);
+  if (!isPublicHost(host) || !SITE_NAME_RE.test(host)) return null;
+  const control = controlBaseUrl();
+  if (control && sameSite(url.origin, control)) return null;
+  return url.origin;
+}
+
 /** Test seam: route lookups through this `fetch` (`undefined` = the global one). */
 export function setTenantHostFetch(impl: TenantHostFetch | undefined): void {
   fetchImpl = impl;
 }
 
-/** Test/reload seam: forget every cached answer and the once-logged failure. */
+/**
+ * Test/reload seam: forget every cached answer (live, stale and the
+ * origin pairs) and the once-logged failure.
+ */
 export function resetTenantHostCache(): void {
   cache.clear();
   inflight.clear();
+  stale.clear();
+  alternates.clear();
   loggedFailure = false;
 }
 
-/** The cached answer for a normalised host, or `undefined` when none is live. */
-export function cachedTenantSite(host: string): string | null | undefined {
+/**
+ * The cached answer for a normalised host - the site and, when known,
+ * its backend origin - `null` for a host cached as nobody's, or
+ * `undefined` when nothing is live.
+ */
+export function cachedTenantHost(host: string): TenantHostSite | null | undefined {
   const entry = cache.get(host);
   if (!entry) return undefined;
   if (entry.expires <= Date.now()) {
     cache.delete(host);
     return undefined;
   }
-  return entry.site;
+  if (!entry.site) return null;
+  return entry.backendUrl
+    ? { siteName: entry.site, backendUrl: entry.backendUrl }
+    : { siteName: entry.site };
 }
 
-function remember(host: string, site: string | null): string | null {
+/** The cached site name for a normalised host, or `undefined` when none is live. */
+export function cachedTenantSite(host: string): string | null | undefined {
+  const found = cachedTenantHost(host);
+  return found === undefined ? undefined : (found?.siteName ?? null);
+}
+
+/** The last positive answer kept for a host, if its stale TTL has not run out. */
+function staleTenantHost(host: string): TenantHostSite | undefined {
+  const entry = stale.get(host);
+  if (!entry) return undefined;
+  if (entry.expires <= Date.now()) {
+    stale.delete(host);
+    return undefined;
+  }
+  return entry.backendUrl
+    ? { siteName: entry.siteName, backendUrl: entry.backendUrl }
+    : { siteName: entry.siteName };
+}
+
+function rememberPair(site: TenantHostSite, expires: number): void {
+  if (!site.backendUrl) return;
+  const own = normalizeSiteUrl(site.siteName) as string;
+  alternates.set(own.toLowerCase(), { origin: site.backendUrl, expires });
+  alternates.set(site.backendUrl.toLowerCase(), { origin: own, expires });
+}
+
+/**
+ * The other origin of a known tenant pair - the backend origin of a site
+ * name's origin, or the site name's origin of a backend origin - or
+ * `undefined` when the origin is not one half of a pair this process has
+ * resolved (within the stale TTL). Base 1.30.0: what platform-gateway.ts
+ * retries a failed call on.
+ */
+export function alternateTenantOrigin(origin: string | null | undefined): string | undefined {
+  const normalized = normalizeSiteUrl(origin)?.toLowerCase();
+  if (!normalized) return undefined;
+  const entry = alternates.get(normalized);
+  if (!entry) return undefined;
+  if (entry.expires <= Date.now()) {
+    alternates.delete(normalized);
+    return undefined;
+  }
+  return entry.origin;
+}
+
+/**
+ * Whether two site names/origins denote the same TENANT: the same site
+ * ([sameSite]), or the two halves of one known pair. The credential
+ * guard platform-gateway.ts applies since 1.30.0 - a session's
+ * credentials go to its site's origin or that site's backend origin,
+ * never to a third.
+ */
+export function sameTenantOrigin(a?: string | null, b?: string | null): boolean {
+  if (sameSite(a, b)) return true;
+  const other = alternateTenantOrigin(a);
+  return Boolean(other && sameSite(other, b));
+}
+
+function remember(host: string, site: TenantHostSite | null): TenantHostSite | null {
+  const now = Date.now();
   const ttl = site ? tenantHostPositiveTtlMs() : tenantHostNegativeTtlMs();
-  if (ttl > 0) cache.set(host, { site, expires: Date.now() + ttl });
+  if (ttl > 0) {
+    cache.set(host, {
+      site: site?.siteName ?? null,
+      ...(site?.backendUrl ? { backendUrl: site.backendUrl } : {}),
+      expires: now + ttl,
+    });
+  }
+  const staleTtl = tenantHostStaleTtlMs();
+  if (site && staleTtl > 0) {
+    stale.set(host, { ...site, expires: now + staleTtl });
+    rememberPair(site, now + staleTtl);
+  } else if (!site) {
+    // Control reached and definite: the host is nobody's now.
+    stale.delete(host);
+  }
   return site;
+}
+
+/**
+ * Control could not be reached: serve the host's last known answer, if
+ * any, for the negative TTL (so control is asked again soon), else the
+ * storefront for the same while.
+ */
+function rememberUnreachable(host: string): TenantHostSite | null {
+  const known = staleTenantHost(host) ?? null;
+  const ttl = tenantHostNegativeTtlMs();
+  if (ttl > 0) {
+    cache.set(host, {
+      site: known?.siteName ?? null,
+      ...(known?.backendUrl ? { backendUrl: known.backendUrl } : {}),
+      expires: Date.now() + ttl,
+    });
+  }
+  return known;
 }
 
 function logFailureOnce(host: string, detail: unknown): void {
@@ -254,24 +452,36 @@ function logFailureOnce(host: string, detail: unknown): void {
   loggedFailure = true;
   console.error(
     `[tenant-host-control] ${TENANT_HOST_RESOLVE_METHOD} failed for ${host}; ` +
-      'treating this and later unknown hosts as the storefront until it answers again',
+      'serving each host its last known site while one is held, and the ' +
+      'storefront otherwise, until it answers again',
     detail,
   );
 }
 
-/** The `{site_name}` answer, unwrapped from Frappe's `message` envelope. */
-function siteNameOf(data: unknown): unknown {
+/**
+ * The `{site_name, backend_url?}` answer, unwrapped from Frappe's
+ * `message` envelope, as a validated [TenantHostSite] - or null when
+ * the site name is not usable. An unusable `backend_url` is dropped,
+ * never fatal.
+ */
+function tenantHostSiteOf(data: unknown): TenantHostSite | null {
   const body =
     data && typeof data === 'object' && 'message' in data
       ? (data as { message: unknown }).message
       : data;
   if (!body || typeof body !== 'object') return null;
-  return (body as { site_name?: unknown }).site_name ?? null;
+  const answer = body as { site_name?: unknown; backend_url?: unknown };
+  const siteName = usableSiteName(answer.site_name ?? null);
+  if (!siteName) return null;
+  const backendUrl = usableBackendUrl(answer.backend_url ?? null);
+  // A backend that is the site itself adds nothing: one origin, no pair.
+  if (!backendUrl || sameSite(backendUrl, siteName)) return { siteName };
+  return { siteName, backendUrl };
 }
 
-async function askControl(host: string): Promise<string | null> {
+async function askControl(host: string): Promise<LookupOutcome> {
   const control = controlBaseUrl();
-  if (!control) return null;
+  if (!control) return { kind: 'answer', site: null };
   const doFetch: TenantHostFetch =
     fetchImpl ?? (globalThis.fetch as unknown as TenantHostFetch);
   const controller = new AbortController();
@@ -294,34 +504,42 @@ async function askControl(host: string): Promise<string | null> {
     );
     if (!res.ok) {
       logFailureOnce(host, `HTTP ${res.status}`);
-      return null;
+      // A 5xx is control not answering; a 4xx is control answering "no".
+      return res.status >= 500
+        ? { kind: 'unreachable' }
+        : { kind: 'answer', site: null };
     }
-    return usableSiteName(siteNameOf(await res.json()));
+    return { kind: 'answer', site: tenantHostSiteOf(await res.json()) };
   } catch (e) {
     logFailureOnce(host, e);
-    return null;
+    return { kind: 'unreachable' };
   } finally {
     clearTimeout(timeoutId);
   }
 }
 
 /**
- * The tenant site a request host belongs to, or `null` when it is not a
- * tenant's host: the `ROKCT_TENANT_HOSTS` map first (exact host, then
- * without its port), then - for a PUBLIC host that is neither the
- * configured site's nor the control site's - the cached or fresh answer
- * from the control site. Never throws.
+ * The tenant a request host belongs to - its site name and, when control
+ * named one, its backend origin - or `null` when it is not a tenant's
+ * host: the `ROKCT_TENANT_HOSTS` map first (exact host, then without its
+ * port; a map entry names no backend), then - for a PUBLIC host that is
+ * neither the configured site's nor the control site's - the cached or
+ * fresh answer from the control site, or the last known answer while
+ * control is unreachable. Never throws.
  */
-export async function resolveTenantSiteByHost(
+export async function resolveTenantHost(
   host: string | null | undefined,
-): Promise<string | null> {
+): Promise<TenantHostSite | null> {
   const raw = (host ?? '').trim().toLowerCase();
   if (!raw) return null;
 
   const map = tenantHostMap();
   const bare = raw.replace(/:\d+$/, '');
   const mapped = map[raw] ?? map[bare];
-  if (mapped) return usableSiteName(mapped) ?? null;
+  if (mapped) {
+    const siteName = usableSiteName(mapped);
+    return siteName ? { siteName } : null;
+  }
 
   const name = normaliseHost(raw);
   if (!isPublicHost(name)) return null;
@@ -329,16 +547,32 @@ export async function resolveTenantSiteByHost(
   if (name === own.site || name === own.control) return null;
   if (!tenantHostLookupEnabled() || !controlBaseUrl()) return null;
 
-  const cached = cachedTenantSite(name);
+  const cached = cachedTenantHost(name);
   if (cached !== undefined) return cached;
 
   const pending = inflight.get(name);
   if (pending) return pending;
   const lookup = askControl(name)
-    .then((site) => remember(name, site))
+    .then((outcome) =>
+      outcome.kind === 'answer'
+        ? remember(name, outcome.site)
+        : rememberUnreachable(name),
+    )
     .finally(() => inflight.delete(name));
   inflight.set(name, lookup);
   return lookup;
+}
+
+/**
+ * The tenant SITE NAME a request host belongs to, or `null` when it is
+ * not a tenant's host - [resolveTenantHost]'s identity half, what the
+ * `x-rokct-tenant-site` header carries. Never the backend origin.
+ * Never throws.
+ */
+export async function resolveTenantSiteByHost(
+  host: string | null | undefined,
+): Promise<string | null> {
+  return (await resolveTenantHost(host))?.siteName ?? null;
 }
 
 /**
@@ -362,13 +596,17 @@ export async function resolveTenantSiteForRequest(
 
 /**
  * The resolver shape `setTenantHostResolver` takes, over
- * [resolveTenantSiteByHost]: `lookupTenantHost` hands it the bare host
- * and turns the site name into an origin itself.
+ * [resolveTenantHost]: `lookupTenantHost` hands it the bare host and
+ * turns the answer into an origin itself. Since 1.30.0 the answer is the
+ * tenant's backend origin when control named one (already scheme'd, so
+ * `normalizeSiteUrl` keeps it), else the site name as before.
  */
 export async function controlTenantHostResolver(
   host: string,
 ): Promise<string | undefined> {
-  return (await resolveTenantSiteByHost(host)) ?? undefined;
+  const found = await resolveTenantHost(host);
+  if (!found) return undefined;
+  return found.backendUrl ?? found.siteName;
 }
 
 let registered = false;

@@ -14,8 +14,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Section registry for the generic landing host
-// (components/custom/landing-content.tsx).
+// Section registry for the generic landing host (app/landing/page.tsx,
+// which since 1.32.0 loads it on the server through
+// components/custom/landing/landing-page.ts; the client wrapper is
+// components/custom/landing-content.tsx).
 //
 // base_sdk holds only the host: the page, the orchestrator, this registry
 // and the hero. Every content section of the page belongs to the home SDK
@@ -28,6 +30,18 @@
 // optional `meta.renders` says whether the section belongs on this page at
 // all - a section it turns down is neither rendered nor listed in the nav.
 // A shell composed with no registered section renders the hero alone.
+//
+// Since 1.32.0 the registry is imported ON THE SERVER, so a section's ENTRY
+// module - the one `load` imports - must be server-safe: it exports `meta`
+// and its default component and does NOT start with "use client" (on the
+// server every export of a "use client" module is a client reference proxy,
+// so meta cannot be read and the loader renders the section with default
+// settings - order 100, the entry id as its DOM id, no floating-nav entry,
+// no rootClass - and one warning); whatever needs hooks, state, effects,
+// browser APIs or
+// framer-motion lives in a sibling `<name>.client.tsx` that starts with
+// "use client" and that the entry's default export renders; and
+// `meta.renders(ctx)` is pure (no window, no localStorage).
 //
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as the
@@ -115,6 +129,18 @@ export interface PageSectionMeta {
    * Absent: the section always belongs.
    */
   renders?: (ctx: PageSectionContext) => boolean;
+  /**
+   * Class names the landing page's ROOT element carries from the first
+   * HTML (since 1.32.0), space-separated. The page renders on the server
+   * now, so a section that themes the landing by putting a class on the
+   * document from a client effect (tokens, font variables) would have its
+   * first paint unthemed; naming the same classes here puts them on the
+   * root that wraps the header, the hero and every section, in the HTML
+   * the server sends, so the tokens are there before any script runs.
+   * The effect may still run for whatever only <html> can carry. Absent:
+   * nothing added. Every present section's value is joined, in page order.
+   */
+  rootClass?: string;
 }
 
 /** The shape of a registered section's module. */
