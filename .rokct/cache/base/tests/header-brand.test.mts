@@ -22,11 +22,17 @@
 // runner with type stripping.
 
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
 import {
+  BRAND_STEM_FONT_SIZE,
   DEFAULT_BRAND_COLLAPSE_DELAY_MS,
   HEADER_MENU,
+  brandFoldsToLetter,
+  brandFoldsToStem,
+  brandLetterOf,
+  brandStemOf,
   headerBrandNeedsCopy,
   isGeneratedBrandIcon,
   loadHeaderBrand,
@@ -79,7 +85,7 @@ describe('resolveHeaderBrand: the pure rule', () => {
   });
 
   it('the generated tile is never the answer, declared or registered', () => {
-    for (const tile of [GENERATED, `${GENERATED}?s=64`, `https://supacharge.app${GENERATED}?s=192`]) {
+    for (const tile of [GENERATED, `${GENERATED}?s=64`, `https://supacharge.school${GENERATED}?s=192`]) {
       assert.ok(isGeneratedBrandIcon(tile), tile);
       assert.equal(resolveHeaderBrand({ logo: tile }, null).logo, 'host');
       assert.equal(resolveHeaderBrand(undefined, { icon: tile }).logo, 'host');
@@ -243,5 +249,235 @@ describe('resolveHeaderMenu: action icons (1.25.0)', () => {
     assert.notEqual(resolved.actions, menu.actions);
     assert.deepEqual(resolved.actions.map((a) => a.id), ['plain', 'glyph', 'image']);
     assert.deepEqual(resolveHeaderMenu(null, []).actions, []);
+  });
+});
+
+// base_sdk 1.28.0: a collapsing brand with no image folds into a letter
+// tile (Ray, 2026-09-10: "since supacharge has not icon cant it fold and
+// only leave the first letter as its icon?").
+describe('brandLetterOf: the letter the name folds into (1.28.0)', () => {
+  it('the first letter, uppercased - the tab tile\'s rule', () => {
+    assert.equal(brandLetterOf('Supacharge'), 'S');
+    assert.equal(brandLetterOf('Rokct'), 'R');
+    assert.equal(brandLetterOf('  Juvo '), 'J');
+  });
+
+  it('a name starting with a lowercase letter is uppercased', () => {
+    assert.equal(brandLetterOf('juvo'), 'J');
+    assert.equal(brandLetterOf('éclair'), 'É');
+  });
+
+  it('a name starting with a digit keeps the digit', () => {
+    assert.equal(brandLetterOf('3scale'), '3');
+    assert.equal(brandLetterOf('7'), '7');
+  });
+
+  it('punctuation and space before the name are skipped; no letter, no tile', () => {
+    assert.equal(brandLetterOf('-- x'), 'X');
+    assert.equal(brandLetterOf('***'), '');
+    assert.equal(brandLetterOf(''), '');
+    assert.equal(brandLetterOf('   '), '');
+    assert.equal(brandLetterOf(null), '');
+    assert.equal(brandLetterOf(undefined), '');
+  });
+});
+
+describe('brandFoldsToLetter: only a collapsing brand with no image (1.28.0)', () => {
+  it('"none" with a collapse declared: the tile (supacharge)', () => {
+    assert.equal(brandFoldsToLetter(resolveHeaderBrand({ logo: 'none', collapse: true }, null)), true);
+    assert.equal(
+      brandFoldsToLetter(
+        resolveHeaderBrand({ logo: 'none', collapse: { delayMs: 1500, code: () => 'ZA' } }, { icon: '/i.png' }),
+      ),
+      true,
+    );
+  });
+
+  it('no collapse declared: never a tile, whatever the logo', () => {
+    assert.equal(brandFoldsToLetter(resolveHeaderBrand({ logo: 'none' }, null)), false);
+    assert.equal(brandFoldsToLetter(resolveHeaderBrand({ logo: 'none', collapse: false }, null)), false);
+    assert.equal(brandFoldsToLetter(resolveHeaderBrand(null, null)), false);
+    assert.equal(brandFoldsToLetter(resolveHeaderBrand({ logo: '/m.svg' }, null)), false);
+  });
+
+  it('a declared image, a registered icon or the host mark: that mark folds, not a tile (rokct)', () => {
+    assert.equal(brandFoldsToLetter(resolveHeaderBrand({ logo: '/m.svg', collapse: true }, null)), false);
+    assert.equal(brandFoldsToLetter(resolveHeaderBrand({ collapse: true }, { icon: '/i.png' })), false);
+    assert.equal(brandFoldsToLetter(resolveHeaderBrand({ badge: true, collapse: { delayMs: 1500 } }, null)), false);
+    assert.equal(resolveHeaderBrand({ badge: true, collapse: { delayMs: 1500 } }, null).logo, 'host');
+  });
+
+  it('the resolved shape is unchanged for a shell that declares no collapse', () => {
+    assert.deepEqual(resolveHeaderBrand({ logo: 'none' }, null), {
+      logo: 'none',
+      wordmark: true,
+      badge: false,
+      collapse: null,
+    });
+    assert.deepEqual(resolveHeaderBrand(null, null), {
+      logo: 'host',
+      wordmark: true,
+      badge: false,
+      collapse: null,
+    });
+  });
+});
+
+// base_sdk 1.29.0: a dotted name folds to its stem (Ray, 2026-09-10: "if
+// sitename has a dot, fold dot and what comes after so they s will never
+// show anymore unless there is icon, if there is icon it fold further to
+// leave only icon").
+describe('brandStemOf: the text before the first dot (1.29.0)', () => {
+  it('a dotted name: the stem; the dot and what follows fold away', () => {
+    assert.equal(brandStemOf('supacharge.school'), 'supacharge');
+    assert.equal(brandStemOf('rokct.ai'), 'rokct');
+    assert.equal(brandStemOf('  supacharge.school '), 'supacharge');
+    assert.equal(brandStemOf('Juvo.app'), 'Juvo');
+  });
+
+  it('only the first dot counts: "a.b.c" gives "a", "x." gives "x"', () => {
+    assert.equal(brandStemOf('a.b.c'), 'a');
+    assert.equal(brandStemOf('x.'), 'x');
+    assert.equal(brandStemOf('x.y'), 'x');
+  });
+
+  it('not dotted: no dot, a leading dot, nothing before the dot, no name', () => {
+    assert.equal(brandStemOf('Supacharge'), null);
+    assert.equal(brandStemOf('Rokct'), null);
+    assert.equal(brandStemOf('.x'), null);
+    assert.equal(brandStemOf('.'), null);
+    assert.equal(brandStemOf('  .school'), null);
+    assert.equal(brandStemOf(''), null);
+    assert.equal(brandStemOf('   '), null);
+    assert.equal(brandStemOf(null), null);
+    assert.equal(brandStemOf(undefined), null);
+  });
+});
+
+describe('brandFoldsToStem: an icon-less collapsing brand with a dotted name (1.29.0)', () => {
+  const iconless = resolveHeaderBrand({ logo: 'none', collapse: true }, null);
+
+  it('a dotted name and no icon: the stem, never the letter tile (supacharge)', () => {
+    assert.equal(brandFoldsToStem(iconless, 'supacharge.school'), true);
+    assert.equal(brandStemOf('supacharge.school'), 'supacharge');
+    assert.equal(
+      brandFoldsToStem(
+        resolveHeaderBrand({ logo: 'none', collapse: { delayMs: 1500, code: () => 'ZA' } }, { icon: '/i.png' }),
+        'supacharge.school',
+      ),
+      true,
+    );
+    // The 1.28.0 rule alone still answers the tile for this brand; the
+    // header asks the stem rule first, so the tile is never reached.
+    assert.equal(brandFoldsToLetter(iconless), true);
+  });
+
+  it('an icon - a declared image, a registered icon or the host mark: folds to the icon, whatever the name (rokct)', () => {
+    for (const brand of [
+      resolveHeaderBrand({ logo: '/m.svg', collapse: true }, null),
+      resolveHeaderBrand({ collapse: true }, { icon: '/i.png' }),
+      resolveHeaderBrand({ badge: true, collapse: { delayMs: 1500 } }, null),
+    ]) {
+      for (const name of ['rokct.ai', 'supacharge.school', 'Rokct']) {
+        assert.equal(brandFoldsToStem(brand, name), false, JSON.stringify({ brand, name }));
+        assert.equal(brandFoldsToLetter(brand), false);
+      }
+    }
+  });
+
+  it('no dot and no icon: the 1.28.0 letter tile, unchanged', () => {
+    assert.equal(brandFoldsToStem(iconless, 'Supacharge'), false);
+    assert.equal(brandFoldsToLetter(iconless), true);
+    assert.equal(brandLetterOf('Supacharge'), 'S');
+  });
+
+  it('the edge cases follow brandStemOf: ".x" is not dotted, "x." and "a.b.c" are', () => {
+    assert.equal(brandFoldsToStem(iconless, '.x'), false);
+    assert.equal(brandFoldsToStem(iconless, 'x.'), true);
+    assert.equal(brandFoldsToStem(iconless, 'a.b.c'), true);
+    assert.equal(brandFoldsToStem(iconless, ''), false);
+    assert.equal(brandFoldsToStem(iconless, null), false);
+  });
+
+  it('a still brand never folds; a wordmark turned off has no stem to keep', () => {
+    assert.equal(brandFoldsToStem(resolveHeaderBrand({ logo: 'none' }, null), 'supacharge.school'), false);
+    assert.equal(brandFoldsToStem(resolveHeaderBrand(null, null), 'rokct.ai'), false);
+    assert.equal(
+      brandFoldsToStem(resolveHeaderBrand({ logo: 'none', wordmark: false, collapse: true }, null), 'supacharge.school'),
+      false,
+    );
+  });
+});
+
+// base_sdk 1.29.0: the stem wordmark sizes itself to the name so a long
+// dotted name never widens the bar before the fold nor pushes the burger
+// off a phone after it (measured on a 17-character name at 60px: 514px
+// at load, a 320px stem at 390). Pure CSS: the 60px of the large
+// wordmark when the whole name fits, else a width budget of the
+// viewport divided by the name's character count.
+describe('BRAND_STEM_FONT_SIZE: the stem wordmark fits the bar (1.29.0)', () => {
+  const RULE = /^min\((\d+)px, calc\(\((\d+)vw \+ (\d+)px\) \/ \(var\(--brand-chars\) \* ([\d.]+)\)\)\)$/;
+
+  /** What the rule computes: the font size in px for `chars` at `vw`. */
+  function fontPx(chars: number, vw: number): number {
+    const m = RULE.exec(BRAND_STEM_FONT_SIZE);
+    assert.ok(m, BRAND_STEM_FONT_SIZE);
+    const [, cap, slope, offset, emPerChar] = m.map(Number);
+    return Math.min(cap, ((slope / 100) * vw + offset) / (chars * emPerChar));
+  }
+
+  /** The text width the rule guarantees: at most 0.6em per character. */
+  function boundPx(chars: number, vw: number): number {
+    return fontPx(chars, vw) * chars * 0.6;
+  }
+
+  it('is a pure CSS min/calc over --brand-chars, capped at the 60px large wordmark', () => {
+    assert.equal(BRAND_STEM_FONT_SIZE, 'min(60px, calc((20vw + 140px) / (var(--brand-chars) * 0.6)))');
+    assert.ok(RULE.test(BRAND_STEM_FONT_SIZE));
+    assert.equal(fontPx(1, 390), 60);
+  });
+
+  it('17 characters stay under 230px at 390, 300px at 768 and 400px at 1280', () => {
+    assert.ok(boundPx(17, 390) < 230, String(boundPx(17, 390)));
+    assert.ok(boundPx(17, 768) < 300, String(boundPx(17, 768)));
+    assert.ok(boundPx(17, 1280) < 400, String(boundPx(17, 1280)));
+    assert.ok(fontPx(17, 390) > 20, 'still larger than the still brand\'s text-xl');
+  });
+
+  it('a 5-letter name at 1280 keeps the 60px the slot was tuned for', () => {
+    assert.equal(fontPx(5, 1280), 60);
+    assert.ok(boundPx(5, 1280) <= 180);
+  });
+
+  it('the stem shares the size and, at 390, leaves the burger on screen', () => {
+    // 10 of the 17 characters at the same size, plus code (53) + chevron
+    // (18) + burger (40) + the bar's padding (32), within 390.
+    const stem = fontPx(17, 390) * 10 * 0.6;
+    assert.ok(stem + 53 + 18 + 40 + 32 < 390, String(stem));
+  });
+
+  it('the header sets it once on the wordmark span, no 60px class, both spans inherit it', () => {
+    const header = readFileSync(new URL('./header.tsx', import.meta.url), 'utf8');
+    const wordmark = header.slice(header.indexOf('function BrandStemWordmark('), header.indexOf('function BrandBlock('));
+    assert.ok(wordmark.length > 0);
+    assert.ok(
+      wordmark.includes(
+        'const size = { "--brand-chars": name.trim().length, fontSize: BRAND_STEM_FONT_SIZE } as React.CSSProperties;',
+      ),
+    );
+    assert.ok(wordmark.includes('style={size}'));
+    assert.ok(
+      wordmark.includes(
+        'className="flex shrink-0 items-center whitespace-nowrap pt-0.5 font-bold tracking-tighter leading-none text-foreground"',
+      ),
+    );
+    assert.ok(!wordmark.includes('text-[60px]'));
+    assert.ok(!wordmark.includes('text-['));
+    assert.equal(wordmark.match(/fontSize/g)?.length, 1);
+    // Neither inner span sizes itself: the stem and the suffix inherit.
+    assert.ok(wordmark.includes('<span>{stem}</span>'));
+    assert.ok(wordmark.includes('<span className="min-w-0 overflow-hidden">{suffix}</span>'));
+    // The 1.24.0 Branding slot keeps its 60px literal.
+    assert.ok(header.includes('<Branding className="text-[60px] tracking-tighter leading-none" />'));
   });
 });

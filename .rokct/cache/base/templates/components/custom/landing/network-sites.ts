@@ -88,7 +88,7 @@ export const NETWORK_SITES: readonly NetworkSite[] = [
   {
     key: "supacharge",
     name: "Supacharge",
-    url: "https://supacharge.app",
+    url: "https://supacharge.school",
     wordmark: true,
   },
   {

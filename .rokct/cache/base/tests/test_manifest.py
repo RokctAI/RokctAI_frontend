@@ -681,6 +681,9 @@ class TestRegistryMarkers(unittest.TestCase):
                     "}\n"
                 )
             shutil.copy(HEADER_BRAND_TESTS, os.path.join(tmp, "header-brand.test.mts"))
+            # 1.29.0: the node test reads the header's stem wordmark markup
+            # (its responsive size) as text; the copy is not imported.
+            shutil.copy(HEADER, os.path.join(tmp, "header.tsx"))
             run = subprocess.run(
                 [node, "--experimental-strip-types", "--no-warnings", "--test",
                  os.path.join(tmp, "header-brand.test.mts")],
@@ -792,6 +795,163 @@ class TestRegistryMarkers(unittest.TestCase):
         actions = partials[partials.index("export function HeaderMenuActions("):partials.index("export interface HeaderMenuRowProps")]
         self.assertIn('const variant = action.variant ?? "primary";', actions)
         self.assertIn('"bg-secondary text-secondary-foreground hover:bg-secondary/80"', actions)
+
+    def test_header_folds_to_a_letter_tile_for_an_icon_less_shell(self):
+        """base_sdk 1.28.0 (Ray, 2026-09-10, on supacharge.app: "since
+        supacharge has not icon cant it fold and only leave the first
+        letter as its icon?"): a collapsing brand with `logo: "none"`
+        folds into a CSS letter tile - the platform name's first letter in
+        the primary token on the tab tile's ground - and nothing else
+        moves: the still brand's literals, the declared-image and host-mark
+        branches and the 1.24.0 collapse machinery are as they were."""
+        src = read(HEADER_MENU_REGISTRY)
+        self.assertIn("export function brandLetterOf(name: string | null | undefined): string {", src)
+        self.assertIn("export function brandFoldsToLetter(brand: ResolvedHeaderBrand): boolean {", src)
+        self.assertIn('return brand.collapse !== null && brand.logo === "none";', src)
+        header = read(HEADER)
+        self.assertRegex(
+            header,
+            r"import \{[^}]*\bbrandFoldsToLetter\b[^}]*\bbrandLetterOf\b[^}]*\} from \"@/components/custom/landing/header-menu\";",
+        )
+        self.assertIn("function BrandLetterTile(", header)
+        tile = header[header.index("function BrandLetterTile("):header.index("function BrandBlock(")]
+        # The letter is text in the primary token; the tile is never an image.
+        self.assertIn("const letter = brandLetterOf(name);", tile)
+        self.assertIn("if (!letter) return null;", tile)
+        self.assertIn("{letter}", tile)
+        self.assertIn("text-primary", tile)
+        self.assertIn('role="img"', tile)
+        self.assertIn("aria-label={name}", tile)
+        self.assertNotIn("<img", tile)
+        self.assertNotIn("BrandLogo", tile)
+        self.assertNotIn("fetch(", tile)
+        # 44px like a mark, the tab tile's corners and ground.
+        self.assertIn("h-11 w-11", tile)
+        self.assertIn("rounded-[22%]", tile)
+        self.assertIn("backgroundColor: BRAND_TILE_GROUND", tile)
+        self.assertIn('const BRAND_TILE_GROUND = "#0b0b0b";', header)
+        route = read(os.path.join(SDK_ROOT, "templates", "app", "brand-icon", "route.tsx"))
+        self.assertIn('const GROUND = "#0b0b0b";', route)
+        self.assertIn("const BRAND_TILE_FONT_PX = Math.round(BRAND_TILE_SIZE * 0.84);", header)
+        self.assertIn("const FONT_RATIO = 0.84;", route)
+        # Opens with the collapse, like the code's slot: hidden until then.
+        self.assertIn("aria-hidden={!collapsed}", tile)
+        self.assertIn('maxWidth: collapsed ? `${BRAND_TILE_SIZE}px` : "0px"', tile)
+        # Reached only inside the collapsing brand, only through the pure rule,
+        # from the same name the wordmark shows.
+        collapsing = header[header.index("function CollapsingBrand("):header.index("const UNDECLARED_BRAND")]
+        # 1.29.0: the stem rule is asked first; the tile is the branch after it.
+        self.assertIn(") : brandFoldsToLetter(brand) ? (", collapsing)
+        self.assertIn("<BrandLetterTile name={PLATFORM_NAME} collapsed={collapsed} />", collapsing)
+        self.assertIn("<BrandMark brand={brand} size={44} />", collapsing)
+        self.assertEqual(header.count("<BrandLetterTile "), 1)
+        # The still brand is untouched, literal for literal.
+        still = header[header.index("function BrandBlock("):header.index("function toBrandCode(")]
+        self.assertIn("if (brand.collapse) return <CollapsingBrand brand={brand} collapsed={collapsed} />;", still)
+        self.assertIn("<BrandMark brand={brand} size={32} />", still)
+        self.assertIn('{brand.wordmark && <Branding className="text-xl" />}', still)
+        self.assertNotIn("BrandLetterTile", still)
+        mark = header[header.index("function BrandMark("):header.index("const BRAND_TILE_GROUND")]
+        self.assertIn('if (brand.logo === "none") return null;', mark)
+        self.assertIn("<BrandLogo width={32} height={32} />", mark)
+        self.assertNotIn("BrandLetterTile", mark)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", header))
+        self.assertNotIn("/brand-icon", code)
+
+    def test_header_folds_a_dotted_name_to_its_stem(self):
+        """base_sdk 1.29.0 (Ray, 2026-09-10: "if sitename has a dot, fold
+        dot and what comes after so they s will never show anymore unless
+        there is icon, if there is icon it fold further to leave only
+        icon"): an icon-less collapsing brand whose platform name has a
+        dot keeps the text before the dot as its wordmark and never draws
+        the letter tile; a brand with an image still folds to the image;
+        an undotted icon-less name still folds to the 1.28.0 tile. No
+        brand string is named in base."""
+        src = read(HEADER_MENU_REGISTRY)
+        self.assertIn("export function brandStemOf(name: string | null | undefined): string | null {", src)
+        self.assertIn("export function brandFoldsToStem(", src)
+        self.assertIn('return brandFoldsToLetter(brand) && brand.wordmark && brandStemOf(name) !== null;', src)
+        stem_of = src[src.index("export function brandStemOf("):src.index("export function brandFoldsToStem(")]
+        self.assertIn('const dot = trimmed.indexOf(".");', stem_of)
+        self.assertIn("if (dot <= 0) return null;", stem_of)
+        header = read(HEADER)
+        self.assertRegex(
+            header,
+            r"import \{[^}]*\bbrandFoldsToStem\b[^}]*\bbrandStemOf\b[^}]*\} from \"@/components/custom/landing/header-menu\";",
+        )
+        self.assertIn("function BrandStemWordmark(", header)
+        wordmark = header[header.index("function BrandStemWordmark("):header.index("function BrandBlock(")]
+        # Text only: the stem stays, the dot and the rest close with the collapse.
+        self.assertIn("const suffix = name.trim().slice(stem.length);", wordmark)
+        self.assertIn("<span>{stem}</span>", wordmark)
+        self.assertIn('<span className="min-w-0 overflow-hidden">{suffix}</span>', wordmark)
+        self.assertIn("aria-hidden={collapsed}", wordmark)
+        # The suffix SLIDES into the stem (Ray: "not as a back type but like
+        # sliding into what gets left"): its slot's width closes over hidden
+        # overflow from the suffix's own width, with the wordmark slot's own
+        # duration and easing, while the stem span before it never moves.
+        self.assertIn('gridTemplateColumns: collapsed ? "0fr" : "1fr"', wordmark)
+        self.assertIn('className="grid transition-all duration-500 ease-in-out"', wordmark)
+        self.assertNotIn("maxWidth", wordmark)
+        self.assertNotIn("setTimeout", wordmark)
+        self.assertNotIn("useEffect", wordmark)
+        self.assertNotIn("useState", wordmark)
+        # The large wordmark's classes (the 1.24.0 Branding slot's) but its
+        # size, bold like the host wordmarks: the size is responsive
+        # (BRAND_STEM_FONT_SIZE with --brand-chars, the FULL name's length),
+        # set once on the span both the stem and the suffix inherit from, so
+        # a long dotted name never widens the bar and the stem does not jump.
+        self.assertIn(
+            'className="flex shrink-0 items-center whitespace-nowrap pt-0.5 font-bold tracking-tighter leading-none text-foreground"',
+            wordmark,
+        )
+        self.assertNotIn("text-[60px]", wordmark)
+        self.assertNotIn("text-[", wordmark)
+        self.assertIn(
+            'const size = { "--brand-chars": name.trim().length, fontSize: BRAND_STEM_FONT_SIZE } as React.CSSProperties;',
+            wordmark,
+        )
+        self.assertIn("style={size}", wordmark)
+        self.assertEqual(wordmark.count("fontSize"), 1)
+        self.assertRegex(
+            header,
+            r"import \{[^}]*\bBRAND_STEM_FONT_SIZE\b[^}]*\} from \"@/components/custom/landing/header-menu\";",
+        )
+        self.assertIn(
+            'export const BRAND_STEM_FONT_SIZE = "min(60px, calc((20vw + 140px) / (var(--brand-chars) * 0.6)))";',
+            src,
+        )
+        self.assertNotIn("<img", wordmark)
+        self.assertNotIn("BrandLogo", wordmark)
+        self.assertNotIn("BrandLetterTile", wordmark)
+        self.assertNotIn("brandLetterOf", wordmark)
+        # Asked before the tile, from the same name the wordmark shows, and
+        # the large wordmark slot yields to it.
+        collapsing = header[header.index("function CollapsingBrand("):header.index("const UNDECLARED_BRAND")]
+        self.assertIn(
+            "const stem = brandFoldsToStem(brand, PLATFORM_NAME) ? brandStemOf(PLATFORM_NAME) : null;",
+            collapsing,
+        )
+        self.assertIn("{stem !== null ? (", collapsing)
+        self.assertIn("<BrandStemWordmark name={PLATFORM_NAME} stem={stem} collapsed={collapsed} />", collapsing)
+        self.assertLess(collapsing.index("<BrandStemWordmark "), collapsing.index("<BrandLetterTile "))
+        self.assertIn("{brand.wordmark && stem === null && (", collapsing)
+        self.assertIn('<Branding className="text-[60px] tracking-tighter leading-none" />', collapsing)
+        self.assertIn('className="flex items-center overflow-hidden transition-all duration-500 ease-in-out"', collapsing)
+        self.assertEqual(header.count("<BrandStemWordmark "), 1)
+        # The still brand and the 1.28.0 tile are untouched.
+        still = header[header.index("function BrandBlock("):header.index("function toBrandCode(")]
+        self.assertIn('{brand.wordmark && <Branding className="text-xl" />}', still)
+        self.assertNotIn("BrandStemWordmark", still)
+        tile = header[header.index("function BrandLetterTile("):header.rindex("/**", 0, header.index("function BrandStemWordmark("))]
+        self.assertIn("const letter = brandLetterOf(name);", tile)
+        self.assertNotIn("BrandStemWordmark", tile)
+        self.assertNotIn("brandStemOf", tile)
+        # No brand is named in code: the stem is whatever name the shell shows.
+        for text in (header, src):
+            code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", text)).lower()
+            self.assertNotIn("supacharge", code)
+            self.assertNotIn("rokct.ai", code)
 
     def test_header_menu_action_carries_an_icon(self):
         # base_sdk 1.20.0 (Ray, 2026-09-09: rokct "lost its chrome icon"):
@@ -939,7 +1099,7 @@ class TestRegistryMarkers(unittest.TestCase):
     # the social origins the admin settings page links, and the hosts the
     # documentation comments use as examples of a tenant or a site.
     FIRST_PARTY_HOSTS = {
-        "rokct.ai", "supacharge.app", "juvo.app", "www.gnu.org",
+        "rokct.ai", "supacharge.school", "juvo.app", "www.gnu.org",
         "twitter.com", "linkedin.com", "instagram.com", "facebook.com",
         "tenant-a.rokct.ai", "example.app", "tenant.localhost",
     }
@@ -1020,7 +1180,7 @@ class TestRegistryMarkers(unittest.TestCase):
     def test_network_sites_list_shape(self):
         src = read(NETWORK_SITES)
         self.assertIn("export const NETWORK_SITES: readonly NetworkSite[]", src)
-        for origin in ("https://rokct.ai", "https://supacharge.app", "https://juvo.app"):
+        for origin in ("https://rokct.ai", "https://supacharge.school", "https://juvo.app"):
             self.assertIn(f'url: "{origin}"', src)
         for pending in ("hosting", "telephony"):
             self.assertRegex(src, re.compile(rf'key: "{pending}".*?url: null.*?shown: false', re.S), pending)

@@ -1,5 +1,102 @@
 # Changelog
 
+## 1.29.0
+
+* Supacharge network site moves to https://supacharge.school (Ray,
+  2026-09-10). `NETWORK_SITES` url, tests and the first-party host
+  allowlist updated. No visible change on any shell; the marquee and
+  footer strip link to the new host after re-pin.
+* An icon-less collapsing brand whose platform name carries a dot folds
+  to its stem. Ray, 2026-09-10: "same on the nextjs is if sitename has a
+  dot, fold dot and what comes after so they s will never show anymore
+  unless there is icon, if there is icon it fold further to leave only
+  icon". So:
+  * `components/custom/landing/header-menu.ts`: `brandStemOf(name)`, the
+    text before the first dot of the trimmed name (`"a.b.c"` gives `"a"`,
+    `"x."` gives `"x"`; `null` for no dot, a leading dot or no name - not
+    dotted for this rule), and `brandFoldsToStem(brand, name)`: a
+    collapsing brand whose logo resolved to `"none"`, with its wordmark
+    on, whose name has a stem. Base names no brand string; whatever name
+    the shell shows is the one that folds.
+  * `components/custom/header.tsx`: `BrandStemWordmark`, asked by
+    `CollapsingBrand` before the 1.28.0 letter tile: the whole
+    `PLATFORM_NAME` at load, as text in the large wordmark's classes (the
+    ones the `Branding` slot takes) at the host wordmarks' bold weight,
+    and after `delayMs` the dot and what follows SLIDE into the stem,
+    leaving the stem as the wordmark with the code and the chevron beside
+    it. Ray, 2026-09-10: "its like its being erased but not as a back type
+    but like sliding into what gets left. i think rokct already use the
+    animation in header" - so it is the large wordmark slot's own slide
+    (500ms ease-in-out, width closing over hidden overflow), the suffix's
+    slot a one-column grid whose track goes `1fr` to `0fr` so it closes
+    from the suffix's own width with nothing measured, and the stem's
+    glyphs never move: no backspace, no swap. The wordmark's size is
+    responsive (`BRAND_STEM_FONT_SIZE` in `header-menu.ts`, set inline
+    with `--brand-chars`, the full name's character count): the large
+    wordmark's 60px when the whole name fits, else what fits a budget of
+    20vw + 140px at 0.6em per character - one size for the name and its
+    stem, so a long dotted name never widens the bar before the fold nor
+    pushes the burger off a phone after it (17 characters: about 21px at
+    390, 29px at 768, 39px at 1280; 5 letters at 1280 stay at 60px).
+    Pure CSS, nothing measured. The letter tile is never
+    drawn for a dotted name. A brand with a declared
+    image, a registered icon or the host's own mark still folds to that
+    mark whatever its name; an undotted icon-less name still folds to the
+    1.28.0 tile; a still brand is untouched. The favicon route is not
+    part of this.
+* Tests: `header-brand.test.mts` - the stem for dotted, multi-dot,
+  trailing-dot, leading-dot, undotted and empty names, and the fold rule
+  for the three cases (a dotted name without an icon, an icon whatever
+  the name, no dot and no icon) with the edge cases;
+  `test_header_folds_a_dotted_name_to_its_stem` reads the stem wordmark
+  (text only, the suffix slot closing with the collapse, the responsive
+  size set once on the span both stem and suffix inherit from and no
+  60px class on it, asked before the tile, no brand string in code) and
+  holds the 1.28.0 literals; `header-brand.test.mts` also pins
+  `BRAND_STEM_FONT_SIZE` (the widths it bounds for 17 characters at 390,
+  768 and 1280, a 5-letter name at 1280, the stem beside the burger at
+  390) and reads the staged `header.tsx` for where it is applied.
+
+## 1.28.0
+
+* A collapsing brand with no image folds into a letter tile. Ray,
+  2026-09-10, on supacharge.app: "rokctai has logo and name that the name
+  fold into logo and menus disapear, this is not in supacharge. since
+  supacharge has not icon cant it fold and only leave the first letter as
+  its icon?" A shell that declares `brand.logo: "none"` (the wordmark is
+  the logo) and `brand.collapse` had nothing to fold into: `BrandMark`
+  draws nothing for `"none"`, so after `delayMs` the header was left with
+  the code and the chevron alone. So:
+  * `components/custom/header.tsx`: `BrandLetterTile`, drawn by
+    `CollapsingBrand` in the mark's slot when the brand folds to a letter.
+    The platform name's first letter (the same `PLATFORM_NAME` the
+    wordmark shows) in the shell's `primary` token on the generated
+    /brand-icon tab tile's ground (`#0b0b0b` with its highlight, the same
+    in both themes, as the tab's icon is), 44px square like a mark,
+    corners at 22% and the face at 84% of the square - the tab tile's
+    proportions - `role="img"` with the name as its label. CSS and text
+    only: no `<img>`, nothing fetched. Its slot opens with the collapse,
+    the way the code's does, so at load the wordmark stands alone as the
+    declaration says and the name then folds into the letter; the code
+    and the chevron sit beside it and the desktop nav fades and returns
+    exactly as in 1.24.0.
+  * `components/custom/landing/header-menu.ts`: `brandLetterOf(name)`, the
+    tab tile's rule restated for the browser bundle (first letter or
+    digit, any script, uppercased; `""` for none), and
+    `brandFoldsToLetter(brand)`: a collapsing brand whose logo resolved to
+    `"none"`, and nothing else. A shell that declares no `collapse`
+    renders byte-for-byte what it did (`resolveHeaderBrand` answers the
+    same shape); a collapsing brand with a declared image, a registered
+    icon or the host's own mark keeps folding to that mark.
+* Tests: `header-brand.test.mts` - the letter for a capitalised, a
+  lowercase, a digit-led and an empty name, and the fold rule for `"none"`
+  with and without a collapse, for a declared image, a registered icon
+  and the host mark, and the unchanged resolved shape without a collapse;
+  `test_header_folds_to_a_letter_tile_for_an_icon_less_shell` reads the
+  tile (text in the primary token, no image, the tab tile's ground and
+  proportions, opened by the collapse) and holds the still brand's and the
+  mark branches' literals.
+
 ## 1.27.0
 
 * The network strip renders once per page. Ray, 2026-09-09, on rokct.ai:

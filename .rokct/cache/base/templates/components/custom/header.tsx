@@ -68,6 +68,27 @@
 // scrolled. Both are off unless declared, so a shell that registers
 // neither (Supacharge) renders byte-for-byte what it did.
 //
+// Since 1.28.0 a collapsing brand with NO image (`logo: "none"`) folds
+// into a letter tile rather than into nothing (Ray, 2026-09-10: "since
+// supacharge has not icon cant it fold and only leave the first letter as
+// its icon?"): [BrandLetterTile], the platform name's first letter in the
+// shell's primary colour on the dark ground the generated /brand-icon tab
+// tile uses, 44px like a mark, drawn in CSS - no image, no fetch - and
+// only while the brand is collapsed. The still brand, a declared image and
+// the host's own mark are untouched; a shell that declares no `collapse`
+// renders exactly what it rendered.
+//
+// Since 1.29.0 an icon-less collapsing brand whose platform name carries a
+// dot folds to its STEM instead (Ray, 2026-09-10: "if sitename has a dot,
+// fold dot and what comes after so the s will never show anymore unless
+// there is icon, if there is icon it fold further to leave only icon"):
+// [BrandStemWordmark] draws the whole name at load in the large
+// wordmark's classes and after `delayMs` slides the dot and what follows
+// it away, leaving the text before the first dot as the wordmark with the
+// code and the chevron beside it. The letter tile is never drawn for a
+// dotted name; a brand with an image still folds to that image whatever
+// its name, and an undotted icon-less name still folds to the 1.28.0 tile.
+//
 // The public API is the one the two shells' own headers had, so the pages
 // that already render <Header> (the auth pages, status, careers) compile
 // unchanged: loginUrl / signupUrl / session, and the openLoginPopup /
@@ -100,7 +121,12 @@ import {
   HeaderMenuNav,
 } from "@/components/custom/header-menu";
 import {
+  BRAND_STEM_FONT_SIZE,
   HEADER_MENU,
+  brandFoldsToLetter,
+  brandFoldsToStem,
+  brandLetterOf,
+  brandStemOf,
   loadHeaderBrand,
   loadHeaderMenu,
   resolveHeaderBrand,
@@ -166,6 +192,109 @@ function BrandMark({ brand, size }: { brand: ResolvedHeaderBrand; size: 32 | 44 
 }
 
 /**
+ * The ground of the generated /brand-icon tab tile (app/brand-icon/
+ * route.tsx's GROUND, restated because that route is a node module), with
+ * its top-right highlight. Not a brand colour: the same near-black in
+ * both themes, so the tile reads as the tab's icon does. The letter takes
+ * the shell's primary token.
+ */
+const BRAND_TILE_GROUND = "#0b0b0b";
+const BRAND_TILE_HIGHLIGHT =
+  "radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 55%)";
+/** The tab tile's proportions at 44px: corners at 22%, the face at 84% (cap height near 62%). */
+const BRAND_TILE_SIZE = 44;
+const BRAND_TILE_FONT_PX = Math.round(BRAND_TILE_SIZE * 0.84);
+
+/**
+ * The letter tile a collapsing brand with no image folds into (1.28.0):
+ * `name`'s first letter or digit, uppercased, in the primary colour on the
+ * tab tile's dark ground, 44px square with the tab tile's corners. Pure
+ * CSS and text - no <img>, nothing fetched. Its slot opens with the
+ * collapse, the way the code's does, so at load the wordmark stands
+ * alone as the declaration says and after `delayMs` the name folds into
+ * the letter. A name with no letter draws nothing.
+ */
+function BrandLetterTile({ name, collapsed }: { name: string; collapsed: boolean }) {
+  const letter = brandLetterOf(name);
+  if (!letter) return null;
+  return (
+    <span
+      aria-hidden={!collapsed}
+      className="flex h-11 shrink-0 items-center overflow-hidden transition-all duration-500 ease-in-out"
+      style={{ maxWidth: collapsed ? `${BRAND_TILE_SIZE}px` : "0px", opacity: collapsed ? 1 : 0 }}
+    >
+      <span
+        role="img"
+        aria-label={name}
+        className="flex h-11 w-11 shrink-0 select-none items-center justify-center rounded-[22%] font-bold leading-none text-primary"
+        style={{
+          backgroundColor: BRAND_TILE_GROUND,
+          backgroundImage: BRAND_TILE_HIGHLIGHT,
+          fontSize: `${BRAND_TILE_FONT_PX}px`,
+        }}
+      >
+        {letter}
+      </span>
+    </span>
+  );
+}
+
+/**
+ * The wordmark a collapsing brand with no image and a DOTTED name folds
+ * into (1.29.0): `stem`, the text before the first dot, then the dot and
+ * the rest of `name` in a slot that closes with the collapse. Text only,
+ * in the large wordmark's classes (the ones the Branding slot below
+ * takes) and the host wordmarks' bold weight, in the foreground token, so at
+ * load the whole name reads as one word and after `delayMs` only the stem
+ * is left, the code and the chevron beside it. No letter tile, no image.
+ * The size is responsive ([BRAND_STEM_FONT_SIZE]): the large wordmark's
+ * 60px when the whole name fits, smaller when it would not, so a long
+ * dotted name never pushes the bar past the viewport before the fold
+ * nor the burger off a phone after it.
+ *
+ * The suffix SLIDES into the stem the way the large wordmark slides into
+ * the mark (Ray, 2026-09-10: "its like its being erased but not as a back
+ * type but like sliding into what gets left. i think rokct already use
+ * the animation in header"): the same 500ms ease-in-out as that slot, its
+ * width closing over hidden overflow while the stem's glyphs never move -
+ * not a backspace, not a swap. The slot is a one-column grid whose track
+ * goes from `1fr` to `0fr`, so it closes from the suffix's own width, the
+ * whole transition visible, with nothing measured.
+ */
+function BrandStemWordmark({
+  name,
+  stem,
+  collapsed,
+}: {
+  name: string;
+  stem: string;
+  collapsed: boolean;
+}) {
+  const suffix = name.trim().slice(stem.length);
+  // One size for the whole name, set on this span so the stem and the
+  // suffix inherit it: the 60px of the large wordmark when the FULL name
+  // fits the bar, else what fits ([BRAND_STEM_FONT_SIZE], from the name's
+  // character count and the viewport), so the name never widens the bar
+  // and the stem's glyphs are the same before and after the fold.
+  const size = { "--brand-chars": name.trim().length, fontSize: BRAND_STEM_FONT_SIZE } as React.CSSProperties;
+  return (
+    <span
+      className="flex shrink-0 items-center whitespace-nowrap pt-0.5 font-bold tracking-tighter leading-none text-foreground"
+      style={size}
+    >
+      <span>{stem}</span>
+      <span
+        aria-hidden={collapsed}
+        className="grid transition-all duration-500 ease-in-out"
+        style={{ gridTemplateColumns: collapsed ? "0fr" : "1fr", opacity: collapsed ? 0 : 1 }}
+      >
+        <span className="min-w-0 overflow-hidden">{suffix}</span>
+      </span>
+    </span>
+  );
+}
+
+/**
  * The brand link's content, as resolved: the mark ("host" is the host
  * shell's own brand-logo.tsx, `{ src }` an image, "none" nothing) and then
  * the wordmark unless the home SDK turned it off. A brand that collapses
@@ -203,6 +332,11 @@ function toBrandCode(answer: HeaderBrandCode | string | null | undefined): Heade
  * the same moment. The code is asked of the declaration once, on the
  * client, after mount - rokct.ai answers it from its branding cache, so a
  * first visit with an empty cache collapses to the mark alone, as before.
+ * A brand with no image (`logo: "none"`, 1.28.0) has no mark to keep, so
+ * the letter tile stands in that slot once collapsed - unless the name
+ * has a dot (1.29.0), when the stem wordmark stands there instead and the
+ * large wordmark slot is not drawn at all: the name IS the wordmark, and
+ * only its dot and suffix fold away.
  */
 function CollapsingBrand({
   brand,
@@ -220,11 +354,19 @@ function CollapsingBrand({
   }, [resolveCode]);
 
   const showCode = collapsed && code !== null;
+  // The stem rule is asked first: a dotted name never reaches the tile.
+  const stem = brandFoldsToStem(brand, PLATFORM_NAME) ? brandStemOf(PLATFORM_NAME) : null;
 
   return (
     <>
       <span className="relative flex h-11 items-center">
-        <BrandMark brand={brand} size={44} />
+        {stem !== null ? (
+          <BrandStemWordmark name={PLATFORM_NAME} stem={stem} collapsed={collapsed} />
+        ) : brandFoldsToLetter(brand) ? (
+          <BrandLetterTile name={PLATFORM_NAME} collapsed={collapsed} />
+        ) : (
+          <BrandMark brand={brand} size={44} />
+        )}
         <span
           aria-hidden={!showCode}
           className="flex h-11 items-start overflow-hidden whitespace-nowrap transition-all duration-500"
@@ -240,7 +382,7 @@ function CollapsingBrand({
           )}
         </span>
       </span>
-      {brand.wordmark && (
+      {brand.wordmark && stem === null && (
         <span
           aria-hidden={collapsed}
           className="flex items-center overflow-hidden transition-all duration-500 ease-in-out"

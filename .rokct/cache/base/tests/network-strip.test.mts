@@ -47,7 +47,7 @@ describe('NETWORK_SITES: the list', () => {
   it('names rokct.ai, Supacharge and juvo with their origins, hosting and telephony without', () => {
     const byKey = new Map(NETWORK_SITES.map((s) => [s.key, s]));
     assert.equal(byKey.get('rokct')?.url, 'https://rokct.ai');
-    assert.equal(byKey.get('supacharge')?.url, 'https://supacharge.app');
+    assert.equal(byKey.get('supacharge')?.url, 'https://supacharge.school');
     assert.equal(byKey.get('supacharge')?.wordmark, true);
     assert.equal(byKey.get('juvo')?.url, 'https://juvo.app');
     for (const pending of ['hosting', 'telephony']) {
@@ -86,7 +86,7 @@ describe('NETWORK_SITES: the list', () => {
 describe('networkSiteHost: the same normalisation as resolveDisplayHost', () => {
   it('drops the port and a leading www., lower-cases', () => {
     assert.equal(networkSiteHost('https://www.Rokct.AI:443/'), 'rokct.ai');
-    assert.equal(networkSiteHost('https://supacharge.app'), 'supacharge.app');
+    assert.equal(networkSiteHost('https://supacharge.school'), 'supacharge.school');
     assert.equal(networkSiteHost('http://localhost:3000'), 'localhost');
   });
 
@@ -107,7 +107,7 @@ describe('resolveNetworkSites: self-exclusion by host', () => {
   });
 
   it("supacharge's shell never lists Supacharge", () => {
-    const sites = resolveNetworkSites(NETWORK_SITES, { selfHost: 'supacharge.app' });
+    const sites = resolveNetworkSites(NETWORK_SITES, { selfHost: 'supacharge.school' });
     assert.deepEqual(keys(sites), ['rokct', 'juvo']);
   });
 
@@ -156,7 +156,7 @@ describe('resolveNetworkSites: order and hidden', () => {
 
 describe('resolveNetworkStrip: the defaults and the registered say', () => {
   it('nothing registered: "Trusted by", footer on, landing off, the shell left out', () => {
-    const strip = resolveNetworkStrip(null, 'supacharge.app');
+    const strip = resolveNetworkStrip(null, 'supacharge.school');
     assert.equal(strip.heading, DEFAULT_NETWORK_STRIP_HEADING);
     assert.equal(strip.heading, 'Trusted by');
     assert.deepEqual(strip.placement, { landing: 'none', footer: true });
@@ -257,7 +257,7 @@ describe('networkStripRendersAt: once per page (1.27.0)', () => {
   });
 
   it('footer false stays off everywhere, and the landing route never turns a surface on', () => {
-    const strip = resolveNetworkStrip({ placement: { landing: 'none', footer: false } }, 'supacharge.app');
+    const strip = resolveNetworkStrip({ placement: { landing: 'none', footer: false } }, 'supacharge.school');
     for (const onLanding of [true, false]) {
       for (const surface of ['afterHero', 'beforeFooter', 'section', 'footer', 'none'] as const) {
         assert.equal(networkStripRendersAt(strip, surface, onLanding), false, `${surface} onLanding=${onLanding}`);

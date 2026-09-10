@@ -31,10 +31,10 @@
       "git": "https://github.com/RokctAI/core",
       "path": "../core/base/nextjs",
       "ref": "main",
-      "commit": "fa04c1451d44ac3477d02659e33cab8187158433",
-      "version": "1.27.0",
+      "commit": "8bc74eddadfeee8f97324b0ab4547ed647879475",
+      "version": "1.29.0",
       "install_py_sha256": "b6c434a1c05611d29f1018f68b9423383f7ecfbf9cc1efe74825ba6c4df98fff",
-      "content_sha256": "d15db61b86fdd9999125cf97ebd6dfea9727b3e8783e5badc75551c2c45c1eda"
+      "content_sha256": "68c21bda2b667cdcbafc296156d70aa2ce70b444cab0b7e8a5fff0958852b3a8"
     },
     {
       "name": "auth_sdk",
