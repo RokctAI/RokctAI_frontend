@@ -89,6 +89,28 @@
 // local" - so the home SDK installs the file under public/ and names its
 // path here; base never names a third-party host.
 //
+// Since 1.28.0 a collapsing brand that declares NO image (`logo: "none"`,
+// the wordmark is the logo) folds into a letter tile rather than into
+// nothing (Ray, 2026-09-10, on supacharge.app: "rokctai has logo and name
+// that the name fold into logo and menus disapear, this is not in
+// supacharge. since supacharge has not icon cant it fold and only leave the
+// first letter as its icon?"). The tile is the header's own CSS - the
+// first letter of the platform name, [brandLetterOf], in the shell's
+// primary colour on the same dark ground the generated /brand-icon tab
+// tile draws - and it exists only while the brand is collapsed; the still
+// brand of a shell that declares no `collapse` is byte-for-byte what it
+// was, and a declared image or the host's mark still folds to that image.
+//
+// Since 1.29.0 that same icon-less collapsing brand folds differently when
+// the platform name carries a DOT (Ray, 2026-09-10: "if sitename has a
+// dot, fold dot and what comes after so the s will never show anymore
+// unless there is icon, if there is icon it fold further to leave only
+// icon"): the dot and everything after it slide away and the text before
+// the first dot, [brandStemOf], stays as the wordmark - the letter tile is
+// never drawn for a dotted name. [brandFoldsToStem] is the rule. A brand
+// with an image keeps folding to that image whatever its name, and an
+// undotted icon-less name keeps the 1.28.0 tile.
+//
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as
 // ./hero-sections.ts, ./hero-copy.ts, ./hero-form.ts, ./plans-query.ts and
@@ -231,6 +253,15 @@ export interface HeaderBrand {
  * bare text, or the text with the inline style the host wants on it (the
  * scale and baseline offset rokct.ai's branding carries). Nothing, or an
  * empty string, draws no code and the mark collapses on its own.
+ *
+ * With `logo: "none"` (since 1.28.0) there is no mark to leave behind, so
+ * the wordmark folds into a letter tile the header draws itself: the
+ * platform name's first letter ([brandLetterOf]) in the primary colour on
+ * the tab tile's dark ground, 44px like a mark, the code and the chevron
+ * beside it. Before the collapse the wordmark alone shows, as declared.
+ * When that name carries a dot (since 1.29.0) there is no tile: the dot
+ * and what follows it fold away and the stem ([brandStemOf]) stays as
+ * the wordmark, the code and the chevron beside it.
  */
 export interface HeaderBrandCollapse {
   /** Milliseconds after mount before the wordmark slides away. Default 1500. */
@@ -542,6 +573,75 @@ export function resolveHeaderBrandCollapse(
       : DEFAULT_BRAND_COLLAPSE_DELAY_MS;
   return { delayMs, code: typeof declared.code === "function" ? declared.code : null };
 }
+
+/**
+ * The letter a collapsing brand with no image folds into (since 1.28.0):
+ * the first letter or digit of `name`, uppercased - the rule the generated
+ * /brand-icon tab tile applies to its host (app/brand-icon/route.tsx), so
+ * the header's tile and the tab's agree. Any script counts ("éclair" gives
+ * "É"); a name with no letter or digit, or no name, gives "" and the
+ * header draws no tile.
+ */
+export function brandLetterOf(name: string | null | undefined): string {
+  if (!name) return "";
+  const match = name.match(/[\p{L}\p{N}]/u);
+  return match ? match[0].toUpperCase() : "";
+}
+
+/**
+ * Whether a resolved brand folds into the letter tile (since 1.28.0): only
+ * a COLLAPSING brand that declared no image. A still brand never does,
+ * whatever its logo; a collapsing brand with a declared image or the
+ * host's own mark keeps folding to that mark, as in 1.24.0.
+ */
+export function brandFoldsToLetter(brand: ResolvedHeaderBrand): boolean {
+  return brand.collapse !== null && brand.logo === "none";
+}
+
+/**
+ * The stem a DOTTED name folds to (since 1.29.0): the text before the
+ * first "." of `name` (trimmed), so "a.b.c" gives "a" and "x." gives "x".
+ * `null` for a name with no dot, one that starts with the dot (".x" has
+ * nothing before it) and no name at all - none of those is dotted for
+ * this rule and the header keeps its 1.28.0 behaviour. No brand string
+ * is known here: whatever name the shell shows is the one that folds.
+ */
+export function brandStemOf(name: string | null | undefined): string | null {
+  const trimmed = name?.trim() ?? "";
+  const dot = trimmed.indexOf(".");
+  if (dot <= 0) return null;
+  return trimmed.slice(0, dot);
+}
+
+/**
+ * Whether a resolved brand folds to the stem of `name` (since 1.29.0):
+ * a COLLAPSING brand that declared no image, keeps its wordmark and whose
+ * name has a stem ([brandStemOf]). The header asks this BEFORE
+ * [brandFoldsToLetter], so a dotted name never draws the letter tile; a
+ * brand with a declared image, a registered icon or the host's own mark
+ * folds to that mark whatever its name, and a still brand never folds.
+ */
+export function brandFoldsToStem(
+  brand: ResolvedHeaderBrand,
+  name: string | null | undefined,
+): boolean {
+  return brandFoldsToLetter(brand) && brand.wordmark && brandStemOf(name) !== null;
+}
+
+/**
+ * The stem wordmark's font size (since 1.29.0), a CSS expression the
+ * header sets inline with `--brand-chars`, the FULL name's character
+ * count: the large wordmark's 60px when the name fits, else what fits
+ * a width budget of 20vw + 140px, at 0.6em per character - a bound that
+ * covers a bold, tightly tracked wordmark of any letters, so the whole
+ * name never widens the bar before the fold and the stem, at the same
+ * size, leaves room for the code, the chevron and the burger after it.
+ * 17 characters: about 21px at 390 (at most 218px of text), 29px at 768
+ * (294px), 39px at 1280 (396px); up to 11 characters stay at 60px at
+ * 1280. Pure CSS, nothing measured: a name of 5 letters at 60px is
+ * exactly what 1.24.0 tuned the slot for and reads the same as before.
+ */
+export const BRAND_STEM_FONT_SIZE = "min(60px, calc((20vw + 140px) / (var(--brand-chars) * 0.6)))";
 
 /**
  * The generated favicon route base_sdk installs at app/brand-icon/route.tsx
