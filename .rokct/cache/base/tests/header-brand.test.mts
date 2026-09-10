@@ -26,6 +26,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
 import {
+  BRAND_STEM_CODE_FONT_SIZE,
   BRAND_STEM_FONT_SIZE,
   DEFAULT_BRAND_COLLAPSE_DELAY_MS,
   HEADER_MENU,
@@ -479,5 +480,96 @@ describe('BRAND_STEM_FONT_SIZE: the stem wordmark fits the bar (1.29.0)', () => 
     assert.ok(wordmark.includes('<span className="min-w-0 overflow-hidden">{suffix}</span>'));
     // The 1.24.0 Branding slot keeps its 60px literal.
     assert.ok(header.includes('<Branding className="text-[60px] tracking-tighter leading-none" />'));
+  });
+});
+
+// base_sdk 1.31.0 (Ray, 2026-09-10: "look at rokct header's country code
+// and then check supacharge's"): beside a mark the code is 36px against a
+// 44px mark on every viewport, so it is always the smaller; beside a stem
+// wordmark, which BRAND_STEM_FONT_SIZE shrinks to fit the bar, a 36px code
+// outgrew the wordmark on a phone. The code follows the stem: its 36px
+// where the stem is at least that, else the stem's own size.
+describe('BRAND_STEM_CODE_FONT_SIZE: the code beside a stem never outgrows it (1.31.0)', () => {
+  const STEM = /^min\((\d+)px, calc\(\((\d+)vw \+ (\d+)px\) \/ \(var\(--brand-chars\) \* ([\d.]+)\)\)\)$/;
+
+  function stemPx(chars: number, vw: number): number {
+    const m = STEM.exec(BRAND_STEM_FONT_SIZE);
+    assert.ok(m, BRAND_STEM_FONT_SIZE);
+    const [, cap, slope, offset, emPerChar] = m.map(Number);
+    return Math.min(cap, ((slope / 100) * vw + offset) / (chars * emPerChar));
+  }
+
+  /** What the rule computes: the code's font size in px for `chars` at `vw`. */
+  function codePx(chars: number, vw: number): number {
+    const m = /^min\((\d+)px, (.+)\)$/.exec(BRAND_STEM_CODE_FONT_SIZE);
+    assert.ok(m, BRAND_STEM_CODE_FONT_SIZE);
+    assert.equal(m[2], BRAND_STEM_FONT_SIZE);
+    return Math.min(Number(m[1]), stemPx(chars, vw));
+  }
+
+  it('is the 36px code capped at the stem rule, pure CSS over the same --brand-chars', () => {
+    assert.equal(
+      BRAND_STEM_CODE_FONT_SIZE,
+      'min(36px, min(60px, calc((20vw + 140px) / (var(--brand-chars) * 0.6))))',
+    );
+    assert.equal(BRAND_STEM_CODE_FONT_SIZE, `min(36px, ${BRAND_STEM_FONT_SIZE})`);
+  });
+
+  it('where the stem is 36px or larger the code keeps its 36px (5 letters at 60px; 17 characters at 1280)', () => {
+    assert.equal(stemPx(5, 1280), 60);
+    assert.equal(codePx(5, 1280), 36);
+    assert.ok(stemPx(17, 1280) > 36, String(stemPx(17, 1280)));
+    assert.equal(codePx(17, 1280), 36);
+  });
+
+  it('where the stem is smaller the code is the stem\'s size (17 characters at 390 and 768)', () => {
+    for (const vw of [390, 768]) {
+      assert.ok(stemPx(17, vw) < 36, `${vw}: ${stemPx(17, vw)}`);
+      assert.equal(codePx(17, vw), stemPx(17, vw));
+    }
+    assert.ok(codePx(17, 390) > 20, 'still larger than the still brand\'s text-xl');
+  });
+
+  it('never larger than the stem, never larger than 36px, for any name at any width', () => {
+    for (const chars of [1, 5, 10, 17, 30]) {
+      for (const vw of [320, 390, 768, 1024, 1280, 1920]) {
+        assert.ok(codePx(chars, vw) <= stemPx(chars, vw), `${chars}@${vw}`);
+        assert.ok(codePx(chars, vw) <= 36, `${chars}@${vw}`);
+      }
+    }
+  });
+
+  it('the header applies it only beside a stem, laid out as the stem is; beside a mark the 1.24.0 code is untouched', () => {
+    const header = readFileSync(new URL('./header.tsx', import.meta.url), 'utf8');
+    const collapsing = header.slice(header.indexOf('function CollapsingBrand('), header.indexOf('const UNDECLARED_BRAND'));
+    assert.ok(collapsing.length > 0);
+    // The stem branch: centred with the stem's leading and top padding, at
+    // the capped stem size with the same --brand-chars the stem takes.
+    assert.ok(
+      collapsing.includes(
+        '? "ml-1 inline-block self-center pt-0.5 font-medium leading-none text-foreground transition-all duration-500 ease-in-out"',
+      ),
+    );
+    assert.ok(
+      collapsing.includes(
+        '? ({ "--brand-chars": PLATFORM_NAME.trim().length, fontSize: BRAND_STEM_CODE_FONT_SIZE } as React.CSSProperties)',
+      ),
+    );
+    // The mark branch: the 1.24.0 literals, class and inline style.
+    assert.ok(
+      collapsing.includes(
+        ': "ml-1 inline-block self-start text-[36px] font-medium text-foreground transition-all duration-500 ease-in-out"',
+      ),
+    );
+    assert.ok(collapsing.includes(': { marginTop: "-2px" };'));
+    // Chosen by the stem rule, and the declaration\'s own style still wins.
+    assert.ok(collapsing.includes('const codeClassName =\n    stem !== null\n      ? "ml-1'));
+    assert.ok(collapsing.includes('const codeStyle: React.CSSProperties =\n    stem !== null\n      ? ({'));
+    assert.ok(collapsing.includes('style={{ ...codeStyle, ...(code.style as React.CSSProperties | undefined) }}'));
+    assert.ok(collapsing.includes('className={codeClassName}'));
+    // The stem wordmark itself is unchanged.
+    const wordmark = header.slice(header.indexOf('function BrandStemWordmark('), header.indexOf('function BrandBlock('));
+    assert.ok(!wordmark.includes('BRAND_STEM_CODE_FONT_SIZE'));
+    assert.equal(header.match(/fontSize: BRAND_STEM_CODE_FONT_SIZE/g)?.length, 1);
   });
 });

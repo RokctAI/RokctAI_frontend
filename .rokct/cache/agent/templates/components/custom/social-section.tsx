@@ -14,101 +14,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-"use client";
-
-// The landing page's "social" carousel. Copy and cards: AGENT_LANDING_CONFIG.social.
+// The section's ENTRY (since 1.18.0): what agent_sdk's manifest registers
+// in base_sdk's components/custom/landing/page-sections.ts, and what
+// base_sdk >= 1.32.0's server-rendered landing (app/landing/page.tsx
+// through components/custom/landing/landing-page.ts) imports to read
+// `meta`. No "use client" here, on purpose: a module that starts with it
+// hands the server only client-reference proxies, so `meta.order`,
+// `meta.nav`, `meta.renders` and `meta.rootClass` all read undefined there
+// - the id falls back to the module name, the floating nav says "Scroll to
+// <module>", the header's anchors do not resolve. `meta` is plain data and
+// this default export is a server component; everything that needs the
+// browser lives in the sibling ./social-section.client.tsx and is rendered
+// from here.
 
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { motion } from "framer-motion";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { AGENT_LANDING_CONFIG } from "@/components/custom/landing/agent-landing-config";
-import type { PageSectionMeta } from "@/components/custom/landing/page-sections";
+import type {
+  PageSectionMeta,
+  PageSectionProps,
+} from "@/components/custom/landing/page-sections";
+import { SocialSection } from "@/components/custom/social-section.client";
 
-export function SocialSection({ id }: { id?: string }) {
-  const config = AGENT_LANDING_CONFIG.social;
-  if (!config) return null;
-
-  return (
-    <section
-      id={id}
-      className="container flex w-full flex-col gap-12 py-16 mx-auto bg-white dark:bg-black"
-    >
-      <div className="flex w-full flex-col items-center justify-center gap-6 px-4 text-center max-w-4xl mx-auto">
-        <span className="inline-flex items-center rounded-md bg-zinc-100 dark:bg-zinc-900 px-3 py-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-          {config.badge}
-        </span>
-        <h2 className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[64px] md:leading-[1.1] tracking-tighter">
-          {config.heading}
-        </h2>
-        <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 max-w-3xl leading-relaxed">
-          {config.blurb}
-        </p>
-        <Link
-          href={config.cta.href}
-          target={config.cta.external ? "_blank" : undefined}
-          rel={config.cta.external ? "noopener noreferrer" : undefined}
-          className="flex h-fit w-fit items-center justify-center gap-2 rounded-full bg-[#4F46E5] px-6 py-3 text-base font-bold text-white transition-transform hover:scale-105 mt-4"
-        >
-          {config.cta.label}
-        </Link>
-      </div>
-
-      <div className="mx-auto w-full max-w-7xl px-4 xl:px-0 mt-8 relative flex items-center justify-center">
-        <Carousel
-          opts={{ align: "start", loop: false, dragFree: true }}
-          className="w-full relative"
-        >
-          <CarouselContent className="-ml-4 !-ml-0">
-            {config.cards.map((card, index) => (
-              <CarouselItem
-                key={card.title}
-                className="min-w-0 shrink-0 grow-0 basis-full flex justify-center p-0 md:basis-1/2 lg:basis-[28%] pl-4"
-              >
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex flex-col overflow-hidden group w-full"
-                >
-                  <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-[24px] bg-zinc-100 dark:bg-zinc-900">
-                    <Image
-                      unoptimized
-                      referrerPolicy="no-referrer"
-                      src={card.image.src}
-                      alt={card.image.alt}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3 pt-6 px-2">
-                    <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
-                      {card.title}
-                    </h3>
-                    <p className="text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                      {card.text}
-                    </p>
-                  </div>
-                </motion.div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 size-12 shadow hover:bg-accent hover:text-accent-foreground hidden lg:flex" />
-          <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 size-12 shadow hover:bg-accent hover:text-accent-foreground hidden lg:flex" />
-        </Carousel>
-      </div>
-    </section>
-  );
-}
+export { SocialSection } from "@/components/custom/social-section.client";
 
 /**
  * What this section adds to base_sdk's landing host when registered in
@@ -120,4 +47,6 @@ export const meta: PageSectionMeta = {
   nav: [{ id: "social", label: "Social Media" }],
 };
 
-export default SocialSection;
+export default function SocialSectionEntry({ id }: PageSectionProps) {
+  return <SocialSection id={id} />;
+}

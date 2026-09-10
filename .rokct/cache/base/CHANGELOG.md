@@ -1,5 +1,224 @@
 # Changelog
 
+## 1.32.1
+
+* The Supacharge network site is named `supacharge.school`. Ray,
+  2026-09-10, on rokct.ai's logos marquee: "logos in rokct are wrong.
+  wrong names". The site is a `wordmark` entry - its name is drawn AS the
+  brand, on rokct.ai's marquee and on every footer strip - and
+  `NETWORK_SITES` (`components/custom/landing/network-sites.ts`) named it
+  "Supacharge", a re-cased, shortened form of the brand string the product
+  declares (lms_sdk's site-metadata `siteName`, under Ray's 2026-09-10
+  ruling that the brand is written "supacharge.school", lowercase, wherever
+  it is written as the brand). The entry now carries that string verbatim,
+  and the rule sits on the `name` field: a name is the product's declared
+  brand string, never shortened, re-cased or otherwise normalised here.
+  `rokct.ai` and `juvo` are as Ray writes them and unchanged. Nothing else
+  moves: a shell never lists itself, and Supacharge's own strip is off
+  (lms_sdk's placement).
+* Tests: `test_network_sites_list_shape` and `network-strip.test.mts` pin
+  the three names verbatim and refuse "Supacharge".
+
+## 1.32.0
+
+* The landing renders server-side. Ray, 2026-09-10: "hero i think should
+  be server side if not the whole landing". Until 1.31.0 the client
+  orchestrator (`components/custom/landing-content.tsx`) loaded every
+  registered section, the header menu and the hero copy in effects after
+  mount, so the first HTML a visitor or a crawler got was the header
+  chrome and an empty hero frame: no words, no section headings, no
+  header links until the client bundle had run. Now:
+  * `app/landing/page.tsx` does the registry work on the server, through
+    the new `components/custom/landing/landing-page.ts`: every
+    `PAGE_SECTIONS` entry is awaited (a module that fails to load is
+    logged and skipped, exactly as the effect did), `meta.renders` is
+    asked once, the sections are sorted (stable, registry order breaking
+    ties), the floating nav is built, the header menu is resolved against
+    it and the hero copy is overlaid. `resolveLandingPage(ctx)` is the
+    loader, `arrangeLandingPage(loaded, ctx, menu)` the pure rule the node
+    tests execute, `resolveHeroConfig()` the hero's half. The page renders
+    the sections and the hero itself (server elements) and hands them,
+    with the resolved menu, to the thin client wrapper.
+  * `components/custom/landing-content.tsx` is that wrapper: it keeps only
+    the search-active state that hides the sections while the hero shows
+    results, and provides the setter to the hero through
+    `HeroResultsContext` so no function crosses the server boundary as a
+    prop. It loads nothing. Section modules stay in the home SDK; only
+    where they are loaded moved - to the server, which is what the next
+    bullet's contract follows from.
+  * The server-safe section contract. The registry is imported on the
+    server now, and on the server every export of a module that starts
+    with `"use client"` is a client reference proxy: `meta.order`,
+    `meta.nav`, `meta.renders` and `meta.rootClass` read as undefined, so
+    a section fell back to its module name as its id and floating-nav
+    label ("Scroll to lms-sessions-section"), the header's anchors did not
+    resolve, a section `renders` would have dropped stayed on the page and
+    the order broke - and the node tests, which load plain objects, never
+    saw it. The contract, in one sentence: a section's ENTRY module (the
+    one the registry imports) is server-safe - no `"use client"`, `meta`
+    exported as a plain object and a default component - and anything
+    that needs hooks, state, effects, browser APIs or framer-motion lives
+    in a sibling `<name>.client.tsx` that starts with `"use client"` and
+    that the entry's default export renders, with `meta.renders(ctx)` pure
+    (no window, no localStorage). `loadPageSection` now checks `meta`
+    before reading it (`describeMetaProblem`: React's
+    `Symbol.for("react.client.reference")` tag or `$$typeof`/`$$id` own
+    keys mark a client reference, a missing export is named, and anything
+    else that is not a plain object is named for what it is) and, rather
+    than dropping the section, renders it with `fallbackSectionMeta()` -
+    order 100, the entry id as its DOM id, no floating-nav entry, always
+    present, no rootClass - and one `console.warn` naming the section, the
+    settings it renders with and the contract (`SECTION_ENTRY_CONTRACT`).
+    So unsplit sections still render with default settings: a shell
+    re-pinned to this base with a home SDK that has not split its entries
+    yet keeps every section on the page (a client-reference default export
+    renders fine from the server component; only its meta is unreadable),
+    which is what 1.31.0 showed, less the nav tick a module name would
+    label. base registers no section of its own and none of its installed
+    modules exports a `meta` from a client module;
+    `tests/test_manifest.py` scans every installed entry for that, and
+    `tests/landing-page.test.mts` executes the fallback against a client
+    reference, React's throwing deep proxy, a missing meta and every
+    non-object.
+  * `components/custom/hero.tsx` is the SERVER wrapper: `HERO_CONFIG` with
+    the registered copy laid over it, awaited, handed as props to the new
+    client view `components/custom/hero-view.tsx`, which draws the copy
+    from props and keeps the word rotation, the visitor's branding cache
+    (`localStorage`, read after mount) and the registered form
+    client-side and hydration-safe (index 0 on both sides, no mismatch).
+    The client copy load is gone; there is no pending "no words" state,
+    because the words are known before the first byte. Framer's entrance
+    animation is off on the elements that carry the copy (`initial={false}`
+    on the wordmark block, the h1 and the badges block, and on the word's
+    `AnimatePresence`), so the server's text is visible before hydration
+    and without JavaScript; the word swap still animates on every rotation
+    after the first. `fallbackHref`, HeroConfig's one function-typed
+    field, cannot be a prop; the view resolves it beside the form that
+    consumes it, in the form's own `next/dynamic` loader, so a registered
+    copy's override still reaches the form. `hasBadgeIcon` is re-exported
+    from `hero.tsx`.
+  * The header's links and mega trigger are in the first HTML: the wrapper
+    passes the menu the page resolved, and `Header` already prefers props.
+  * `HeroConfig.brand?: "name" | "stem"` (default `"name"`; no visible
+    change on any shell until a home SDK's hero copy declares it). `"stem"`
+    renders `brandStemOf(PLATFORM_NAME)` - the whole name when it has no
+    dot - as the wordmark's visible text, sized to the slot, with the full
+    name on the element's `aria-label` and `title`; resolved on the server
+    (`resolveHeroWordmark`), so the first HTML carries the stem. No brand
+    string and no hostname in base.
+  * `PageSectionMeta.rootClass?: string`: class names the landing root
+    carries from the first HTML, every present section's value joined in
+    page order. The seam for a home SDK whose theme section puts its token
+    class on the document from a client effect: server-rendered copy would
+    otherwise first paint unthemed. The effect may keep running for what
+    only `<html>` can carry (a mode default, a mirror attribute).
+  * Installs: `components/custom/hero-view.tsx` and
+    `components/custom/landing/landing-page.ts`. No new dependency.
+  * Tests: `tests/landing-page.test.mts` (node, run by
+    `tests/test_manifest.py`) executes `arrangeLandingPage` (skip, renders,
+    stable order, overlays/flow, nav ends, menu against the live nav,
+    rootClass), `describeMetaProblem`/`isClientReference` and the
+    client-reference fallback, and `resolveHeroWordmark`/`resolveHeroConfig`
+    with an `acme.school` fixture; `test_manifest.py` holds that the page, the
+    wrapper and the view load no section, menu or copy in an effect and
+    that the view renders the copy from props with `initial={false}` on
+    the h1.
+
+## 1.31.0
+
+* The country code beside a stem wordmark follows the stem's size. Ray,
+  2026-09-10: "look at rokct header's country code and then check
+  supacharge's". Beside a mark the code is the 36px rokct.ai's old header
+  set it at, against a 44px mark that is the same on every viewport, so
+  it is always the smaller of the two; beside a stem wordmark (1.29.0),
+  which `BRAND_STEM_FONT_SIZE` shrinks to fit the bar, the 36px code
+  outgrew the wordmark on a phone (17 characters at 390: a 21px stem
+  beside a 36px code, the code's capitals half again the wordmark's
+  height and 8px below its baseline) while at 1280 the two shells drew
+  the code the same (36px, medium, foreground, 4px after the brand, a
+  25px capital). rokct.ai keeps everything its old host header had and
+  Supacharge inherits it; what Supacharge did not inherit was the code
+  being the smaller element, so:
+  * `components/custom/landing/header-menu.ts`:
+    `BRAND_STEM_CODE_FONT_SIZE`, `min(36px, <BRAND_STEM_FONT_SIZE>)` -
+    the 36px wherever the stem is at least that (a 5-letter name at 60px,
+    17 characters at 1280), else the stem's own size (17 characters: 21px
+    at 390, 29px at 768). Pure CSS over the same `--brand-chars`.
+  * `components/custom/header.tsx`: `CollapsingBrand` sets it inline on
+    the code, with `--brand-chars`, only when the brand folds to a stem,
+    and lays the code out as the stem is (centred, `leading-none`, the
+    same `pt-0.5`) so it sits on the stem's baseline at every width. The
+    code beside a mark (rokct.ai) or a letter tile keeps its 1.24.0
+    class and inline style, literal for literal, and a declaration's own
+    `code.style` still wins.
+* Tests: `header-brand.test.mts` pins `BRAND_STEM_CODE_FONT_SIZE` (36px
+  where the stem is 36px or larger, the stem's size where it is smaller,
+  never larger than either, for names of 1 to 30 characters at 320 to
+  1920) and reads the staged `header.tsx` for where it is applied;
+  `test_header_code_follows_the_stem_wordmark` holds the two branches'
+  literals, the untouched slot and the stem wordmark.
+
+## 1.30.0
+
+* A tenant's BACKEND custom domain, from the host resolver (Ray,
+  2026-09-10). A tenant may have, besides the shell domain that opens
+  its portal, a domain of its own that its backend answers on, so it
+  keeps working when the platform's own zone is down - protection, not a
+  new identity. The control site's `resolve_site_by_host` returns
+  `backend_url` (a scheme'd origin) beside `site_name` while that domain
+  is Active, and the kernel keeps the two apart:
+  * `app/services/base/tenant-host-control.ts`: the answer is parsed as
+    a pair, `TenantHostSite { siteName, backendUrl? }`, by the new
+    `resolveTenantHost(host)`; the positive cache holds the pair
+    (`cachedTenantHost`). A `backend_url` that is malformed, not an
+    http(s) origin, not a public host, the control site, or the site
+    itself is dropped and the site name still answers; only its origin
+    is kept (no path). `resolveTenantSiteByHost` and
+    `resolveTenantSiteForRequest` answer the SITE NAME as before, so the
+    `x-rokct-tenant-site` header auth_sdk's middleware forwards never
+    carries the backend origin. The registered
+    `controlTenantHostResolver` answers the backend origin when control
+    named one (already scheme'd, so `normalizeSiteUrl` keeps it), else
+    the site name as before; `ROKCT_TENANT_HOSTS` entries are unchanged
+    and name no backend.
+  * Stale-while-error, same module: every positive answer is also kept
+    for `TENANT_HOST_STALE_TTL_MS` (24 h, `ROKCT_TENANT_HOST_STALE_TTL_MS`,
+    `0` switches it off) beyond the 5-minute positive TTL. When control
+    is UNREACHABLE - a network error, a timeout, a 5xx - the last known
+    answer for that host is served instead of "unknown host" (for the
+    negative TTL, so control is asked again soon). A 4xx, or control
+    reached and saying the host is nobody's, is a definitive answer and
+    replaces the stale one. Per process, in memory: an instance that
+    never saw a host while control was up still answers the storefront.
+  * `alternateTenantOrigin(origin)` (the other half of a known pair,
+    both ways, kept for the stale TTL) and `sameTenantOrigin(a, b)`
+    (same site, or the two halves of one pair) are exported for the
+    gateway; all new names are re-exported from `index.ts`.
+  * `app/services/base/platform-gateway.ts`: `platformCall` retries a
+    RESOLVED origin ONCE on the other half of the pair when the first
+    attempt fails at the network level (a fetch error, a timeout - the
+    retry gets its own timeout budget) or with a 502/503/504: a backend
+    origin falls back on the site name, a site name on the backend
+    origin (known for the session's site once this process resolved the
+    tenant's shell host). Never on a 4xx or any other status (that is
+    the tenant's answer), never for an explicit `baseUrl` (that call
+    asked for one specific origin), never a third origin; the alternate's
+    own outcome is final. The credential guard is `sameTenantOrigin`: a
+    session's credentials reach its site's origin or that site's backend
+    origin, nothing else. Logged once per alternate origin.
+  * Tests: `tests/tenant-host-control.test.mts` gains the backend
+    origin (parsing, the cached pair, the resolver answering the origin,
+    the header still the site name, unusable backends dropped, the pair
+    both ways) and stale-while-error (network error, 5xx, 4xx is
+    definitive, a definite "nobody's" forgets it, off at 0, its own TTL);
+    new `tests/platform-gateway.test.mts` (retry once on a network error
+    / timeout / 502-504, no retry on 4xx or 500, exactly two attempts,
+    the retry's own signal, GET keeps its query, the reverse direction
+    with credentials, no pair means one attempt, credentials never to a
+    third origin, explicit `baseUrl` never retried), staged by
+    `test_manifest.py` with session.ts's host seam stood in by a null
+    session. The contract test follows the new exports.
+
 ## 1.29.0
 
 * Supacharge network site moves to https://supacharge.school (Ray,

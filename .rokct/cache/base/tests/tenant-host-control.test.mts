@@ -27,13 +27,17 @@ import assert from 'node:assert/strict';
 import { beforeEach, describe, it } from 'node:test';
 
 import {
+  alternateTenantOrigin,
+  cachedTenantHost,
   cachedTenantSite,
   controlTenantHostResolver,
   registerControlTenantHostResolver,
   resetControlTenantHostResolver,
   resetTenantHostCache,
+  resolveTenantHost,
   resolveTenantSiteByHost,
   resolveTenantSiteForRequest,
+  sameTenantOrigin,
   setTenantHostFetch,
   TENANT_HOST_RESOLVE_METHOD,
   type TenantHostFetch,
@@ -111,6 +115,7 @@ beforeEach(() => {
   delete process.env.ROKCT_TENANT_HOST_LOOKUP;
   delete process.env.ROKCT_TENANT_HOST_TTL_MS;
   delete process.env.ROKCT_TENANT_HOST_NEGATIVE_TTL_MS;
+  delete process.env.ROKCT_TENANT_HOST_STALE_TTL_MS;
   resetTenantHostMap();
   resetTenantHostCache();
   resetControlTenantHostResolver();
@@ -344,5 +349,186 @@ describe('the kernel wiring', () => {
     assert.equal(control.calls.length, 2);
     assert.equal(await controlTenantHostResolver('shop.tenant-one.co'), 'tenant-one.platform-shell.co');
     assert.equal(await controlTenantHostResolver('shop.unknown-seven.co'), undefined);
+  });
+});
+
+// base_sdk 1.30.0: a tenant may have a BACKEND custom domain besides its
+// shell domain; control returns it as `backend_url` while it is Active.
+describe('the backend origin (1.30.0)', () => {
+  const SITE = 'tenant-one.platform-shell.co';
+  const BACKEND = 'https://platform.acme.school';
+  const withBackend = () =>
+    fakeControl({ 'acme.school': { site_name: SITE, backend_url: `${BACKEND}/` } });
+
+  it('parses backend_url beside site_name and caches the pair', async () => {
+    const control = withBackend();
+    setTenantHostFetch(control.fetch);
+    assert.deepEqual(await resolveTenantHost('acme.school'), { siteName: SITE, backendUrl: BACKEND });
+    assert.deepEqual(cachedTenantHost('acme.school'), { siteName: SITE, backendUrl: BACKEND });
+    assert.equal(cachedTenantSite('acme.school'), SITE);
+    assert.equal(control.calls.length, 1);
+  });
+
+  it('keeps site_name as the identity: the header value never carries the backend origin', async () => {
+    const control = withBackend();
+    setTenantHostFetch(control.fetch);
+    assert.equal(await resolveTenantSiteByHost('acme.school'), SITE);
+    assert.equal(
+      await resolveTenantSiteForRequest(headersOf({ host: 'www.acme.school:443' })),
+      SITE,
+      'x-rokct-tenant-site carries the site name',
+    );
+    assert.equal(control.calls.length, 1);
+  });
+
+  it('answers the backend origin to the kernel resolver, and the site name without one', async () => {
+    const control = fakeControl({
+      'acme.school': { site_name: SITE, backend_url: BACKEND },
+      'shop.tenant-two.co': { site_name: 'tenant-two.platform-shell.co' },
+    });
+    setTenantHostFetch(control.fetch);
+    assert.equal(await controlTenantHostResolver('acme.school'), BACKEND);
+    assert.equal(await controlTenantHostResolver('shop.tenant-two.co'), 'tenant-two.platform-shell.co');
+    assert.equal(registerControlTenantHostResolver(), true);
+    assert.equal(await lookupTenantHost('acme.school'), BACKEND, 'normalizeSiteUrl keeps the scheme');
+    assert.equal(await lookupTenantHost('shop.tenant-two.co'), 'https://tenant-two.platform-shell.co');
+  });
+
+  it('knows the other origin of the pair, both ways, and treats the two as one tenant', async () => {
+    const control = withBackend();
+    setTenantHostFetch(control.fetch);
+    assert.equal(alternateTenantOrigin(`https://${SITE}`), undefined, 'nothing resolved yet');
+    await resolveTenantHost('acme.school');
+    assert.equal(alternateTenantOrigin(`https://${SITE}`), BACKEND);
+    assert.equal(alternateTenantOrigin(SITE), BACKEND, 'a bare site name too');
+    assert.equal(alternateTenantOrigin(`${BACKEND}/`), `https://${SITE}`);
+    assert.equal(alternateTenantOrigin('https://tenant-two.platform-shell.co'), undefined);
+    assert.equal(sameTenantOrigin(SITE, BACKEND), true);
+    assert.equal(sameTenantOrigin(BACKEND, `https://${SITE}`), true);
+    assert.equal(sameTenantOrigin(SITE, `https://${SITE}`), true);
+    assert.equal(sameTenantOrigin(SITE, 'https://tenant-two.platform-shell.co'), false);
+    assert.equal(sameTenantOrigin(BACKEND, 'https://platform.other-nine.co'), false);
+  });
+
+  it('drops a backend_url that is unusable, keeping the site', async () => {
+    const control = fakeControl({
+      'a.tenant-five.co': { site_name: SITE, backend_url: 'not a url at all' },
+      'b.tenant-five.co': { site_name: SITE, backend_url: 'http://localhost:8000' },
+      'c.tenant-five.co': { site_name: SITE, backend_url: 'https://backend.internal' },
+      'd.tenant-five.co': { site_name: SITE, backend_url: CONTROL },
+      'e.tenant-five.co': { site_name: SITE, backend_url: `https://${SITE}` },
+      'f.tenant-five.co': { site_name: SITE, backend_url: { nested: true } },
+      'g.tenant-five.co': { site_name: SITE, backend_url: 'ftp://platform.acme.school' },
+      'h.tenant-five.co': { site_name: 'not a host', backend_url: BACKEND },
+    });
+    setTenantHostFetch(control.fetch);
+    for (const p of ['a', 'b', 'c', 'd', 'e', 'f', 'g']) {
+      assert.deepEqual(await resolveTenantHost(`${p}.tenant-five.co`), { siteName: SITE }, p);
+    }
+    assert.equal(await resolveTenantHost('h.tenant-five.co'), null, 'no site, no answer');
+    assert.equal(alternateTenantOrigin(`https://${SITE}`), undefined);
+  });
+
+  it('keeps only the origin of a backend_url that carries a path', async () => {
+    const control = fakeControl({
+      'acme.school': { site_name: SITE, backend_url: 'https://Platform.Acme.school/api/' },
+    });
+    setTenantHostFetch(control.fetch);
+    assert.deepEqual(await resolveTenantHost('acme.school'), {
+      siteName: SITE,
+      backendUrl: 'https://platform.acme.school',
+    });
+  });
+
+  it('names no backend for a ROKCT_TENANT_HOSTS entry', async () => {
+    process.env.ROKCT_TENANT_HOSTS = JSON.stringify({ 'acme.school': SITE });
+    resetTenantHostMap();
+    const control = withBackend();
+    setTenantHostFetch(control.fetch);
+    assert.deepEqual(await resolveTenantHost('acme.school'), { siteName: SITE });
+    assert.equal(await controlTenantHostResolver('acme.school'), SITE);
+    assert.equal(control.calls.length, 0);
+  });
+});
+
+// base_sdk 1.30.0: the shell keeps answering a custom domain while control
+// is unreachable, from the last known answer.
+describe('stale-while-error (1.30.0)', () => {
+  const SITE = 'tenant-one.platform-shell.co';
+  const BACKEND = 'https://platform.acme.school';
+
+  async function primed(): Promise<FakeControl> {
+    process.env.ROKCT_TENANT_HOST_TTL_MS = '20';
+    process.env.ROKCT_TENANT_HOST_NEGATIVE_TTL_MS = '20';
+    const control = fakeControl({ 'acme.school': { site_name: SITE, backend_url: BACKEND } });
+    setTenantHostFetch(control.fetch);
+    assert.deepEqual(await resolveTenantHost('acme.school'), { siteName: SITE, backendUrl: BACKEND });
+    await sleep(30);
+    assert.equal(cachedTenantHost('acme.school'), undefined, 'the positive entry has expired');
+    return control;
+  }
+
+  it('serves the last known pair on a network error, then asks again after the negative TTL', async () => {
+    const control = await primed();
+    control.failWith = 'network';
+    const { result, errors } = await withSilencedConsole(() => resolveTenantHost('acme.school'));
+    assert.deepEqual(result, { siteName: SITE, backendUrl: BACKEND });
+    assert.equal(errors, 1);
+    assert.equal(control.calls.length, 2);
+    assert.deepEqual(cachedTenantHost('acme.school'), { siteName: SITE, backendUrl: BACKEND });
+    assert.equal(await resolveTenantSiteByHost('acme.school'), SITE, 'from the short-lived entry');
+    assert.equal(await controlTenantHostResolver('acme.school'), BACKEND);
+    assert.equal(alternateTenantOrigin(`https://${SITE}`), BACKEND, 'the pair outlives the outage');
+    assert.equal(control.calls.length, 2, 'no call while the stale answer is cached');
+    await sleep(30);
+    control.failWith = undefined;
+    assert.deepEqual(await resolveTenantHost('acme.school'), { siteName: SITE, backendUrl: BACKEND });
+    assert.equal(control.calls.length, 3, 'asked again once the negative TTL ran out');
+  });
+
+  it('serves the last known answer on a 5xx too', async () => {
+    const control = await primed();
+    control.failWith = 503;
+    const { result } = await withSilencedConsole(() => resolveTenantSiteByHost('acme.school'));
+    assert.equal(result, SITE);
+  });
+
+  it('treats a 4xx as control answering: no stale service', async () => {
+    const control = await primed();
+    control.failWith = 404;
+    const { result } = await withSilencedConsole(() => resolveTenantSiteByHost('acme.school'));
+    assert.equal(result, null);
+    assert.equal(cachedTenantSite('acme.school'), null);
+  });
+
+  it('forgets the stale answer once control says the host is nobody\'s', async () => {
+    const control = await primed();
+    delete control.answers['acme.school'];
+    assert.equal(await resolveTenantSiteByHost('acme.school'), null, 'a definite no');
+    await sleep(30);
+    control.failWith = 'network';
+    const { result } = await withSilencedConsole(() => resolveTenantSiteByHost('acme.school'));
+    assert.equal(result, null, 'nothing stale to serve');
+  });
+
+  it('serves nothing stale with ROKCT_TENANT_HOST_STALE_TTL_MS=0, or for a host never resolved', async () => {
+    process.env.ROKCT_TENANT_HOST_STALE_TTL_MS = '0';
+    const control = await primed();
+    control.failWith = 'network';
+    const { result } = await withSilencedConsole(async () => [
+      await resolveTenantSiteByHost('acme.school'),
+      await resolveTenantSiteByHost('shop.tenant-two.co'),
+    ]);
+    assert.deepEqual(result, [null, null]);
+    assert.equal(alternateTenantOrigin(`https://${SITE}`), undefined, 'no pair kept either');
+  });
+
+  it('lets the stale answer run out after its own TTL', async () => {
+    process.env.ROKCT_TENANT_HOST_STALE_TTL_MS = '40';
+    const control = await primed();
+    await sleep(30);
+    control.failWith = 'network';
+    const { result } = await withSilencedConsole(() => resolveTenantSiteByHost('acme.school'));
+    assert.equal(result, null);
   });
 });

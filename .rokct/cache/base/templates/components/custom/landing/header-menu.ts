@@ -111,6 +111,13 @@
 // with an image keeps folding to that image whatever its name, and an
 // undotted icon-less name keeps the 1.28.0 tile.
 //
+// Since 1.31.0 the country code beside a stem wordmark follows the stem's
+// size ([BRAND_STEM_CODE_FONT_SIZE]): the 36px it has beside a mark, or
+// the stem's own size where that is smaller, so on a phone the code is
+// never larger than the wordmark it sits beside - as it never is beside
+// rokct.ai's fixed 44px mark. The code beside a mark or a tile is
+// unchanged.
+//
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as
 // ./hero-sections.ts, ./hero-copy.ts, ./hero-form.ts, ./plans-query.ts and
@@ -642,6 +649,22 @@ export function brandFoldsToStem(
  * exactly what 1.24.0 tuned the slot for and reads the same as before.
  */
 export const BRAND_STEM_FONT_SIZE = "min(60px, calc((20vw + 140px) / (var(--brand-chars) * 0.6)))";
+
+/**
+ * The country code's font size beside a STEM wordmark (since 1.31.0). The
+ * code's size beside a mark is the 36px rokct.ai's old header set it at,
+ * beside a 44px mark that is the same on every viewport, so the code is
+ * always the smaller of the two. A stem wordmark is not the same on every
+ * viewport - [BRAND_STEM_FONT_SIZE] shrinks it to fit the bar - and at
+ * 36px the code outgrew it on a phone (17 characters at 390: a 21px stem
+ * beside a 36px code). This is the same rule with the code's own cap: the
+ * 36px wherever the stem is at least that large (a 5-letter name at 60px,
+ * 17 characters at 1280), else the stem's size, so the code follows the
+ * wordmark it sits beside and is never larger than it. The header sets
+ * it inline on the code with the same `--brand-chars` the stem takes;
+ * the code beside a mark or a letter tile keeps its 36px class.
+ */
+export const BRAND_STEM_CODE_FONT_SIZE = `min(36px, ${BRAND_STEM_FONT_SIZE})`;
 
 /**
  * The generated favicon route base_sdk installs at app/brand-icon/route.tsx
