@@ -17,23 +17,15 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { eq } from "drizzle-orm";
 
-import { db } from "@/db";
-import { user, globalSettings } from "@/db/schema";
-// Added at seed time: the source file called getSubscriptionPlans without
-// importing it (masked upstream by `typescript.ignoreBuildErrors`).
-import { getSubscriptionPlans } from "@/lib/actions/getSubscriptionPlans";
-import {
-  PlatformGatewayError,
-  platformCall,
-} from "@/app/services/base/platform-gateway";
+import { headers } from "next/headers";
+
+import { platformCall } from "@/app/services/base/platform-gateway";
+import { TENANT_SITE_HEADER } from "@/app/services/base/tenant-host-control";
 import { signIn, auth } from "./auth";
-
-// Provisioning creates a control-plane user or queues a tenant site, so it
-// runs well past the gateway client's 10s default; the raw fetch it replaces
-// had no timeout at all.
-const PROVISIONING_TIMEOUT_MS = 60000;
+import { linkRegisteredAccount } from "./register-link";
+import { loadRegisterProvisioner } from "./register-provision";
+import { loadTenantLink } from "./tenant-link";
 
 export async function getCurrentSession() {
   return await auth();
@@ -89,8 +81,18 @@ export async function login(
   formData: FormData,
 ): Promise<ActionState> {
   try {
+    // auth_sdk 1.7.0: a login on a resolved tenant host signs in against
+    // that host's site when the form named none - the `x-rokct-tenant-site`
+    // header middleware.ts forwarded. A `site_name` on the form still wins.
+    const fields = Object.fromEntries(formData);
+    const formSite =
+      typeof fields.site_name === "string" ? fields.site_name.trim() : "";
+    const headerSite = formSite
+      ? null
+      : (await headers()).get(TENANT_SITE_HEADER)?.trim() || null;
     await signIn("credentials", {
-      ...Object.fromEntries(formData),
+      ...fields,
+      ...(headerSite ? { site_name: headerSite } : {}),
       is_paas: formData.get("is_paas"), // Pass the flag explicitly
       redirect: false,
     });
@@ -108,284 +110,103 @@ export async function login(
   }
 }
 
+/**
+ * Register (auth_sdk 1.7.0): collect, hand to the provisioner, sign in.
+ *
+ * The account fields are this SDK's (first name, last name, email,
+ * password); every other field on the form was declared by the home SDK's
+ * register config (components/custom/auth/register-registry.ts) and goes
+ * to its provisioner (./register-provision.ts) under `values`, untouched.
+ * What the provisioner does with them is its own business; this action
+ * links the account locally, then signs it in the way the outcome asks,
+ * and never signs in against anything but the site the outcome names.
+ *
+ * The local link is auth's own step, not the provisioner's: the user row
+ * that maps the account to the site it came from (./register-link.ts,
+ * through ./tenant-link.ts - the multi-tenancy store, or a per-shell
+ * no-op) is written after ANY provisioner succeeds, exactly where 1.6.0
+ * wrote it, and no provisioner has to know it exists.
+ */
 export async function register(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const companyName = formData.get("company_name") as string;
-  const firstName = formData.get("first_name") as string;
-  const lastName = formData.get("last_name") as string;
-  const industry = formData.get("industry") as string;
-  const voucherCode = formData.get("voucher_code") as string | null;
-  const isServicePlan = formData.get("is_service_plan") === "on";
-
-  const plan = formData.get("plan") as string;
-  const countryInput = (formData.get("country") as string) || "South Africa";
-
-  // Resolve Currency from Country (via Control Site API)
-  let currency = "USD"; // Default
-  let country = countryInput; // Default to input
-
-  try {
-    const baseUrl = process.env.ROKCT_BASE_URL;
-    if (baseUrl) {
-      // Resolve from Country Name (Dynamic based on form input). Still a
-      // per-method URL: the control site registers no `control:` gateway cmd
-      // for get_pricing_metadata (only the subscription-plans catalogue), so
-      // this guest read cannot ride the platform gateway yet.
-      const pricingRes = await fetch(
-        `${baseUrl}/api/method/control.control.api.subscription.get_pricing_metadata?country=${encodeURIComponent(countryInput)}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        },
-      );
-
-      if (pricingRes.ok) {
-        const pricingData = await pricingRes.json();
-        const data = pricingData.message;
-        if (data) {
-          if (data.currency) currency = data.currency;
-          if (data.country_name) country = data.country_name; // Normalize Country Name
-        }
-      }
-    }
-  } catch (err) {
-    console.warn("Failed to resolve currency from country:", err);
+  const text = (name: string) => {
+    const value = formData.get(name);
+    return typeof value === "string" ? value.trim() : "";
+  };
+  const email = text("email");
+  const password = (formData.get("password") as string | null) ?? "";
+  const firstName = text("first_name");
+  const lastName = text("last_name");
+  if (!email || !password || !firstName || !lastName) {
+    return { status: "invalid_data", error: "Every account field is required." };
   }
 
+  const values: Record<string, string> = {};
+  for (const [name, value] of formData.entries()) {
+    if (ACCOUNT_FIELDS.has(name) || typeof value !== "string") continue;
+    values[name] = value;
+  }
+
+  const tenantSite =
+    text("site_name") ||
+    (await headers()).get(TENANT_SITE_HEADER)?.trim() ||
+    null;
+
   try {
-    const baseUrl = process.env.ROKCT_BASE_URL;
-    if (!baseUrl) throw new Error("ROKCT_BASE_URL is not set");
-
-    // Retrieve Admin Keys from GlobalSettings (set via Admin Login)
-    const settings = await db.select().from(globalSettings).limit(1);
-    const adminKey = settings.length > 0 ? settings[0].adminApiKey : null;
-    const adminSecret = settings.length > 0 ? settings[0].adminApiSecret : null;
-
-    if (!adminKey || !adminSecret) {
-      return {
-        status: "failed",
-        error: "System not initialized. Administrator must login first.",
-      };
+    const provisioner = await loadRegisterProvisioner();
+    const outcome = await provisioner.provision({
+      email,
+      password,
+      firstName,
+      lastName,
+      values,
+      tenantSite,
+    });
+    if (outcome.status !== "success") {
+      return { status: outcome.status, error: outcome.error };
     }
 
-    // 2. Provisioning handles User Creation (Service) or Site Setup (Tenant)
-    let siteName = null;
+    // Link the new account to its site locally (Persistence), as 1.6.0
+    // did after provisioning and before the auto-login. A link with
+    // nowhere to write makes this a no-op; see ./tenant-link.ts.
+    await linkRegisteredAccount(
+      { email, firstName, lastName, values, tenantSite },
+      outcome,
+      loadTenantLink,
+    );
 
-    if (companyName) {
+    if (outcome.signIn) {
       try {
-        if (isServicePlan) {
-          // Method 1: Service Provisioning (Creates Control Plane User).
-          // Universal gateway call — the control gateway serves the
-          // `control:`-prefixed cmd the control app registers for this
-          // provisioning method; the admin credentials go out as an explicit
-          // Authorization header (no session exists during registration).
-          let provisionData: any;
-          try {
-            provisionData = await platformCall<any>(
-              "control:provision_service_subscription",
-              {
-                plan: plan,
-                email: email,
-                password: password,
-                first_name: firstName,
-                last_name: lastName,
-                company_name: companyName,
-                currency: currency,
-                country: country,
-                industry: industry,
-                voucher_code: voucherCode,
-                domain: formData.get("domain")
-                  ? (formData.get("domain") as string)
-                  : null,
-                lines: 1,
-              },
-              {
-                baseUrl,
-                headers: { Authorization: `token ${adminKey}:${adminSecret}` },
-                throwOnError: true,
-                timeout: PROVISIONING_TIMEOUT_MS,
-              },
-            );
-          } catch (e) {
-            // Handle Error: a non-2xx answer is the provisioning failure the
-            // raw fetch reported; anything else reaches the outer catch.
-            if (e instanceof PlatformGatewayError && e.reason === "http_error") {
-              return {
-                status: "failed",
-                error: "Service Provisioning failed",
-              };
-            }
-            throw e;
-          }
-          siteName = provisionData?.site_name || provisionData;
-        } else {
-          // Method 2: Tenant Provisioning (Queues Site, User NOT created on
-          // Control Plane). Same gateway route as Method 1.
-          let provisionData: any;
-          try {
-            provisionData = await platformCall<any>(
-              "control:provision_new_tenant",
-              {
-                email: email,
-                company_name: companyName,
-                plan: plan,
-                first_name: firstName,
-                last_name: lastName,
-                currency: currency,
-                country: country,
-                industry: industry,
-                voucher_code: voucherCode,
-              },
-              {
-                baseUrl,
-                headers: { Authorization: `token ${adminKey}:${adminSecret}` },
-                throwOnError: true,
-                timeout: PROVISIONING_TIMEOUT_MS,
-              },
-            );
-          } catch (e) {
-            // Handle Error
-            if (e instanceof PlatformGatewayError && e.reason === "http_error") {
-              return {
-                status: "failed",
-                error: "Tenant Provisioning failed",
-              };
-            }
-            throw e;
-          }
-          siteName = provisionData?.site_name || provisionData;
-        }
-      } catch (e) {
-        console.error("Provisioning Error:", e);
-        return { status: "failed", error: "Provisioning exception occurred." };
+        await signIn("credentials", {
+          email: outcome.signIn.email,
+          password: outcome.signIn.password,
+          ...(outcome.signIn.siteName
+            ? { site_name: outcome.signIn.siteName }
+            : {}),
+          ...(outcome.signIn.extra ?? {}),
+          is_paas: "true",
+          redirect: false,
+        });
+      } catch (loginError) {
+        // The account exists; a sign-in that fails leaves the visitor at
+        // the login, as before.
+        console.warn("Auto-login failed:", loginError);
       }
     }
-
-    // 3. Save User to Local DB (Persistence)
-    const initialOnboardingData = {
-      user_fullname: `${firstName} ${lastName}`,
-      company_name: companyName,
-      location: country,
-      industry: industry,
-      full_name: `${firstName} ${lastName}`,
-      trading_name: companyName,
-      primary_base: country,
-    };
-
-    const existingUser = await db
-      .select()
-      .from(user)
-      .where(eq(user.email, email))
-      .limit(1);
-
-    if (existingUser.length === 0) {
-      await db.insert(user).values({
-        id: email,
-        email: email,
-        siteName: siteName,
-        onboardingData: initialOnboardingData,
-      });
-    } else {
-      await db
-        .update(user)
-        .set({
-          siteName: siteName,
-          onboardingData: initialOnboardingData,
-        })
-        .where(eq(user.email, email));
-    }
-
-    // 4. Auto-Login
-    try {
-      // Fetch Plan Details to check for AI capability
-      let isAiPlan = false;
-      const plansRes = await getSubscriptionPlans();
-      if (plansRes.success && plansRes.data) {
-        const p = plansRes.data.find((x: any) => x.plan_name === plan);
-        if (p && p.is_ai === 1) isAiPlan = true;
-      }
-
-      // Determine Login Mode
-      // Service Plans -> Normal PaaS Login (User exists on Control Plane)
-      // Tenant Plans which are AI -> Onboarding Login (User exists in DB only, bypass auth)
-      // Tenant Plans (Non-AI) -> No Login (Wait for email)
-
-      const loginParams: any = {
-        email: email,
-        password: password,
-        redirect: false,
-        is_paas: "true",
-      };
-
-      let shouldLogin = true;
-
-      if (!isServicePlan) {
-        if (isAiPlan) {
-          loginParams.is_onboarding = "true";
-        } else {
-          // Non-AI Tenant Plan: User cannot login yet (Site not ready, no onboarding)
-          shouldLogin = false;
-        }
-      }
-
-      if (shouldLogin) {
-        await signIn("credentials", loginParams);
-      } else {
-        // Return success but user is not logged in.
-        // They will be redirected to login page usually, or we can show a specific message?
-        // The form expects { status: "success" }.
-        // The UI might redirect to /login or show "Check your email".
-      }
-    } catch (loginError) {
-      console.warn("Auto-login failed:", loginError);
-      // Fallback: If login fails, we still return success for registration.
-    }
-
-    return { status: "success" };
+    return { status: "success", error: outcome.message };
   } catch (error) {
     console.error("Registration Error:", error);
     return { status: "failed", error: "Could not create user." };
   }
 }
 
-export async function getIndustries(): Promise<string[]> {
-  try {
-    const baseUrl = process.env.ROKCT_BASE_URL;
-    if (!baseUrl) return [];
-
-    // Retrieve Admin Keys
-    const settings = await db.select().from(globalSettings).limit(1);
-    const adminKey = settings.length > 0 ? settings[0].adminApiKey : null;
-    const adminSecret = settings.length > 0 ? settings[0].adminApiSecret : null;
-
-    if (!adminKey || !adminSecret) return [];
-
-    // Framework methods ride the gateway with the full dotted frappe path
-    // (same cmd the ControlBaseService.getList helper uses).
-    const industries = await platformCall<any[]>(
-      "frappe.client.get_list",
-      {
-        doctype: "Industry Type",
-        fields: ["name"],
-        limit_page_length: 100,
-        order_by: "name asc",
-      },
-      {
-        baseUrl,
-        headers: { Authorization: `token ${adminKey}:${adminSecret}` },
-      },
-    );
-
-    if (Array.isArray(industries)) {
-      return industries.map((item: any) => item.name);
-    }
-    return [];
-  } catch (error) {
-    console.error("Failed to fetch industries:", error);
-    return [];
-  }
-}
+/** The fields the register form owns; everything else is the home SDK's. */
+const ACCOUNT_FIELDS = new Set([
+  "email",
+  "password",
+  "first_name",
+  "last_name",
+  "site_name",
+]);

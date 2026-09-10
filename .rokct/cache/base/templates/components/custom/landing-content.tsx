@@ -16,169 +16,97 @@
 
 "use client";
 
-// The generic landing host's client orchestrator: the host header, the
-// hero, then every section the composed SDKs registered in
-// ./landing/page-sections.ts, loaded with a dynamic import and rendered in
-// ascending `meta.order`. This file names no section of its own - base_sdk
-// carries the host and the hero only; the sections of a product's landing
-// page belong to its home SDK - so a shell with nothing registered renders
-// the hero alone. A negative order renders before the hero (a fixed overlay
-// such as a floating nav) and stays visible while the hero shows search
-// results; everything else renders after the hero and hides with it.
+// The generic landing host's client WRAPPER (since 1.32.0 - until 1.31.0
+// this was the orchestrator, and it loaded every registered section, the
+// header menu and the hero copy in effects after mount, so the first HTML
+// carried none of them). Now app/landing/page.tsx does that work on the
+// server, through components/custom/landing/landing-page.ts, and hands
+// this component the results: the header menu resolved against the live
+// nav, the hero and the sections already rendered (server elements, passed
+// as props), and the class names the root carries from the first HTML.
+// What stays here is the one thing that needs the client: whether the
+// hero's form is showing results, which hides the sections under it. That
+// setter reaches the server-rendered hero through HeroResultsContext, so
+// no function ever crosses the server boundary as a prop.
+//
+// This file still names no section of its own - base_sdk carries the host
+// and the hero only; the sections of a product's landing page belong to
+// its home SDK - so a shell with nothing registered renders the hero
+// alone. A negative order renders before the hero (a fixed overlay such as
+// a floating nav) and stays visible while the hero shows search results;
+// everything else renders after the hero and hides with it. Since 1.23.0
+// the network strip (components/custom/network-strip.tsx) has two surfaces
+// here too - right under the hero and right before the footer anchor - and
+// draws on the one the home SDK's registered placement names, or on
+// neither: "none", or (since 1.27.0) "section", where a registered section
+// of the home SDK's own draws the strip in its own look.
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 
-import type { LandingPlan } from "@/app/actions/base/landing";
 import { Header } from "@/components/custom/header";
-import { Hero } from "@/components/custom/hero";
-import {
-  LANDING_CONFIG,
-  type LandingNavItem,
-} from "@/components/custom/landing/landing-config";
-import {
-  DEFAULT_PAGE_SECTION_ORDER,
-  PAGE_SECTIONS,
-  type PageSectionComponent,
-  type PageSectionMeta,
-} from "@/components/custom/landing/page-sections";
+import { HeroResultsContext } from "@/components/custom/hero-view";
+import { NetworkStrip } from "@/components/custom/network-strip";
+import type { ResolvedHeaderMenu } from "@/components/custom/landing/header-menu";
+import { LANDING_CONFIG } from "@/components/custom/landing/landing-config";
 
-interface LoadedSection {
-  id: string;
-  /** The DOM id: the first nav entry's id, else meta.anchor, else the registry id. */
-  domId: string;
-  order: number;
-  /** The section's floating-nav entries; empty when it is not a nav stop. */
-  nav: LandingNavItem[];
-  Component: PageSectionComponent;
-  meta: PageSectionMeta;
-}
-
-function RegisteredSections({
-  sections,
-  plans,
-  nav,
-  session,
-}: {
-  sections: LoadedSection[];
-  plans: LandingPlan[];
-  nav: LandingNavItem[];
+export interface LandingContentProps {
   session?: unknown;
-}) {
-  return (
-    <>
-      {sections.map(({ id, domId, Component, nav: entries }) => (
-        <React.Fragment key={id}>
-          <Component
-            id={domId}
-            signupUrl={LANDING_CONFIG.signupUrl}
-            loginUrl={LANDING_CONFIG.loginUrl}
-            session={session}
-            plans={plans}
-            nav={nav}
-          />
-          {/* Empty anchors for the section's extra nav entries. */}
-          {entries.slice(1).map((item) => (
-            <div key={item.id} id={item.id} />
-          ))}
-        </React.Fragment>
-      ))}
-    </>
-  );
+  /** The header menu, resolved on the server against the page's live nav. */
+  menu: ResolvedHeaderMenu;
+  /** The hero, rendered on the server (components/custom/hero.tsx). */
+  hero: React.ReactNode;
+  /** The sections with a negative order, rendered on the server: before the hero, never hidden. */
+  overlays?: React.ReactNode;
+  /** Every other section, rendered on the server: after the hero, hidden while it shows results. */
+  sections?: React.ReactNode;
+  /** Class names the root carries from the first HTML (every present section's `meta.rootClass`). */
+  rootClass?: string;
 }
 
 export function LandingContent({
-  plans,
   session,
-}: {
-  plans: LandingPlan[];
-  session?: unknown;
-}) {
+  menu,
+  hero,
+  overlays,
+  sections,
+  rootClass,
+}: LandingContentProps) {
   const [searchActive, setSearchActive] = useState(false);
-  const [sections, setSections] = useState<LoadedSection[]>([]);
-
-  // Load the registered sections once, on the client, and keep them in
-  // page order. A section that fails to load is logged and skipped; the
-  // page still renders.
-  useEffect(() => {
-    let cancelled = false;
-    Promise.all(
-      PAGE_SECTIONS.map(async (entry): Promise<LoadedSection | null> => {
-        try {
-          const mod = await entry.load();
-          const meta = mod.meta ?? {};
-          const nav = meta.nav ?? [{ id: entry.id, label: entry.id }];
-          return {
-            id: entry.id,
-            domId: nav[0]?.id ?? meta.anchor ?? entry.id,
-            order: meta.order ?? DEFAULT_PAGE_SECTION_ORDER,
-            nav,
-            Component: mod.default,
-            meta,
-          };
-        } catch (e) {
-          console.error(`[landing] section "${entry.id}" failed to load:`, e);
-          return null;
-        }
-      }),
-    ).then((loaded) => {
-      if (!cancelled) {
-        // Array.prototype.sort is stable: registry order breaks ties.
-        setSections(
-          loaded
-            .filter((s): s is LoadedSection => s !== null)
-            .sort((a, b) => a.order - b.order),
-        );
-      }
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const overlays = useMemo(
-    () => sections.filter((s) => s.order < 0),
-    [sections],
-  );
-  const flow = useMemo(() => sections.filter((s) => s.order >= 0), [sections]);
-
-  const navItems = useMemo<LandingNavItem[]>(
-    () => [
-      LANDING_CONFIG.nav.hero,
-      ...sections.flatMap((s) => s.nav),
-      LANDING_CONFIG.nav.footer,
-    ],
-    [sections],
-  );
+  const rootClassName = ["flex flex-col min-h-screen bg-white dark:bg-black", rootClass?.trim()]
+    .filter((c) => c)
+    .join(" ");
 
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-black">
-      <Header
-        loginUrl={LANDING_CONFIG.loginUrl}
-        signupUrl={LANDING_CONFIG.signupUrl}
-        session={session}
-      />
-      <main className="flex-1">
-        <RegisteredSections
-          sections={overlays}
-          plans={plans}
-          nav={navItems}
-          session={session}
-        />
-        <Hero
-          id={LANDING_CONFIG.nav.hero.id}
+    <HeroResultsContext.Provider value={setSearchActive}>
+      <div className={rootClassName}>
+        {/* The header carries the menu itself (inline from lg up, behind its
+            burger below) and pins itself, so there is no wrapper and no row
+            under it: one element tree whether or not a menu is registered.
+            The menu arrives resolved, so its links are in the first HTML. */}
+        <Header
+          loginUrl={LANDING_CONFIG.loginUrl}
           signupUrl={LANDING_CONFIG.signupUrl}
-          onResultsChange={setSearchActive}
+          session={session}
+          menuItems={menu.items}
+          groups={menu.groups}
+          actions={menu.actions}
         />
-        <div style={{ display: searchActive ? "none" : undefined }}>
-          <RegisteredSections
-            sections={flow}
-            plans={plans}
-            nav={navItems}
-            session={session}
-          />
-        </div>
-        <div id={LANDING_CONFIG.nav.footer.id} />
-      </main>
-    </div>
+        <main className="flex-1">
+          {overlays}
+          {hero}
+          <div style={{ display: searchActive ? "none" : undefined }}>
+            {/* The network strip's two landing surfaces (since 1.23.0): the
+                strip draws on the one its registered placement names, or on
+                neither - the default, and "section", where one of the
+                registered sections below carries it - and hides with the
+                sections while the hero shows search results. */}
+            <NetworkStrip surface="afterHero" />
+            {sections}
+            <NetworkStrip surface="beforeFooter" />
+          </div>
+          <div id={LANDING_CONFIG.nav.footer.id} />
+        </main>
+      </div>
+    </HeroResultsContext.Provider>
   );
 }

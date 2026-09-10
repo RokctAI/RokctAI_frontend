@@ -14,90 +14,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-"use client";
+// The section's ENTRY (since 1.18.0): what agent_sdk's manifest registers
+// in base_sdk's components/custom/landing/page-sections.ts, and what
+// base_sdk >= 1.32.0's server-rendered landing (app/landing/page.tsx
+// through components/custom/landing/landing-page.ts) imports to read
+// `meta`. No "use client" here, on purpose: a module that starts with it
+// hands the server only client-reference proxies, so `meta.order`,
+// `meta.nav`, `meta.renders` and `meta.rootClass` all read undefined there
+// - the id falls back to the module name, the floating nav says "Scroll to
+// <module>", the header's anchors do not resolve. `meta` is plain data and
+// this default export is a server component; everything that needs the
+// browser lives in the sibling ./faq-section.client.tsx and is rendered
+// from here.
 
-// The landing page's FAQ accordion. Copy and questions: AGENT_LANDING_CONFIG.faq.
+import React from "react";
 
-import React, { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Minus, Plus } from "lucide-react";
+import { FaqSection } from "@/components/custom/faq-section.client";
+import type {
+  PageSectionMeta,
+  PageSectionProps,
+} from "@/components/custom/landing/page-sections";
 
-import { AGENT_LANDING_CONFIG } from "@/components/custom/landing/agent-landing-config";
-import type { PageSectionMeta } from "@/components/custom/landing/page-sections";
-
-export function FaqSection({ id }: { id?: string }) {
-  const config = AGENT_LANDING_CONFIG.faq;
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-  if (!config) return null;
-
-  const toggle = (index: number) =>
-    setOpenIndex(openIndex === index ? null : index);
-
-  return (
-    <section
-      id={id}
-      className="container flex w-full flex-col gap-12 py-12 md:py-20 bg-white dark:bg-black mx-auto"
-    >
-      <div className="flex w-full flex-col items-center justify-center gap-6 px-4 text-center">
-        <h2 className="text-[32px] font-black leading-[1.2] text-zinc-900 dark:text-white md:text-[56px] md:leading-[1.1]">
-          {config.heading}
-        </h2>
-        <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 max-w-2xl">
-          {config.blurb}
-        </p>
-      </div>
-
-      <div className="mx-auto w-full max-w-4xl px-4 xl:px-0 mt-8">
-        <div className="flex flex-col gap-4">
-          {config.items.map((faq, index) => {
-            const open = openIndex === index;
-            return (
-              <div
-                key={faq.question}
-                className={`border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden transition-all duration-300 ${
-                  open ? "bg-zinc-50 dark:bg-zinc-900" : "bg-transparent"
-                }`}
-              >
-                <button
-                  onClick={() => toggle(index)}
-                  aria-expanded={open}
-                  className="flex w-full items-center justify-between p-3 md:p-5 text-left"
-                >
-                  <span className="text-base md:text-xl font-bold text-zinc-900 dark:text-white pr-8">
-                    {faq.question}
-                  </span>
-                  <span className="flex-shrink-0 flex items-center justify-center w-7 h-7 md:w-10 md:h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
-                    {open ? (
-                      <Minus className="w-3 h-3 md:w-5 md:h-5" />
-                    ) : (
-                      <Plus className="w-3 h-3 md:w-5 md:h-5" />
-                    )}
-                  </span>
-                </button>
-
-                <AnimatePresence>
-                  {open && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="p-6 pt-0 text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800/50 mt-2">
-                        <p className="pt-4">{faq.answer}</p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
+export { FaqSection } from "@/components/custom/faq-section.client";
 
 /**
  * What this section adds to base_sdk's landing host when registered in
@@ -109,4 +47,6 @@ export const meta: PageSectionMeta = {
   nav: [{ id: "faq", label: "FAQ" }],
 };
 
-export default FaqSection;
+export default function FaqSectionEntry({ id }: PageSectionProps) {
+  return <FaqSection id={id} />;
+}

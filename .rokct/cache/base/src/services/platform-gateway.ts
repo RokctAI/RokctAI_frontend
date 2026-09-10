@@ -43,6 +43,17 @@
  * door itself is guest-accessible on both roles, and the resolved
  * TARGET's own `allow_guest` policy decides server-side.
  *
+ * Since base_sdk 1.30.0 a tenant may answer on TWO origins - its site
+ * name and a backend custom domain of its own (Ray, 2026-09-10; the pair
+ * comes from the control-backed host resolver, tenant-host-control.ts) -
+ * so the tenant keeps working when the platform's zone is down. A call
+ * whose origin was resolved (not an explicit `baseUrl`) is retried ONCE
+ * on the other origin of the pair when the first attempt fails at the
+ * network level (a fetch error, a timeout) or with a 502/503/504; a 4xx,
+ * or any other status, is the tenant's answer and is never retried. The
+ * credential guard treats the two origins of one pair as the session's
+ * own site (`sameTenantOrigin`), and no third origin ever sees them.
+ *
  * Server-only: reading the session and the request host needs the
  * request scope. Client code imports the wire constants from
  * gateway-constants.ts and the telemetry lane from telemetry.ts instead.
@@ -65,10 +76,21 @@ import {
   hostFromHeaders,
   lookupTenantHost,
   normalizeSiteUrl,
-  sameSite,
 } from './tenant-hosts';
+import {
+  alternateTenantOrigin,
+  registerControlTenantHostResolver,
+  sameTenantOrigin,
+} from './tenant-host-control';
 
 export { PLATFORM_GATEWAY_METHOD, PLATFORM_GATEWAY_PATH };
+
+// base_sdk 1.20.0: the control site answers which tenant a request host
+// belongs to (a custom domain), so the per-host step of
+// resolveTenantBaseUrl below works with no host wiring. Idempotent, a
+// no-op without ROKCT_BASE_URL or with ROKCT_TENANT_HOST_LOOKUP=off, and
+// a host's own setTenantHostResolver call still replaces it.
+registerControlTenantHostResolver();
 
 /** Anything carrying request headers: a `Request`, a `NextRequest`, … */
 export interface RequestLike {
@@ -105,7 +127,13 @@ export interface TenantResolutionInput {
  *  3. The host name the request arrived on, mapped to a tenant site by
  *     `ROKCT_TENANT_HOSTS` or a registered resolver — only consulted when
  *     one of those is configured (`hasTenantHostLookup`), so env-only
- *     deployments never touch the request headers.
+ *     deployments never touch the request headers. Since 1.20.0 the
+ *     control-backed resolver (tenant-host-control.ts) is registered
+ *     whenever `ROKCT_BASE_URL` is set, so a tenant's custom domain
+ *     resolves to its site here; non-public and the shell's own hosts
+ *     answer nothing without a network call. Since 1.30.0 that resolver
+ *     answers the tenant's BACKEND origin when control names an Active
+ *     one, else the site name as before.
  *  4. `ROKCT_BASE_URL` / `NEXT_PUBLIC_ROKCT_BASE_URL` /
  *     `NEXT_PUBLIC_FRAPPE_URL` — the configured default.
  *
@@ -182,7 +210,11 @@ export interface PlatformCallOptions extends TenantResolutionInput {
    * whose try/catch is their error handling (the `paasCall` semantics).
    */
   throwOnError?: boolean;
-  /** Abort the request after this many milliseconds. Default 10000. */
+  /**
+   * Abort the request after this many milliseconds. Default 10000. The
+   * one retry on the tenant's other origin (see [platformCall]) gets its
+   * own budget, so a call may take up to twice this before giving up.
+   */
   timeout?: number;
   /**
    * Merged into the `fetch()` init — e.g.
@@ -221,6 +253,47 @@ export class PlatformGatewayError extends Error {
   }
 }
 
+/** The statuses a proxy in front of an unreachable origin answers with. */
+const RETRY_STATUSES = new Set([502, 503, 504]);
+
+/** The alternate origins this process has already fallen back on (logged once each). */
+const warnedAlternates = new Set<string>();
+
+function warnAlternateOnce(cmd: string, from: string, to: string, why: string): void {
+  if (warnedAlternates.has(to)) return;
+  warnedAlternates.add(to);
+  console.warn(
+    `Platform gateway: ${from} did not answer ${cmd} (${why}); retrying once on ${to}`,
+  );
+}
+
+/**
+ * One fetch on [origin], then - when [alternate] is given and the first
+ * attempt fails at the network level or with a 502/503/504 - exactly
+ * one more on the alternate, whose own outcome (success, any status, or
+ * a thrown error) is final. Never a third attempt.
+ */
+async function fetchWithAlternate(
+  cmd: string,
+  origin: string,
+  alternate: string | undefined,
+  send: (origin: string) => Promise<Response>,
+): Promise<Response> {
+  let first: Response;
+  try {
+    first = await send(origin);
+  } catch (e) {
+    if (!alternate) throw e;
+    warnAlternateOnce(cmd, origin, alternate, e instanceof Error ? e.name : 'network error');
+    return send(alternate);
+  }
+  if (alternate && RETRY_STATUSES.has(first.status)) {
+    warnAlternateOnce(cmd, origin, alternate, `HTTP ${first.status}`);
+    return send(alternate);
+  }
+  return first;
+}
+
 /**
  * Executes [cmd] on the tenant site resolved for this call (see
  * [resolveTenantBaseUrl]), with [payload] as the target method's kwargs
@@ -232,6 +305,15 @@ export class PlatformGatewayError extends Error {
  * resolved, non-2xx response, network error, timeout). Pass
  * `throwOnError: true` to get a [PlatformGatewayError] instead — or use
  * [paasCall], which also insists on a signed-in session.
+ *
+ * Since 1.30.0, when the resolved origin is one half of a tenant's known
+ * pair (its site name and its backend domain, learned from the host
+ * resolver) and the first attempt fails at the network level or with a
+ * 502/503/504, the same request is sent ONCE more to the other half -
+ * whichever direction: a backend origin falls back on the site name,
+ * a site name on the backend origin. Not for an explicit `baseUrl`
+ * (that call asked for one specific origin), not on a 4xx, never a
+ * third origin.
  */
 export async function platformCall<T = unknown>(
   cmd: string,
@@ -264,10 +346,21 @@ export async function platformCall<T = unknown>(
     return null;
   }
 
-  // Credentials stay with the site they belong to: a session that names
-  // its tenant site only authenticates calls to that site.
+  // The other origin of the tenant's pair, for the one retry: only for a
+  // RESOLVED origin (an explicit baseUrl asked for that one), and only
+  // when it passes the same credential guard as the first.
   const sessionSite = session?.user?.siteName;
-  const credentialsApply = !sessionSite || sameSite(sessionSite, baseUrl);
+  const explicit = Boolean(normalizeSiteUrl(options.baseUrl));
+  const candidate = explicit ? undefined : alternateTenantOrigin(baseUrl);
+  const alternate =
+    candidate && (!sessionSite || sameTenantOrigin(sessionSite, candidate))
+      ? candidate
+      : undefined;
+
+  // Credentials stay with the tenant they belong to: a session that names
+  // its tenant site only authenticates calls to that site - or, since
+  // 1.30.0, to that site's own backend origin - never to a third origin.
+  const credentialsApply = !sessionSite || sameTenantOrigin(sessionSite, baseUrl);
   const authorization =
     callerAuthorization ??
     (requireAuth && credentialsApply
@@ -278,11 +371,8 @@ export async function platformCall<T = unknown>(
   const timeout = options.timeout ?? 10000;
   const { headers: fetchHeaders, ...fetchRest } = options.fetchOptions ?? {};
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-
   try {
-    let url = `${baseUrl}${PLATFORM_GATEWAY_PATH}`;
+    let query = '';
     const init: RequestInit & {
       next?: { revalidate?: number | false; tags?: string[] };
     } = {
@@ -296,7 +386,6 @@ export async function platformCall<T = unknown>(
         ...(fetchHeaders as Record<string, string> | undefined),
         ...options.headers,
       },
-      signal: controller.signal,
     };
 
     if (method === 'GET') {
@@ -307,7 +396,7 @@ export async function platformCall<T = unknown>(
           typeof payload === 'string' ? payload : JSON.stringify(payload),
         );
       }
-      url += `?${params.toString()}`;
+      query = `?${params.toString()}`;
     } else {
       init.headers = {
         'Content-Type': 'application/json',
@@ -319,7 +408,22 @@ export async function platformCall<T = unknown>(
       });
     }
 
-    const res = await fetch(url, init);
+    // Each attempt gets its own abort timer: a first attempt that timed
+    // out has already fired its controller.
+    const send = async (origin: string): Promise<Response> => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      try {
+        return await fetch(`${origin}${PLATFORM_GATEWAY_PATH}${query}`, {
+          ...init,
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    };
+
+    const res = await fetchWithAlternate(cmd, baseUrl, alternate, send);
     if (!res.ok) {
       if (throwOnError) {
         throw new PlatformGatewayError(cmd, 'http_error', res.status);
@@ -337,8 +441,6 @@ export async function platformCall<T = unknown>(
       throw new PlatformGatewayError(cmd, 'network_error', undefined, e);
     }
     return null;
-  } finally {
-    clearTimeout(timeoutId);
   }
 }
 

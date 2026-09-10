@@ -14,8 +14,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Section registry for the generic landing host
-// (components/custom/landing-content.tsx).
+// Section registry for the generic landing host (app/landing/page.tsx,
+// which since 1.32.0 loads it on the server through
+// components/custom/landing/landing-page.ts; the client wrapper is
+// components/custom/landing-content.tsx).
 //
 // base_sdk holds only the host: the page, the orchestrator, this registry
 // and the hero. Every content section of the page belongs to the home SDK
@@ -24,8 +26,22 @@
 // testimonials sections), the way a Dart home SDK holds its own profile
 // screens. The orchestrator renders each registered module's default export
 // with PageSectionProps, in ascending `meta.order` (registry order breaks
-// ties); a module's `meta.nav` adds its floating-nav entries. A shell
-// composed with no registered section renders the hero alone.
+// ties); a module's `meta.nav` adds its floating-nav entries, and its
+// optional `meta.renders` says whether the section belongs on this page at
+// all - a section it turns down is neither rendered nor listed in the nav.
+// A shell composed with no registered section renders the hero alone.
+//
+// Since 1.32.0 the registry is imported ON THE SERVER, so a section's ENTRY
+// module - the one `load` imports - must be server-safe: it exports `meta`
+// and its default component and does NOT start with "use client" (on the
+// server every export of a "use client" module is a client reference proxy,
+// so meta cannot be read and the loader renders the section with default
+// settings - order 100, the entry id as its DOM id, no floating-nav entry,
+// no rootClass - and one warning); whatever needs hooks, state, effects,
+// browser APIs or
+// framer-motion lives in a sibling `<name>.client.tsx` that starts with
+// "use client" and that the entry's default export renders; and
+// `meta.renders(ctx)` is pure (no window, no localStorage).
 //
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as the
@@ -65,6 +81,19 @@ export interface PageSectionProps {
   nav: LandingNavItem[];
 }
 
+/**
+ * The page facts a section may decide on before it is rendered: the same
+ * values the page hands it in PageSectionProps. `meta.renders` reads them,
+ * so the test that keeps a section off the page is the very test the page
+ * asks before giving it a floating-nav tick.
+ */
+export interface PageSectionContext {
+  /** The plans the page prefetched; empty when there are none. */
+  plans: LandingPlan[];
+  /** The visitor's session as the page read it through the kernel seam, or null. */
+  session?: unknown;
+}
+
 export type PageSectionComponent = ComponentType<PageSectionProps>;
 
 /** The `meta.order` of a module that declares none. */
@@ -90,6 +119,28 @@ export interface PageSectionMeta {
   nav?: LandingNavItem[];
   /** The DOM id when the section has no nav entry; the entry id when absent. */
   anchor?: string;
+  /**
+   * Whether the section belongs on this page at all. A section that draws
+   * nothing for some visitors - no plan rows to price, a config slot left
+   * empty - says so here rather than returning null from its component,
+   * because the page asks this once and then both skips the section and
+   * drops its `nav` entries. That is what keeps a floating-nav tick honest:
+   * a stop is listed only when there is a section for it to scroll to.
+   * Absent: the section always belongs.
+   */
+  renders?: (ctx: PageSectionContext) => boolean;
+  /**
+   * Class names the landing page's ROOT element carries from the first
+   * HTML (since 1.32.0), space-separated. The page renders on the server
+   * now, so a section that themes the landing by putting a class on the
+   * document from a client effect (tokens, font variables) would have its
+   * first paint unthemed; naming the same classes here puts them on the
+   * root that wraps the header, the hero and every section, in the HTML
+   * the server sends, so the tokens are there before any script runs.
+   * The effect may still run for whatever only <html> can carry. Absent:
+   * nothing added. Every present section's value is joined, in page order.
+   */
+  rootClass?: string;
 }
 
 /** The shape of a registered section's module. */

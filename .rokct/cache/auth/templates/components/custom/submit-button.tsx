@@ -37,7 +37,7 @@ export function SubmitButton({
     <Button
       type={pending ? "button" : "submit"}
       aria-disabled={pending}
-      className={clsx("relative text-white", className)}
+      className={clsx("relative", className)}
     >
       {children}
       {pending && (

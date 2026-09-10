@@ -14,7 +14,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-"use client";
+// Since 1.18.0 no "use client": this testimonial marquee has no hook, no effect,
+// no browser API and no framer element, so the whole section is a server
+// component and the entry base_sdk >= 1.32.0's server-rendered landing
+// reads `meta` from is this file itself (a module that starts with
+// "use client" hands the server only client-reference proxies, and the
+// order, the nav and the anchors would all read undefined). next/image
+// renders on the server; nothing here needs the browser.
 
 // The landing page's testimonial marquee. Quotes: AGENT_LANDING_CONFIG.testimonials.
 

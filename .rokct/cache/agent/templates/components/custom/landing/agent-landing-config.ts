@@ -15,9 +15,11 @@
  */
 
 // Copy for rokctapp's landing page sections (this SDK's floating-nav,
-// logos, social, all-features, workflow, pricing, copied-pricing, faq and
+// social, all-features, workflow, pricing, copied-pricing, faq and
 // testimonials templates), which register themselves into base_sdk's
 // generic landing host through components/custom/landing/page-sections.ts.
+// The logos section (logos.tsx) has no copy here since 1.17.0: its items
+// are base's network sites and its heading base's "Trusted by".
 //
 // Ray, 2026-09-03: each home SDK holds its own landing page, the way a Dart
 // home SDK holds its profile screens - so the words, images, links and
@@ -53,11 +55,6 @@ export interface LandingLink {
 export interface LandingImage {
   src: string;
   alt: string;
-}
-
-export interface LogosConfig {
-  eyebrow: string;
-  logos: { name: string; url: string }[];
 }
 
 export interface SocialCard {
@@ -191,7 +188,6 @@ export interface TestimonialsConfig {
 }
 
 export interface AgentLandingConfig {
-  logos: LogosConfig | null;
   social: SocialConfig | null;
   features: FeaturesConfig | null;
   workflow: WorkflowConfig | null;
@@ -212,20 +208,11 @@ const ACTIVE_TAB =
   "data-[state=active]:text-white dark:data-[state=active]:text-black";
 
 export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
-  logos: {
-    eyebrow: "Trusted by professionals at",
-    logos: [
-      { name: "Walmart", url: `${CDN}/Walmart_1_0cd05c542e.png` },
-      { name: "Cisco", url: `${CDN}/Cisco_1_ab0ee6173d.png` },
-      { name: "Netflix", url: `${CDN}/Netflix_1_dabb0f82d5.png` },
-      { name: "Pinterest", url: `${CDN}/Pinterest_1_25eeb74ab0.png` },
-      { name: "Zoom", url: `${CDN}/Zoom_1_b5d03a6d69.png` },
-      { name: "Sony", url: `${CDN}/Sony_1_e475b6ed27.png` },
-      { name: "Ebay", url: `${CDN}/Ebay_1_dbfa7af44d.png` },
-      { name: "Uber", url: `${CDN}/Uber_1_338311f3dc.png` },
-    ],
-  },
-
+  // No `logos` block since 1.17.0: 1.13.0 turned the third-party logo wall
+  // off (Ray, 2026-09-09: "everything served from another company cdn
+  // tells you is placeholder") and 1.17.0 made logos.tsx the landing
+  // page's "Trusted by" row, drawing base's network sites; the section
+  // has no copy of its own to hold here.
   social: {
     badge: `${PLATFORM_NAME} Chrome Extension`,
     heading: "Stay social, not drained",
@@ -369,7 +356,7 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
     },
     defaultCategoryStyle:
       "text-slate-600 border-slate-200 hover:border-slate-500 hover:text-slate-500 data-[state=active]:bg-slate-600 data-[state=active]:text-white dark:text-slate-400 dark:border-slate-800",
-    hiddenCategories: ["lms"],
+    hiddenCategories: ["lms", "hosting", "paas", "telephony"],
     hideFreePlansIn: ["rokct"],
     featureTokens: { model: modelLabel(AI_MODELS.PAID.id) },
     localize: () =>

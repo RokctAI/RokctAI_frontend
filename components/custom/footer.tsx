@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import t from "@/app/lib/i18n";
 import { Button } from "@/components/ui/button";
+import { NetworkStrip } from "@/components/custom/network-strip";
 import versionData from "@/version.json";
 import type { PlatformStatus } from "@/app/services/public/versions";
 
@@ -100,7 +101,7 @@ export async function Footer() {
 
     if (label === "soon") {
       return (
-        <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
+        <span className="text-[10px] bg-primary text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
           {t("common.soon")}
         </span>
       );
@@ -108,7 +109,7 @@ export async function Footer() {
 
     if (label === "new") {
       return (
-        <span className="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
+        <span className="text-[10px] bg-primary text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
           {t("common.new")}
         </span>
       );
@@ -163,7 +164,7 @@ export async function Footer() {
             <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-[240px]">
               {t("footer.tagline")}
             </p>
-            <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-6 rounded-lg text-lg">
+            <Button className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-6 rounded-lg text-lg">
               {t("footer.contact_us")}
             </Button>
             <div className="flex gap-6 mt-2">
@@ -345,6 +346,10 @@ export async function Footer() {
             </div>
           </div>
         </div>
+
+        {/* The Rokct network - the other shells, minus this one
+            (base_sdk network strip, footer placement). */}
+        <NetworkStrip surface="footer" />
 
         {/* Footer Bottom */}
         <div className="flex flex-row justify-between items-center pt-12 border-t border-gray-200 dark:border-white/5 gap-6">

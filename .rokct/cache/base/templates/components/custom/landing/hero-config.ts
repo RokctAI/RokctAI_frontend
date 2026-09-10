@@ -24,6 +24,16 @@
 // regenerated on every compose, so an edit here does not last - has its
 // home SDK register its own copy in ./hero-copy.ts, which the hero lays
 // over this config field by field.
+//
+// Since 1.23.0 the defaults name NO third-party asset (Ray, 2026-09-09:
+// "everything served from another company cdn tells you is placeholder"):
+// the gradient behind the hero, the Chrome Web Store and Google Play icons
+// hotlinked from a chat template's CDN and the "Trusted by 20M+ users"
+// claim are gone. The background is empty (the hero hides the block), the
+// trust line is empty (the network strip is what stands under the hero
+// now), the Chrome badge draws lucide's own Chrome mark as the header's
+// extension button does, and the Google Play badge has no icon - a badge
+// without one is not drawn until a home SDK's hero copy gives it one.
 
 import { PLATFORM_FEATURES } from "@/app/config/features";
 import { PLATFORM_NAME } from "@/app/config/platform";
@@ -40,8 +50,18 @@ export interface HeroBadge {
   href: string;
   eyebrow: string;
   label: string;
-  /** An image icon, or the built-in Apple glyph. */
-  icon: { src: string; alt: string } | "app-store";
+  /**
+   * An image icon (a public path or an absolute URL), or a built-in glyph:
+   * "app-store" (the Apple mark) or "chrome" (lucide's Chrome mark, the one
+   * the header's extension button draws). Absent, or an image with an
+   * empty `src`: the badge is not drawn (below `md` it would be an empty
+   * pill), so a badge waits for its icon rather than inventing one. Since
+   * 1.26.0 base serves the platform marks itself (./brand-marks.ts:
+   * BRAND_MARKS, `/brand/marks/<name>.svg`) - a home SDK's hero copy may
+   * hand one to a badge, typed or as the bare path, and base inverts the
+   * two monochrome ones (App Store, Windows) on the dark shell.
+   */
+  icon?: { src: string; alt: string } | "app-store" | "chrome";
 }
 
 export interface HeroConfig {
@@ -69,6 +89,20 @@ export interface HeroConfig {
    * ./hero-sections.ts: the input is then a plain call to action.
    */
   fallbackHref: (query: string, signupUrl: string) => string;
+  /**
+   * What the hero's wordmark slot shows (since 1.32.0). `"name"` - the
+   * default, and what every shell drew before the field existed - draws
+   * the host's own wordmark component (components/custom/branding.tsx).
+   * `"stem"` draws the platform name's stem as text instead - the part
+   * before the first dot, the same rule the header folds a dotted name
+   * to (header-menu.ts: brandStemOf; "acme.school" shows "acme"), or the
+   * whole name when it has no dot - with the full name on the element's
+   * aria-label and title. Resolved on the server (landing-page.ts:
+   * resolveHeroWordmark), so the first HTML already carries the stem; no
+   * brand string lives in base, and no shell changes until its home SDK's
+   * hero copy declares it.
+   */
+  brand?: "name" | "stem";
 }
 
 const CHROME_BADGE: HeroBadge = {
@@ -76,10 +110,7 @@ const CHROME_BADGE: HeroBadge = {
   href: PLATFORM_FEATURES[1]?.href || "#",
   eyebrow: "Available in the",
   label: "Chrome Web Store",
-  icon: {
-    src: "https://cdn.getmerlin.in/cms/Chrome_Web_Store_icon_5e2d8a5a4f.svg",
-    alt: "Chrome",
-  },
+  icon: "chrome",
 };
 
 const GOOGLE_PLAY_BADGE: HeroBadge = {
@@ -87,10 +118,8 @@ const GOOGLE_PLAY_BADGE: HeroBadge = {
   href: PLATFORM_FEATURES[3]?.href || "#",
   eyebrow: "GET IT ON",
   label: "Google Play",
-  icon: {
-    src: "https://cdn.getmerlin.in/cms/Google_Play_logo_64f9907f74.svg",
-    alt: "Google Play",
-  },
+  // No icon until a home SDK's hero copy gives it one: the hero does not
+  // draw a badge without an icon.
 };
 
 const APP_STORE_BADGE: HeroBadge = {
@@ -111,12 +140,12 @@ export const HERO_CONFIG: HeroConfig = {
   wordIntervalMs: 3000,
   placeholders: ["search...", `chat with ${PLATFORM_NAME}`],
   logoPlaceholderToken: PLATFORM_NAME,
-  backgroundImage:
-    "https://cdn.getmerlin.in/cms/Gradient_Animation_2_a3db99fe6f.png",
-  trustLine: ["Trusted by 20M+ users", "Install on all platforms"],
+  backgroundImage: "",
+  trustLine: [],
   badges: [
     ...(PLATFORM_FEATURES[1]?.active ? [CHROME_BADGE] : []),
     ...(PLATFORM_FEATURES[3]?.active ? [GOOGLE_PLAY_BADGE, APP_STORE_BADGE] : []),
   ],
   fallbackHref: (_query, signupUrl) => signupUrl,
+  brand: "name",
 };
