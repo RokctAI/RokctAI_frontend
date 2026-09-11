@@ -32,7 +32,29 @@ import {
 import t from "@/app/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { NetworkStrip } from "@/components/custom/network-strip";
+import { FooterChromeRow } from "@/components/custom/footer-chrome";
+import type { FooterChromeConfig } from "@/components/custom/landing/footer-chrome-config";
 import versionData from "@/version.json";
+
+// The copyright / platform-status / version row is base_sdk's footer chrome
+// (components/custom/footer-chrome.tsx, composed). It probes the platform
+// through the gateway AFTER hydration via the getPlatformStatus() server
+// action, so the footer no longer waits on a status call during SSR. The
+// facts the row shows are still this shell's: the legal entity, the frontend
+// version from version.json, and the words from this shell's translations.
+// Maintenance and checking have no host key, so those two fall back to
+// base's own labels. The dot colours are base's defaults, which are the
+// same green-500 / red-500 the hand-rolled pill used.
+const FOOTER_CHROME: FooterChromeConfig = {
+  copyrightHolder: LEGAL_COMPANY_NAME,
+  version: versionData.frontend,
+  labels: {
+    statusPrefix: t("system.status_prefix"),
+    operational: t("system.online"),
+    offline: t("system.offline"),
+    version: t("system.version"),
+  },
+};
 
 async function PublicRoadmapLink() {
   try {
@@ -57,16 +79,6 @@ export async function Footer() {
   try {
     const fetchedTerms = await TermsService.getMasterTerms();
     if (Array.isArray(fetchedTerms)) terms = fetchedTerms;
-  } catch (e) {}
-
-  let isOnline = false;
-
-  try {
-    const { VersionsService } = await import("@/app/services/public/versions");
-    const versions = await VersionsService.getPublicVersions();
-    if (versions) {
-      isOnline = true;
-    }
   } catch (e) {}
 
   let hasCareers = false;
@@ -132,8 +144,6 @@ export async function Footer() {
       </Link>
     );
   };
-
-  const version = versionData.frontend;
 
   return (
     <footer className="bg-white dark:bg-black text-black dark:text-white pt-24 pb-12 border-t border-gray-200 dark:border-white/5">
@@ -340,28 +350,14 @@ export async function Footer() {
             (base_sdk network strip, footer placement). */}
         <NetworkStrip surface="footer" />
 
-        {/* Footer Bottom */}
-        <div className="flex flex-row justify-between items-center pt-12 border-t border-gray-200 dark:border-white/5 gap-6">
-          <p className="text-sm text-gray-500">
-            © Copyright {new Date().getFullYear()} - {LEGAL_COMPANY_NAME}
-          </p>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 px-2 py-1 md:px-3 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200 dark:border-white/10">
-              <div
-                className={`w-2 h-2 rounded-full ${isOnline ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"}`}
-              />
-              <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight">
-                <span className="hidden md:inline">
-                  {t("system.status_prefix")}{" "}
-                </span>
-                {isOnline ? t("system.online") : t("system.offline")}
-              </span>
-            </div>
-            <span className="hidden md:inline text-xs font-mono font-bold text-gray-700 uppercase">
-              {t("system.version")} {version}
-            </span>
-          </div>
-        </div>
+        {/* Footer Bottom: copyright, platform status, version - base's
+            footer chrome row. The network strip is placed above by this
+            footer itself, so the row does not draw its own. */}
+        <FooterChromeRow
+          config={FOOTER_CHROME}
+          networkStrip={false}
+          className="pt-12 border-t border-gray-200 dark:border-white/5"
+        />
       </div>
     </footer>
   );
