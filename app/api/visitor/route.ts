@@ -51,8 +51,36 @@ export async function POST(request: Request) {
     // site, where no tenant-role manifest registers that method, so it
     // could never succeed; the control counter is the only sink for this
     // record. The cmd is allow_guest, so no session credentials are sent.
-    const host =
-      process.env.NEXT_PUBLIC_FRAPPE_URL || process.env.ROKCT_BASE_URL || "";
+    //
+    // That cmd has to be STEERED at the control plane, and `ROKCT_BASE_URL`
+    // is what names it on this shell — base_sdk's app/actions/base/status.ts
+    // says so in as many words: "on rokctai_frontend it IS the control
+    // site". It is the origin the only other two host-owned control reads
+    // use, alone: `callPublicApi` (app/services/common/api.ts, whose doc
+    // states the rule — "the control gateway serves only those") and
+    // `control:get_versions` (app/services/public/versions.ts).
+    //
+    // This line used to prefer `NEXT_PUBLIC_FRAPPE_URL`, which is the
+    // TENANT/paas backend — the expression every *tenant*-cmd call site
+    // pairs with it (versions.ts's `api.get_version`, roadmap.ts, the rpanel
+    // actions). So wherever that variable is set, this `control:`-prefixed
+    // cmd was posted to a tenant gateway, which registers no such method;
+    // the call failed, `platformCall` answered `null`, and the branch below
+    // turned every visit into a 502 — the same "could never succeed" shape
+    // as the per-method tenant leg it replaced.
+    const host = process.env.ROKCT_BASE_URL;
+    if (!host) {
+      // No explicit origin would leave `platformCall` to resolve one from
+      // the session or the env default — the tenant site again — so say so
+      // instead of sending a control cmd somewhere that cannot serve it.
+      console.error(
+        "ROKCT_BASE_URL is not set; cannot record visit on the control plane",
+      );
+      return NextResponse.json(
+        { success: false, error: "Control plane is not configured" },
+        { status: 502 },
+      );
+    }
     const data = await platformCall(
       "control:record_unique_visit",
       {
