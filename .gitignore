@@ -658,9 +658,12 @@ migrate_working_dir/
 /components/custom/auth/register-registry.ts
 /components/custom/beta-toggle.tsx
 /components/custom/chat-section.client.tsx
+/components/custom/chat-section.tsx
 /components/custom/chat.tsx
 /components/custom/copied-pricing.client.tsx
+/components/custom/copied-pricing.tsx
 /components/custom/faq-section.client.tsx
+/components/custom/faq-section.tsx
 /components/custom/floating-nav.client.tsx
 /components/custom/floating-nav.tsx
 /components/custom/footer-chrome.tsx
@@ -697,6 +700,7 @@ migrate_working_dir/
 /components/custom/landing/testimonials-marquee.tsx
 /components/custom/left-sidebar.tsx
 /components/custom/logos.client.tsx
+/components/custom/logos.tsx
 /components/custom/menu-label.tsx
 /components/custom/message.tsx
 /components/custom/model-selector.tsx
@@ -715,12 +719,14 @@ migrate_working_dir/
 /components/custom/right-plane.tsx
 /components/custom/session-provider.tsx
 /components/custom/social-section.client.tsx
+/components/custom/social-section.tsx
 /components/custom/submit-button.tsx
 /components/custom/testimonials-section.tsx
 /components/custom/use-scroll-to-bottom.ts
 /components/custom/use-window-size.tsx
 /components/custom/weather.tsx
 /components/custom/workflow-section.client.tsx
+/components/custom/workflow-section.tsx
 /components/flights/authorize-payment.tsx
 /components/flights/boarding-pass.tsx
 /components/flights/create-reservation.tsx

@@ -237,14 +237,8 @@ jobs:
           # to the SDK copy. Listing them keeps this gate real for everything
           # else, and the job fails if an entry stops drifting - so the list can
           # only shrink, never quietly outlive its purpose.
-          PENDING=(
-            "components/custom/chat-section.tsx"
-            "components/custom/copied-pricing.tsx"
-            "components/custom/faq-section.tsx"
-            "components/custom/logos.tsx"
-            "components/custom/social-section.tsx"
-            "components/custom/workflow-section.tsx"
-          )
+          # Empty: every section now comes from the SDK install (the stale host copies were removed).
+          PENDING=()
           PENDING_LIST="$(printf '%s\n' "${PENDING[@]}")"
 
           DRIFT="$(git status --porcelain)"
