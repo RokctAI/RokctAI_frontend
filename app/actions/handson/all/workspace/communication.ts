@@ -16,7 +16,7 @@
 
 "use server";
 
-import { getClient } from "@/app/lib/client";
+import { platformCall } from "@/app/services/base/platform-gateway";
 import { revalidatePath } from "next/cache";
 
 export interface CommentData {
@@ -27,12 +27,22 @@ export interface CommentData {
   communication_type?: "Comment" | "Communication" | "Automated Message";
 }
 
+/**
+ * Rides the ONE platform gateway (ADR-005, a `{cmd, payload}` POST), never
+ * a per-method URL. `frappe.client.*` is the framework form the gateway
+ * takes verbatim (app/lib/gateway-rpc.ts).
+ *
+ * It had to move: `FrappeApp.call()` takes ZERO arguments and returns a
+ * `FrappeCall` (frappe-js-sdk 1.12.0, `lib/frappe_app/index.d.ts`), so the
+ * `{method, args}` object was discarded, no HTTP request was issued, and
+ * the caller got an SDK builder back. `throwOnError` keeps the axios
+ * semantics the try/catch here was written against.
+ */
 export async function getCommunications(doctype: string, docname: string) {
-  const client = await getClient();
   try {
-    const response = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const response = await platformCall<CommentData[]>(
+      "frappe.client.get_list",
+      {
         doctype: "Communication",
         filters: {
           reference_doctype: doctype,
@@ -42,8 +52,9 @@ export async function getCommunications(doctype: string, docname: string) {
         order_by: "creation asc", // Oldest first for chat-like view
         limit_page_length: 100,
       },
-    });
-    return response?.message || [];
+      { throwOnError: true },
+    );
+    return response || [];
   } catch (e) {
     console.error(
       `Failed to fetch communications for ${doctype} ${docname}`,
@@ -58,7 +69,6 @@ export async function addComment(
   docname: string,
   content: string,
 ) {
-  const client = await getClient();
   try {
     // We use the simpler "frappe.desk.form.utils.add_comment" if available,
     // or just insert a Communication doc manually. Inserting doc is safer/standard api.
@@ -66,11 +76,13 @@ export async function addComment(
     // Note: 'Comment' DocType is deprecated in newer Frappe versions in favor of 'Communication'
     // with communication_type='Comment'. Let's try inserting a Communication.
 
-    const user = await (client as any).getLoggedInUser(); // Attempt to get current user email if needed, or let backend handle
-
-    const response = await (client as any).call({
-      method: "frappe.client.insert",
-      args: {
+    // The `(client as any).getLoggedInUser()` that stood here went with the
+    // client: `FrappeApp` has no such method (it lives on `.auth()`), so the
+    // line could only ever throw into the catch below. Its result was never
+    // read — the backend stamps the sender — so nothing replaces it.
+    await platformCall(
+      "frappe.client.insert",
+      {
         doc: {
           doctype: "Communication",
           communication_type: "Comment",
@@ -83,7 +95,8 @@ export async function addComment(
           sent_or_received: "Sent",
         },
       },
-    });
+      { throwOnError: true },
+    );
 
     // Revalidate the specific page that uses this data
     // Ideally we would pass the path, but here we cover the main issue path

@@ -16,8 +16,19 @@
 
 "use server";
 
-import { getClient } from "@/app/lib/client";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
+/**
+ * Rides the ONE platform gateway (ADR-005, a `{cmd, payload}` POST), never
+ * a per-method URL. `frappe.client.*` is the framework form the gateway
+ * takes verbatim (app/lib/gateway-rpc.ts).
+ *
+ * It had to move: `FrappeApp.call()` takes ZERO arguments and returns a
+ * `FrappeCall` (frappe-js-sdk 1.12.0, `lib/frappe_app/index.d.ts`), so the
+ * `{method, args}` object was discarded, no HTTP request was issued, and
+ * the caller got an SDK builder back. `throwOnError` keeps the axios
+ * semantics the try/catch here was written against.
+ */
 export async function updateUserProfile(
   email: string,
   data: {
@@ -27,17 +38,17 @@ export async function updateUserProfile(
     birth_date?: string;
   },
 ) {
-  const client = await getClient();
   try {
-    const response = await (client as any).call({
-      method: "frappe.client.set_value",
-      args: {
+    const response = await platformCall<Record<string, any>>(
+      "frappe.client.set_value",
+      {
         doctype: "User",
         name: email,
         fieldname: data,
       },
-    });
-    return { success: true, message: response?.message };
+      { throwOnError: true },
+    );
+    return { success: true, message: response };
   } catch (e: any) {
     console.error("Failed to update User Profile", e);
     return { success: false, error: e?.message || "Unknown error" };

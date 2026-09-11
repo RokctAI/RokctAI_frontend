@@ -14,7 +14,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getFrappeClient } from "@/lib/frappe";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
 export default async function TestConnectionPage() {
   let message = "Testing connection...";
@@ -22,17 +22,26 @@ export default async function TestConnectionPage() {
   let data = null;
 
   try {
-    const frappe = getFrappeClient();
-    const call = frappe.call({
-      method: "frappe.client.get_list",
-      args: {
+    // This page exists to prove the backend answers, so it has to actually
+    // ask. It did not: `FrappeApp.call()` takes ZERO arguments and returns a
+    // `FrappeCall` (frappe-js-sdk 1.12.0, `lib/frappe_app/index.d.ts`), so
+    // the `{method, args}` object was discarded, no HTTP request was made,
+    // and awaiting the returned builder could not throw — the page reported
+    // "Connection Successful!" and printed an SDK object as "Data Received"
+    // against any backend at all, reachable or not. The compiler was already
+    // saying so: `TS2554: Expected 0 arguments, but got 1` on `main`.
+    //
+    // Now it asks through the ONE platform gateway (ADR-005), with
+    // `throwOnError` so an unreachable or refusing backend reaches the
+    // catch below and renders "Connection Failed".
+    const response = await platformCall<Record<string, any>>(
+      "frappe.client.get_list",
+      {
         doctype: "User",
         limit_page_length: 1,
       },
-    });
-
-    // Await the promise to get the actual response
-    const response = await call;
+      { throwOnError: true },
+    );
     data = response;
     message = "Connection Successful!";
   } catch (e: any) {

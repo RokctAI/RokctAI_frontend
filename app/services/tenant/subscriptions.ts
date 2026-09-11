@@ -14,17 +14,34 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getClient } from "@/app/lib/client";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
 export class SubscriptionService {
+  /**
+   * The tenant's plan and status, through the ONE platform gateway
+   * (ADR-005) rather than a per-method URL.
+   *
+   * What it replaced never made a request: `FrappeApp.call()` takes ZERO
+   * arguments and returns a `FrappeCall` (frappe-js-sdk 1.12.0,
+   * `lib/frappe_app/index.d.ts`), so the `{method, args}` object was
+   * discarded and `response.message` read `undefined` off an SDK builder.
+   * Every caller therefore got the "Simple"/"Active" fallback below, on
+   * every render, with no network activity behind it. The `as any` is what
+   * let it compile.
+   *
+   * The cmd is the manifest key minus the app prefix, per
+   * app/lib/gateway-rpc.ts — the old string also carried the wrong prefix
+   * (`core.`, not `rcore.`). `platformCall` already unwraps the Frappe
+   * `message` envelope, so the details object arrives directly.
+   */
   static async getSubscriptionStatus() {
-    const client = await getClient();
     try {
-      const response = await (client as any).call({
-        method: "core.tenant.api.get_subscription_details",
-        args: {},
-      });
-      return response?.message || { plan_name: "Simple", status: "Active" };
+      const response = await platformCall<Record<string, any>>(
+        "tenant.api.get_subscription_details",
+        undefined,
+        { throwOnError: true },
+      );
+      return response || { plan_name: "Simple", status: "Active" };
     } catch (e) {
       return { plan_name: "Simple", status: "Active" };
     }

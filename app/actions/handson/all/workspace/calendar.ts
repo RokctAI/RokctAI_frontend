@@ -16,7 +16,7 @@
 
 "use server";
 
-import { getClient } from "@/app/lib/client";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
 export interface CalendarEvent {
   name: string;
@@ -30,17 +30,27 @@ export interface CalendarEvent {
   google_meet_link?: string; // If synced from Google
 }
 
+/**
+ * Rides the ONE platform gateway (ADR-005, a `{cmd, payload}` POST), never
+ * a per-method URL. `frappe.client.*` is the framework form the gateway
+ * takes verbatim (app/lib/gateway-rpc.ts).
+ *
+ * It had to move: `FrappeApp.call()` takes ZERO arguments and returns a
+ * `FrappeCall` (frappe-js-sdk 1.12.0, `lib/frappe_app/index.d.ts`), so the
+ * `{method, args}` object was discarded, no HTTP request was issued, and
+ * the caller got an SDK builder back. The compiler was already saying so —
+ * `TS2554: Expected 0 arguments, but got 1` on `main`. `throwOnError` keeps
+ * the axios semantics the try/catch here was written against.
+ */
 export async function getCalendarEvents(start?: string, end?: string) {
-  const client = await getClient();
-
   try {
     const filters: any = {};
     if (start) filters.starts_on = [">=", start];
     if (end) filters.ends_on = ["<=", end];
 
-    const events = await client.call({
-      method: "frappe.client.get_list",
-      args: {
+    const events = await platformCall<CalendarEvent[]>(
+      "frappe.client.get_list",
+      {
         doctype: "Event",
         fields: [
           "name",
@@ -56,9 +66,10 @@ export async function getCalendarEvents(start?: string, end?: string) {
         order_by: "starts_on asc",
         limit_page_length: 100,
       },
-    });
+      { throwOnError: true },
+    );
 
-    return { success: true, events: events?.message || [] };
+    return { success: true, events: events || [] };
   } catch (e: any) {
     console.error("Failed to fetch calendar events", e);
     return { success: false, error: e?.message || "Failed to fetch events" };

@@ -16,15 +16,33 @@
 
 "use server";
 
-import { getControlClient } from "@/app/lib/client";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
+/**
+ * Client usage for the rpanel dashboard, through the ONE platform gateway
+ * (ADR-005), never a per-method URL.
+ *
+ * It had to move: `FrappeApp.call()` takes ZERO arguments and returns a
+ * `FrappeCall` (frappe-js-sdk 1.12.0, `lib/frappe_app/index.d.ts`), so the
+ * method name was discarded, no HTTP request was issued, and the dashboard
+ * rendered an SDK builder object as if it were usage data. The compiler
+ * was already saying so — `TS2554: Expected 0 arguments, but got 1` on
+ * `main`. The explicit `baseUrl` keeps this on the control plane, which is
+ * what `getControlClient()` did by ignoring the session's tenant site.
+ */
 export async function getClientUsage() {
   try {
-    const client = await getControlClient();
-    const response = await client.call(
+    const response = await platformCall<Record<string, any>>(
       "rpanel.hosting.doctype.hosting_client.hosting_client.get_client_usage",
+      undefined,
+      {
+        baseUrl:
+          process.env.NEXT_PUBLIC_FRAPPE_URL || process.env.ROKCT_BASE_URL,
+        throwOnError: true,
+      },
     );
-    return response.message || response;
+    // `platformCall` already unwrapped Frappe's `message` envelope.
+    return response;
   } catch (error: any) {
     console.error("Error fetching client usage:", error);
     return {
