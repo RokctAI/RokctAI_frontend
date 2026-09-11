@@ -37,7 +37,13 @@ export default function OverviewPage() {
         getServerInfo(),
       ]);
 
-      if (usageRes.message?.success) {
+      // `getClientUsage()` now returns the gateway's answer, which is
+      // `null` when the call fails, so the read has to be guarded. Note the
+      // `.message` hop below is one level too deep either way: `platformCall`
+      // already unwraps Frappe's `message` envelope. Left alone here because
+      // the cmd this tile needs is not registered server-side yet, so
+      // nothing would light up; it is a one-line follow-up once it is.
+      if (usageRes?.message?.success) {
         setUsage(usageRes.message.usage);
       }
       if (infoRes.message?.success) {

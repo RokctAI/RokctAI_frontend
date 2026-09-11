@@ -16,16 +16,30 @@
 
 "use server";
 
-import { getClient } from "@/app/lib/client";
+import { platformCall } from "@/app/services/base/platform-gateway";
 
 export type UserRole = "Employee" | "Client" | "Accountant" | "Viewer";
 
+/**
+ * Every call in this file goes through the ONE platform gateway (ADR-005,
+ * a `{cmd, payload}` POST), never a per-method URL. They had to move:
+ * `FrappeApp.call()` takes ZERO arguments and returns a `FrappeCall`
+ * (frappe-js-sdk 1.12.0, `lib/frappe_app/index.d.ts`), so every
+ * `(client as any).call({ method, args })` here discarded its argument,
+ * issued no HTTP request, and handed back an SDK builder object. Reading
+ * `.message` off it gave `undefined`, so the user list was always empty
+ * and creating a user always "succeeded" without creating anything. The
+ * `as any` is what let it compile.
+ *
+ * `frappe.client.*` is the framework form the gateway takes verbatim (see
+ * app/lib/gateway-rpc.ts), and `throwOnError` keeps the axios semantics
+ * these try/catch blocks were written against.
+ */
 export async function getUsers() {
-  const client = await getClient();
   try {
-    const response = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
+    const response = await platformCall<any[]>(
+      "frappe.client.get_list",
+      {
         doctype: "User",
         fields: [
           "name",
@@ -38,8 +52,9 @@ export async function getUsers() {
         filters: [["name", "not in", ["Administrator", "Guest"]]], // Hide system users
         limit_page_length: 50,
       },
-    });
-    return response?.message || [];
+      { throwOnError: true },
+    );
+    return response || [];
   } catch (e) {
     console.error("Failed to fetch Users", e);
     return [];
@@ -52,12 +67,11 @@ export async function createUser(data: {
   last_name?: string;
   role: UserRole;
 }) {
-  const client = await getClient();
   try {
     // 1. Create the User Document
-    const userRes = await (client as any).call({
-      method: "frappe.client.insert",
-      args: {
+    const userRes = await platformCall<Record<string, any>>(
+      "frappe.client.insert",
+      {
         doc: {
           doctype: "User",
           email: data.email,
@@ -68,7 +82,8 @@ export async function createUser(data: {
           roles: [], // Explicitly set empty roles initially
         },
       },
-    });
+      { throwOnError: true },
+    );
 
     // 2. Assign Roles based on Selection
     // We add roles to the User's 'roles' child table
@@ -87,7 +102,6 @@ export async function createUser(data: {
 
     // Apply roles
     if (rolesToAdd.length > 0) {
-      const user = userRes.message;
       // We need to re-save with the roles list.
       // Ideally use 'frappe.client.set_value' or 'add_role' API if available.
       // But 'frappe.client.get' + 'save' with roles child table works reliably.
@@ -96,19 +110,22 @@ export async function createUser(data: {
       const rolesTable = rolesToAdd.map((r) => ({ role: r }));
 
       // Re-update user with roles
-      await (client as any).call({
-        method: "frappe.client.set_value",
-        args: {
+      await platformCall(
+        "frappe.client.set_value",
+        {
           doctype: "User",
           name: data.email,
           fieldname: {
             roles: rolesTable,
           },
         },
-      });
+        { throwOnError: true },
+      );
     }
 
-    return { success: true, message: userRes.message };
+    // `platformCall` already unwrapped Frappe's `message` envelope, so
+    // `userRes` is the inserted doc the old `.message` read meant to reach.
+    return { success: true, message: userRes };
   } catch (e: any) {
     console.error("Failed to create User", e);
     return { success: false, error: e?.message || "Unknown error" };
