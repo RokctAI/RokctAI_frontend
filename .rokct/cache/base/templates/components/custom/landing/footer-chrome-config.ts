@@ -60,7 +60,7 @@ export interface PlatformStatusProbe {
 }
 
 /**
- * The default probe order: ASK THE TENANT FIRST, fall back to control.
+ * The probes a deployment can name - the CATALOGUE, not the default order.
  *
  * Both cmds are guest-accessible, which the row needs because it renders
  * for anonymous visitors:
@@ -72,15 +72,12 @@ export interface PlatformStatusProbe {
  *    tenant can report maintenance mode about ITSELF - which is the state a
  *    visitor to that tenant actually cares about.
  *  - `control:get_versions` is the control plane's version map
- *    (control hooks `control:get_versions`), also `allow_guest=True`, and is
- *    what rokct.ai's host footer reads today. A control site accepts only
- *    `control:`-prefixed cmds, hence the prefix.
+ *    (control hooks `control:get_versions`), also `allow_guest=True`. A
+ *    control site accepts only `control:`-prefixed cmds, hence the prefix.
  *
- * Tenant first because a tenant site that is up can speak for itself and
- * for its own maintenance window; control answers for the fleet when the
- * tenant cannot be reached or this deployment has no tenant of its own.
- * [resolvePlatformStatusProbes] lets a deployment reorder or narrow this
- * without a new SDK release.
+ * Which of them run, and in what order, is [DEFAULT_PLATFORM_STATUS_SOURCES]
+ * unless `ROKCT_STATUS_SOURCE` names its own list
+ * ([resolvePlatformStatusProbes]).
  */
 export const PLATFORM_STATUS_PROBES: readonly PlatformStatusProbe[] = [
   { site: "tenant", cmd: "api.system.api_status" },
@@ -88,21 +85,38 @@ export const PLATFORM_STATUS_PROBES: readonly PlatformStatusProbe[] = [
 ];
 
 /**
+ * The sites probed when `ROKCT_STATUS_SOURCE` is unset: THE TENANT ONLY
+ * (since 1.37.0).
+ *
+ * Ray, 2026-09-09: every shell reads its footer status from its own
+ * tenant backend, never from control. Until 1.33.0 the default list fell
+ * back to the control probe, which stayed harmless only because a shell
+ * with no control variable pointed that probe at its tenant URL too. Now
+ * control is OPT-IN: a deployment that wants it names it explicitly -
+ * `ROKCT_STATUS_SOURCE=control` for a control-plane shell,
+ * `ROKCT_STATUS_SOURCE=tenant,control` to keep control as a fallback -
+ * and the variable names are unchanged.
+ */
+export const DEFAULT_PLATFORM_STATUS_SOURCES: readonly PlatformStatusSite[] = [
+  "tenant",
+];
+
+/**
  * The probes to run, from a comma-separated list of sites - the value of
- * `ROKCT_STATUS_SOURCE`. Unset (or unrecognised) keeps
- * [PLATFORM_STATUS_PROBES] as it is; `off` runs nothing, so the indicator
- * reports `unconfigured` and the row hides it.
+ * `ROKCT_STATUS_SOURCE`. Unset (or nothing recognised) runs
+ * [DEFAULT_PLATFORM_STATUS_SOURCES] - the tenant only; `off` runs
+ * nothing, so the indicator reports `unconfigured` and the row hides it.
  *
  * Configured rather than hard-coded so "which site answers for status" can
  * be flipped per deployment - `ROKCT_STATUS_SOURCE=control` pins a shell to
- * the control plane, `tenant` pins it to its own backend - without another
- * SDK release.
+ * the control plane, `tenant` (the default) pins it to its own backend,
+ * `tenant,control` probes both in that order - without another SDK
+ * release. Named order wins, and a site named twice is probed once.
  */
 export function resolvePlatformStatusProbes(
   source?: string | null,
 ): PlatformStatusProbe[] {
   const raw = (source ?? "").trim().toLowerCase();
-  if (!raw) return [...PLATFORM_STATUS_PROBES];
   if (raw === "off" || raw === "none") return [];
 
   const wanted = raw
@@ -111,12 +125,16 @@ export function resolvePlatformStatusProbes(
     .filter((part): part is PlatformStatusSite =>
       part === "tenant" || part === "control",
     );
-  if (wanted.length === 0) return [...PLATFORM_STATUS_PROBES];
+  if (wanted.length === 0) return probesFor(DEFAULT_PLATFORM_STATUS_SOURCES);
+  return probesFor(wanted);
+}
 
-  // Named order wins, and a site named twice is probed once.
+/** The catalogue entries for the named sites, in the order named, once each. */
+function probesFor(sites: readonly PlatformStatusSite[]): PlatformStatusProbe[] {
+
   const seen = new Set<PlatformStatusSite>();
   const probes: PlatformStatusProbe[] = [];
-  for (const site of wanted) {
+  for (const site of sites) {
     if (seen.has(site)) continue;
     seen.add(site);
     const probe = PLATFORM_STATUS_PROBES.find((p) => p.site === site);
@@ -179,6 +197,34 @@ export const FOOTER_CHROME_STATUS_COLORS: Required<
   checking: "#9ca3af",
 };
 
+/**
+ * One link a footer group carries (since 1.37.0). `label` is the word on
+ * screen, already in the shell's language - the same rule as
+ * HeaderMenuLink: this module never reaches for an i18n dictionary.
+ */
+export interface FooterLink {
+  /** Stable key for the list. */
+  id: string;
+  label: string;
+  href: string;
+  /** Open in a new tab with rel="noopener noreferrer". */
+  external?: boolean;
+}
+
+/**
+ * One labelled group of footer links (since 1.37.0) - the seam a home SDK
+ * fills to put a compact link row above the copyright line: its legal
+ * documents (components/custom/landing/legal-links.ts builds that group
+ * from the published documents), or whatever else its footer wants there.
+ * A group with no items draws nothing.
+ */
+export interface FooterLinkGroup {
+  id: string;
+  /** The group's heading word, drawn before its links. */
+  label: string;
+  items: FooterLink[];
+}
+
 /** Everything the row needs that is not generic. */
 export interface FooterChromeConfig {
   /**
@@ -195,6 +241,12 @@ export interface FooterChromeConfig {
   version?: string | null;
   labels?: Partial<FooterChromeLabels>;
   statusColors?: FooterChromeStatusColors;
+  /**
+   * Link groups drawn as one compact row above the copyright line (since
+   * 1.37.0). Absent or empty draws nothing - a shell that has not opted in
+   * renders exactly the row it rendered before.
+   */
+  links?: FooterLinkGroup[];
 }
 
 /**

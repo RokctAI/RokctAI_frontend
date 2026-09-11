@@ -1,0 +1,12 @@
+{
+  "items": [
+    {
+      "name": "Acme Still Water",
+      "description": "Still water in returnable bottles.",
+      "sizes": ["500 ml", "1.5 L", "5 L"],
+      "image": "/products/still.jpg",
+      "status": "active"
+    },
+    { "name": "Acme Sparkling Water", "sizes": ["500 ml"], "status": "coming" }
+  ]
+}

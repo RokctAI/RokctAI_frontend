@@ -118,6 +118,23 @@
 // rokct.ai's fixed 44px mark. The code beside a mark or a tile is
 // unchanged.
 //
+// Since 1.36.0 a group may lay its items out in ONE ROW (`layout: "row"`)
+// instead of a column, and the menu may name the trigger's word itself
+// (`megaLabel`) rather than take the first group's label (Ray, 2026-09-10,
+// on supacharge: "header app links first. if possible put mobile apps in
+// one row since supa dont have much menu"). The apps group goes first,
+// its cards side by side across a wider lead column, and the bar still
+// reads the word the shell declares. Also since 1.36.0 the code beside a
+// STEM wordmark is capped at the size rokct.ai's original header gave
+// its code: the superscript scale of its branding, [BRAND_CODE_SCALE],
+// of the 44px mark ([BRAND_CODE_FONT_SIZE], about 12px) - the 36px was
+// that header's fallback for a cache with no style, never what rokct
+// rendered (Ray, 2026-09-10: "za in supa is big, look at one in rokct,
+// original one"). The code beside a mark or a tile is untouched, so
+// rokct.ai renders exactly as it did; beside a stem the code still
+// follows the stem down ([BRAND_STEM_CODE_FONT_SIZE]) so it never
+// outgrows the wordmark.
+//
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as
 // ./hero-sections.ts, ./hero-copy.ts, ./hero-form.ts, ./plans-query.ts and
@@ -136,6 +153,7 @@ import {
   loadSiteMetadata,
   type SiteMetadataCopy,
 } from "@/components/custom/landing/site-metadata";
+import type { SiteDataMode } from "@/lib/site-data/kinds";
 
 /**
  * One fixed destination in the header menu: a route or an external URL the
@@ -316,6 +334,15 @@ export interface HeaderMenu {
    */
   groups?: HeaderMenuGroup[];
   /**
+   * The word on the desktop trigger that opens the groups panel (since
+   * 1.36.0). Without it the trigger reads the FIRST group's label, as it
+   * has since 1.18.0; with it a shell may put any group first (the apps,
+   * in a row) while the bar still reads what the shell declares. Blank
+   * or whitespace is treated as absent. The trigger's badge, when any,
+   * is still the first group's.
+   */
+  megaLabel?: string;
+  /**
    * Call-to-action buttons at the right-hand end of the header bar, ahead
    * of the theme toggle and the auth links. Optional and new in 1.14.0.
    */
@@ -349,7 +376,19 @@ export interface HeaderMenuGroup {
   label: string;
   badge?: LandingNavBadge;
   items: HeaderMenuGroupItem[];
+  /**
+   * How the desktop panel lays the group's items out (since 1.36.0).
+   * `"column"` (the default, and everything before 1.36.0) stacks them;
+   * `"row"` puts them side by side in ONE row - cards keep their icon,
+   * label and blurb and shrink to share the width. A row group that
+   * leads the panel widens the lead column to fit; a later row group
+   * spans its headed column. The burger's stacked list ignores it.
+   */
+  layout?: HeaderMenuGroupLayout;
 }
+
+/** The two layouts a group's items may take in the desktop panel (1.36.0). */
+export type HeaderMenuGroupLayout = "column" | "row";
 
 /**
  * A call-to-action button in the header bar (rokct.ai's "Add the Chrome
@@ -458,6 +497,8 @@ export interface HeaderMenuResolvedGroup {
   label: string;
   badge?: LandingNavBadge;
   items: HeaderMenuItem[];
+  /** As declared, defaulted: "row" only when the group asked for it (1.36.0). */
+  layout: HeaderMenuGroupLayout;
 }
 
 /** Everything the header renders, resolved against the page's live nav. */
@@ -468,9 +509,35 @@ export interface ResolvedHeaderMenu {
   groups: HeaderMenuResolvedGroup[];
   /** The call-to-action buttons, in the order the home SDK named them. */
   actions: HeaderMenuAction[];
+  /**
+   * The declared trigger word, trimmed, or null when the shell declared
+   * none (1.36.0); [megaTriggerLabel] answers the word the bar shows.
+   */
+  megaLabel: string | null;
 }
 
-const EMPTY_HEADER_MENU: ResolvedHeaderMenu = { items: [], groups: [], actions: [] };
+const EMPTY_HEADER_MENU: ResolvedHeaderMenu = { items: [], groups: [], actions: [], megaLabel: null };
+
+/**
+ * The declared group layout, defaulted (1.36.0): "row" when asked for,
+ * "column" for anything else, including nothing and a value the type
+ * does not know.
+ */
+export function resolveHeaderMenuGroupLayout(
+  layout: HeaderMenuGroupLayout | null | undefined,
+): HeaderMenuGroupLayout {
+  return layout === "row" ? "row" : "column";
+}
+
+/**
+ * The word on the desktop trigger (1.36.0): the menu's `megaLabel` when
+ * it declared one, else the first group's label as it was since 1.18.0;
+ * null with no groups, when the header draws no trigger at all.
+ */
+export function megaTriggerLabel(menu: Pick<ResolvedHeaderMenu, "groups" | "megaLabel">): string | null {
+  if (menu.groups.length === 0) return null;
+  return menu.megaLabel ?? menu.groups[0].label;
+}
 
 /**
  * The whole menu the header should render: [resolveHeaderMenuItems]'s flat
@@ -513,14 +580,39 @@ export function resolveHeaderMenu(
       }
     }
     if (items.length === 0) continue;
-    groups.push({ id: group.id, label: group.label, badge: group.badge, items });
+    groups.push({
+      id: group.id,
+      label: group.label,
+      badge: group.badge,
+      items,
+      layout: resolveHeaderMenuGroupLayout(group.layout),
+    });
   }
+
+  const megaLabel = menu.megaLabel?.trim() || null;
 
   return {
     items: resolveHeaderMenuItems(menu, nav),
     groups,
     actions: [...(menu.actions ?? [])],
+    megaLabel,
   };
+}
+
+/**
+ * Whether the header draws its OWN "Log in" / "Sign up" pair for a
+ * visitor with no session (1.38.0): the 1.35.0 `local` rule
+ * (landing-page.ts's dropBackendOnlyActions drops the DECLARED sign-in /
+ * sign-up actions) applied to the header's own surface. A shell that
+ * declares `"data": "local"` has no backend, so the two routes auth_sdk
+ * would serve are dead and the pair is skipped; "backend", "hybrid" and
+ * an undeclared mode (every caller that passes none, as before) draw it.
+ * Pure: the header takes the mode as a prop, read on the server by the
+ * page through `siteDataMode()`, so the "use client" header never imports
+ * the server-only reader.
+ */
+export function showsHeaderAuth(dataMode: SiteDataMode | undefined): boolean {
+  return dataMode !== "local";
 }
 
 /**
@@ -621,6 +713,24 @@ export function brandStemOf(name: string | null | undefined): string | null {
 }
 
 /**
+ * The stem as it is DISPLAYED (since 1.39.0): [brandStemOf] with its first
+ * character upper-cased, so "acme.school" folds to "Acme" on the bar and in
+ * the hero while the full name - the title, the aria-label, the metadata,
+ * the suffix that slides away - stays exactly what the shell declared,
+ * lower case and all. Only the first character changes (`toUpperCase()`
+ * on it alone, so "acme" is "Acme" and "ACME" or "Acme" are themselves);
+ * a name with no stem answers `null` as [brandStemOf] does, so an undotted
+ * name is never touched - the letter tile, the whole-name hero wordmark
+ * and the still brand render what they rendered. The rule is one place:
+ * the header and the hero both ask here, never capitalise on their own.
+ */
+export function brandStemLabel(name: string | null | undefined): string | null {
+  const stem = brandStemOf(name);
+  if (stem === null) return null;
+  return stem.charAt(0).toUpperCase() + stem.slice(1);
+}
+
+/**
  * Whether a resolved brand folds to the stem of `name` (since 1.29.0):
  * a COLLAPSING brand that declared no image, keeps its wordmark and whose
  * name has a stem ([brandStemOf]). The header asks this BEFORE
@@ -651,20 +761,50 @@ export function brandFoldsToStem(
 export const BRAND_STEM_FONT_SIZE = "min(60px, calc((20vw + 140px) / (var(--brand-chars) * 0.6)))";
 
 /**
- * The country code's font size beside a STEM wordmark (since 1.31.0). The
- * code's size beside a mark is the 36px rokct.ai's old header set it at,
- * beside a 44px mark that is the same on every viewport, so the code is
- * always the smaller of the two. A stem wordmark is not the same on every
- * viewport - [BRAND_STEM_FONT_SIZE] shrinks it to fit the bar - and at
- * 36px the code outgrew it on a phone (17 characters at 390: a 21px stem
- * beside a 36px code). This is the same rule with the code's own cap: the
- * 36px wherever the stem is at least that large (a 5-letter name at 60px,
- * 17 characters at 1280), else the stem's size, so the code follows the
- * wordmark it sits beside and is never larger than it. The header sets
- * it inline on the code with the same `--brand-chars` the stem takes;
- * the code beside a mark or a letter tile keeps its 36px class.
+ * The size of the collapsed brand's mark, tile and slot, in px: the 44px
+ * rokct.ai's original header drew its mark at (since 1.24.0 the header
+ * has drawn it so; named here since 1.36.0 because the code's size is
+ * derived from it).
  */
-export const BRAND_STEM_CODE_FONT_SIZE = `min(36px, ${BRAND_STEM_FONT_SIZE})`;
+export const BRAND_MARK_SIZE_PX = 44;
+
+/**
+ * The country code's scale (since 1.36.0): the superscript rokct.ai's
+ * branding draws its code at, 0.28 of the text it sits beside - the
+ * "noticeably small superscript" its original header rendered once the
+ * branding cache's style was laid over the span. That header named 36px
+ * inline and then spread the cache's style over it, so 36px was only the
+ * fallback for a cache with no style; what rokct.ai showed was the 0.28em.
+ * No brand string, no colour: a proportion.
+ */
+export const BRAND_CODE_SCALE = 0.28;
+
+/**
+ * The country code's cap beside a STEM wordmark (since 1.36.0):
+ * [BRAND_CODE_SCALE] of the 44px mark - about 12px - the size the
+ * original superscript takes beside the thing the original header sat
+ * it beside. Until 1.32.0 the stem's code was capped at 36px, the
+ * original header's fallback, and beside a wordmark it read almost as
+ * large as the name (Ray, 2026-09-10: "za in supa is big, look at one in
+ * rokct, original one"). The code beside a MARK or a tile does not read
+ * this: it keeps the header's 1.24.0 36px class, so rokct.ai's code is
+ * exactly what it was.
+ */
+export const BRAND_CODE_FONT_SIZE = `calc(${BRAND_MARK_SIZE_PX}px * ${BRAND_CODE_SCALE})`;
+
+/**
+ * The country code's font size beside a STEM wordmark (since 1.31.0; the
+ * cap is 1.36.0's). A stem wordmark is not the same on every viewport -
+ * [BRAND_STEM_FONT_SIZE] shrinks it to fit the bar - and a fixed code
+ * outgrew it on a phone (17 characters at 390: a 21px stem beside what
+ * was then a 36px code). So the code takes its own cap
+ * ([BRAND_CODE_FONT_SIZE], about 12px) wherever the stem is at least that
+ * large - every name that fits a phone - else the stem's size, so the
+ * code follows the wordmark it sits beside and is never larger than it.
+ * The header sets it inline on the code with the same `--brand-chars`
+ * the stem takes.
+ */
+export const BRAND_STEM_CODE_FONT_SIZE = `min(${BRAND_CODE_FONT_SIZE}, ${BRAND_STEM_FONT_SIZE})`;
 
 /**
  * The generated favicon route base_sdk installs at app/brand-icon/route.tsx

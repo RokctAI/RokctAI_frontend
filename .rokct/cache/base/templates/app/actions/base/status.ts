@@ -41,7 +41,8 @@ import {
  * shell: on rokctai_frontend it IS the control site, on a single-tenant
  * shell it is that tenant. `ROKCT_CONTROL_BASE_URL` says which one is
  * control without guessing, and falls back to the configured default so a
- * control-plane shell needs no new variable.
+ * control-plane shell needs no new variable. Only consulted when the
+ * control probe is opted in through `ROKCT_STATUS_SOURCE`.
  */
 function controlBaseUrl(): string | undefined {
   return (
@@ -76,9 +77,10 @@ function readProbeAnswer(answer: unknown): {
 
 /**
  * The platform status, probed in the order
- * [resolvePlatformStatusProbes] gives: the tenant site first and the control
- * plane as the fallback by default, either of them alone or neither when
- * `ROKCT_STATUS_SOURCE` says so.
+ * [resolvePlatformStatusProbes] gives: the tenant site ONLY by default
+ * (since 1.37.0 - Ray, 2026-09-09: every shell reads its footer status
+ * from its own tenant backend, never from control), the control plane
+ * only when `ROKCT_STATUS_SOURCE` names it, or neither when it says `off`.
  *
  * The FIRST probe that answers decides. A probe that cannot run at all
  * because no origin is configured for its site is skipped without counting

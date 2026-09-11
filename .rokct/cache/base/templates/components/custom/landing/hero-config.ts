@@ -94,10 +94,11 @@ export interface HeroConfig {
    * default, and what every shell drew before the field existed - draws
    * the host's own wordmark component (components/custom/branding.tsx).
    * `"stem"` draws the platform name's stem as text instead - the part
-   * before the first dot, the same rule the header folds a dotted name
-   * to (header-menu.ts: brandStemOf; "acme.school" shows "acme"), or the
-   * whole name when it has no dot - with the full name on the element's
-   * aria-label and title. Resolved on the server (landing-page.ts:
+   * before the first dot with its first character upper-cased, the same
+   * rule the header folds a dotted name to (header-menu.ts:
+   * brandStemLabel; "acme.school" shows "Acme"), or the whole name,
+   * untouched, when it has no dot - with the full name as declared on
+   * the element's aria-label and title. Resolved on the server (landing-page.ts:
    * resolveHeroWordmark), so the first HTML already carries the stem; no
    * brand string lives in base, and no shell changes until its home SDK's
    * hero copy declares it.

@@ -48,6 +48,7 @@ import { HeroResultsContext } from "@/components/custom/hero-view";
 import { NetworkStrip } from "@/components/custom/network-strip";
 import type { ResolvedHeaderMenu } from "@/components/custom/landing/header-menu";
 import { LANDING_CONFIG } from "@/components/custom/landing/landing-config";
+import type { SiteDataMode } from "@/lib/site-data/kinds";
 
 export interface LandingContentProps {
   session?: unknown;
@@ -61,6 +62,12 @@ export interface LandingContentProps {
   sections?: React.ReactNode;
   /** Class names the root carries from the first HTML (every present section's `meta.rootClass`). */
   rootClass?: string;
+  /**
+   * The shell's data mode (1.38.0), as the page read it through
+   * `siteDataMode()`; handed to the header, which skips its own Log in /
+   * Sign up pair on a "local" shell. Absent draws the pair, as before.
+   */
+  dataMode?: SiteDataMode;
 }
 
 export function LandingContent({
@@ -70,6 +77,7 @@ export function LandingContent({
   overlays,
   sections,
   rootClass,
+  dataMode,
 }: LandingContentProps) {
   const [searchActive, setSearchActive] = useState(false);
   const rootClassName = ["flex flex-col min-h-screen bg-white dark:bg-black", rootClass?.trim()]
@@ -89,7 +97,9 @@ export function LandingContent({
           session={session}
           menuItems={menu.items}
           groups={menu.groups}
+          megaLabel={menu.megaLabel}
           actions={menu.actions}
+          dataMode={dataMode}
         />
         <main className="flex-1">
           {overlays}

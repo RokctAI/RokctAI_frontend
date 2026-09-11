@@ -1,5 +1,292 @@
 # Changelog
 
+## 1.39.0
+
+* The folded brand stem is capitalised where base shows ONLY the stem
+  (Ray, 2026-09-11 04:23Z: the brand string stays the domain, lower
+  case - "supacharge.school" - and the stem without ".school" is
+  capitalised: "supacharge" shows as "Supacharge"). NEW
+  `brandStemLabel(name)` beside `brandStemOf` in
+  `components/custom/landing/header-menu.ts` is the one rule: the
+  1.29.0 stem with its first character upper-cased, `null` for a name
+  with no stem exactly as `brandStemOf` answers, so an undotted name
+  ("Rokct") is never touched and a stem that already starts upper-case
+  ("Juvo") is itself. The header's stem wordmark (`header.tsx`,
+  `BrandStemWordmark`) shows the label in the stem span, still cuts the
+  suffix from the name at the stem's length so ".school" slides away
+  as it did, and now carries `title={name.trim()}` - the full name as
+  declared. The hero's stem wordmark (`landing-page.ts`,
+  `resolveHeroWordmark`) answers `{ text: brandStemLabel(name) ?? name,
+  name }`, so `brand: "stem"` draws "Supacharge" with the full domain on
+  the element's aria-label and title as before; the whole-name case
+  ("stem" on an undotted name) is unchanged. Nothing else changes case:
+  the site metadata, the network strip, the footer and every brand
+  string source stay what the shell declared. The fold rule, the
+  1.36.0 code cap (`calc(44px * 0.28)`) and the code's placement beside
+  the stem are untouched; no brand string is named in base.
+* Tests: `header-brand.test.mts` gains the `brandStemLabel` cases
+  (lower-case, already-capitalised and undotted names, the header
+  markup) and `landing-page.test.mts` reads "Acme" / "Supacharge" from
+  `resolveHeroWordmark` with the lower-case name beside it;
+  `test_manifest.py` gains `test_folded_stem_is_capitalised` (one
+  `toUpperCase` in base, in `brandStemLabel`; the header and the hero
+  show the label and title the full name).
+* Release order: 1.38.0 (RokctAI/core #220, the page slot and the
+  header's local-mode switch) merged first; this release sits above it
+  on main and touches none of its files' rules.
+
+## 1.38.0
+
+* A registered section may name the PAGE it belongs to, so a home SDK's
+  card reaches a company page through the one registry it already knows
+  (Ray, 2026-09-10: corporate_sdk owns `/about` and `/team` as renderers;
+  their content comes from the shell's `data/` folder - base 1.35.0's
+  reader - or is empty, and Supacharge's about page reuses lms's founder
+  card). `PageSectionMeta.page?: "landing" | "about" | "team"`
+  (`components/custom/landing/page-sections.ts`; `PageSlot`, `PAGE_SLOTS`,
+  `DEFAULT_PAGE_SLOT`, `sectionPageOf(meta)`): absent is `"landing"`, and
+  every section registered before this field renders exactly where it
+  did. `arrangeLandingPage` keeps only landing sections - a section that
+  names another page is neither drawn nor a floating-nav stop on the
+  landing - and NEW `pageSectionsFor(page, ctx?, entries?)` in
+  `landing-page.ts` is what a company page's renderer awaits: the same
+  loader (a failing module skipped and logged, an unreadable meta
+  rendered with defaults), the same `meta.renders(ctx)` and `meta.order`
+  rules (`presentSectionsFor`, the rule both share), filtered to that
+  page; `ctx` defaults to no plans and no session, and nothing registered
+  answers `[]`. No brand, route or host is named by either module.
+* The header's own "Log in" / "Sign up" pair follows the shell's data
+  mode - the TODO 1.35.0 left on `dropBackendOnlyActions`, now that the
+  header files are free. `app/landing/page.tsx` hands the mode it read
+  through `siteDataMode()` to `landing-content.tsx` (`dataMode?`), which
+  passes it to `header.tsx` (`HeaderProps.dataMode?: SiteDataMode`); for
+  a visitor with no session the header draws no pair, on the bar and in
+  the burger panel, when `showsHeaderAuth(dataMode)` (NEW in
+  `landing/header-menu.ts`, pure: false for `"local"` only) says so, and
+  the burger hides with nothing left to open. A page that mounts the
+  header without the prop - every caller before this release - draws the
+  pair as it did; the "use client" files import only the `SiteDataMode`
+  type from `lib/site-data/kinds`, never the server-only reader.
+* `docs/site-data.md`: the legal kind's title rule now reads "the first
+  level-1 heading" - the code span that held a hash and a trailing space
+  failed markdownlint MD038 (no-space-in-code) in every host that vendors
+  the docs; the doc also gains the company-pages section and the switched
+  header paragraph.
+* Tests: `tests/landing-page.test.mts` (+6: the slots, a landing
+  arrangement identical with and without the field, a company-page
+  section kept off the landing, the filter / renders / stable order rule,
+  `pageSectionsFor` over given entries and over the live registry),
+  `tests/header-brand.test.mts` (+2: `showsHeaderAuth` and the header
+  reading it on both surfaces), `test_manifest.py` (the page-slot
+  contract, the header switch, the local-mode test updated for the
+  wrapper's fourth `dataMode`, the header-menu stage stubbing the type).
+
+## 1.37.0
+
+* The footer chrome has a links seam, and base reads the shell's legal
+  documents for it. Ray, 2026-09-10: "supa has no terms pages or about
+  page"; asked where the pages belong: "legal pages are not in corporate
+  sdk?" and "you should look at the dart side if they are not there
+  yet". On the Dart side `corporate_sdk` owns the policy / terms pages
+  and every auth composition includes it, so the Next.js layout mirrors
+  that split: the pages at `/legal` and `/legal/<name>` are
+  `corporate_sdk`'s (RokctAI/corporate `corporate/corporate/nextjs`,
+  floor base_sdk >= 1.37.0); base carries the links and the read only.
+  * `FooterChromeConfig.links?: FooterLinkGroup[]`
+    (`components/custom/landing/footer-chrome-config.ts`): `{id, label,
+    items: {id, label, href, external?}[]}`. `FooterChromeRow`
+    (`components/custom/footer-chrome.tsx`) draws the groups as one
+    compact labelled row between the network strip and the copyright
+    line, internal links through `next/link`, external ones with
+    `rel="noopener noreferrer"`, and NOTHING when `links` is absent or
+    every group is empty - rokct.ai and supacharge render exactly what
+    they rendered until their home SDK opts in.
+  * NEW `app/actions/base/legal.ts`: `listPublicTerms()` reads every
+    enabled "Terms and Conditions" document (the doctype the admin editor
+    at `app/admin/settings/terms` writes) as `{name, title, disabled}`
+    through the platform gateway as a guest, and soft-fails to `[]` with
+    no backend, a refused guest read or a failed call - the shape
+    `getLandingPlans` takes, so a footer lists nothing rather than the
+    page failing.
+  * NEW `components/custom/landing/legal-links.ts`, the pure half:
+    `PublicTerm`, `normalisePublicTerms(rows)` (drops disabled and
+    malformed rows, `null` is `[]`), `legalDocHref(name)` and
+    `legalFooterLinks(terms, label?)`, which maps the documents to
+    `/legal/<name>` links under one "Legal" group - the only word base
+    owns here; titles come from the documents, never from code - or to no
+    group when nothing is published.
+* Tests: `tests/legal-links.test.mts` (node) executes the rule;
+  `test_manifest.py` holds the seam's shape, the installs and that the
+  footer draws no row without groups.
+* The footer status probes the tenant only by default. Ray, 2026-09-09:
+  every shell reads its footer status from its own tenant backend, never
+  from control. `resolvePlatformStatusProbes()` with `ROKCT_STATUS_SOURCE`
+  unset now runs `DEFAULT_PLATFORM_STATUS_SOURCES` (`["tenant"]`); the
+  control probe is opt-in (`ROKCT_STATUS_SOURCE=control`, or
+  `tenant,control` to keep it as a fallback). Variable names unchanged;
+  `tests/status-probes.test.mts` holds the default and the opt-in.
+## 1.36.0
+
+* A header-menu group may lay its items out in ONE ROW, and the menu
+  may name the trigger's word (Ray, 2026-09-10, on supacharge: "header
+  app links first. if possible put mobile apps in one row since supa
+  dont have much menu"). `HeaderMenuGroup.layout?: "column" | "row"`
+  (default `"column"`, everything before this release): a `"row"`
+  group's items sit side by side in the desktop panel - cards keep
+  their icon, label and blurb and shrink to share the width (`min-w-0
+  flex-1` cells, `md:flex-row`, `data-layout` on the list). A row group
+  that LEADS the panel widens the lead column from 300px to 58% of the
+  panel (about 650px at `max-w-6xl`, three cards of about 210px) and
+  the headed columns share the rest; alone in the panel it takes the
+  whole width; a row group AFTER the lead spans the headed grid
+  (`col-span-full`). The burger's stacked list ignores the layout.
+  `HeaderMenu.megaLabel?: string` is the trigger's word: without it the
+  trigger reads the first group's label as it has since 1.18.0; with it
+  a shell may put any group first while the bar still reads what it
+  declares. `resolveHeaderMenu()` carries both (`layout` on every
+  resolved group, `megaLabel` trimmed or null on the menu),
+  `resolveHeaderMenuGroupLayout()` and `megaTriggerLabel()` are the pure
+  rules, `HeaderProps.megaLabel` / `HeaderMenuNavProps.megaLabel` carry
+  it to the trigger, and the landing host passes it with the groups.
+* The country code beside a STEM wordmark is capped at the size
+  rokct.ai's ORIGINAL header rendered its code at (Ray, 2026-09-10: "za
+  in supa is big, look at one in rokct, original one"). That header
+  named 36px inline and then spread the branding cache's style over the
+  span, and the cache's style is a 0.28em superscript, so 36px was only
+  the fallback for a cache with no style - never what rokct.ai showed.
+  `BRAND_CODE_SCALE` (0.28) of `BRAND_MARK_SIZE_PX` (44) is
+  `BRAND_CODE_FONT_SIZE`, `calc(44px * 0.28)`, about 12px, and
+  `BRAND_STEM_CODE_FONT_SIZE` is now `min(` that `, BRAND_STEM_FONT_SIZE)`
+  - the 1.31.0 follow-the-stem rule with the new cap, so on a phone the
+  code is still never larger than the stem. For a 17-character name:
+  1280 was 36px, now 12.32px; 768 was 28.78px, now 12.32px; 390 was
+  21.37px, now 12.32px. The code beside a MARK or a letter tile is
+  byte-for-byte the 1.24.0 code (`text-[36px]`, the -2px top), so
+  rokct.ai's country code renders exactly as it did (Ray: "if i merge
+  that one it will change country code in rokct to wrong one" - it does
+  not), and a declaration's own style is still merged over the header's.
+* The hero's STEM wordmark is no longer clipped by its own slot (Ray,
+  2026-09-10, on supacharge: "supa name in hero cut off on g and e").
+  `hero-view.tsx` draws the stem at `leading-none` inside the slot that
+  hides its overflow (that is how the slot closes when the form takes
+  over), and a 1em line box is shorter than a face's glyphs: the
+  descenders of "g" and "p" reached below it (Inter's by about 0.11em,
+  Montserrat's by 0.07em) and were cut flat, and an italic face's last
+  glyph overhangs its advance width and lost its right edge. The span
+  now carries `HERO_STEM_PADDING_CLASS`, `py-[0.15em] px-[0.05em]` -
+  padding rather than line height because a home SDK restyles the span
+  from outside (face, size, `line-height: 1 !important`) and would undo
+  a leading change; and symmetric so the glyphs do not move (the row is
+  a fixed 72px with the slot centred in it, so equal padding above and
+  below keeps the baseline where it was and only the slot's box grows).
+  Font size, tracking and everything around the slot are unchanged;
+  measured on supacharge at 1280/768/390: 5px, 5px and 3.7px of the
+  descenders and 1.2-1.6px of the last glyph were clipped before, 0px
+  after.
+* Tests: `header-brand.test.mts` gains the layout and trigger-word
+  cases (the stage now carries `header-menu.tsx`) and the stem-code
+  cases read the new cap; `test_manifest.py` gains
+  `test_header_code_beside_a_mark_is_untouched_and_the_stem_cap_is_the_original`,
+  `test_header_menu_group_row_layout_and_trigger_word` and
+  `test_hero_stem_wordmark_has_room_for_its_descenders`.
+
+## 1.35.0
+
+* The shell's host-owned `data/` folder, and an explicit data mode. Ray,
+  2026-09-10: "do you think we need a data folder for non backend shells?
+  so if the folder exist sdks read it?", "but dont the shell need to
+  anounce im local so it look for data/ first?", "what we cant give sdk we
+  can give data/". A shell with no backend (South River), or one that
+  keeps some content with the site, commits a `data/` folder and announces
+  how it is read with ONE top-level key in its own composer.json,
+  `"data": "local" | "backend" | "hybrid"`. Absent is `backend`: today's
+  behaviour, byte for byte - rokct.ai and Supacharge change nothing. The
+  declaration is explicit rather than "the folder exists" so a half-static
+  shell can never silently call a backend it does not have, and so base
+  has one signal for hiding backend-only surface.
+  * Kinds and files: `theme` (`data/theme.json`: `primary`, optional
+    `secondary`, `accent`, hex strings), `team` (`data/team.json`:
+    `members[]` of `name`, `role`, optional `photo`, `links[]`),
+    `stockists` (`data/stockists.json`: `items[]` of `name`, `address`,
+    `town`, optional `lat`/`lng` together, `mapsUrl`), `products`
+    (`data/products.json`: `items[]` of `name`, optional `description`,
+    `sizes[]`, `image`, `status` "active" | "coming"), `about`
+    (`data/about.md`, the markdown verbatim) and `legal`
+    (`data/legal/<slug>.md`, a map of slug to `{ title, markdown }`; the
+    title from a `title:` front-matter line, else the first level-1
+    heading, which is then removed from the body). Types in
+    `lib/site-data/kinds.ts`; the checks, hand-written and dependency-free,
+    in `lib/site-data/validate.mjs`. The brand name is never in data/.
+  * Bundled at BUILD time, never read at request time. A new script,
+    `lib/site-data/generate.mjs`, run from the shell root before
+    `next build` (the shell's own package.json `"prebuild": "node
+    lib/site-data/generate.mjs"`, plus `predev`; npm runs it on its own
+    before `build`, so Vercel's `bash scripts/compose.sh && npm run build`
+    composes, generates, builds), reads composer.json's `"data"`, reads
+    and validates every known file under data/ and writes
+    `lib/site-data/generated.ts` - the typed module the reader imports.
+    base installs the neutral `generated.ts` (backend, no files), so a
+    shell that never runs the script builds exactly as before. A bad file
+    fails the build naming the file and the field
+    ("data/team.json: members[1].role must be a non-empty string"), so
+    does an unknown mode, an unknown file in data/ (a typo such as
+    teams.json) and, in local mode, a kind an installed SDK's manifest
+    requires (`"site_data": { "requires": ["about"] }`) with no file.
+  * The reader, `lib/site-data/read-site-data.ts` (server-only), for any
+    composed SDK's server code: `readSiteData(kind)` answers the kind's
+    file, typed by kind; `hasSiteData(kind)` whether it would, never
+    throwing; `siteDataMode()` the declared mode. The rule
+    (`resolveSiteData` in kinds.ts): backend answers undefined for
+    everything; hybrid the file when it was bundled, else undefined and
+    the caller falls back to its backend; local the file, or an Error
+    naming the missing file - a local shell has nothing to fall back to.
+    Import paths: `@/lib/site-data/read-site-data` for the functions,
+    `@/lib/site-data/kinds` for the types (importable from client code).
+    corporate_sdk 1.1.0 is the first consumer: its legal, about and team
+    renderers read their content here.
+  * Theme: with a `data/theme.json` the shell's colours reach every
+    route. `components/custom/site-theme.tsx` (server) renders one
+    `<style>` with a `:root` block from `lib/site-data/site-theme.ts`:
+    `--primary`, `--secondary`, `--accent` as the HSL triplets the
+    shells' shadcn tokens expect, a `-foreground` for each picked for
+    contrast, `--ring` following primary, and the raw hex as
+    `--site-primary` / `--site-secondary` / `--site-accent`. It is
+    rendered by `components/custom/theme-provider.tsx`, the seam every
+    host layout already wraps its page in - which is now a directive-free
+    SERVER entry over the new `theme-provider.client.tsx` (next-themes,
+    the 1.22.0 dark default and class attribute, unchanged), the same
+    split as a landing section's entry and its `<name>.client.tsx`. Order:
+    the host's globals.css first, this block after it in `<body>` (wins
+    over the `:root` and `.dark` token blocks, same specificity, later),
+    and a home SDK's own theme set later in the document or on a more
+    specific selector (lms_sdk's `.sc-landing { ... }`) still wins over
+    it. No theme file, or backend mode: nothing is rendered and the markup
+    of every shell composed today is unchanged.
+  * Local mode switches off backend-only surface base owns: the landing
+    prefetches no plans (every section already handles the empty list)
+    and `arrangeLandingPage` drops the DECLARED header actions (a home
+    SDK's `HeaderMenu.actions`) whose href is the sign-in or sign-up
+    route (`dropBackendOnlyActions`, applied to the resolved menu, so
+    header.tsx and header-menu.ts are untouched). `PageSectionContext`
+    and `PageSectionProps` carry `dataMode` so a home SDK's `meta.renders`
+    keeps pricing or a sign-in strip off a local shell. The footer status
+    pill already hides itself with no base URL (state "unconfigured"); the
+    1.37.0 status-probe default keeps its own files. NOT yet switched, on
+    purpose: the header's own "Log in" / "Sign up" pair - header.tsx
+    draws it for a visitor with no session from the `loginUrl` /
+    `signupUrl` props landing-content.tsx passes, and both files belong
+    to the 1.36.0 header branch. `siteDataMode()` is the switch; the TODO
+    sits on `dropBackendOnlyActions` for the 1.36.0 merge (header.tsx
+    skips the pair when the mode is "local").
+* Tests: `tests/site-data.test.mts` (validators for every kind, the
+  legal title rule, the mode rule in all three modes with a missing and
+  a present file, hex to HSL and contrast, the generator end to end
+  against `tests/fixtures/site-data/` - valid acme.school-style fixtures,
+  a bad field, an unknown file, an unknown mode, a local shell missing a
+  required kind, backend ignoring the folder, the neutral module byte for
+  byte); `test_manifest.py` holds the install set, the version, the
+  theme-provider split and runs the node suite.
+
 ## 1.32.1
 
 * The Supacharge network site is named `supacharge.school`. Ray,

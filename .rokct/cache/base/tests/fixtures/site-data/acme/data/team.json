@@ -1,0 +1,11 @@
+{
+  "members": [
+    {
+      "name": "A. Acme",
+      "role": "Founder",
+      "photo": "/team/a-acme.jpg",
+      "links": [{ "label": "acme.school", "href": "https://acme.school" }]
+    },
+    { "name": "B. Acme", "role": "Head of learning" }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "acme_web_composer",
+  "_comment": "Fixture shell root for tests/site-data.test.mts: a hybrid shell for acme.school with a complete data/ folder.",
+  "data": "hybrid",
+  "sdks": []
+}

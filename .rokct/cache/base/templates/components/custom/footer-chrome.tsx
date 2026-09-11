@@ -38,8 +38,16 @@
 // whenever the home SDK's landing placement is not "none" (the page
 // already carries the strip), and nothing here needs to know - the strip
 // reads the route itself.
+//
+// Since 1.37.0 the row can also carry LINK GROUPS (`config.links`): a
+// compact row of labelled links drawn between the strip and the
+// copyright line - the seam a home SDK's footer fills with the shell's
+// legal documents (components/custom/landing/legal-links.ts turns the
+// published documents into that group, one link each to corporate_sdk's
+// /legal/<name> page). Nothing is drawn when no group is passed.
 
 import React from "react";
+import Link from "next/link";
 
 import { getPlatformStatus } from "@/app/actions/base/status";
 import { NetworkStrip } from "@/components/custom/network-strip";
@@ -105,6 +113,8 @@ export function FooterChromeRow({
   const labels = { ...FOOTER_CHROME_LABELS, ...config.labels };
   const colors = { ...FOOTER_CHROME_STATUS_COLORS, ...config.statusColors };
 
+  const groups = (config.links ?? []).filter((g) => g.items.length > 0);
+
   const year = config.copyrightYear ?? new Date().getFullYear();
   const holder = config.copyrightHolder?.trim();
   const version = config.version?.trim();
@@ -133,6 +143,45 @@ export function FooterChromeRow({
   return (
     <>
       {networkStrip && <NetworkStrip surface="footer" />}
+      {groups.length > 0 && (
+        <nav
+          aria-label="Footer links"
+          className="flex flex-wrap items-center gap-x-8 gap-y-2 pb-4 text-sm"
+        >
+          {groups.map((group) => (
+            <div
+              key={group.id}
+              className="flex flex-wrap items-center gap-x-4 gap-y-1"
+              data-footer-group={group.id}
+            >
+              <span className="text-xs font-bold uppercase tracking-tight opacity-50">
+                {group.label}
+              </span>
+              {group.items.map((item) =>
+                item.external ? (
+                  <a
+                    key={item.id}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="opacity-70 hover:opacity-100 underline-offset-4 hover:underline"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    className="opacity-70 hover:opacity-100 underline-offset-4 hover:underline"
+                  >
+                    {item.label}
+                  </Link>
+                ),
+              )}
+            </div>
+          ))}
+        </nav>
+      )}
       <div
         className={`flex flex-row justify-between items-center gap-6 ${className}`}
       >

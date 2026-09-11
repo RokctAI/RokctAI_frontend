@@ -98,6 +98,23 @@ NETWORK_STRIP = os.path.join(SDK_ROOT, "templates", "components", "custom", "net
 FOOTER_CHROME = os.path.join(SDK_ROOT, "templates", "components", "custom", "footer-chrome.tsx")
 LANDING_CONTENT = os.path.join(SDK_ROOT, "templates", "components", "custom", "landing-content.tsx")
 NETWORK_STRIP_TESTS = os.path.join(HERE, "network-strip.test.mts")
+# base_sdk 1.37.0: the footer links seam and the legal documents (Ray,
+# 2026-09-10: "supa has no terms pages or about page"; the pages are
+# corporate_sdk's, base carries the links and the guest read).
+FOOTER_CHROME_CONFIG = os.path.join(LANDING, "footer-chrome-config.ts")
+LEGAL_LINKS = os.path.join(LANDING, "legal-links.ts")
+LEGAL_ACTION = os.path.join(SDK_ROOT, "templates", "app", "actions", "base", "legal.ts")
+LEGAL_LINKS_TESTS = os.path.join(HERE, "legal-links.test.mts")
+LEGAL_LINKS_INSTALL = (
+    "templates/components/custom/landing/legal-links.ts",
+    "components/custom/landing/legal-links.ts",
+)
+LEGAL_ACTION_INSTALL = ("templates/app/actions/base/legal.ts", "app/actions/base/legal.ts")
+# base_sdk 1.37.0: the footer status probes the tenant only by default
+# (Ray, 2026-09-09: every shell reads its footer status from its own tenant
+# backend, never from control); control is opt-in via ROKCT_STATUS_SOURCE.
+STATUS_ACTION = os.path.join(SDK_ROOT, "templates", "app", "actions", "base", "status.ts")
+STATUS_PROBES_TESTS = os.path.join(HERE, "status-probes.test.mts")
 
 # base_sdk 1.26.0: the platform marks base serves itself (Ray, 2026-09-09:
 # "move to base, home sdk can choose to use them or not"), installed as a
@@ -178,6 +195,32 @@ THEME_PROVIDER_TEMPLATE = os.path.join(
     SDK_ROOT, "templates", "components", "custom", "theme-provider.tsx"
 )
 THEME_PROVIDER_TARGET = "components/custom/theme-provider.tsx"
+# base_sdk 1.35.0: the seam is a server entry over its client half, so it
+# can paint the shell's data/theme.json colours.
+THEME_PROVIDER_CLIENT_TEMPLATE = os.path.join(
+    SDK_ROOT, "templates", "components", "custom", "theme-provider.client.tsx"
+)
+SITE_THEME_COMPONENT = os.path.join(SDK_ROOT, "templates", "components", "custom", "site-theme.tsx")
+
+# base_sdk 1.35.0: the shell's host-owned data/ folder and its explicit
+# data mode (Ray, 2026-09-10: "do you think we need a data folder for non
+# backend shells? so if the folder exist sdks read it?", "but dont the
+# shell need to anounce im local so it look for data/ first?", "what we
+# cant give sdk we can give data/").
+SITE_DATA_DIR = os.path.join(SDK_ROOT, "templates", "lib", "site-data")
+SITE_DATA_INSTALLS = {
+    "templates/lib/site-data/kinds.ts": "lib/site-data/kinds.ts",
+    "templates/lib/site-data/validate.mjs": "lib/site-data/validate.mjs",
+    "templates/lib/site-data/generate.mjs": "lib/site-data/generate.mjs",
+    "templates/lib/site-data/generated.ts": "lib/site-data/generated.ts",
+    "templates/lib/site-data/read-site-data.ts": "lib/site-data/read-site-data.ts",
+    "templates/lib/site-data/site-theme.ts": "lib/site-data/site-theme.ts",
+    "templates/components/custom/site-theme.tsx": "components/custom/site-theme.tsx",
+    "templates/components/custom/theme-provider.client.tsx": "components/custom/theme-provider.client.tsx",
+}
+SITE_DATA_TESTS = os.path.join(HERE, "site-data.test.mts")
+SITE_DATA_FIXTURE = os.path.join(HERE, "fixtures", "site-data", "acme")
+SITE_DATA_DOC = os.path.join(SDK_ROOT, "docs", "site-data.md")
 
 # What the theme-provider stage stands in for `react` and `next-themes`: the
 # prop shape next-themes 0.4.x exports from its package root, and just enough
@@ -192,6 +235,7 @@ declare module "react" {
   export type ReactNode = unknown;
   export function createElement(...args: unknown[]): JSX.Element;
 }
+declare module "server-only" {}
 declare module "next-themes" {
   import type { ReactNode } from "react";
   export type Attribute = `data-${string}` | "class";
@@ -605,21 +649,40 @@ class TestManifest(unittest.TestCase):
     def test_theme_provider_is_installed_and_defaults_to_dark(self):
         """1.22.0 (Ray, 2026-09-09: "default to dark mode"): base ships the
         theme seam, and its default is dark. The install lands on the path
-        both shells already import from their root layout, the template is
-        a client wrapper over next-themes whose `defaultTheme` falls back to
-        "dark" and whose `attribute` falls back to "class" (Tailwind's
-        darkMode signal), next-themes is a declared dependency, and the
-        host layout note states the contract."""
+        both shells already import from their root layout; since 1.35.0 the
+        template is a directive-free SERVER entry that renders the
+        data/theme.json colour block and then the client half,
+        theme-provider.client.tsx, a client wrapper over next-themes whose
+        `defaultTheme` falls back to "dark" and whose `attribute` falls back
+        to "class" (Tailwind's darkMode signal); next-themes is a declared
+        dependency, and the host layout note states the contract."""
         installs = {e["from"]: e["to"] for e in self.manifest["installs"]}
         self.assertEqual(
             installs.get("templates/components/custom/theme-provider.tsx"),
             THEME_PROVIDER_TARGET,
         )
+        self.assertEqual(
+            installs.get("templates/components/custom/theme-provider.client.tsx"),
+            "components/custom/theme-provider.client.tsx",
+        )
         self.assertNotIn(THEME_PROVIDER_TARGET, self.manifest["requires"])
         self.assertIn("next-themes", self.manifest["dependencies"])
 
-        src = read(THEME_PROVIDER_TEMPLATE)
-        self.assertRegex(src, re.compile(r'^"use client";$', re.M), "the provider must be a client component")
+        entry = read(THEME_PROVIDER_TEMPLATE)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", entry)).lstrip()
+        self.assertFalse(code.startswith(('"use client"', "'use client'")), "the entry is a server component")
+        self.assertNotIn('"use client"', code)
+        self.assertIn('from "@/components/custom/theme-provider.client";', entry)
+        self.assertIn('from "@/components/custom/site-theme";', entry)
+        self.assertIn("<SiteTheme />", entry)
+        self.assertIn("<ThemeProviderClient {...props}>{children}</ThemeProviderClient>", entry)
+        self.assertIn("export { DEFAULT_THEME, THEME_ATTRIBUTE };", entry)
+        self.assertIn("export default ThemeProvider;", entry)
+        self.assertNotRegex(entry, r'defaultTheme = "(light|system)"')
+        self.assertNotRegex(entry, r'defaultTheme="(light|system)"')
+
+        src = read(THEME_PROVIDER_CLIENT_TEMPLATE)
+        self.assertRegex(src, re.compile(r'^"use client";$', re.M), "the client half is a client component")
         self.assertRegex(src, re.compile(r'^export const DEFAULT_THEME = "dark";$', re.M))
         self.assertRegex(src, re.compile(r'^export const THEME_ATTRIBUTE = "class";$', re.M))
         self.assertRegex(src, r"\bdefaultTheme = DEFAULT_THEME\b", "defaultTheme must fall back to DEFAULT_THEME")
@@ -628,15 +691,20 @@ class TestManifest(unittest.TestCase):
         self.assertNotRegex(src, r'defaultTheme="(light|system)"')
         self.assertIn('from "next-themes";', src)
         self.assertNotIn("next-themes/dist/types", src, "0.4.x exports the props type from the package root")
-        self.assertIn("export default ThemeProvider;", src)
+        self.assertIn("export function ThemeProviderClient(", src)
+        self.assertIn("export default ThemeProviderClient;", src)
 
         note = self.manifest["_comment"].get("app/layout.tsx", "")
         self.assertIn("theme-provider", note)
         self.assertIn("dark", note)
+        self.assertIn("server component", note)
 
     def test_theme_provider_type_checks_under_tsc(self):
-        """The staged template under tsc, strict and isolatedModules with
-        `jsx: preserve`, against next-themes 0.4.x's prop shape: the
+        """The staged seam under tsc, strict and isolatedModules with
+        `jsx: preserve`, against next-themes 0.4.x's prop shape: the entry,
+        its client half, the site-theme component and the lib/site-data
+        modules it reads, with the `@/` imports pointed at the stage and
+        `server-only` stood in by an empty module. The client half's
         destructured defaults must fit `ThemeProviderProps` (an `attribute`
         that is not an Attribute, or a props type imported from a path the
         package does not export, fails here the way a shell build would).
@@ -644,16 +712,226 @@ class TestManifest(unittest.TestCase):
         tsc = os.environ.get("ROKCT_TSC") or shutil.which("tsc")
         if not tsc or not os.path.exists(tsc):
             raise unittest.SkipTest("no tsc reachable (set ROKCT_TSC to a tsc binary)")
+        rewrites = {
+            'from "@/components/custom/theme-provider.client"': 'from "./theme-provider.client"',
+            'from "@/components/custom/site-theme"': 'from "./site-theme"',
+            'from "@/lib/site-data/read-site-data"': 'from "./read-site-data"',
+            'from "@/lib/site-data/site-theme"': 'from "./site-theme-css"',
+            'from "@/lib/site-data/kinds"': 'from "./kinds"',
+        }
+        staged = {
+            "theme-provider.tsx": THEME_PROVIDER_TEMPLATE,
+            "theme-provider.client.tsx": THEME_PROVIDER_CLIENT_TEMPLATE,
+            "site-theme.tsx": SITE_THEME_COMPONENT,
+            "site-theme-css.ts": os.path.join(SITE_DATA_DIR, "site-theme.ts"),
+            "read-site-data.ts": os.path.join(SITE_DATA_DIR, "read-site-data.ts"),
+            "kinds.ts": os.path.join(SITE_DATA_DIR, "kinds.ts"),
+            "generated.ts": os.path.join(SITE_DATA_DIR, "generated.ts"),
+        }
         with tempfile.TemporaryDirectory() as tmp:
-            shutil.copy(THEME_PROVIDER_TEMPLATE, os.path.join(tmp, "theme-provider.tsx"))
+            for name, src in staged.items():
+                text = read(src)
+                for old, new in rewrites.items():
+                    text = text.replace(old, new)
+                with open(os.path.join(tmp, name), "w", encoding="utf-8") as f:
+                    f.write(text)
             with open(os.path.join(tmp, "stubs.d.ts"), "w", encoding="utf-8") as f:
                 f.write(TSC_THEME_STAGE_STUBS)
+            config = dict(TSC_THEME_STAGE_CONFIG, include=["*.tsx", "*.ts", "*.d.ts"])
             with open(os.path.join(tmp, "tsconfig.json"), "w", encoding="utf-8") as f:
-                json.dump(TSC_THEME_STAGE_CONFIG, f)
+                json.dump(config, f)
             run = subprocess.run(
                 [tsc, "-p", tmp], capture_output=True, text=True, timeout=300, cwd=tmp,
             )
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+
+    # -- 1.35.0: the host-owned data/ folder and the explicit data mode --------
+
+    def test_site_data_files_are_installed(self):
+        """Every file of the seam is installed to lib/site-data/ (and the two
+        components beside the theme seam), the manifest is 1.35.0 and says
+        so, the CHANGELOG leads with it, and the docs exist."""
+        by_from = {e["from"]: e["to"] for e in self.manifest["installs"]}
+        for src, dst in SITE_DATA_INSTALLS.items():
+            self.assertEqual(by_from.get(src), dst, f"{src} must install to {dst}")
+            self.assertTrue(os.path.exists(os.path.join(SDK_ROOT, src)), src)
+            self.assertNotIn(dst, self.manifest["requires"])
+        about = self.manifest["_comment"]["about"]
+        for text in ("Since 1.35.0", '"data": "local" | "backend" | "hybrid"', "lib/site-data/generate.mjs",
+                     "readSiteData(kind)", "hasSiteData(kind)", "@/lib/site-data/read-site-data",
+                     "site_data", "The brand name is never in data/", "docs/site-data.md"):
+            self.assertIn(text, about)
+        self.assertTrue(os.path.exists(SITE_DATA_DOC))
+        doc = read(SITE_DATA_DOC)
+        for text in ("@/lib/site-data/read-site-data", "@/lib/site-data/kinds", "prebuild",
+                     "corporate_sdk 1.1.0", "The brand name is never in `data/`"):
+            self.assertIn(text, doc)
+        changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
+        self.assertIn("## 1.35.0", changelog)
+        self.assertNotRegex(changelog, re.compile(r"^#[^#\s]", re.M), "no CHANGELOG line starts with # and text")
+
+    def test_neutral_generated_module_is_what_the_generator_writes(self):
+        """base installs generated.ts as "backend, no files" and the generator
+        writes exactly that text for a backend shell, so a shell that never
+        runs the script and one that does agree byte for byte."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node is needed to execute generate.mjs")
+        neutral = read(os.path.join(SITE_DATA_DIR, "generated.ts"))
+        self.assertIn('"mode": "backend"', neutral)
+        self.assertIn('import type { SiteDataBundle } from "./kinds";', neutral)
+        with tempfile.TemporaryDirectory() as tmp:
+            run = subprocess.run(
+                [node, os.path.join(SITE_DATA_DIR, "generate.mjs"), "--root", tmp],
+                capture_output=True, text=True, timeout=60,
+            )
+            self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+            self.assertIn("[site-data] mode backend: no data/ file bundled", run.stdout)
+            self.assertEqual(read(os.path.join(tmp, "lib", "site-data", "generated.ts")), neutral)
+
+    def test_site_data_reader_is_server_only_and_typed(self):
+        reader = read(os.path.join(SITE_DATA_DIR, "read-site-data.ts"))
+        self.assertRegex(reader, re.compile(r'^import "server-only";$', re.M))
+        self.assertIn('import { SITE_DATA } from "./generated";', reader)
+        for fn in ("export function siteDataMode(): SiteDataMode",
+                   "export function hasSiteData(kind: SiteDataKind): boolean",
+                   "export function readSiteData<K extends SiteDataKind>(kind: K): SiteDataKinds[K] | undefined"):
+            self.assertIn(fn, reader)
+        kinds = read(os.path.join(SITE_DATA_DIR, "kinds.ts"))
+        self.assertNotIn('import "server-only"', kinds, "the types are importable from client code")
+        self.assertIn('export type SiteDataMode = "local" | "backend" | "hybrid";', kinds)
+        self.assertIn('export const DEFAULT_SITE_DATA_MODE: SiteDataMode = "backend";', kinds)
+        for kind in ("theme", "team", "stockists", "products", "about", "legal"):
+            self.assertRegex(kinds, re.compile(rf"^  {kind}: Site\w+;$", re.M), f"{kind} is a kind")
+        self.assertIn("export interface SiteLegalPage {", kinds)
+        # No brand string anywhere in the seam.
+        for name in os.listdir(SITE_DATA_DIR):
+            text = read(os.path.join(SITE_DATA_DIR, name)).lower()
+            for brand in ("rokct.ai", "supacharge", "south river", "southriver"):
+                self.assertNotIn(brand, text, f"{name} names a brand")
+
+    def test_site_data_behaviour_under_node(self):
+        """tests/site-data.test.mts, run in place: it imports the templates
+        by relative path (the generator and validators are plain ESM, the
+        rule and the theme CSS are stripped TypeScript) and drives the
+        generator against tests/fixtures/site-data/acme and temp shells."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute the site-data suite")
+        self.assertTrue(os.path.isdir(SITE_DATA_FIXTURE))
+        run = subprocess.run(
+            [node, "--experimental-strip-types", "--no-warnings", "--test", SITE_DATA_TESTS],
+            capture_output=True, text=True, timeout=180, cwd=HERE,
+        )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 23)
+
+    def test_fixture_data_folder_names_no_real_thing(self):
+        """The fixture data/ is acme.school's: no brand, nobody real."""
+        for root, _, files in os.walk(SITE_DATA_FIXTURE):
+            for name in files:
+                text = read(os.path.join(root, name)).lower()
+                for word in ("rokct", "supacharge", "south river", "southriver", "demo", "sample", "lorem"):
+                    self.assertNotIn(word, text, f"{name} carries {word}")
+                if name != "theme.json":
+                    self.assertIn("acme", text, f"{name} is not an acme.school fixture")
+
+    def test_local_mode_switches_off_backend_only_surface(self):
+        """A local shell has no backend: the landing page reads the mode
+        through the reader, prefetches no plans in local mode and hands
+        `dataMode` to the arrangement, to every section and (1.38.0) to
+        the client wrapper; the arrangement drops the header actions that
+        lead to the sign-in / sign-up routes; the section types carry the
+        field."""
+        page = read(LANDING_PAGE)
+        self.assertIn('import { siteDataMode } from "@/lib/site-data/read-site-data";', page)
+        self.assertIn("const dataMode = siteDataMode();", page)
+        self.assertIn('if (dataMode !== "local") {', page)
+        self.assertLess(page.index('if (dataMode !== "local") {'), page.index("plans = await getLandingPlans();"))
+        self.assertIn("resolveLandingPage({ plans, session, dataMode })", page)
+        # Two RegisteredSections renders and, since 1.38.0, LandingContent.
+        self.assertEqual(page.count("dataMode={dataMode}"), 4)
+        resolver = read(LANDING_PAGE_RESOLVER)
+        self.assertIn("export function dropBackendOnlyActions(", resolver)
+        self.assertIn('if (dataMode !== "local") return actions;', resolver)
+        self.assertIn("new Set([LANDING_CONFIG.loginUrl, LANDING_CONFIG.signupUrl])", resolver)
+        self.assertIn("actions: dropBackendOnlyActions(menu.actions, ctx.dataMode)", resolver)
+        sections = read(os.path.join(LANDING, "page-sections.ts"))
+        self.assertIn('import type { SiteDataMode } from "@/lib/site-data/kinds";', sections)
+        self.assertEqual(sections.count("dataMode?: SiteDataMode;"), 2)
+        # The panel partials are not touched by this rule.
+        self.assertNotIn("site-data", read(HEADER_MENU_PARTIALS))
+
+    def test_header_skips_its_own_auth_pair_on_a_local_shell(self):
+        """1.38.0: the TODO 1.35.0 left on dropBackendOnlyActions. The
+        header's OWN Log in / Sign up pair - not a declared action - follows
+        the same `local` rule: the page hands the mode it read to the
+        client wrapper, the wrapper to the header as `dataMode`, and the
+        header draws no pair for a visitor with no session when
+        showsHeaderAuth(dataMode) (header-menu.ts, pure) answers false, on
+        the bar and in the burger panel. A caller that passes no mode draws
+        what it drew. The "use client" files import only the TYPE from
+        lib/site-data/kinds, never the server-only reader."""
+        registry = read(HEADER_MENU_REGISTRY)
+        self.assertIn('import type { SiteDataMode } from "@/lib/site-data/kinds";', registry)
+        self.assertIn("export function showsHeaderAuth(dataMode: SiteDataMode | undefined): boolean {", registry)
+        self.assertIn('return dataMode !== "local";', registry)
+        header = read(HEADER)
+        self.assertIn('import type { SiteDataMode } from "@/lib/site-data/kinds";', header)
+        self.assertIn("  showsHeaderAuth,\n", header)
+        self.assertIn("dataMode?: SiteDataMode;", header)
+        self.assertIn("const hasAuth = !!user || showsHeaderAuth(dataMode);", header)
+        self.assertEqual(header.count("!hasAuth ? null :"), 2, "the desktop element and the stacked panel")
+        content = read(LANDING_CONTENT)
+        self.assertIn('import type { SiteDataMode } from "@/lib/site-data/kinds";', content)
+        self.assertIn("dataMode?: SiteDataMode;", content)
+        self.assertIn("dataMode={dataMode}", content)
+        self.assertIn("dataMode={dataMode}", read(LANDING_PAGE))
+        for path in (HEADER, LANDING_CONTENT, HEADER_MENU_REGISTRY):
+            self.assertNotIn("read-site-data", read(path), path)
+        resolver = read(LANDING_PAGE_RESOLVER)
+        self.assertNotIn("TODO", resolver, "the 1.35.0 TODO is done")
+        self.assertIn("showsHeaderAuth(dataMode)", resolver)
+        doc = read(SITE_DATA_DOC)
+        self.assertNotIn("Not yet switched", doc)
+        self.assertIn("showsHeaderAuth", doc)
+
+    def test_sections_may_name_a_company_page(self):
+        """1.38.0 (Ray, 2026-09-10: corporate_sdk owns /about and /team as
+        renderers; a home SDK's cards reach them through the one section
+        registry). PageSectionMeta.page is "landing" | "about" | "team",
+        absent meaning landing; the landing arrangement keeps only landing
+        sections (so a company-page section is neither drawn nor a nav
+        stop there), and pageSectionsFor(page) is what a company page
+        awaits - the same loader, renders and order rules, filtered. No
+        brand, no route and no host is named by either module."""
+        sections = read(os.path.join(LANDING, "page-sections.ts"))
+        self.assertIn('export type PageSlot = "landing" | "about" | "team";', sections)
+        self.assertIn('export const PAGE_SLOTS: readonly PageSlot[] = ["landing", "about", "team"];', sections)
+        self.assertIn('export const DEFAULT_PAGE_SLOT: PageSlot = "landing";', sections)
+        self.assertIn("  page?: PageSlot;", sections)
+        self.assertIn("export function sectionPageOf(meta: PageSectionMeta | undefined): PageSlot {", sections)
+        self.assertIn("return meta?.page ?? DEFAULT_PAGE_SLOT;", sections)
+        resolver = read(LANDING_PAGE_RESOLVER)
+        self.assertIn("export function presentSectionsFor(", resolver)
+        self.assertIn(".filter((s) => sectionPageOf(s.meta) === page)", resolver)
+        self.assertIn(".filter((s) => s.meta.renders?.(ctx) ?? true)", resolver)
+        self.assertIn(".sort((a, b) => a.order - b.order)", resolver)
+        self.assertIn("const present = presentSectionsFor(DEFAULT_PAGE_SLOT, loaded, ctx);", resolver)
+        self.assertIn("export async function pageSectionsFor(", resolver)
+        self.assertIn("  page: PageSlot,\n  ctx: PageSectionContext = { plans: [], session: null },\n"
+                      "  entries: PageSectionEntry[] = PAGE_SECTIONS,\n): Promise<LoadedSection[]> {", resolver)
+        self.assertIn("return presentSectionsFor(page, loaded, ctx);", resolver)
+        for path in (os.path.join(LANDING, "page-sections.ts"), LANDING_PAGE_RESOLVER):
+            code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(path))).lower()
+            for word in ("rokct.ai", "supacharge", "/about", "/team", "#"):
+                self.assertNotIn(word, code, f"{os.path.basename(path)} names {word}")
+        self.assertIn("pageSectionsFor", read(SITE_DATA_DOC))
+        changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
+        self.assertIn("## 1.38.0", changelog)
+        self.assertIn("`PageSectionMeta.page?:", changelog)
+        self.assertNotRegex(changelog, re.compile(r"^#[^#\s]", re.M), "no CHANGELOG line starts with # and text")
 
 
 class TestRegistryMarkers(unittest.TestCase):
@@ -734,6 +1012,8 @@ class TestRegistryMarkers(unittest.TestCase):
                 'from "@/components/custom/landing/landing-config"', 'from "./landing-config.ts"'
             ).replace(
                 'from "@/components/custom/landing/site-metadata"', 'from "./landing-site-metadata.ts"'
+            ).replace(
+                'from "@/lib/site-data/kinds"', 'from "./site-data-kinds.ts"'
             )
             self.assertNotIn('from "@/', staged, "header-menu.ts imports something the stage does not cover")
             with open(os.path.join(tmp, "header-menu.ts"), "w", encoding="utf-8") as f:
@@ -741,6 +1021,9 @@ class TestRegistryMarkers(unittest.TestCase):
             with open(os.path.join(tmp, "landing-config.ts"), "w", encoding="utf-8") as f:
                 f.write("export type LandingNavBadge = 'new' | 'soon';\n"
                         "export interface LandingNavItem { id: string; label: string; badge?: LandingNavBadge }\n")
+            # 1.38.0: showsHeaderAuth takes the shell's data mode.
+            with open(os.path.join(tmp, "site-data-kinds.ts"), "w", encoding="utf-8") as f:
+                f.write('export type SiteDataMode = "local" | "backend" | "hybrid";\n')
             with open(os.path.join(tmp, "landing-site-metadata.ts"), "w", encoding="utf-8") as f:
                 f.write(
                     "let icon: string | undefined;\n"
@@ -753,6 +1036,8 @@ class TestRegistryMarkers(unittest.TestCase):
             # 1.29.0: the node test reads the header's stem wordmark markup
             # (its responsive size) as text; the copy is not imported.
             shutil.copy(HEADER, os.path.join(tmp, "header.tsx"))
+            # 1.36.0: and the panel partials (the row layout markup).
+            shutil.copy(HEADER_MENU_PARTIALS, os.path.join(tmp, "header-menu.tsx"))
             run = subprocess.run(
                 [node, "--experimental-strip-types", "--no-warnings", "--test",
                  os.path.join(tmp, "header-brand.test.mts")],
@@ -780,7 +1065,7 @@ class TestRegistryMarkers(unittest.TestCase):
         partials = read(os.path.join(SDK_ROOT, "templates", "components", "custom", "header-menu.tsx"))
         self.assertIn("function DesktopMegaMenu(", partials)
         self.assertIn("const MENU_ICONS: Record<HeaderMenuIcon, LucideIcon>", partials)
-        self.assertIn("{groups.length > 0 && <DesktopMegaMenu groups={groups} />}", partials)
+        self.assertIn("{groups.length > 0 && <DesktopMegaMenu groups={groups} megaLabel={megaLabel} />}", partials)
         self.assertNotIn("function DesktopGroup(", partials)
         for hard_coded in ("yellow-", "zinc-", "gray-", "#0a0a0a"):
             self.assertNotIn(hard_coded, partials, f"header-menu.tsx paints a hard-coded colour: {hard_coded}")
@@ -952,7 +1237,8 @@ class TestRegistryMarkers(unittest.TestCase):
         wordmark = header[header.index("function BrandStemWordmark("):header.index("function BrandBlock(")]
         # Text only: the stem stays, the dot and the rest close with the collapse.
         self.assertIn("const suffix = name.trim().slice(stem.length);", wordmark)
-        self.assertIn("<span>{stem}</span>", wordmark)
+        # 1.39.0: the span shows the capitalised label of that same stem.
+        self.assertIn("<span>{label}</span>", wordmark)
         self.assertIn('<span className="min-w-0 overflow-hidden">{suffix}</span>', wordmark)
         self.assertIn("aria-hidden={collapsed}", wordmark)
         # The suffix SLIDES into the stem (Ray: "not as a back type but like
@@ -1033,8 +1319,9 @@ class TestRegistryMarkers(unittest.TestCase):
         sits on the stem's baseline. The code beside a mark or a tile is
         the 1.24.0 code, literal for literal."""
         src = read(HEADER_MENU_REGISTRY)
+        # 1.36.0: the cap is the original header's superscript size, not 36px.
         self.assertIn(
-            "export const BRAND_STEM_CODE_FONT_SIZE = `min(36px, ${BRAND_STEM_FONT_SIZE})`;",
+            "export const BRAND_STEM_CODE_FONT_SIZE = `min(${BRAND_CODE_FONT_SIZE}, ${BRAND_STEM_FONT_SIZE})`;",
             src,
         )
         self.assertLess(src.index("export const BRAND_STEM_FONT_SIZE ="), src.index("export const BRAND_STEM_CODE_FONT_SIZE ="))
@@ -1077,6 +1364,59 @@ class TestRegistryMarkers(unittest.TestCase):
         wordmark = header[header.index("function BrandStemWordmark("):header.index("function BrandBlock(")]
         self.assertNotIn("BRAND_STEM_CODE_FONT_SIZE", wordmark)
         self.assertEqual(wordmark.count("fontSize"), 1)
+
+    def test_header_code_beside_a_mark_is_untouched_and_the_stem_cap_is_the_original(self):
+        """base_sdk 1.36.0 (Ray, 2026-09-10: "za in supa is big, look at one
+        in rokct, original one"; and "if i merge that one it will change
+        country code in rokct to wrong one"): the stem branch's cap is the
+        original header's superscript size - 0.28 of the 44px mark - and
+        the mark branch is byte-for-byte the 1.24.0 code, so rokct.ai
+        renders exactly what it did."""
+        src = read(HEADER_MENU_REGISTRY)
+        self.assertIn("export const BRAND_MARK_SIZE_PX = 44;", src)
+        self.assertIn("export const BRAND_CODE_SCALE = 0.28;", src)
+        self.assertIn("export const BRAND_CODE_FONT_SIZE = `calc(${BRAND_MARK_SIZE_PX}px * ${BRAND_CODE_SCALE})`;", src)
+        self.assertNotIn("min(36px", src)
+        header = read(HEADER)
+        collapsing = header[header.index("function CollapsingBrand("):header.index("const UNDECLARED_BRAND")]
+        self.assertIn(
+            ': "ml-1 inline-block self-start text-[36px] font-medium text-foreground transition-all duration-500 ease-in-out"',
+            collapsing,
+        )
+        self.assertIn(': { marginTop: "-2px" };', collapsing)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", header))
+        self.assertNotIn("BRAND_CODE_FONT_SIZE", code.replace("BRAND_STEM_CODE_FONT_SIZE", ""))
+        self.assertNotIn("BRAND_CODE_SCALE", code)
+
+    def test_header_menu_group_row_layout_and_trigger_word(self):
+        """base_sdk 1.36.0 (Ray, 2026-09-10: "header app links first. if
+        possible put mobile apps in one row since supa dont have much
+        menu"): a group may be laid out as a row, and the menu may name the
+        trigger's word so any group can lead."""
+        src = read(HEADER_MENU_REGISTRY)
+        self.assertIn('export type HeaderMenuGroupLayout = "column" | "row";', src)
+        group = src[src.index("export interface HeaderMenuGroup {"):src.index("export type HeaderMenuGroupLayout")]
+        self.assertIn("  layout?: HeaderMenuGroupLayout;", group)
+        menu = src[src.index("export interface HeaderMenu {"):src.index("export type HeaderMenuGroupItem")]
+        self.assertIn("  megaLabel?: string;", menu)
+        resolved = src[src.index("export interface HeaderMenuResolvedGroup {"):src.index("const EMPTY_HEADER_MENU")]
+        self.assertIn("  layout: HeaderMenuGroupLayout;", resolved)
+        self.assertIn("  megaLabel: string | null;", resolved)
+        self.assertIn("export function resolveHeaderMenuGroupLayout(", src)
+        self.assertIn("export function megaTriggerLabel(", src)
+        self.assertIn("layout: resolveHeaderMenuGroupLayout(group.layout),", src)
+        self.assertIn("const megaLabel = menu.megaLabel?.trim() || null;", src)
+        partials = read(HEADER_MENU_PARTIALS)
+        self.assertIn('const LEAD_ROW_WIDTH = "w-[58%] shrink-0";', partials)
+        self.assertIn('? "flex flex-col gap-3 md:flex-row md:items-stretch"', partials)
+        self.assertIn("const label = megaTriggerLabel({ groups, megaLabel });", partials)
+        header = read(HEADER)
+        self.assertIn("  megaLabel?: string | null;", header)
+        self.assertIn("megaLabel={megaLabel}", header)
+        content = read(LANDING_CONTENT)
+        self.assertIn("megaLabel={menu.megaLabel}", content)
+        for hard_coded in ("yellow-", "zinc-", "gray-", "#0a0a0a", "\"Explore\"", "\"Get the app\""):
+            self.assertNotIn(hard_coded, partials, hard_coded)
 
     def test_header_menu_action_carries_an_icon(self):
         # base_sdk 1.20.0 (Ray, 2026-09-09: rokct "lost its chrome icon"):
@@ -1638,6 +1978,87 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertIn("{wordmark.text}", view)
         self.assertIn("HeroResultsContext", view)
 
+    def test_hero_stem_wordmark_has_room_for_its_descenders(self):
+        """1.36.0 (Ray, 2026-09-10, on supacharge: "supa name in hero cut
+        off on g and e"): the stem span sits at leading-none inside the
+        slot that hides its overflow, and a 1em line box is shorter than
+        a face's glyphs, so the descenders (and an italic face's last
+        glyph) were clipped. The span carries symmetric em padding of
+        its own - on the span, not its line height, because a home SDK
+        restyles the span's face, size and line-height from outside -
+        and the slot still clips (that is how it closes)."""
+        raw = read(HERO_VIEW)
+        view = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", raw))
+        self.assertIn('export const HERO_STEM_PADDING_CLASS = "py-[0.15em] px-[0.05em]";', view)
+        slot = view[view.index("function HeroWordmarkSlot("):view.index("export interface HeroViewProps")]
+        self.assertIn("leading-none text-black dark:text-white ${HERO_STEM_PADDING_CLASS}`}", slot)
+        self.assertIn("{wordmark.text}", slot)
+        # The padding is in em so it scales with whatever size the span is
+        # given, and symmetric so the glyphs stay put in the fixed-height row.
+        match = re.search(r'HERO_STEM_PADDING_CLASS = "py-\[(\d*\.?\d+)em\] px-\[(\d*\.?\d+)em\]"', view)
+        self.assertIsNotNone(match)
+        self.assertGreaterEqual(float(match.group(1)), 0.12, "less than a sans descender's overflow at leading-none")
+        self.assertGreater(float(match.group(2)), 0)
+        self.assertNotIn("pb-[", slot)
+        self.assertNotIn("pt-[", slot)
+        # The slot still clips: the collapse closes it over hidden overflow.
+        row = view[view.index('<div className="flex flex-row items-center justify-center h-[72px]">'):view.index("<HeroWordmarkSlot wordmark={wordmark} />")]
+        self.assertIn('className="overflow-hidden transition-all duration-500 ease-in-out flex items-center"', row)
+        self.assertIn('width: isExpanded ? "0px" : "250px",', row)
+
+    def test_folded_stem_is_capitalised(self):
+        """1.39.0 (Ray, 2026-09-11 04:23Z: the stem without .school is
+        capitalised - "supacharge" shows as "Supacharge"): ONE function,
+        brandStemLabel in header-menu.ts, upper-cases the stem's first
+        character; the header's stem span and the hero's stem wordmark
+        show it, while the title / aria-label / suffix / metadata keep
+        the full name as declared. No render site capitalises on its own,
+        the fold rule (brandStemOf, the 1.29.0 cap, the code beside the
+        stem) is untouched, and no brand string is named."""
+        src = read(HEADER_MENU_REGISTRY)
+        self.assertIn("export function brandStemLabel(name: string | null | undefined): string | null {", src)
+        label = src[src.index("export function brandStemLabel("):src.index("export function brandFoldsToStem(")]
+        self.assertIn("const stem = brandStemOf(name);", label)
+        self.assertIn("if (stem === null) return null;", label)
+        self.assertIn("return stem.charAt(0).toUpperCase() + stem.slice(1);", label)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", src))
+        letter = code[code.index("export function brandLetterOf("):code.index("export function brandFoldsToLetter(")]
+        self.assertEqual(letter.count("toUpperCase"), 1, "the 1.28.0 letter tile's own upper-casing")
+        self.assertEqual(code.count("toUpperCase"), 2, "the stem's capitalisation lives in brandStemLabel alone")
+        # The header: the span shows the label, the suffix is cut at the
+        # stem, the wordmark's title is the full name.
+        header = read(HEADER)
+        wordmark = header[header.index("function BrandStemWordmark("):header.index("function BrandBlock(")]
+        self.assertIn("const suffix = name.trim().slice(stem.length);", wordmark)
+        self.assertIn("const label = brandStemLabel(name) ?? stem;", wordmark)
+        self.assertIn("<span>{label}</span>", wordmark)
+        self.assertNotIn("<span>{stem}</span>", wordmark)
+        self.assertIn("title={name.trim()}", wordmark)
+        self.assertNotIn("toUpperCase", LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", header)))
+        self.assertRegex(
+            header,
+            r"import \{[^}]*\bbrandStemLabel\b[^}]*\} from \"@/components/custom/landing/header-menu\";",
+        )
+        # The hero: the resolver answers the label, the view still titles
+        # and labels the element with the full name.
+        resolver = read(LANDING_PAGE_RESOLVER)
+        self.assertIn("brandStemLabel(name) ?? name", resolver)
+        self.assertNotIn("brandStemOf", resolver.replace("[brandStemOf]", ""))
+        self.assertNotIn("toUpperCase", LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", resolver)))
+        view = read(HERO_VIEW)
+        slot = view[view.index("function HeroWordmarkSlot("):view.index("export interface HeroViewProps")]
+        self.assertIn("aria-label={wordmark.name}", slot)
+        self.assertIn("title={wordmark.name}", slot)
+        self.assertIn("{wordmark.text}", slot)
+        self.assertNotIn("toUpperCase", slot)
+        # The fold cap and the code beside the stem are what 1.36.0 left.
+        self.assertIn("export const BRAND_CODE_SCALE = 0.28;", src)
+        self.assertIn("calc(${BRAND_MARK_SIZE_PX}px * ${BRAND_CODE_SCALE})", src)
+        for text in (src, header, resolver):
+            plain = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", text)).lower()
+            self.assertNotIn("supacharge", plain)
+            self.assertNotIn("rokct.ai", plain)
+
     def test_hero_config_declares_the_brand_and_sections_the_root_class(self):
         config = read(os.path.join(LANDING, "hero-config.ts"))
         self.assertIn('brand?: "name" | "stem";', config)
@@ -1648,7 +2069,7 @@ class TestRegistryMarkers(unittest.TestCase):
         sections = read(os.path.join(LANDING, "page-sections.ts"))
         self.assertIn("rootClass?: string;", sections)
         resolver = read(LANDING_PAGE_RESOLVER)
-        self.assertIn("brandStemOf(name) ?? name", resolver)
+        self.assertIn("brandStemLabel(name) ?? name", resolver)
         self.assertIn("s.meta.rootClass?.trim()", resolver)
         wrapper = read(LANDING_CONTENT)
         self.assertIn("rootClass?: string;", wrapper)
@@ -1670,6 +2091,7 @@ class TestRegistryMarkers(unittest.TestCase):
             'from "@/app/actions/base/landing"': 'from "./landing-actions.ts"',
             'from "@/app/config/features"': 'from "./features.ts"',
             'from "@/app/config/platform"': 'from "./platform.ts"',
+            'from "@/lib/site-data/kinds"': 'from "./site-data-kinds.ts"',
         }
         real = {
             "landing-page.ts": LANDING_PAGE_RESOLVER,
@@ -1691,6 +2113,7 @@ class TestRegistryMarkers(unittest.TestCase):
                 "}\n"
             ),
             "landing-actions.ts": "export interface LandingPlan { name: string }\n",
+            "site-data-kinds.ts": 'export type SiteDataMode = "local" | "backend" | "hybrid";\n',
             "features.ts": (
                 "export const PLATFORM_FEATURES = [\n"
                 "  { active: true, href: '/' }, { active: true, href: '/extension' },\n"
@@ -1720,7 +2143,7 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
-        self.assertGreaterEqual(int(passed.group(1)), 15)
+        self.assertGreaterEqual(int(passed.group(1)), 21)
 
     def test_installed_section_entry_modules_are_server_safe(self):
         """The registry is imported on the server since 1.32.0, so a section's
@@ -1831,6 +2254,169 @@ class TestRegistryMarkers(unittest.TestCase):
                 [tsc, "-p", tmp], capture_output=True, text=True, timeout=300, cwd=tmp,
             )
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+
+
+    # -- 1.37.0: the footer links seam and the legal documents ---------------
+
+    def test_legal_links_and_action_are_installed(self):
+        """Ray, 2026-09-10: "supa has no terms pages or about page" and, on
+        where they belong, "legal pages are not in corporate sdk?" / "you
+        should look at the dart side if they are not there yet". Base
+        installs the pure links rule and the guest read; the pages are
+        corporate_sdk's and are NOT installed here."""
+        pairs = {(i["from"], i["to"]) for i in load_manifest()["installs"]}
+        self.assertIn(LEGAL_LINKS_INSTALL, pairs)
+        self.assertIn(LEGAL_ACTION_INSTALL, pairs)
+        targets = {i["to"] for i in load_manifest()["installs"]}
+        self.assertFalse(
+            any(t.startswith("app/legal") for t in targets),
+            "the /legal pages belong to corporate_sdk, never to base",
+        )
+        about = load_manifest()["_comment"]["about"]
+        for text in ("FooterChromeConfig.links?: FooterLinkGroup[]", "listPublicTerms()",
+                     "legalFooterLinks(terms, label?)", "corporate_sdk", "base_sdk >= 1.37.0"):
+            self.assertIn(text, about)
+        head = read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.32.1", 1)[0]
+        self.assertIn("## 1.37.0", head)
+        for text in ("`FooterChromeConfig.links?: FooterLinkGroup[]`", "`listPublicTerms()`",
+                     "`legalFooterLinks(terms, label?)`", "`corporate_sdk`"):
+            self.assertIn(text, head)
+        # SDK CHANGELOG lines never start with `#` followed by text (MD018 on
+        # the host re-pin): only headings, which are `## x.y.z`.
+        for line in head.splitlines():
+            if line.startswith("#") and line != "# Changelog":
+                self.assertRegex(line, r"^## \d+\.\d+\.\d+$", line)
+
+    def test_footer_links_seam_shape(self):
+        config = read(FOOTER_CHROME_CONFIG)
+        for needle in (
+            "export interface FooterLink {",
+            "export interface FooterLinkGroup {",
+            "  items: FooterLink[];",
+            "  links?: FooterLinkGroup[];",
+        ):
+            self.assertIn(needle, config)
+        # `links` is optional on the config the row already takes.
+        self.assertLess(config.index("export interface FooterChromeConfig {"), config.index("  links?: FooterLinkGroup[];"))
+        footer = read(FOOTER_CHROME)
+        self.assertIn('import Link from "next/link";', footer)
+        self.assertIn("const groups = (config.links ?? []).filter((g) => g.items.length > 0);", footer)
+        self.assertIn("{groups.length > 0 && (", footer)
+        self.assertIn('aria-label="Footer links"', footer)
+        self.assertIn('rel="noopener noreferrer"', footer)
+        self.assertIn("data-footer-group={group.id}", footer)
+        # The row sits between the strip and the copyright line.
+        self.assertLess(footer.index('{networkStrip && <NetworkStrip surface="footer" />}'),
+                        footer.index("{groups.length > 0 && ("))
+        self.assertLess(footer.index("{groups.length > 0 && ("), footer.index("© Copyright {year}"))
+        # Still generic: no product, brand, host or copy.
+        body = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", footer + config))
+        for word in ("rokct.ai", "supacharge", "Privacy", "Terms of", "https://", "demo", "sample", "lorem"):
+            self.assertNotIn(word, body, word)
+
+    def test_legal_action_is_a_guest_read_that_soft_fails(self):
+        src = read(LEGAL_ACTION)
+        self.assertRegex(src, re.compile(r'^"use server";$', re.M))
+        self.assertIn('import { platformCall } from "@/app/services/base/platform-gateway";', src)
+        self.assertIn("export async function listPublicTerms(): Promise<PublicTerm[]> {", src)
+        self.assertIn('"frappe.client.get_list",', src)
+        self.assertIn("doctype: LEGAL_DOCTYPE,", src)
+        self.assertIn('fields: ["name", "title", "disabled"],', src)
+        self.assertIn("filters: { disabled: 0 },", src)
+        self.assertIn("{ requireAuth: false },", src)
+        self.assertIn("return normalisePublicTerms(rows);", src)
+        self.assertIn("return [];", src)
+        # A "use server" module exports async functions only; the words and
+        # the rule live in the pure module.
+        body = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", src))
+        self.assertNotIn("export const", body)
+        links = read(LEGAL_LINKS)
+        self.assertNotIn('"use client"', links)
+        self.assertNotIn('"use server"', links)
+        for needle in (
+            'export const LEGAL_DOCTYPE = "Terms and Conditions";',
+            'export const LEGAL_ROUTE = "/legal";',
+            "export interface PublicTerm {",
+            "export function legalDocHref(name: string): string {",
+            "export function normalisePublicTerms(rows: unknown): PublicTerm[] {",
+            "export function legalFooterLinks(",
+            "): FooterLinkGroup[] {",
+        ):
+            self.assertIn(needle, links)
+        for path in (LEGAL_ACTION, LEGAL_LINKS):
+            text = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(path))).lower()
+            for word in ("demo", "sample", "example", "lorem", "https://"):
+                self.assertNotIn(word, text, f"{os.path.basename(path)} carries {word}")
+
+    def test_legal_links_behaviour_under_node(self):
+        """The rule executed: null rows are [], disabled and malformed rows
+        drop, the href is /legal/<name> encoded, and nothing published is
+        NO group (so a footer that spreads it draws nothing new)."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute legal-links.ts")
+        with tempfile.TemporaryDirectory() as tmp:
+            shutil.copy(FOOTER_CHROME_CONFIG, os.path.join(tmp, "footer-chrome-config.ts"))
+            links = read(LEGAL_LINKS).replace(
+                'from "@/components/custom/landing/footer-chrome-config"', 'from "./footer-chrome-config.ts"'
+            )
+            self.assertNotIn('from "@/', links, "legal-links.ts imports something the stage does not cover")
+            with open(os.path.join(tmp, "legal-links.ts"), "w", encoding="utf-8") as f:
+                f.write(links)
+            shutil.copy(LEGAL_LINKS_TESTS, os.path.join(tmp, "legal-links.test.mts"))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 os.path.join(tmp, "legal-links.test.mts")],
+                capture_output=True, text=True, timeout=120, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 8)
+
+
+    # -- 1.37.0: the footer status probes the tenant only by default --------
+
+    def test_status_probes_default_to_the_tenant_only(self):
+        """Ray, 2026-09-09: every shell reads its footer status from its own
+        tenant backend, never from control. The default list is the tenant
+        alone; control stays in the catalogue for an explicit opt-in; the
+        variable names are unchanged."""
+        config = read(FOOTER_CHROME_CONFIG)
+        self.assertIn('export const DEFAULT_PLATFORM_STATUS_SOURCES: readonly PlatformStatusSite[] = [\n  "tenant",\n];', config)
+        self.assertIn("if (wanted.length === 0) return probesFor(DEFAULT_PLATFORM_STATUS_SOURCES);", config)
+        self.assertNotIn("if (!raw) return [...PLATFORM_STATUS_PROBES];", config)
+        self.assertNotIn("return [...PLATFORM_STATUS_PROBES];", config)
+        self.assertIn('{ site: "control", cmd: "control:get_versions" },', config)
+        self.assertIn("control is OPT-IN", config)
+        status = read(STATUS_ACTION)
+        self.assertIn("resolvePlatformStatusProbes(process.env.ROKCT_STATUS_SOURCE)", status)
+        self.assertIn("the tenant site ONLY by default", status)
+        for name in ("ROKCT_STATUS_SOURCE", "ROKCT_CONTROL_BASE_URL", "NEXT_PUBLIC_ROKCT_CONTROL_BASE_URL",
+                     "ROKCT_BASE_URL", "NEXT_PUBLIC_ROKCT_BASE_URL"):
+            self.assertIn(name, config + status, f"{name} renamed or dropped")
+        head = read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.32.1", 1)[0]
+        self.assertIn("`DEFAULT_PLATFORM_STATUS_SOURCES`", head)
+        self.assertIn("2026-09-09", head)
+
+    def test_status_probes_behaviour_under_node(self):
+        """The rule executed: unset is the tenant only with no control probe;
+        an explicit opt-in (control, or tenant,control) still includes it."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute footer-chrome-config.ts")
+        with tempfile.TemporaryDirectory() as tmp:
+            shutil.copy(FOOTER_CHROME_CONFIG, os.path.join(tmp, "footer-chrome-config.ts"))
+            shutil.copy(STATUS_PROBES_TESTS, os.path.join(tmp, "status-probes.test.mts"))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 os.path.join(tmp, "status-probes.test.mts")],
+                capture_output=True, text=True, timeout=120, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 7)
 
 
 if __name__ == "__main__":

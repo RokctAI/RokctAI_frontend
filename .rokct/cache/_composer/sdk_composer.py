@@ -561,6 +561,67 @@ def run_npm_install():
 PROTOCOL_REPO_NAME = "The-Rokct-Protocol"
 PROTOCOL_DIR_ENV = "ROKCT_PROTOCOL_DIR"
 FRAPPE_COMPOSE_BACKEND_REL = "core/utils/frappe/compose_backend.py"
+
+# Local copy of compose_backend.SHELL_OWNED_COMPOSER_KEYS / SITE_DATA_MODES
+# for the standalone fallback below, which by definition runs with no
+# protocol checkout to import the shared core from. The canonical definition
+# and its rationale live in core/utils/frappe/compose_backend.py; a test pins
+# these equal to it. base_sdk >= 1.35.0 reads "data" (local | backend |
+# hybrid) from the shell's own composer.json, so a materialized template must
+# not drop the shell's declaration.
+SHELL_OWNED_COMPOSER_KEYS = ("data", "_data_comment")
+SITE_DATA_MODES = ("local", "backend", "hybrid")
+
+
+def _carry_shell_owned_keys_standalone(template_text, composer_path):
+    """Standalone twin of compose_backend.carry_shell_owned_keys(): the
+    template text with the shell's SHELL_OWNED_COMPOSER_KEYS carried over
+    from the committed composer.json (byte-identical when there is nothing
+    to carry). Raises ValueError on an invalid "data" mode."""
+    template = json.loads(template_text)
+    committed = None
+    if os.path.isfile(composer_path):
+        try:
+            with open(composer_path, "r", encoding="utf-8") as fh:
+                committed = json.load(fh)
+        except Exception as e:
+            print(
+                f"[!] WARNING: committed composer.json is not valid JSON ({e}); "
+                f"none of its {', '.join(SHELL_OWNED_COMPOSER_KEYS)} keys can be "
+                f"carried over."
+            )
+    if not isinstance(committed, dict):
+        committed = {}
+    carried = {k: committed[k] for k in SHELL_OWNED_COMPOSER_KEYS if k in committed}
+    if isinstance(template, dict):
+        mode_at = (
+            ("composer.json", carried["data"])
+            if "data" in carried
+            else ("registry template", template.get("data"))
+            if "data" in template
+            else None
+        )
+        if mode_at is not None:
+            where, value = mode_at
+            if not isinstance(value, str) or value not in SITE_DATA_MODES:
+                allowed = ", ".join(f'"{m}"' for m in SITE_DATA_MODES)
+                raise ValueError(
+                    f'{where}: "data" must be one of {allowed}, got {json.dumps(value)}'
+                )
+    if not carried or not isinstance(template, dict):
+        return template_text
+    merged = {}
+    placed = False
+    for key, value in template.items():
+        if not placed and key not in carried and isinstance(value, (list, dict)):
+            merged.update(carried)
+            placed = True
+        merged[key] = carried.get(key, value)  # the shell's value wins, in place
+    if not placed:
+        merged.update(carried)
+    return json.dumps(merged, indent=2, ensure_ascii=False) + "\n"
+
+
 COMPOSER_TEMPLATES_REL = "core/utils/frappe/composer"
 COMPOSER_TEMPLATES_RAW_BASE = (
     "https://raw.githubusercontent.com/RokctAI/The-Rokct-Protocol/main/"
@@ -649,7 +710,9 @@ def resolve_composer_config():
     composer core (core/utils/frappe/compose_backend.py) whenever a protocol
     checkout is locatable, so both stacks resolve templates with one
     implementation; otherwise falls back to the same data-only fetch the
-    flutter CI uses. Returns True when composer.json was (re)written."""
+    flutter CI uses. Returns True when composer.json was (re)written. Either
+    way the shell's own top-level keys (SHELL_OWNED_COMPOSER_KEYS - the
+    "data" mode base_sdk reads, and its comment) survive the rewrite."""
     core = load_composer_core()
     if core is not None:
         return core.resolve_composer_config(PROJECT_ROOT)
@@ -669,6 +732,15 @@ def resolve_composer_config():
         )
         return False
     composer_path = os.path.join(PROJECT_ROOT, "composer.json")
+    try:
+        text = _carry_shell_owned_keys_standalone(text, composer_path)
+    except ValueError as e:
+        print(
+            f"[-] Composition aborted: {e}. The shell's data mode is its own "
+            f"declaration (base_sdk lib/site-data reads it from composer.json); "
+            f"fix the value before composing."
+        )
+        sys.exit(1)
     action = "overwritten" if os.path.exists(composer_path) else "written"
     with open(composer_path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(text)

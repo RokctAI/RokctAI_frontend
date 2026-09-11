@@ -61,11 +61,24 @@
 // registered, and that a shell composed without the SDK never references
 // the missing module. Do not remove or reformat the marker comments inside
 // the array literal.
+//
+// Since 1.38.0 a registered section may name the PAGE it belongs to
+// (Ray, 2026-09-10: corporate_sdk owns /about and /team as renderers;
+// their content comes from the shell's data/ folder or is empty, and a
+// home SDK's cards - Supacharge's founder card - reach those pages through
+// THIS registry rather than a second one). `meta.page` is "landing" (the
+// default, and what every section registered before 1.38.0 means),
+// "about" or "team". The landing host renders only landing sections, so a
+// section that names another page is neither drawn nor listed in the
+// floating nav there, and a company page asks landing-page.ts's
+// `pageSectionsFor(page)` for its own - the same loader, the same
+// `meta.renders` and `meta.order` rules, filtered to that page.
 
 import type { ComponentType } from "react";
 
 import type { LandingPlan } from "@/app/actions/base/landing";
 import type { LandingNavItem } from "@/components/custom/landing/landing-config";
+import type { SiteDataMode } from "@/lib/site-data/kinds";
 
 /** What the landing page hands every registered section. */
 export interface PageSectionProps {
@@ -79,6 +92,15 @@ export interface PageSectionProps {
   plans: LandingPlan[];
   /** The whole floating nav in page order (hero, every section's entries, footer), for a section that renders the nav itself. */
   nav: LandingNavItem[];
+  /**
+   * How the shell reads its data (since 1.35.0): the `"data"` mode its
+   * composer.json declares - "local" (data/ only, no backend), "backend"
+   * (the default; absent means this) or "hybrid". A section that draws
+   * backend-only surface (a sign-in row, prices) checks it, and one that
+   * serves content from data/ reads the folder through
+   * `@/lib/site-data/read-site-data`.
+   */
+  dataMode?: SiteDataMode;
 }
 
 /**
@@ -92,12 +114,31 @@ export interface PageSectionContext {
   plans: LandingPlan[];
   /** The visitor's session as the page read it through the kernel seam, or null. */
   session?: unknown;
+  /**
+   * The shell's data mode (since 1.35.0), as in PageSectionProps; absent
+   * is "backend". `meta.renders` keeps a backend-only section (pricing, a
+   * sign-in strip) off a "local" shell with `ctx.dataMode !== "local"`.
+   */
+  dataMode?: SiteDataMode;
 }
 
 export type PageSectionComponent = ComponentType<PageSectionProps>;
 
 /** The `meta.order` of a module that declares none. */
 export const DEFAULT_PAGE_SECTION_ORDER = 100;
+
+/**
+ * The pages a registered section may belong to (1.38.0): the landing
+ * host's page, or one of the company pages corporate_sdk renders. No
+ * brand and no route is named here - a page slot is a word the renderer
+ * of that page asks the registry for.
+ */
+export type PageSlot = "landing" | "about" | "team";
+
+export const PAGE_SLOTS: readonly PageSlot[] = ["landing", "about", "team"];
+
+/** What a section with no `meta.page` means: the landing page, as before 1.38.0. */
+export const DEFAULT_PAGE_SLOT: PageSlot = "landing";
 
 /** Optional additions a section makes to the page. */
 export interface PageSectionMeta {
@@ -141,6 +182,20 @@ export interface PageSectionMeta {
    * nothing added. Every present section's value is joined, in page order.
    */
   rootClass?: string;
+  /**
+   * The page the section belongs to (1.38.0): "landing" when absent -
+   * every section registered before this field existed renders exactly
+   * where it did. "about" or "team" keeps it OFF the landing page (not
+   * drawn, not a nav stop) and hands it to that company page's renderer
+   * through `pageSectionsFor(page)` in landing-page.ts, which applies the
+   * same `renders` and `order` rules there.
+   */
+  page?: PageSlot;
+}
+
+/** The page a section's meta puts it on: `meta.page`, or the landing page when it names none. */
+export function sectionPageOf(meta: PageSectionMeta | undefined): PageSlot {
+  return meta?.page ?? DEFAULT_PAGE_SLOT;
 }
 
 /** The shape of a registered section's module. */

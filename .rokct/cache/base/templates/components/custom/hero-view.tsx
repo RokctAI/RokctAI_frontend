@@ -170,6 +170,22 @@ function BadgeIcon({ icon }: { icon: HeroBadge["icon"] }) {
  * header sizes its stem wordmark: the large 76px when it fits, else what
  * fits at 0.6em per character, so a long stem never overflows the slot.
  */
+// The stem wordmark's text (1.32.0's `brand: "stem"`), in the slot's
+// padding div. Since 1.36.0 the span carries its own em padding
+// (HERO_STEM_PADDING_CLASS): the slot clips its overflow (that is how it
+// closes when the form takes over), and at `leading-none` the line box is
+// exactly 1em while a face's descenders reach below it - Inter's by about
+// 0.11em, Montserrat's by 0.07em - so the bottom of a "g" or a "p" was
+// cut flat, and an italic face's last glyph overhangs its advance width
+// and lost its right edge (Ray, 2026-09-10, on supacharge: "supa name in
+// hero cut off on g and e"). The padding is on the span, not on its line
+// height, because a home SDK restyles this span from outside (face, size,
+// `line-height: 1 !important`) and would undo a leading change; padding it
+// leaves alone. It is symmetric so the glyphs do not move: the row is a
+// fixed 72px with the slot centred in it, so equal padding above and
+// below keeps the baseline where it was and only the slot's box grows.
+export const HERO_STEM_PADDING_CLASS = "py-[0.15em] px-[0.05em]";
+
 function HeroWordmarkSlot({ wordmark }: { wordmark: HeroWordmark | null }) {
   if (!wordmark) {
     return (
@@ -183,7 +199,7 @@ function HeroWordmarkSlot({ wordmark }: { wordmark: HeroWordmark | null }) {
     <span
       aria-label={wordmark.name}
       title={wordmark.name}
-      className="inline-block whitespace-nowrap font-sans font-bold tracking-tighter leading-none text-black dark:text-white"
+      className={`inline-block whitespace-nowrap font-sans font-bold tracking-tighter leading-none text-black dark:text-white ${HERO_STEM_PADDING_CLASS}`}
       style={{
         fontSize: `min(76px, calc(250px / (${Math.max(wordmark.text.length, 1)} * 0.6)))`,
       }}

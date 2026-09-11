@@ -258,8 +258,7 @@ export function Pricing({
 
         <div
           ref={scrollContainerRef}
-          className="flex overflow-x-auto flex-nowrap snap-x snap-mandatory gap-6 w-full pb-8 no-scrollbar items-stretch"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          className="flex overflow-x-auto flex-nowrap snap-x snap-mandatory gap-6 w-full pb-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden items-stretch"
         >
           {displayedPlans.map((plan) => {
             const baseName = cleanPlanName(plan.plan_name);

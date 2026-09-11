@@ -90,10 +90,22 @@
 // its name, and an undotted icon-less name still folds to the 1.28.0 tile.
 //
 // Since 1.31.0 the code beside a stem is sized with the stem
-// ([BRAND_STEM_CODE_FONT_SIZE]: its 36px, or the stem's size where that
+// ([BRAND_STEM_CODE_FONT_SIZE]: its cap, or the stem's size where that
 // is smaller) and laid out as the stem is, so on a phone it sits on the
 // stem's baseline and is never larger than the wordmark - as the code is
 // never larger than the 44px mark it sits beside on rokct.ai.
+//
+// Since 1.36.0 the code beside a STEM is capped at the size rokct.ai's
+// ORIGINAL header rendered its code at: the superscript scale of its
+// branding (BRAND_CODE_SCALE, 0.28) of the 44px mark - BRAND_CODE_FONT_SIZE,
+// about 12px - not the 36px that header named inline and then overrode
+// with the branding cache's style (Ray, 2026-09-10: "za in supa is big,
+// look at one in rokct, original one"). The code beside a MARK or a tile
+// is byte-for-byte the 1.24.0 code - rokct.ai's renders exactly as it
+// did (Ray: "if i merge that one it will change country code in rokct to
+// wrong one"); only the stem branch, which no mark shell reaches, takes
+// the new cap. The trigger word of the groups panel may also be the
+// menu's own since 1.36.0 (`megaLabel`, carried through to HeaderMenuNav).
 //
 // The public API is the one the two shells' own headers had, so the pages
 // that already render <Header> (the auth pages, status, careers) compile
@@ -110,6 +122,15 @@
 // It is `sticky`, not `fixed`: it stays in the document flow, so no page
 // under it needs a top padding to keep its first line visible (the hero's
 // own pt-16 is unchanged from 1.13.0 either way).
+//
+// Since 1.38.0 the header's own "Log in" / "Sign up" pair follows the
+// shell's data mode (the 1.35.0 `local` rule, which until now reached only
+// the DECLARED actions through landing-page.ts): with `dataMode="local"` -
+// passed by landing-content.tsx from the mode the page read through
+// siteDataMode() - a visitor with no session gets no pair, on the bar and
+// in the burger panel (showsHeaderAuth in landing/header-menu.ts). A
+// caller that passes no mode, every page that mounted the header before,
+// draws exactly what it drew.
 
 import React, { useCallback, useEffect, useId, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
@@ -132,12 +153,14 @@ import {
   HEADER_MENU,
   brandFoldsToLetter,
   brandFoldsToStem,
+  brandStemLabel,
   brandLetterOf,
   brandStemOf,
   loadHeaderBrand,
   loadHeaderMenu,
   resolveHeaderBrand,
   resolveHeaderMenu,
+  showsHeaderAuth,
   type HeaderBrandCode,
   type HeaderMenuAction,
   type HeaderMenuItem,
@@ -147,6 +170,7 @@ import {
 } from "@/components/custom/landing/header-menu";
 import type { LandingNavItem } from "@/components/custom/landing/landing-config";
 import { SITE_METADATA } from "@/components/custom/landing/site-metadata";
+import type { SiteDataMode } from "@/lib/site-data/kinds";
 import { ThemeToggle } from "@/components/custom/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -167,11 +191,25 @@ export interface HeaderProps {
   /** The call-to-action buttons, as the home SDK declared them. */
   actions?: HeaderMenuAction[];
   /**
+   * The groups panel's trigger word, as resolveHeaderMenu() answers it
+   * (1.36.0): the menu's declared `megaLabel`, or null for the first
+   * group's label. Read only with `groups`.
+   */
+  megaLabel?: string | null;
+  /**
    * The page's live nav, used only when the header loads the menu itself
    * (no menuItems/groups/actions given) to resolve anchors. A page without
    * sections leaves it out and the anchors are dropped.
    */
   nav?: LandingNavItem[];
+  /**
+   * The shell's data mode (1.38.0; base 1.35.0's composer.json `"data"`),
+   * as the page read it through `siteDataMode()`. "local" skips the
+   * header's own Log in / Sign up pair for a visitor with no session (a
+   * local shell has no backend to sign in to); absent, "backend" and
+   * "hybrid" draw it as before.
+   */
+  dataMode?: SiteDataMode;
 }
 
 /** The mark alone, at `size` px: the host's own brand-logo.tsx or the declared image. */
@@ -278,6 +316,12 @@ function BrandStemWordmark({
   collapsed: boolean;
 }) {
   const suffix = name.trim().slice(stem.length);
+  // What the stem span shows (1.39.0): the stem with its first character
+  // upper-cased ([brandStemLabel]; "acme.school" folds to "Acme"). The
+  // suffix is still cut from the name at the stem's length, and the
+  // title on the wordmark is the full name as declared, so nothing but
+  // the one displayed character changes case.
+  const label = brandStemLabel(name) ?? stem;
   // One size for the whole name, set on this span so the stem and the
   // suffix inherit it: the 60px of the large wordmark when the FULL name
   // fits the bar, else what fits ([BRAND_STEM_FONT_SIZE], from the name's
@@ -286,10 +330,11 @@ function BrandStemWordmark({
   const size = { "--brand-chars": name.trim().length, fontSize: BRAND_STEM_FONT_SIZE } as React.CSSProperties;
   return (
     <span
+      title={name.trim()}
       className="flex shrink-0 items-center whitespace-nowrap pt-0.5 font-bold tracking-tighter leading-none text-foreground"
       style={size}
     >
-      <span>{stem}</span>
+      <span>{label}</span>
       <span
         aria-hidden={collapsed}
         className="grid transition-all duration-500 ease-in-out"
@@ -364,10 +409,12 @@ function CollapsingBrand({
   // The stem rule is asked first: a dotted name never reaches the tile.
   const stem = brandFoldsToStem(brand, PLATFORM_NAME) ? brandStemOf(PLATFORM_NAME) : null;
   // Beside a stem (1.31.0) the code is laid out as the stem is - centred,
-  // leading-none, the same top padding - at the stem's size or the 36px
+  // leading-none, the same top padding - at the stem's size or the code's
   // cap, whichever is smaller (BRAND_STEM_CODE_FONT_SIZE, with the same
   // --brand-chars), so it sits on the stem's baseline and never outgrows
-  // it on a phone. Beside a mark or a tile it is the 1.24.0 code, untouched.
+  // it on a phone (1.36.0: that cap is the original header's superscript
+  // size, about 12px, no longer 36px). Beside a mark or a tile it is the
+  // 1.24.0 code, untouched: rokct.ai's renders exactly as it did.
   const codeClassName =
     stem !== null
       ? "ml-1 inline-block self-center pt-0.5 font-medium leading-none text-foreground transition-all duration-500 ease-in-out"
@@ -519,8 +566,10 @@ export function Header({
   openSignupPopup,
   menuItems: menuItemsProp,
   groups: groupsProp,
+  megaLabel: megaLabelProp,
   actions: actionsProp,
   nav,
+  dataMode,
 }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const [loaded, setLoaded] = useState<ResolvedHeaderMenu | null>(null);
@@ -552,15 +601,19 @@ export function Header({
   const menuItems = menuItemsProp ?? loaded?.items ?? [];
   const groups = groupsProp ?? loaded?.groups ?? [];
   const actions = actionsProp ?? loaded?.actions ?? [];
+  // 1.36.0: the trigger word rides with the groups it names.
+  const megaLabel = groupsProp !== undefined ? (megaLabelProp ?? null) : (loaded?.megaLabel ?? null);
 
   const user = (session as { user?: { email?: string; name?: string } } | null)
     ?.user;
   const hasMenu =
     menuItems.length > 0 || groups.length > 0 || actions.length > 0;
-  // The auth links are always there to reach (Dashboard, or Log in and Sign
-  // up), so the burger always has something to open. Spelled out so the
-  // rule is visible: a header with no menu AND no auth would hide it.
-  const hasAuth = true;
+  // The auth links are there to reach (Dashboard, or Log in and Sign up)
+  // unless the shell is local (1.38.0: no backend, no pair for a visitor
+  // with no session), so the burger has something to open whenever there
+  // is anything. Spelled out so the rule is visible: a header with no menu
+  // AND no auth hides it.
+  const hasAuth = !!user || showsHeaderAuth(dataMode);
   const showBurger = hasMenu || hasAuth;
 
   const close = useCallback(() => setOpen(false), []);
@@ -585,11 +638,12 @@ export function Header({
     };
   }, [open]);
 
+  // 1.38.0: a local shell draws no pair for a visitor with no session.
   const auth = user ? (
     <Link href={dashboardUrl} className={AUTH_OUTLINE}>
       {t("common.dashboard")}
     </Link>
-  ) : (
+  ) : !hasAuth ? null : (
     <>
       <Link href={loginUrl} onClick={openLoginPopup} className={AUTH_LINK}>
         {t("auth.login")}
@@ -614,6 +668,7 @@ export function Header({
     <HeaderMenuNav
       items={menuItems}
       groups={groups}
+      megaLabel={megaLabel}
       className="hidden lg:flex"
     />
   );
@@ -719,7 +774,7 @@ export function Header({
             >
               {t("common.dashboard")}
             </Link>
-          ) : (
+          ) : !hasAuth ? null : (
             <>
               <Link
                 href={loginUrl}

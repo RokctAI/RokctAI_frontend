@@ -1,0 +1,13 @@
+{
+  "items": [
+    {
+      "name": "Acme Corner Store",
+      "address": "1 Acme Street",
+      "town": "Acme Town",
+      "lat": -25.75,
+      "lng": 28.19,
+      "mapsUrl": "https://maps.acme.school/corner-store"
+    },
+    { "name": "Acme Depot", "address": "2 Acme Road", "town": "Acme Town" }
+  ]
+}
