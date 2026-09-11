@@ -14,58 +14,46 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// /legal/<id> - one legal document (corporate_sdk 1.0.0), the Next.js
-// counterpart of the Dart corporate_sdk's TermPage / PolicyPage and of
-// rokct.ai's hand-rolled app/legal/[id]/page.tsx. A server component: the
-// document is read on the server through `loadLegalDoc` (the one seam
-// 1.1.0 extends with the shell's data/ folder), the first HTML carries the
-// words, and a missing or disabled document is a 404.
-
-// ==========================================
-// [GENERATED TEMPLATE FILE]
-// This file was installed from: corporate_sdk
-// Feel free to modify and customize this code.
-// Note: If you edit this file, the SDK installer will detect your changes
-// and automatically skip overwriting it during future upgrades.
-// ==========================================
-
-import React from "react";
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { TermsService } from "@/app/services/control/terms";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollText } from "lucide-react";
 
-import { buildPageMetadata } from "@/app/lib/site-metadata";
-import { LegalDocView } from "@/components/custom/legal/legal-doc";
-import { LegalFrame } from "@/components/custom/legal/legal-frame";
-import {
-  loadLegalDoc,
-  loadLegalIndex,
-} from "@/components/custom/legal/load-legal-doc";
-
-export const dynamic = "force-dynamic";
-
-interface LegalDocPageProps {
-  params: Promise<{ id: string }>;
-}
-
-export async function generateMetadata({
+export default async function LegalPage({
   params,
-}: LegalDocPageProps): Promise<Metadata> {
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
-  const doc = await loadLegalDoc(decodeURIComponent(id));
-  if (!doc) return buildPageMetadata();
-  return buildPageMetadata({ title: doc.title });
-}
+  let term;
 
-export default async function LegalDocPage({ params }: LegalDocPageProps) {
-  const { id } = await params;
-  const [doc, terms] = await Promise.all([
-    loadLegalDoc(decodeURIComponent(id)),
-    loadLegalIndex(),
-  ]);
-  if (!doc) notFound();
+  try {
+    term = await TermsService.getSystemTerm(id);
+  } catch (e) {
+    console.error("Failed to fetch term", e);
+  }
+
+  if (!term || term.disabled) {
+    notFound();
+  }
+
   return (
-    <LegalFrame terms={terms}>
-      <LegalDocView doc={doc} />
-    </LegalFrame>
+    <div className="container mx-auto py-12 px-4 max-w-4xl">
+      <Card>
+        <CardHeader className="border-b space-y-4 pb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <ScrollText className="h-6 w-6 text-primary" />
+            </div>
+            <CardTitle className="text-2xl font-bold">{term.title}</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="prose dark:prose-invert max-w-none whitespace-pre-wrap leading-relaxed text-muted-foreground">
+            {term.terms}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

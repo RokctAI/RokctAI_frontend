@@ -49,18 +49,6 @@
       "content_sha256": "1c758cdec101e100f88121eee2f2e5624653bf0f03186ba34f7fc09ed86001c5"
     },
     {
-      "name": "corporate_sdk",
-      "home_sdk": false,
-      "cache": ".rokct/cache/corporate",
-      "git": "https://github.com/RokctAI/corporate",
-      "path": "../corporate/corporate/nextjs",
-      "ref": "main",
-      "commit": "1d28d71d8cf056539545df32eae252a8015e8ed3",
-      "version": "1.1.0",
-      "install_py_sha256": "6e03485fd03617ea1e175adc50354a91af25e213908371fa3581083d8aa7d4ba",
-      "content_sha256": "b2a2c9667f04048f45097d13a29f85eadd49e9fa04a74b561f57a7d198ed36c4"
-    },
-    {
       "name": "users_sdk",
       "home_sdk": false,
       "cache": ".rokct/cache/users",

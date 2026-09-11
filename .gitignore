@@ -115,7 +115,6 @@ migrate_working_dir/
 /app/(chat)/api/summarize/route.ts
 /app/(chat)/chat/\[id\]/page.tsx
 /app/(chat)/page.tsx
-/app/about/page.tsx
 /app/actions/ai/admin.ts
 /app/actions/ai/competitor.ts
 /app/actions/ai/control.ts
@@ -142,7 +141,6 @@ migrate_working_dir/
 /app/actions/base/status.ts
 /app/actions/booking/booking.ts
 /app/actions/comms/whatsapp.ts
-/app/actions/corporate/legal.ts
 /app/actions/gateways/admin/finance.ts
 /app/actions/gateways/admin/transactions.ts
 /app/actions/gateways/finance.ts
@@ -554,7 +552,6 @@ migrate_working_dir/
 /app/handson/all/workspace/communication/events/page.tsx
 /app/handson/all/workspace/page.tsx
 /app/landing/page.tsx
-/app/legal/page.tsx
 /app/lib/intent-engine.ts
 /app/lib/session.ts
 /app/lib/site-metadata.ts
@@ -652,7 +649,6 @@ migrate_working_dir/
 /app/services/server/intent-classifier.ts
 /app/styles/rokct-marquee.css
 /app/styles/rokct-scroll.css
-/app/team/page.tsx
 /app/twitter-image.tsx
 /components/admin/GenericReport.tsx
 /components/custom/CompetitorMap.tsx
@@ -664,12 +660,6 @@ migrate_working_dir/
 /components/custom/beta-toggle.tsx
 /components/custom/chat-section.client.tsx
 /components/custom/chat.tsx
-/components/custom/company/company-frame.tsx
-/components/custom/company/company-pages.ts
-/components/custom/company/company-sections.tsx
-/components/custom/company/markdown-parser.ts
-/components/custom/company/markdown.tsx
-/components/custom/company/team-grid.tsx
 /components/custom/copied-pricing.client.tsx
 /components/custom/faq-section.client.tsx
 /components/custom/floating-nav.client.tsx
@@ -708,9 +698,6 @@ migrate_working_dir/
 /components/custom/landing/site-metadata.ts
 /components/custom/landing/testimonials-marquee.tsx
 /components/custom/left-sidebar.tsx
-/components/custom/legal/legal-doc.tsx
-/components/custom/legal/legal-frame.tsx
-/components/custom/legal/load-legal-doc.ts
 /components/custom/logos.client.tsx
 /components/custom/menu-label.tsx
 /components/custom/message.tsx
