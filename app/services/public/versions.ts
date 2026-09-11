@@ -46,7 +46,9 @@ export class VersionsService {
         baseUrl:
           process.env.NEXT_PUBLIC_FRAPPE_URL || process.env.ROKCT_BASE_URL,
       }),
-      frappe.call({ method: "rpanel.api.get_version" }),
+      // `FrappeApp.call()` takes no arguments and returns a request builder
+      // synchronously; the request only happens on `.get()`/`.post()`.
+      frappe.call().get<{ message?: unknown }>("rpanel.api.get_version"),
     ]);
 
     // platformCall already unwraps Frappe's `message` envelope.
@@ -54,10 +56,13 @@ export class VersionsService {
       rokctRes.status === "fulfilled" && rokctRes.value ? rokctRes.value : {};
     const paasVer =
       paasRes.status === "fulfilled" && paasRes.value ? paasRes.value : null;
-    const rpanelVer =
+    const rpanelRaw =
       rpanelRes.status === "fulfilled"
-        ? rpanelRes.value.message || rpanelRes.value
+        ? (rpanelRes.value?.message ?? rpanelRes.value)
         : null;
+    // Only ever surface a string as the version; anything else is a bad
+    // payload (e.g. an object) and must not be stored as `version`.
+    const rpanelVer = typeof rpanelRaw === "string" ? rpanelRaw : null;
 
     // Merge datas
     const versions = {
