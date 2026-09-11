@@ -713,6 +713,24 @@ export function brandStemOf(name: string | null | undefined): string | null {
 }
 
 /**
+ * The stem as it is DISPLAYED (since 1.39.0): [brandStemOf] with its first
+ * character upper-cased, so "acme.school" folds to "Acme" on the bar and in
+ * the hero while the full name - the title, the aria-label, the metadata,
+ * the suffix that slides away - stays exactly what the shell declared,
+ * lower case and all. Only the first character changes (`toUpperCase()`
+ * on it alone, so "acme" is "Acme" and "ACME" or "Acme" are themselves);
+ * a name with no stem answers `null` as [brandStemOf] does, so an undotted
+ * name is never touched - the letter tile, the whole-name hero wordmark
+ * and the still brand render what they rendered. The rule is one place:
+ * the header and the hero both ask here, never capitalise on their own.
+ */
+export function brandStemLabel(name: string | null | undefined): string | null {
+  const stem = brandStemOf(name);
+  if (stem === null) return null;
+  return stem.charAt(0).toUpperCase() + stem.slice(1);
+}
+
+/**
  * Whether a resolved brand folds to the stem of `name` (since 1.29.0):
  * a COLLAPSING brand that declared no image, keeps its wordmark and whose
  * name has a stem ([brandStemOf]). The header asks this BEFORE

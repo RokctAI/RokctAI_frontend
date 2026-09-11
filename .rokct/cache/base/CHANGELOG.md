@@ -1,5 +1,40 @@
 # Changelog
 
+## 1.39.0
+
+* The folded brand stem is capitalised where base shows ONLY the stem
+  (Ray, 2026-09-11 04:23Z: the brand string stays the domain, lower
+  case - "supacharge.school" - and the stem without ".school" is
+  capitalised: "supacharge" shows as "Supacharge"). NEW
+  `brandStemLabel(name)` beside `brandStemOf` in
+  `components/custom/landing/header-menu.ts` is the one rule: the
+  1.29.0 stem with its first character upper-cased, `null` for a name
+  with no stem exactly as `brandStemOf` answers, so an undotted name
+  ("Rokct") is never touched and a stem that already starts upper-case
+  ("Juvo") is itself. The header's stem wordmark (`header.tsx`,
+  `BrandStemWordmark`) shows the label in the stem span, still cuts the
+  suffix from the name at the stem's length so ".school" slides away
+  as it did, and now carries `title={name.trim()}` - the full name as
+  declared. The hero's stem wordmark (`landing-page.ts`,
+  `resolveHeroWordmark`) answers `{ text: brandStemLabel(name) ?? name,
+  name }`, so `brand: "stem"` draws "Supacharge" with the full domain on
+  the element's aria-label and title as before; the whole-name case
+  ("stem" on an undotted name) is unchanged. Nothing else changes case:
+  the site metadata, the network strip, the footer and every brand
+  string source stay what the shell declared. The fold rule, the
+  1.36.0 code cap (`calc(44px * 0.28)`) and the code's placement beside
+  the stem are untouched; no brand string is named in base.
+* Tests: `header-brand.test.mts` gains the `brandStemLabel` cases
+  (lower-case, already-capitalised and undotted names, the header
+  markup) and `landing-page.test.mts` reads "Acme" / "Supacharge" from
+  `resolveHeroWordmark` with the lower-case name beside it;
+  `test_manifest.py` gains `test_folded_stem_is_capitalised` (one
+  `toUpperCase` in base, in `brandStemLabel`; the header and the hero
+  show the label and title the full name).
+* Release order: 1.38.0 (RokctAI/core #220, the page slot and the
+  header's local-mode switch) merged first; this release sits above it
+  on main and touches none of its files' rules.
+
 ## 1.38.0
 
 * A registered section may name the PAGE it belongs to, so a home SDK's

@@ -1237,7 +1237,8 @@ class TestRegistryMarkers(unittest.TestCase):
         wordmark = header[header.index("function BrandStemWordmark("):header.index("function BrandBlock(")]
         # Text only: the stem stays, the dot and the rest close with the collapse.
         self.assertIn("const suffix = name.trim().slice(stem.length);", wordmark)
-        self.assertIn("<span>{stem}</span>", wordmark)
+        # 1.39.0: the span shows the capitalised label of that same stem.
+        self.assertIn("<span>{label}</span>", wordmark)
         self.assertIn('<span className="min-w-0 overflow-hidden">{suffix}</span>', wordmark)
         self.assertIn("aria-hidden={collapsed}", wordmark)
         # The suffix SLIDES into the stem (Ray: "not as a back type but like
@@ -2005,6 +2006,59 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertIn('className="overflow-hidden transition-all duration-500 ease-in-out flex items-center"', row)
         self.assertIn('width: isExpanded ? "0px" : "250px",', row)
 
+    def test_folded_stem_is_capitalised(self):
+        """1.39.0 (Ray, 2026-09-11 04:23Z: the stem without .school is
+        capitalised - "supacharge" shows as "Supacharge"): ONE function,
+        brandStemLabel in header-menu.ts, upper-cases the stem's first
+        character; the header's stem span and the hero's stem wordmark
+        show it, while the title / aria-label / suffix / metadata keep
+        the full name as declared. No render site capitalises on its own,
+        the fold rule (brandStemOf, the 1.29.0 cap, the code beside the
+        stem) is untouched, and no brand string is named."""
+        src = read(HEADER_MENU_REGISTRY)
+        self.assertIn("export function brandStemLabel(name: string | null | undefined): string | null {", src)
+        label = src[src.index("export function brandStemLabel("):src.index("export function brandFoldsToStem(")]
+        self.assertIn("const stem = brandStemOf(name);", label)
+        self.assertIn("if (stem === null) return null;", label)
+        self.assertIn("return stem.charAt(0).toUpperCase() + stem.slice(1);", label)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", src))
+        letter = code[code.index("export function brandLetterOf("):code.index("export function brandFoldsToLetter(")]
+        self.assertEqual(letter.count("toUpperCase"), 1, "the 1.28.0 letter tile's own upper-casing")
+        self.assertEqual(code.count("toUpperCase"), 2, "the stem's capitalisation lives in brandStemLabel alone")
+        # The header: the span shows the label, the suffix is cut at the
+        # stem, the wordmark's title is the full name.
+        header = read(HEADER)
+        wordmark = header[header.index("function BrandStemWordmark("):header.index("function BrandBlock(")]
+        self.assertIn("const suffix = name.trim().slice(stem.length);", wordmark)
+        self.assertIn("const label = brandStemLabel(name) ?? stem;", wordmark)
+        self.assertIn("<span>{label}</span>", wordmark)
+        self.assertNotIn("<span>{stem}</span>", wordmark)
+        self.assertIn("title={name.trim()}", wordmark)
+        self.assertNotIn("toUpperCase", LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", header)))
+        self.assertRegex(
+            header,
+            r"import \{[^}]*\bbrandStemLabel\b[^}]*\} from \"@/components/custom/landing/header-menu\";",
+        )
+        # The hero: the resolver answers the label, the view still titles
+        # and labels the element with the full name.
+        resolver = read(LANDING_PAGE_RESOLVER)
+        self.assertIn("brandStemLabel(name) ?? name", resolver)
+        self.assertNotIn("brandStemOf", resolver.replace("[brandStemOf]", ""))
+        self.assertNotIn("toUpperCase", LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", resolver)))
+        view = read(HERO_VIEW)
+        slot = view[view.index("function HeroWordmarkSlot("):view.index("export interface HeroViewProps")]
+        self.assertIn("aria-label={wordmark.name}", slot)
+        self.assertIn("title={wordmark.name}", slot)
+        self.assertIn("{wordmark.text}", slot)
+        self.assertNotIn("toUpperCase", slot)
+        # The fold cap and the code beside the stem are what 1.36.0 left.
+        self.assertIn("export const BRAND_CODE_SCALE = 0.28;", src)
+        self.assertIn("calc(${BRAND_MARK_SIZE_PX}px * ${BRAND_CODE_SCALE})", src)
+        for text in (src, header, resolver):
+            plain = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", text)).lower()
+            self.assertNotIn("supacharge", plain)
+            self.assertNotIn("rokct.ai", plain)
+
     def test_hero_config_declares_the_brand_and_sections_the_root_class(self):
         config = read(os.path.join(LANDING, "hero-config.ts"))
         self.assertIn('brand?: "name" | "stem";', config)
@@ -2015,7 +2069,7 @@ class TestRegistryMarkers(unittest.TestCase):
         sections = read(os.path.join(LANDING, "page-sections.ts"))
         self.assertIn("rootClass?: string;", sections)
         resolver = read(LANDING_PAGE_RESOLVER)
-        self.assertIn("brandStemOf(name) ?? name", resolver)
+        self.assertIn("brandStemLabel(name) ?? name", resolver)
         self.assertIn("s.meta.rootClass?.trim()", resolver)
         wrapper = read(LANDING_CONTENT)
         self.assertIn("rootClass?: string;", wrapper)

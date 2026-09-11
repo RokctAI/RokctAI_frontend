@@ -429,13 +429,22 @@ describe('resolveHeroWordmark', () => {
     assert.equal(resolveHeroWordmark(undefined, 'acme.school'), null);
   });
 
-  it('answers the stem of a dotted name for "stem", with the full name beside it', () => {
-    assert.deepEqual(resolveHeroWordmark('stem', 'acme.school'), { text: 'acme', name: 'acme.school' });
-    assert.deepEqual(resolveHeroWordmark('stem', ' acme.school.co '), { text: 'acme', name: ' acme.school.co ' });
+  // 1.39.0 (Ray, 2026-09-11): the displayed stem is capitalised; the name
+  // beside it (the aria-label and title) is the full domain as declared.
+  it('answers the capitalised stem of a dotted name for "stem", with the full name beside it', () => {
+    assert.deepEqual(resolveHeroWordmark('stem', 'acme.school'), { text: 'Acme', name: 'acme.school' });
+    assert.deepEqual(resolveHeroWordmark('stem', ' acme.school.co '), { text: 'Acme', name: ' acme.school.co ' });
+    assert.deepEqual(resolveHeroWordmark('stem', 'supacharge.school'), { text: 'Supacharge', name: 'supacharge.school' });
   });
 
-  it('answers the whole name for "stem" when it has no stem', () => {
+  it('a stem that already starts upper-case is unchanged', () => {
+    assert.deepEqual(resolveHeroWordmark('stem', 'Acme.school'), { text: 'Acme', name: 'Acme.school' });
+    assert.deepEqual(resolveHeroWordmark('stem', 'ACME.school'), { text: 'ACME', name: 'ACME.school' });
+  });
+
+  it('answers the whole name, untouched, for "stem" when it has no stem', () => {
     assert.deepEqual(resolveHeroWordmark('stem', 'acme'), { text: 'acme', name: 'acme' });
+    assert.deepEqual(resolveHeroWordmark('stem', 'Rokct'), { text: 'Rokct', name: 'Rokct' });
     assert.deepEqual(resolveHeroWordmark('stem', '.acme'), { text: '.acme', name: '.acme' });
   });
 });

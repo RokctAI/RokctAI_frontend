@@ -153,6 +153,7 @@ import {
   HEADER_MENU,
   brandFoldsToLetter,
   brandFoldsToStem,
+  brandStemLabel,
   brandLetterOf,
   brandStemOf,
   loadHeaderBrand,
@@ -315,6 +316,12 @@ function BrandStemWordmark({
   collapsed: boolean;
 }) {
   const suffix = name.trim().slice(stem.length);
+  // What the stem span shows (1.39.0): the stem with its first character
+  // upper-cased ([brandStemLabel]; "acme.school" folds to "Acme"). The
+  // suffix is still cut from the name at the stem's length, and the
+  // title on the wordmark is the full name as declared, so nothing but
+  // the one displayed character changes case.
+  const label = brandStemLabel(name) ?? stem;
   // One size for the whole name, set on this span so the stem and the
   // suffix inherit it: the 60px of the large wordmark when the FULL name
   // fits the bar, else what fits ([BRAND_STEM_FONT_SIZE], from the name's
@@ -323,10 +330,11 @@ function BrandStemWordmark({
   const size = { "--brand-chars": name.trim().length, fontSize: BRAND_STEM_FONT_SIZE } as React.CSSProperties;
   return (
     <span
+      title={name.trim()}
       className="flex shrink-0 items-center whitespace-nowrap pt-0.5 font-bold tracking-tighter leading-none text-foreground"
       style={size}
     >
-      <span>{stem}</span>
+      <span>{label}</span>
       <span
         aria-hidden={collapsed}
         className="grid transition-all duration-500 ease-in-out"

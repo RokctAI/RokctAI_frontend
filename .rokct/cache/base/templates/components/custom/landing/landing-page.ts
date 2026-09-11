@@ -85,7 +85,7 @@
 import {
   loadHeaderMenu,
   resolveHeaderMenu,
-  brandStemOf,
+  brandStemLabel,
   type ResolvedHeaderMenu,
 } from "@/components/custom/landing/header-menu";
 import {
@@ -382,7 +382,7 @@ export async function resolveHeroConfig(): Promise<HeroConfig> {
 
 /** What the hero's wordmark slot shows as text, when it shows text at all. */
 export interface HeroWordmark {
-  /** The visible text: the stem of `name`, or `name` itself when it has none. */
+  /** The visible text: the capitalised stem of `name`, or `name` itself when it has none. */
   text: string;
   /** The full platform name, for the aria-label and title on the text. */
   name: string;
@@ -392,14 +392,16 @@ export interface HeroWordmark {
  * The 1.32.0 `brand` rule. `"name"` (the default, and what every shell
  * drew before the field existed) answers null: the hero draws the host's
  * own wordmark component, exactly as it did. `"stem"` answers the text the
- * hero renders instead: [brandStemOf] of `name` ("acme.school" gives
- * "acme"), or the whole name when it has no stem, with the full name on
- * the element's aria-label and title. No brand string is known here.
+ * hero renders instead: [brandStemLabel] of `name` - the stem with its
+ * first character upper-cased, since 1.39.0 ("acme.school" gives "Acme") -
+ * or the whole name, untouched, when it has no stem, with the full name
+ * as declared on the element's aria-label and title. No brand string is
+ * known here.
  */
 export function resolveHeroWordmark(
   brand: HeroConfig["brand"],
   name: string,
 ): HeroWordmark | null {
   if (brand !== "stem") return null;
-  return { text: brandStemOf(name) ?? name, name };
+  return { text: brandStemLabel(name) ?? name, name };
 }
