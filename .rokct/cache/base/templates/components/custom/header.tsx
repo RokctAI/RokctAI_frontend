@@ -122,6 +122,15 @@
 // It is `sticky`, not `fixed`: it stays in the document flow, so no page
 // under it needs a top padding to keep its first line visible (the hero's
 // own pt-16 is unchanged from 1.13.0 either way).
+//
+// Since 1.38.0 the header's own "Log in" / "Sign up" pair follows the
+// shell's data mode (the 1.35.0 `local` rule, which until now reached only
+// the DECLARED actions through landing-page.ts): with `dataMode="local"` -
+// passed by landing-content.tsx from the mode the page read through
+// siteDataMode() - a visitor with no session gets no pair, on the bar and
+// in the burger panel (showsHeaderAuth in landing/header-menu.ts). A
+// caller that passes no mode, every page that mounted the header before,
+// draws exactly what it drew.
 
 import React, { useCallback, useEffect, useId, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
@@ -150,6 +159,7 @@ import {
   loadHeaderMenu,
   resolveHeaderBrand,
   resolveHeaderMenu,
+  showsHeaderAuth,
   type HeaderBrandCode,
   type HeaderMenuAction,
   type HeaderMenuItem,
@@ -159,6 +169,7 @@ import {
 } from "@/components/custom/landing/header-menu";
 import type { LandingNavItem } from "@/components/custom/landing/landing-config";
 import { SITE_METADATA } from "@/components/custom/landing/site-metadata";
+import type { SiteDataMode } from "@/lib/site-data/kinds";
 import { ThemeToggle } from "@/components/custom/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -190,6 +201,14 @@ export interface HeaderProps {
    * sections leaves it out and the anchors are dropped.
    */
   nav?: LandingNavItem[];
+  /**
+   * The shell's data mode (1.38.0; base 1.35.0's composer.json `"data"`),
+   * as the page read it through `siteDataMode()`. "local" skips the
+   * header's own Log in / Sign up pair for a visitor with no session (a
+   * local shell has no backend to sign in to); absent, "backend" and
+   * "hybrid" draw it as before.
+   */
+  dataMode?: SiteDataMode;
 }
 
 /** The mark alone, at `size` px: the host's own brand-logo.tsx or the declared image. */
@@ -542,6 +561,7 @@ export function Header({
   megaLabel: megaLabelProp,
   actions: actionsProp,
   nav,
+  dataMode,
 }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const [loaded, setLoaded] = useState<ResolvedHeaderMenu | null>(null);
@@ -580,10 +600,12 @@ export function Header({
     ?.user;
   const hasMenu =
     menuItems.length > 0 || groups.length > 0 || actions.length > 0;
-  // The auth links are always there to reach (Dashboard, or Log in and Sign
-  // up), so the burger always has something to open. Spelled out so the
-  // rule is visible: a header with no menu AND no auth would hide it.
-  const hasAuth = true;
+  // The auth links are there to reach (Dashboard, or Log in and Sign up)
+  // unless the shell is local (1.38.0: no backend, no pair for a visitor
+  // with no session), so the burger has something to open whenever there
+  // is anything. Spelled out so the rule is visible: a header with no menu
+  // AND no auth hides it.
+  const hasAuth = !!user || showsHeaderAuth(dataMode);
   const showBurger = hasMenu || hasAuth;
 
   const close = useCallback(() => setOpen(false), []);
@@ -608,11 +630,12 @@ export function Header({
     };
   }, [open]);
 
+  // 1.38.0: a local shell draws no pair for a visitor with no session.
   const auth = user ? (
     <Link href={dashboardUrl} className={AUTH_OUTLINE}>
       {t("common.dashboard")}
     </Link>
-  ) : (
+  ) : !hasAuth ? null : (
     <>
       <Link href={loginUrl} onClick={openLoginPopup} className={AUTH_LINK}>
         {t("auth.login")}
@@ -743,7 +766,7 @@ export function Header({
             >
               {t("common.dashboard")}
             </Link>
-          ) : (
+          ) : !hasAuth ? null : (
             <>
               <Link
                 href={loginUrl}

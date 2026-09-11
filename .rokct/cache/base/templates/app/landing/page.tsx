@@ -134,6 +134,7 @@ export default async function LandingPage() {
       session={session}
       menu={page.menu}
       rootClass={page.rootClass}
+      dataMode={dataMode}
       overlays={
         <RegisteredSections
           sections={page.overlays}

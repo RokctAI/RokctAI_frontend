@@ -581,6 +581,28 @@ class TestRegisterInjection(unittest.TestCase):
         # The track rule imports nothing, so node executes it as it is.
         self.assertNotIn("import ", re.sub(r"^\s*//.*$", "", read(LOGOS_TRACK), flags=re.M))
 
+    def test_the_plan_scroller_hides_its_scrollbar(self):
+        """1.18.2: the plan row asked for a hidden scrollbar with a
+        `no-scrollbar` class defined nowhere in this SDK or the shell, so
+        the rule never existed and webkit drew base_sdk's thumb under the
+        row. The row states the three declarations itself, as
+        AGENT_CARD_ROW already does, and nothing hides the scroll."""
+        row = read(os.path.join(TEMPLATES, "components", "custom", "pricing.client.tsx"))
+        # The inert class is gone from the SDK entirely.
+        self.assertNotIn("no-scrollbar", row)
+        # All three engines, in the className rather than half of them in an
+        # inline style: Firefox, legacy Edge/IE and webkit.
+        for utility in ("[scrollbar-width:none]",
+                        "[-ms-overflow-style:none]",
+                        "[&::-webkit-scrollbar]:hidden"):
+            self.assertIn(utility, row)
+        # Stated once: no inline style repeating what the classes declare.
+        self.assertNotIn("scrollbarWidth", row)
+        self.assertNotIn("msOverflowStyle", row)
+        # Hiding the bar must not hide the scroll.
+        self.assertIn("overflow-x-auto", row)
+        self.assertNotIn("overflow-x-hidden", row)
+
     def test_section_entries_are_server_safe(self):
         """1.18.0 (base_sdk 1.32.0 renders the landing on the server and
         reads each registered module's `meta` there): every page-sections

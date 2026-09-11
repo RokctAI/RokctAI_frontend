@@ -21,14 +21,6 @@
 // 1.1.0 extends with the shell's data/ folder), the first HTML carries the
 // words, and a missing or disabled document is a 404.
 
-// ==========================================
-// [GENERATED TEMPLATE FILE]
-// This file was installed from: corporate_sdk
-// Feel free to modify and customize this code.
-// Note: If you edit this file, the SDK installer will detect your changes
-// and automatically skip overwriting it during future upgrades.
-// ==========================================
-
 import React from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";

@@ -153,6 +153,7 @@ import {
   loadSiteMetadata,
   type SiteMetadataCopy,
 } from "@/components/custom/landing/site-metadata";
+import type { SiteDataMode } from "@/lib/site-data/kinds";
 
 /**
  * One fixed destination in the header menu: a route or an external URL the
@@ -596,6 +597,22 @@ export function resolveHeaderMenu(
     actions: [...(menu.actions ?? [])],
     megaLabel,
   };
+}
+
+/**
+ * Whether the header draws its OWN "Log in" / "Sign up" pair for a
+ * visitor with no session (1.38.0): the 1.35.0 `local` rule
+ * (landing-page.ts's dropBackendOnlyActions drops the DECLARED sign-in /
+ * sign-up actions) applied to the header's own surface. A shell that
+ * declares `"data": "local"` has no backend, so the two routes auth_sdk
+ * would serve are dead and the pair is skipped; "backend", "hybrid" and
+ * an undeclared mode (every caller that passes none, as before) draw it.
+ * Pure: the header takes the mode as a prop, read on the server by the
+ * page through `siteDataMode()`, so the "use client" header never imports
+ * the server-only reader.
+ */
+export function showsHeaderAuth(dataMode: SiteDataMode | undefined): boolean {
+  return dataMode !== "local";
 }
 
 /**

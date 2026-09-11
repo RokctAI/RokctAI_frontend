@@ -71,7 +71,12 @@
 //
 // [arrangeLandingPage] is the pure rule (the loaded modules in, the page's
 // shape out; the node tests execute it) and [resolveLandingPage] the loader
-// the page awaits. [resolveHeroConfig] is the hero's half: HERO_CONFIG
+// the page awaits. Since 1.38.0 a section may name another page
+// (`meta.page`, "about" or "team"): the landing rule keeps only landing
+// sections, and [pageSectionsFor] is what a company page's renderer
+// (corporate_sdk's /about, /team) awaits - the same loader, `renders` and
+// order rules, filtered to its page - so a home SDK registers a card for
+// a company page with the one registry line it already knows. [resolveHeroConfig] is the hero's half: HERO_CONFIG
 // with the registered copy laid over it, and [resolveHeroWordmark] the
 // 1.32.0 `brand` rule - what the hero's wordmark slot shows as text when a
 // home SDK's copy declares `brand: "stem"` (null, the host's own wordmark
@@ -94,12 +99,15 @@ import {
 } from "@/components/custom/landing/landing-config";
 import {
   DEFAULT_PAGE_SECTION_ORDER,
+  DEFAULT_PAGE_SLOT,
   PAGE_SECTIONS,
+  sectionPageOf,
   type PageSectionComponent,
   type PageSectionContext,
   type PageSectionEntry,
   type PageSectionMeta,
   type PageSectionModule,
+  type PageSlot,
 } from "@/components/custom/landing/page-sections";
 
 /** One registered section, loaded: what the page needs to place and draw it. */
@@ -265,9 +273,7 @@ export function arrangeLandingPage(
   ctx: PageSectionContext,
   headerMenu: Parameters<typeof resolveHeaderMenu>[0],
 ): LandingPageLayout {
-  const present = loaded
-    .filter((s) => s.meta.renders?.(ctx) ?? true)
-    .sort((a, b) => a.order - b.order);
+  const present = presentSectionsFor(DEFAULT_PAGE_SLOT, loaded, ctx);
   const overlays = present.filter((s) => s.order < 0);
   const flow = present.filter((s) => s.order >= 0);
   const navItems: LandingNavItem[] = [
@@ -290,6 +296,43 @@ export function arrangeLandingPage(
 }
 
 /**
+ * The sections of `page`, in page order (1.38.0): the loaded sections
+ * whose `meta.page` is `page` (absent means the landing page), asked
+ * `meta.renders(ctx)` once each, sorted by `order` (stable, so registry
+ * order breaks a tie). The one rule both the landing arrangement and
+ * [pageSectionsFor] apply.
+ */
+export function presentSectionsFor(
+  page: PageSlot,
+  loaded: LoadedSection[],
+  ctx: PageSectionContext,
+): LoadedSection[] {
+  return loaded
+    .filter((s) => sectionPageOf(s.meta) === page)
+    .filter((s) => s.meta.renders?.(ctx) ?? true)
+    .sort((a, b) => a.order - b.order);
+}
+
+/**
+ * What a company page's renderer awaits (1.38.0): every registered
+ * section that names `page` in its `meta.page`, loaded through the same
+ * loader as the landing's (a failing module skipped and logged, an
+ * unreadable meta rendered with defaults), filtered by `meta.renders(ctx)`
+ * and ordered by `meta.order`. `ctx` defaults to no plans and no session -
+ * a company page prefetches nothing; the renderer passes its own when it
+ * read one. Nothing registered for the page answers `[]`, and the page
+ * draws its own empty state.
+ */
+export async function pageSectionsFor(
+  page: PageSlot,
+  ctx: PageSectionContext = { plans: [], session: null },
+  entries: PageSectionEntry[] = PAGE_SECTIONS,
+): Promise<LoadedSection[]> {
+  const loaded = await loadPageSections(entries);
+  return presentSectionsFor(page, loaded, ctx);
+}
+
+/**
  * The 1.35.0 `local` rule for the header's DECLARED call-to-action
  * buttons (a home SDK's `HeaderMenu.actions`): a shell that declares
  * `"data": "local"` has no backend, so an action that leads to the
@@ -299,14 +342,13 @@ export function arrangeLandingPage(
  * "hybrid". Applied by [arrangeLandingPage] to the resolved menu, so the
  * header component itself is untouched.
  *
- * TODO(base 1.36.0 merge): the header's OWN "Log in" / "Sign up" pair
- * (components/custom/header.tsx, the `auth` element drawn for a visitor
- * with no session from the `loginUrl` / `signupUrl` props that
- * landing-content.tsx passes) is not a declared action, so this rule does
- * not reach it, and those two files belong to the 1.36.0 header branch.
- * When that branch merges, header.tsx skips the pair when
- * `siteDataMode() === "local"` (lib/site-data/read-site-data.ts; or a
- * `dataMode` prop landing-content.tsx passes from the page).
+ * The header's OWN "Log in" / "Sign up" pair (components/custom/header.tsx,
+ * the `auth` element drawn for a visitor with no session) is not a declared
+ * action, so this rule does not reach it: since 1.38.0 the page hands the
+ * mode it read through `siteDataMode()` to landing-content.tsx, which
+ * passes it to the header as `dataMode`, and the header skips the pair
+ * when `showsHeaderAuth(dataMode)` (header-menu.ts) answers false - the
+ * same `local` rule, on the header's own surface.
  */
 export function dropBackendOnlyActions(
   actions: ResolvedHeaderMenu["actions"],

@@ -1,5 +1,53 @@
 # Changelog
 
+## 1.18.2
+
+Requires base_sdk >= 1.32.0 and auth_sdk >= 1.7.0 as before. No install,
+integration or floor changes.
+
+* The plan row no longer draws a scrollbar under itself. Ray asked for the
+  card rows to be one horizontally swipeable row on a phone so the page is
+  not a long vertical scroll; on the pricing section a scrollbar was still
+  drawn under the row he asked to be swiped.
+  * `components/custom/pricing.client.tsx` asked for the bar to be hidden
+    with a `no-scrollbar` class, and that class is defined nowhere - not in
+    this SDK, which ships no CSS at all, and not in the shell. It compiled
+    to no rule, so the only declarations that reached a browser were the
+    row's own inline `scrollbarWidth` and `msOverflowStyle`: Firefox and
+    legacy Edge were covered and webkit was not, which left base_sdk's
+    yellow thumb (`app/styles/rokct-scroll.css`) under the row in Chrome
+    and Safari - every phone Ray looks at it on.
+  * The row now states the rule itself, in the className, in the three
+    forms the three engines read: `[scrollbar-width:none]` (Firefox),
+    `[-ms-overflow-style:none]` (legacy Edge/IE) and
+    `[&::-webkit-scrollbar]:hidden` (Chromium/WebKit). The inline style is
+    gone, because it said a subset of the same thing in a second place.
+  * Tailwind utilities rather than a stylesheet, and not a shared module,
+    for the reason `landing/agent-card-row.ts` already gives: this SDK
+    ships no CSS, every section in it is Tailwind, and a rule used by one
+    component does not need a first-and-only stylesheet plus an import seam
+    to carry it. `AGENT_CARD_ROW` hides its own bar with exactly these
+    three utilities behind `max-sm:`; the plan row is a scroller at every
+    width, so its three carry no breakpoint prefix.
+  * Hiding the bar does not hide the scroll: `overflow-x-auto`, the snap
+    axis and the 85% cards are untouched, so the row still swipes, still
+    flings and still scrolls a focused card into view by keyboard - each
+    card holds its own plan link, which is the keyboard path through the
+    row. Compiled with the shell's own Tailwind 3.4.19, the class string
+    emits `scrollbar-width: none`, `-ms-overflow-style: none` and
+    `::-webkit-scrollbar { display: none }` and no `overflow` declaration
+    changes; the same compile of the version before this one emits no
+    webkit rule at all and no rule whatsoever for `no-scrollbar`.
+  * The scrollbar was the row's only visual cue that it scrolls. The row
+    keeps the affordance the rest of the page uses - the next card's own
+    edge, which its 85% width leaves showing - and this entry adds no dots,
+    arrows or gradient, because the class was missing and that is what is
+    being fixed here.
+  * Manifest: version 1.18.2.
+* Tests: `test_the_plan_scroller_hides_its_scrollbar` pins the three
+  utilities, the absence of the inert class and of the inline style that
+  repeated it, and that the row still declares `overflow-x-auto`.
+
 ## 1.18.1
 
 Requires base_sdk >= 1.32.0 and auth_sdk >= 1.7.0 as before. The names

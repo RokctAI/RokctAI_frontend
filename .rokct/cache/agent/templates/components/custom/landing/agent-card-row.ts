@@ -41,17 +41,19 @@
 // snap-mandatory` over `flex-none w-[85%] snap-center`): a card at 85% of
 // the row so both neighbours show an edge, and centre snapping. A second
 // scroller on the same page that sized or snapped differently would read as
-// a different component rather than the same page. Two deliberate
-// departures from it:
-//   - the scrollbar is actually hidden here. `pricing.tsx` asks for that
-//     with a `no-scrollbar` class that is not defined anywhere in this SDK
-//     or the shell, so only its inline `scrollbarWidth` reaches Firefox and
-//     webkit still draws base_sdk's yellow thumb (app/styles/
-//     rokct-scroll.css) under the row. `[&::-webkit-scrollbar]:hidden` is
-//     the rule that class is missing.
+// a different component rather than the same page. One deliberate
+// departure from it:
 //   - no `scroll-snap-stop: always`. lms_sdk's row pins every swipe to one
 //     card; `pricing.tsx` does not, and with ten feature cards a fling that
 //     can cross several of them beats nine separate swipes.
+//
+// The scrollbar is hidden the same way in both since agent_sdk 1.18.2. The
+// plan row used to ask for it with a `no-scrollbar` class that was defined
+// nowhere in this SDK or the shell, so only its inline `scrollbarWidth`
+// reached Firefox while webkit still drew base_sdk's yellow thumb
+// (app/styles/rokct-scroll.css) under it; it now states the same three
+// declarations this row states, without the `max-sm:` prefix because it
+// scrolls at every width.
 //
 // PHONES ONLY, AND MECHANICALLY SO: every utility below is behind `max-sm:`,
 // so the whole row lives in one `@media not all and (min-width: 640px)`

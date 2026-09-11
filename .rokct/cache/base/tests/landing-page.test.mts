@@ -41,12 +41,20 @@ import {
   fallbackSectionMeta,
   isClientReference,
   loadPageSections,
+  pageSectionsFor,
+  presentSectionsFor,
   resolveHeroConfig,
   resolveHeroWordmark,
   resolveLandingPage,
   type LoadedSection,
 } from './landing-page.ts';
-import { PAGE_SECTIONS, type PageSectionMeta } from './page-sections.ts';
+import {
+  DEFAULT_PAGE_SLOT,
+  PAGE_SECTIONS,
+  PAGE_SLOTS,
+  sectionPageOf,
+  type PageSectionMeta,
+} from './page-sections.ts';
 
 // A section component stub: the arrangement never renders it.
 const Section = () => null;
@@ -455,5 +463,125 @@ describe('dropBackendOnlyActions (1.35.0)', () => {
     assert.deepEqual(local.menu.actions.map((a) => a.id), ['contact']);
     const backend = arrangeLandingPage([section('a')], { plans: [] }, menu);
     assert.deepEqual(backend.menu.actions.map((a) => a.id), ['login', 'signup', 'contact']);
+  });
+});
+
+describe('page slots (1.38.0)', () => {
+  const menu = { items: [], groups: [], actions: [] };
+  /** The arrangement's shape as ids and words, for a byte-for-byte comparison. */
+  const shape = (loaded: LoadedSection[]) => {
+    const page = arrangeLandingPage(loaded, CTX, menu);
+    return {
+      overlays: page.overlays.map((s) => s.id),
+      flow: page.flow.map((s) => s.id),
+      nav: page.navItems.map((n) => `${n.id}:${n.label}`),
+      rootClass: page.rootClass,
+      menu: page.menu,
+    };
+  };
+
+  it('names the three slots, landing the default, and reads a missing page as landing', () => {
+    assert.deepEqual(PAGE_SLOTS, ['landing', 'about', 'team']);
+    assert.equal(DEFAULT_PAGE_SLOT, 'landing');
+    assert.equal(sectionPageOf(undefined), 'landing');
+    assert.equal(sectionPageOf({}), 'landing');
+    assert.equal(sectionPageOf({ page: 'landing' }), 'landing');
+    assert.equal(sectionPageOf({ page: 'about' }), 'about');
+    assert.equal(sectionPageOf({ page: 'team' }), 'team');
+  });
+
+  it('keeps the landing arrangement identical when no section names a page', () => {
+    const before = [
+      section('nav', { order: -1, nav: [], rootClass: 'acme' }),
+      section('b', { order: 20, nav: [{ id: 'b1', label: 'B' }, { id: 'b2', label: 'B2' }] }),
+      section('a', { order: 10, anchor: 'a-anchor', nav: [] }),
+      section('c', { renders: () => false }),
+      section('d'),
+    ];
+    // The same sections saying "landing" out loud: nothing changes either.
+    const explicit = before.map((s) => ({ ...s, meta: { ...s.meta, page: 'landing' as const } }));
+    const expected = {
+      overlays: ['nav'],
+      flow: ['a', 'b', 'd'],
+      nav: ['hero:Hero', 'b1:B', 'b2:B2', 'd:d', 'footer:Footer'],
+      rootClass: 'acme',
+      menu: { items: [], groups: [], actions: [], megaLabel: null },
+    };
+    assert.deepEqual(shape(before), expected);
+    assert.deepEqual(shape(explicit), expected);
+  });
+
+  it('keeps a section that names another page off the landing page and out of its nav', () => {
+    const loaded = [
+      section('founders', { order: 5, nav: [{ id: 'founders', label: 'Founders' }], rootClass: 'about-root', page: 'about' }),
+      section('people', { order: 5, page: 'team' }),
+      section('hero-copy', { order: 10 }),
+    ];
+    assert.deepEqual(shape(loaded), {
+      overlays: [],
+      flow: ['hero-copy'],
+      nav: ['hero:Hero', 'hero-copy:hero-copy', 'footer:Footer'],
+      rootClass: '',
+      menu: { items: [], groups: [], actions: [], megaLabel: null },
+    });
+  });
+
+  it('presentSectionsFor filters to the page, asks renders, and sorts stably', () => {
+    const loaded = [
+      section('late', { order: 50, page: 'about' }),
+      section('early', { order: 1, page: 'about' }),
+      section('tie-first', { order: 10, page: 'about' }),
+      section('tie-second', { order: 10, page: 'about' }),
+      section('off', { order: 0, page: 'about', renders: (ctx) => ctx.dataMode === 'local' }),
+      section('landing-only', { order: 0 }),
+      section('team-only', { order: 0, page: 'team' }),
+    ];
+    assert.deepEqual(presentSectionsFor('about', loaded, CTX).map((s) => s.id), [
+      'early', 'tie-first', 'tie-second', 'late',
+    ]);
+    assert.deepEqual(presentSectionsFor('about', loaded, { plans: [], dataMode: 'local' }).map((s) => s.id), [
+      'off', 'early', 'tie-first', 'tie-second', 'late',
+    ]);
+    assert.deepEqual(presentSectionsFor('team', loaded, CTX).map((s) => s.id), ['team-only']);
+    assert.deepEqual(presentSectionsFor('landing', loaded, CTX).map((s) => s.id), ['landing-only']);
+  });
+
+  it('pageSectionsFor loads the page\'s sections through the same loader, defaulting the context', async () => {
+    const entries = [
+      { id: 'about-card', load: async () => ({ default: Section, meta: { order: 20, page: 'about' as const } }) },
+      { id: 'about-lead', load: async () => ({ default: Section, meta: { order: 10, page: 'about' as const } }) },
+      { id: 'about-plans', load: async () => ({ default: Section, meta: { page: 'about' as const, renders: (ctx: { plans: unknown[] }) => ctx.plans.length > 0 } }) },
+      { id: 'landing-thing', load: async () => ({ default: Section, meta: {} }) },
+      { id: 'broken', load: async () => { throw new Error('nope'); } },
+    ];
+    const { result: about, logged } = await quietly(() => pageSectionsFor('about', undefined, entries));
+    assert.equal(logged.length, 1);
+    assert.deepEqual(about.map((s) => [s.id, s.domId, s.order]), [
+      ['about-lead', 'about-lead', 10],
+      ['about-card', 'about-card', 20],
+    ]);
+    const { result: withPlans } = await quietly(() =>
+      pageSectionsFor('about', { plans: [{ name: 'p' } as never], session: null }, entries),
+    );
+    assert.deepEqual(withPlans.map((s) => s.id), ['about-lead', 'about-card', 'about-plans']);
+    const { result: team } = await quietly(() => pageSectionsFor('team', undefined, entries));
+    assert.deepEqual(team, []);
+  });
+
+  it('pageSectionsFor reads the live registry by default', async () => {
+    PAGE_SECTIONS.splice(0, PAGE_SECTIONS.length);
+    PAGE_SECTIONS.push(
+      { id: 'acme-founders', load: async () => ({ default: Section, meta: { page: 'about' } }) },
+      { id: 'acme-courses', load: async () => ({ default: Section, meta: {} }) },
+    );
+    try {
+      const { result: about } = await quietly(() => pageSectionsFor('about'));
+      assert.deepEqual(about.map((s) => s.id), ['acme-founders']);
+      const { result: landing } = await quietly(() => resolveLandingPage(CTX));
+      assert.deepEqual(landing.flow.map((s) => s.id), ['acme-courses']);
+      assert.deepEqual(landing.navItems.map((n) => n.id), ['hero', 'acme-courses', 'footer']);
+    } finally {
+      PAGE_SECTIONS.splice(0, PAGE_SECTIONS.length);
+    }
   });
 });

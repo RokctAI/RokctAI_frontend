@@ -1,5 +1,51 @@
 # Changelog
 
+## 1.38.0
+
+* A registered section may name the PAGE it belongs to, so a home SDK's
+  card reaches a company page through the one registry it already knows
+  (Ray, 2026-09-10: corporate_sdk owns `/about` and `/team` as renderers;
+  their content comes from the shell's `data/` folder - base 1.35.0's
+  reader - or is empty, and Supacharge's about page reuses lms's founder
+  card). `PageSectionMeta.page?: "landing" | "about" | "team"`
+  (`components/custom/landing/page-sections.ts`; `PageSlot`, `PAGE_SLOTS`,
+  `DEFAULT_PAGE_SLOT`, `sectionPageOf(meta)`): absent is `"landing"`, and
+  every section registered before this field renders exactly where it
+  did. `arrangeLandingPage` keeps only landing sections - a section that
+  names another page is neither drawn nor a floating-nav stop on the
+  landing - and NEW `pageSectionsFor(page, ctx?, entries?)` in
+  `landing-page.ts` is what a company page's renderer awaits: the same
+  loader (a failing module skipped and logged, an unreadable meta
+  rendered with defaults), the same `meta.renders(ctx)` and `meta.order`
+  rules (`presentSectionsFor`, the rule both share), filtered to that
+  page; `ctx` defaults to no plans and no session, and nothing registered
+  answers `[]`. No brand, route or host is named by either module.
+* The header's own "Log in" / "Sign up" pair follows the shell's data
+  mode - the TODO 1.35.0 left on `dropBackendOnlyActions`, now that the
+  header files are free. `app/landing/page.tsx` hands the mode it read
+  through `siteDataMode()` to `landing-content.tsx` (`dataMode?`), which
+  passes it to `header.tsx` (`HeaderProps.dataMode?: SiteDataMode`); for
+  a visitor with no session the header draws no pair, on the bar and in
+  the burger panel, when `showsHeaderAuth(dataMode)` (NEW in
+  `landing/header-menu.ts`, pure: false for `"local"` only) says so, and
+  the burger hides with nothing left to open. A page that mounts the
+  header without the prop - every caller before this release - draws the
+  pair as it did; the "use client" files import only the `SiteDataMode`
+  type from `lib/site-data/kinds`, never the server-only reader.
+* `docs/site-data.md`: the legal kind's title rule now reads "the first
+  level-1 heading" - the code span that held a hash and a trailing space
+  failed markdownlint MD038 (no-space-in-code) in every host that vendors
+  the docs; the doc also gains the company-pages section and the switched
+  header paragraph.
+* Tests: `tests/landing-page.test.mts` (+6: the slots, a landing
+  arrangement identical with and without the field, a company-page
+  section kept off the landing, the filter / renders / stable order rule,
+  `pageSectionsFor` over given entries and over the live registry),
+  `tests/header-brand.test.mts` (+2: `showsHeaderAuth` and the header
+  reading it on both surfaces), `test_manifest.py` (the page-slot
+  contract, the header switch, the local-mode test updated for the
+  wrapper's fourth `dataMode`, the header-menu stage stubbing the type).
+
 ## 1.37.0
 
 * The footer chrome has a links seam, and base reads the shell's legal

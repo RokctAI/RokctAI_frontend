@@ -45,6 +45,7 @@ import {
   resolveHeaderBrandCollapse,
   resolveHeaderMenu,
   resolveHeaderMenuGroupLayout,
+  showsHeaderAuth,
 } from './header-menu.ts';
 import { setRegisteredIcon } from './landing-site-metadata.ts';
 
@@ -655,5 +656,24 @@ describe('mega menu layout: a row group and the declared trigger word (1.36.0)',
     assert.ok(partials.includes('const LEAD_ROW_WIDTH = "w-[58%] shrink-0";'));
     assert.ok(menu.includes(': "w-[300px] shrink-0";'));
     assert.ok(partials.includes('{groups.length > 0 && <DesktopMegaMenu groups={groups} megaLabel={megaLabel} />}'));
+  });
+});
+
+describe('showsHeaderAuth (1.38.0)', () => {
+  it('skips the header\'s own Log in / Sign up pair on a local shell only', () => {
+    assert.equal(showsHeaderAuth('local'), false);
+    assert.equal(showsHeaderAuth('backend'), true);
+    assert.equal(showsHeaderAuth('hybrid'), true);
+    assert.equal(showsHeaderAuth(undefined), true);
+  });
+
+  it('is what the header reads, on the bar and in the burger panel, for a visitor with no session', () => {
+    const header = readFileSync(new URL('./header.tsx', import.meta.url), 'utf8');
+    assert.match(header, /dataMode\?: SiteDataMode;/);
+    assert.match(header, /const hasAuth = !!user \|\| showsHeaderAuth\(dataMode\);/);
+    // Once for the desktop `auth` element, once for the stacked panel.
+    assert.equal(header.split('!hasAuth ? null :').length - 1, 2);
+    // The "use client" header never imports the server-only reader.
+    assert.doesNotMatch(header, /read-site-data/);
   });
 });

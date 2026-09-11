@@ -840,17 +840,18 @@ class TestManifest(unittest.TestCase):
     def test_local_mode_switches_off_backend_only_surface(self):
         """A local shell has no backend: the landing page reads the mode
         through the reader, prefetches no plans in local mode and hands
-        `dataMode` to the arrangement and to every section; the arrangement
-        drops the header actions that lead to the sign-in / sign-up routes
-        (so header.tsx and header-menu.ts stay untouched); the section
-        types carry the field."""
+        `dataMode` to the arrangement, to every section and (1.38.0) to
+        the client wrapper; the arrangement drops the header actions that
+        lead to the sign-in / sign-up routes; the section types carry the
+        field."""
         page = read(LANDING_PAGE)
         self.assertIn('import { siteDataMode } from "@/lib/site-data/read-site-data";', page)
         self.assertIn("const dataMode = siteDataMode();", page)
         self.assertIn('if (dataMode !== "local") {', page)
         self.assertLess(page.index('if (dataMode !== "local") {'), page.index("plans = await getLandingPlans();"))
         self.assertIn("resolveLandingPage({ plans, session, dataMode })", page)
-        self.assertEqual(page.count("dataMode={dataMode}"), 3)
+        # Two RegisteredSections renders and, since 1.38.0, LandingContent.
+        self.assertEqual(page.count("dataMode={dataMode}"), 4)
         resolver = read(LANDING_PAGE_RESOLVER)
         self.assertIn("export function dropBackendOnlyActions(", resolver)
         self.assertIn('if (dataMode !== "local") return actions;', resolver)
@@ -859,10 +860,78 @@ class TestManifest(unittest.TestCase):
         sections = read(os.path.join(LANDING, "page-sections.ts"))
         self.assertIn('import type { SiteDataMode } from "@/lib/site-data/kinds";', sections)
         self.assertEqual(sections.count("dataMode?: SiteDataMode;"), 2)
-        # The header files are not touched by this rule.
-        for name in ("header.tsx", "header-menu.tsx"):
-            self.assertNotIn("site-data", read(os.path.join(SDK_ROOT, "templates", "components", "custom", name)))
-        self.assertNotIn("site-data", read(HEADER_MENU_REGISTRY))
+        # The panel partials are not touched by this rule.
+        self.assertNotIn("site-data", read(HEADER_MENU_PARTIALS))
+
+    def test_header_skips_its_own_auth_pair_on_a_local_shell(self):
+        """1.38.0: the TODO 1.35.0 left on dropBackendOnlyActions. The
+        header's OWN Log in / Sign up pair - not a declared action - follows
+        the same `local` rule: the page hands the mode it read to the
+        client wrapper, the wrapper to the header as `dataMode`, and the
+        header draws no pair for a visitor with no session when
+        showsHeaderAuth(dataMode) (header-menu.ts, pure) answers false, on
+        the bar and in the burger panel. A caller that passes no mode draws
+        what it drew. The "use client" files import only the TYPE from
+        lib/site-data/kinds, never the server-only reader."""
+        registry = read(HEADER_MENU_REGISTRY)
+        self.assertIn('import type { SiteDataMode } from "@/lib/site-data/kinds";', registry)
+        self.assertIn("export function showsHeaderAuth(dataMode: SiteDataMode | undefined): boolean {", registry)
+        self.assertIn('return dataMode !== "local";', registry)
+        header = read(HEADER)
+        self.assertIn('import type { SiteDataMode } from "@/lib/site-data/kinds";', header)
+        self.assertIn("  showsHeaderAuth,\n", header)
+        self.assertIn("dataMode?: SiteDataMode;", header)
+        self.assertIn("const hasAuth = !!user || showsHeaderAuth(dataMode);", header)
+        self.assertEqual(header.count("!hasAuth ? null :"), 2, "the desktop element and the stacked panel")
+        content = read(LANDING_CONTENT)
+        self.assertIn('import type { SiteDataMode } from "@/lib/site-data/kinds";', content)
+        self.assertIn("dataMode?: SiteDataMode;", content)
+        self.assertIn("dataMode={dataMode}", content)
+        self.assertIn("dataMode={dataMode}", read(LANDING_PAGE))
+        for path in (HEADER, LANDING_CONTENT, HEADER_MENU_REGISTRY):
+            self.assertNotIn("read-site-data", read(path), path)
+        resolver = read(LANDING_PAGE_RESOLVER)
+        self.assertNotIn("TODO", resolver, "the 1.35.0 TODO is done")
+        self.assertIn("showsHeaderAuth(dataMode)", resolver)
+        doc = read(SITE_DATA_DOC)
+        self.assertNotIn("Not yet switched", doc)
+        self.assertIn("showsHeaderAuth", doc)
+
+    def test_sections_may_name_a_company_page(self):
+        """1.38.0 (Ray, 2026-09-10: corporate_sdk owns /about and /team as
+        renderers; a home SDK's cards reach them through the one section
+        registry). PageSectionMeta.page is "landing" | "about" | "team",
+        absent meaning landing; the landing arrangement keeps only landing
+        sections (so a company-page section is neither drawn nor a nav
+        stop there), and pageSectionsFor(page) is what a company page
+        awaits - the same loader, renders and order rules, filtered. No
+        brand, no route and no host is named by either module."""
+        sections = read(os.path.join(LANDING, "page-sections.ts"))
+        self.assertIn('export type PageSlot = "landing" | "about" | "team";', sections)
+        self.assertIn('export const PAGE_SLOTS: readonly PageSlot[] = ["landing", "about", "team"];', sections)
+        self.assertIn('export const DEFAULT_PAGE_SLOT: PageSlot = "landing";', sections)
+        self.assertIn("  page?: PageSlot;", sections)
+        self.assertIn("export function sectionPageOf(meta: PageSectionMeta | undefined): PageSlot {", sections)
+        self.assertIn("return meta?.page ?? DEFAULT_PAGE_SLOT;", sections)
+        resolver = read(LANDING_PAGE_RESOLVER)
+        self.assertIn("export function presentSectionsFor(", resolver)
+        self.assertIn(".filter((s) => sectionPageOf(s.meta) === page)", resolver)
+        self.assertIn(".filter((s) => s.meta.renders?.(ctx) ?? true)", resolver)
+        self.assertIn(".sort((a, b) => a.order - b.order)", resolver)
+        self.assertIn("const present = presentSectionsFor(DEFAULT_PAGE_SLOT, loaded, ctx);", resolver)
+        self.assertIn("export async function pageSectionsFor(", resolver)
+        self.assertIn("  page: PageSlot,\n  ctx: PageSectionContext = { plans: [], session: null },\n"
+                      "  entries: PageSectionEntry[] = PAGE_SECTIONS,\n): Promise<LoadedSection[]> {", resolver)
+        self.assertIn("return presentSectionsFor(page, loaded, ctx);", resolver)
+        for path in (os.path.join(LANDING, "page-sections.ts"), LANDING_PAGE_RESOLVER):
+            code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(path))).lower()
+            for word in ("rokct.ai", "supacharge", "/about", "/team", "#"):
+                self.assertNotIn(word, code, f"{os.path.basename(path)} names {word}")
+        self.assertIn("pageSectionsFor", read(SITE_DATA_DOC))
+        changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
+        self.assertIn("## 1.38.0", changelog)
+        self.assertIn("`PageSectionMeta.page?:", changelog)
+        self.assertNotRegex(changelog, re.compile(r"^#[^#\s]", re.M), "no CHANGELOG line starts with # and text")
 
 
 class TestRegistryMarkers(unittest.TestCase):
@@ -943,6 +1012,8 @@ class TestRegistryMarkers(unittest.TestCase):
                 'from "@/components/custom/landing/landing-config"', 'from "./landing-config.ts"'
             ).replace(
                 'from "@/components/custom/landing/site-metadata"', 'from "./landing-site-metadata.ts"'
+            ).replace(
+                'from "@/lib/site-data/kinds"', 'from "./site-data-kinds.ts"'
             )
             self.assertNotIn('from "@/', staged, "header-menu.ts imports something the stage does not cover")
             with open(os.path.join(tmp, "header-menu.ts"), "w", encoding="utf-8") as f:
@@ -950,6 +1021,9 @@ class TestRegistryMarkers(unittest.TestCase):
             with open(os.path.join(tmp, "landing-config.ts"), "w", encoding="utf-8") as f:
                 f.write("export type LandingNavBadge = 'new' | 'soon';\n"
                         "export interface LandingNavItem { id: string; label: string; badge?: LandingNavBadge }\n")
+            # 1.38.0: showsHeaderAuth takes the shell's data mode.
+            with open(os.path.join(tmp, "site-data-kinds.ts"), "w", encoding="utf-8") as f:
+                f.write('export type SiteDataMode = "local" | "backend" | "hybrid";\n')
             with open(os.path.join(tmp, "landing-site-metadata.ts"), "w", encoding="utf-8") as f:
                 f.write(
                     "let icon: string | undefined;\n"
@@ -2015,7 +2089,7 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
-        self.assertGreaterEqual(int(passed.group(1)), 15)
+        self.assertGreaterEqual(int(passed.group(1)), 21)
 
     def test_installed_section_entry_modules_are_server_safe(self):
         """The registry is imported on the server since 1.32.0, so a section's

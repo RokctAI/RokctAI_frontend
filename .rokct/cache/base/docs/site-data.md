@@ -43,7 +43,7 @@ so base has one signal for switching off backend-only surface.
 | `stockists` | `data/stockists.json`   | `{ items: [{ name, address, town, lat?, lng?, mapsUrl? }] }` (`lat` and `lng` together or not at all)                             |
 | `products`  | `data/products.json`    | `{ items: [{ name, description?, sizes?: string[], image?, status?: "active" \| "coming" }] }`                                     |
 | `about`     | `data/about.md`         | the markdown, verbatim, as a string                                                                                              |
-| `legal`     | `data/legal/<slug>.md`  | a map of slug to `{ title, markdown }`; the title from a `title:` front-matter line, else the first `# ` heading (removed from the body) |
+| `legal`     | `data/legal/<slug>.md`  | a map of slug to `{ title, markdown }`; the title from a `title:` front-matter line, else the first level-1 heading (removed from the body) |
 
 `photo` and `image` are public paths (`/team/jane.jpg`, served from the
 shell's `public/`) or absolute URLs. A slug is lowercase letters, digits
@@ -147,6 +147,31 @@ kind)`, also lives in `kinds.ts` and is what the node tests execute.
 Consumers: corporate_sdk 1.1.0 (its legal, about and team renderers) is
 the first; a home SDK's landing sections are the next.
 
+## Company pages and the section registry
+
+Since 1.38.0 a registered landing section may name the page it belongs
+to: `PageSectionMeta.page` is `"landing"` (the default - every section
+registered before the field existed renders exactly where it did),
+`"about"` or `"team"`. The landing host keeps only landing sections, so a
+section that names a company page is neither drawn nor listed in the
+floating nav there. A company page's renderer (corporate_sdk's `/about`
+and `/team`, which read `about` and `team` from `data/`) asks for its own
+with
+
+```ts
+import { pageSectionsFor } from "@/components/custom/landing/landing-page";
+
+const sections = await pageSectionsFor("about"); // LoadedSection[], in order
+```
+
+the same loader as the landing's (a failing module skipped and logged, an
+unreadable meta rendered with defaults), the same `meta.renders(ctx)` and
+`meta.order` rules, filtered to that page; `ctx` defaults to no plans and
+no session. So a home SDK puts a card on a company page with the one
+registry line it already knows - `{ id, load }` at the page-sections
+marker - and `page: "about"` in the entry's `meta`; nothing registered for
+a page answers `[]`, and the page draws its own empty state.
+
 ## Theme
 
 With a `data/theme.json` the shell's colours reach every route with no
@@ -202,13 +227,15 @@ owns:
 - the footer status pill already hides itself when no base URL is
   configured (state `unconfigured`).
 
-Not yet switched: the header's own "Log in" / "Sign up" pair, which
-`components/custom/header.tsx` draws for a visitor with no session from
-the `loginUrl` / `signupUrl` props `landing-content.tsx` passes. Both
-files belong to the base 1.36.0 header branch; when it merges, the
-header skips the pair when `siteDataMode()` is `local` (the TODO sits on
-`dropBackendOnlyActions` in `landing-page.ts`). A local shell's home SDK
-can also hide it today by rendering its own header row.
+- since 1.38.0, the header's own "Log in" / "Sign up" pair, which
+  `components/custom/header.tsx` draws for a visitor with no session: the
+  landing page hands the mode it read through `siteDataMode()` to
+  `landing-content.tsx`, which passes it to the header as `dataMode`, and
+  the header skips the pair - on the bar and in the burger panel - when
+  `showsHeaderAuth(dataMode)` (`landing/header-menu.ts`, pure) answers
+  false. A page that mounts the header without the prop draws the pair as
+  it did; the "use client" files import only the `SiteDataMode` type,
+  never the server-only reader.
 
 ## Fixtures
 
