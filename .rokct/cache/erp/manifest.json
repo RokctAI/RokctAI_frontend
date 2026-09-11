@@ -1,6 +1,6 @@
 {
   "name": "erp_sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "installs": [
     {
       "from": "templates/app/handson/all/accounting",
@@ -474,6 +474,7 @@
     "app/actions/handson/all/hrms/employees.ts",
     "app/actions/handson/all/reports/financial.ts",
     "app/lib/client.ts",
+    "app/lib/gateway-rpc.ts",
     "app/lib/i18n/index.ts",
     "app/lib/roles.ts",
     "app/services/all/hrms/performance.ts",
@@ -498,5 +499,8 @@
     "components/ui/tabs.tsx",
     "components/ui/textarea.tsx",
     "lib/utils.ts"
-  ]
+  ],
+  "_comment": {
+    "app/lib/gateway-rpc.ts": "core/base (installed by base_sdk): gatewayCall(client, cmd, payload) posts a gateway command on the given frappe-js-sdk client's own connection, so the control-site sync calls stay on the system control client"
+  }
 }

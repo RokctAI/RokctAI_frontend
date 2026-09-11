@@ -1,6 +1,6 @@
 {
   "name": "crm_sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "installs": [
     {
       "from": "templates/app/handson/all/crm",
@@ -122,6 +122,7 @@
     "app/actions/handson/all/accounting/selling/sales_order.ts",
     "app/actions/handson/all/workspace/communication.ts",
     "app/lib/client.ts",
+    "app/lib/gateway-rpc.ts",
     "app/lib/i18n/index.ts",
     "app/lib/roles.ts",
     "app/lib/role_constants.ts",

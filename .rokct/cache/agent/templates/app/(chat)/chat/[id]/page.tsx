@@ -19,13 +19,35 @@ import { notFound } from "next/navigation";
 
 import { auth } from "@/app/(auth)/auth";
 import { Chat as PreviewChat } from "@/components/custom/chat";
-import { getChatById } from "@/db/queries";
 import { Chat } from "@/db/schema";
 import { convertToUIMessages } from "@/lib/utils";
 
-export default async function Page({ params }: { params: any }) {
-  const { id } = params;
-  const chatFromDb = await getChatById({ id });
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  // Next 15+ hands a route segment its params as a Promise.
+  const { id } = await params;
+
+  // The session first: the read below is only ever made on a caller's behalf.
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return notFound();
+  }
+
+  // A failed read is a missing chat to the visitor, not a 500.
+  let chatFromDb;
+  try {
+    const { getChatById } = await import("@/db/queries");
+    chatFromDb = await getChatById({ id });
+  } catch (e) {
+    console.error(
+      `[chat/[id]] Failed to load chat ${id}: ${e instanceof Error ? e.message : String(e)}`,
+    );
+    notFound();
+  }
 
   if (!chatFromDb) {
     notFound();
@@ -36,12 +58,6 @@ export default async function Page({ params }: { params: any }) {
     ...chatFromDb,
     messages: convertToUIMessages(chatFromDb.messages as Array<CoreMessage>),
   };
-
-  const session = await auth();
-
-  if (!session || !session.user) {
-    return notFound();
-  }
 
   if (session.user.id !== chat.userId) {
     return notFound();

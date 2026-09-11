@@ -17,8 +17,9 @@
 import { BaseService, ServiceOptions } from "@/app/services/common/base";
 
 // Calls agent/agent/frappe's Brain module via its manifest.json whitelisted
-// aliases (flat "paas.api.<fn>" namespace). Do not invent a different path.
-const NS = "paas.api";
+// aliases (flat "{app_name}.api.<fn>" namespace), named to the gateway as
+// the prefix-free key "api.<fn>". Do not invent a different path.
+const NS = "api";
 
 /** Worker queues the backend routes tasks to. */
 export type AiTaskType = "vision" | "rcore" | "router";

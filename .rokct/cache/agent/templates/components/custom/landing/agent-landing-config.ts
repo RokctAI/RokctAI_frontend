@@ -389,9 +389,12 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
       icon: { src: `${CDN}/Group_2_b0e06c28f9.svg`, alt: `${PLATFORM_NAME} icon` },
       price: "$19",
       period: ["per month", "billed annually"],
+      // 1.19.0: the plans are the `pricing` section this block renders in
+      // (copied-pricing.tsx's meta.nav id, the header's `anchors` entry),
+      // not a /pricing route - no host or SDK installs one.
       ctas: [
-        { label: "Buy now", href: "/pricing" },
-        { label: "Explore plans", href: "/pricing" },
+        { label: "Buy now", href: "#pricing" },
+        { label: "Explore plans", href: "#pricing" },
       ],
       listHeading: "One purchase is all it takes.",
       benefits: [

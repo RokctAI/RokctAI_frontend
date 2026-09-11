@@ -17,8 +17,8 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 import { verifyCrmRole } from "@/app/lib/roles";
-import { PLATFORM_GATEWAY_METHOD } from "@/app/services/base/platform-gateway";
 
 export async function getDashboardStats(fromDate?: string, toDate?: string) {
   if (!(await verifyCrmRole())) return { data: [], error: "Unauthorized" };
@@ -39,20 +39,15 @@ export async function getDashboardStats(fromDate?: string, toDate?: string) {
     // cmd: the gateway resolves "api.crm.dashboard.get_dashboard" against
     // crm/frappe manifest.json's whitelisted alias
     // "{app_name}.api.crm.dashboard.get_dashboard" server-side, so no app
-    // prefix is ever hard-coded here. The authenticated frappe client is
-    // kept (same as the sibling actions) so token auth still applies.
-    const result = await (client as any).call({
-      method: PLATFORM_GATEWAY_METHOD,
-      args: {
-        cmd: "api.crm.dashboard.get_dashboard",
-        payload: {
-          from_date: fromDate,
-          to_date: toDate,
-        },
-      },
+    // prefix is ever hard-coded here. gatewayCall wraps the cmd/payload
+    // envelope itself; the authenticated frappe client is kept (same as
+    // the sibling actions) so token auth still applies.
+    const result = await gatewayCall(client, "api.crm.dashboard.get_dashboard", {
+      from_date: fromDate,
+      to_date: toDate,
     });
 
-    return { data: result.message || [] };
+    return { data: result?.message || [] };
   } catch (e) {
     console.error("Failed to fetch Sales Dashboard", e);
     return { data: [], error: "Failed to load dashboard" };

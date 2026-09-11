@@ -1,5 +1,118 @@
 # Changelog
 
+## 1.19.0
+
+Requires base_sdk >= 1.40.0 (`NetworkStripConfig.sites`, and a base that
+carries no site of the network) and auth_sdk >= 1.7.0 as before. Against
+base_sdk 1.27.0-1.39.0 the registry's config type rejects the `sites`
+property, so this version must not be composed over an older base; over
+base_sdk 1.40.0 an agent_sdk <= 1.18.2 composes but draws NO network
+strip, because base no longer has a list to fall back on.
+
+* rokct.ai declares the network's sites itself. Ray, 2026-09-11: a shell
+  with no declaration shows no "Trusted by" strip - a shell outside the
+  network must not list products it has nothing to do with - and site
+  names are brand content base may not hard-code, so base_sdk 1.40.0
+  emptied `NETWORK_SITES` and added `sites` to the config a home SDK
+  registers. `components/custom/landing/agent-network-strip.ts` now sets
+  `sites`: the five entries base's `network-sites.ts` held from 1.23.0 to
+  1.39.0, moved entry for entry - `rokct` (rokct.ai, its own light and
+  dark glyphs), `supacharge` (supacharge.school, a wordmark) and `juvo`
+  (juvo, its own glyphs) with the same names, origins and logo paths, and
+  `hosting` and `telephony` as the same hidden place-holders (`url: null`,
+  `shown: false`, "No domain yet (Ray, 2026-09-09)": an unused surface is
+  switched off, never removed). The new `AgentNetworkSite` interface
+  states base's `NetworkSite` shape structurally, like the rest of the
+  module, so an older base still compiles the shell. The placement is
+  unchanged (`"section"` on /landing, the footer row elsewhere), the
+  heading is still base's default, the order the list's, nothing hidden,
+  and base still leaves rokct.ai itself out by host - so rokct.ai keeps
+  exactly the strip it had: one "Trusted by" with supacharge.school and
+  juvo. lms_sdk's registration (`footer: false`, landing `"none"`) keeps
+  supacharge.school free of the strip, and a shell that registers nothing
+  draws none, as ruled.
+* Tests: `network-strip.test.mts` asserts the five keys in order, the
+  three origins and brand strings, the glyphs and the wordmark, the two
+  hidden place-holders, and that every url is an https origin and every
+  logo is on its site's own origin with no parameter;
+  `test_manifest.py`'s `test_network_strip_says_where_and_which` allows
+  the module exactly those URLs, and NEW
+  `test_network_sites_are_declared_here_and_nowhere_else` holds the
+  shape and that no other template of this SDK restates the list.
+* The six tenant calls that still handed frappe-js-sdk an object send
+  something again. `FrappeApp.call()` takes no argument, so
+  `(client as any).call({ method, args })` in `app/(chat)/api/chat/route.ts`
+  (both session rolls), `api/error/route.ts`, `api/reminders/pending/route.ts`,
+  `api/summarize/route.ts`, `app/(chat)/page.tsx` and the untyped
+  `client.call({...})` in `app/actions/ai/control.ts` posted nothing and
+  resolved to a FrappeCall object: no summary, no error log, no
+  notifications, no settings, silently. Each now goes through base's
+  `gatewayCall(client, cmd, payload)` like the rest of this SDK's actions
+  (`admin.ts`, `hr.ts`), which POSTs `{cmd, payload}` to the gateway and
+  keeps Frappe's `message` envelope, so the `.message` readers stand and the
+  summaries read `message.summary`. The cmds are the prefix-free manifest
+  keys the gateway accepts on a tenant site:
+  `rcore.api.plan_builder.summarize_chat_session` is
+  `api.plan_builder.summarize_chat_session` (agent/frappe's manifest),
+  `rcore.tenant.api.log_frontend_error` is `tenant.api.log_frontend_error`
+  (core's telemetry manifest); `frappe.client.*` stays verbatim. No
+  per-method dotted URL is introduced. NEW `TestGatewayCalls` in
+  `test_manifest.py` holds that no template hands `.call(` an object, names
+  no `rcore.`-prefixed cmd, and that the converted sites name those keys.
+* Two more cmds spelt for a retired route. `api/error/route.ts` sent the
+  control site `control.api.log_frontend_error`, a per-method alias the
+  gateway does not route on a control site: it is now
+  `control:log_frontend_error`, the key core's telemetry manifest
+  registers, still on the control client; the unused `OnboardingService`
+  import goes. `app/services/all/agent/plan.ts`, `memory.ts` and
+  `tasks.ts` built their cmds on `paas.api`, a retired app name: the
+  namespaces are `api.plan_builder` and `api`, so `chat_with_rok`,
+  `commit_plan`, `query`, `search`, `semantic_search`, `record_event`,
+  `dispatch_ai_task` and `get_ai_result` reach the `{app_name}.api.*` keys
+  agent/frappe's manifest registers. `TestGatewayCalls` also refuses a
+  `paas.`-prefixed cmd and holds the three namespaces and the control key.
+* `/chat` is a route. The header's "Chat with ROK" action and its AI Chat
+  entry, the chat section's "Explore now" and the landing config's chat CTA
+  all link to `/chat`, but the chat surface is `app/(chat)/page.tsx` at `/`
+  and the only file under `chat/` was `[id]/page.tsx`, so `/chat` matched
+  nothing and 404'd on the composed rokct.ai shell. NEW
+  `app/(chat)/chat/page.tsx` re-exports the root page's default export (it
+  exports nothing else), so a guest is sent to `/landing` and a signed-in
+  visitor to a fresh `/chat/<id>` exactly as at `/`; the
+  `templates/app/(chat)` directory install already carries it, as it does
+  `chat/[id]/page.tsx`, and the hrefs stand. The Product group's "Web App /
+  Open in browser" entry still points at `/dashboard`, which leads nowhere:
+  no route of that name exists on the host or in any SDK of this
+  repository, and `/portal`, the one candidate, is the host's Client Portal
+  (telephony and hosting subscriptions, balance, quotes), not the chat web
+  app, so the href is left rather than pointed at the wrong page;
+  `/affiliate` and `/teams` are in the same state. NEW `TestNavLinks` in
+  `test_manifest.py` holds that `/chat` is the root chat page and that
+  every href `agent-header-menu.ts` authors is an anchor, an https URL or
+  a route this manifest installs, with exactly those three as the known
+  exceptions - a set that may only shrink.
+* The compare block's "Buy now" and "Explore plans" no longer 404. Both
+  pointed at `/pricing`, a route no host or SDK of this repository
+  installs; the plans are the `pricing` section the block renders in
+  (`copied-pricing.tsx`'s `meta.nav` id, the one the header's `anchors`
+  names), so `agent-landing-config.ts` now links them to `#pricing`.
+  `TestNavLinks` now holds the landing config's hrefs to the same rule as
+  the header's, with the same known-dead set and no new exception.
+* `chat/[id]/page.tsx` reads its params, and a failed read is a 404.
+  The page took `params: any` and read `const { id } = params;` without
+  awaiting: on the host's Next 16 a route segment's params are a Promise,
+  so `id` was undefined and `getChatById` queried on NULL; that read was
+  also made before `await auth()`, on nobody's behalf, and unguarded, so
+  a database failure was a 500. `params` is now typed
+  `Promise<{ id: string }>` and awaited, the session is read first (the
+  same three `notFound()` outcomes stand: no session, no chat, another
+  user's chat), and the read follows `app/(chat)/page.tsx`'s convention -
+  a lazy `await import("@/db/queries")` inside try/catch that logs one
+  line with no connection detail and calls `notFound()`. NEW
+  `TestChatIdPage` in `test_manifest.py` holds all three.
+* Release order: RokctAI/core's base_sdk 1.40.0 merges first; this
+  release follows it and the two are re-pinned together.
+
 ## 1.18.2
 
 Requires base_sdk >= 1.32.0 and auth_sdk >= 1.7.0 as before. No install,

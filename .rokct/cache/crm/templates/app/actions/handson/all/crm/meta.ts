@@ -17,6 +17,7 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 import { verifyCrmRole } from "@/app/lib/roles";
 
 export interface DocField {
@@ -41,10 +42,7 @@ export async function getDocTypeMeta(
   const client = await getClient();
 
   try {
-    const meta = await (client as any).call({
-      method: "frappe.client.get_meta",
-      args: { doctype },
-    });
+    const meta = await gatewayCall(client, "frappe.client.get_meta", { doctype });
 
     // Simplified meta for frontend consumption
     const fields = meta.message.fields.map((f: any) => ({

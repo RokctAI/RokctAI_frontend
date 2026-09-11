@@ -1,0 +1,24 @@
+{
+  "heading": "Acme runs on",
+  "sites": [
+    {
+      "key": "acme-shop",
+      "name": "shop.acme.school",
+      "url": "https://shop.acme.school",
+      "logo": "/network/acme-shop.svg",
+      "logoDark": "/network/acme-shop-dark.svg"
+    },
+    {
+      "key": "acme-club",
+      "name": "Acme Club",
+      "url": "https://club.acme.school",
+      "wordmark": true
+    },
+    {
+      "key": "acme-tv",
+      "name": "Acme TV",
+      "url": null,
+      "shown": false
+    }
+  ]
+}

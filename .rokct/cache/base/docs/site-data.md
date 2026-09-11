@@ -44,15 +44,25 @@ so base has one signal for switching off backend-only surface.
 | `products`  | `data/products.json`    | `{ items: [{ name, description?, sizes?: string[], image?, status?: "active" \| "coming" }] }`                                     |
 | `about`     | `data/about.md`         | the markdown, verbatim, as a string                                                                                              |
 | `legal`     | `data/legal/<slug>.md`  | a map of slug to `{ title, markdown }`; the title from a `title:` front-matter line, else the first level-1 heading (removed from the body) |
+| `network`   | `data/network.json`     | `{ heading?, sites: [{ key, name, url, logo?, logoDark?, wordmark?, shown? }] }`; `url` an https origin with no path, query string or fragment, or `null` with `shown: false` |
 
 `photo` and `image` are public paths (`/team/jane.jpg`, served from the
 shell's `public/`) or absolute URLs. A slug is lowercase letters, digits
 and single dashes. Anything else in `data/` that ends in `.json` or `.md`
 (a typo such as `teams.json`) fails the build; `README.md` is allowed.
 
+`network` (since 1.40.0) is the network strip's list for a shell whose home
+SDK registers no `sites` on its `NetworkStripConfig`
+(`components/custom/landing/network-strip.ts`): base carries no site of the
+network, so a shell with neither a registration nor this file shows no
+strip. The strip reads the file through the `getNetworkSites()` action
+(`app/actions/base/network-sites.ts`) after mount; a registered list never
+waits on it. `heading` replaces the strip's default over these sites only
+when the registered config names none.
+
 The types are `lib/site-data/kinds.ts` (`SiteTheme`, `SiteTeam`,
-`SiteStockists`, `SiteProducts`, `SiteAbout`, `SiteLegal`, and
-`SiteDataKinds` keyed by kind). The checks are `lib/site-data/validate.mjs`:
+`SiteStockists`, `SiteProducts`, `SiteAbout`, `SiteLegal`, `SiteNetwork`,
+and `SiteDataKinds` keyed by kind). The checks are `lib/site-data/validate.mjs`:
 hand-written, dependency-free, one sentence per problem naming the field.
 
 ## Bundled at build time

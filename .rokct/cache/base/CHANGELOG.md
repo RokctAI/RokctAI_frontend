@@ -1,5 +1,160 @@
 # Changelog
 
+## 1.40.0
+
+* The network strip's sites come from the home SDK that owns them, or
+  from the shell's own data, never from base (Ray, 2026-09-11: a shell
+  with no declaration shows no "Trusted by" strip - a shell outside the
+  network must not list products it has nothing to do with; site names
+  are brand content and logos are hostnames, neither of which base may
+  hard-code). NEW `NetworkStripConfig.sites?: NetworkSite[]` on
+  `components/custom/landing/network-strip.ts` is where a home SDK
+  declares the network beside its heading, order, hidden keys and
+  placement; `resolveNetworkStrip(config, selfHost, sites)` draws
+  `config.sites` when the config declares them and its `sites` argument
+  otherwise. `NETWORK_SITES` in `network-sites.ts` is now an EMPTY
+  readonly list - the default the rules fall back to, so nothing is drawn
+  with nothing declared - and the hidden place-holder entries went with
+  the list to the home SDK. The `NetworkSite` shape, `networkSiteHost`,
+  `hasTrackingParameters`, self-exclusion by host and the once-per-page
+  rule are unchanged; `networkStripRendersAt` already answered false with
+  no site, so a config that says only WHERE the strip goes draws nothing
+  until its sites arrive. A shell whose home SDK registers no `sites` and
+  runs in local or hybrid data mode may commit `data/network.json`: NEW
+  site-data kind `network` (`lib/site-data/kinds.ts` `SiteNetwork`
+  `{ heading?, sites: SiteNetworkSite[] }`, `SITE_DATA_KINDS`,
+  `SITE_DATA_FILES`; `validate.mjs` `validateNetwork` holds every `url`
+  to an https origin with no path, query string or fragment - or `null`
+  with `shown: false` - and every logo to a path or URL with no
+  parameters), read by the NEW `"use server"` action
+  `app/actions/base/network-sites.ts` `getNetworkSites()` (`{ sites: [] }`
+  in backend mode or with no file, the bundled file otherwise). NEW
+  `withOwnNetworkSites(config, own)` on `network-strip.ts` lays the data
+  under the config - registered sites win, else the shell's own data (and
+  its heading when the config names none), else none - and
+  `components/custom/network-strip.tsx`'s `loadResolvedNetworkStrip`
+  answers that merge; the module-level render resolves the registered
+  config with the page (`loadNetworkStripInputs`) and reads the data
+  AFTER MOUNT (`loadOwnNetworkSites`, `useOwnNetworkSites`), because a
+  server function cannot be called while a client component renders on
+  the server, so the server markup and the first client render agree. A
+  home SDK that draws the strip itself (a "section" placement) keeps
+  calling `loadResolvedNetworkStrip` and, with its own `sites` declared,
+  never waits on the action. `docs/site-data.md` gains the kind.
+* Tests: `network-strip.test.mts` no longer pins any brand - its list is
+  an inline fixture handed to the rules as the `sites` argument - and
+  asserts `NETWORK_SITES` is empty, a declared `sites` wins over the
+  argument, `withOwnNetworkSites` in every combination, and zero sites
+  rendering on no surface; `site-data.test.mts` validates
+  `data/network.json` (the acme fixture gains one) and bundles it;
+  `test_manifest.py` replaces `test_network_sites_list_shape` with
+  `test_network_sites_list_is_empty` and
+  `test_network_sites_come_from_the_home_sdk_or_data` (the action is
+  installed, names no host and no brand; the component stages the data
+  read after mount), and its first-party host allowlist drops the product
+  origins - no base default names one now.
+* Home SDKs: agent_sdk declares rokct.ai's five entries (three sites, two
+  hidden place-holders) on its registration in the same release train;
+  lms_sdk's registration (`footer: false`, landing `none`) and every shell
+  with no registration draw no strip, as ruled.
+* A registered section whose module loads with NO default export is
+  skipped, not rendered: `loadPageSection` in
+  `components/custom/landing/landing-page.ts` now checks
+  `typeof mod.default === "function"` before it builds the section, logs
+  one `console.error` naming the section id ("its module has no default
+  export; section skipped", with `SECTION_ENTRY_CONTRACT`) and answers
+  null, the way a module that fails to load already did - so the rest of
+  the page renders instead of React throwing "Element type is invalid" at
+  render time and the route answering 500. A module with a default export
+  is loaded exactly as before, its `meta` read or defaulted as before.
+  `landing-page.test.mts` gains the case: a module with meta but no
+  default export (and one whose default is not a function) is skipped
+  with the error logged and no meta warning, and a proper module beside
+  it still renders with its own meta.
+* A 2xx status probe whose body is EMPTY is not an answer:
+  `getPlatformStatus` (`app/actions/base/status.ts`) now asks NEW
+  `isProbeAnswer(answer)` on `components/custom/landing/footer-chrome-config.ts`
+  (a plain object with at least one field, the gateway's `message`
+  envelope looked through) after `attempted = true` and before it reads
+  the answer, and `continue`s when the resolved body is null, undefined,
+  a scalar, an array, `{}` or `{"message": null}` - a proxy or a
+  placeholder page in front of a backend that is not there answers 200
+  with nothing, and that read as `operational`. The three empty shapes
+  `platformCall` produces all read as `offline`: a body that parses to
+  JSON null (`platformCall` answers null and throws nothing), a genuinely
+  empty body (`res.json()` rejects, so it throws a `network_error`) and a
+  body of `{"message": null}` (`data.message || data` hands back the
+  envelope itself, a truthy object). It now reads as `offline` once every
+  probe is tried (the doc comment that said "an answer at all is the
+  signal" now says an answer with something in it is). The three states
+  keep their meaning: `unconfigured` - the state the footer hides the
+  indicator on - is reached from `ROKCT_STATUS_SOURCE=off` / `none`, or
+  from no probe having an origin to ask, and never from a failed or an
+  empty probe, which are `offline`; a real answer is `operational` or
+  `maintenance` with its version, as before. Tests: NEW `status.test.mts`
+  executes the action against a stub gateway (one test per empty shape:
+  a JSON-null body, a body that fails to parse, `{"message": null}` -
+  plus `undefined`, `{}`, a scalar and an array - each offline and never
+  operational or unconfigured; `{status:"ok"}` is
+  operational; the envelope's maintenance and version read as before; an
+  empty tenant answer falls through to an opted-in control probe; `off` /
+  `none` are unconfigured with no probe run; a failed probe is offline,
+  not unconfigured), staged by `test_manifest.py`'s NEW
+  `test_status_action_behaviour_under_node` and held in shape by
+  `test_status_action_treats_an_empty_answer_as_none`;
+  `status-probes.test.mts` covers `isProbeAnswer` itself.
+* The admin system-info actions ask a cmd that EXISTS for the version.
+  `app/actions/base/admin/settings.ts` and `system.ts` `getSystemInfo`
+  called `paasCall("api.get_version")`, a cmd registered nowhere -
+  not among the tenant cmds in `base/frappe/manifest.json`, not in the
+  platform's hooks, not in any cached SDK manifest - so the version was
+  always null. Both now call `paasCall(PLATFORM_VERSION_CMD)` - NEW on
+  `components/custom/landing/footer-chrome-config.ts`,
+  `"api.system.api_status"`, the one registered tenant cmd that carries
+  `version` (`{data: {status, version, user}}`; the same cmd the footer's
+  tenant probe asks) - and read it with NEW `readPlatformVersion(answer)`
+  beside it (the envelope, the gateway's `message` wrapper around it, or
+  a bare `version`; a string, else null). The callers' return shape is
+  unchanged (`{ ...info, version }`); `status.ts` reads its version
+  through the same reader. Tests: `status-probes.test.mts` asserts the
+  cmd name and the reader's string-or-null rule; `test_manifest.py`'s NEW
+  `test_admin_system_info_asks_a_registered_version_cmd` holds both call
+  sites to the constant, checks the frappe manifest registers the cmd and
+  not the phantom, and that no template or kernel file asks
+  `api.get_version`.
+* The header's stem wordmark is set in the same face as the hero's (Ray,
+  2026-09-11: on supacharge.school the "Supacharge" wordmark is right in
+  the hero and the footer but wrong in the header). The header's
+  `BrandStemWordmark` (`components/custom/header.tsx`) and the hero's
+  `HeroWordmarkSlot` (`components/custom/hero-view.tsx`) now carry the
+  SAME font utilities - `font-bold tracking-tighter leading-none`, no
+  family of their own - so both inherit the face the shell's root
+  declares (the hero span's `font-sans`, which forced Tailwind's default
+  stack over whatever the shell set, is gone; the header never had one),
+  and both carry the one hook `data-brand-wordmark="stem"`, so a home
+  SDK that gives its wordmark a face of its own styles the header and
+  the hero with ONE rule instead of reaching the hero through a deep
+  selector and leaving the header in the body font. The code span
+  beside the stem keeps `font-medium` at its `calc(44px * 0.28)` cap;
+  the stem's label (`brandStemLabel`) and sizes are unchanged. NEW
+  `test_header_stem_wordmark_shares_the_hero_wordmark_font` holds the
+  two class lists equal.
+* The admin settings and content actions send their `frappe.client.*`
+  calls through the gateway instead of nowhere. `app/actions/base/admin/settings.ts`
+  (21 sites: payment gateways, permission settings, Flutter app and build
+  settings, terms, privacy policies) and `admin/content.ts` (4 sites:
+  FAQs) still called `frappe.call({ method, args })` on the client from
+  `getPaaSClient()`; frappe-js-sdk's `call()` takes no object argument,
+  so those calls sent nothing and the admin surfaces were silently
+  empty. Every site is now `paasCall(cmd, args)` - the cmd string
+  verbatim, the same args, the `message` envelope unwrapped by the
+  gateway as the already-migrated sites in the same files have it - and
+  the `getPaaSClient` import is gone from both. NEW
+  `test_admin_actions_call_the_gateway_not_the_sdk_client` in
+  `test_manifest.py` walks every action file and fails on any `.call({`,
+  `frappe.call(` or `as any).call(` left, on a `getPaaSClient` import,
+  or on a dotted `/api/method/` URL, and pins the 25 sites per cmd.
+
 ## 1.39.0
 
 * The folded brand stem is capitalised where base shows ONLY the stem

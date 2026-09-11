@@ -17,6 +17,7 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 import { revalidatePath } from "next/cache";
 
 export type WorkItemType = "todo" | "task" | "note";
@@ -75,14 +76,11 @@ export async function getWorkItems(type: WorkItemType): Promise<WorkItem[]> {
   }
 
   try {
-    const response = await client.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: docType,
-        fields: fields,
-        limit_page_length: 50,
-        order_by: "creation desc",
-      },
+    const response = await gatewayCall(client, "frappe.client.get_list", {
+      doctype: docType,
+      fields: fields,
+      limit_page_length: 50,
+      order_by: "creation desc",
     });
 
     const items = response?.message || [];
@@ -142,9 +140,8 @@ export async function createWorkItem(type: WorkItemType, data: any) {
   }
 
   try {
-    const response = await client.call({
-      method: "frappe.client.insert",
-      args: { doc: doc },
+    const response = await gatewayCall(client, "frappe.client.insert", {
+      doc: doc,
     });
     revalidatePath("/handson/all/workspace");
     return { success: true, message: response?.message };

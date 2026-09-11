@@ -14,33 +14,42 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// The ONE list of the sites in the Rokct network, and the pure rules the
-// network strip (components/custom/network-strip.tsx) applies to it.
+// The shape of a site in the Rokct network, and the pure rules the network
+// strip (components/custom/network-strip.tsx) applies to a list of them.
 //
 // Ray, 2026-09-09: each product has its own shell now - rokct.ai lists none
 // of the others as a plan to buy - but a founder who lands on rokct.ai's
 // free opportunities pages must still learn about the other products, from
 // a clickable strip of their logos under a "Trusted by" heading ("these
-// products already trust rokct as they run on it"). The list lives in base
-// because every shell shows the SAME strip minus itself: a product that
-// joins the network is added here once and every composed shell picks it
-// up on its next compose. No home SDK restates it.
+// products already trust rokct as they run on it").
+//
+// Since 1.40.0 base carries NO sites: a site's name is brand content and
+// its logo is a hostname, neither of which base may hard-code (Ray,
+// 2026-09-11: a shell with no declaration shows no strip - a shell outside
+// the network must not list products it has nothing to do with). The list the
+// strip draws comes from the home SDK that owns it, as `sites` on the
+// NetworkStripConfig it registers at ./network-strip.ts's marker, or - on
+// a local or hybrid shell - from the shell's own `data/network.json`
+// (lib/site-data, kind "network"). [NETWORK_SITES] below stays as the
+// empty default the rules fall back to, so nothing is drawn with nothing
+// declared.
 //
 // This module is pure and browser-safe: it imports only the kernel's host
 // normalisation (app/services/base/tenant-hosts.ts, itself import-free), so
 // the client bundle that draws the strip can use the same
 // `normaliseHost` app/lib/site-metadata.ts's resolveDisplayHost uses.
 //
-// No entry carries, and no rule adds, a query string: a link in the strip
-// is the site's own origin, never a tracking parameter, never an ad
-// network's redirect. tests/network-strip.test.mts holds that line.
+// No rule adds a query string: a link in the strip is the site's own
+// origin, never a tracking parameter, never an ad network's redirect, and
+// an entry that carries one is never drawn. tests/network-strip.test.mts
+// holds that line.
 
 import { normaliseHost } from "@/app/services/base/tenant-hosts";
 
 /**
  * One site in the network.
  *
- * - `key` is stable and unique; the home SDK's registry names it to hide
+ * - `key` is stable and unique; the home SDK's config names it to hide
  *   or reorder the entry.
  * - `name` is the wordmark drawn when there is no logo, and the alt text
  *   when there is. It is the brand string the product itself declares
@@ -54,9 +63,9 @@ import { normaliseHost } from "@/app/services/base/tenant-hosts";
  * - `logo` is an absolute URL, or a public path on the site that draws
  *   the strip, to the mark drawn instead of the name; `logoDark` its
  *   dark-theme twin when the site has one.
- * - `wordmark` says the site's name IS its logo (supacharge.school until
- *   Ray designs an icon): the name is drawn as text even when a logo path is
- *   later added elsewhere.
+ * - `wordmark` says the site's name IS its logo (a product with no icon
+ *   yet): the name is drawn as text even when a logo path is later added
+ *   elsewhere.
  * - `shown` defaults to true; false keeps the entry off every strip.
  */
 export interface NetworkSite {
@@ -70,42 +79,18 @@ export interface NetworkSite {
 }
 
 /**
- * The network, in the default strip order. Logos are read from each site's
- * own public assets, so a mark changes in one place - on its own site.
+ * The list with nothing declared: empty. Base carries no sites - site
+ * names are brand content and logos are hostnames - so entries come from a
+ * registered NetworkStripConfig's `sites` (the home SDK that owns them) or,
+ * on a local or hybrid shell, from `data/network.json`. A shell with
+ * neither draws no strip.
  *
- * The rokct.ai and juvo shells serve two glyphs and name them after the
- * TILE their brand-logo.tsx draws them on, not the page: `logo.svg` is the
- * WHITE glyph (on a dark tile in light mode) and `logo_dark.svg` the BLACK
- * one (on a light tile in dark mode). The strip draws the bare glyph on
- * the page itself, so the black one is the light-theme `logo` and the
- * white one the dark-theme `logoDark`.
+ * A home SDK that lists a product with two glyphs names them after the
+ * TILE its brand-logo.tsx draws them on, not the page: the strip draws the
+ * bare glyph on the page itself, so the black one is the light-theme
+ * `logo` and the white one the dark-theme `logoDark`.
  */
-export const NETWORK_SITES: readonly NetworkSite[] = [
-  {
-    key: "rokct",
-    name: "rokct.ai",
-    url: "https://rokct.ai",
-    logo: "https://rokct.ai/images/logo_dark.svg",
-    logoDark: "https://rokct.ai/images/logo.svg",
-  },
-  {
-    key: "supacharge",
-    name: "supacharge.school",
-    url: "https://supacharge.school",
-    wordmark: true,
-  },
-  {
-    key: "juvo",
-    name: "juvo",
-    url: "https://juvo.app",
-    logo: "https://juvo.app/images/logo_dark.svg",
-    logoDark: "https://juvo.app/images/logo.svg",
-  },
-  // No domain yet (Ray, 2026-09-09): listed so the entry has a place, hidden
-  // until the url is filled in.
-  { key: "hosting", name: "Hosting", url: null, shown: false },
-  { key: "telephony", name: "Telephony", url: null, shown: false },
-];
+export const NETWORK_SITES: readonly NetworkSite[] = [];
 
 /** A site that can be drawn: shown, with a URL to link to. */
 export type LinkableNetworkSite = NetworkSite & { url: string };

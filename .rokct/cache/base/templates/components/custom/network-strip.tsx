@@ -22,9 +22,22 @@
 // row: no product name and no brand hue in the markup, neutral alphas only,
 // so it sits on whatever ground the page has in either theme.
 //
-// The list is components/custom/landing/network-sites.ts, the rules and
-// the home SDK's say (heading, order, hidden keys, placement) are
-// components/custom/landing/network-strip.ts. This file only draws.
+// The shape of a site and the list rules are
+// components/custom/landing/network-sites.ts; the home SDK's say (the
+// sites themselves since 1.40.0, the heading, order, hidden keys and
+// placement) is components/custom/landing/network-strip.ts. This file
+// only draws.
+//
+// Where the sites come from (1.40.0; base carries none): the registered
+// config's `sites` win. With none registered, the shell's own
+// `data/network.json` (lib/site-data kind "network") is read through the
+// app/actions/base/network-sites.ts server action AFTER MOUNT - a server
+// function cannot be called while a client component renders on the
+// server, and the data module is server-only - so the server-rendered
+// markup and the first client render agree (no strip), and the strip
+// appears once the action answers, the way the footer's status indicator
+// does. With neither, nothing is drawn on any surface. A registered
+// config never waits: its sites render with the page.
 //
 // A shell never lists itself: the site whose host matches the shell's own
 // - NEXT_PUBLIC_SITE_URL first, else the `url` the home SDK registered in
@@ -49,16 +62,20 @@
 // loadResolvedNetworkStrip below and asks networkStripRendersAt for the
 // "section" surface).
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 
+import { getNetworkSites } from "@/app/actions/base/network-sites";
 import {
   isLandingRoute,
   loadNetworkStrip,
   networkStripRendersAt,
   resolveNetworkStrip,
+  withOwnNetworkSites,
+  type NetworkStripConfig,
   type NetworkStripSurface,
+  type OwnNetworkSites,
   type ResolvedNetworkStrip,
 } from "@/components/custom/landing/network-strip";
 import {
@@ -83,10 +100,42 @@ export async function loadSelfHost(): Promise<string | null> {
   }
 }
 
-/** The registered config and the shell's host, resolved into what to draw. */
-export async function loadResolvedNetworkStrip(): Promise<ResolvedNetworkStrip> {
+/** The registered config (or null) and the shell's host, as the strip needs both. */
+export interface NetworkStripInputs {
+  config: NetworkStripConfig | null;
+  selfHost: string | null;
+}
+
+/** The registered config and the shell's host, loaded together; server-safe. */
+export async function loadNetworkStripInputs(): Promise<NetworkStripInputs> {
   const [config, selfHost] = await Promise.all([loadNetworkStrip(), loadSelfHost()]);
-  return resolveNetworkStrip(config, selfHost);
+  return { config, selfHost };
+}
+
+/**
+ * The shell's own `data/network.json` through the server action; `null`
+ * when the action cannot be reached (a client component rendering on the
+ * server) or answers nothing, so the caller lays nothing under the config.
+ */
+export async function loadOwnNetworkSites(): Promise<OwnNetworkSites | null> {
+  try {
+    const own = await getNetworkSites();
+    return own.sites.length > 0 ? own : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The registered config, the shell's own data laid under it (registered
+ * sites win, else the shell's data, else none) and the shell's host,
+ * resolved into what to draw. For a caller on the server or after mount;
+ * the module-level render below stages the data read after mount itself.
+ */
+export async function loadResolvedNetworkStrip(): Promise<ResolvedNetworkStrip> {
+  const { config, selfHost } = await loadNetworkStripInputs();
+  const own = config?.sites === undefined ? await loadOwnNetworkSites() : null;
+  return resolveNetworkStrip(withOwnNetworkSites(config, own), selfHost);
 }
 
 export interface NetworkStripProps {
@@ -194,10 +243,37 @@ export function NetworkStripBody({
   );
 }
 
-// Resolved once per module, server-rendered with the page.
+/**
+ * The shell's own sites, read once after mount and only while the
+ * registered config names none; null before the answer and when there is
+ * nothing to lay under the config.
+ */
+function useOwnNetworkSites(wanted: boolean): OwnNetworkSites | null {
+  const [own, setOwn] = useState<OwnNetworkSites | null>(null);
+  useEffect(() => {
+    if (!wanted) return;
+    let live = true;
+    loadOwnNetworkSites().then((next) => {
+      if (live && next) setOwn(next);
+    });
+    return () => {
+      live = false;
+    };
+  }, [wanted]);
+  return own;
+}
+
+// The config and the host resolved once per module, server-rendered with
+// the page; the shell's own data, when the config leaves the sites to it,
+// after mount.
 const ResolvedNetworkStripBody: React.ComponentType<NetworkStripProps> = dynamic(() =>
-  loadResolvedNetworkStrip().then((strip) => ({
+  loadNetworkStripInputs().then(({ config, selfHost }) => ({
     default: function LoadedNetworkStrip(props: NetworkStripProps) {
+      const own = useOwnNetworkSites(config?.sites === undefined);
+      const strip = useMemo(
+        () => resolveNetworkStrip(withOwnNetworkSites(config, own), selfHost),
+        [own],
+      );
       return <NetworkStripBody strip={strip} {...props} />;
     },
   })),

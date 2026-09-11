@@ -115,6 +115,8 @@ LEGAL_ACTION_INSTALL = ("templates/app/actions/base/legal.ts", "app/actions/base
 # backend, never from control); control is opt-in via ROKCT_STATUS_SOURCE.
 STATUS_ACTION = os.path.join(SDK_ROOT, "templates", "app", "actions", "base", "status.ts")
 STATUS_PROBES_TESTS = os.path.join(HERE, "status-probes.test.mts")
+# 1.40.0: the action itself, against a stub gateway.
+STATUS_ACTION_TESTS = os.path.join(HERE, "status.test.mts")
 
 # base_sdk 1.26.0: the platform marks base serves itself (Ray, 2026-09-09:
 # "move to base, home sdk can choose to use them or not"), installed as a
@@ -800,7 +802,7 @@ class TestManifest(unittest.TestCase):
         self.assertNotIn('import "server-only"', kinds, "the types are importable from client code")
         self.assertIn('export type SiteDataMode = "local" | "backend" | "hybrid";', kinds)
         self.assertIn('export const DEFAULT_SITE_DATA_MODE: SiteDataMode = "backend";', kinds)
-        for kind in ("theme", "team", "stockists", "products", "about", "legal"):
+        for kind in ("theme", "team", "stockists", "products", "about", "legal", "network"):
             self.assertRegex(kinds, re.compile(rf"^  {kind}: Site\w+;$", re.M), f"{kind} is a kind")
         self.assertIn("export interface SiteLegalPage {", kinds)
         # No brand string anywhere in the seam.
@@ -1560,11 +1562,14 @@ class TestRegistryMarkers(unittest.TestCase):
 
     # -- 1.23.0: no third-party default ---------------------------------------
 
-    # Hosts a base default may name: the network's own sites, the licence,
-    # the social origins the admin settings page links, and the hosts the
-    # documentation comments use as examples of a tenant or a site.
+    # Hosts a base default may name: the licence, the social origins the
+    # admin settings page links, and the hosts the documentation comments
+    # use as examples of a tenant or a site. Since 1.40.0 the network's own
+    # sites are NOT among them: base carries no site of the network (the
+    # list moved to the home SDK that owns it), so no product origin is
+    # allowed in a base default either.
     FIRST_PARTY_HOSTS = {
-        "rokct.ai", "supacharge.school", "juvo.app", "www.gnu.org",
+        "www.gnu.org",
         "twitter.com", "linkedin.com", "instagram.com", "facebook.com",
         "tenant-a.rokct.ai", "example.app", "tenant.localhost",
     }
@@ -1643,24 +1648,93 @@ class TestRegistryMarkers(unittest.TestCase):
         # Footer on and landing off with nothing registered.
         self.assertRegex(src, re.compile(r'landing:\s*"none",\s*footer:\s*true', re.S))
 
-    def test_network_sites_list_shape(self):
+    def test_network_sites_list_is_empty(self):
+        """1.40.0 (Ray, 2026-09-11: a shell with no declaration shows no
+        strip): base carries no site of the network. Site names are brand
+        strings and logos are hostnames, so the list moved to the home SDK
+        that owns it (`sites` on its registered NetworkStripConfig) or to the
+        shell's own data/network.json; NETWORK_SITES stays as the empty
+        default the rules fall back to."""
         src = read(NETWORK_SITES)
-        self.assertIn("export const NETWORK_SITES: readonly NetworkSite[]", src)
-        for origin in ("https://rokct.ai", "https://supacharge.school", "https://juvo.app"):
-            self.assertIn(f'url: "{origin}"', src)
-        for pending in ("hosting", "telephony"):
-            self.assertRegex(src, re.compile(rf'key: "{pending}".*?url: null.*?shown: false', re.S), pending)
-        # 1.32.1 (Ray, 2026-09-10, rokct.ai's logos marquee: "wrong names"):
-        # a name is the brand string the product declares, verbatim - a
-        # wordmark site draws it AS the brand - never re-cased or shortened.
-        for key, name in (("rokct", "rokct.ai"), ("supacharge", "supacharge.school"), ("juvo", "juvo")):
-            self.assertRegex(src, re.compile(rf'key: "{key}",\s*name: "{re.escape(name)}",', re.S), key)
-        self.assertNotIn('name: "Supacharge"', src)
-        self.assertIn("never shortened,\n *   re-cased or otherwise normalised here", src)
-        # The same host normalisation as resolveDisplayHost: the kernel's.
+        self.assertIn("export const NETWORK_SITES: readonly NetworkSite[] = [];", src)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", src))
+        for word in ("rokct.ai", "supacharge", "juvo", "url: null", "shown: false", "https://"):
+            self.assertNotIn(word, code, f"network-sites.ts carries {word}")
+        self.assertIn("Since 1.40.0 base carries NO sites", src)
+        # The shape and the rules are unchanged: the same host normalisation
+        # as resolveDisplayHost (the kernel's), self-exclusion, no parameters.
+        self.assertIn("export interface NetworkSite {", src)
         self.assertIn('import { normaliseHost } from "@/app/services/base/tenant-hosts";', src)
         self.assertIn("export function resolveNetworkSites(", src)
         self.assertIn("export function networkSiteHost(", src)
+        self.assertIn("export function hasTrackingParameters(url: string): boolean", src)
+        self.assertIn("if (!site.url || hasTrackingParameters(site.url)) return false;", src)
+        self.assertIn("if (self && networkSiteHost(site.url) === self) return false;", src)
+
+    def test_network_sites_come_from_the_home_sdk_or_data(self):
+        """1.40.0: NetworkStripConfig.sites is where a home SDK declares
+        the network; resolveNetworkStrip takes them over its `sites`
+        argument; a shell that registers none may commit data/network.json,
+        read through the app/actions/base/network-sites.ts action and laid
+        under the config by withOwnNetworkSites - registered sites win, else
+        the shell's own data, else none, and with none the strip draws on no
+        surface (networkStripRendersAt is unchanged)."""
+        registry = read(NETWORK_STRIP_REGISTRY)
+        self.assertIn("  sites?: NetworkSite[];", registry)
+        self.assertIn("export interface OwnNetworkSites {", registry)
+        self.assertIn("export function withOwnNetworkSites(", registry)
+        self.assertIn("if (config?.sites !== undefined) return config;", registry)
+        self.assertIn("sites: readonly NetworkSite[] = NETWORK_SITES,", registry)
+        self.assertIn("sites: resolveNetworkSites(config?.sites ?? sites, {", registry)
+        self.assertIn("if (strip.sites.length === 0) return false;", registry)
+        # The action: server-side, the bundled data/ file or nothing, never a
+        # site of its own.
+        action_path = os.path.join(SDK_ROOT, "templates", "app", "actions", "base", "network-sites.ts")
+        self.assertTrue(os.path.exists(action_path))
+        self.assertIn("app/actions/base/network-sites.ts", {i["to"] for i in load_manifest()["installs"]})
+        action = read(action_path)
+        self.assertTrue(action.lstrip().startswith("/*"))
+        self.assertIn('"use server";', action)
+        self.assertIn("export async function getNetworkSites(): Promise<SiteNetwork>", action)
+        self.assertIn('import { hasSiteData, readSiteData } from "@/lib/site-data/read-site-data";', action)
+        self.assertIn('if (!hasSiteData("network")) return { sites: [] };', action)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", action))
+        self.assertNotIn("https://", code)
+        for brand in ("rokct.ai", "supacharge", "juvo"):
+            self.assertNotIn(brand, action.lower())
+        # The component: the registered config with the page, the shell's
+        # own data after mount (a server function cannot be called while a
+        # client component renders on the server), never both lists.
+        component = read(NETWORK_STRIP)
+        self.assertIn('import { getNetworkSites } from "@/app/actions/base/network-sites";', component)
+        self.assertIn("export async function loadNetworkStripInputs(): Promise<NetworkStripInputs>", component)
+        self.assertIn("export async function loadOwnNetworkSites(): Promise<OwnNetworkSites | null>", component)
+        self.assertIn("export async function loadResolvedNetworkStrip(): Promise<ResolvedNetworkStrip>", component)
+        self.assertIn("const own = config?.sites === undefined ? await loadOwnNetworkSites() : null;", component)
+        self.assertIn("return resolveNetworkStrip(withOwnNetworkSites(config, own), selfHost);", component)
+        self.assertIn("function useOwnNetworkSites(wanted: boolean): OwnNetworkSites | null {", component)
+        self.assertIn("const own = useOwnNetworkSites(config?.sites === undefined);", component)
+        self.assertIn("() => resolveNetworkStrip(withOwnNetworkSites(config, own), selfHost),", component)
+        # The data kind, its file and its validator.
+        kinds = read(os.path.join(SITE_DATA_DIR, "kinds.ts"))
+        self.assertIn("export interface SiteNetworkSite {", kinds)
+        self.assertIn("export interface SiteNetwork {", kinds)
+        self.assertIn('  network: "data/network.json",', kinds)
+        validate = read(os.path.join(SITE_DATA_DIR, "validate.mjs"))
+        self.assertIn('network: "network.json"', validate)
+        self.assertIn("export function validateNetwork(value) {", validate)
+        self.assertIn("export function isHttpsOrigin(v) {", validate)
+        self.assertIn('return url.protocol === "https:" && url.pathname === "/"', validate)
+        self.assertIn("  network: validateNetwork,", validate)
+        doc = read(SITE_DATA_DOC)
+        self.assertIn("| `network`   | `data/network.json`", doc)
+        self.assertIn("`SiteNetwork`", doc)
+        self.assertIn("getNetworkSites()", doc)
+        self.assertTrue(os.path.exists(os.path.join(SITE_DATA_FIXTURE, "data", "network.json")))
+        changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
+        self.assertIn("## 1.40.0", changelog)
+        self.assertIn("`NetworkStripConfig.sites?: NetworkSite[]`", changelog.split("## 1.39.0", 1)[0])
+        self.assertNotRegex(changelog, re.compile(r"^#[^#\s]", re.M), "no CHANGELOG line starts with # and text")
 
     def test_network_strip_component_never_tracks(self):
         src = read(NETWORK_STRIP)
@@ -2215,7 +2289,16 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertIn('`[landing] section "${entry.id}" renders with default settings `', resolver)
         self.assertIn("`no rootClass): ${problem}. ${SECTION_ENTRY_CONTRACT}`", resolver)
         self.assertIn("meta = fallbackSectionMeta();", resolver)
-        self.assertNotIn("skipped", resolver)
+        # A meta problem never skips: between reading the problem and
+        # building the section there is no early return. The one skip in
+        # the loader (1.40.0) is a module with no default export to render,
+        # decided BEFORE meta is looked at.
+        meta_path = resolver[resolver.index("const problem = describeMetaProblem(mod.meta);"):resolver.index("const nav = meta.nav ??")]
+        self.assertNotIn("return null", meta_path)
+        self.assertNotIn("skipped", meta_path)
+        self.assertIn('if (typeof mod.default !== "function") {', resolver)
+        self.assertIn('"its module has no default export; section skipped. "', resolver)
+        self.assertLess(resolver.index('typeof mod.default !== "function"'), resolver.index("describeMetaProblem(mod.meta)"))
         self.assertLess(resolver.index("describeMetaProblem(mod.meta)"), resolver.index("const nav = meta.nav ??"))
         for text in ('"use client"', "sibling <name>.client.tsx", "meta.renders(ctx) stays pure"):
             self.assertIn(text, resolver)
@@ -2416,7 +2499,216 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
-        self.assertGreaterEqual(int(passed.group(1)), 7)
+        self.assertGreaterEqual(int(passed.group(1)), 13)
+
+    def test_status_action_treats_an_empty_answer_as_none(self):
+        """1.40.0: a 2xx whose body is null, not an object, or {} is a proxy
+        or a placeholder in front of a missing backend, not an answer: the
+        loop continues to the next probe and falls through to offline. The
+        rule is footer-chrome-config.ts's pure isProbeAnswer, so a client
+        may share it; the action applies it after `attempted = true` and
+        before it reads the answer."""
+        config = read(FOOTER_CHROME_CONFIG)
+        self.assertIn("export function isProbeAnswer(answer: unknown): answer is Record<string, unknown> {", config)
+        self.assertIn("const keys = Object.keys(answer);", config)
+        self.assertIn('if (keys.length === 1 && keys[0] === "message") {', config)
+        status = read(STATUS_ACTION)
+        self.assertIn("  isProbeAnswer,\n  readPlatformVersion,\n  resolvePlatformStatusProbes,", status)
+        self.assertIn("      attempted = true;\n", status)
+        self.assertLess(status.index("attempted = true;"), status.index("if (!isProbeAnswer(answer)) continue;"))
+        self.assertLess(status.index("if (!isProbeAnswer(answer)) continue;"),
+                        status.index("const { maintenance, version } = readProbeAnswer(answer);"))
+        self.assertIn("function readProbeAnswer(answer: Record<string, unknown>): {", status)
+        self.assertNotIn("an answer at all is the signal", status)
+        self.assertIn("an answer WITH SOMETHING IN IT is the signal", status)
+        self.assertIn("a 2xx with an empty body counts as tried and not answered (1.40.0)", status)
+
+    def test_header_stem_wordmark_shares_the_hero_wordmark_font(self):
+        """1.40.0 (Ray, 2026-09-11: on supacharge.school the wordmark is
+        right in the hero and the footer but wrong in the HEADER, font-wise):
+        the header's stem wordmark and the hero's carry the SAME font
+        utilities - weight, tracking, leading, case - and neither declares
+        a family, so both inherit the shell's face; both carry the
+        `data-brand-wordmark="stem"` hook a home SDK styles with one rule.
+        The code span keeps its own weight at its 12.32px cap."""
+        header = read(HEADER)
+        view = read(HERO_VIEW)
+        wordmark = header[header.index("function BrandStemWordmark("):header.index("function BrandBlock(")]
+        slot = view[view.index("function HeroWordmarkSlot("):view.index("export interface HeroViewProps")]
+        font_re = re.compile(r"\b(?:font-[a-z0-9\[\]-]+|tracking-[a-z0-9\[\]\.-]+|leading-[a-z0-9\[\]\.-]+|uppercase|lowercase|capitalize|normal-case|italic|not-italic)\b")
+        header_cls = re.search(r'data-brand-wordmark="stem"\s*className="([^"]+)"', wordmark)
+        hero_cls = re.search(r'data-brand-wordmark="stem"\s*className=\{`([^`]+)`\}', slot)
+        self.assertIsNotNone(header_cls, "the header stem wordmark carries the hook and a class list")
+        self.assertIsNotNone(hero_cls, "the hero stem wordmark carries the hook and a class list")
+        header_font = sorted(font_re.findall(header_cls.group(1)))
+        hero_font = sorted(font_re.findall(hero_cls.group(1)))
+        self.assertEqual(header_font, hero_font)
+        self.assertEqual(header_font, ["font-bold", "leading-none", "tracking-tighter"])
+        for cls in (header_cls.group(1), hero_cls.group(1)):
+            self.assertNotIn("font-sans", cls)
+            self.assertNotIn("font-mono", cls)
+            self.assertNotIn("uppercase", cls)
+        for text in (header, view):
+            code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", text))
+            self.assertEqual(code.count('data-brand-wordmark="stem"'), 1)
+        # The stem's label is the hero's: the same capitalised stem.
+        self.assertIn("const label = brandStemLabel(name) ?? stem;", wordmark)
+        self.assertIn("text: brandStemLabel(name) ?? name", read(LANDING_PAGE_RESOLVER))
+        # The code span (the country code / the domain suffix) is its own
+        # thing: font-medium at the 1.36.0 cap, untouched.
+        self.assertIn("fontSize: BRAND_STEM_CODE_FONT_SIZE }", header)
+        menu = read(os.path.join(LANDING, "header-menu.ts"))
+        self.assertIn("export const BRAND_CODE_FONT_SIZE = `calc(${BRAND_MARK_SIZE_PX}px * ${BRAND_CODE_SCALE})`;", menu)
+        self.assertRegex(menu, re.compile(r"^export const BRAND_MARK_SIZE_PX = 44;$", re.M))
+        self.assertRegex(menu, re.compile(r"^export const BRAND_CODE_SCALE = 0\.28;$", re.M))
+        self.assertIn("export const BRAND_STEM_CODE_FONT_SIZE = `min(${BRAND_CODE_FONT_SIZE}, ${BRAND_STEM_FONT_SIZE})`;", menu)
+        self.assertIn('"ml-1 inline-block self-center pt-0.5 font-medium leading-none text-foreground transition-all duration-500 ease-in-out"', header)
+        self.assertNotIn("font-medium", header_cls.group(1))
+
+    def test_admin_system_info_asks_a_registered_version_cmd(self):
+        """1.40.0: the admin system-info actions asked `api.get_version`, a
+        cmd registered nowhere (base/frappe/manifest.json's 130-odd tenant
+        cmds, the platform's hooks), so the version was always null. Both
+        now ask `api.system.api_status` - the ONE registered tenant cmd that
+        carries `version` - through the same paasCall, read it with the pure
+        readPlatformVersion (a string, else null) and keep their return
+        shape. No base template or kernel file names the phantom cmd."""
+        config = read(FOOTER_CHROME_CONFIG)
+        self.assertIn('export const PLATFORM_VERSION_CMD = "api.system.api_status";', config)
+        self.assertIn("export function readPlatformVersion(answer: unknown): string | null {", config)
+        self.assertIn('return typeof inner.version === "string" ? inner.version : null;', config)
+        frappe_manifest = read(os.path.join(SDK_ROOT, "..", "frappe", "manifest.json"))
+        self.assertIn('"{app_name}.api.system.api_status"', frappe_manifest)
+        self.assertNotIn("get_version", frappe_manifest)
+        for name in ("settings.ts", "system.ts"):
+            action = read(os.path.join(SDK_ROOT, "templates", "app", "actions", "base", "admin", name))
+            self.assertIn("      paasCall(PLATFORM_VERSION_CMD),", action, name)
+            self.assertIn('paasCall("api.admin_system.get_system_info"),', action, name)
+            self.assertIn('versionRes.status === "fulfilled" ? readPlatformVersion(versionRes.value) : null;', action, name)
+            self.assertIn("      version: version,", action, name)
+            code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", action))
+            self.assertNotIn("api.get_version", code, name)
+        status = read(STATUS_ACTION)
+        self.assertIn("version: readPlatformVersion(answer)", status)
+        for root in (os.path.join(SDK_ROOT, "templates"), os.path.join(SDK_ROOT, "src")):
+            for dirpath, _, files in os.walk(root):
+                for fname in files:
+                    if not fname.endswith((".ts", ".tsx")):
+                        continue
+                    path = os.path.join(dirpath, fname)
+                    code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(path)))
+                    self.assertNotIn('"api.get_version"', code, f"{os.path.relpath(path, SDK_ROOT)} asks the phantom cmd")
+
+    def test_admin_actions_call_the_gateway_not_the_sdk_client(self):
+        """1.40.0: `admin/settings.ts` (21 sites) and `admin/content.ts` (4)
+        still called `frappe.call({ method, args })` on the client from
+        `getPaaSClient()`. frappe-js-sdk's `call()` takes NO object
+        argument, so those calls sent nothing and the admin surfaces
+        (payment gateways, permission and Flutter settings, terms, privacy
+        policies, FAQs) were silently empty. Every site is now
+        `paasCall(cmd, args)` with the cmd string verbatim - `frappe.client.*`
+        goes through the gateway as-is - and the same args, the shape the
+        already-migrated sites in the same files use. No action file under
+        templates/app/actions calls `.call({` with an object, names
+        `frappe.call(`, casts to `(x as any).call(`, or imports
+        `getPaaSClient`; no site turned into a dotted `/api/method/` URL."""
+        object_call = re.compile(r"\.call\(\s*\{")
+        frappe_call = re.compile(r"\bfrappe\.call\(")
+        any_call = re.compile(r"as any\)\.call\(")
+        actions = os.path.join(SDK_ROOT, "templates", "app", "actions")
+        seen = 0
+        for dirpath, _, files in os.walk(actions):
+            for fname in files:
+                if not fname.endswith((".ts", ".tsx")):
+                    continue
+                path = os.path.join(dirpath, fname)
+                rel = os.path.relpath(path, SDK_ROOT)
+                code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(path)))
+                seen += 1
+                self.assertNotRegex(code, object_call, f"{rel} calls .call({{...}}) with an object argument")
+                self.assertNotRegex(code, frappe_call, f"{rel} calls frappe.call(")
+                self.assertNotRegex(code, any_call, f"{rel} casts to any to reach .call(")
+                self.assertNotIn("getPaaSClient", code, f"{rel} still reaches the sdk client")
+                self.assertNotIn("/api/method/", code, f"{rel} hard-codes a dotted method URL")
+        self.assertGreaterEqual(seen, 7, "the action files were walked")
+        expected = {
+            "settings.ts": {
+                "frappe.client.get": 6,
+                "frappe.client.get_list": 3,
+                "frappe.client.set_value": 6,
+                "frappe.client.insert": 3,
+                "frappe.client.delete": 2,
+                "frappe.client.save": 1,
+            },
+            "content.ts": {
+                "frappe.client.get_list": 1,
+                "frappe.client.insert": 1,
+                "frappe.client.set_value": 1,
+                "frappe.client.delete": 1,
+            },
+        }
+        for name, cmds in expected.items():
+            action = read(os.path.join(actions, "base", "admin", name))
+            self.assertIn('import { paasCall } from "@/app/services/base/platform-gateway";', action, name)
+            self.assertNotIn('from "@/app/lib/client"', action, name)
+            for cmd, count in cmds.items():
+                self.assertEqual(
+                    action.count(f'paasCall("{cmd}", {{'), count,
+                    f"{name} asks {cmd} through paasCall at {count} sites",
+                )
+
+    def test_status_action_behaviour_under_node(self):
+        """The action executed (tests/status.test.mts): null, a scalar, an
+        array and {} read as offline; {status:"ok"} as operational; the
+        envelope's maintenance and version as before; an empty tenant
+        answer falls through to an opted-in control probe; no origin is
+        unconfigured and a failed probe offline, as before; and the hidden
+        indicator (`unconfigured`) is reached from ROKCT_STATUS_SOURCE=off
+        or none alone - never from a failed or an empty probe."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute status.ts")
+        stub_gateway = (
+            "export type PlatformGatewayFailure = 'no_base_url' | 'http_error' | 'network_error';\n"
+            "export class PlatformGatewayError extends Error {\n"
+            "  readonly cmd: string; readonly reason: PlatformGatewayFailure; readonly status?: number;\n"
+            "  constructor(cmd: string, reason: PlatformGatewayFailure, status?: number) {\n"
+            "    super(`Platform gateway call failed: ${cmd}`); this.name = 'PlatformGatewayError';\n"
+            "    this.cmd = cmd; this.reason = reason; this.status = status;\n"
+            "  }\n"
+            "}\n"
+            "/** What the next platformCall answers, in order; a function is called and may throw. */\n"
+            "export const answers: unknown[] = [];\n"
+            "export const calls: { cmd: string; site: 'tenant' | 'control' }[] = [];\n"
+            "export async function platformCall<T = unknown>(cmd: string, _payload: unknown, options: { baseUrl?: string }): Promise<T> {\n"
+            "  calls.push({ cmd, site: options.baseUrl ? 'control' : 'tenant' });\n"
+            "  if (answers.length === 0) throw new Error('no stub answer left');\n"
+            "  const next = answers.shift();\n"
+            "  return (typeof next === 'function' ? next() : next) as T;\n"
+            "}\n"
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            shutil.copy(FOOTER_CHROME_CONFIG, os.path.join(tmp, "footer-chrome-config.ts"))
+            with open(os.path.join(tmp, "platform-gateway.ts"), "w", encoding="utf-8") as f:
+                f.write(stub_gateway)
+            staged = read(STATUS_ACTION).replace(
+                'from "@/app/services/base/platform-gateway"', 'from "./platform-gateway.ts"'
+            ).replace(
+                'from "@/components/custom/landing/footer-chrome-config"', 'from "./footer-chrome-config.ts"'
+            )
+            self.assertNotIn('from "@/', staged, "status.ts imports something the stage does not cover")
+            with open(os.path.join(tmp, "status.ts"), "w", encoding="utf-8") as f:
+                f.write(staged)
+            shutil.copy(STATUS_ACTION_TESTS, os.path.join(tmp, "status.test.mts"))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 os.path.join(tmp, "status.test.mts")],
+                capture_output=True, text=True, timeout=120, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 14)
 
 
 if __name__ == "__main__":

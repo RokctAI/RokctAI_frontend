@@ -116,7 +116,7 @@ function problemsOf(fn: () => unknown): string[] {
 describe("validators", () => {
   it("accept every fixture file", () => {
     const data = path.join(FIXTURE, "data");
-    for (const kind of ["theme", "team", "stockists", "products"] as const) {
+    for (const kind of ["theme", "team", "stockists", "products", "network"] as const) {
       const value = JSON.parse(fs.readFileSync(path.join(data, `${kind}.json`), "utf8"));
       assert.deepEqual(validateSiteData(kind, value), [], kind);
     }
@@ -161,6 +161,40 @@ describe("validators", () => {
     ]);
     assert.deepEqual(validateSiteData("legal", { terms: { markdown: "m" } }), ["terms.title is required"]);
     assert.equal(validateSiteData("menu", {}).length, 1);
+  });
+
+  it("hold data/network.json to https origins with no parameters (1.40.0)", () => {
+    const site = { key: "acme-shop", name: "shop.acme.school", url: "https://shop.acme.school" };
+    assert.deepEqual(validateSiteData("network", { sites: [site] }), []);
+    assert.deepEqual(validateSiteData("network", { heading: "Acme runs on", sites: [] }), []);
+    assert.deepEqual(validateSiteData("network", { sites: [{ ...site, url: null, shown: false }] }), []);
+    assert.deepEqual(validateSiteData("network", { sites: [{ ...site, url: null }] }), [
+      "sites[0] has no url and must be shown: false",
+    ]);
+    for (const url of ["http://shop.acme.school", "https://shop.acme.school/shop", "https://shop.acme.school?utm_source=strip", "https://shop.acme.school#ref", "shop.acme.school"]) {
+      assert.deepEqual(validateSiteData("network", { sites: [{ ...site, url }] }), [
+        `sites[0].url must be an https origin with no path, query string or fragment, got ${JSON.stringify(url)}`,
+      ], url);
+    }
+    assert.deepEqual(validateSiteData("network", { sites: [{ ...site, logo: "/acme.svg?v=2" }] }), [
+      "sites[0].logo must be a public path or an absolute URL with no query string or fragment",
+    ]);
+    assert.deepEqual(validateSiteData("network", { sites: [site, { ...site, name: "Twice" }] }), [
+      'sites[1].key "acme-shop" is used twice',
+    ]);
+    assert.deepEqual(validateSiteData("network", { sites: [{ name: "No key" }] }), [
+      "sites[0].key is required",
+      "sites[0].url is required (an https origin, or null with shown: false)",
+    ]);
+    assert.deepEqual(validateSiteData("network", { sites: [{ ...site, wordmark: "yes", extra: 1 }] }), [
+      "sites[0].extra is not a site field (key, name, url, logo, logoDark, wordmark, shown)",
+      "sites[0].wordmark must be true or false",
+    ]);
+    assert.deepEqual(validateSiteData("network", { items: [] }), [
+      "items is not a field of network (heading, sites)",
+      "sites must be an array",
+    ]);
+    assert.deepEqual(validateSiteData("network", []), ['the file must be a JSON object with a "sites" array']);
   });
 
   it("know the three modes", () => {
@@ -220,7 +254,8 @@ describe("the mode rule", () => {
   });
 
   it("names every kind and its file", () => {
-    assert.deepEqual([...SITE_DATA_KINDS], ["theme", "team", "stockists", "products", "about", "legal"]);
+    assert.deepEqual([...SITE_DATA_KINDS], ["theme", "team", "stockists", "products", "about", "legal", "network"]);
+    assert.equal(SITE_DATA_FILES.network, "data/network.json");
     for (const kind of SITE_DATA_KINDS) assert.match(SITE_DATA_FILES[kind], /^data\//);
   });
 });
@@ -275,8 +310,11 @@ describe("the generator", () => {
   it("bundles the whole fixture folder in hybrid mode", () => {
     const { mode, files, sources } = collectSiteData(FIXTURE, "hybrid");
     assert.equal(mode, "hybrid");
-    assert.deepEqual(Object.keys(files).sort(), ["about", "legal", "products", "stockists", "team", "theme"]);
+    assert.deepEqual(Object.keys(files).sort(), ["about", "legal", "network", "products", "stockists", "team", "theme"]);
     assert.equal(files.theme.primary, "#1a5fb4");
+    assert.equal(files.network.heading, "Acme runs on");
+    assert.deepEqual(files.network.sites.map((s: { key: string }) => s.key), ["acme-shop", "acme-club", "acme-tv"]);
+    assert.deepEqual(sources.network, ["data/network.json"]);
     assert.equal(files.team.members.length, 2);
     assert.equal(files.stockists.items[0].town, "Acme Town");
     assert.equal(files.products.items[1].status, "coming");
@@ -360,7 +398,7 @@ describe("the generator", () => {
     const out = path.join(root, "lib", "site-data", "generated.ts");
     assert.equal(first.out, out);
     assert.ok(fs.existsSync(out));
-    assert.deepEqual(first.kinds.sort(), ["about", "legal", "products", "stockists", "team", "theme"]);
+    assert.deepEqual(first.kinds.sort(), ["about", "legal", "network", "products", "stockists", "team", "theme"]);
     assert.match(first.lines[0], /^\[site-data\] mode hybrid: /);
     assert.match(first.lines[1], /generated\.ts written$/);
     const second = generateSiteData(root);
@@ -371,10 +409,10 @@ describe("the generator", () => {
     fs.writeFileSync(
       probe,
       'import { SITE_DATA } from "./generated.ts";\nimport { resolveSiteData, hasSiteDataIn } from "./kinds.ts";\n' +
-        'console.log(JSON.stringify({ mode: SITE_DATA.mode, team: resolveSiteData(SITE_DATA, "team")?.members.length, has: hasSiteDataIn(SITE_DATA, "legal"), legal: Object.keys(resolveSiteData(SITE_DATA, "legal") ?? {}) }));\n',
+        'console.log(JSON.stringify({ mode: SITE_DATA.mode, team: resolveSiteData(SITE_DATA, "team")?.members.length, has: hasSiteDataIn(SITE_DATA, "legal"), legal: Object.keys(resolveSiteData(SITE_DATA, "legal") ?? {}), network: resolveSiteData(SITE_DATA, "network")?.sites.length }));\n',
     );
     const out2 = execFileSync(process.execPath, ["--experimental-strip-types", "--no-warnings", probe], { encoding: "utf8" });
-    assert.deepEqual(JSON.parse(out2.trim()), { mode: "hybrid", team: 2, has: true, legal: ["privacy", "terms"] });
+    assert.deepEqual(JSON.parse(out2.trim()), { mode: "hybrid", team: 2, has: true, legal: ["privacy", "terms"], network: 3 });
   });
 
   it("runs as a command: exit 0 with a summary, exit 1 with the problems", () => {

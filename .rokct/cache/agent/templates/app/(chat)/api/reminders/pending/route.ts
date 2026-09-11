@@ -20,6 +20,7 @@ import { auth } from "@/app/(auth)/auth";
 import { getPendingReminders } from "@/db/queries";
 
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export const revalidate = 0;
 
@@ -35,26 +36,23 @@ export async function GET(request: Request) {
 
     // Fetch Unread Notifications from Frappe
     const client = await getClient();
-    const notificationsPromise = (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Notification Log",
-        filters: {
-          for_user: session.user.email,
-          read: 0,
-        },
-        fields: [
-          "name",
-          "subject",
-          "email_content",
-          "type",
-          "creation",
-          "document_type",
-          "document_name",
-        ],
-        order_by: "creation desc",
-        limit_page_length: 5,
+    const notificationsPromise = gatewayCall(client, "frappe.client.get_list", {
+      doctype: "Notification Log",
+      filters: {
+        for_user: session.user.email,
+        read: 0,
       },
+      fields: [
+        "name",
+        "subject",
+        "email_content",
+        "type",
+        "creation",
+        "document_type",
+        "document_name",
+      ],
+      order_by: "creation desc",
+      limit_page_length: 5,
     });
 
     const [reminders, notificationsRes] = await Promise.all([

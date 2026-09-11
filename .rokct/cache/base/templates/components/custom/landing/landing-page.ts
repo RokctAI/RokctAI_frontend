@@ -217,17 +217,29 @@ export function describeMetaProblem(meta: unknown): string | null {
 /**
  * Loads one registry entry into a [LoadedSection]; null, after a logged
  * error, when its module fails to load - the rule the client effect
- * applied until 1.31.0, unchanged. When its `meta` is not something the
- * server can read (a "use client" module's client reference proxy, a
- * missing export, any non-object) the section still loads, with
- * [fallbackSectionMeta] and one logged warning naming the module, the
- * settings it renders with and [SECTION_ENTRY_CONTRACT].
+ * applied until 1.31.0, unchanged - or (1.40.0) when it loads with no
+ * default export to render: React would otherwise throw "Element type is
+ * invalid" for the section at render time and the whole page would answer
+ * 500, so a module that is not a component is skipped, named, and the rest
+ * of the page renders. When its `meta` is not something the server can
+ * read (a "use client" module's client reference proxy, a missing export,
+ * any non-object) the section still loads, with [fallbackSectionMeta] and
+ * one logged warning naming the module, the settings it renders with and
+ * [SECTION_ENTRY_CONTRACT].
  */
 export async function loadPageSection(
   entry: PageSectionEntry,
 ): Promise<LoadedSection | null> {
   try {
     const mod: PageSectionModule = await entry.load();
+    if (typeof mod.default !== "function") {
+      console.error(
+        `[landing] section "${entry.id}" has no component to render: ` +
+          "its module has no default export; section skipped. " +
+          SECTION_ENTRY_CONTRACT,
+      );
+      return null;
+    }
     const problem = describeMetaProblem(mod.meta);
     let meta: PageSectionMeta;
     if (problem === null) {

@@ -1,6 +1,6 @@
 {
   "name": "promotions_sdk",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "installs": [
     {
       "from": "templates/app/actions/promotions/admin/marketing.ts",
@@ -54,7 +54,6 @@
     "app/actions/base/admin/content.ts",
     "app/actions/merchants/business.ts",
     "app/actions/users/admin/customers.ts",
-    "app/lib/client.ts",
     "app/lib/i18n/index.ts",
     "app/services/base/platform-gateway.ts",
     "components/custom/image-upload.tsx",

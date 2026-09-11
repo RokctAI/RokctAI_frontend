@@ -17,6 +17,7 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 import { auth } from "@/app/(auth)/auth"; // Assuming auth helper exists
 import { revalidatePath } from "next/cache";
 
@@ -40,25 +41,22 @@ export async function getMyTasks() {
     // Actually, let's fetch all and filter in memory if volume is low, or rely on standard "Owner" permission.
 
     // Better: Fetch standard list, relying on permission manager.
-    const response = await client.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Task",
-        fields: [
-          "name",
-          "subject",
-          "status",
-          "priority",
-          "project",
-          "exp_end_date",
-        ],
-        filters: {
-          // explicit filter for "Me" often requires join.
-          // For now, let's return all tasks visible to user, which IS "My Tasks" in strict permission mode.
-        },
-        limit_page_length: 50,
-        order_by: "creation desc",
+    const response = await gatewayCall(client, "frappe.client.get_list", {
+      doctype: "Task",
+      fields: [
+        "name",
+        "subject",
+        "status",
+        "priority",
+        "project",
+        "exp_end_date",
+      ],
+      filters: {
+        // explicit filter for "Me" often requires join.
+        // For now, let's return all tasks visible to user, which IS "My Tasks" in strict permission mode.
       },
+      limit_page_length: 50,
+      order_by: "creation desc",
     });
 
     // In a real "Me" view, we might want to filter strictly by assignment.

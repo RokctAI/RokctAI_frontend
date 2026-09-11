@@ -54,6 +54,7 @@ import {
   PAGE_SLOTS,
   sectionPageOf,
   type PageSectionMeta,
+  type PageSectionModule,
 } from './page-sections.ts';
 
 // A section component stub: the arrangement never renders it.
@@ -160,6 +161,26 @@ describe('loadPageSections', () => {
     assert.deepEqual(result.map((s) => s.id), ['ok', 'also-ok']);
     assert.equal(logged.length, 1);
     assert.match(logged[0], /section "broken" failed to load/);
+  });
+
+  it('skips a module with meta but no default export, logs it, and keeps the rest (1.40.0)', async () => {
+    const { result, logged, warned } = await quietly(() =>
+      loadPageSections([
+        { id: 'ok', load: async () => ({ default: Section, meta: { order: 1 } }) },
+        { id: 'no-component', load: async () => ({ meta: { order: 2, nav: [{ id: 'x', label: 'X' }] } } as unknown as PageSectionModule) },
+        { id: 'not-a-component', load: async () => ({ default: { render: true }, meta: {} } as unknown as PageSectionModule) },
+        { id: 'also-ok', load: async () => ({ default: Section, meta: {} }) },
+      ]),
+    );
+    assert.deepEqual(result.map((s) => s.id), ['ok', 'also-ok']);
+    assert.equal(result[0].Component, Section);
+    assert.equal(logged.length, 2);
+    assert.match(logged[0], /section "no-component" has no component to render: its module has no default export; section skipped/);
+    assert.match(logged[1], /section "not-a-component" has no component to render: its module has no default export; section skipped/);
+    // The skip is not a meta problem: nothing is warned about, and a proper
+    // module beside it renders with its own meta as before.
+    assert.deepEqual(warned, []);
+    assert.equal(result[0].order, 1);
   });
 
   it('renders a "use client" module whose meta is a client reference with default settings and one warning', async () => {

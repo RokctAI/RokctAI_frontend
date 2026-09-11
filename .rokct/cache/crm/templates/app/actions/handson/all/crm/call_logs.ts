@@ -17,6 +17,7 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 import { verifyCrmRole } from "@/app/lib/roles";
 
 export async function getCallLogs(page = 1, limit = 20) {
@@ -27,34 +28,30 @@ export async function getCallLogs(page = 1, limit = 20) {
   try {
     const start = (page - 1) * limit;
 
-    const logs = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Call Log",
-        fields: [
-          "name",
-          "title",
-          "status",
-          "call_type",
-          "start_time",
-          "duration",
-          "owner",
-          "modified",
-        ],
-        order_by: "modified desc",
-        limit_start: start,
-        limit_page_length: limit,
-      },
+    const logs = await gatewayCall(client, "frappe.client.get_list", {
+      doctype: "Call Log",
+      fields: [
+        "name",
+        "title",
+        "status",
+        "call_type",
+        "start_time",
+        "duration",
+        "owner",
+        "modified",
+      ],
+      order_by: "modified desc",
+      limit_start: start,
+      limit_page_length: limit,
     });
 
-    const countRes = await (client as any).call({
-      method: "frappe.client.get_count",
-      args: { doctype: "Call Log" },
+    const countRes = await gatewayCall(client, "frappe.client.get_count", {
+      doctype: "Call Log",
     });
 
     return {
-      data: logs,
-      total: countRes || 0,
+      data: logs?.message || [],
+      total: countRes?.message || 0,
       page: page,
       limit: limit,
     };

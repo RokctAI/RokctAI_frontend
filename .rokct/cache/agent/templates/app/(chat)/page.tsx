@@ -66,15 +66,13 @@ export default async function Page({
           if (isBusiness) {
             // Call Tenant site summarization
             const { getClient } = await import("@/app/lib/client");
+            const { gatewayCall } = await import("@/app/lib/gateway-rpc");
             const client = await getClient();
-            const sumRes = await (client as any).call({
-              method: "rcore.api.plan_builder.summarize_chat_session",
-              args: {
-                session_id: lastChat.id,
-                messages: JSON.stringify(lastChat.messages),
-              },
+            const sumRes = await gatewayCall(client, "api.plan_builder.summarize_chat_session", {
+              session_id: lastChat.id,
+              messages: JSON.stringify(lastChat.messages),
             });
-            summary = sumRes?.summary || "";
+            summary = sumRes?.message?.summary || "";
           } else {
             // Call Control site summarization
             const { ControlBaseService } = await import("@/app/services/control/base");

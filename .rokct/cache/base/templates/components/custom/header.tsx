@@ -328,9 +328,20 @@ function BrandStemWordmark({
   // character count and the viewport), so the name never widens the bar
   // and the stem's glyphs are the same before and after the fold.
   const size = { "--brand-chars": name.trim().length, fontSize: BRAND_STEM_FONT_SIZE } as React.CSSProperties;
+  // The face (1.40.0; Ray, 2026-09-11: the header's stem wordmark was in a
+  // different font from the hero's and the footer's): the stem wordmark
+  // here and the hero's (hero-view.tsx HeroWordmarkSlot) carry the SAME
+  // font utilities - bold, tracking-tighter, leading-none, and NO family
+  // of their own, so both inherit the face the shell's root declares -
+  // and the same `data-brand-wordmark="stem"` hook, so a home SDK that
+  // gives its wordmark a face of its own styles both with ONE rule
+  // ([data-brand-wordmark="stem"]) instead of reaching one and not the
+  // other. The code span beside it keeps its own font-medium at its
+  // 1.36.0 cap. tests/test_manifest.py holds the two class lists equal.
   return (
     <span
       title={name.trim()}
+      data-brand-wordmark="stem"
       className="flex shrink-0 items-center whitespace-nowrap pt-0.5 font-bold tracking-tighter leading-none text-foreground"
       style={size}
     >

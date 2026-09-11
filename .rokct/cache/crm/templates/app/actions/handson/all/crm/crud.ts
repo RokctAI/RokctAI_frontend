@@ -17,6 +17,7 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 import { verifyCrmRole } from "@/app/lib/roles";
 import { revalidatePath } from "next/cache";
 
@@ -32,14 +33,12 @@ export async function saveDoc(
     let result;
     // Check if updating or creating
     if (data.name) {
-      result = await (client as any).call({
-        method: "frappe.client.save",
-        args: { doc: { doctype, ...data } },
+      result = await gatewayCall(client, "frappe.client.save", {
+        doc: { doctype, ...data },
       });
     } else {
-      result = await (client as any).call({
-        method: "frappe.client.insert",
-        args: { doc: { doctype, ...data } },
+      result = await gatewayCall(client, "frappe.client.insert", {
+        doc: { doctype, ...data },
       });
     }
 

@@ -19,8 +19,6 @@
 import { paasCall } from "@/app/services/base/platform-gateway";
 import { revalidatePath } from "next/cache";
 
-import { getPaaSClient } from "@/app/lib/client";
-
 export async function getAds(page: number = 1, limit: number = 20) {
   try {
     // api.banner.get_ads paginates by page number with a fixed server-side
@@ -109,18 +107,14 @@ export async function getEmailSubscribers(
   page: number = 1,
   limit: number = 20,
 ) {
-  const frappe = await getPaaSClient();
   const start = (page - 1) * limit;
   try {
-    return await frappe.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Email Subscription",
-        fields: ["name", "email", "creation"],
-        limit_start: start,
-        limit_page_length: limit,
-        order_by: "creation desc",
-      },
+    return await paasCall("frappe.client.get_list", {
+      doctype: "Email Subscription",
+      fields: ["name", "email", "creation"],
+      limit_start: start,
+      limit_page_length: limit,
+      order_by: "creation desc",
     });
   } catch (error) {
     console.error("Failed to fetch email subscribers:", error);

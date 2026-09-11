@@ -17,7 +17,6 @@
 "use server";
 
 import { paasCall } from "@/app/services/base/platform-gateway";
-import { getPaaSClient } from "@/app/lib/client";
 
 export async function getSellerInvites() {
   try {
@@ -33,16 +32,12 @@ export async function updateInviteStatus(
   inviteId: string,
   status: "Accepted" | "Rejected",
 ) {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "frappe.client.set_value",
-      args: {
-        doctype: "Invitation",
-        name: inviteId,
-        fieldname: "status",
-        value: status,
-      },
+    return await paasCall("frappe.client.set_value", {
+      doctype: "Invitation",
+      name: inviteId,
+      fieldname: "status",
+      value: status,
     });
   } catch (error) {
     console.error("Failed to update invite status:", error);

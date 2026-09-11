@@ -17,6 +17,7 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 import { verifyCrmRole } from "@/app/lib/roles";
 
 export async function getNotes(page = 1, limit = 20) {
@@ -27,25 +28,21 @@ export async function getNotes(page = 1, limit = 20) {
   try {
     const start = (page - 1) * limit;
 
-    const notes = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Sales Note",
-        fields: ["name", "title", "content", "owner", "modified"],
-        order_by: "modified desc",
-        limit_start: start,
-        limit_page_length: limit,
-      },
+    const notes = await gatewayCall(client, "frappe.client.get_list", {
+      doctype: "Sales Note",
+      fields: ["name", "title", "content", "owner", "modified"],
+      order_by: "modified desc",
+      limit_start: start,
+      limit_page_length: limit,
     });
 
-    const countRes = await (client as any).call({
-      method: "frappe.client.get_count",
-      args: { doctype: "Sales Note" },
+    const countRes = await gatewayCall(client, "frappe.client.get_count", {
+      doctype: "Sales Note",
     });
 
     return {
-      data: notes,
-      total: countRes || 0,
+      data: notes?.message || [],
+      total: countRes?.message || 0,
       page: page,
       limit: limit,
     };
