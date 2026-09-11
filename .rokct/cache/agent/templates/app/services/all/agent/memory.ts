@@ -18,8 +18,9 @@ import { BaseService, ServiceOptions } from "@/app/services/common/base";
 
 // Calls agent/agent/frappe's Brain module via its manifest.json whitelisted
 // aliases. Unlike other SDKs the agent backend whitelists a FLAT namespace —
-// "paas.api.<fn>" with no domain segment. Do not invent a different path here.
-const NS = "paas.api";
+// "{app_name}.api.<fn>" with no domain segment, named to the gateway as the
+// prefix-free key "api.<fn>". Do not invent a different path here.
+const NS = "api";
 
 export interface Engram {
   name: string;

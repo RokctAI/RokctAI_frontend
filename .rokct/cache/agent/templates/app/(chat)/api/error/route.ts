@@ -34,20 +34,17 @@ export async function POST(request: Request) {
     if (isBusiness) {
       // Call Tenant site error logger
       const { getClient } = await import("@/app/lib/client");
+      const { gatewayCall } = await import("@/app/lib/gateway-rpc");
       const client = await getClient();
-      logRes = await (client as any).call({
-        method: "rcore.tenant.api.log_frontend_error",
-        args: {
-          error_message: errorMessage,
-          context: typeof context === "string" ? context : JSON.stringify(context || {}),
-        },
+      logRes = await gatewayCall(client, "tenant.api.log_frontend_error", {
+        error_message: errorMessage,
+        context: typeof context === "string" ? context : JSON.stringify(context || {}),
       });
     } else {
       // Call Control site error logger
-      const { OnboardingService } = await import("@/app/services/control/onboarding");
       // Since ControlBaseService is static, we call via ControlBaseService directly
       const { ControlBaseService } = await import("@/app/services/control/base");
-      logRes = await ControlBaseService.call("control.api.log_frontend_error", {
+      logRes = await ControlBaseService.call("control:log_frontend_error", {
         error_message: errorMessage,
         context: typeof context === "string" ? context : JSON.stringify(context || {}),
       });

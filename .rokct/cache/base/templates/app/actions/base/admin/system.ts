@@ -17,6 +17,10 @@
 "use server";
 
 import { paasCall } from "@/app/services/base/platform-gateway";
+import {
+  PLATFORM_VERSION_CMD,
+  readPlatformVersion,
+} from "@/components/custom/landing/footer-chrome-config";
 import { revalidatePath } from "next/cache";
 
 export async function getLanguages() {
@@ -70,9 +74,14 @@ export async function createBackup() {
 
 export async function getSystemInfo() {
   try {
+    // 1.40.0: the version comes from the ONE registered tenant cmd that
+    // carries it, api.system.api_status (PLATFORM_VERSION_CMD); the
+    // `api.get_version` this asked before is registered nowhere and always
+    // answered null. The return shape is unchanged: `version` is the
+    // string the platform reports, else null.
     const [infoRes, versionRes] = await Promise.allSettled([
       paasCall("api.admin_system.get_system_info"),
-      paasCall("api.get_version"),
+      paasCall(PLATFORM_VERSION_CMD),
     ]);
 
     const info =
@@ -80,9 +89,7 @@ export async function getSystemInfo() {
         ? (infoRes.value as any).message || infoRes.value
         : {};
     const version =
-      versionRes.status === "fulfilled"
-        ? (versionRes.value as any).message || versionRes.value
-        : null;
+      versionRes.status === "fulfilled" ? readPlatformVersion(versionRes.value) : null;
 
     return {
       ...info,

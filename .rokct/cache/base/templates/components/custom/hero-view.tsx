@@ -195,11 +195,16 @@ function HeroWordmarkSlot({ wordmark }: { wordmark: HeroWordmark | null }) {
       />
     );
   }
+  // The same font utilities and the same hook as the header's stem
+  // wordmark (header.tsx BrandStemWordmark; 1.40.0): no family of its own,
+  // so both inherit the shell's face, and `data-brand-wordmark="stem"` for
+  // a home SDK to style both at once.
   return (
     <span
       aria-label={wordmark.name}
       title={wordmark.name}
-      className={`inline-block whitespace-nowrap font-sans font-bold tracking-tighter leading-none text-black dark:text-white ${HERO_STEM_PADDING_CLASS}`}
+      data-brand-wordmark="stem"
+      className={`inline-block whitespace-nowrap font-bold tracking-tighter leading-none text-black dark:text-white ${HERO_STEM_PADDING_CLASS}`}
       style={{
         fontSize: `min(76px, calc(250px / (${Math.max(wordmark.text.length, 1)} * 0.6)))`,
       }}

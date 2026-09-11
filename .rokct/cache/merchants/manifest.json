@@ -1,6 +1,6 @@
 {
   "name": "merchants_sdk",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "installs": [
     {
       "from": "templates/app/actions/merchants/admin/shops.ts",
@@ -81,7 +81,6 @@
   "requires": [
     "app/(auth)/actions.ts",
     "app/actions/users/customers.ts",
-    "app/lib/client.ts",
     "app/lib/i18n/index.ts",
     "app/services/base/platform-gateway.ts",
     "components/ui/avatar.tsx",

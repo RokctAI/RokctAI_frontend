@@ -15,17 +15,31 @@
  */
 
 // Network-strip registry: how THIS shell shows the other sites of the
-// Rokct network (the list itself is ./network-sites.ts; the markup is
-// components/custom/network-strip.tsx).
+// Rokct network, and (since 1.40.0) WHICH sites those are. The shape of a
+// site and the pure list rules are ./network-sites.ts; the markup is
+// components/custom/network-strip.tsx.
 //
 // Ray, 2026-09-09: rokct.ai no longer lists his other products as plans,
 // but a founder on its free opportunities pages must still learn about
 // them - a clickable logo strip, headed "Trusted by" ("these products
 // already trust rokct as they run on it"). The strip is generic chrome, so
-// base draws it and every shell gets it minus itself; what a home SDK may
-// say is the heading, the order, which keys to leave out and WHERE it
+// base draws it; what a home SDK says is the sites themselves (since
+// 1.40.0), the heading, the order, which keys to leave out and WHERE it
 // goes - after the hero, before the footer anchor of the landing page, in
 // the footer row, or not at all.
+//
+// Since 1.40.0 base carries no site (Ray, 2026-09-11: site names are brand
+// content, logos are hostnames, and a shell with no declaration must show
+// no strip). The list is the registered config's `sites`; a shell that
+// registers none and runs in local or hybrid data mode may commit its own
+// `data/network.json` (lib/site-data, kind "network"), which
+// components/custom/network-strip.tsx reads through the
+// app/actions/base/network-sites.ts action and lays under the config with
+// [withOwnNetworkSites]: registered sites win, else the shell's own data,
+// else nothing - and with no site the strip renders on no surface
+// ([networkStripRendersAt]). The placement default is unchanged (footer on,
+// landing off): an existing home SDK's registration keeps its placement and
+// gains the strip back the moment it declares its sites.
 //
 // Since 1.27.0 the strip renders ONCE PER PAGE (Ray, 2026-09-09, on
 // rokct.ai showing two "Trusted by" rows: the shell's layout draws its
@@ -48,8 +62,9 @@
 // strip - the same single-answer rule as ./header-menu.ts, ./hero-form.ts
 // and ./plans-query.ts). With NOTHING registered it answers the default:
 // heading "Trusted by", list order, nothing hidden, footer on and the
-// landing page off - so lms_sdk, the hosting and the delivery home SDKs
-// need no change to get the strip in the footer row minus themselves.
+// landing page off - over an empty list, so a shell whose home SDK
+// registers nothing shows no strip until it, or the shell's data/, names
+// the sites.
 //
 // Entries between the markers below are injected by the Rokct SDK installer
 // (sdk_installer_base.py update_integrations()) - the same contract as the
@@ -100,11 +115,49 @@ export interface NetworkStripPlacement {
 export interface NetworkStripConfig {
   /** The heading over the strip; default "Trusted by" (Ray's wording). */
   heading?: string;
+  /**
+   * The sites of the network, in default strip order (since 1.40.0). The
+   * home SDK that owns the network declares them here; base carries none.
+   * Absent leaves the list to the shell's own `data/network.json`
+   * ([withOwnNetworkSites]), else to the empty default - so a config that
+   * says only WHERE the strip goes draws nothing until the sites arrive.
+   * A hidden entry (`shown: false`, `url: null`) may be listed to keep its
+   * place.
+   */
+  sites?: NetworkSite[];
   /** Site keys drawn first, in this order; the rest follow in list order. */
   order?: string[];
   /** Site keys left out on this shell. The shell itself is always left out. */
   hidden?: string[];
   placement?: NetworkStripPlacement;
+}
+
+/**
+ * The shell's own `data/network.json` (lib/site-data kind "network"),
+ * as app/actions/base/network-sites.ts answers it: the heading is
+ * optional, the sites are the same shape a config declares. Written out
+ * structurally so this pure module imports nothing from lib/site-data.
+ */
+export interface OwnNetworkSites {
+  heading?: string;
+  sites: NetworkSite[];
+}
+
+/**
+ * The registered config with the shell's own data laid UNDER it: the
+ * config's `sites` win; with none, the data's sites (and its heading, when
+ * the config names none). Null in and nothing to lay under it stays null.
+ * Pure; the component and the tests call it alike.
+ */
+export function withOwnNetworkSites(
+  config: NetworkStripConfig | null | undefined,
+  own: OwnNetworkSites | null | undefined,
+): NetworkStripConfig | null {
+  if (config?.sites !== undefined) return config;
+  if (!own || own.sites.length === 0) return config ?? null;
+  const merged: NetworkStripConfig = { ...(config ?? {}), sites: [...own.sites] };
+  if (!config?.heading?.trim() && own.heading?.trim()) merged.heading = own.heading;
+  return merged;
 }
 
 /** The shape of a registered network-strip module. */
@@ -142,8 +195,9 @@ export interface ResolvedNetworkStrip {
 
 /**
  * The pure rule: the registered config (or nothing) laid over the
- * defaults, and the list resolved against it and the shell's own host.
- * The component and the tests call it alike.
+ * defaults, and the list - the config's `sites` when it declares them,
+ * else `sites` (the empty [NETWORK_SITES] by default) - resolved against
+ * it and the shell's own host. The component and the tests call it alike.
  */
 export function resolveNetworkStrip(
   config: NetworkStripConfig | null | undefined,
@@ -153,7 +207,7 @@ export function resolveNetworkStrip(
   const heading = config?.heading?.trim() || DEFAULT_NETWORK_STRIP_HEADING;
   return {
     heading,
-    sites: resolveNetworkSites(sites, {
+    sites: resolveNetworkSites(config?.sites ?? sites, {
       selfHost,
       order: config?.order,
       hidden: config?.hidden,

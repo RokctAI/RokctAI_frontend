@@ -17,9 +17,11 @@
 "use server";
 
 import { paasCall } from "@/app/services/base/platform-gateway";
+import {
+  PLATFORM_VERSION_CMD,
+  readPlatformVersion,
+} from "@/components/custom/landing/footer-chrome-config";
 import { revalidatePath } from "next/cache";
-
-import { getPaaSClient } from "@/app/lib/client";
 
 export async function getGeneralSettings() {
   try {
@@ -66,16 +68,12 @@ export async function getPaymentMethods() {
 }
 
 export async function updatePaymentMethod(name: string, enabled: boolean) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.set_value",
-      args: {
-        doctype: "PaaS Payment Gateway",
-        name: name,
-        fieldname: "enabled",
-        value: enabled ? 1 : 0,
-      },
+    await paasCall("frappe.client.set_value", {
+      doctype: "PaaS Payment Gateway",
+      name: name,
+      fieldname: "enabled",
+      value: enabled ? 1 : 0,
     });
     revalidatePath("/admin/settings/payments");
     return { success: true };
@@ -86,14 +84,10 @@ export async function updatePaymentMethod(name: string, enabled: boolean) {
 }
 
 export async function getPaymentGateway(name: string) {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "frappe.client.get",
-      args: {
-        doctype: "PaaS Payment Gateway",
-        name: name,
-      },
+    return await paasCall("frappe.client.get", {
+      doctype: "PaaS Payment Gateway",
+      name: name,
     });
   } catch (error) {
     console.error("Failed to fetch payment gateway:", error);
@@ -102,13 +96,9 @@ export async function getPaymentGateway(name: string) {
 }
 
 export async function savePaymentGateway(doc: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.save",
-      args: {
-        doc: doc,
-      },
+    await paasCall("frappe.client.save", {
+      doc: doc,
     });
     revalidatePath("/admin/settings/payments");
     return { success: true };
@@ -168,11 +158,9 @@ export async function getPages(page: number = 1, limit: number = 20) {
 }
 
 export async function getPermissionSettings() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "frappe.client.get",
-      args: { doctype: "Permission Settings" },
+    return await paasCall("frappe.client.get", {
+      doctype: "Permission Settings",
     });
   } catch (error) {
     console.error("Failed to fetch permission settings:", error);
@@ -181,20 +169,15 @@ export async function getPermissionSettings() {
 }
 
 export async function updatePermissionSettings(settings: any) {
-  const frappe = await getPaaSClient();
   try {
-    const doc = await frappe.call({
-      method: "frappe.client.get",
-      args: { doctype: "Permission Settings" },
+    const doc = await paasCall("frappe.client.get", {
+      doctype: "Permission Settings",
     });
 
-    await frappe.call({
-      method: "frappe.client.set_value",
-      args: {
-        doctype: "Permission Settings",
-        name: doc.name,
-        fieldname: settings,
-      },
+    await paasCall("frappe.client.set_value", {
+      doctype: "Permission Settings",
+      name: doc.name,
+      fieldname: settings,
     });
 
     revalidatePath("/admin/settings/permissions");
@@ -215,16 +198,12 @@ export async function getAvailableSourceProjects() {
 }
 
 export async function getFlutterAppSettings() {
-  const frappe = await getPaaSClient();
   try {
     // Fetch the list of Flutter App Configurations
-    return await frappe.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Flutter App Configuration",
-        fields: ["*"],
-        limit_page_length: 100,
-      },
+    return await paasCall("frappe.client.get_list", {
+      doctype: "Flutter App Configuration",
+      fields: ["*"],
+      limit_page_length: 100,
     });
   } catch (error) {
     console.error("Failed to fetch flutter app settings:", error);
@@ -233,11 +212,10 @@ export async function getFlutterAppSettings() {
 }
 
 export async function getFlutterAppConfig(name: string) {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "frappe.client.get",
-      args: { doctype: "Flutter App Configuration", name: name },
+    return await paasCall("frappe.client.get", {
+      doctype: "Flutter App Configuration",
+      name: name,
     });
   } catch (error) {
     console.error("Failed to fetch flutter app config:", error);
@@ -246,15 +224,11 @@ export async function getFlutterAppConfig(name: string) {
 }
 
 export async function updateFlutterAppSettings(name: string, settings: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.set_value",
-      args: {
-        doctype: "Flutter App Configuration",
-        name: name,
-        fieldname: settings,
-      },
+    await paasCall("frappe.client.set_value", {
+      doctype: "Flutter App Configuration",
+      name: name,
+      fieldname: settings,
     });
 
     revalidatePath("/admin/settings/flutter");
@@ -266,15 +240,11 @@ export async function updateFlutterAppSettings(name: string, settings: any) {
 }
 
 export async function createFlutterAppConfig(settings: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.insert",
-      args: {
-        doc: {
-          doctype: "Flutter App Configuration",
-          ...settings,
-        },
+    await paasCall("frappe.client.insert", {
+      doc: {
+        doctype: "Flutter App Configuration",
+        ...settings,
       },
     });
     revalidatePath("/admin/settings/flutter");
@@ -286,11 +256,9 @@ export async function createFlutterAppConfig(settings: any) {
 }
 
 export async function getFlutterBuildSettings() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "frappe.client.get",
-      args: { doctype: "Flutter Build Settings" },
+    return await paasCall("frappe.client.get", {
+      doctype: "Flutter Build Settings",
     });
   } catch (error) {
     console.error("Failed to fetch flutter build settings:", error);
@@ -299,20 +267,15 @@ export async function getFlutterBuildSettings() {
 }
 
 export async function updateFlutterBuildSettings(settings: any) {
-  const frappe = await getPaaSClient();
   try {
-    const doc = await frappe.call({
-      method: "frappe.client.get",
-      args: { doctype: "Flutter Build Settings" },
+    const doc = await paasCall("frappe.client.get", {
+      doctype: "Flutter Build Settings",
     });
 
-    await frappe.call({
-      method: "frappe.client.set_value",
-      args: {
-        doctype: "Flutter Build Settings",
-        name: doc.name,
-        fieldname: settings,
-      },
+    await paasCall("frappe.client.set_value", {
+      doctype: "Flutter Build Settings",
+      name: doc.name,
+      fieldname: settings,
     });
 
     revalidatePath("/admin/settings/flutter");
@@ -325,9 +288,14 @@ export async function updateFlutterBuildSettings(settings: any) {
 
 export async function getSystemInfo() {
   try {
+    // 1.40.0: the version comes from the ONE registered tenant cmd that
+    // carries it, api.system.api_status (PLATFORM_VERSION_CMD); the
+    // `api.get_version` this asked before is registered nowhere and always
+    // answered null. The return shape is unchanged: `version` is the
+    // string the platform reports, else null.
     const [infoRes, versionRes] = await Promise.allSettled([
       paasCall("api.admin_system.get_system_info"),
-      paasCall("api.get_version"),
+      paasCall(PLATFORM_VERSION_CMD),
     ]);
 
     const info =
@@ -335,9 +303,7 @@ export async function getSystemInfo() {
         ? (infoRes.value as any).message || infoRes.value
         : {};
     const version =
-      versionRes.status === "fulfilled"
-        ? (versionRes.value as any).message || versionRes.value
-        : null;
+      versionRes.status === "fulfilled" ? readPlatformVersion(versionRes.value) : null;
 
     return {
       ...info,
@@ -350,16 +316,12 @@ export async function getSystemInfo() {
 }
 
 export async function getTerms() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Terms and Conditions",
-        fields: ["name", "title", "terms", "disabled"],
-        order_by: "creation desc",
-        limit_page_length: 1000,
-      },
+    return await paasCall("frappe.client.get_list", {
+      doctype: "Terms and Conditions",
+      fields: ["name", "title", "terms", "disabled"],
+      order_by: "creation desc",
+      limit_page_length: 1000,
     });
   } catch (error) {
     console.error("Failed to fetch Terms:", error);
@@ -368,15 +330,11 @@ export async function getTerms() {
 }
 
 export async function createTerm(data: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.insert",
-      args: {
-        doc: {
-          doctype: "Terms and Conditions",
-          ...data,
-        },
+    await paasCall("frappe.client.insert", {
+      doc: {
+        doctype: "Terms and Conditions",
+        ...data,
       },
     });
     revalidatePath("/admin/settings/terms");
@@ -388,15 +346,11 @@ export async function createTerm(data: any) {
 }
 
 export async function updateTerm(name: string, data: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.set_value",
-      args: {
-        doctype: "Terms and Conditions",
-        name: name,
-        fieldname: data,
-      },
+    await paasCall("frappe.client.set_value", {
+      doctype: "Terms and Conditions",
+      name: name,
+      fieldname: data,
     });
     revalidatePath("/admin/settings/terms");
     return { success: true };
@@ -407,14 +361,10 @@ export async function updateTerm(name: string, data: any) {
 }
 
 export async function deleteTerm(name: string) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.delete",
-      args: {
-        doctype: "Terms and Conditions",
-        name: name,
-      },
+    await paasCall("frappe.client.delete", {
+      doctype: "Terms and Conditions",
+      name: name,
     });
     revalidatePath("/admin/settings/terms");
     return { success: true };
@@ -425,16 +375,12 @@ export async function deleteTerm(name: string) {
 }
 
 export async function getPrivacyPolicies() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Privacy Policy",
-        fields: ["name", "title", "content", "active"],
-        order_by: "creation desc",
-        limit_page_length: 1000,
-      },
+    return await paasCall("frappe.client.get_list", {
+      doctype: "Privacy Policy",
+      fields: ["name", "title", "content", "active"],
+      order_by: "creation desc",
+      limit_page_length: 1000,
     });
   } catch (error) {
     console.error("Failed to fetch Privacy Policies:", error);
@@ -443,15 +389,11 @@ export async function getPrivacyPolicies() {
 }
 
 export async function createPrivacyPolicy(data: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.insert",
-      args: {
-        doc: {
-          doctype: "Privacy Policy",
-          ...data,
-        },
+    await paasCall("frappe.client.insert", {
+      doc: {
+        doctype: "Privacy Policy",
+        ...data,
       },
     });
     revalidatePath("/admin/settings/privacy");
@@ -465,7 +407,9 @@ export async function createPrivacyPolicy(data: any) {
 export async function getLandingPage() {
   try {
     // Assuming 'home' is the route for the landing page
-    return await paasCall("api.page.get_admin_web_page", { route: "home" });
+    return await paasCall("api.page.get_admin_web_page", {
+      route: "home",
+    });
   } catch (error) {
     console.error("Failed to fetch landing page:", error);
     return null;
@@ -487,15 +431,11 @@ export async function updateLandingPage(data: any) {
 }
 
 export async function updatePrivacyPolicy(name: string, data: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.set_value",
-      args: {
-        doctype: "Privacy Policy",
-        name: name,
-        fieldname: data,
-      },
+    await paasCall("frappe.client.set_value", {
+      doctype: "Privacy Policy",
+      name: name,
+      fieldname: data,
     });
     revalidatePath("/admin/settings/privacy");
     return { success: true };
@@ -506,14 +446,10 @@ export async function updatePrivacyPolicy(name: string, data: any) {
 }
 
 export async function deletePrivacyPolicy(name: string) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.delete",
-      args: {
-        doctype: "Privacy Policy",
-        name: name,
-      },
+    await paasCall("frappe.client.delete", {
+      doctype: "Privacy Policy",
+      name: name,
     });
     revalidatePath("/admin/settings/privacy");
     return { success: true };

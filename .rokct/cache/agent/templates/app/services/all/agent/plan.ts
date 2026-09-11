@@ -17,10 +17,12 @@
 import { BaseService, ServiceOptions } from "@/app/services/common/base";
 
 // Calls agent/agent/frappe's plan_builder module via its manifest.json
-// whitelisted aliases ("paas.api.plan_builder.<fn>" — the standard
+// whitelisted aliases ("{app_name}.api.plan_builder.<fn>" — the standard
 // "{app_name}.api.<module>.<endpoint>" alias shape used by every other
-// module manifest). The manifest and this file must stay in lockstep.
-const NS = "paas.api.plan_builder";
+// module manifest), named to the gateway as the prefix-free key
+// ("api.plan_builder.<fn>"; an app-prefixed cmd is refused on a tenant
+// site). The manifest and this file must stay in lockstep.
+const NS = "api.plan_builder";
 
 export interface RokChatReply {
   status: string;

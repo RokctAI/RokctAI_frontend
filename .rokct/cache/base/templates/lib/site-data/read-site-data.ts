@@ -65,8 +65,8 @@ export function hasSiteData(kind: SiteDataKind): boolean {
 
 /**
  * The kind's file as bundled at build time, typed by kind - `theme`,
- * `team`, `stockists`, `products` parsed JSON, `about` the markdown string,
- * `legal` the slug-to-page map. undefined in backend mode and, in hybrid
+ * `team`, `stockists`, `products`, `network` parsed JSON, `about` the
+ * markdown string, `legal` the slug-to-page map. undefined in backend mode and, in hybrid
  * mode, when the file is absent; an Error in local mode when it is.
  */
 export function readSiteData<K extends SiteDataKind>(kind: K): SiteDataKinds[K] | undefined {

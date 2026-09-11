@@ -119,6 +119,38 @@ export interface SiteLegalPage {
 /** `data/legal/`: slug (the file name without `.md`) to page. */
 export type SiteLegal = Record<string, SiteLegalPage>;
 
+/**
+ * One site of the network strip (`data/network.json`, since 1.40.0): the
+ * same shape as `NetworkSite` in
+ * components/custom/landing/network-sites.ts, written out here so this
+ * seam imports nothing from the components. `url` is the site's https
+ * origin (no path, query or fragment), or null for an entry that has no
+ * domain yet, which must then be `shown: false`.
+ */
+export interface SiteNetworkSite {
+  key: string;
+  name: string;
+  url: string | null;
+  /** An absolute URL, or a public path on this shell, to the light-theme mark. */
+  logo?: string;
+  /** Its dark-theme twin. */
+  logoDark?: string;
+  /** The name IS the logo: drawn as text even with a logo path. */
+  wordmark?: boolean;
+  /** Default true; false keeps the entry off every strip. */
+  shown?: boolean;
+}
+
+/**
+ * `data/network.json`: the sites the network strip draws on a shell whose
+ * home SDK registers none, and the heading over them (the strip's default
+ * when absent). A shell with neither shows no strip.
+ */
+export interface SiteNetwork {
+  heading?: string;
+  sites: SiteNetworkSite[];
+}
+
 /** Every kind, keyed by the name a reader asks for. */
 export interface SiteDataKinds {
   theme: SiteTheme;
@@ -127,6 +159,7 @@ export interface SiteDataKinds {
   products: SiteProducts;
   about: SiteAbout;
   legal: SiteLegal;
+  network: SiteNetwork;
 }
 
 export type SiteDataKind = keyof SiteDataKinds;
@@ -138,6 +171,7 @@ export const SITE_DATA_KINDS: readonly SiteDataKind[] = [
   "products",
   "about",
   "legal",
+  "network",
 ];
 
 /** Where each kind lives under the shell root, as the error messages name it. */
@@ -148,6 +182,7 @@ export const SITE_DATA_FILES: Readonly<Record<SiteDataKind, string>> = {
   products: "data/products.json",
   about: "data/about.md",
   legal: "data/legal/<slug>.md",
+  network: "data/network.json",
 };
 
 /**

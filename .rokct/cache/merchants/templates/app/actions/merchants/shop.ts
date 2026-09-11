@@ -17,7 +17,6 @@
 "use server";
 
 import { paasCall } from "@/app/services/base/platform-gateway";
-import { getPaaSClient } from "@/app/lib/client";
 
 export async function getShop() {
   try {
@@ -54,15 +53,11 @@ export async function setWorkingStatus(status: boolean) {
 }
 
 export async function getShops() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Shop",
-        fields: ["name", "shop_name"],
-        limit_page_length: 50,
-      },
+    return await paasCall("frappe.client.get_list", {
+      doctype: "Shop",
+      fields: ["name", "shop_name"],
+      limit_page_length: 50,
     });
   } catch (error) {
     console.error("Failed to fetch shops:", error);

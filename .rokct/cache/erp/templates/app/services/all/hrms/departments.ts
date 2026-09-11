@@ -16,7 +16,8 @@
 
 import { BaseService, ServiceOptions } from "@/app/services/common/base";
 import { auth } from "@/app/(auth)/auth";
-import { getSystemControlClient, getClient } from "@/app/lib/client";
+import { getSystemControlClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export interface DepartmentData {
   department_name: string;
@@ -49,36 +50,38 @@ export class DepartmentService {
   private static async syncGlobalDepartments() {
     try {
       const systemClient = await getSystemControlClient();
-      const client = await getClient();
 
-      // 1. Fetch Global Departments
-      const globalDepts = await (systemClient as any).call({
-        method: "frappe.client.get_list",
-        args: {
+      // 1. Fetch Global Departments. frappe-js-sdk's `call()` takes no
+      // arguments, so the call goes through the gateway on the system
+      // client's OWN connection: routing stays on the control site.
+      const globalDepts = await gatewayCall(
+        systemClient,
+        "frappe.client.get_list",
+        {
           doctype: "Department",
           fields: ["name", "department_name", "parent_department"],
           limit_page_length: 100,
         },
-      });
+      );
+      const depts: any[] = Array.isArray(globalDepts)
+        ? globalDepts
+        : globalDepts?.message || [];
 
       // 2. Sync to Tenant
-      if (globalDepts?.message) {
+      if (depts.length) {
         const session = await auth();
         const defaultCompany = (session?.user as any)?.company?.name;
 
         if (defaultCompany) {
-          for (const dept of globalDepts.message) {
+          for (const dept of depts) {
             try {
-              await (client as any).call({
-                method: "frappe.client.insert",
-                args: {
-                  doc: {
-                    doctype: "Department",
-                    name: dept.name,
-                    department_name: dept.department_name,
-                    company: defaultCompany,
-                    is_group: 0,
-                  },
+              await BaseService.call("frappe.client.insert", {
+                doc: {
+                  doctype: "Department",
+                  name: dept.name,
+                  department_name: dept.department_name,
+                  company: defaultCompany,
+                  is_group: 0,
                 },
               });
             } catch (ignore) {}

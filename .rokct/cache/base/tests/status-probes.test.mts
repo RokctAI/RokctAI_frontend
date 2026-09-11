@@ -27,6 +27,9 @@ import { describe, it } from 'node:test';
 import {
   DEFAULT_PLATFORM_STATUS_SOURCES,
   PLATFORM_STATUS_PROBES,
+  PLATFORM_VERSION_CMD,
+  isProbeAnswer,
+  readPlatformVersion,
   resolvePlatformStatusProbes,
 } from './footer-chrome-config.ts';
 
@@ -86,5 +89,50 @@ describe('resolvePlatformStatusProbes: the opt-in', () => {
     assert.notEqual(probes, PLATFORM_STATUS_PROBES);
     probes.pop();
     assert.equal(PLATFORM_STATUS_PROBES.length, 2);
+  });
+});
+
+describe('isProbeAnswer: what counts as an answer (1.40.0)', () => {
+  it('is a plain object with something in it', () => {
+    assert.equal(isProbeAnswer({ status: 'ok' }), true);
+    assert.equal(isProbeAnswer({ data: { status: 'ok', version: '1.0.0' } }), true);
+    assert.equal(isProbeAnswer({ control: '1.0.0' }), true);
+  });
+
+  it('is not null, undefined, a scalar, an array or an empty object', () => {
+    for (const nothing of [null, undefined, '', 'ok', 0, true, [], [{ status: 'ok' }], {}]) {
+      assert.equal(isProbeAnswer(nothing), false, JSON.stringify(nothing) ?? String(nothing));
+    }
+  });
+
+  it('looks through the gateway envelope: {message: null} is empty, {message: {status}} is an answer', () => {
+    for (const nothing of [{ message: null }, { message: undefined }, { message: {} }, { message: 'ok' }, { message: [] }]) {
+      assert.equal(isProbeAnswer(nothing), false, JSON.stringify(nothing));
+    }
+    assert.equal(isProbeAnswer({ message: { status: 'ok' } }), true);
+    assert.equal(isProbeAnswer({ message: { data: { status: 'ok' } } }), true);
+    // Any second field beside message is content of its own.
+    assert.equal(isProbeAnswer({ message: null, status: 'ok' }), true);
+  });
+});
+
+describe('readPlatformVersion: the version cmd and its answer (1.40.0)', () => {
+  it('asks the ONE registered tenant cmd that carries the version - the tenant status probe', () => {
+    assert.equal(PLATFORM_VERSION_CMD, 'api.system.api_status');
+    assert.equal(PLATFORM_STATUS_PROBES.find((p) => p.site === 'tenant')?.cmd, PLATFORM_VERSION_CMD);
+    assert.notEqual(PLATFORM_VERSION_CMD, 'api.get_version');
+  });
+
+  it('reads the envelope, the gateway wrapper around it, or a bare version', () => {
+    assert.equal(readPlatformVersion({ data: { status: 'ok', version: '15.2.0', user: 'Guest' } }), '15.2.0');
+    assert.equal(readPlatformVersion({ message: { data: { version: '15.2.0' } } }), '15.2.0');
+    assert.equal(readPlatformVersion({ message: { version: '15.2.0' } }), '15.2.0');
+    assert.equal(readPlatformVersion({ version: '15.2.0' }), '15.2.0');
+  });
+
+  it('is null unless the field is a string', () => {
+    for (const nothing of [null, undefined, '', '15.2.0', 0, [], {}, { version: 15 }, { version: null }, { data: {} }, { data: { version: ['15'] } }, { message: 'ok' }, { message: null, version: 1 }]) {
+      assert.equal(readPlatformVersion(nothing), null, JSON.stringify(nothing) ?? String(nothing));
+    }
   });
 });

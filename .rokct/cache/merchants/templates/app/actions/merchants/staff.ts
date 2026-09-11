@@ -17,12 +17,9 @@
 "use server";
 
 import { paasCall } from "@/app/services/base/platform-gateway";
-import { getPaaSClient } from "@/app/lib/client";
 
 // Staff Management - Generic function to get staff by role
 async function getStaffByRole(role: string) {
-  const frappe = await getPaaSClient();
-
   try {
     const shop = await paasCall("api.user.get_user_shop");
 
@@ -31,15 +28,12 @@ async function getStaffByRole(role: string) {
     }
 
     // Get users with specific role
-    const users = await frappe.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "User",
-        filters: {
-          enabled: 1,
-        },
-        fields: ["name", "email", "full_name", "user_image"],
+    const users = await paasCall("frappe.client.get_list", {
+      doctype: "User",
+      filters: {
+        enabled: 1,
       },
+      fields: ["name", "email", "full_name", "user_image"],
     });
 
     return users;

@@ -19,8 +19,6 @@
 import { paasCall } from "@/app/services/base/platform-gateway";
 import { revalidatePath } from "next/cache";
 
-import { getPaaSClient } from "@/app/lib/client";
-
 export async function getSalesReport(
   fromDate: string,
   toDate: string,
@@ -78,18 +76,14 @@ export async function getWalletHistory(page: number = 1, limit: number = 20) {
 }
 
 export async function getPaymentPayloads(page: number = 1, limit: number = 20) {
-  const frappe = await getPaaSClient();
   const start = (page - 1) * limit;
   try {
-    return await frappe.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Payment Payload",
-        fields: ["name", "payload", "creation"],
-        order_by: "creation desc",
-        limit_start: start,
-        limit_page_length: limit,
-      },
+    return await paasCall("frappe.client.get_list", {
+      doctype: "Payment Payload",
+      fields: ["name", "payload", "creation"],
+      order_by: "creation desc",
+      limit_start: start,
+      limit_page_length: limit,
     });
   } catch (error) {
     console.error("Failed to fetch payment payloads:", error);

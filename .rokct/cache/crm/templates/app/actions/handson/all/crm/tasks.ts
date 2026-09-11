@@ -17,6 +17,7 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 import { verifyCrmRole } from "@/app/lib/roles";
 
 export async function getTasks(page = 1, limit = 20) {
@@ -43,13 +44,10 @@ export async function getTasks(page = 1, limit = 20) {
       order_by: "creation desc",
     });
 
-    const countRes = await (client as any).call({
-      method: "frappe.client.get_value",
-      args: {
-        doctype: "Sales Task",
-        filters: {},
-        fieldname: "count(name) as total",
-      },
+    const countRes = await gatewayCall(client, "frappe.client.get_value", {
+      doctype: "Sales Task",
+      filters: {},
+      fieldname: "count(name) as total",
     });
 
     return {

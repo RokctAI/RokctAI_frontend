@@ -1,6 +1,6 @@
 {
   "name": "gateways_sdk",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "installs": [
     {
       "from": "templates/app/actions/gateways/admin/finance.ts",

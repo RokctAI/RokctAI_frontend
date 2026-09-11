@@ -88,15 +88,13 @@ export async function POST(request: Request) {
       try {
         if (isBusiness) {
           const { getClient } = await import("@/app/lib/client");
+          const { gatewayCall } = await import("@/app/lib/gateway-rpc");
           const client = await getClient();
-          const sumRes = await (client as any).call({
-            method: "rcore.api.plan_builder.summarize_chat_session",
-            args: {
-              session_id: id,
-              messages: JSON.stringify(coreMessages),
-            },
+          const sumRes = await gatewayCall(client, "api.plan_builder.summarize_chat_session", {
+            session_id: id,
+            messages: JSON.stringify(coreMessages),
           });
-          summary = sumRes?.summary || "";
+          summary = sumRes?.message?.summary || "";
         } else {
           const { ControlBaseService } = await import("@/app/services/control/base");
           const sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {
@@ -209,15 +207,13 @@ export async function POST(request: Request) {
         const fullMessagesHistory = [...coreMessages, { role: "assistant", content: responseMessage }];
         if (isBusiness) {
           const { getClient } = await import("@/app/lib/client");
+          const { gatewayCall } = await import("@/app/lib/gateway-rpc");
           const client = await getClient();
-          const sumRes = await (client as any).call({
-            method: "rcore.api.plan_builder.summarize_chat_session",
-            args: {
-              session_id: id,
-              messages: JSON.stringify(fullMessagesHistory),
-            },
+          const sumRes = await gatewayCall(client, "api.plan_builder.summarize_chat_session", {
+            session_id: id,
+            messages: JSON.stringify(fullMessagesHistory),
           });
-          onboardingSummary = sumRes?.summary || "";
+          onboardingSummary = sumRes?.message?.summary || "";
         } else {
           const { ControlBaseService } = await import("@/app/services/control/base");
           const sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {

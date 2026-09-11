@@ -1,3 +1,20 @@
+## 1.1.1
+
+* `getPaymentPayloads` in `app/actions/gateways/admin/finance.ts` reaches
+  the platform again. It called `frappe.call({ method, args })` on the
+  `getPaaSClient()` client, but frappe-js-sdk's `call()` takes no
+  arguments: the object was dropped, nothing was sent, and the action
+  resolved to a `FrappeCall` handle instead of rows, so the admin
+  payment-payloads page was silently empty. The action now goes through
+  `paasCall("frappe.client.get_list", args)` from the base kernel exactly
+  like the other actions in the file; the `frappe.client.*` cmd is passed
+  verbatim (no `/api/method/<name>` URL is built) and the session-resolved
+  tenant answers. `getPaaSClient` is no longer imported.
+* `tests/test_gateway_calls.py` (new, stdlib unittest) fails the build if
+  an object-argument `.call({...})` / `frappe.call(` / `(x as any).call(`
+  pattern reappears anywhere under `templates/`, and ties the top
+  CHANGELOG entry to `manifest.json`'s version.
+
 ## 1.1.0
 
 * The server actions call the platform through `paasCall` from the base

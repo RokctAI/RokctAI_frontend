@@ -56,12 +56,11 @@ export async function getGlobalSettings(data: { modelId?: string } = {}) {
   const client = await getClient();
 
   try {
-    const settings = await client.call({
-      method: "frappe.client.get_singles",
-      args: { doctype: "System Settings" },
+    const settings = await gatewayCall(client, "frappe.client.get_singles", {
+      doctype: "System Settings",
     });
     // Filter sensitive data? For System Manager it is fine.
-    return { success: true, settings: settings };
+    return { success: true, settings: settings?.message };
   } catch (e: any) {
     return { success: false, error: e?.message };
   }

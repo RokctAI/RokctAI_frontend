@@ -15,7 +15,8 @@
  */
 
 import { BaseService, ServiceOptions } from "@/app/services/common/base";
-import { getSystemControlClient, getClient } from "@/app/lib/client";
+import { getSystemControlClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 
 export interface DesignationData {
   designation_name: string;
@@ -43,35 +44,35 @@ export class DesignationService {
   private static async syncGlobalDesignations() {
     try {
       const systemClient = await getSystemControlClient();
-      const client = await getClient();
 
-      // 1. Fetch Global Designations
-      const globalDesigs = await (systemClient as any).call({
-        method: "frappe.client.get_list",
-        args: {
+      // 1. Fetch Global Designations. frappe-js-sdk's `call()` takes no
+      // arguments, so the call goes through the gateway on the system
+      // client's OWN connection: routing stays on the control site.
+      const globalDesigs = await gatewayCall(
+        systemClient,
+        "frappe.client.get_list",
+        {
           doctype: "Designation",
           fields: ["name", "designation_name", "description"],
           limit_page_length: 100,
         },
-      });
+      );
+      const desigs: any[] = Array.isArray(globalDesigs)
+        ? globalDesigs
+        : globalDesigs?.message || [];
 
       // 2. Sync to Tenant
-      if (globalDesigs?.message) {
-        for (const desig of globalDesigs.message) {
-          try {
-            await (client as any).call({
-              method: "frappe.client.insert",
-              args: {
-                doc: {
-                  doctype: "Designation",
-                  name: desig.name,
-                  designation_name: desig.designation_name,
-                  description: desig.description,
-                },
-              },
-            });
-          } catch (ignore) {}
-        }
+      for (const desig of desigs) {
+        try {
+          await BaseService.call("frappe.client.insert", {
+            doc: {
+              doctype: "Designation",
+              name: desig.name,
+              designation_name: desig.designation_name,
+              description: desig.description,
+            },
+          });
+        } catch (ignore) {}
       }
     } catch (e) {
       console.warn("Failed to sync global designations", e);

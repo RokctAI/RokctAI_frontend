@@ -17,6 +17,7 @@
 "use server";
 
 import { getClient } from "@/app/lib/client";
+import { gatewayCall } from "@/app/lib/gateway-rpc";
 import { revalidatePath } from "next/cache";
 
 export interface EventData {
@@ -31,9 +32,8 @@ export interface EventData {
 export async function createEvent(data: EventData) {
   const client = await getClient();
   try {
-    const response = await (client as any).call({
-      method: "frappe.client.insert",
-      args: { doc: { doctype: "Event", ...data } },
+    const response = await gatewayCall(client, "frappe.client.insert", {
+      doc: { doctype: "Event", ...data },
     });
     revalidatePath("/handson/all/communication/events");
     return { success: true, message: response?.message };
@@ -46,23 +46,20 @@ export async function createEvent(data: EventData) {
 export async function getEvents(filters?: any) {
   const client = await getClient();
   try {
-    const response = await (client as any).call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Event",
-        fields: [
-          "name",
-          "subject",
-          "starts_on",
-          "status",
-          "event_type",
-          "description",
-          "all_day",
-        ],
-        filters: filters || {},
-        limit_page_length: 100,
-        order_by: "starts_on asc",
-      },
+    const response = await gatewayCall(client, "frappe.client.get_list", {
+      doctype: "Event",
+      fields: [
+        "name",
+        "subject",
+        "starts_on",
+        "status",
+        "event_type",
+        "description",
+        "all_day",
+      ],
+      filters: filters || {},
+      limit_page_length: 100,
+      order_by: "starts_on asc",
     });
     return response?.message || [];
   } catch (e) {
@@ -74,9 +71,9 @@ export async function getEvents(filters?: any) {
 export async function deleteEvent(name: string) {
   const client = await getClient();
   try {
-    await (client as any).call({
-      method: "frappe.client.delete",
-      args: { doctype: "Event", name: name },
+    await gatewayCall(client, "frappe.client.delete", {
+      doctype: "Event",
+      name: name,
     });
     revalidatePath("/handson/all/communication/events");
     return { success: true };

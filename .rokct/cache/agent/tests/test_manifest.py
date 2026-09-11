@@ -46,6 +46,11 @@ PROVISION = os.path.join(AUTH_GROUP, "agent-register-provision.ts")
 HELPERS = os.path.join(AUTH_GROUP, "agent-register-helpers.ts")
 ACTIONS = os.path.join(AUTH_GROUP, "agent-register-actions.ts")
 HEADER_MENU = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-header-menu.ts")
+# 1.19.0: /chat is a route - the root chat page under a second path.
+CHAT_GROUP = os.path.join(TEMPLATES, "app", "(chat)")
+ROOT_CHAT_PAGE = os.path.join(CHAT_GROUP, "page.tsx")
+CHAT_ROUTE = os.path.join(CHAT_GROUP, "chat", "page.tsx")
+CHAT_ID_PAGE = os.path.join(CHAT_GROUP, "chat", "[id]", "page.tsx")
 # 1.13.0: rokct.ai's say over base_sdk 1.23.0's network strip.
 NETWORK_STRIP = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-network-strip.ts")
 # 1.17.0: the logos marquee carries the strip on /landing; its pure track rule.
@@ -95,7 +100,7 @@ PROVISION_LINE = re.compile(
 
 # Words no copy or comment of this SDK's new files may carry.
 FORBIDDEN_WORDS = re.compile(r"\b(lorem|sample|demo|example)\b", re.I)
-NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS, NETWORK_STRIP, HERO_COPY, LOGOS_TRACK]
+NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS, NETWORK_STRIP, HERO_COPY, LOGOS_TRACK, CHAT_ROUTE]
 
 # 1.13.0: the network-strip registry line, in base's one-line contract.
 NETWORK_STRIP_LINE = re.compile(
@@ -255,6 +260,11 @@ class TestManifest(unittest.TestCase):
         self.assertIn("1.32.0", comment["about"])
         self.assertIn("base_sdk >= 1.32.0", comment["components/custom/landing/page-sections.ts"])
         self.assertIn("base_sdk >= 1.32.0", comment["components/custom/landing/hero-config.ts"])
+        # 1.19.0: `sites` on the registration is base_sdk 1.40.0's.
+        self.assertIn("base_sdk >= 1.40.0", read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.18.2")[0])
+        self.assertIn("1.40.0", comment["about"])
+        self.assertIn("base_sdk >= 1.40.0", comment["components/custom/landing/network-strip.ts"])
+        self.assertIn("1.40.0", comment["components/custom/landing/network-sites.ts"])
 
     def test_changelog_leads_with_the_manifest_version(self):
         changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
@@ -675,7 +685,7 @@ class TestRegisterInjection(unittest.TestCase):
         # 1.17.0: the registry note names the "section" floor, 1.27.0.
         self.assertIn("base_sdk >= 1.27.0", manifest["_comment"]["components/custom/landing/network-strip.ts"])
 
-    def test_network_strip_says_where_and_nothing_more(self):
+    def test_network_strip_says_where_and_which(self):
         src = read(NETWORK_STRIP)
         # 1.17.0: the logos section carries the strip on /landing; the
         # footer row everywhere else. Never afterHero beside footer: that
@@ -686,12 +696,59 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn('landing?: "afterHero" | "beforeFooter" | "section" | "none";', src)
         body = re.sub(r"/\*.*?\*/", "", src, flags=re.S)
         body = re.sub(r"^\s*//.*$", "", body, flags=re.M)
-        # No URL, no tracking word: the links are base's list, verbatim.
-        self.assertNotIn("http", body)
-        for tracker in ("utm", "ref=", "onClick", "gtag", "analytics"):
+        # 1.19.0: the URLs in the module are the sites' own origins and
+        # their own logo files, and nothing else - no tracking word, no
+        # parameter (base never draws an entry with one).
+        urls = re.findall(r"https?://[^\s\"']+", body)
+        self.assertTrue(urls, "the registration names the sites' origins")
+        for url in urls:
+            self.assertRegex(url, r"^https://(rokct\.ai|supacharge\.school|juvo\.app)(/images/logo(_dark)?\.svg)?$", url)
+        for tracker in ("utm", "ref=", "onClick", "gtag", "analytics", "?u", "&"):
             self.assertNotIn(tracker, body)
         # Imports nothing, so an older base still compiles the shell.
         self.assertNotIn("import ", body)
+
+    def test_network_sites_are_declared_here_and_nowhere_else(self):
+        """1.19.0 (base_sdk 1.40.0; Ray, 2026-09-11: a shell with no
+        declaration shows no strip): the five entries base_sdk carried
+        until 1.39.0 - rokct, supacharge, juvo, and the hidden hosting and
+        telephony place-holders - are `sites` on this SDK's registration,
+        and no other file of this SDK restates the list. Executed by
+        tests/network-strip.test.mts; the shape is held here."""
+        src = read(NETWORK_STRIP)
+        self.assertIn("  sites?: AgentNetworkSite[];", src)
+        self.assertIn("export interface AgentNetworkSite {", src)
+        keys = re.findall(r'key: "([a-z]+)"', src)
+        self.assertEqual(keys, ["rokct", "supacharge", "juvo", "hosting", "telephony"])
+        for key, name, url in (
+            ("rokct", "rokct.ai", "https://rokct.ai"),
+            ("supacharge", "supacharge.school", "https://supacharge.school"),
+            ("juvo", "juvo", "https://juvo.app"),
+        ):
+            self.assertRegex(src, re.compile(rf'key: "{key}",\s*name: "{re.escape(name)}",\s*url: "{re.escape(url)}",', re.S), key)
+        self.assertIn('name: "supacharge.school",\n      url: "https://supacharge.school",\n      wordmark: true,', src)
+        for pending, name in (("hosting", "Hosting"), ("telephony", "Telephony")):
+            self.assertIn(f'{{ key: "{pending}", name: "{name}", url: null, shown: false }},', src)
+        self.assertIn("// No domain yet (Ray, 2026-09-09): listed so the entry has a place, hidden", src)
+        self.assertLess(src.index("  sites: ["), src.index("  placement: {"))
+        # The list is stated once: no other template of this SDK names an
+        # entry of the network by key and origin.
+        for dirpath, _, files in os.walk(TEMPLATES):
+            for fname in files:
+                path = os.path.join(dirpath, fname)
+                if path == NETWORK_STRIP or not fname.endswith((".ts", ".tsx")):
+                    continue
+                text = read(path)
+                for origin in ("https://supacharge.school", "https://juvo.app", 'key: "juvo"', 'key: "supacharge"'):
+                    self.assertNotIn(origin, text, f"{os.path.relpath(path, SDK_ROOT)} restates the network list")
+        # The manifest says where the list went, and the floor it needs.
+        comment = load_manifest()["_comment"]
+        self.assertIn("base carries no site", comment["components/custom/landing/network-sites.ts"])
+        self.assertIn("base_sdk >= 1.40.0", comment["components/custom/landing/network-strip.ts"])
+        head = read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.18.2", 1)[0]
+        self.assertIn("## 1.19.0", head)
+        for word in ("`sites`", "base_sdk >= 1.40.0", "hosting", "telephony"):
+            self.assertIn(word, head)
 
     def test_behaviour_under_node(self):
         node = shutil.which("node")
@@ -711,8 +768,260 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
-        self.assertGreaterEqual(int(passed.group(1)), 20)
+        self.assertGreaterEqual(int(passed.group(1)), 25)
+
+
+# 1.19.0: frappe-js-sdk's `call()` takes no argument, so a `client.call({
+# method, args })` sends nothing and resolves to a FrappeCall object; every
+# tenant call of this SDK goes through base's gatewayCall(client, cmd,
+# payload) (or platformCall/paasCall), which POSTs {cmd, payload} to the
+# gateway. Tenant cmds are the prefix-free manifest keys - never
+# app-prefixed (no `rcore.`, no retired `paas.`), never a per-method
+# dotted URL; a control cmd carries the `control:` prefix.
+OBJECT_ARGUMENT_CALL = re.compile(r"\.call\(\s*\{", re.S)
+DESK_FRAPPE_CALL = re.compile(r"\bfrappe\.call\(")
+UNTYPED_CALL = re.compile(r"as any\)\.call\(")
+APP_PREFIXED_CMD = re.compile(r"[\"'`](rcore|paas)\.")
+TEMPLATE_SUFFIXES = (".ts", ".tsx", ".mts", ".js", ".jsx", ".mjs")
+TENANT_CMDS = {
+    "api.plan_builder.summarize_chat_session": (
+        os.path.join(TEMPLATES, "app", "(chat)", "api", "chat", "route.ts"),
+        os.path.join(TEMPLATES, "app", "(chat)", "api", "summarize", "route.ts"),
+        os.path.join(TEMPLATES, "app", "(chat)", "page.tsx"),
+    ),
+    "tenant.api.log_frontend_error": (
+        os.path.join(TEMPLATES, "app", "(chat)", "api", "error", "route.ts"),
+    ),
+}
+
+
+def template_sources():
+    for root, _dirs, files in os.walk(TEMPLATES):
+        for name in sorted(files):
+            if name.endswith(TEMPLATE_SUFFIXES):
+                yield os.path.join(root, name)
+
+
+class TestGatewayCalls(unittest.TestCase):
+    """The six sites that still handed frappe-js-sdk an object (chat, error,
+    reminders and summarize routes, the chat page, control.ts) call the
+    gateway, and nothing of that class comes back."""
+
+    def test_no_template_hands_call_an_object(self):
+        for path in template_sources():
+            with self.subTest(file=os.path.relpath(path, SDK_ROOT)):
+                src = read(path)
+                self.assertIsNone(OBJECT_ARGUMENT_CALL.search(src), "`.call({` sends nothing: use gatewayCall(client, cmd, payload)")
+                self.assertIsNone(DESK_FRAPPE_CALL.search(src), "desk-style frappe.call({...}) has no place in a Next.js template")
+                self.assertIsNone(UNTYPED_CALL.search(src), "`(client as any).call(` hides the missing argument")
+
+    def test_no_template_carries_an_app_prefixed_cmd(self):
+        # A tenant cmd is the manifest key minus `{app_name}.`; the gateway
+        # rejects app-prefixed names (`rcore.`, the retired `paas.`) on
+        # tenant sites.
+        for path in template_sources():
+            with self.subTest(file=os.path.relpath(path, SDK_ROOT)):
+                self.assertIsNone(APP_PREFIXED_CMD.search(read(path)), "app-prefixed cmd")
+
+    def test_the_converted_sites_name_the_manifest_keys(self):
+        for cmd, paths in TENANT_CMDS.items():
+            for path in paths:
+                with self.subTest(cmd=cmd, file=os.path.relpath(path, SDK_ROOT)):
+                    src = read(path)
+                    self.assertIn(f'gatewayCall(client, "{cmd}", {{', src)
+                    self.assertIn("@/app/lib/gateway-rpc", src)
+        # The three summaries read the target's return under Frappe's
+        # `message` envelope, which gatewayCall keeps.
+        for path in TENANT_CMDS["api.plan_builder.summarize_chat_session"]:
+            with self.subTest(file=os.path.relpath(path, SDK_ROOT)):
+                self.assertRegex(read(path), r"(sumRes|tenantRes)\?\.message")
+        # summarize_chat_session is this SDK's own tenant endpoint: the key
+        # the cmd is cut from is in the frappe half's manifest.
+        with open(os.path.join(SDK_ROOT, os.pardir, "frappe", "manifest.json"), encoding="utf-8") as f:
+            frappe_manifest = f.read()
+        self.assertIn('"{app_name}.api.plan_builder.summarize_chat_session"', frappe_manifest)
+        self.assertNotIn("/api/method/rcore.", "".join(read(p) for p in template_sources()))
+        # The agent services build their cmds from a prefix-free namespace.
+        for name, ns in (("plan.ts", "api.plan_builder"), ("memory.ts", "api"), ("tasks.ts", "api")):
+            with self.subTest(file=name):
+                self.assertIn(f'const NS = "{ns}";', read(os.path.join(TEMPLATES, "app", "services", "all", "agent", name)))
+        # The control-side error sink is a `control:` cmd (core's telemetry
+        # manifest key), on the control client.
+        error_route = read(TENANT_CMDS["tenant.api.log_frontend_error"][0])
+        self.assertIn('ControlBaseService.call("control:log_frontend_error", {', error_route)
+        self.assertNotIn("control.api.log_frontend_error", error_route)
+        self.assertNotIn("OnboardingService", error_route)
 
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# 1.19.0: every href the landing header authors is an anchor, an https URL
+# or a route an install of this manifest puts under app/ on the host. /chat
+# is such a route since 1.19.0 (the chat surface is app/(chat)/page.tsx at
+# `/`, and chat/[id]/page.tsx was the only file under chat/, so /chat
+# matched nothing and 404'd on the composed shell). The three below are the
+# header's remaining links to nothing: rokctai_frontend's app/ has no
+# affiliate, teams or dashboard route and no SDK of this repository installs
+# one, and /portal - the one candidate for the Product group's "Web App"
+# entry - is the host's Client Portal (telephony and hosting subscriptions,
+# balance, quotes), not the chat web app, so the href is left rather than
+# pointed at the wrong page. This set may only shrink: a fixed link comes
+# out of it, and a new dead one fails the test.
+KNOWN_DEAD_HREFS = frozenset({"/affiliate", "/teams", "/dashboard"})
+# The identifier form must not be a type annotation (`href: string;`).
+HREF_RE = re.compile(r'\bhref:\s*(?:"([^"]*)"|([A-Za-z_][A-Za-z0-9_]*)\b(?!\s*;))')
+CONST_RE = re.compile(r'^const ([A-Z_][A-Z0-9_]*)\s*=\s*"([^"]*)";', re.M)
+ROUTE_FILES = ("page.tsx", "route.ts")
+ROUTE_GROUP_RE = re.compile(r"^\(.*\)$")
+
+
+def authored_hrefs(path):
+    """Every `href:` a module authors, a string literal or a string constant
+    of the same file; any other form fails, so an href cannot slip past."""
+    src = read(path)
+    consts = dict(CONST_RE.findall(src))
+    hrefs = []
+    for literal, name in HREF_RE.findall(src):
+        if name:
+            if name not in consts:
+                raise AssertionError(f"{os.path.basename(path)}: href {name} is not a string constant of the file")
+            hrefs.append(consts[name])
+        else:
+            hrefs.append(literal)
+    return hrefs
+
+
+def installed_routes(manifest):
+    """The URL paths the manifest's installs put under app/: a page.tsx or
+    route.ts per route, route groups dropped, a dynamic segment kept as
+    [name]."""
+    routes = set()
+    for entry in manifest["installs"]:
+        src = os.path.join(SDK_ROOT, entry["from"])
+        targets = []
+        if os.path.isdir(src):
+            for root, _dirs, files in os.walk(src):
+                for name in files:
+                    rel = os.path.relpath(os.path.join(root, name), src).replace(os.sep, "/")
+                    targets.append(entry["to"] + "/" + rel)
+        else:
+            targets.append(entry["to"])
+        for target in targets:
+            parts = target.split("/")
+            if parts[0] != "app" or parts[-1] not in ROUTE_FILES:
+                continue
+            segments = [p for p in parts[1:-1] if not ROUTE_GROUP_RE.match(p)]
+            routes.add("/" + "/".join(segments))
+    return routes
+
+
+def resolves(href, routes):
+    """Whether a site-relative href (query and fragment ignored) matches an
+    installed route, a [name] segment matching any one segment."""
+    path = href.split("?", 1)[0].split("#", 1)[0].rstrip("/") or "/"
+    want = path.split("/")[1:] if path != "/" else []
+    for route in routes:
+        have = route.split("/")[1:] if route != "/" else []
+        if len(have) == len(want) and all(h.startswith("[") or h == w for h, w in zip(have, want)):
+            return True
+    return False
+
+
+class TestNavLinks(unittest.TestCase):
+    """1.19.0: no href the landing header or the landing config authors
+    leads to a 404 this SDK could have prevented."""
+
+    def setUp(self):
+        self.routes = installed_routes(load_manifest())
+
+    def dead_hrefs(self, hrefs):
+        """The site-relative hrefs among `hrefs` that no installed route
+        answers; an anchor or an https URL is never dead."""
+        dead = set()
+        for href in hrefs:
+            if href.startswith("#") or href.startswith("https://"):
+                continue
+            self.assertTrue(href.startswith("/"), f"unrecognised href {href!r}")
+            if not resolves(href, self.routes):
+                dead.add(href)
+        return dead
+
+    def test_chat_is_a_route_and_is_the_root_chat_page(self):
+        # The (chat) directory install carries all three, as it always
+        # carried chat/[id]/page.tsx.
+        for route in ("/", "/chat", "/chat/[id]"):
+            self.assertIn(route, self.routes)
+        code = "\n".join(
+            line for line in read(CHAT_ROUTE).splitlines()
+            if line.strip() and not line.lstrip().startswith(("//", "/*", "*"))
+        )
+        # Nothing of its own: the page's logic lives in ../page.tsx alone.
+        self.assertEqual(code.strip(), 'export { default } from "../page";')
+        root = read(ROOT_CHAT_PAGE)
+        # The guest rule the re-export inherits, and the one export it forwards.
+        self.assertIn('redirect("/landing")', root)
+        self.assertEqual(len(re.findall(r"^export\b", root, re.M)), 1, "the root page exports more than its default; forward it")
+
+    def test_every_header_href_is_an_anchor_an_https_url_or_an_installed_route(self):
+        hrefs = authored_hrefs(HEADER_MENU)
+        self.assertIn("/chat", hrefs)
+        self.assertGreaterEqual(len(hrefs), 17)
+        dead = self.dead_hrefs(hrefs)
+        self.assertEqual(
+            dead, set(KNOWN_DEAD_HREFS),
+            f"new header links to nothing: {sorted(dead - KNOWN_DEAD_HREFS)}; "
+            f"fixed, take out of KNOWN_DEAD_HREFS: {sorted(KNOWN_DEAD_HREFS - dead)}",
+        )
+
+    def test_every_landing_config_href_is_an_anchor_an_https_url_or_a_route(self):
+        # The compare block's "Buy now" / "Explore plans" pointed at
+        # /pricing, a route nothing installs: the plans are the `pricing`
+        # section the block renders in, the id the header's `anchors`
+        # names, so they are that anchor. The same known-dead set covers
+        # this file; a new dead href here fails, as in the header.
+        hrefs = authored_hrefs(LANDING_CONFIG)
+        self.assertIn("/chat", hrefs)
+        self.assertEqual(hrefs.count("#pricing"), 2)
+        self.assertNotIn("/pricing", hrefs)
+        self.assertIn('anchors: ["pricing"]', read(HEADER_MENU))
+        dead = self.dead_hrefs(hrefs)
+        self.assertEqual(
+            dead - KNOWN_DEAD_HREFS, set(),
+            f"new landing-config links to nothing: {sorted(dead - KNOWN_DEAD_HREFS)}",
+        )
+
+
+class TestChatIdPage(unittest.TestCase):
+    """1.19.0: chat/[id]/page.tsx reads its params, knows the session
+    before it reads the chat, and turns a failed read into a 404."""
+
+    def setUp(self):
+        self.page = read(CHAT_ID_PAGE)
+
+    def test_params_are_awaited(self):
+        # Next 15+ hands a route segment its params as a Promise: read
+        # without awaiting, `id` is undefined and the query runs on NULL.
+        self.assertIn("params: Promise<{ id: string }>", self.page)
+        self.assertIn("const { id } = await params;", self.page)
+        self.assertNotIn("= params;", self.page)
+        self.assertNotIn("params: any", self.page)
+
+    def test_session_is_known_before_the_read(self):
+        # No static import of the query: the only mention of getChatById
+        # is the guarded read, and it follows `await auth()`.
+        self.assertNotIn("import { getChatById }", self.page)
+        self.assertLess(self.page.index("await auth()"), self.page.index("getChatById"))
+        self.assertIn('await import("@/db/queries")', self.page)
+
+    def test_read_is_guarded_and_a_failure_is_a_404(self):
+        guard = re.search(r"\n  try \{\n(.*?)\n  \} catch \(\w+\) \{\n(.*?)\n  \}\n", self.page, re.S)
+        self.assertIsNotNone(guard, "the page has no try/catch")
+        self.assertIn("chatFromDb = await getChatById({ id });", guard.group(1))
+        self.assertIn("console.error(", guard.group(2))
+        self.assertIn("notFound();", guard.group(2))
+        # The existing checks stand, unchanged.
+        self.assertIn("if (!chatFromDb) {\n    notFound();", self.page)
+        self.assertIn("if (!session || !session.user) {\n    return notFound();", self.page)
+        self.assertIn("if (session.user.id !== chat.userId) {\n    return notFound();", self.page)

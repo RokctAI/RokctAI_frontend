@@ -143,6 +143,61 @@ function probesFor(sites: readonly PlatformStatusSite[]): PlatformStatusProbe[] 
   return probes;
 }
 
+/**
+ * The ONE registered tenant cmd that carries the platform's version
+ * (1.40.0): base_sdk's own `api.system.api_status`
+ * (`{app_name}.api.system.api_status` in base/frappe/manifest.json),
+ * answering `{data: {status, version, user}}`. The admin system-info
+ * actions (app/actions/base/admin/settings.ts and system.ts) asked
+ * `api.get_version`, a cmd registered nowhere - not in base's frappe
+ * manifest, not in the platform's hooks - so the version always came back
+ * null; they now ask this cmd and read it with [readPlatformVersion].
+ */
+export const PLATFORM_VERSION_CMD = "api.system.api_status";
+
+/**
+ * The version out of whatever a probe or the version cmd answered: the
+ * base_sdk envelope `{data: {version}}`, the gateway's `message` wrapper
+ * around it, or a bare `{version}`; `null` unless the field is a string.
+ */
+export function readPlatformVersion(answer: unknown): string | null {
+  if (answer === null || typeof answer !== "object") return null;
+  const body = answer as Record<string, unknown>;
+  const message = body.message;
+  const unwrapped =
+    message !== null && typeof message === "object" && !Array.isArray(message)
+      ? (message as Record<string, unknown>)
+      : body;
+  const data = unwrapped.data;
+  const inner =
+    data !== null && typeof data === "object" && !Array.isArray(data)
+      ? (data as Record<string, unknown>)
+      : unwrapped;
+  return typeof inner.version === "string" ? inner.version : null;
+}
+
+/**
+ * Whether what a probe answered with counts as an answer (1.40.0): a
+ * plain object with at least one field. A 2xx that resolves to `null`,
+ * `undefined`, a scalar, an array or `{}` is a proxy or an empty page
+ * standing where the backend should be - it says nothing about the
+ * platform, so `getPlatformStatus` treats it as no answer and falls
+ * through to the next probe, then to `offline`. The gateway's own
+ * `message` envelope is looked through: `platformCall` hands back
+ * `data.message || data`, so a body of `{"message": null}` arrives as the
+ * envelope itself, and an envelope whose only field is an empty `message`
+ * is exactly as empty as `null`.
+ */
+export function isProbeAnswer(answer: unknown): answer is Record<string, unknown> {
+  if (answer === null || typeof answer !== "object" || Array.isArray(answer)) return false;
+  const keys = Object.keys(answer);
+  if (keys.length === 0) return false;
+  if (keys.length === 1 && keys[0] === "message") {
+    return isProbeAnswer((answer as Record<string, unknown>).message);
+  }
+  return true;
+}
+
 /** What [getPlatformStatus] answers. */
 export interface PlatformStatus {
   state: PlatformStatusState;

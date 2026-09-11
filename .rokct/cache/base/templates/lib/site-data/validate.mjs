@@ -24,10 +24,10 @@
 /** The kinds and where each lives, mirrored from ./kinds.ts. */
 export const SITE_DATA_MODES = ["local", "backend", "hybrid"];
 export const DEFAULT_SITE_DATA_MODE = "backend";
-export const JSON_KINDS = { theme: "theme.json", team: "team.json", stockists: "stockists.json", products: "products.json" };
+export const JSON_KINDS = { theme: "theme.json", team: "team.json", stockists: "stockists.json", products: "products.json", network: "network.json" };
 export const MARKDOWN_KINDS = { about: "about.md" };
 export const LEGAL_DIR = "legal";
-export const SITE_DATA_KINDS = ["theme", "team", "stockists", "products", "about", "legal"];
+export const SITE_DATA_KINDS = ["theme", "team", "stockists", "products", "about", "legal", "network"];
 
 const HEX_COLOUR = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
 
@@ -164,6 +164,72 @@ export function validateProducts(value) {
   return problems;
 }
 
+/**
+ * An https origin and nothing more: `https://<host>[:port]`, no path
+ * beyond "/", no query string, no fragment (the strip never carries a
+ * tracking parameter) - the same line components/custom/landing/network-sites.ts holds.
+ */
+export function isHttpsOrigin(v) {
+  if (typeof v !== "string" || v.trim() !== v || /[?#]/.test(v)) return false;
+  let url;
+  try {
+    url = new URL(v);
+  } catch {
+    return false;
+  }
+  return url.protocol === "https:" && url.pathname === "/" && url.username === "" && url.password === "";
+}
+
+function checkLogo(problems, at, v) {
+  if (v === undefined) return;
+  if (!nonEmptyString(v) || /[?#]/.test(v)) {
+    problems.push(`${at} must be a public path or an absolute URL with no query string or fragment`);
+  }
+}
+
+/** `data/network.json` (1.40.0): `{ heading?, sites: [{ key, name, url, logo?, logoDark?, wordmark?, shown? }] }`. */
+export function validateNetwork(value) {
+  const problems = [];
+  if (!isPlainObject(value)) return ['the file must be a JSON object with a "sites" array'];
+  const { heading, sites, ...rest } = value;
+  for (const extra of Object.keys(rest)) problems.push(`${extra} is not a field of network (heading, sites)`);
+  checkString(problems, "heading", heading);
+  if (!Array.isArray(sites)) {
+    problems.push("sites must be an array");
+    return problems;
+  }
+  const seen = new Set();
+  sites.forEach((site, i) => {
+    const at = `sites[${i}]`;
+    if (!isPlainObject(site)) {
+      problems.push(`${at} must be an object`);
+      return;
+    }
+    for (const extra of Object.keys(site).filter((k) => !["key", "name", "url", "logo", "logoDark", "wordmark", "shown"].includes(k))) {
+      problems.push(`${at}.${extra} is not a site field (key, name, url, logo, logoDark, wordmark, shown)`);
+    }
+    checkString(problems, `${at}.key`, site.key, { required: true });
+    if (nonEmptyString(site.key)) {
+      if (seen.has(site.key)) problems.push(`${at}.key "${site.key}" is used twice`);
+      seen.add(site.key);
+    }
+    checkString(problems, `${at}.name`, site.name, { required: true });
+    if (site.url === null) {
+      if (site.shown !== false) problems.push(`${at} has no url and must be shown: false`);
+    } else if (site.url === undefined) {
+      problems.push(`${at}.url is required (an https origin, or null with shown: false)`);
+    } else if (!isHttpsOrigin(site.url)) {
+      problems.push(`${at}.url must be an https origin with no path, query string or fragment, got ${JSON.stringify(site.url)}`);
+    }
+    checkLogo(problems, `${at}.logo`, site.logo);
+    checkLogo(problems, `${at}.logoDark`, site.logoDark);
+    for (const flag of ["wordmark", "shown"]) {
+      if (site[flag] !== undefined && typeof site[flag] !== "boolean") problems.push(`${at}.${flag} must be true or false`);
+    }
+  });
+  return problems;
+}
+
 export function validateAbout(value) {
   return nonEmptyString(value) ? [] : ["the file must carry some markdown"];
 }
@@ -217,6 +283,7 @@ const VALIDATORS = {
   products: validateProducts,
   about: validateAbout,
   legal: validateLegal,
+  network: validateNetwork,
 };
 
 /** Problems with a parsed value of `kind`; [] when it fits the kind's shape. */

@@ -19,8 +19,6 @@
 import { paasCall } from "@/app/services/base/platform-gateway";
 import { revalidatePath } from "next/cache";
 
-import { getPaaSClient } from "@/app/lib/client";
-
 export async function getBrands(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
@@ -143,16 +141,12 @@ export async function getNotifications(page: number = 1, limit: number = 20) {
 }
 
 export async function getFAQs() {
-  const frappe = await getPaaSClient();
   try {
-    return await frappe.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "FAQ",
-        fields: ["name", "question", "answer", "type", "active"],
-        order_by: "creation desc",
-        limit_page_length: 1000,
-      },
+    return await paasCall("frappe.client.get_list", {
+      doctype: "FAQ",
+      fields: ["name", "question", "answer", "type", "active"],
+      order_by: "creation desc",
+      limit_page_length: 1000,
     });
   } catch (error) {
     console.error("Failed to fetch FAQs:", error);
@@ -161,15 +155,11 @@ export async function getFAQs() {
 }
 
 export async function createFAQ(data: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.insert",
-      args: {
-        doc: {
-          doctype: "FAQ",
-          ...data,
-        },
+    await paasCall("frappe.client.insert", {
+      doc: {
+        doctype: "FAQ",
+        ...data,
       },
     });
     revalidatePath("/admin/settings/faqs");
@@ -181,15 +171,11 @@ export async function createFAQ(data: any) {
 }
 
 export async function updateFAQ(name: string, data: any) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.set_value",
-      args: {
-        doctype: "FAQ",
-        name: name,
-        fieldname: data,
-      },
+    await paasCall("frappe.client.set_value", {
+      doctype: "FAQ",
+      name: name,
+      fieldname: data,
     });
     revalidatePath("/admin/settings/faqs");
     return { success: true };
@@ -200,14 +186,10 @@ export async function updateFAQ(name: string, data: any) {
 }
 
 export async function deleteFAQ(name: string) {
-  const frappe = await getPaaSClient();
   try {
-    await frappe.call({
-      method: "frappe.client.delete",
-      args: {
-        doctype: "FAQ",
-        name: name,
-      },
+    await paasCall("frappe.client.delete", {
+      doctype: "FAQ",
+      name: name,
     });
     revalidatePath("/admin/settings/faqs");
     return { success: true };

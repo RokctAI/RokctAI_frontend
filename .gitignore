@@ -114,6 +114,7 @@ migrate_working_dir/
 /app/(chat)/api/reservation/route.ts
 /app/(chat)/api/summarize/route.ts
 /app/(chat)/chat/\[id\]/page.tsx
+/app/(chat)/chat/page.tsx
 /app/(chat)/page.tsx
 /app/actions/ai/admin.ts
 /app/actions/ai/competitor.ts
@@ -138,6 +139,7 @@ migrate_working_dir/
 /app/actions/base/admin/system.ts
 /app/actions/base/landing.ts
 /app/actions/base/legal.ts
+/app/actions/base/network-sites.ts
 /app/actions/base/status.ts
 /app/actions/booking/booking.ts
 /app/actions/comms/whatsapp.ts

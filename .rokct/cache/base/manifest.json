@@ -1,6 +1,6 @@
 {
   "name": "base_sdk",
-  "version": "1.39.0",
+  "version": "1.40.0",
   "installs": [
     {
       "from": "src/services",
@@ -186,6 +186,10 @@
     {
       "from": "templates/app/actions/base/legal.ts",
       "to": "app/actions/base/legal.ts"
+    },
+    {
+      "from": "templates/app/actions/base/network-sites.ts",
+      "to": "app/actions/base/network-sites.ts"
     },
     {
       "from": "templates/app/actions/base/status.ts",

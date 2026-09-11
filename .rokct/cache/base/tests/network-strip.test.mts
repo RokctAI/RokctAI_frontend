@@ -16,10 +16,14 @@
 
 // base_sdk 1.23.0: the network strip (Ray, 2026-09-09: a clickable logo
 // strip of the other products under "Trusted by", on every shell minus
-// itself, no ad network, no click tracking). Run by tests/test_manifest.py
-// against a staged copy of components/custom/landing/network-sites.ts and
-// network-strip.ts beside the kernel's tenant-hosts.ts, under node's own
-// test runner with type stripping.
+// itself, no ad network, no click tracking). Since 1.40.0 base carries NO
+// sites: the list below is this file's own fixture - no product, no real
+// host - handed to the rules as the `sites` argument, the way a registered
+// config's `sites` or a shell's data/network.json reach them. Run by
+// tests/test_manifest.py against a staged copy of
+// components/custom/landing/network-sites.ts and network-strip.ts beside
+// the kernel's tenant-hosts.ts, under node's own test runner with type
+// stripping.
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
@@ -39,23 +43,63 @@ import {
   loadNetworkStrip,
   networkStripRendersAt,
   resolveNetworkStrip,
+  withOwnNetworkSites,
 } from './network-strip.ts';
 
 const keys = (sites: readonly NetworkSite[]) => sites.map((s) => s.key);
 
-describe('NETWORK_SITES: the list', () => {
-  it('names rokct.ai, supacharge.school and juvo with their origins, hosting and telephony without', () => {
-    const byKey = new Map(NETWORK_SITES.map((s) => [s.key, s]));
-    assert.equal(byKey.get('rokct')?.url, 'https://rokct.ai');
-    assert.equal(byKey.get('supacharge')?.url, 'https://supacharge.school');
-    assert.equal(byKey.get('supacharge')?.wordmark, true);
-    assert.equal(byKey.get('juvo')?.url, 'https://juvo.app');
-    // 1.32.1: each name is the declared brand string, verbatim (a wordmark
-    // site draws it AS the brand): never re-cased, never shortened.
-    assert.equal(byKey.get('rokct')?.name, 'rokct.ai');
-    assert.equal(byKey.get('supacharge')?.name, 'supacharge.school');
-    assert.equal(byKey.get('juvo')?.name, 'juvo');
-    for (const pending of ['hosting', 'telephony']) {
+/**
+ * The fixture network: what a home SDK's registered config or a shell's
+ * data/network.json would declare. Three linkable sites - one with two
+ * glyphs, one wordmark, one plain - and two pending ones with no domain
+ * yet, kept as hidden entries the way a real list keeps its place-holders.
+ */
+const SITES: readonly NetworkSite[] = [
+  {
+    key: 'alpha',
+    name: 'alpha.example',
+    url: 'https://alpha.example',
+    logo: 'https://alpha.example/images/logo_dark.svg',
+    logoDark: 'https://alpha.example/images/logo.svg',
+  },
+  { key: 'beta', name: 'beta.example', url: 'https://beta.example', wordmark: true },
+  { key: 'gamma', name: 'gamma', url: 'https://gamma.example' },
+  { key: 'pending-one', name: 'Pending one', url: null, shown: false },
+  { key: 'pending-two', name: 'Pending two', url: null, shown: false },
+];
+
+describe('NETWORK_SITES: base carries no site (1.40.0)', () => {
+  it('is empty: site names are brand content, entries come from the home SDK or data/', () => {
+    assert.deepEqual([...NETWORK_SITES], []);
+    assert.deepEqual(resolveNetworkSites(NETWORK_SITES), []);
+  });
+
+  it('with nothing declared the strip resolves to no site and draws on no surface', () => {
+    const strip = resolveNetworkStrip(null, 'alpha.example');
+    assert.deepEqual(strip.sites, []);
+    assert.equal(strip.heading, 'Trusted by');
+    for (const surface of ['afterHero', 'beforeFooter', 'section', 'footer', 'none'] as const) {
+      for (const onLanding of [true, false]) {
+        assert.equal(networkStripRendersAt(strip, surface, onLanding), false, `${surface} onLanding=${onLanding}`);
+      }
+    }
+  });
+
+  it('a placement alone draws nothing either: WHERE without WHICH is no strip', () => {
+    const strip = resolveNetworkStrip({ placement: { landing: 'afterHero', footer: true } }, null);
+    assert.deepEqual(strip.sites, []);
+    assert.equal(networkStripRendersAt(strip, 'afterHero', true), false);
+    assert.equal(networkStripRendersAt(strip, 'footer', false), false);
+  });
+});
+
+describe('the fixture list: the shape a declared list must have', () => {
+  it('names three linkable sites and keeps the pending ones hidden with no url', () => {
+    const byKey = new Map(SITES.map((s) => [s.key, s]));
+    assert.equal(byKey.get('alpha')?.url, 'https://alpha.example');
+    assert.equal(byKey.get('beta')?.wordmark, true);
+    assert.equal(byKey.get('gamma')?.name, 'gamma');
+    for (const pending of ['pending-one', 'pending-two']) {
       assert.equal(byKey.get(pending)?.url, null, pending);
       assert.equal(byKey.get(pending)?.shown, false, pending);
     }
@@ -63,7 +107,7 @@ describe('NETWORK_SITES: the list', () => {
 
   it('every entry has a unique key and a name; every url is an https origin with no query string', () => {
     const seen = new Set<string>();
-    for (const site of NETWORK_SITES) {
+    for (const site of SITES) {
       assert.ok(site.key.trim(), 'key');
       assert.ok(!seen.has(site.key), `duplicate key ${site.key}`);
       seen.add(site.key);
@@ -81,22 +125,22 @@ describe('NETWORK_SITES: the list', () => {
   });
 
   it('a site is drawn as a logo only when it has one and is not a wordmark', () => {
-    const rokct = NETWORK_SITES.find((s) => s.key === 'rokct');
-    assert.ok(rokct?.logo && rokct.logoDark);
-    const supacharge = NETWORK_SITES.find((s) => s.key === 'supacharge');
-    assert.equal(supacharge?.logo, undefined);
+    const alpha = SITES.find((s) => s.key === 'alpha');
+    assert.ok(alpha?.logo && alpha.logoDark);
+    const beta = SITES.find((s) => s.key === 'beta');
+    assert.equal(beta?.logo, undefined);
   });
 });
 
 describe('networkSiteHost: the same normalisation as resolveDisplayHost', () => {
   it('drops the port and a leading www., lower-cases', () => {
-    assert.equal(networkSiteHost('https://www.Rokct.AI:443/'), 'rokct.ai');
-    assert.equal(networkSiteHost('https://supacharge.school'), 'supacharge.school');
+    assert.equal(networkSiteHost('https://www.Alpha.EXAMPLE:443/'), 'alpha.example');
+    assert.equal(networkSiteHost('https://beta.example'), 'beta.example');
     assert.equal(networkSiteHost('http://localhost:3000'), 'localhost');
   });
 
   it('answers null for nothing and for a non-URL', () => {
-    for (const bad of [null, undefined, '', '   ', 'rokct.ai', 'not a url']) {
+    for (const bad of [null, undefined, '', '   ', 'alpha.example', 'not a url']) {
       assert.equal(networkSiteHost(bad), null, String(bad));
     }
   });
@@ -104,41 +148,41 @@ describe('networkSiteHost: the same normalisation as resolveDisplayHost', () => 
 
 describe('resolveNetworkSites: self-exclusion by host', () => {
   it('leaves out the site whose host matches the shell, however the shell spells it', () => {
-    for (const self of ['rokct.ai', 'www.rokct.ai', 'ROKCT.AI:443', networkSiteHost('https://www.rokct.ai:443/')]) {
-      const sites = resolveNetworkSites(NETWORK_SITES, { selfHost: self });
-      assert.ok(!keys(sites).includes('rokct'), `self=${self}`);
-      assert.deepEqual(keys(sites), ['supacharge', 'juvo']);
+    for (const self of ['alpha.example', 'www.alpha.example', 'ALPHA.EXAMPLE:443', networkSiteHost('https://www.alpha.example:443/')]) {
+      const sites = resolveNetworkSites(SITES, { selfHost: self });
+      assert.ok(!keys(sites).includes('alpha'), `self=${self}`);
+      assert.deepEqual(keys(sites), ['beta', 'gamma']);
     }
   });
 
-  it("supacharge's shell never lists Supacharge", () => {
-    const sites = resolveNetworkSites(NETWORK_SITES, { selfHost: 'supacharge.school' });
-    assert.deepEqual(keys(sites), ['rokct', 'juvo']);
+  it("the wordmark site's own shell never lists it", () => {
+    const sites = resolveNetworkSites(SITES, { selfHost: 'beta.example' });
+    assert.deepEqual(keys(sites), ['alpha', 'gamma']);
   });
 
   it('with no host every shown site is in, and the hidden-by-list ones still out', () => {
     for (const self of [null, undefined, '']) {
-      assert.deepEqual(keys(resolveNetworkSites(NETWORK_SITES, { selfHost: self })), ['rokct', 'supacharge', 'juvo']);
+      assert.deepEqual(keys(resolveNetworkSites(SITES, { selfHost: self })), ['alpha', 'beta', 'gamma']);
     }
-    assert.deepEqual(keys(resolveNetworkSites(NETWORK_SITES)), ['rokct', 'supacharge', 'juvo']);
+    assert.deepEqual(keys(resolveNetworkSites(SITES)), ['alpha', 'beta', 'gamma']);
   });
 
   it('a local or preview host matches nothing and leaves every site in', () => {
     for (const self of ['localhost', '127.0.0.1', 'preview.vercel.app']) {
-      assert.deepEqual(keys(resolveNetworkSites(NETWORK_SITES, { selfHost: self })), ['rokct', 'supacharge', 'juvo']);
+      assert.deepEqual(keys(resolveNetworkSites(SITES, { selfHost: self })), ['alpha', 'beta', 'gamma']);
     }
   });
 });
 
 describe('resolveNetworkSites: order and hidden', () => {
   it('named keys come first in the named order, the rest keep list order', () => {
-    assert.deepEqual(keys(resolveNetworkSites(NETWORK_SITES, { order: ['juvo'] })), ['juvo', 'rokct', 'supacharge']);
-    assert.deepEqual(keys(resolveNetworkSites(NETWORK_SITES, { order: ['supacharge', 'juvo', 'rokct'] })), ['supacharge', 'juvo', 'rokct']);
-    assert.deepEqual(keys(resolveNetworkSites(NETWORK_SITES, { order: ['unknown'] })), ['rokct', 'supacharge', 'juvo']);
+    assert.deepEqual(keys(resolveNetworkSites(SITES, { order: ['gamma'] })), ['gamma', 'alpha', 'beta']);
+    assert.deepEqual(keys(resolveNetworkSites(SITES, { order: ['beta', 'gamma', 'alpha'] })), ['beta', 'gamma', 'alpha']);
+    assert.deepEqual(keys(resolveNetworkSites(SITES, { order: ['unknown'] })), ['alpha', 'beta', 'gamma']);
   });
 
   it('hidden keys are left out; a hidden key that is not in the list is ignored', () => {
-    assert.deepEqual(keys(resolveNetworkSites(NETWORK_SITES, { hidden: ['juvo', 'nothing'] })), ['rokct', 'supacharge']);
+    assert.deepEqual(keys(resolveNetworkSites(SITES, { hidden: ['gamma', 'nothing'] })), ['alpha', 'beta']);
   });
 
   it('a site with a tracking parameter in its url is never drawn', () => {
@@ -151,8 +195,8 @@ describe('resolveNetworkSites: order and hidden', () => {
   });
 
   it('never adds a parameter: every resolved url is the entry url, verbatim', () => {
-    for (const site of resolveNetworkSites(NETWORK_SITES, { order: ['juvo'], hidden: [] })) {
-      const entry = NETWORK_SITES.find((s) => s.key === site.key);
+    for (const site of resolveNetworkSites(SITES, { order: ['gamma'], hidden: [] })) {
+      const entry = SITES.find((s) => s.key === site.key);
       assert.equal(site.url, entry?.url);
       assert.ok(!hasTrackingParameters(site.url));
     }
@@ -160,32 +204,86 @@ describe('resolveNetworkSites: order and hidden', () => {
 });
 
 describe('resolveNetworkStrip: the defaults and the registered say', () => {
-  it('nothing registered: "Trusted by", footer on, landing off, the shell left out', () => {
-    const strip = resolveNetworkStrip(null, 'supacharge.school');
+  it('nothing registered over a list: "Trusted by", footer on, landing off, the shell left out', () => {
+    const strip = resolveNetworkStrip(null, 'beta.example', SITES);
     assert.equal(strip.heading, DEFAULT_NETWORK_STRIP_HEADING);
     assert.equal(strip.heading, 'Trusted by');
     assert.deepEqual(strip.placement, { landing: 'none', footer: true });
-    assert.deepEqual(keys(strip.sites), ['rokct', 'juvo']);
+    assert.deepEqual(keys(strip.sites), ['alpha', 'gamma']);
   });
 
   it('a registered config sets the heading, the order, the hidden keys and the placement', () => {
     const strip = resolveNetworkStrip(
-      { heading: ' Runs on rokct ', order: ['juvo'], hidden: ['supacharge'], placement: { landing: 'afterHero' } },
-      'rokct.ai',
+      { heading: ' Runs on alpha ', order: ['gamma'], hidden: ['beta'], placement: { landing: 'afterHero' } },
+      'alpha.example',
+      SITES,
     );
-    assert.equal(strip.heading, 'Runs on rokct');
-    assert.deepEqual(keys(strip.sites), ['juvo']);
+    assert.equal(strip.heading, 'Runs on alpha');
+    assert.deepEqual(keys(strip.sites), ['gamma']);
     assert.deepEqual(strip.placement, { landing: 'afterHero', footer: true });
   });
 
   it('a blank heading keeps the default', () => {
-    assert.equal(resolveNetworkStrip({ heading: '   ' }, null).heading, 'Trusted by');
+    assert.equal(resolveNetworkStrip({ heading: '   ' }, null, SITES).heading, 'Trusted by');
+  });
+
+  it("a registered config's own sites win over the list argument (1.40.0)", () => {
+    const strip = resolveNetworkStrip({ sites: [...SITES] }, 'alpha.example', [
+      { key: 'other', name: 'Other', url: 'https://other.example' },
+    ]);
+    assert.deepEqual(keys(strip.sites), ['beta', 'gamma']);
+    // An empty declared list is a declaration too: nothing is drawn.
+    assert.deepEqual(resolveNetworkStrip({ sites: [] }, null, SITES).sites, []);
+  });
+
+  it('the shell itself, the hidden keys and the order apply to declared sites the same way', () => {
+    const strip = resolveNetworkStrip(
+      { sites: [...SITES], order: ['gamma'], hidden: ['beta'], placement: { landing: 'section' } },
+      'localhost',
+    );
+    assert.deepEqual(keys(strip.sites), ['gamma', 'alpha']);
+    assert.equal(networkStripRendersAt(strip, 'section', true), true);
+  });
+});
+
+describe('withOwnNetworkSites: registered sites win, else the shell\'s own data, else none', () => {
+  const own = { heading: 'Runs beside', sites: [SITES[1]!, SITES[2]!] };
+
+  it('lays the data under a config that declares no sites, and its heading under a config that names none', () => {
+    const merged = withOwnNetworkSites({ placement: { footer: false } }, own);
+    assert.deepEqual(keys(merged?.sites ?? []), ['beta', 'gamma']);
+    assert.equal(merged?.heading, 'Runs beside');
+    assert.deepEqual(merged?.placement, { footer: false });
+    assert.deepEqual(withOwnNetworkSites(null, own), { sites: own.sites, heading: 'Runs beside' });
+  });
+
+  it('a registered heading stays over the data\'s sites', () => {
+    assert.equal(withOwnNetworkSites({ heading: 'Trusted by' }, own)?.heading, 'Trusted by');
+  });
+
+  it('a config with sites is answered as it is, whatever the data says', () => {
+    const config = { sites: [SITES[0]!] };
+    assert.equal(withOwnNetworkSites(config, own), config);
+    assert.equal(withOwnNetworkSites({ sites: [] }, own)?.sites.length, 0);
+  });
+
+  it('nothing to lay under: the config as it was, or null', () => {
+    assert.equal(withOwnNetworkSites(null, null), null);
+    assert.equal(withOwnNetworkSites(null, { sites: [] }), null);
+    const config = { placement: { landing: 'afterHero' as const } };
+    assert.equal(withOwnNetworkSites(config, undefined), config);
+    assert.equal(withOwnNetworkSites(config, { sites: [] }), config);
+  });
+
+  it('never copies a site by reference into the config it answers', () => {
+    const merged = withOwnNetworkSites(null, own);
+    assert.notEqual(merged?.sites, own.sites);
   });
 });
 
 describe('networkStripRendersAt: where the strip draws', () => {
   it('landing "none" (the default) hides both landing surfaces and keeps the footer', () => {
-    const strip = resolveNetworkStrip(null, 'rokct.ai');
+    const strip = resolveNetworkStrip(null, 'alpha.example', SITES);
     assert.equal(networkStripRendersAt(strip, 'afterHero'), false);
     assert.equal(networkStripRendersAt(strip, 'beforeFooter'), false);
     assert.equal(networkStripRendersAt(strip, 'none'), false);
@@ -193,22 +291,22 @@ describe('networkStripRendersAt: where the strip draws', () => {
   });
 
   it('a landing placement draws on that surface only', () => {
-    const after = resolveNetworkStrip({ placement: { landing: 'afterHero' } }, 'rokct.ai');
+    const after = resolveNetworkStrip({ placement: { landing: 'afterHero' } }, 'alpha.example', SITES);
     assert.equal(networkStripRendersAt(after, 'afterHero'), true);
     assert.equal(networkStripRendersAt(after, 'beforeFooter'), false);
-    const before = resolveNetworkStrip({ placement: { landing: 'beforeFooter' } }, 'rokct.ai');
+    const before = resolveNetworkStrip({ placement: { landing: 'beforeFooter' } }, 'alpha.example', SITES);
     assert.equal(networkStripRendersAt(before, 'afterHero'), false);
     assert.equal(networkStripRendersAt(before, 'beforeFooter'), true);
   });
 
   it('footer false hides the footer surface', () => {
-    const strip = resolveNetworkStrip({ placement: { footer: false, landing: 'afterHero' } }, 'rokct.ai');
+    const strip = resolveNetworkStrip({ placement: { footer: false, landing: 'afterHero' } }, 'alpha.example', SITES);
     assert.equal(networkStripRendersAt(strip, 'footer'), false);
     assert.equal(networkStripRendersAt(strip, 'afterHero'), true);
   });
 
   it('draws nowhere with no site left', () => {
-    const strip = resolveNetworkStrip({ hidden: ['rokct', 'supacharge', 'juvo'], placement: { landing: 'afterHero' } }, null);
+    const strip = resolveNetworkStrip({ hidden: ['alpha', 'beta', 'gamma'], placement: { landing: 'afterHero' } }, null, SITES);
     assert.deepEqual(strip.sites, []);
     for (const surface of ['afterHero', 'beforeFooter', 'footer'] as const) {
       assert.equal(networkStripRendersAt(strip, surface), false, surface);
@@ -232,8 +330,8 @@ describe('isLandingRoute: the one route with landing surfaces', () => {
 });
 
 describe('networkStripRendersAt: once per page (1.27.0)', () => {
-  it('nothing registered: the footer strip draws on every route, the landing route included', () => {
-    const strip = resolveNetworkStrip(null, 'rokct.ai');
+  it('nothing registered over a list: the footer strip draws on every route, the landing route included', () => {
+    const strip = resolveNetworkStrip(null, 'alpha.example', SITES);
     assert.equal(networkStripRendersAt(strip, 'footer', false), true);
     assert.equal(networkStripRendersAt(strip, 'footer', true), true);
     assert.equal(networkStripRendersAt(strip, 'section', true), false);
@@ -241,7 +339,7 @@ describe('networkStripRendersAt: once per page (1.27.0)', () => {
 
   it('a landing placement makes the footer yield on the landing route only', () => {
     for (const landing of ['afterHero', 'beforeFooter', 'section'] as const) {
-      const strip = resolveNetworkStrip({ placement: { landing, footer: true } }, 'rokct.ai');
+      const strip = resolveNetworkStrip({ placement: { landing, footer: true } }, 'alpha.example', SITES);
       assert.equal(networkStripRendersAt(strip, 'footer', true), false, `${landing} on /landing`);
       assert.equal(networkStripRendersAt(strip, 'footer', false), true, `${landing} elsewhere`);
       assert.equal(networkStripRendersAt(strip, 'footer'), true, `${landing} default`);
@@ -249,7 +347,7 @@ describe('networkStripRendersAt: once per page (1.27.0)', () => {
   });
 
   it('"section" draws on the section surface alone, and base\'s two landing surfaces stay empty', () => {
-    const strip = resolveNetworkStrip({ placement: { landing: 'section' } }, 'rokct.ai');
+    const strip = resolveNetworkStrip({ placement: { landing: 'section' } }, 'alpha.example', SITES);
     assert.deepEqual(strip.placement, { landing: 'section', footer: true });
     assert.equal(networkStripRendersAt(strip, 'section'), true);
     assert.equal(networkStripRendersAt(strip, 'section', true), true);
@@ -262,7 +360,7 @@ describe('networkStripRendersAt: once per page (1.27.0)', () => {
   });
 
   it('footer false stays off everywhere, and the landing route never turns a surface on', () => {
-    const strip = resolveNetworkStrip({ placement: { landing: 'none', footer: false } }, 'supacharge.school');
+    const strip = resolveNetworkStrip({ placement: { landing: 'none', footer: false } }, 'beta.example', SITES);
     for (const onLanding of [true, false]) {
       for (const surface of ['afterHero', 'beforeFooter', 'section', 'footer', 'none'] as const) {
         assert.equal(networkStripRendersAt(strip, surface, onLanding), false, `${surface} onLanding=${onLanding}`);
@@ -280,10 +378,10 @@ describe('loadNetworkStrip: the registry', () => {
     try {
       NETWORK_STRIP.push(
         { id: 'broken', load: async () => { throw new Error('nope'); } },
-        { id: 'home', load: async () => ({ default: { heading: 'Runs on rokct' } }) },
+        { id: 'home', load: async () => ({ default: { heading: 'Runs on alpha' } }) },
         { id: 'late', load: async () => ({ default: { heading: 'never' } }) },
       );
-      assert.deepEqual(await loadNetworkStrip(), { heading: 'Runs on rokct' });
+      assert.deepEqual(await loadNetworkStrip(), { heading: 'Runs on alpha' });
     } finally {
       console.error = original;
       NETWORK_STRIP.length = 0;
