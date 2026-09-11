@@ -26,13 +26,61 @@ import { user, chat, User, reservation, personalTask } from "./schema";
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
+
+// Merge sslmode=require into the connection URL instead of concatenating it.
+//
+// This used to be `${POSTGRES_URL}?sslmode=require`. When the value already
+// carries a query string - the normal Neon/Supabase shape - that appends a
+// SECOND "?", and the driver folds it into the last parameter it sees:
+//   ...?channel_binding=require&sslmode=require  ->  ssl="require?sslmode=require"
+//   ...?pgbouncer=true&connection_limit=1        ->  ssl=false, connection_limit="1?sslmode=require"
+// The first is an unrecognised TLS mode, so postgres-js skips the
+// rejectUnauthorized:false it applies for a real "require" and demands full
+// certificate verification; the second drops TLS entirely and corrupts the
+// pooler setting. Either way the parameter that was meant to be added is the
+// one that breaks.
+//
+// Set sslmode only when the operator has not already chosen one, and leave
+// every existing parameter untouched.
+function withSslMode(url: string): string {
+  try {
+    let parsed = new URL(url);
+    if (!parsed.searchParams.has("sslmode")) {
+      parsed.searchParams.set("sslmode", "require");
+    }
+    return parsed.toString();
+  } catch {
+    // Not parseable as a URL. Hand it to the driver unchanged rather than
+    // throwing: this runs at module scope (see the note below).
+    console.error(
+      "POSTGRES_URL is not a parseable URL; passing it to the driver without merging sslmode=require.",
+    );
+    return url;
+  }
+}
+
 let client;
 if (
   process.env.POSTGRES_URL &&
   process.env.POSTGRES_URL !== "postgres://dummy:dummy@dummy/dummy"
 ) {
-  client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
+  client = postgres(withSslMode(process.env.POSTGRES_URL));
 } else {
+  // No usable POSTGRES_URL. postgres({}) does not throw here - it quietly
+  // defaults to localhost:5432 - so the misconfiguration otherwise surfaces
+  // much later as ECONNREFUSED 127.0.0.1:5432 from whatever query runs first,
+  // with nothing naming the variable that is actually missing. Say so now.
+  //
+  // The fallback itself is kept on purpose. This module is imported at the top
+  // level by the composed (chat) route handlers and by app/(chat)/chat/[id],
+  // and `next build` evaluates it while collecting page data, so throwing here
+  // would turn a build that currently needs no database into a hard failure
+  // ("Failed to collect page data for /api/history/clear"). That is the same
+  // trap db/index.ts documents having fallen into and deliberately backed out
+  // of; this line makes the cause legible without moving when it fails.
+  console.error(
+    "POSTGRES_URL is not set (or is still the dummy placeholder). Falling back to the postgres-js default of localhost:5432; database queries will fail until POSTGRES_URL is configured.",
+  );
   client = postgres({});
 }
 let db = drizzle(client);

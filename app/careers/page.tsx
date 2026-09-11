@@ -14,6 +14,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { auth } from "@/app/(auth)/auth";
 import { JobsService } from "@/app/services/control/jobs";
 import { Header } from "@/components/custom/header";
 import { Footer } from "@/components/custom/footer";
