@@ -48,17 +48,26 @@ export class VersionsService {
    * Liveness of the control plane, for the footer's status pill.
    *
    * ONE gateway call, made with `throwOnError: true` so that a missing
-   * base URL, a non-2xx, a timeout and a network failure all surface as
-   * a thrown `PlatformGatewayError` rather than the gateway's default
-   * silent `null`. `"online"` is therefore reachable only when the
-   * platform actually answered: the pill can no longer be green by
-   * default, or green because some object happened to exist.
+   * base URL, a non-2xx, a timeout, a network failure and a body that
+   * will not parse all surface as a thrown `PlatformGatewayError` rather
+   * than the gateway's default silent `null`.
+   *
+   * A throw is not the only way to come back with nothing: `platformCall`
+   * returns `null` for a 2xx whose body parses to JSON `null`, without
+   * throwing. So the answer is inspected as well as the asking, and
+   * `"online"` requires both — the platform answered, and the answer
+   * carried a value. A nothing-answer reads the same as no answer:
+   * `"offline"`, because a status pill must never default to healthy.
+   *
+   * Never `"hidden"`: a probe that fails or comes back empty still
+   * renders the honest red state. Vanishing belongs to the explicit off
+   * switch alone.
    */
   static async getPlatformStatus(): Promise<PlatformStatus> {
     if (isStatusReportingOff()) return "hidden";
 
     try {
-      await platformCall("control:get_versions", undefined, {
+      const answer = await platformCall("control:get_versions", undefined, {
         baseUrl: process.env.ROKCT_BASE_URL,
         method: "GET",
         requireAuth: false,
@@ -69,7 +78,10 @@ export class VersionsService {
         // on the very next render.
         fetchOptions: { next: { revalidate: 60 } },
       });
-      return "online";
+      // A 2xx that yielded nothing is not an answer the pill may claim:
+      // the gateway hands back `null` for a body that parses to `null`,
+      // and nothing is thrown for it.
+      return answer == null ? "offline" : "online";
     } catch {
       // Asked, got nothing. This is the honest red state, never a
       // silently-absent pill.
@@ -113,8 +125,12 @@ export class VersionsService {
       rokctRes.status === "fulfilled" && rokctRes.value ? rokctRes.value : {};
     const paasVer =
       paasRes.status === "fulfilled" && paasRes.value ? paasRes.value : null;
+    // `get_version` is annotated server-side as returning a dict but
+    // actually returns the version string, and the static type here is
+    // `unknown`, so a truthiness test would let an object through into
+    // the rendered version line. Only a string is a version.
     const rpanelVer =
-      rpanelRes.status === "fulfilled" && rpanelRes.value
+      rpanelRes.status === "fulfilled" && typeof rpanelRes.value === "string"
         ? rpanelRes.value
         : null;
 
