@@ -60,6 +60,19 @@ strip. The strip reads the file through the `getNetworkSites()` action
 waits on it. `heading` replaces the strip's default over these sites only
 when the registered config names none.
 
+`legal` is also what the public terms list falls back to (since 1.45.0):
+`listPublicTerms()` (`app/actions/base/legal.ts`) asks the backend first
+and returns its rows whenever it publishes any; when it answers nothing -
+no backend, a refused guest read, a failed call, or no document published
+yet - and the shell bundles the kind (`hasSiteData("legal")`), the bundled
+pages are the list, each `{ name: slug, title, disabled: false }` in slug
+order, so a footer's Legal row and corporate_sdk's `/legal` index list the
+shell's own documents. The two lists are never merged. For the fallback to
+have anything to answer the shell needs the `prebuild` generate step below
+and a data mode that bundles legal (`local` or `hybrid` with the files
+present); a backend-mode shell, or one with no `data/legal/`, lists exactly
+what its backend publishes.
+
 The types are `lib/site-data/kinds.ts` (`SiteTheme`, `SiteTeam`,
 `SiteStockists`, `SiteProducts`, `SiteAbout`, `SiteLegal`, `SiteNetwork`,
 and `SiteDataKinds` keyed by kind). The checks are `lib/site-data/validate.mjs`:

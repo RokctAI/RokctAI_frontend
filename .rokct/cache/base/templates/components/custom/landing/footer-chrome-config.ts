@@ -24,6 +24,14 @@
 // here names a product, a brand colour or a company: every value is either
 // read from the environment or handed in by the shell or the home SDK that
 // renders the row.
+//
+// Since 1.41.0 the row can also carry DOWNLOADS (`downloads`): one icon
+// button per platform the shell has an app for, declared by the home SDK
+// as [DownloadEntry] rows - nothing here names a store, a platform's
+// wording or a link; the platform marks base serves (brand-marks.ts) are
+// keyed by name, and everything else is a neutral glyph.
+
+import type { BrandMarkId } from "@/components/custom/landing/brand-marks";
 
 /**
  * What the status indicator is saying.
@@ -218,6 +226,8 @@ export interface FooterChromeLabels {
   checking: string;
   /** Shown before the version string ("Version 1.4.3"). */
   version: string;
+  /** The accessible name of the download buttons' nav (since 1.41.0). */
+  downloads: string;
 }
 
 export const FOOTER_CHROME_LABELS: FooterChromeLabels = {
@@ -227,6 +237,7 @@ export const FOOTER_CHROME_LABELS: FooterChromeLabels = {
   offline: "Offline",
   checking: "Checking",
   version: "Version",
+  downloads: "Downloads",
 };
 
 /**
@@ -280,6 +291,48 @@ export interface FooterLinkGroup {
   items: FooterLink[];
 }
 
+/**
+ * The platforms a download can be for (since 1.41.0). The closed set the
+ * install offer (components/custom/landing/install-offer.ts) detects
+ * against, and the key of the neutral glyph a button falls back to
+ * (components/custom/landing/platform-glyphs.tsx) when its entry names
+ * no mark.
+ */
+export type DownloadPlatform =
+  | "ios"
+  | "android"
+  | "huawei"
+  | "macos"
+  | "windows"
+  | "linux"
+  | "web";
+
+/**
+ * One download a shell offers (since 1.41.0). Ray, 2026-09-11: "footer
+ * has download links let them be platform icons buttons" - so each entry
+ * is drawn as ONE icon button, its `label` on the button's aria-label
+ * and title (the word on screen for a reader, already in the shell's
+ * language, the FooterLink rule), never as a text link. `mark` names one
+ * of the marks base serves itself (BRAND_MARKS: googlePlay, appGallery,
+ * appStore, windows, chromeWebStore); with none named the button draws
+ * the platform's neutral glyph. `href` is an https URL or a route of the
+ * shell's own (download-platform.ts holds the rule).
+ */
+export interface DownloadEntry {
+  /** Stable key for the list. */
+  id: string;
+  platform: DownloadPlatform;
+  /** What the button is called: "Android app", "Chrome extension". */
+  label: string;
+  href: string;
+  /** Open in a new tab with rel="noreferrer". */
+  external?: boolean;
+  /** The button's title when it is not the label. */
+  title?: string;
+  /** A mark base serves under /brand/marks/, by its BRAND_MARKS key. */
+  mark?: BrandMarkId;
+}
+
 /** Everything the row needs that is not generic. */
 export interface FooterChromeConfig {
   /**
@@ -302,6 +355,12 @@ export interface FooterChromeConfig {
    * renders exactly the row it rendered before.
    */
   links?: FooterLinkGroup[];
+  /**
+   * The shell's downloads, one icon button each, drawn beside the link
+   * groups (since 1.41.0), and what the install offer picks from. Absent
+   * or empty draws nothing.
+   */
+  downloads?: DownloadEntry[];
 }
 
 /**

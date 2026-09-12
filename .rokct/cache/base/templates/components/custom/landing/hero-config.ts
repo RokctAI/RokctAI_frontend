@@ -101,9 +101,14 @@ export interface HeroConfig {
    * the element's aria-label and title. Resolved on the server (landing-page.ts:
    * resolveHeroWordmark), so the first HTML already carries the stem; no
    * brand string lives in base, and no shell changes until its home SDK's
-   * hero copy declares it.
+   * hero copy declares it. `"stem-tld"` (1.41.0; Ray, 2026-09-11: "also
+   * site name the .school get primary color in nextjs") draws the same
+   * stem and, after it, the rest of the name - the dot and the suffix -
+   * in the shell's primary colour, the way the header's stem wordmark
+   * draws its suffix; a name with no dot draws exactly what `"stem"`
+   * draws.
    */
-  brand?: "name" | "stem";
+  brand?: "name" | "stem" | "stem-tld";
 }
 
 const CHROME_BADGE: HeroBadge = {

@@ -1,5 +1,166 @@
 # Changelog
 
+## 1.45.0
+
+* The public terms list falls back to the shell's bundled `data/legal`
+  pages when the backend publishes nothing. `app/actions/base/legal.ts`
+  `listPublicTerms()` still asks the backend first, as a guest, for
+  every enabled "Terms and Conditions" document and returns its rows
+  unchanged whenever it answers any; when the answer is nothing - no
+  base URL (a shell with no backend), a refused guest read, a failed
+  call, or a backend that has published no document yet - and the shell
+  bundles the 1.35.0 `legal` kind (`hasSiteData("legal")`: a `local` or
+  `hybrid` data mode with `data/legal/<slug>.md` files present, never
+  backend mode), the answer is those pages, each as the same
+  `{name: slug, title, disabled: false}` a gateway row becomes, in slug
+  order, read through the generated `lib/site-data/generated.ts` and
+  never the disk at request time. The two lists are never merged, the
+  guest soft-fail is kept (a failing bundle read logs and answers `[]`),
+  and a shell with no legal folder, or in backend mode, answers exactly
+  what it did. A footer's Legal row (`legalFooterLinks`) and
+  corporate_sdk's `/legal` index, which already read `listPublicTerms()`,
+  list the shell's own documents with no code change - a shell whose
+  backend has no documents carries its own markdown instead. Shells need
+  the `prebuild` generate step (`docs/site-data.md`) and a data mode that
+  bundles legal for the fallback to have anything to answer.
+  `tests/legal-fallback.test.mts` executes the action against a
+  `generated.ts` the real generator writes from the acme fixture and
+  against the neutral module.
+
+## 1.42.0
+
+* The landing has a floating "Back to top" button. Ray, 2026-09-11
+  12:32Z: "whats missing is floating push to home, that button you press
+  and it get you to top i just forgot what it says". NEW client component
+  `components/custom/back-to-top.tsx` `BackToTop({ threshold?, label?,
+  className? })`: hidden at the top of the page, shown once the visitor
+  has scrolled past `threshold` pixels (one viewport height by default,
+  read on every check), fixed at the bottom right (`bottom-4 right-4`,
+  `md:bottom-6 md:right-6`, the safe-area inset as margin) at `z-30` -
+  under the sticky header (`z-50`) and its mobile panel (`z-40`), so an
+  open menu covers it, and clear of the left edge and the vertical
+  middle a home SDK's floating nav uses; the install offer is inline in
+  the footer, never fixed, so the two never meet. A click calls
+  `window.scrollTo({ top: 0, behavior })` - `"smooth"`, or `"auto"` (the
+  instant jump) when `(prefers-reduced-motion: reduce)` matches - and
+  blurs the button. The scroll and resize listeners are `passive: true`
+  and folded into one `requestAnimationFrame` per frame; every window
+  read is in the effect or the click, never at render, so the server and
+  the first client render agree on hidden. The button stays in the tree
+  and fades (`motion-safe:transition-opacity`); while hidden it carries
+  `tabIndex={-1}`, `aria-hidden` and `pointer-events-none`, so it is
+  never in the tab order unseen. `aria-label` and `title` are
+  `BACK_TO_TOP_LABEL` ("Back to top"; `label` overrides). Lucide's
+  `ArrowUp`, the icon set the shells already import; theme tokens only
+  (`bg-background`, `border-border`, `text-primary`, `hover:bg-muted`,
+  `ring-ring`). NEW `landing/back-to-top.ts` is the pure half:
+  `BACK_TO_TOP_LABEL`, `REDUCED_MOTION_MEDIA_QUERY`,
+  `resolveThreshold(threshold, viewportHeight)`,
+  `isPastThreshold(scrollY, threshold)` (strictly past, so the top is
+  always hidden), `scrollBehaviour(reducedMotion)`.
+  `components/custom/landing-content.tsx` mounts `<BackToTop />` once,
+  after `<main>`, so a base-only host and a home SDK's composed landing
+  (its `/` sends an anonymous visitor to `/landing`) both have it with
+  no host edit; a host that wants it on every page mounts it in its own
+  root layout. `docs/downloads-and-install.md` describes it.
+* The header's suffix no longer clips its last glyph. Ray, 2026-09-11
+  13:57Z: the final "l" of the site name's suffix was "a bit cut". The
+  suffix span (`components/custom/header.tsx` `BrandStemWordmark`) clips
+  its own overflow so the slot can slide closed over it, and its box is
+  the text's advance width - so once a home SDK italicises the wordmark
+  through the `data-brand-wordmark="stem"` hook, the last glyph's
+  italic overhang (a 900 italic lowercase "l" leans about 0.09em past
+  its advance) was sheared off at the box's right edge. The span now
+  carries `pr-[0.12em] -mr-[0.12em]`: the padding keeps the overhang
+  inside the clipped box, the negative margin hands that width back to
+  the grid, so the track, the stem's width and the country code beside
+  it measure exactly what they did, open and folded. No font, size or
+  colour changes; an upright face draws as before. The hero's suffix
+  never clipped and is untouched.
+* Tests: NEW `tests/back-to-top.test.mts` (node) executes the rules;
+  `test_manifest.py` gains
+  `test_back_to_top_is_a_client_component_mounted_in_the_landing_shell`,
+  `test_back_to_top_rules_under_node`,
+  `test_back_to_top_type_checks_under_tsc` and
+  `test_brand_suffix_has_room_for_its_italic_overhang`. Manifest
+  installs the two new files.
+
+## 1.41.0
+
+* The site name's suffix is in the primary colour. Ray, 2026-09-11
+  07:34:03Z: "also site name the .school get primary color in nextjs".
+  The header's stem wordmark (`components/custom/header.tsx`
+  `BrandStemWordmark`) draws the dot and what follows the stem in
+  `text-primary` - the theme token, no brand colour named - with its own
+  `data-brand-wordmark="tld"` hook on that span
+  (`<span data-brand-wordmark="tld" className="min-w-0 overflow-hidden text-primary">`);
+  the stem span, the country-code span, the wordmark's class list and
+  the slide are untouched. The hero has the matching mode:
+  `HeroConfig.brand` accepts `"stem-tld"` (`landing/hero-config.ts`),
+  `resolveHeroWordmark` (`landing/landing-page.ts`) answers
+  `{ text, name, suffix }` for it - `HeroWordmark.suffix?` is the trimmed
+  name after the stem - and `HeroWordmarkSlot` (`hero-view.tsx`) draws the
+  suffix after the stem inside the same span, in primary with the same
+  hook, sized over the stem and the suffix together; `"stem"` and `"name"`
+  draw exactly what they drew. `docs/downloads-and-install.md` describes
+  both.
+* The footer's downloads are icon buttons. Ray, 2026-09-11 07:34:37Z:
+  "footer has  download links let them be platform icons buttons". NEW
+  `FooterChromeConfig.downloads?: DownloadEntry[]`
+  (`landing/footer-chrome-config.ts`): `DownloadPlatform` is the closed
+  set `ios | android | huawei | macos | windows | linux | web`, and
+  `DownloadEntry` is `{ id, platform, label, href, external?, title?,
+  mark?: BrandMarkId }`. `FooterChromeRow` (`components/custom/footer-chrome.tsx`)
+  draws them as `<nav aria-label="Downloads">` beside the link groups,
+  above the copyright line, one `<a>` per entry - the label as
+  aria-label and title, external ones `target="_blank"
+  rel="noreferrer"`, `h-10 w-10 rounded-full border border-border
+  bg-transparent hover:bg-muted flex items-center justify-center` - with
+  the named mark from `BRAND_MARKS` through `next/image` and
+  `markImageClass`, else a neutral glyph from NEW
+  `landing/platform-glyphs.tsx` (`PlatformGlyph`: a phone, a laptop, a
+  terminal, a globe in `currentColor`; `DownloadMark`; the button class
+  `DOWNLOAD_BUTTON_CLASS`) - never a third-party mark drawn by hand. NEW
+  `landing/download-platform.ts` is the pure half: `DOWNLOAD_PLATFORMS`,
+  `isDownloadPlatform`, `isDownloadHref` (https with a host, or a route
+  with one leading slash), `isDownloadEntry`, `normaliseDownloads`,
+  `downloadTitle`. `FooterChromeLabels.downloads` ("Downloads") names the
+  nav. Nothing declared draws nothing; base declares no entry.
+* The install offer checks the platform. Ray, 2026-09-11 07:37:17Z:
+  "this nextjs has install, it does show on mobile though i havent seen
+  it in desktop i think it installs as pwa but i think it should check
+  the platform and offer app of that platform". NEW client component
+  `components/custom/install-offer.tsx` `InstallOffer({ downloads,
+  labels?, platform?, className? })`: nothing on the server and the first
+  client render; after mount it hides when
+  `matchMedia("(display-mode: standalone)")` matches, reads the platform
+  (NEW `landing/install-offer.ts` `detectPlatform()`:
+  `navigator.userAgentData.platform`, then the user-agent string -
+  iPhone/iPad, HarmonyOS/HUAWEI, Android, Windows, Mac, Linux/X11 - and
+  `detectPlatformFrom(hints)` for tests), picks the entry
+  (`pickDownload(entries, platform)`: its own platform first, android and
+  huawei standing in for each other, the desktops and iOS their own
+  only, `DOWNLOAD_FALLBACKS`) and draws one icon button with "Get the
+  <label>" linking there; with none it listens for `beforeinstallprompt`,
+  keeps the event and draws "Install", which calls `prompt()`; with
+  neither it draws nothing. `INSTALL_OFFER_LABELS` (`get`, `install`) and
+  `installOfferText` hold the words; `platform` forces one for a preview.
+  `FooterChromeRow` mounts it FIRST in the Downloads nav (`installOffer`
+  prop, default true); a home SDK that wants it in a header slot imports
+  `@/components/custom/install-offer` itself - no header change in base.
+* Tests: NEW `tests/download-platform.test.mts` and
+  `tests/install-offer.test.mts` (node) execute the rules;
+  `landing-page.test.mts` covers `"stem-tld"`; `header-brand.test.mts`
+  reads the suffix span's new markup; `test_manifest.py` gains
+  `test_brand_suffix_is_in_the_primary_colour`,
+  `test_footer_downloads_seam_shape`,
+  `test_install_offer_is_a_client_component_that_checks_the_platform` and
+  `test_download_and_install_rules_under_node`, and reads the suffix
+  span's new markup in the 1.29.0 test. Manifest installs the four new
+  files.
+* Home SDKs: lms_sdk 1.31.0 declares its entries (the marks by key, its
+  own hrefs) on its footer config; supacharge re-pins after.
+
 ## 1.40.0
 
 * The network strip's sites come from the home SDK that owns them, or

@@ -468,6 +468,22 @@ describe('resolveHeroWordmark', () => {
     assert.deepEqual(resolveHeroWordmark('stem', 'Rokct'), { text: 'Rokct', name: 'Rokct' });
     assert.deepEqual(resolveHeroWordmark('stem', '.acme'), { text: '.acme', name: '.acme' });
   });
+
+  // 1.41.0 (Ray, 2026-09-11: "also site name the .school get primary color
+  // in nextjs"): "stem-tld" adds the suffix - the dot and the rest of the
+  // trimmed name, in its own case - for the view to draw in the primary
+  // colour after the stem. "stem" answers no suffix at all.
+  it('answers the stem AND the suffix for "stem-tld"', () => {
+    assert.deepEqual(resolveHeroWordmark('stem-tld', 'acme.school'), { text: 'Acme', name: 'acme.school', suffix: '.school' });
+    assert.deepEqual(resolveHeroWordmark('stem-tld', ' acme.school.co '), { text: 'Acme', name: ' acme.school.co ', suffix: '.school.co' });
+    assert.deepEqual(resolveHeroWordmark('stem-tld', 'ACME.School'), { text: 'ACME', name: 'ACME.School', suffix: '.School' });
+    assert.equal('suffix' in resolveHeroWordmark('stem', 'acme.school')!, false);
+  });
+
+  it('answers what "stem" answers for "stem-tld" when the name has no stem', () => {
+    assert.deepEqual(resolveHeroWordmark('stem-tld', 'acme'), { text: 'acme', name: 'acme' });
+    assert.deepEqual(resolveHeroWordmark('stem-tld', '.acme'), { text: '.acme', name: '.acme' });
+  });
 });
 
 // base_sdk 1.35.0: a "local" shell (composer.json "data": "local") has no

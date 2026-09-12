@@ -557,14 +557,26 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn('const ITEM =\n  "relative flex-shrink-0 h-8 w-24 md:h-12 md:w-40 flex items-center justify-center";', logos)
         self.assertIn('const MARK = "absolute inset-0 h-full w-full object-contain";', logos)
         self.assertIn('const WORDMARK_ITEM =\n  "relative flex-shrink-0 h-8 min-w-[6rem] md:h-12 md:min-w-[10rem] px-2 flex items-center justify-center";', logos)
-        self.assertIn('const WORDMARK =\n  "text-2xl md:text-4xl font-bold tracking-tight leading-none text-zinc-700 dark:text-zinc-300";', logos)
+        # 1.19.1 (Ray, 2026-09-11 07:45Z: "use caps in logos"): the wordmark
+        # span carries `uppercase` - a display transform; the string, the
+        # aria-label and the alt stay as declared, and no picture is touched.
+        self.assertIn('const WORDMARK =\n  "uppercase text-2xl md:text-4xl font-bold tracking-tight leading-none text-zinc-700 dark:text-zinc-300";', logos)
         self.assertIn("className={drawLogo ? ITEM : WORDMARK_ITEM}", logos)
         self.assertIn("<span className={WORDMARK}>{site.name}</span>", logos)
         self.assertIn("aria-label={site.name}", logos)
         self.assertIn("alt={site.name}", logos)
         wordmark_line = re.search(r'const WORDMARK =\n  "([^"]+)";', logos).group(1)
-        for transform in ("uppercase", "lowercase", "capitalize", "truncate", "text-lg", "text-sm"):
+        self.assertIn("uppercase", wordmark_line.split())
+        for transform in ("lowercase", "capitalize", "normal-case", "truncate", "text-lg", "text-sm"):
             self.assertNotIn(transform, wordmark_line, transform)
+        # The transform is the span's alone: not the item box, not the mark.
+        for line in (
+            re.search(r'const ITEM =\n  "([^"]+)";', logos).group(1),
+            re.search(r'const MARK = "([^"]+)";', logos).group(1),
+            re.search(r'const WORDMARK_ITEM =\n  "([^"]+)";', logos).group(1),
+        ):
+            self.assertNotIn("uppercase", line)
+        self.assertNotIn("filter", logos.split("const MARK")[1].split("function LogoLink")[0])
         for rewrite in ("toLowerCase(", "toUpperCase(", "site.name.replace(", "site.name.slice(", "site.name.split("):
             self.assertNotIn(rewrite, logos, rewrite)
         self.assertIn("export const meta: PageSectionMeta = { order: 20, nav: [] };", entry)
@@ -714,7 +726,10 @@ class TestRegisterInjection(unittest.TestCase):
         until 1.39.0 - rokct, supacharge, juvo, and the hidden hosting and
         telephony place-holders - are `sites` on this SDK's registration,
         and no other file of this SDK restates the list. Executed by
-        tests/network-strip.test.mts; the shape is held here."""
+        tests/network-strip.test.mts; the shape is held here. 1.19.1: the
+        juvo entry is named "juvo platforms" - Ray, 2026-09-11 07:43Z:
+        "and juvo is still juvo while i told you its juvo platforms" -
+        the string as he typed it; the bare "juvo" is refused as a name."""
         src = read(NETWORK_STRIP)
         self.assertIn("  sites?: AgentNetworkSite[];", src)
         self.assertIn("export interface AgentNetworkSite {", src)
@@ -723,9 +738,12 @@ class TestRegisterInjection(unittest.TestCase):
         for key, name, url in (
             ("rokct", "rokct.ai", "https://rokct.ai"),
             ("supacharge", "supacharge.school", "https://supacharge.school"),
-            ("juvo", "juvo", "https://juvo.app"),
+            ("juvo", "juvo platforms", "https://juvo.app"),
         ):
             self.assertRegex(src, re.compile(rf'key: "{key}",\s*name: "{re.escape(name)}",\s*url: "{re.escape(url)}",', re.S), key)
+        for wrong in ('name: "juvo",', 'name: "Juvo",', 'name: "Juvo Platforms",', 'name: "JUVO PLATFORMS",'):
+            self.assertNotIn(wrong, src, wrong)
+        self.assertIn('      logo: "https://juvo.app/images/logo_dark.svg",\n      logoDark: "https://juvo.app/images/logo.svg",', src)
         self.assertIn('name: "supacharge.school",\n      url: "https://supacharge.school",\n      wordmark: true,', src)
         for pending, name in (("hosting", "Hosting"), ("telephony", "Telephony")):
             self.assertIn(f'{{ key: "{pending}", name: "{name}", url: null, shown: false }},', src)
@@ -749,6 +767,11 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn("## 1.19.0", head)
         for word in ("`sites`", "base_sdk >= 1.40.0", "hosting", "telephony"):
             self.assertIn(word, head)
+        latest = head.split("## 1.19.0", 1)[0]
+        self.assertIn("## 1.19.1", latest)
+        for word in ('"juvo platforms"', "use caps in logos", "`uppercase`"):
+            self.assertIn(word, latest)
+        self.assertEqual(load_manifest()["version"], "1.19.2")
 
     def test_behaviour_under_node(self):
         node = shutil.which("node")
@@ -793,6 +816,39 @@ TENANT_CMDS = {
         os.path.join(TEMPLATES, "app", "(chat)", "api", "error", "route.ts"),
     ),
 }
+
+
+# 1.19.2: a control-site cmd is the verbatim `control:<name>` key. On a
+# control site the platform gateway routes ONLY a cmd carrying that prefix
+# (control/hooks.py states the rule above its override_whitelisted_methods;
+# base's platform-gateway.ts repeats it), so the dotted per-method alias
+# `control.api.<name>` never routed through ControlBaseService.call, however
+# the frappe manifest spelt it. Every `control:` literal a template carries
+# must be a key some frappe manifest registers under
+# app_type.control.hooks.whitelisted_methods: this SDK's own (agent/frappe),
+# or one of the sibling modules named here.
+FRAPPE_MANIFEST = os.path.join(SDK_ROOT, os.pardir, "frappe", "manifest.json")
+FRAPPE_SRC = os.path.join(SDK_ROOT, os.pardir, "frappe", "src")
+CONTROL_CMD_LITERAL = re.compile(r"[\"'`](control:[A-Za-z0-9_]+)[\"'`]")
+DOTTED_CONTROL_CMD = re.compile(r"\.call\(\s*[\"'`]control\.(?:control\.)?api\.")
+CONTROL_CMDS = {
+    "control:summarize_chat_session": (
+        os.path.join(TEMPLATES, "app", "(chat)", "api", "chat", "route.ts"),
+        os.path.join(TEMPLATES, "app", "(chat)", "api", "summarize", "route.ts"),
+        os.path.join(TEMPLATES, "app", "(chat)", "page.tsx"),
+    ),
+}
+CONTROL_CMDS_OF_OTHER_MODULES = {
+    "control:log_frontend_error": "core telemetry/frappe manifest",
+    "control:get_public_opportunities": "corporate tender/frappe manifest",
+    "control:provision_service_subscription": "control/hooks.py override_whitelisted_methods",
+    "control:provision_new_tenant": "control/hooks.py override_whitelisted_methods",
+}
+
+
+def control_whitelist():
+    with open(FRAPPE_MANIFEST, encoding="utf-8") as f:
+        return json.load(f)["app_type"]["control"]["hooks"]["whitelisted_methods"]
 
 
 def template_sources():
@@ -851,6 +907,46 @@ class TestGatewayCalls(unittest.TestCase):
         self.assertIn('ControlBaseService.call("control:log_frontend_error", {', error_route)
         self.assertNotIn("control.api.log_frontend_error", error_route)
         self.assertNotIn("OnboardingService", error_route)
+
+    def test_no_template_hands_the_control_client_a_dotted_cmd(self):
+        # `control.api.<name>` / `control.control.api.<name>` is a per-method
+        # alias; the control gateway refuses it, so it is never a cmd.
+        for path in template_sources():
+            with self.subTest(file=os.path.relpath(path, SDK_ROOT)):
+                self.assertIsNone(DOTTED_CONTROL_CMD.search(read(path)), "a control cmd is `control:<name>`")
+
+    def test_every_control_cmd_is_a_registered_control_key(self):
+        registered = {k for k in control_whitelist() if k.startswith("control:")}
+        registered |= set(CONTROL_CMDS_OF_OTHER_MODULES)
+        for path in template_sources():
+            for cmd in CONTROL_CMD_LITERAL.findall(read(path)):
+                with self.subTest(cmd=cmd, file=os.path.relpath(path, SDK_ROOT)):
+                    self.assertIn(cmd, registered, "not a key any manifest registers")
+
+    def test_the_control_sites_name_the_control_key(self):
+        for cmd, paths in CONTROL_CMDS.items():
+            for path in paths:
+                with self.subTest(cmd=cmd, file=os.path.relpath(path, SDK_ROOT)):
+                    src = read(path)
+                    self.assertIn(f'ControlBaseService.call("{cmd}", {{', src)
+                    self.assertNotIn(cmd.replace("control:", "control.api."), src)
+
+    def test_own_control_keys_resolve_to_the_legacy_aliases_handlers(self):
+        # Each `control:<name>` key agent/frappe registers points at the same
+        # target as its dotted `control.api.<name>` alias (kept, unused), and
+        # that target is a @frappe.whitelist function under frappe/src.
+        whitelist = control_whitelist()
+        own = {k: v for k, v in whitelist.items() if k.startswith("control:")}
+        self.assertEqual(set(own) & set(CONTROL_CMDS), set(CONTROL_CMDS))
+        self.assertIn("control:chat_with_rok", own)
+        for key, target in own.items():
+            with self.subTest(key=key):
+                self.assertEqual(target, whitelist[key.replace("control:", "control.api.")])
+                self.assertTrue(target.startswith("{app_name}.agent.control."), target)
+                parts = target[len("{app_name}.agent."):].split(".")
+                module = os.path.join(FRAPPE_SRC, *parts[:-1]) + ".py"
+                self.assertTrue(os.path.isfile(module), module)
+                self.assertRegex(read(module), rf"@frappe\.whitelist\([^)]*\)\ndef {re.escape(parts[-1])}\(")
 
 
 if __name__ == "__main__":

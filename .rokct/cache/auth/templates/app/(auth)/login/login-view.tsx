@@ -20,6 +20,7 @@ import { useActionState, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PLATFORM_NAME, getGuestBranding } from "@/app/config/platform";
+import { brandHeadingLabel } from "@/app/(auth)/login/brand-heading";
 import { toast } from "sonner";
 import { login, ActionState } from "@/app/(auth)/actions";
 import { AuthForm } from "@/components/custom/auth-form";
@@ -70,8 +71,14 @@ export function LoginView() {
             <div className="mb-4">
               <BrandLogo width={56} height={56} />
             </div>
+            {/*
+              The brand, not the address: a dotted PLATFORM_NAME folds to its
+              stem here (./brand-heading.ts, base_sdk's `brandStemLabel`
+              rule), so a shell named after its domain still says "Welcome to
+              Supacharge". A name with no dot is untouched.
+            */}
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              Welcome to {PLATFORM_NAME}
+              Welcome to {brandHeadingLabel(PLATFORM_NAME)}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
               Sign in to your account to continue

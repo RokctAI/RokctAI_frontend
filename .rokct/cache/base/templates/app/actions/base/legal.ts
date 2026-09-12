@@ -23,6 +23,16 @@
 // /legal index), so the doctype and the fields are fixed here rather than
 // handed in from the browser. The pages themselves are corporate_sdk's;
 // this is the read every shell shares.
+//
+// Since 1.45.0 the list falls back to the shell's own `data/legal/<slug>.md`
+// (lib/site-data kind "legal", bundled at build time by
+// lib/site-data/generate.mjs; docs/site-data.md) when the backend answers
+// nothing - no base URL, a refused guest read, a failed call, or a backend
+// that has published no document yet - and the shell bundles the folder
+// (`hasSiteData("legal")`, false in backend mode). The backend wins whenever
+// it answers a row; the bundled documents are never merged into its list.
+// Like app/actions/base/network-sites.ts, the read goes through the
+// generated module, never the disk at request time.
 
 import { platformCall } from "@/app/services/base/platform-gateway";
 import {
@@ -30,14 +40,39 @@ import {
   normalisePublicTerms,
   type PublicTerm,
 } from "@/components/custom/landing/legal-links";
+import { hasSiteData, readSiteData } from "@/lib/site-data/read-site-data";
+
+/**
+ * The bundled `data/legal/` pages as public terms, in slug order - the
+ * slug is the `/legal/<name>` route id and the title comes from the file,
+ * the same `{name, title, disabled: false}` a gateway row becomes. Empty
+ * in backend mode, when the shell committed no such folder, or when the
+ * bundle cannot be read: the fallback never throws for a guest.
+ */
+function bundledPublicTerms(): PublicTerm[] {
+  try {
+    if (!hasSiteData("legal")) return [];
+    const docs = readSiteData("legal") ?? {};
+    return normalisePublicTerms(
+      Object.keys(docs)
+        .sort()
+        .map((slug) => ({ name: slug, title: docs[slug].title, disabled: 0 })),
+    );
+  } catch (e) {
+    console.error("[legal] bundled data/legal read failed:", e);
+    return [];
+  }
+}
 
 /**
  * Every ENABLED "Terms and Conditions" document, `{name, title,
  * disabled}` each, through the platform gateway as a guest (no
- * credentials) - the same soft-failing shape as `getLandingPlans`: empty
- * when the gateway has no base URL (a shell with no backend), when the
- * backend refuses the guest read, or when the call fails. A footer or an
- * index page then lists nothing rather than the page failing.
+ * credentials) - the same soft-failing shape as `getLandingPlans`: when
+ * the gateway has no base URL (a shell with no backend), when the backend
+ * refuses the guest read, when the call fails, or when the backend has
+ * published nothing, the answer is the shell's bundled `data/legal/`
+ * pages (since 1.45.0), and with none of those an empty list. A footer or
+ * an index page then lists nothing rather than the page failing.
  */
 export async function listPublicTerms(): Promise<PublicTerm[]> {
   try {
@@ -52,9 +87,11 @@ export async function listPublicTerms(): Promise<PublicTerm[]> {
       },
       { requireAuth: false },
     );
-    return normalisePublicTerms(rows);
+    const published = normalisePublicTerms(rows);
+    if (published.length > 0) return published;
+    return bundledPublicTerms();
   } catch (e) {
     console.error("[legal] terms list failed:", e);
-    return [];
+    return bundledPublicTerms();
   }
 }

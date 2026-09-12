@@ -37,12 +37,61 @@ import * as schema from "./schema";
 // all. There is no default connection string and no silent fallback: no
 // POSTGRES_URL still means no database.
 
+// Merge sslmode=require into the connection URL instead of passing it raw.
+//
+// `postgres(process.env.POSTGRES_URL)` asks for no TLS at all when the value
+// carries no sslmode parameter: postgres-js derives ssl=false and connects in
+// clear text. The host's own db/queries.ts already merges sslmode=require for
+// the very same variable, so one deployment disagreed with itself about
+// whether its database traffic was encrypted - the chat path required TLS
+// while the login and webhook paths composed from here did not.
+//
+// MERGED, not appended. `${POSTGRES_URL}?sslmode=require` adds a SECOND "?"
+// whenever the value already has a query string - the normal Neon/Supabase
+// shape - and the driver folds it into the last parameter it saw:
+//   ...?channel_binding=require&sslmode=require  ->  ssl="require?sslmode=require"
+//   ...?pgbouncer=true&connection_limit=1        ->  ssl=false, connection_limit="1?sslmode=require"
+// The first is an unrecognised TLS mode, so postgres-js skips the
+// rejectUnauthorized:false it applies for a real "require" and demands full
+// certificate verification; the second drops TLS entirely and corrupts the
+// pooler setting. Either way the parameter meant to be added is the one that
+// breaks. Setting it through the URL's own parser cannot produce either.
+//
+// Only when the operator has not already chosen: sslmode=disable keeps
+// saying disable, and a second pass changes nothing the first one did.
+//
+// Deliberately a DUPLICATE of the host's helper rather than an import of it.
+// auth_sdk's `requires` list does not name db/queries.ts - that file belongs
+// to the host - so this template has to stand alone in a repo where it does
+// not exist. The body is kept identical to the host's copy so the two diff
+// cleanly and stay in step; change one and change the other.
+function withSslMode(url: string): string {
+  try {
+    let parsed = new URL(url);
+    if (!parsed.searchParams.has("sslmode")) {
+      parsed.searchParams.set("sslmode", "require");
+    }
+    return parsed.toString();
+  } catch {
+    // Unparseable, so hand it to the driver untouched rather than throwing -
+    // and nothing is left without TLS by doing so. postgres-js runs the value
+    // through `new URL()` itself in its own parseUrl, so a string this catch
+    // sees is one the driver cannot parse either: it raises its own
+    // "Invalid URL" from the postgres() call below instead of quietly
+    // connecting in clear text.
+    console.error(
+      "POSTGRES_URL is not a parseable URL; passing it to the driver without merging sslmode=require.",
+    );
+    return url;
+  }
+}
+
 function createDb() {
   if (!process.env.POSTGRES_URL) {
     throw new Error("POSTGRES_URL environment variable is not set");
   }
 
-  const client = postgres(process.env.POSTGRES_URL);
+  const client = postgres(withSslMode(process.env.POSTGRES_URL));
   return drizzle(client, { schema });
 }
 

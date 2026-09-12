@@ -398,6 +398,13 @@ export interface HeroWordmark {
   text: string;
   /** The full platform name, for the aria-label and title on the text. */
   name: string;
+  /**
+   * The rest of the name after the stem - the dot and the suffix
+   * (".school" of "acme.school") - drawn after `text` in the shell's
+   * primary colour when the copy declares `brand: "stem-tld"` (1.41.0).
+   * Absent for `"stem"`, and for a name with no dot.
+   */
+  suffix?: string;
 }
 
 /**
@@ -407,13 +414,24 @@ export interface HeroWordmark {
  * hero renders instead: [brandStemLabel] of `name` - the stem with its
  * first character upper-cased, since 1.39.0 ("acme.school" gives "Acme") -
  * or the whole name, untouched, when it has no stem, with the full name
- * as declared on the element's aria-label and title. No brand string is
- * known here.
+ * as declared on the element's aria-label and title. `"stem-tld"`
+ * (1.41.0; Ray, 2026-09-11: "also site name the .school get primary
+ * color in nextjs") answers the same text and, beside it, `suffix`: the
+ * rest of the trimmed name after the stem (".school"), which the hero
+ * draws after the stem in the shell's primary colour; a name with no
+ * stem answers what `"stem"` answers. No brand string is known here.
  */
 export function resolveHeroWordmark(
   brand: HeroConfig["brand"],
   name: string,
 ): HeroWordmark | null {
-  if (brand !== "stem") return null;
+  if (brand !== "stem" && brand !== "stem-tld") return null;
+  if (brand === "stem-tld") {
+    // The suffix is cut from the trimmed name at the stem's length, the
+    // way header.tsx BrandStemWordmark cuts it: the stem's label and the
+    // suffix together read the whole name, in its own case.
+    const label = brandStemLabel(name);
+    if (label !== null) return { text: label, name, suffix: name.trim().slice(label.length) };
+  }
   return { text: brandStemLabel(name) ?? name, name };
 }

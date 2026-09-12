@@ -1,3 +1,84 @@
+## 1.7.3
+
+* **The sign-in heading prints the brand, not the address.** Ray,
+  2026-09-11: "login register page, no s, full supacharge without
+  .school". `app/(auth)/login/login-view.tsx` rendered
+  `Welcome to {PLATFORM_NAME}`, and a shell whose name IS its domain -
+  supacharge-web sets `PLATFORM_NAME` from `app/site.ts`'s `SITE_NAME`,
+  which is the string `supacharge.school` - therefore greeted everyone
+  signing in with "Welcome to supacharge.school". The heading now asks
+  `brandHeadingLabel(PLATFORM_NAME)` and reads "Welcome to Supacharge":
+  the dotted suffix is the address, the stem is the name.
+* **A dotted name folds; a name with no dot is returned byte for byte.**
+  The new `app/(auth)/login/brand-heading.ts` carries the whole rule and
+  imports nothing: the text before the FIRST dot of the trimmed name with
+  its first character upper-cased ("a.b.c" is "A", "x." is "X", "ACME.tld"
+  stays "ACME"), and the name verbatim when it has no dot or starts with
+  one. rokct.ai's `PLATFORM_NAME` is `"Rokct"`, so that shell's heading is
+  untouched - `tests/login-heading.test.mts` pins it, undotted name in,
+  same string out, for "Rokct", "rokct", "ROKCT", "South River", a padded
+  "  Rokct  " and the empty string.
+* **The rule is base_sdk's, copied on purpose.** base_sdk owns it as
+  `brandStemLabel` in `components/custom/landing/header-menu.ts` (1.39.0,
+  on `brandStemOf` from 1.29.0) and its own header renders the bar with
+  it. The copy's header comment says why it is a copy rather than an
+  import: base_sdk is another repository, so a module importing
+  `@/components/custom/landing/header-menu` cannot be staged by this SDK's
+  node suites and the one thing that must not regress - an undotted name
+  left alone - could not be proven here; `brandStemLabel` is 1.39.0's
+  while this SDK declares a floor of base_sdk >= 1.20.0; and
+  `components/custom/landing/*` is base's landing seam set, none of which
+  this SDK requires. The body is kept identical to base's so the two diff
+  cleanly.
+* **`/register` needed no change.** Its heading is the register registry's
+  own copy (`DEFAULT_REGISTER_CONFIG.copy.title`, "Create account") and
+  `register-view.tsx` reads no platform name at all, so there is nothing
+  dotted to fold. The remaining `PLATFORM_NAME` interpolation in this SDK
+  is the tenant portal's copyright line
+  (`components/custom/paas-login.tsx`, "© 2025 {PLATFORM_NAME}. All rights
+  reserved."), deliberately left alone: a legal notice names the site, not
+  the brand.
+
+## 1.7.2
+
+* **The composed `db/index.ts` asks for TLS again.** It built its client
+  from the raw variable - `postgres(process.env.POSTGRES_URL)` - and
+  postgres-js derives `ssl = false` from a URL that names no `sslmode`, so
+  the login, session and webhook traffic this module serves could reach
+  Postgres with no TLS requested at all. The host's own `db/queries.ts`
+  already merged `sslmode=require` for the very same variable, so one
+  deployment disagreed with itself about whether its database traffic was
+  encrypted: the chat path required TLS, everything composed from here did
+  not. `db/index.ts` now carries a `withSslMode` helper and hands the
+  merged URL to `postgres()`. Measured against postgres-js 3.4.9: a bare
+  URL and `?pgbouncer=true&connection_limit=1` both move from
+  `ssl = false` to `ssl = "require"`; `?sslmode=require` was already
+  `"require"` and stays it; `?sslmode=disable` stays `false`, because an
+  operator who has chosen a mode keeps it. Idempotent, and no other
+  parameter is touched.
+* **Merged through the URL's own parser, never appended.**
+  `${POSTGRES_URL}?sslmode=require` adds a SECOND `?` whenever the value
+  already carries a query string - the normal Neon/Supabase shape - and
+  the driver folds it into the last parameter it saw, which is how
+  `ssl = "require?sslmode=require"` (an unrecognised TLS mode, so full
+  certificate verification is demanded) and a corrupted
+  `connection_limit = "1?sslmode=require"` happen. The helper is a
+  deliberate DUPLICATE of the host's rather than an import of it:
+  `db/queries.ts` is not in this SDK's `requires` and belongs to the host,
+  so the template has to stand alone in a repo where that file does not
+  exist. The body is kept identical to the host's copy so the two diff
+  cleanly and stay in step. Its `catch` leaves nothing without TLS:
+  postgres-js runs the value through `new URL()` in its own `parseUrl`, so
+  a string the helper cannot parse the driver cannot parse either, and it
+  raises its own `Invalid URL`.
+* **`db/migrate.ts` is knowingly left inconsistent.** It sits in the same
+  directory with the same raw-string pattern and is deliberately not
+  changed: it runs during the host's build, those builds currently
+  succeed, and that success is the only evidence anyone has that Postgres
+  is reachable. Changing the one path that demonstrably works is not worth
+  the risk to a deploy in the same release that fixes the paths that do
+  not.
+
 ## 1.7.1
 
 * **`middleware.ts` type-checks again.** 1.7.0 imported `NextRequest` with
