@@ -4,7 +4,7 @@
   "app_type": "rokctapp",
   "protocol": {
     "git": "https://github.com/RokctAI/The-Rokct-Protocol",
-    "ref": "3e5cb6119b2f060f9131b9658405180ef360a120",
+    "ref": "76a06e423e87671f17a0ee8c9ef54ef4b0e2c0f4",
     "vendored": ".rokct/cache/_composer",
     "files": {
       "sdk_composer.py": "6f4e8762012ec10fd5ce8a689432a6d698be5e9f4e7a77f9c327eb9ff58eddd5",
@@ -19,7 +19,7 @@
       "git": "https://github.com/RokctAI/core",
       "path": "../core/telemetry/nextjs",
       "ref": "main",
-      "commit": "2572d374ed1350368a146c22714964621a18a72e",
+      "commit": "c0bbadd7ff9fbc8a92e3ecb07a2e79622ab31664",
       "version": "1.2.0",
       "install_py_sha256": "318d20eb7123ffaa549618d06b4530dfce5df9ba0b07df2328c0c6e1738e36c4",
       "content_sha256": "79628f311222b638a98c8357e0d947936ba4b7b247361545d88d2da5be767396"
@@ -31,10 +31,10 @@
       "git": "https://github.com/RokctAI/core",
       "path": "../core/base/nextjs",
       "ref": "main",
-      "commit": "2572d374ed1350368a146c22714964621a18a72e",
-      "version": "1.40.0",
+      "commit": "c0bbadd7ff9fbc8a92e3ecb07a2e79622ab31664",
+      "version": "1.45.0",
       "install_py_sha256": "b6c434a1c05611d29f1018f68b9423383f7ecfbf9cc1efe74825ba6c4df98fff",
-      "content_sha256": "0267160d7e541f9ba0ac732a2ef8dc3ad1cf33b343bd6a6d219946d59f3eed81"
+      "content_sha256": "ee166c795e116008f9ebb64dc0a761561269b1cfec4bbc0dc0c3783b7fe45c75"
     },
     {
       "name": "auth_sdk",
@@ -43,10 +43,22 @@
       "git": "https://github.com/RokctAI/Users",
       "path": "../Users/auth/nextjs",
       "ref": "main",
-      "commit": "27531a966dc79d397d4ef88848885cd85a14cb9e",
-      "version": "1.7.1",
+      "commit": "ce46dd3d02ad6ffe6b1beb528f48dcafe5feb4f1",
+      "version": "1.7.3",
       "install_py_sha256": "b9b0d4156a68d46f528be2b885eed17cc7dba21f6b4b48b2991ba2c3274ae21b",
-      "content_sha256": "1c758cdec101e100f88121eee2f2e5624653bf0f03186ba34f7fc09ed86001c5"
+      "content_sha256": "f121718d6c6fede908721c4860a6b7b584afd87fd37d63f6c84529d0baadd418"
+    },
+    {
+      "name": "corporate_sdk",
+      "home_sdk": false,
+      "cache": ".rokct/cache/corporate",
+      "git": "https://github.com/RokctAI/corporate",
+      "path": "../corporate/corporate/nextjs",
+      "ref": "main",
+      "commit": "1d28d71d8cf056539545df32eae252a8015e8ed3",
+      "version": "1.1.0",
+      "install_py_sha256": "6e03485fd03617ea1e175adc50354a91af25e213908371fa3581083d8aa7d4ba",
+      "content_sha256": "b2a2c9667f04048f45097d13a29f85eadd49e9fa04a74b561f57a7d198ed36c4"
     },
     {
       "name": "users_sdk",
@@ -55,7 +67,7 @@
       "git": "https://github.com/RokctAI/Users",
       "path": "../Users/users/nextjs",
       "ref": "main",
-      "commit": "27531a966dc79d397d4ef88848885cd85a14cb9e",
+      "commit": "ce46dd3d02ad6ffe6b1beb528f48dcafe5feb4f1",
       "version": "1.1.0",
       "install_py_sha256": "3a1855f895916342fe2e421bdf54e4201e0c97490e4eba68259a3b653af597e2",
       "content_sha256": "3b6b8656283e13482aa4c1db429dcf878d2bcb291695b84d43b19528f2184f4c"
@@ -91,7 +103,7 @@
       "git": "https://github.com/RokctAI/core",
       "path": "../core/comms/nextjs",
       "ref": "main",
-      "commit": "2572d374ed1350368a146c22714964621a18a72e",
+      "commit": "c0bbadd7ff9fbc8a92e3ecb07a2e79622ab31664",
       "version": "1.1.0",
       "install_py_sha256": "c625d38498b473d9ab747111062e794e0be1872da08ac4e481d575f4e5d2c5a3",
       "content_sha256": "6b15e7672d9b0ed9842a696bfee3e9a0f526260476d190c2677d211c1f049645"
@@ -235,10 +247,10 @@
       "git": "https://github.com/RokctAI/agent",
       "path": "../agent/agent/nextjs",
       "ref": "main",
-      "commit": "ba690edac781f466ea7a88c66d6f53b90800b6d7",
-      "version": "1.19.0",
+      "commit": "f7c30d30ed65db2dbfd7c32a4493685df0da47b9",
+      "version": "1.19.2",
       "install_py_sha256": "c629e669d7aeba008b2e1c23a845eb65628f09e8538f738abbfa1385bf1088a3",
-      "content_sha256": "b39e1cd3632fb1c2daed56dd0996521607910faae56cad1f0adca3de3894d4fb"
+      "content_sha256": "d59ad361b158edccdb4478231e17619cc53c0df045381ec35b1ae9ec1ed6a215"
     }
   ]
 }

@@ -54,6 +54,13 @@
 // as its minimum. A name is never shrunk to fit a box meant for a
 // picture.
 //
+// Ray, 2026-09-11 07:45Z: "use caps" - "use caps in logos". A wordmark
+// (and the name a broken mark falls back to) is shown in capitals:
+// `uppercase` on the span, a display transform and nothing more. The
+// declared strings are untouched - "supacharge.school" is still the name,
+// the aria-label and the alt; the page shows SUPACHARGE.SCHOOL - and no
+// picture logo is filtered, re-drawn or replaced.
+//
 // The eight marks this slot showed until 1.13.0 (Walmart, Cisco, Netflix,
 // Pinterest, Zoom, Sony, Ebay, Uber) were hotlinked from a chat template's
 // CDN and were never Ray's; 1.13.0 turned the wall off and 1.17.0 retires
@@ -86,9 +93,14 @@ const MARK = "absolute inset-0 h-full w-full object-contain";
  */
 const WORDMARK_ITEM =
   "relative flex-shrink-0 h-8 min-w-[6rem] md:h-12 md:min-w-[10rem] px-2 flex items-center justify-center";
-/** The name drawn as the mark: at the box's height, verbatim. */
+/**
+ * The name drawn as the mark: at the box's height, the declared string
+ * shown in capitals (Ray, 2026-09-11 07:45Z: "use caps in logos") - a CSS
+ * transform on the span only, so the string itself, the aria-label and the
+ * alt stay exactly as declared.
+ */
 const WORDMARK =
-  "text-2xl md:text-4xl font-bold tracking-tight leading-none text-zinc-700 dark:text-zinc-300";
+  "uppercase text-2xl md:text-4xl font-bold tracking-tight leading-none text-zinc-700 dark:text-zinc-300";
 
 function LogoLink({ site }: { site: LinkableNetworkSite }) {
   // A logo that will not load falls back to the name, so a site whose

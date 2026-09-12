@@ -97,7 +97,7 @@ export async function POST(request: Request) {
           summary = sumRes?.message?.summary || "";
         } else {
           const { ControlBaseService } = await import("@/app/services/control/base");
-          const sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {
+          const sumRes = await ControlBaseService.call("control:summarize_chat_session", {
             session_id: id,
             messages: JSON.stringify(coreMessages),
           });
@@ -216,7 +216,7 @@ export async function POST(request: Request) {
           onboardingSummary = sumRes?.message?.summary || "";
         } else {
           const { ControlBaseService } = await import("@/app/services/control/base");
-          const sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {
+          const sumRes = await ControlBaseService.call("control:summarize_chat_session", {
             session_id: id,
             messages: JSON.stringify(fullMessagesHistory),
           });

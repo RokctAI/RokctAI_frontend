@@ -54,8 +54,14 @@ STAGED = {
     "register-provision.ts": os.path.join(AUTH_GROUP, "register-provision.ts"),
     "register-link.ts": os.path.join(AUTH_GROUP, "register-link.ts"),
     "tenant-link.ts": os.path.join(AUTH_GROUP, "tenant-link.ts"),
+    "brand-heading.ts": os.path.join(AUTH_GROUP, "login", "brand-heading.ts"),
 }
-NODE_SUITES = ["tenant-host.test.mts", "register-registry.test.mts", "register-link.test.mts"]
+NODE_SUITES = [
+    "tenant-host.test.mts",
+    "register-registry.test.mts",
+    "register-link.test.mts",
+    "login-heading.test.mts",
+]
 
 # Words no fixture, copy or comment of this SDK's new files may carry.
 FORBIDDEN_WORDS = re.compile(r"\b(lorem|sample|demo)\b", re.I)
@@ -285,6 +291,33 @@ class TestTenantHostSwitch(unittest.TestCase):
         # The portal login signs in against the named site and nowhere else.
         auth = read(os.path.join(AUTH_GROUP, "auth.ts"))
         self.assertIn("`https://${siteName}`", auth)
+
+    def test_login_heading_folds_a_dotted_platform_name(self):
+        """auth_sdk 1.7.3: the heading prints the brand, not the address.
+
+        Ray, 2026-09-11: "login register page, no s, full supacharge without
+        .school". The rule itself is pinned by tests/login-heading.test.mts;
+        this pins the CALL SITE, so the heading cannot quietly go back to
+        printing a dotted PLATFORM_NAME verbatim.
+        """
+        view = read(os.path.join(AUTH_GROUP, "login", "login-view.tsx"))
+        self.assertIn(
+            'import { brandHeadingLabel } from "@/app/(auth)/login/brand-heading";',
+            view,
+        )
+        self.assertIn("Welcome to {brandHeadingLabel(PLATFORM_NAME)}", view)
+        self.assertNotIn("Welcome to {PLATFORM_NAME}", view)
+        # The rule is base_sdk's; the copy has to say so and stay pure
+        # (tests stage it flat, so it may import nothing).
+        helper = read(os.path.join(AUTH_GROUP, "login", "brand-heading.ts"))
+        self.assertIn("brandStemLabel", helper)
+        self.assertIn("components/custom/landing/header-menu.ts", helper)
+        self.assertNotIn("\nimport ", helper)
+        # The register page's heading is the registry's copy, not a platform
+        # name, so it needs none of this.
+        registry = read(os.path.join(TEMPLATES, "components", "custom", "auth", "register-registry.ts"))
+        self.assertIn('title: "Create account"', registry)
+        self.assertNotIn("PLATFORM_NAME", read(os.path.join(AUTH_GROUP, "register", "register-view.tsx")))
 
     def test_switch_behaviour_under_node(self):
         node = shutil.which("node")

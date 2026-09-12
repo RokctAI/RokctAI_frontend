@@ -1,5 +1,75 @@
 # Changelog
 
+## 1.19.2
+
+Requires base_sdk >= 1.40.0 and auth_sdk >= 1.7.0 as before. No install,
+integration or floor changes. Ships with agent/frappe's manifest: the control
+site is recomposed and redeployed with the two new `control:` keys before or
+with the host re-pin to this version.
+
+* The control-site summary reaches its handler. `app/(chat)/api/chat/route.ts`
+  (twice), `app/(chat)/api/summarize/route.ts` and `app/(chat)/page.tsx` sent
+  the control site `control.api.summarize_chat_session`, a dotted per-method
+  alias. `ControlBaseService.call` posts `{cmd, payload}` to the platform
+  gateway, and on a control site the gateway routes only a verbatim
+  `control:<name>` key (the rule control/hooks.py states above its
+  `override_whitelisted_methods`, and base's platform-gateway.ts repeats), so
+  the call never reached `summarize_chat_session` however the manifest spelt
+  it. The four sites now send `control:summarize_chat_session`, the form the
+  tender module's `control:get_tender_detail` and this SDK's own
+  `control:log_frontend_error` (1.19.0) already use. agent/frappe's manifest
+  registers `control:chat_with_rok` and `control:summarize_chat_session`
+  under `app_type.control.hooks.whitelisted_methods`, pointing at the same
+  `{app_name}.agent.control.api.chat.*` handlers as the existing
+  `control.api.*` and `control.control.api.*` keys; those dotted keys stay as
+  legacy aliases and nothing is removed. `TestGatewayCalls` now holds that no
+  template hands the control client a dotted `control.api.` cmd, that every
+  `control:` literal under templates/ is a key agent/frappe's manifest or a
+  named sibling module registers, and that each of this SDK's `control:` keys
+  resolves to the same whitelisted handler as its legacy alias.
+* `control:chat_with_rok` has no caller in this SDK. The host's
+  `app/services/control/onboarding.ts` still sends
+  `control.api.chat_with_rok` and `control.api.get_onboarding_template`; that
+  file is the host's, and `get_onboarding_template` is registered by the
+  users onboarding module, not here.
+
+## 1.19.1
+
+Requires base_sdk >= 1.40.0 and auth_sdk >= 1.7.0 as before. No install,
+integration or floor changes. rokct.ai shows both changes only after a host
+re-pin to this version.
+
+* The juvo network site is named "juvo platforms". Ray, 2026-09-11 07:43Z:
+  "and juvo is still juvo while i told you its juvo platforms" (first said
+  2026-09-09 22:07Z: "in it juvo is juvo platforms", and 22:12Z: "i gave
+  you full juvo name"). The `juvo` entry of `sites` in
+  `components/custom/landing/agent-network-strip.ts` carried
+  `name: "juvo"`; it now carries the string Ray typed, verbatim - never shortened
+  to "juvo", never re-cased here (base_sdk 1.32.1's rule on the `name`
+  field). The key, the url (`https://juvo.app`) and the two glyph paths
+  are unchanged, and no logo artwork is touched: the name is what the
+  aria-label and the alt say, and what the marquee draws when the glyph
+  will not load.
+* The marquee shows wordmarks in capitals. Ray, 2026-09-11 07:45Z: "use
+  caps" - "use caps in logos". The wordmark span in
+  `components/custom/logos.client.tsx` (the name drawn AS a mark at the
+  box's height, since 1.18.1) now carries `uppercase`, so
+  "supacharge.school" displays as SUPACHARGE.SCHOOL and the juvo name, when
+  drawn as text, as JUVO PLATFORMS. It is a CSS transform on that span and
+  nothing more: the declared strings stay exactly as typed (the `name`
+  fields, the aria-label and the alt are unchanged), the eyebrow, the item
+  boxes and the marks are untouched, and no SVG or picture logo is
+  filtered, re-drawn or replaced. Scoped to this SDK's logos section; the
+  footer strip is base's component and is not changed here.
+* Manifest: version 1.19.1.
+* Tests: `network-strip.test.mts` pins `name: "juvo platforms"` and
+  refuses the bare "juvo", "Juvo" and "Juvo Platforms";
+  `test_manifest.py`'s `test_network_sites_are_declared_here_and_nowhere_else`
+  holds the same string and the unchanged url and glyph paths, and
+  `test_logos_section_draws_the_network_sites` holds `uppercase` on the
+  wordmark span only (not the item box, not the mark) and still refuses
+  `lowercase`, `capitalize`, `truncate` and any rewrite of `site.name`.
+
 ## 1.19.0
 
 Requires base_sdk >= 1.40.0 (`NetworkStripConfig.sites`, and a base that

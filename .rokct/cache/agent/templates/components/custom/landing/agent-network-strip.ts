@@ -16,9 +16,9 @@
 
 // rokct.ai's say over base_sdk's NETWORK STRIP
 // (components/custom/landing/network-strip.ts, base_sdk >= 1.23.0): the
-// other sites of the Rokct network - Supacharge, juvo, and whatever joins
-// next - each a link, under Ray's heading "Trusted by" ("these products
-// already trust rokct as they run on it").
+// other sites of the Rokct network - supacharge.school, juvo platforms, and
+// whatever joins next - each a link, under Ray's heading "Trusted by"
+// ("these products already trust rokct as they run on it").
 //
 // Since 1.19.0 the SITES themselves are declared HERE (base_sdk 1.40.0;
 // Ray, 2026-09-11: a shell with no declaration shows no strip - a shell
@@ -26,7 +26,8 @@
 // and site names are brand content base may not hard-code). Base carries
 // no site any more: `sites` below is the list base's network-sites.ts held
 // from 1.23.0 to 1.39.0, moved entry for entry - rokct.ai, supacharge.school
-// and juvo with the same names, origins and logo paths, and the two
+// and juvo with the same origins and logo paths (the juvo name is Ray's
+// "juvo platforms" since 1.19.1; the rest are unchanged), and the two
 // products that have no domain yet as the same hidden place-holders (an
 // unused surface is switched off, never removed). rokct.ai is the owner of
 // the network, so the list lives with rokct.ai's home SDK; another shell
@@ -120,9 +121,13 @@ const AGENT_NETWORK_STRIP: AgentNetworkStrip = {
       url: "https://supacharge.school",
       wordmark: true,
     },
+    // Ray, 2026-09-11 07:43Z: "and juvo is still juvo while i told you its
+    // juvo platforms" (first said 2026-09-09 22:07Z). The name is the string
+    // he typed, verbatim - never shortened to "juvo", never re-cased here;
+    // the url and the glyphs are unchanged.
     {
       key: "juvo",
-      name: "juvo",
+      name: "juvo platforms",
       url: "https://juvo.app",
       logo: "https://juvo.app/images/logo_dark.svg",
       logoDark: "https://juvo.app/images/logo.svg",

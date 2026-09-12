@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     } else {
       // Call Control site summarization
       const { ControlBaseService } = await import("@/app/services/control/base");
-      sumRes = await ControlBaseService.call("control.api.summarize_chat_session", {
+      sumRes = await ControlBaseService.call("control:summarize_chat_session", {
         session_id: sessionId,
         messages: JSON.stringify(messages),
       });

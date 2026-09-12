@@ -17,7 +17,7 @@
 import Link from "next/link";
 import { PLATFORM_NAME, LEGAL_COMPANY_NAME } from "@/app/config/platform";
 import { PLATFORM_FEATURES } from "@/app/config/features";
-import { TermsService } from "@/app/services/control/terms";
+import { listPublicTerms } from "@/app/actions/base/legal";
 import { JobsService } from "@/app/services/control/jobs";
 import { BrandLogo } from "./brand-logo";
 import { Branding } from "./branding";
@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import { NetworkStrip } from "@/components/custom/network-strip";
 import { FooterChromeRow } from "@/components/custom/footer-chrome";
 import type { FooterChromeConfig } from "@/components/custom/landing/footer-chrome-config";
+import { legalFooterLinks } from "@/components/custom/landing/legal-links";
 import versionData from "@/version.json";
 
 // The copyright / platform-status / version row is base_sdk's footer chrome
@@ -45,6 +46,14 @@ import versionData from "@/version.json";
 // Maintenance and checking have no host key, so those two fall back to
 // base's own labels. The dot colours are base's defaults, which are the
 // same green-500 / red-500 the hand-rolled pill used.
+//
+// The row's Legal link group is base's too (components/custom/landing/
+// legal-links.ts): every enabled "Terms and Conditions" document the shell
+// publishes, read as a guest through the platform gateway by base's
+// listPublicTerms() action, one link each to corporate_sdk's /legal/<name>
+// page. Footer() adds it per request (`links`), so the footer never hard
+// codes a document title and never links to "#" while none exists: the
+// group draws nothing until a document is published.
 const FOOTER_CHROME: FooterChromeConfig = {
   copyrightHolder: LEGAL_COMPANY_NAME,
   version: versionData.frontend,
@@ -75,28 +84,16 @@ async function PublicRoadmapLink() {
 }
 
 export async function Footer() {
-  let terms: any[] = [];
-  try {
-    const fetchedTerms = await TermsService.getMasterTerms();
-    if (Array.isArray(fetchedTerms)) terms = fetchedTerms;
-  } catch (e) {}
+  const footerChrome: FooterChromeConfig = {
+    ...FOOTER_CHROME,
+    links: legalFooterLinks(await listPublicTerms(), t("footer.legal")),
+  };
 
   let hasCareers = false;
   try {
     const jobs = await JobsService.getOpenings();
     if (jobs && jobs.length > 0) hasCareers = true;
   } catch (e) {}
-
-  // Helper to find term by likely title or name
-  const getTermLink = (preferredTitle: string) => {
-    const term = terms.find(
-      (t) =>
-        t.title?.toLowerCase().includes(preferredTitle.toLowerCase()) ||
-        t.name?.toLowerCase().includes(preferredTitle.toLowerCase()),
-    );
-    if (term) return `/legal/${term.name}`;
-    return "#";
-  };
 
   // Helper to render premium badges dynamically
   const renderBadge = (id: number) => {
@@ -246,40 +243,10 @@ export async function Footer() {
               </h4>
               <div className="flex flex-col gap-4">
                 <Link
-                  href="#"
+                  href="/team"
                   className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
                 >
                   {t("footer.team")}
-                </Link>
-                <Link
-                  href={getTermLink("Privacy")}
-                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                >
-                  {t("footer.privacy_policy")}
-                </Link>
-                <Link
-                  href={getTermLink("Legal")}
-                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                >
-                  {t("footer.legal")}
-                </Link>
-                <Link
-                  href={getTermLink("Cookie")}
-                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                >
-                  {t("footer.cookie_policy")}
-                </Link>
-                <Link
-                  href={getTermLink("Terms and Conditions")}
-                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                >
-                  {t("footer.terms")}
-                </Link>
-                <Link
-                  href="#"
-                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                >
-                  {t("footer.data_protection")}
                 </Link>
                 {hasCareers && (
                   <Link
@@ -289,12 +256,9 @@ export async function Footer() {
                     {t("footer.careers")}
                   </Link>
                 )}
-                <Link
-                  href="#"
-                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                >
-                  {t("footer.refund_policy")}
-                </Link>
+                {/* The legal documents are listed by the footer chrome row
+                    below (base's Legal group, from the published documents)
+                    rather than as fixed titles here. */}
               </div>
             </div>
           </div>
@@ -354,7 +318,7 @@ export async function Footer() {
             footer chrome row. The network strip is placed above by this
             footer itself, so the row does not draw its own. */}
         <FooterChromeRow
-          config={FOOTER_CHROME}
+          config={footerChrome}
           networkStrip={false}
           className="pt-12 border-t border-gray-200 dark:border-white/5"
         />

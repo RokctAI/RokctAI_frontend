@@ -17,7 +17,8 @@
 // agent_sdk 1.13.0: rokct.ai's say over base_sdk 1.23.0's network strip;
 // 1.17.0: the landing placement is "section" - the logos marquee carries
 // the strip on /landing (base_sdk 1.27.0); 1.19.0: the sites themselves
-// are declared here (base_sdk 1.40.0 carries none). Run by
+// are declared here (base_sdk 1.40.0 carries none); 1.19.1: the juvo entry
+// is named "juvo platforms" (Ray, 2026-09-11 07:43Z). Run by
 // tests/test_manifest.py against a staged copy of
 // components/custom/landing/agent-network-strip.ts.
 
@@ -57,13 +58,25 @@ describe('agent-network-strip: the sites rokct.ai declares (1.19.0, base_sdk 1.4
     assert.deepEqual(sites.map((s) => s.key), ['rokct', 'supacharge', 'juvo', 'hosting', 'telephony']);
   });
 
-  it('names rokct.ai, supacharge.school and juvo with their origins and their declared brand strings', () => {
+  it('names rokct.ai, supacharge.school and juvo platforms with their origins and their declared brand strings', () => {
     assert.equal(byKey.get('rokct')?.url, 'https://rokct.ai');
     assert.equal(byKey.get('supacharge')?.url, 'https://supacharge.school');
     assert.equal(byKey.get('juvo')?.url, 'https://juvo.app');
     assert.equal(byKey.get('rokct')?.name, 'rokct.ai');
     assert.equal(byKey.get('supacharge')?.name, 'supacharge.school');
-    assert.equal(byKey.get('juvo')?.name, 'juvo');
+    assert.equal(byKey.get('juvo')?.name, 'juvo platforms');
+  });
+
+  it('never shortens or re-cases the juvo name (Ray, 2026-09-11 07:43Z: "and juvo is still juvo while i told you its juvo platforms")', () => {
+    const name = byKey.get('juvo')?.name ?? '';
+    assert.notEqual(name, 'juvo');
+    assert.notEqual(name.toLowerCase(), 'juvo');
+    assert.notEqual(name, 'Juvo');
+    assert.notEqual(name, 'Juvo Platforms');
+    assert.equal(name, 'juvo platforms');
+    for (const site of sites) {
+      assert.equal(site.name, site.name.trim(), site.key);
+    }
   });
 
   it('draws rokct.ai and juvo as their own glyphs, light and dark, and supacharge.school as its wordmark', () => {

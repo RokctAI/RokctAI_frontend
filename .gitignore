@@ -94,6 +94,7 @@ migrate_working_dir/
 /app/(auth)/auth.config.ts
 /app/(auth)/auth.ts
 /app/(auth)/forgot-password/page.tsx
+/app/(auth)/login/brand-heading.ts
 /app/(auth)/login/login-view.tsx
 /app/(auth)/login/page.tsx
 /app/(auth)/register-link.ts
@@ -116,6 +117,7 @@ migrate_working_dir/
 /app/(chat)/chat/\[id\]/page.tsx
 /app/(chat)/chat/page.tsx
 /app/(chat)/page.tsx
+/app/about/page.tsx
 /app/actions/ai/admin.ts
 /app/actions/ai/competitor.ts
 /app/actions/ai/control.ts
@@ -143,6 +145,7 @@ migrate_working_dir/
 /app/actions/base/status.ts
 /app/actions/booking/booking.ts
 /app/actions/comms/whatsapp.ts
+/app/actions/corporate/legal.ts
 /app/actions/gateways/admin/finance.ts
 /app/actions/gateways/admin/transactions.ts
 /app/actions/gateways/finance.ts
@@ -554,6 +557,8 @@ migrate_working_dir/
 /app/handson/all/workspace/communication/events/page.tsx
 /app/handson/all/workspace/page.tsx
 /app/landing/page.tsx
+/app/legal/\[id\]/page.tsx
+/app/legal/page.tsx
 /app/lib/intent-engine.ts
 /app/lib/session.ts
 /app/lib/site-metadata.ts
@@ -651,6 +656,7 @@ migrate_working_dir/
 /app/services/server/intent-classifier.ts
 /app/styles/rokct-marquee.css
 /app/styles/rokct-scroll.css
+/app/team/page.tsx
 /app/twitter-image.tsx
 /components/admin/GenericReport.tsx
 /components/custom/CompetitorMap.tsx
@@ -659,10 +665,17 @@ migrate_working_dir/
 /components/custom/auth-form.tsx
 /components/custom/auth/agent-register-config.ts
 /components/custom/auth/register-registry.ts
+/components/custom/back-to-top.tsx
 /components/custom/beta-toggle.tsx
 /components/custom/chat-section.client.tsx
 /components/custom/chat-section.tsx
 /components/custom/chat.tsx
+/components/custom/company/company-frame.tsx
+/components/custom/company/company-pages.ts
+/components/custom/company/company-sections.tsx
+/components/custom/company/markdown-parser.ts
+/components/custom/company/markdown.tsx
+/components/custom/company/team-grid.tsx
 /components/custom/copied-pricing.client.tsx
 /components/custom/copied-pricing.tsx
 /components/custom/faq-section.client.tsx
@@ -675,6 +688,7 @@ migrate_working_dir/
 /components/custom/hero-view.tsx
 /components/custom/hero.tsx
 /components/custom/image-upload.tsx
+/components/custom/install-offer.tsx
 /components/custom/landing-content.tsx
 /components/custom/landing/agent-card-row.ts
 /components/custom/landing/agent-header-menu.ts
@@ -686,13 +700,16 @@ migrate_working_dir/
 /components/custom/landing/agent-opportunities.tsx
 /components/custom/landing/agent-plans-query.ts
 /components/custom/landing/agent-site-metadata.ts
+/components/custom/landing/back-to-top.ts
 /components/custom/landing/brand-marks.ts
+/components/custom/landing/download-platform.ts
 /components/custom/landing/footer-chrome-config.ts
 /components/custom/landing/header-menu.ts
 /components/custom/landing/hero-config.ts
 /components/custom/landing/hero-copy.ts
 /components/custom/landing/hero-form.ts
 /components/custom/landing/hero-sections.ts
+/components/custom/landing/install-offer.ts
 /components/custom/landing/landing-config.ts
 /components/custom/landing/landing-page.ts
 /components/custom/landing/legal-links.ts
@@ -700,9 +717,13 @@ migrate_working_dir/
 /components/custom/landing/network-strip.ts
 /components/custom/landing/page-sections.ts
 /components/custom/landing/plans-query.ts
+/components/custom/landing/platform-glyphs.tsx
 /components/custom/landing/site-metadata.ts
 /components/custom/landing/testimonials-marquee.tsx
 /components/custom/left-sidebar.tsx
+/components/custom/legal/legal-doc.tsx
+/components/custom/legal/legal-frame.tsx
+/components/custom/legal/load-legal-doc.ts
 /components/custom/logos.client.tsx
 /components/custom/logos.tsx
 /components/custom/menu-label.tsx

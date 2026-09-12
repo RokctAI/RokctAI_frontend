@@ -39,10 +39,13 @@
 // here too - right under the hero and right before the footer anchor - and
 // draws on the one the home SDK's registered placement names, or on
 // neither: "none", or (since 1.27.0) "section", where a registered section
-// of the home SDK's own draws the strip in its own look.
+// of the home SDK's own draws the strip in its own look. Since 1.42.0 the
+// floating "Back to top" button (components/custom/back-to-top.tsx) is
+// mounted here too, after <main>, so every composed landing has it.
 
 import React, { useState } from "react";
 
+import { BackToTop } from "@/components/custom/back-to-top";
 import { Header } from "@/components/custom/header";
 import { HeroResultsContext } from "@/components/custom/hero-view";
 import { NetworkStrip } from "@/components/custom/network-strip";
@@ -116,6 +119,11 @@ export function LandingContent({
           </div>
           <div id={LANDING_CONFIG.nav.footer.id} />
         </main>
+        {/* The floating "Back to top" button (1.42.0): hidden at the top,
+            shown past one viewport height, fixed bottom right under the
+            header's layers - mounted here, once, so a base-only host and a
+            home SDK's composed landing both have it with no host edit. */}
+        <BackToTop />
       </div>
     </HeroResultsContext.Provider>
   );

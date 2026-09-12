@@ -538,11 +538,47 @@ describe('BRAND_STEM_FONT_SIZE: the stem wordmark fits the bar (1.29.0)', () => 
     assert.ok(!wordmark.includes('text-['));
     assert.equal(wordmark.match(/fontSize/g)?.length, 1);
     // Neither inner span sizes itself: the stem (its 1.39.0 label) and the
-    // suffix inherit.
+    // suffix inherit. 1.41.0: the suffix span is in the primary colour and
+    // carries its own hook (Ray, 2026-09-11: "also site name the .school
+    // get primary color in nextjs").
     assert.ok(wordmark.includes('<span>{label}</span>'));
-    assert.ok(wordmark.includes('<span className="min-w-0 overflow-hidden">{suffix}</span>'));
+    assert.ok(
+      wordmark.includes(
+        '<span data-brand-wordmark="tld" className="min-w-0 overflow-hidden pr-[0.12em] -mr-[0.12em] text-primary">',
+      ),
+    );
+    assert.ok(!wordmark.includes('<span className="min-w-0 overflow-hidden">{suffix}</span>'));
     // The 1.24.0 Branding slot keeps its 60px literal.
     assert.ok(header.includes('<Branding className="text-[60px] tracking-tighter leading-none" />'));
+  });
+
+  // 1.42.0 (Ray, 2026-09-11 13:57Z: the final "l" of the suffix was "a bit
+  // cut"): the suffix span clips its own overflow so the slot can close
+  // over it, and its box is the text's advance width, so an italic face's
+  // last glyph - which leans past its advance - was sheared off at the
+  // right edge once a home SDK italicised the wordmark. The span pads its
+  // right in em and hands the same width back as a negative margin, so
+  // the grid track, the stem's width and the code beside it are what they
+  // were, open and folded; the clip itself stays for the fold.
+  it('the suffix span keeps room for an italic overhang without widening the stem', () => {
+    const header = readFileSync(new URL('./header.tsx', import.meta.url), 'utf8');
+    const wordmark = header.slice(header.indexOf('function BrandStemWordmark('), header.indexOf('function BrandBlock('));
+    const tld = wordmark.match(/<span data-brand-wordmark="tld" className="([^"]+)">/);
+    assert.ok(tld);
+    const classes = tld[1].split(' ');
+    assert.ok(classes.includes('overflow-hidden'), 'the fold still clips');
+    assert.ok(classes.includes('min-w-0'), 'the track still closes to zero');
+    const pad = classes.find((c) => /^pr-\[[\d.]+em\]$/.test(c));
+    const neg = classes.find((c) => /^-mr-\[[\d.]+em\]$/.test(c));
+    assert.ok(pad, 'a right padding in em');
+    assert.ok(neg, 'a matching negative right margin in em');
+    const em = (c: string) => Number(c.match(/\[([\d.]+)em\]/)![1]);
+    assert.equal(em(pad), em(neg), 'the padding is handed back in full');
+    // A 900 italic lowercase "l" overhangs its advance by about 0.09em.
+    assert.ok(em(pad) >= 0.09);
+    assert.ok(em(pad) <= 0.2, 'room, not a gap');
+    assert.ok(!wordmark.includes('pr-[0.12em]"'), 'the padding is not the last class: text-primary still closes the list');
+    assert.ok(classes.includes('text-primary'));
   });
 });
 

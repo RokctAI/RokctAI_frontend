@@ -198,7 +198,12 @@ function HeroWordmarkSlot({ wordmark }: { wordmark: HeroWordmark | null }) {
   // The same font utilities and the same hook as the header's stem
   // wordmark (header.tsx BrandStemWordmark; 1.40.0): no family of its own,
   // so both inherit the shell's face, and `data-brand-wordmark="stem"` for
-  // a home SDK to style both at once.
+  // a home SDK to style both at once. With `brand: "stem-tld"` (1.41.0;
+  // Ray, 2026-09-11: "also site name the .school get primary color in
+  // nextjs") the resolver hands a `suffix` - the dot and the rest of the
+  // name - and it is drawn after the stem, inside the same span so it
+  // shares the face and size, in the shell's primary colour with the
+  // header's `data-brand-wordmark="tld"` hook.
   return (
     <span
       aria-label={wordmark.name}
@@ -206,10 +211,17 @@ function HeroWordmarkSlot({ wordmark }: { wordmark: HeroWordmark | null }) {
       data-brand-wordmark="stem"
       className={`inline-block whitespace-nowrap font-bold tracking-tighter leading-none text-black dark:text-white ${HERO_STEM_PADDING_CLASS}`}
       style={{
-        fontSize: `min(76px, calc(250px / (${Math.max(wordmark.text.length, 1)} * 0.6)))`,
+        // Sized to the WHOLE displayed text, suffix included, so a
+        // dotted name still fits the slot.
+        fontSize: `min(76px, calc(250px / (${Math.max(wordmark.text.length + (wordmark.suffix?.length ?? 0), 1)} * 0.6)))`,
       }}
     >
       {wordmark.text}
+      {wordmark.suffix && (
+        <span data-brand-wordmark="tld" className="text-primary">
+          {wordmark.suffix}
+        </span>
+      )}
     </span>
   );
 }
