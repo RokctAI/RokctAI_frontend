@@ -22,6 +22,11 @@
 // beside footer-chrome-config.ts, under node's own test runner with type
 // stripping. The user-agent strings below are the shapes browsers send,
 // with no real product in them; the entries are this file's fixture.
+//
+// base_sdk 1.46.0 adds the offered-download store and visibleDownloads
+// (Ray, 2026-09-11 20:33:16Z: the icon buttons "become double when you
+// tell user to download for that platform, i think should hide the normal
+// one when showing the other").
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
@@ -29,11 +34,14 @@ import { describe, it } from 'node:test';
 import {
   DOWNLOAD_FALLBACKS,
   INSTALL_OFFER_LABELS,
+  OFFERED_DOWNLOAD,
   STANDALONE_MEDIA_QUERY,
+  createOfferedDownloadStore,
   detectPlatform,
   detectPlatformFrom,
   installOfferText,
   pickDownload,
+  visibleDownloads,
 } from './install-offer.ts';
 import type { DownloadEntry, DownloadPlatform } from './footer-chrome-config.ts';
 
@@ -173,5 +181,66 @@ describe('the words', () => {
 
   it('hides on an installed page by the standalone display mode', () => {
     assert.equal(STANDALONE_MEDIA_QUERY, '(display-mode: standalone)');
+  });
+});
+
+describe('visibleDownloads: the icon row minus the entry the offer shows', () => {
+  it('drops the offered entry and keeps the declared order of the rest', () => {
+    assert.deepEqual(
+      visibleDownloads(ALL, 'android').map((e) => e.id),
+      ['ios', 'huawei', 'macos', 'windows', 'linux', 'web'],
+    );
+    assert.deepEqual(visibleDownloads(ALL, 'web').map((e) => e.id), ['ios', 'android', 'huawei', 'macos', 'windows', 'linux']);
+    assert.deepEqual(visibleDownloads([entry('android')], 'android'), []);
+  });
+
+  it('hides by id, so a second entry for the same platform stays', () => {
+    const two = [entry('android', 'first'), entry('android', 'second')];
+    assert.deepEqual(visibleDownloads(two, 'first').map((e) => e.id), ['second']);
+  });
+
+  it('null (nothing offered) and an id no entry carries leave every entry, as a new array', () => {
+    const all = visibleDownloads(ALL, null);
+    assert.deepEqual(all, ALL);
+    assert.notEqual(all, ALL, 'never the input itself');
+    assert.deepEqual(visibleDownloads(ALL, 'nowhere'), ALL);
+    assert.deepEqual(visibleDownloads([], 'android'), []);
+  });
+});
+
+describe('the offered-download store', () => {
+  it('starts null, publishes an id, and notifies on a change only', () => {
+    const store = createOfferedDownloadStore();
+    const seen: Array<string | null> = [];
+    store.subscribe(() => seen.push(store.get()));
+    assert.equal(store.get(), null);
+    store.set('android');
+    store.set('android');
+    store.set(null);
+    store.set(null);
+    assert.deepEqual(seen, ['android', null]);
+  });
+
+  it('a blank id reads as null, and an unsubscribed listener hears nothing more', () => {
+    const store = createOfferedDownloadStore();
+    let calls = 0;
+    const off = store.subscribe(() => {
+      calls += 1;
+    });
+    store.set('  ');
+    assert.equal(store.get(), null);
+    assert.equal(calls, 0, 'null to null is no change');
+    store.set('ios');
+    assert.equal(calls, 1);
+    off();
+    store.set('web');
+    assert.equal(calls, 1);
+    assert.equal(store.get(), 'web');
+  });
+
+  it('OFFERED_DOWNLOAD is one shared store that starts null: the server snapshot', () => {
+    assert.equal(OFFERED_DOWNLOAD.get(), null);
+    assert.equal(typeof OFFERED_DOWNLOAD.subscribe, 'function');
+    assert.equal(typeof OFFERED_DOWNLOAD.set, 'function');
   });
 });

@@ -1,9 +1,11 @@
 # Downloads, the install offer, the suffix in primary and Back to top
 
-Three generic seams base_sdk 1.41.0 adds to the shell's chrome. Base
-declares NO entry, NO site name and NO colour for any of them: a home SDK
-hands the data in, and a shell whose home SDK declares nothing renders
-exactly what it rendered before.
+Three generic seams base_sdk 1.41.0 adds to the shell's chrome, and the
+two rules 1.46.0 adds to the install offer (the browser's install prompt
+as a real action; the offered platform's icon hidden). Base declares NO
+entry, NO site name and NO colour for any of them: a home SDK hands the
+data in, and a shell whose home SDK declares nothing renders exactly
+what it rendered before.
 
 ## The site name's suffix in the primary colour
 
@@ -73,7 +75,9 @@ export interface DownloadEntry {
 
 `FooterChromeRow` (`components/custom/footer-chrome.tsx`) draws the
 entries as `<nav aria-label="Downloads">` beside the link groups, above
-the copyright line: one `<a>` per entry, 40px round, the theme's border,
+the copyright line, through `DownloadButtons`
+(`components/custom/download-buttons.tsx`, since 1.46.0 - see "The
+offered platform's icon is hidden" below): one `<a>` per entry, 40px round, the theme's border,
 transparent and tinted on hover
 (`h-10 w-10 rounded-full border border-border bg-transparent hover:bg-muted flex items-center justify-center`),
 the label as `aria-label` and `title`, the platform on
@@ -117,10 +121,64 @@ i think it should check the platform and offer app of that platform".
    own; `web` and `null` take none.
 4. With an entry it draws one icon button and "Get the <label>" (the
    entry's label; `labels.get` overrides the prefix) linking there.
-5. With none it listens for the browser's `beforeinstallprompt`, keeps
-   the event, and draws "Install" (`labels.install`), which shows that
-   prompt.
+5. Beside it - whether or not an entry matched - it draws "Install"
+   (`labels.install`) once the browser has fired `beforeinstallprompt`;
+   a click runs that prompt (below).
 6. With neither it draws nothing.
+
+### The install prompt is a real action (1.46.0)
+
+Ray, 2026-09-11 20:35:38Z: "nextjs no longer offering me to install app
+like it used to with pwa"; 20:46:43Z: "the install offer used to show
+its not showing, that bottom offer is not really an offer its attention,
+no clicking icon on browser and it try to install or it popup and
+install".
+
+The 1.41.0 offer listened for `beforeinstallprompt` only when no entry
+matched the platform, and only from a second effect after the platform
+read: a shell with a matching entry never offered the install, and
+elsewhere an early event was missed while a late one was swallowed by
+`preventDefault()` with nothing drawn for it. Since 1.46.0:
+
+1. The FIRST effect on mount - before any platform read - listens for
+   `beforeinstallprompt` and `appinstalled`, once. The event is stashed
+   and stays stashed until the visitor acts; `appinstalled` drops it.
+2. `preventDefault()` runs only when the Install control will render. A
+   page running installed (`display-mode: standalone`) leaves the
+   browser's own banner alone.
+3. The Install control renders only once an event is stashed. A click
+   calls `event.prompt()`, awaits `event.userChoice`, then clears the
+   stash; a second click while the prompt shows is ignored, and a later
+   event (the browser may fire one again after a dismissal) is stashed
+   again.
+4. The native link and the Install action render side by side when both
+   apply.
+
+`BeforeInstallPromptEvent` is exported for a host that types the event
+itself. Base registers no service worker: the browser fires the event
+only for a page it finds installable, which needs the host's own
+`app/manifest.ts` to carry `icons`.
+
+### The offered platform's icon is hidden (1.46.0)
+
+Ray, 2026-09-11 20:33:16Z, of the icon buttons: "they become double when
+you tell user to download for that platform, i think should hide the
+normal one when showing the other".
+
+The offer publishes the id of the entry it is showing to
+`OFFERED_DOWNLOAD` (`landing/install-offer.ts`;
+`createOfferedDownloadStore()` is a plain `get`/`set`/`subscribe` store,
+`null` until set, notifying on a change only) after mount, and clears
+it on unmount. `DownloadButtons({ downloads, hideOffered? })`
+(`components/custom/download-buttons.tsx`, `"use client"`) reads it
+through `React.useSyncExternalStore` with `null` as the server snapshot
+and draws `visibleDownloads(downloads, offeredId)` - every entry but
+that id, in declared order; `null` or an id no entry carries keeps them
+all. So the server HTML and the first client render carry EVERY icon -
+no window read at render - and the duplicate goes after mount; with no
+offer mounted, no platform recognised or an installed page nothing is
+hidden. `hideOffered={false}` keeps every button; `useOfferedDownload()`
+is exported for a home SDK's own row.
 
 `platform` forces the platform for a preview or a test. `FooterChromeRow`
 mounts the offer FIRST in the Downloads nav (`installOffer` prop, default
@@ -191,7 +249,10 @@ layout; `className` adds to the button, `threshold` sets the distance.
 
 ## Tests
 
-`tests/download-platform.test.mts`, `tests/install-offer.test.mts` and
+`tests/download-platform.test.mts`, `tests/install-offer.test.mts`
+(since 1.46.0 also `visibleDownloads` and the store) and
 `tests/back-to-top.test.mts` (node) execute the rules; `tests/test_manifest.py` holds the header's
 suffix span, the hero mode, the seam's shape, the row's nav and button,
-the component's contract and the installs.
+the component's contract, the 1.46.0 early attach, guarded
+`preventDefault`, `prompt()` then `userChoice`, the publish and the
+row's server snapshot, and the installs.

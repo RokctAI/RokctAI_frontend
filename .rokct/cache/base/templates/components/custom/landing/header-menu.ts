@@ -456,9 +456,28 @@ export interface HeaderMenuItem {
  * link. A `null` menu, or one that resolves to nothing, yields an empty
  * array and the host then renders no row at all.
  */
+/**
+ * How an anchor entry becomes a link (1.47.0): the page's own fragment by
+ * default (`#id`, the landing resolving its menu against its own nav), or,
+ * through [anchorHrefOn], the fragment on another route - what the site
+ * frame uses on a page that is not the landing, so "Pricing" in the header
+ * of /about still leads to the landing's pricing section.
+ */
+export type HeaderAnchorHref = (id: string) => string;
+
+/** The default: the anchor on the current page. */
+export const sameAnchorHref: HeaderAnchorHref = (id) => `#${id}`;
+
+/** The anchor on `route`: `/landing#pricing` for `anchorHrefOn("/landing")("pricing")`. */
+export function anchorHrefOn(route: string): HeaderAnchorHref {
+  const base = route.trim().replace(/#.*$/, "");
+  return (id) => `${base}#${id}`;
+}
+
 export function resolveHeaderMenuItems(
   menu: HeaderMenu | null,
   nav: LandingNavItem[],
+  anchorHref: HeaderAnchorHref = sameAnchorHref,
 ): HeaderMenuItem[] {
   if (!menu) return [];
 
@@ -471,7 +490,7 @@ export function resolveHeaderMenuItems(
     items.push({
       key: id,
       label: entry.label,
-      href: `#${entry.id}`,
+      href: anchorHref(entry.id),
       badge: entry.badge,
     });
   }
@@ -549,6 +568,7 @@ export function megaTriggerLabel(menu: Pick<ResolvedHeaderMenu, "groups" | "mega
 export function resolveHeaderMenu(
   menu: HeaderMenu | null,
   nav: LandingNavItem[],
+  anchorHref: HeaderAnchorHref = sameAnchorHref,
 ): ResolvedHeaderMenu {
   if (!menu) return EMPTY_HEADER_MENU;
 
@@ -564,7 +584,7 @@ export function resolveHeaderMenu(
         items.push({
           key: entry.anchor,
           label: nav.label,
-          href: `#${nav.id}`,
+          href: anchorHref(nav.id),
           badge: nav.badge,
         });
       } else {
@@ -592,7 +612,7 @@ export function resolveHeaderMenu(
   const megaLabel = menu.megaLabel?.trim() || null;
 
   return {
-    items: resolveHeaderMenuItems(menu, nav),
+    items: resolveHeaderMenuItems(menu, nav, anchorHref),
     groups,
     actions: [...(menu.actions ?? [])],
     megaLabel,

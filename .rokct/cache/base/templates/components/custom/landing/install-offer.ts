@@ -20,10 +20,20 @@
 // think it installs as pwa but i think it should check the platform and
 // offer app of that platform". So: read the platform the visitor is on
 // ([detectPlatform]), pick the download the shell declared for it
-// ([pickDownload]), and only with none declared fall back to the
-// browser's own install prompt. No user-agent string, platform name or
-// store is known here beyond the tokens the detection reads; the entries
-// and every word on screen arrive from the home SDK.
+// ([pickDownload]), and beside it - since 1.46.0, whether or not one is
+// declared - the browser's own install prompt as an action of ours. No
+// user-agent string, platform name or store is known here beyond the
+// tokens the detection reads; the entries and every word on screen
+// arrive from the home SDK.
+//
+// Since 1.46.0 this module also holds the OFFERED-DOWNLOAD STORE and
+// [visibleDownloads] (Ray, 2026-09-11 20:33:16Z: the icon buttons "become
+// double when you tell user to download for that platform, i think should
+// hide the normal one when showing the other"): the offer publishes the
+// id of the entry it is showing, and the icon row
+// (components/custom/download-buttons.tsx) drops that one entry after
+// mount. A plain subscribe/get/set store, no DOM, so a server render and
+// the first client render read `null` and draw every icon.
 
 import type {
   DownloadEntry,
@@ -169,3 +179,57 @@ export function installOfferText(
 
 /** The media query a page installed to the home screen matches. */
 export const STANDALONE_MEDIA_QUERY = "(display-mode: standalone)";
+
+/**
+ * The entry the install offer is showing, by `id`, or `null` when it
+ * shows none: nothing mounted, no platform recognised, no entry declared
+ * for it, or an installed page. The offer writes it after mount and
+ * clears it on unmount; the icon row reads it through
+ * `React.useSyncExternalStore` with `null` as the server snapshot, so
+ * the server and the first client render always draw every icon.
+ */
+export interface OfferedDownloadStore {
+  /** The offered entry's id, or `null`. */
+  get: () => string | null;
+  /** Publish the offered entry's id (or `null`); listeners run on a change only. */
+  set: (id: string | null) => void;
+  /** Subscribe to changes; answers the unsubscribe. */
+  subscribe: (listener: () => void) => () => void;
+}
+
+/** A fresh store: `null` until set. Exported for tests; the app shares [OFFERED_DOWNLOAD]. */
+export function createOfferedDownloadStore(): OfferedDownloadStore {
+  let offered: string | null = null;
+  const listeners = new Set<() => void>();
+  return {
+    get: () => offered,
+    set: (id) => {
+      const next = id && id.trim().length > 0 ? id : null;
+      if (next === offered) return;
+      offered = next;
+      for (const listener of Array.from(listeners)) listener();
+    },
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+  };
+}
+
+/** The one store the offer writes and the icon row reads. */
+export const OFFERED_DOWNLOAD: OfferedDownloadStore = createOfferedDownloadStore();
+
+/**
+ * The icon row's entries once the offer shows `offeredId`: every entry
+ * but that one, in declared order. `null` (nothing offered) and an id no
+ * entry carries leave the list untouched.
+ */
+export function visibleDownloads<T extends { id: string }>(
+  entries: readonly T[],
+  offeredId: string | null,
+): T[] {
+  if (offeredId === null) return [...entries];
+  return entries.filter((entry) => entry.id !== offeredId);
+}

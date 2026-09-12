@@ -191,11 +191,29 @@ export interface PageSectionMeta {
    * same `renders` and `order` rules there.
    */
   page?: PageSlot;
+  /**
+   * Whether the section is part of the SITE FRAME (1.47.0): the chrome a
+   * home SDK draws around every page, not only the landing - its theme
+   * (the section carrying `rootClass` and the tokens), its footer. A frame
+   * section still renders on the landing exactly as its `order` and `page`
+   * say; `frame: true` ALSO hands it to components/custom/site-frame.tsx
+   * (through `resolveSiteFrame` in landing/site-frame.ts), which draws it
+   * around a composed page that sits in the frame (corporate_sdk's /about,
+   * /team and /legal): a negative `order` before the page's content, the
+   * rest after it, `renders(ctx)` asked the same way. Absent: the landing
+   * only, as before. No brand and no route is named here.
+   */
+  frame?: boolean;
 }
 
 /** The page a section's meta puts it on: `meta.page`, or the landing page when it names none. */
 export function sectionPageOf(meta: PageSectionMeta | undefined): PageSlot {
   return meta?.page ?? DEFAULT_PAGE_SLOT;
+}
+
+/** Whether a section's meta puts it in the site frame (1.47.0): `frame: true`, and nothing else. */
+export function sectionFramesSite(meta: PageSectionMeta | undefined): boolean {
+  return meta?.frame === true;
 }
 
 /** The shape of a registered section's module. */

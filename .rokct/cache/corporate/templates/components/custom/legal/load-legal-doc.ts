@@ -26,6 +26,15 @@
 // to ask (no tenant base URL resolves for this request). A `hybrid`
 // shell with a backend keeps reading the backend, as 1.0.0 did.
 //
+// Since 1.2.0 the backend's answer is checked the way base_sdk 1.45.0's
+// listPublicTerms() checks it: the backend wins whenever it answers an
+// ENABLED document, and when it answers nothing for the slug - no such
+// document, a disabled one, a refused guest read, a failed call - the
+// bundled `data/legal/<slug>.md` page is the document, in ANY data mode
+// that bundles the folder (`bundledLegalDoc`). So the slug the 1.45.0
+// index lists on a hybrid shell whose backend publishes nothing no longer
+// 404s on its own page; a shell with no folder answers exactly what it did.
+//
 // Server-only by use (the actions and the reader it calls are),
 // directive-free itself.
 
@@ -68,16 +77,38 @@ export function legalDocFromSiteData(slug: string, docs: SiteLegal): LegalDoc | 
 }
 
 /**
+ * The bundled `data/legal/<slug>.md` page as the document (1.2.0), in
+ * any data mode that bundles the folder; `null` without the folder, the
+ * slug, or on a failed read (logged, never thrown - the page then 404s
+ * as it would with nothing). What [loadLegalDoc] falls back to when the
+ * backend answers nothing for the slug, mirroring base_sdk 1.45.0's
+ * listPublicTerms().
+ */
+export function bundledLegalDoc(slug: string): LegalDoc | null {
+  try {
+    if (!hasSiteData("legal")) return null;
+    const docs = readSiteData("legal");
+    return docs ? legalDocFromSiteData(slug, docs) : null;
+  } catch (e) {
+    console.error("[legal] bundled data/legal read failed:", e);
+    return null;
+  }
+}
+
+/**
  * The document at `/legal/<slug>`, or `null` when the page should answer
- * 404: no such document, a disabled one, or no backend to ask. The page
- * never needs to know which.
+ * 404: no such document anywhere, or a disabled one with no bundled page
+ * of that slug. The page never needs to know which. The folder is the
+ * document outright when [siteLegalDocs] says so (1.1.0); otherwise the
+ * backend is asked and wins with an enabled document, and the bundled
+ * page of that slug answers when it has none (1.2.0).
  */
 export async function loadLegalDoc(slug: string): Promise<LegalDoc | null> {
   const local = await siteLegalDocs();
   if (local) return legalDocFromSiteData(slug, local);
   const doc = await getPublicTerm(slug);
-  if (!doc || doc.disabled) return null;
-  return doc;
+  if (doc && !doc.disabled) return doc;
+  return bundledLegalDoc(slug);
 }
 
 /**

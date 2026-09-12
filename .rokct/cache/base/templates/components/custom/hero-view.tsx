@@ -316,7 +316,7 @@ export function HeroView({
         >
           <div className="flex flex-row items-center justify-center h-[72px]">
             <div className="relative flex items-center h-[56px]">
-              <BrandLogo width={56} height={56} showBadge={true} />
+              {hero.logo !== "none" && <BrandLogo width={56} height={56} showBadge={true} />}
               {/* Country code appears next to logo only when text is collapsed */}
               <div
                 className="transition-all duration-500 overflow-hidden flex items-start"
