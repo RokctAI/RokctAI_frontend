@@ -1,5 +1,56 @@
 # Changelog
 
+## 1.2.0
+
+* The pages sit in the shell's site frame. Ray, 2026-09-11 20:44Z, of
+  `/about`: "we have no way to get here and its so disconnected to the
+  rest of the site". Every page here - `/about`, `/team`, `/legal` and
+  `/legal/<id>` - now awaits base_sdk 1.47.0's `resolveSiteFrame({ plans:
+  [], session, dataMode })` (`components/custom/landing/site-frame.ts`)
+  beside what it already loaded, and:
+  * sits in base's `SiteFrame` (`components/custom/site-frame.tsx`: the
+    home SDK's header with its registered menu - every anchor leading
+    back to the landing - its theme and its footer, the sections the home
+    SDK marked `frame: true`) when `SiteFrameLayout.registered` is true;
+  * keeps its own `CompanyFrame` / `LegalFrame` otherwise, so a shell
+    composed without a home landing renders exactly as 1.1.0 did.
+  The legal pages read the session (`getPlatformSession`) and the data
+  mode (`siteDataMode`) for the frame, as the company pages already did.
+  This SDK imports no home SDK: the home SDK opts in by marking its theme
+  and footer sections in the registry it already fills, and nothing here
+  names one.
+* `components/custom/legal/load-legal-doc.ts`: `loadLegalDoc(slug)`
+  mirrors base_sdk 1.45.0's `listPublicTerms()` rule per slug. The folder
+  is still the document outright when `siteLegalDocs()` says so (1.1.0);
+  otherwise the backend is asked and wins with an ENABLED document, and
+  when it answers nothing for the slug - no such document, a disabled
+  one, a refused guest read, a failed call - NEW `bundledLegalDoc(slug)`
+  answers the bundled `data/legal/<slug>.md` page in any data mode that
+  bundles the folder (`hasSiteData("legal")`; a failed read is logged and
+  `null`). So the slugs base 1.45.0's index lists on a hybrid shell whose
+  backend publishes nothing no longer 404 on their own page; a shell with
+  no folder answers what it did. `loadLegalIndex` is unchanged.
+* Floors: base_sdk >= 1.47.0 (`components/custom/landing/site-frame.ts`,
+  `components/custom/site-frame.tsx`), >= 1.45.0
+  (`app/actions/base/legal.ts`, the index that lists the bundled slugs the
+  document page now answers); the 1.38.0, 1.35.0 and 1.37.0 floors as
+  before. Still never the home SDK; no dependencies or integrations.
+* Install notes: nothing to write. A shell whose home SDK has not yet
+  marked its frame sections keeps the 1.1.0 frames until it does; the
+  content stays the shell's `data/` folder (`about.md`, `team.json`,
+  `legal/`), and this SDK carries no copy for it.
+* Tests: `tests/test_manifest.py` - the two 1.47.0 prerequisites and the
+  1.45.0 floor, every page awaiting `resolveSiteFrame` beside its loads,
+  sitting in `SiteFrame` when registered and in its own frame otherwise,
+  the fallback frames still installed and unchanged, the loader's rule
+  and that no page reads the reader or the actions itself; NEW
+  `tests/load-legal-doc.test.mts` (node) executes `loadLegalDoc` and
+  `loadLegalIndex` against a stub backend, gateway and reader: the folder
+  outright on a local shell and on a hybrid shell with no backend, the
+  backend's enabled document winning, a null, disabled or failing answer
+  falling back to the bundled slug in hybrid and backend-with-folder
+  modes, an unknown slug and a shell with no folder still `null`.
+
 ## 1.1.0
 
 * The about and team pages, and the `data/` fallback. Ray, 2026-09-10:

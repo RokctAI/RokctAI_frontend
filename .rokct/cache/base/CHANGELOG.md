@@ -1,5 +1,134 @@
 # Changelog
 
+## 1.47.0
+
+* The site frame: the shell a composed page that is not the landing sits
+  in, so it reads as the same site as `/landing`. Ray, 2026-09-11 20:44Z,
+  of an about page in its own bare frame: "we have no way to get here and
+  its so disconnected to the rest of the site". Nothing new is registered:
+  a home SDK marks the sections that ARE its frame - the theme section
+  carrying `rootClass`, the footer - with `frame: true` on the `meta` it
+  already exports, and keeps its header menu where it is.
+  * `components/custom/landing/page-sections.ts`: `PageSectionMeta.frame`
+    (optional; absent is the landing only, as before) and
+    `sectionFramesSite(meta)`. A frame section still renders on the
+    landing exactly as its `order` and `page` say.
+  * NEW `components/custom/landing/site-frame.ts`: `arrangeSiteFrame`
+    (the pure rule) and `resolveSiteFrame(ctx)` (the loader a page awaits,
+    through the landing's own `loadPageSections` and `loadHeaderMenu`).
+    The answer, `SiteFrameLayout`: `registered` (any frame section
+    present after `renders(ctx)`), `before` (negative order) and `after`
+    (the rest) in order, `rootClass` joined from the frame sections, the
+    landing's `navItems`, and the header `menu` resolved against the
+    LANDING's nav with every anchor on the landing route
+    (`/landing#pricing`), the `local` rule dropping backend-only actions
+    as the landing does. `frameSectionsOf`, `landingNavItemsOf` and
+    `SITE_FRAME_ROOT_CLASS` (the landing root's own classes) beside them.
+  * `components/custom/landing/header-menu.ts`: `resolveHeaderMenu` and
+    `resolveHeaderMenuItems` take an optional third argument,
+    `anchorHref: (id) => string` (`sameAnchorHref`, `#id`, when absent -
+    every existing call is unchanged); `anchorHrefOn(route)` builds the
+    one the frame passes.
+  * NEW `components/custom/site-frame.tsx`: `SiteFrame({ frame?, session?,
+    dataMode?, page?, children })`, a directive-free server component
+    that draws the frame - the landing root's classes plus `rootClass`
+    (`data-site-frame` naming the page), base's `Header` with the
+    resolved menu (its links in the first HTML), the `before` sections,
+    `<main>`, the `after` sections, each with the `PageSectionProps` a
+    landing section gets (no plans, no nav), and `BackToTop` once. A
+    page resolves the frame first and keeps its own when `registered` is
+    false (corporate_sdk 1.2.0's `/about`, `/team` and `/legal` do), so a
+    shell composed without a home landing still renders; a caller that
+    hands no `frame` has it resolved here.
+  * Nothing in base names a brand, a host or a route beyond the existing
+    `LANDING_ROUTE`. A home SDK opts in with `frame: true` on its theme
+    and footer sections and nothing else.
+* Tests: `tests/landing-page.test.mts` executes the rule (a frame with
+  nothing marked is not registered; `before` / `after` split and ordered;
+  `renders` honoured; `rootClass` from frame sections only; the menu's
+  anchors on the landing route, a missing anchor dropped, links kept; the
+  `local` rule; `resolveSiteFrame` against the neutral registries);
+  `tests/test_manifest.py` pins the installs, the field, the component's
+  contract and that it is directive-free.
+
+## 1.46.0
+
+* The install offer runs the browser's install prompt as a real action.
+  Ray, 2026-09-11 20:35:38Z: "nextjs no longer offering me to install app
+  like it used to with pwa"; 20:46:43Z: "the install offer used to show
+  its not showing, that bottom offer is not really an offer its
+  attention, no clicking icon on browser and it try to install or it
+  popup and install". Root cause, in the 1.41.0
+  `components/custom/install-offer.tsx`: the `beforeinstallprompt`
+  listener was attached only when NO declared download matched the
+  visitor's platform (`if (platform === undefined || hasEntry) return;`),
+  and only from a second effect after the platform read - so a shell
+  with a matching entry never offered the install at all, and elsewhere
+  an event that fired before that effect was missed while a later one
+  was swallowed by `preventDefault()` with no control drawn for it. Now
+  the FIRST effect on mount, before any platform read, listens for
+  `beforeinstallprompt` and `appinstalled` (once, `[]`); the handler
+  calls `preventDefault()` only when our control will render - a page
+  running installed (`display-mode: standalone`) leaves the browser's
+  own banner alone - and stashes the event, which survives until the
+  visitor acts (`appinstalled` drops it). The Install control renders
+  only once an event is stashed; a click calls `event.prompt()`, awaits
+  `userChoice`, then clears the stash (a second click while it shows is
+  ignored; a later event is stashed again). With a matching download the
+  offer draws BOTH "Get the <label>" and, when an event is stashed,
+  Install - the 1.41.0 link is unchanged. `BeforeInstallPromptEvent` is
+  exported. The server and the first client render still draw nothing;
+  every window read is in an effect. Base registers no service worker:
+  the browser fires the event only for an installable page, which needs
+  the host's `app/manifest.ts` to carry `icons`.
+* The offered platform's icon button is hidden. Ray, 2026-09-11
+  20:33:16Z, of the icon buttons: "they become double when you tell user
+  to download for that platform, i think should hide the normal one when
+  showing the other". NEW client component
+  `components/custom/download-buttons.tsx` `DownloadButtons({ downloads,
+  hideOffered? })` draws the row's buttons - the same `<a>` per entry
+  `FooterChromeRow` drew (label as aria-label and title,
+  `data-download-platform`, `DOWNLOAD_BUTTON_CLASS`, `DownloadMark`) -
+  minus the one entry the install offer is showing. The offer publishes
+  that entry's id after mount to NEW `OFFERED_DOWNLOAD`
+  (`landing/install-offer.ts`; `createOfferedDownloadStore()`: a plain
+  `get`/`set`/`subscribe` store, `null` until set, notifying on a change
+  only) and clears it on unmount; the buttons read it through
+  `React.useSyncExternalStore` with `null` as the server snapshot and
+  filter with NEW `visibleDownloads(entries, offeredId)` (every entry but
+  that id, in order; `null` or an unknown id keeps all). So the server
+  HTML and the first client render carry EVERY icon - no window read at
+  render - and the duplicate goes after mount; with no offer mounted, no
+  platform recognised or an installed page nothing is hidden.
+  `useOfferedDownload()` is exported for a home SDK's own row;
+  `hideOffered={false}` keeps every button. `FooterChromeRow` renders
+  `<DownloadButtons downloads={downloads} />` after the offer, in the
+  same nav; nothing else in the row changes.
+* Tests: `tests/install-offer.test.mts` (node) executes
+  `visibleDownloads` and the store; `test_manifest.py` gains
+  `test_install_offer_runs_the_prompt_and_hides_the_offered_icon` (the
+  early attach, the guarded `preventDefault`, `prompt()` then
+  `userChoice`, the publish, the row's snapshot), re-pins the 1.41.0
+  offer and row needles (three effects now; the buttons in their file)
+  and raises the node pass floor. Manifest installs the new file.
+  `docs/downloads-and-install.md` describes both.
+* The hero's logo tile can be declared away. `HeroConfig.logo?: "tile" |
+  "none"` (`landing/hero-config.ts`, beside `brand`): `"tile"` - the
+  default, `HERO_CONFIG.logo`, and what every shell drew - draws the
+  host's `BrandLogo` (56px, with its badge) beside the wordmark slot;
+  `"none"` skips that render in `hero-view.tsx`
+  (`{hero.logo !== "none" && <BrandLogo width={56} height={56} showBadge={true} />}`),
+  for a shell whose `BrandLogo` is the full wordmark while the hero
+  already draws the stem (`brand: "stem"` or `"stem-tld"`) - the same
+  declaration the header's brand takes (`logo: "none"`). A home SDK's
+  hero copy declares it; nothing changes until one does.
+  `test_manifest.py` gains `test_hero_logo_tile_can_be_declared_none`.
+* Home SDKs: nothing to declare for the install offer; a shell that
+  mounts the offer in a header slot and its own icon row imports
+  `DownloadButtons` (or `useOfferedDownload`) for the same hiding. A
+  home SDK whose host `BrandLogo` is the wordmark declares
+  `logo: "none"` in its hero copy.
+
 ## 1.45.0
 
 * The public terms list falls back to the shell's bundled `data/legal`

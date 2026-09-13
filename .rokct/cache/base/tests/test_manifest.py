@@ -85,6 +85,16 @@ HERO_VIEW = os.path.join(SDK_ROOT, "templates", "components", "custom", "hero-vi
 LANDING_PAGE_RESOLVER = os.path.join(LANDING, "landing-page.ts")
 LANDING_PAGE = os.path.join(SDK_ROOT, "templates", "app", "landing", "page.tsx")
 LANDING_PAGE_TESTS = os.path.join(HERE, "landing-page.test.mts")
+# base_sdk 1.47.0: the site frame (Ray, 2026-09-11 20:44Z, of /about in its
+# own bare frame: "we have no way to get here and its so disconnected to
+# the rest of the site"), the pure rule beside the landing's and the
+# directive-free server component that draws it.
+SITE_FRAME_RULES = os.path.join(LANDING, "site-frame.ts")
+SITE_FRAME = os.path.join(SDK_ROOT, "templates", "components", "custom", "site-frame.tsx")
+SITE_FRAME_INSTALLS = {
+    "templates/components/custom/landing/site-frame.ts": "components/custom/landing/site-frame.ts",
+    "templates/components/custom/site-frame.tsx": "components/custom/site-frame.tsx",
+}
 LANDING_SSR_INSTALLS = {
     "templates/components/custom/hero-view.tsx": "components/custom/hero-view.tsx",
     "templates/components/custom/landing/landing-page.ts": "components/custom/landing/landing-page.ts",
@@ -130,7 +140,11 @@ INSTALL_OFFER = os.path.join(SDK_ROOT, "templates", "components", "custom", "ins
 DOWNLOAD_PLATFORM_TESTS = os.path.join(HERE, "download-platform.test.mts")
 INSTALL_OFFER_TESTS = os.path.join(HERE, "install-offer.test.mts")
 DOWNLOADS_DOC = os.path.join(SDK_ROOT, "docs", "downloads-and-install.md")
+# base_sdk 1.46.0: the install prompt as a real action and the icon row
+# minus the offered entry (Ray, 2026-09-11 20:33:16Z, 20:35:38Z, 20:46:43Z).
+DOWNLOAD_BUTTONS = os.path.join(SDK_ROOT, "templates", "components", "custom", "download-buttons.tsx")
 DOWNLOADS_INSTALLS = {
+    "templates/components/custom/download-buttons.tsx": "components/custom/download-buttons.tsx",
     "templates/components/custom/install-offer.tsx": "components/custom/install-offer.tsx",
     "templates/components/custom/landing/download-platform.ts": "components/custom/landing/download-platform.ts",
     "templates/components/custom/landing/install-offer.ts": "components/custom/landing/install-offer.ts",
@@ -965,6 +979,84 @@ class TestManifest(unittest.TestCase):
         self.assertIn("## 1.38.0", changelog)
         self.assertIn("`PageSectionMeta.page?:", changelog)
         self.assertNotRegex(changelog, re.compile(r"^#[^#\s]", re.M), "no CHANGELOG line starts with # and text")
+
+
+    def test_site_frame_seam(self):
+        """1.47.0 (Ray, 2026-09-11 20:44Z: "we have no way to get here and its
+        so disconnected to the rest of the site"). A home SDK marks the
+        sections that are its frame with `frame: true` on the meta it
+        already exports; site-frame.ts resolves the frame through the
+        landing's own loaders, its header menu against the LANDING's nav
+        with anchors on the landing route; site-frame.tsx draws it as a
+        directive-free server component; a page keeps its own frame when
+        none is registered. No brand, no host, no route beyond LANDING_ROUTE."""
+        manifest = load_manifest()
+        pairs = {(e["from"], e["to"]) for e in manifest["installs"]}
+        for src, dst in SITE_FRAME_INSTALLS.items():
+            self.assertIn((src, dst), pairs, f"{src} is not installed to {dst}")
+        sections = read(os.path.join(LANDING, "page-sections.ts"))
+        self.assertIn("  frame?: boolean;", sections)
+        self.assertIn("export function sectionFramesSite(meta: PageSectionMeta | undefined): boolean {", sections)
+        self.assertIn("return meta?.frame === true;", sections)
+        menu = read(HEADER_MENU_REGISTRY)
+        self.assertIn("export type HeaderAnchorHref = (id: string) => string;", menu)
+        self.assertIn("export const sameAnchorHref: HeaderAnchorHref = (id) => `#${id}`;", menu)
+        self.assertIn("export function anchorHrefOn(route: string): HeaderAnchorHref {", menu)
+        self.assertIn("  anchorHref: HeaderAnchorHref = sameAnchorHref,\n): ResolvedHeaderMenu {", menu)
+        self.assertIn("  anchorHref: HeaderAnchorHref = sameAnchorHref,\n): HeaderMenuItem[] {", menu)
+        self.assertIn("href: anchorHref(entry.id),", menu)
+        self.assertIn("href: anchorHref(nav.id),", menu)
+        self.assertIn("items: resolveHeaderMenuItems(menu, nav, anchorHref),", menu)
+        self.assertNotIn("href: `#${", menu, "every anchor href goes through anchorHref")
+        rules = read(SITE_FRAME_RULES)
+        self.assertIn("export interface SiteFrameLayout {", rules)
+        for field in ("registered: boolean;", "before: LoadedSection[];", "after: LoadedSection[];",
+                      "menu: ResolvedHeaderMenu;", "navItems: LandingNavItem[];", "rootClass: string;"):
+            self.assertIn(field, rules, field)
+        self.assertIn('export const SITE_FRAME_ROOT_CLASS = "flex flex-col min-h-screen bg-white dark:bg-black";', rules)
+        self.assertIn("export function frameSectionsOf(", rules)
+        self.assertIn(".filter((s) => sectionFramesSite(s.meta))", rules)
+        self.assertIn(".filter((s) => s.meta.renders?.(ctx) ?? true)", rules)
+        self.assertIn("export function landingNavItemsOf(", rules)
+        self.assertIn("const present = presentSectionsFor(DEFAULT_PAGE_SLOT, loaded, ctx);", rules)
+        self.assertIn("export function arrangeSiteFrame(", rules)
+        self.assertIn("landingRoute: string = LANDING_ROUTE,", rules)
+        self.assertIn("resolveHeaderMenu(headerMenu, navItems, anchorHrefOn(landingRoute))", rules)
+        self.assertIn("actions: dropBackendOnlyActions(menu.actions, ctx.dataMode)", rules)
+        self.assertIn("registered: frame.length > 0,", rules)
+        self.assertIn("export async function resolveSiteFrame(", rules)
+        self.assertIn("  ctx: PageSectionContext = { plans: [], session: null },\n"
+                      "  entries: PageSectionEntry[] = PAGE_SECTIONS,\n): Promise<SiteFrameLayout> {", rules)
+        self.assertIn("Promise.all([loadPageSections(entries), loadHeaderMenu()])", rules)
+        self.assertIn('import { LANDING_ROUTE } from "@/components/custom/landing/network-strip";', rules)
+        wrapper = read(SITE_FRAME)
+        self.assertIn("export async function SiteFrame({ frame, session, dataMode, page, children }: SiteFrameProps) {", wrapper)
+        self.assertIn("const layout = frame ?? (await resolveSiteFrame({ plans: [], session, dataMode }));", wrapper)
+        self.assertIn("[SITE_FRAME_ROOT_CLASS, layout.rootClass.trim()]", wrapper)
+        self.assertIn('data-site-frame={page ?? ""}', wrapper)
+        for prop in ("menuItems={layout.menu.items}", "groups={layout.menu.groups}",
+                     "megaLabel={layout.menu.megaLabel}", "actions={layout.menu.actions}",
+                     "loginUrl={LANDING_CONFIG.loginUrl}", "signupUrl={LANDING_CONFIG.signupUrl}",
+                     "session={session}", "dataMode={dataMode}"):
+            self.assertIn(prop, wrapper, prop)
+        self.assertIn("<FrameSections sections={layout.before} session={session} dataMode={dataMode} />", wrapper)
+        self.assertIn('<main className="flex-1">{children}</main>', wrapper)
+        self.assertIn("<FrameSections sections={layout.after} session={session} dataMode={dataMode} />", wrapper)
+        self.assertIn("<BackToTop />", wrapper)
+        for prop in ("id={domId}", "plans={[]}", "nav={[]}"):
+            self.assertIn(prop, wrapper, prop)
+        directive = re.compile(r"""^\s*["']use (client|server)["']""", re.M)
+        for path in (SITE_FRAME, SITE_FRAME_RULES):
+            code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(path)))
+            self.assertIsNone(directive.search(code), f"{os.path.basename(path)} carries a directive")
+            for hook in ("useState", "useEffect", "usePathname", "window.", "localStorage", "document."):
+                self.assertNotIn(hook, code, f"{os.path.basename(path)} uses {hook}")
+            for word in ("rokct.ai", "supacharge", ".school", "/about", "/team", "/legal", "demo", "sample", "lorem"):
+                self.assertNotIn(word, code.lower(), f"{os.path.basename(path)} names {word}")
+        changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
+        self.assertIn("## 1.47.0", changelog)
+        self.assertIn("`PageSectionMeta.frame`", changelog)
+        self.assertIn("SiteFrame", manifest["_comment"]["about"])
 
 
 class TestRegistryMarkers(unittest.TestCase):
@@ -2196,6 +2288,8 @@ class TestRegistryMarkers(unittest.TestCase):
             'from "@/components/custom/landing/hero-config"': 'from "./hero-config.ts"',
             'from "@/components/custom/landing/hero-copy"': 'from "./hero-copy.ts"',
             'from "@/components/custom/landing/page-sections"': 'from "./page-sections.ts"',
+            'from "@/components/custom/landing/landing-page"': 'from "./landing-page.ts"',
+            'from "@/components/custom/landing/network-strip"': 'from "./network-strip.ts"',
             'from "@/app/actions/base/landing"': 'from "./landing-actions.ts"',
             'from "@/app/config/features"': 'from "./features.ts"',
             'from "@/app/config/platform"': 'from "./platform.ts"',
@@ -2207,8 +2301,12 @@ class TestRegistryMarkers(unittest.TestCase):
             "hero-config.ts": os.path.join(LANDING, "hero-config.ts"),
             "hero-copy.ts": os.path.join(LANDING, "hero-copy.ts"),
             "page-sections.ts": os.path.join(LANDING, "page-sections.ts"),
+            # 1.47.0: the site frame rule, beside the landing's.
+            "site-frame.ts": SITE_FRAME_RULES,
         }
         stubs = {
+            # The landing route the frame's anchors lead to; the strip itself is not staged.
+            "network-strip.ts": 'export const LANDING_ROUTE = "/landing";\n',
             "landing-config.ts": (
                 "export type LandingNavBadge = 'new' | 'soon';\n"
                 "export interface LandingNavItem { id: string; label: string; badge?: LandingNavBadge }\n"
@@ -2251,7 +2349,7 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
-        self.assertGreaterEqual(int(passed.group(1)), 21)
+        self.assertGreaterEqual(int(passed.group(1)), 31)
 
     def test_installed_section_entry_modules_are_server_safe(self):
         """The registry is imported on the server since 1.32.0, so a section's
@@ -2893,6 +2991,7 @@ class TestRegistryMarkers(unittest.TestCase):
             self.assertIn(needle, rules)
         footer = read(FOOTER_CHROME)
         for needle in (
+            'import { DownloadButtons } from "@/components/custom/download-buttons";',
             'import { InstallOffer } from "@/components/custom/install-offer";',
             "const downloads = normaliseDownloads(config.downloads);",
             "{(groups.length > 0 || downloads.length > 0) && (",
@@ -2900,7 +2999,15 @@ class TestRegistryMarkers(unittest.TestCase):
             "aria-label={labels.downloads}",
             "data-footer-downloads={downloads.length}",
             '{installOffer && <InstallOffer downloads={downloads} className="mr-2" />}',
-            "{downloads.map((entry) => (",
+            "<DownloadButtons downloads={downloads} />",
+            "installOffer = true,",
+        ):
+            self.assertIn(needle, footer)
+        # 1.46.0: the buttons themselves are download-buttons.tsx, the same
+        # <a> per entry the row drew in 1.41.0.
+        buttons = read(DOWNLOAD_BUTTONS)
+        for needle in (
+            "{entries.map((entry) => (",
             'target={entry.external ? "_blank" : undefined}',
             'rel={entry.external ? "noreferrer" : undefined}',
             "aria-label={entry.label}",
@@ -2908,12 +3015,11 @@ class TestRegistryMarkers(unittest.TestCase):
             "data-download-platform={entry.platform}",
             "className={DOWNLOAD_BUTTON_CLASS}",
             "<DownloadMark entry={entry} />",
-            "installOffer = true,",
         ):
-            self.assertIn(needle, footer)
+            self.assertIn(needle, buttons)
         # The offer is FIRST in the nav, the buttons after it; the nav sits
         # beside the link groups, both above the copyright line.
-        self.assertLess(footer.index("<InstallOffer downloads={downloads}"), footer.index("{downloads.map((entry) => ("))
+        self.assertLess(footer.index("<InstallOffer downloads={downloads}"), footer.index("<DownloadButtons downloads={downloads} />"))
         self.assertLess(footer.index('aria-label="Footer links"'), footer.index("aria-label={labels.downloads}"))
         self.assertLess(footer.index("aria-label={labels.downloads}"), footer.index("© Copyright {year}"))
         glyphs = read(PLATFORM_GLYPHS)
@@ -2938,7 +3044,7 @@ class TestRegistryMarkers(unittest.TestCase):
             self.assertRegex(shapes, re.compile(rf'^  {platform}: "(?:phone|laptop|terminal|globe)",$', re.M))
         # Still generic, and no brand mark is drawn by hand: the only paths
         # the glyph file draws are the four shapes' own.
-        body = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", footer + config + rules + glyphs))
+        body = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", footer + buttons + config + rules + glyphs))
         for word in ("rokct.ai", "supacharge", "https://", "play.google", "apps.apple", "appgallery.huawei", "demo", "sample", "lorem", "APK"):
             self.assertNotIn(word, body, word)
         # Installed, as a set.
@@ -2958,10 +3064,11 @@ class TestRegistryMarkers(unittest.TestCase):
         is a client component that reads the platform after mount
         (install-offer.ts detectPlatform), hides on an installed page
         (matchMedia standalone), links the download declared for the
-        platform as "Get the <label>", and falls back to the browser's
-        beforeinstallprompt as "Install"; the row mounts it first in the
-        Downloads nav and exports nothing new for the header: a home SDK
-        imports the component itself."""
+        platform as "Get the <label>", and keeps the browser's
+        beforeinstallprompt for "Install" (since 1.46.0 beside the link,
+        not instead of it); the row mounts it first in the Downloads nav
+        and exports nothing new for the header: a home SDK imports the
+        component itself."""
         offer = read(INSTALL_OFFER)
         self.assertTrue(offer.lstrip().startswith("/*"), "licence header first")
         self.assertIn('"use client";', offer)
@@ -2979,8 +3086,8 @@ class TestRegistryMarkers(unittest.TestCase):
             "setPlatform(forced === undefined ? detectPlatform() : forced);",
             "const entry = platform ? pickDownload(downloads, platform) : null;",
             "if (platform === undefined || standalone) return null;",
-            "const text = installOfferText(entry, words);",
-            "pending.prompt().catch(() => {",
+            "<span>{installOfferText(entry, words)}</span>",
+            "await event.prompt();",
             "<span>{words.install}</span>",
             "data-install-offer={entry.platform}",
             'data-install-offer="prompt"',
@@ -2989,9 +3096,10 @@ class TestRegistryMarkers(unittest.TestCase):
         ):
             self.assertIn(needle, offer)
         # Everything is read in effects: the server and the first client
-        # render agree on nothing drawn.
+        # render agree on nothing drawn. Three since 1.46.0: the listeners,
+        # the platform read, the publish to the icon row.
         code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", offer))
-        self.assertEqual(code.count("React.useEffect("), 2)
+        self.assertEqual(code.count("React.useEffect("), 3)
         self.assertNotIn("typeof window", code.split("React.useEffect(")[0], "no window read at render")
         rules = read(INSTALL_OFFER_RULES)
         for needle in (
@@ -3045,7 +3153,141 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
-        self.assertGreaterEqual(int(passed.group(1)), 22)
+        self.assertGreaterEqual(int(passed.group(1)), 28)
+
+    # -- 1.46.0: the install prompt as a real action; the duplicate icon hidden
+
+    def test_install_offer_runs_the_prompt_and_hides_the_offered_icon(self):
+        """1.46.0 (Ray, 2026-09-11 20:35:38Z: "nextjs no longer offering me
+        to install app like it used to with pwa"; 20:46:43Z: "the install
+        offer used to show its not showing, that bottom offer is not really
+        an offer its attention, no clicking icon on browser and it try to
+        install or it popup and install"; 20:33:16Z: the icon buttons
+        "become double when you tell user to download for that platform, i
+        think should hide the normal one when showing the other"): the
+        offer listens for beforeinstallprompt in its FIRST effect, before
+        the platform read; preventDefault runs only when the control will
+        render (never on an installed page); the stash survives until the
+        visitor acts, appinstalled drops it; Install calls event.prompt()
+        and awaits userChoice; a matching download and the Install action
+        render side by side; the offer publishes the shown entry's id and
+        download-buttons.tsx hides that one icon after mount, with every
+        icon still in the server HTML. Manifest 1.46.0 installs the new
+        file; the CHANGELOG and the doc carry the rulings."""
+        manifest = load_manifest()
+        self.assertGreaterEqual(tuple(int(p) for p in manifest["version"].split(".")), (1, 46, 0))
+        installs = {e["from"]: e["to"] for e in manifest["installs"]}
+        self.assertEqual(
+            installs.get("templates/components/custom/download-buttons.tsx"),
+            "components/custom/download-buttons.tsx",
+        )
+        self.assertIn("1.46.0", manifest["_comment"]["about"])
+        offer = read(INSTALL_OFFER)
+        for needle in (
+            "export interface BeforeInstallPromptEvent extends Event {",
+            "const offerable = React.useRef(true);",
+            "const showing = React.useRef(false);",
+            "if (!offerable.current) return;",
+            "event.preventDefault();",
+            'window.addEventListener("beforeinstallprompt", onPrompt);',
+            'window.addEventListener("appinstalled", onInstalled);',
+            'window.removeEventListener("appinstalled", onInstalled);',
+            "offerable.current = !installed;",
+            "const offeredId = platform !== undefined && !standalone && entry ? entry.id : null;",
+            "OFFERED_DOWNLOAD.set(offeredId);",
+            "OFFERED_DOWNLOAD.set(null);",
+            "const install = async () => {",
+            "if (!event || showing.current) return;",
+            "await event.prompt();",
+            "await event.userChoice;",
+            "setPrompt(null);",
+            "{entry && (",
+            "{prompt && (",
+            "onClick={install}",
+        ):
+            self.assertIn(needle, offer, needle)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", offer))
+        effects = code.split("React.useEffect(")
+        self.assertEqual(len(effects), 4, "three effects")
+        # The FIRST effect attaches the listeners and reads no platform; the
+        # platform read is the second; the publish is the third.
+        self.assertIn('window.addEventListener("beforeinstallprompt", onPrompt);', effects[1])
+        self.assertIn("}, []);", effects[1], "attached once, on mount")
+        self.assertNotIn("detectPlatform()", effects[1])
+        self.assertIn("setPlatform(forced === undefined ? detectPlatform() : forced);", effects[2])
+        self.assertIn("OFFERED_DOWNLOAD.set(offeredId);", effects[3])
+        self.assertLess(code.index("if (!offerable.current) return;"), code.index("event.preventDefault();"))
+        self.assertLess(code.index("await event.prompt();"), code.index("await event.userChoice;"))
+        self.assertLess(code.index("await event.userChoice;"), code.index("setPrompt(null);\n    }\n  };"))
+        self.assertNotIn("window", effects[0], "no window read at render")
+        self.assertNotIn("hasEntry", code, "the entry no longer gates the listener")
+        # The icon row: every entry on the server, the offered one hidden
+        # after mount, no window read anywhere.
+        buttons = read(DOWNLOAD_BUTTONS)
+        self.assertTrue(buttons.lstrip().startswith("/*"), "licence header first")
+        self.assertIn('"use client";', buttons)
+        self.assertLess(buttons.index('"use client";'), buttons.index("import React"))
+        for needle in (
+            'import { OFFERED_DOWNLOAD, visibleDownloads } from "@/components/custom/landing/install-offer";',
+            "export interface DownloadButtonsProps {",
+            "  downloads: DownloadEntry[];",
+            "  hideOffered?: boolean;",
+            "const serverSnapshot = () => null;",
+            "export function useOfferedDownload(): string | null {",
+            "return React.useSyncExternalStore(OFFERED_DOWNLOAD.subscribe, OFFERED_DOWNLOAD.get, serverSnapshot);",
+            "export function DownloadButtons({ downloads, hideOffered = true }: DownloadButtonsProps) {",
+            "const entries = visibleDownloads(downloads, hideOffered ? offeredId : null);",
+            "export default DownloadButtons;",
+        ):
+            self.assertIn(needle, buttons, needle)
+        buttons_code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", buttons))
+        self.assertNotIn("window", buttons_code)
+        self.assertNotIn("useEffect", buttons_code)
+        rules = read(INSTALL_OFFER_RULES)
+        for needle in (
+            "export interface OfferedDownloadStore {",
+            "export function createOfferedDownloadStore(): OfferedDownloadStore {",
+            "export const OFFERED_DOWNLOAD: OfferedDownloadStore = createOfferedDownloadStore();",
+            "export function visibleDownloads<T extends { id: string }>(",
+            "if (offeredId === null) return [...entries];",
+            "return entries.filter((entry) => entry.id !== offeredId);",
+        ):
+            self.assertIn(needle, rules, needle)
+        rules_code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", rules + offer + buttons)).lower()
+        for word in ("rokct.ai", "supacharge", "https://", "apk", "document.", "localstorage", "serviceworker"):
+            self.assertNotIn(word, rules_code, word)
+        changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
+        self.assertIn("## 1.46.0", changelog)
+        self.assertLess(changelog.index("## 1.46.0"), changelog.index("## 1.45.0"))
+        # The bullets are hard-wrapped; the rulings are quoted whole.
+        changelog = " ".join(changelog.split())
+        for quote in (
+            "no longer offering me to install app like it used to with pwa",
+            "no clicking icon on browser and it try to install or it popup and install",
+            "hide the normal one when showing the other",
+        ):
+            self.assertIn(quote, changelog, quote)
+            self.assertIn(quote, manifest["_comment"]["about"], quote)
+        doc = read(DOWNLOADS_DOC)
+        for needle in ("appinstalled", "userChoice", "download-buttons", "visibleDownloads", "OFFERED_DOWNLOAD"):
+            self.assertIn(needle, doc, needle)
+
+    def test_hero_logo_tile_can_be_declared_none(self):
+        """1.46.0: `HeroConfig.logo?: "tile" | "none"` (hero-config.ts),
+        default "tile" - the host's BrandLogo beside the wordmark slot, as
+        every shell drew - and "none" skips that render in hero-view.tsx,
+        for a shell whose BrandLogo is the full wordmark while the hero
+        draws the stem; the same declaration the header's brand takes."""
+        config = read(os.path.join(LANDING, "hero-config.ts"))
+        self.assertIn('  logo?: "tile" | "none";', config)
+        self.assertLess(config.index('brand?: "name" | "stem" | "stem-tld";'), config.index('logo?: "tile" | "none";'))
+        self.assertIn('  logo: "tile",', config)
+        self.assertLess(config.index("export const HERO_CONFIG: HeroConfig = {"), config.index('  logo: "tile",'))
+        hero = read(HERO_VIEW)
+        self.assertIn('{hero.logo !== "none" && <BrandLogo width={56} height={56} showBadge={true} />}', hero)
+        self.assertEqual(hero.count("<BrandLogo "), 1, "the hero draws the tile once, guarded")
+        header_rules = read(HEADER_MENU_REGISTRY)
+        self.assertIn('export type HeaderBrandLogo = "auto" | "none" | (string & {});', header_rules)
 
     # -- 1.42.0: the floating "Back to top" button ----------------------------
 

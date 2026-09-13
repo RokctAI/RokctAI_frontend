@@ -63,8 +63,22 @@ MARKDOWN_PARSER = os.path.join(COMPANY_COMPONENTS, "markdown-parser.ts")
 MARKDOWN_VIEW = os.path.join(COMPANY_COMPONENTS, "markdown.tsx")
 TEAM_GRID = os.path.join(COMPANY_COMPONENTS, "team-grid.tsx")
 MARKDOWN_TESTS = os.path.join(HERE, "markdown.test.mts")
+# 1.2.0: the loader's rule, executed under node against stubs.
+LOADER_TESTS = os.path.join(HERE, "load-legal-doc.test.mts")
+LEGAL_INDEX_PAGE = INDEX_PAGE
+PAGES = (ABOUT_PAGE, TEAM_PAGE, INDEX_PAGE, DOC_PAGE)
 
 BASE_FLOOR = "1.37.0"
+# 1.2.0: the site frame (Ray, 2026-09-11 20:44Z: "we have no way to get
+# here and its so disconnected to the rest of the site") and the 1.45.0
+# index whose bundled slugs the document page now answers.
+BASE_147_REQUIRES = (
+    "components/custom/landing/site-frame.ts",
+    "components/custom/site-frame.tsx",
+)
+BASE_145_REQUIRES = (
+    "app/actions/base/legal.ts",
+)
 # 1.1.0: the page slot and the site-data reader, each read at its floor.
 BASE_138_REQUIRES = (
     "components/custom/landing/landing-page.ts",
@@ -77,7 +91,6 @@ BASE_135_REQUIRES = (
 # The base_sdk 1.37.0 files this SDK reads: each must be a declared
 # prerequisite with its floor in the manifest comment.
 BASE_134_REQUIRES = (
-    "app/actions/base/legal.ts",
     "components/custom/landing/legal-links.ts",
     "components/custom/landing/footer-chrome-config.ts",
     "components/custom/footer-chrome.tsx",
@@ -118,7 +131,7 @@ class TestCorporateNextjs(unittest.TestCase):
     def test_identity_and_version(self):
         self.assertEqual(self.manifest["name"], "corporate_sdk")
         self.assertRegex(self.manifest["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual(self.manifest["version"], "1.1.0")
+        self.assertEqual(self.manifest["version"], "1.2.0")
         self.assertIn("sdk_name = 'corporate_sdk'", read(INSTALL_PY))
         self.assertTrue(read(INSTALL_PY).startswith("# " + LICENSE_HEAD))
         # Same shape as the sibling halves: one flat installs list, no
@@ -198,6 +211,15 @@ class TestCorporateNextjs(unittest.TestCase):
             self.assertIn("base_sdk >= 1.35.0", comment[path], path)
         self.assertIn("base_sdk >= 1.38.0", comment["about"])
         self.assertIn("base_sdk >= 1.35.0", comment["about"])
+        # 1.2.0: the site frame (1.47.0) and the bundled index (1.45.0).
+        for path in BASE_147_REQUIRES:
+            self.assertIn(path, requires, path)
+            self.assertIn("base_sdk >= 1.47.0", comment[path], path)
+        for path in BASE_145_REQUIRES:
+            self.assertIn(path, requires, path)
+            self.assertIn("base_sdk >= 1.45.0", comment[path], path)
+        self.assertIn("base_sdk >= 1.47.0", comment["about"])
+        self.assertIn("base_sdk >= 1.45.0", comment["about"])
         # Every other prerequisite names who installs it too.
         for req in requires:
             self.assertIn(req, comment, f"{req} has no owner comment")
@@ -259,12 +281,15 @@ class TestCorporateNextjs(unittest.TestCase):
         loader = read(LOADER)
         self.assertIn("export async function loadLegalDoc(slug: string): Promise<LegalDoc | null> {", loader)
         self.assertIn("export async function loadLegalIndex(): Promise<PublicTerm[]> {", loader)
-        self.assertIn("if (!doc || doc.disabled) return null;", loader)
+        # 1.2.0: an enabled backend document wins; nothing (or disabled) falls
+        # back to the bundled slug - see test_legal_loader_falls_back_to_the_folder.
+        self.assertIn("if (doc && !doc.disabled) return doc;", loader)
         self.assertIn("1.1.0", loader)
 
     def test_index_page_lists_through_the_seam(self):
         src = read(INDEX_PAGE)
-        self.assertIn("const terms = await loadLegalIndex();", src)
+        self.assertIn("  const [terms, frame] = await Promise.all([\n    loadLegalIndex(),\n"
+                      "    resolveSiteFrame({ plans: [], session, dataMode }),\n  ]);", src)
         self.assertIn("href={legalDocHref(term.name)}", src)
         self.assertIn("{term.title}", src)
         self.assertIn("terms.length === 0", src)
@@ -412,10 +437,159 @@ class TestCorporateNextjs(unittest.TestCase):
         self.assertIn("const local = await siteLegalDocs();\n  if (local) return legalDocFromSiteData(slug, local);", loader)
         self.assertIn("const local = await siteLegalDocs();\n  if (local) {", loader)
         self.assertIn(".sort()", loader)
+        # 1.2.0: the bundled slug answers when the backend has nothing for it.
+        self.assertIn("export function bundledLegalDoc(slug: string): LegalDoc | null {", loader)
+        self.assertIn('    if (!hasSiteData("legal")) return null;\n    const docs = readSiteData("legal");\n'
+                      "    return docs ? legalDocFromSiteData(slug, docs) : null;", loader)
+        self.assertIn('console.error("[legal] bundled data/legal read failed:", e);', loader)
+        self.assertIn("  const doc = await getPublicTerm(slug);\n  if (doc && !doc.disabled) return doc;\n"
+                      "  return bundledLegalDoc(slug);", loader)
+        self.assertNotIn("if (!doc || doc.disabled) return null;", loader)
+        self.assertIn("1.2.0", loader)
+        # The pages read the folder through the seams only (the data mode
+        # they read for the frame is not the folder).
         for path in (INDEX_PAGE, DOC_PAGE):
             body = code_of(path)
-            self.assertNotIn("site-data", body)
-            self.assertNotIn("siteLegalDocs", body)
+            for word in ("siteLegalDocs", "bundledLegalDoc", "hasSiteData", "readSiteData", "legalDocFromSiteData"):
+                self.assertNotIn(word, body, f"{os.path.relpath(path, SDK_ROOT)} reads {word}")
+            self.assertIn('import { siteDataMode } from "@/lib/site-data/read-site-data";', read(path))
+
+    def test_legal_loader_behaviour_under_node(self):
+        """tests/load-legal-doc.test.mts against a copy of the loader staged
+        beside stubs of base's listPublicTerms, this SDK's getPublicTerm,
+        the tenant resolver and the site-data reader: the folder outright
+        on a local shell or with no backend, the backend winning with an
+        enabled document, nothing / disabled / a failure falling back to
+        the bundled slug in hybrid and backend modes, no folder still null."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute load-legal-doc.ts")
+        rewrites = {
+            'from "@/app/actions/base/legal"': 'from "./base-legal.ts"',
+            'from "@/app/actions/corporate/legal"': 'from "./corporate-legal.ts"',
+            'from "@/app/services/base/platform-gateway"': 'from "./platform-gateway.ts"',
+            'from "@/components/custom/landing/legal-links"': 'from "./legal-links.ts"',
+            'from "@/components/custom/legal/legal-doc"': 'from "./legal-doc.ts"',
+            'from "@/lib/site-data/kinds"': 'from "./site-data-kinds.ts"',
+            'from "@/lib/site-data/read-site-data"': 'from "./read-site-data.ts"',
+        }
+        stubs = {
+            "base-legal.ts": (
+                "import type { PublicTerm } from './legal-links.ts';\n"
+                "export const index = { asked: 0, rows: [] as PublicTerm[],\n"
+                "  reset() { this.asked = 0; this.rows = []; }, answer(rows: PublicTerm[]) { this.rows = rows; } };\n"
+                "export async function listPublicTerms(): Promise<PublicTerm[]> { index.asked += 1; return index.rows; }\n"
+            ),
+            "corporate-legal.ts": (
+                "import type { LegalDoc } from './legal-doc.ts';\n"
+                "export const backend = { asked: [] as string[], doc: null as LegalDoc | null,\n"
+                "  reset() { this.asked = []; this.doc = null; }, answer(doc: LegalDoc | null) { this.doc = doc; } };\n"
+                "export async function getPublicTerm(name: string): Promise<LegalDoc | null> { backend.asked.push(name); return backend.doc; }\n"
+            ),
+            "platform-gateway.ts": (
+                "export const gateway = { base: undefined as string | undefined, failure: null as Error | null,\n"
+                "  reset() { this.base = undefined; this.failure = null; },\n"
+                "  tenant(base: string | undefined) { this.base = base; this.failure = null; },\n"
+                "  fail(error: Error) { this.failure = error; } };\n"
+                "export async function resolveTenantBaseUrl(): Promise<string | undefined> {\n"
+                "  if (gateway.failure) throw gateway.failure; return gateway.base; }\n"
+            ),
+            "legal-links.ts": "export interface PublicTerm { name: string; title: string; disabled: boolean }\n",
+            "legal-doc.ts": "export interface LegalDoc { name: string; title: string; body: string; disabled: boolean }\n",
+            "site-data-kinds.ts": (
+                "export type SiteDataMode = 'local' | 'backend' | 'hybrid';\n"
+                "export interface SiteLegalPage { title: string; markdown: string }\n"
+                "export type SiteLegal = Record<string, SiteLegalPage>;\n"
+            ),
+            "read-site-data.ts": (
+                "import type { SiteDataMode, SiteLegal } from './site-data-kinds.ts';\n"
+                "type Bundle = { legal?: SiteLegal };\n"
+                "export const reader = { mode: 'backend' as SiteDataMode, bundle: {} as Bundle, failure: null as Error | null,\n"
+                "  reset() { this.mode = 'backend'; this.bundle = {}; this.failure = null; },\n"
+                "  set(mode: SiteDataMode, bundle: Bundle) { this.mode = mode; this.bundle = bundle; this.failure = null; },\n"
+                "  throwOnRead(error: Error) { this.failure = error; } };\n"
+                "export function siteDataMode(): SiteDataMode { return reader.mode; }\n"
+                "export function hasSiteData(kind: 'legal'): boolean { return reader.mode !== 'backend' ? kind in reader.bundle : kind in reader.bundle; }\n"
+                "export function readSiteData(kind: 'legal'): SiteLegal | undefined {\n"
+                "  if (reader.failure) throw reader.failure; return reader.bundle[kind]; }\n"
+            ),
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            staged = read(LOADER)
+            for src, dst in rewrites.items():
+                self.assertIn(src, staged, f"load-legal-doc.ts no longer imports {src}")
+                staged = staged.replace(src, dst)
+            self.assertNotIn('from "@/', staged, "load-legal-doc.ts imports something the stage does not cover")
+            with open(os.path.join(tmp, "load-legal-doc.ts"), "w", encoding="utf-8") as f:
+                f.write(staged)
+            for fname, body in stubs.items():
+                with open(os.path.join(tmp, fname), "w", encoding="utf-8") as f:
+                    f.write(body)
+            shutil.copy(LOADER_TESTS, os.path.join(tmp, "load-legal-doc.test.mts"))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 os.path.join(tmp, "load-legal-doc.test.mts")],
+                capture_output=True, text=True, timeout=120, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 13)
+
+    # -- 1.2.0: the site frame ---------------------------------------------------
+
+    def test_pages_sit_in_the_site_frame_when_registered(self):
+        """Ray, 2026-09-11 20:44Z, of /about: "we have no way to get here and
+        its so disconnected to the rest of the site". Every page awaits
+        base_sdk 1.47.0's resolveSiteFrame beside what it loads, sits in
+        base's SiteFrame when the home SDK registered one, and keeps its
+        own frame otherwise - the fallback frames are unchanged and still
+        installed. No home SDK is imported."""
+        pairs = {(e["from"], e["to"]) for e in self.manifest["installs"]}
+        self.assertIn(("templates/components/custom/company/company-frame.tsx",
+                       "components/custom/company/company-frame.tsx"), pairs)
+        self.assertIn(("templates/components/custom/legal/legal-frame.tsx",
+                       "components/custom/legal/legal-frame.tsx"), pairs)
+        requires = set(self.manifest["requires"])
+        for path in BASE_147_REQUIRES:
+            self.assertIn(path, requires, path)
+        frames = {
+            ABOUT_PAGE: ('if (!frame.registered) return <CompanyFrame page="about" terms={terms}>{body}</CompanyFrame>;',
+                         '<SiteFrame frame={frame} page="about" session={session} dataMode={dataMode}>'),
+            TEAM_PAGE: ('if (!frame.registered) return <CompanyFrame page="team" terms={terms}>{body}</CompanyFrame>;',
+                        '<SiteFrame frame={frame} page="team" session={session} dataMode={dataMode}>'),
+            INDEX_PAGE: ("if (!frame.registered) return <LegalFrame terms={terms} indexLink={false}>{body}</LegalFrame>;",
+                         '<SiteFrame frame={frame} page="legal" session={session} dataMode={dataMode}>'),
+            DOC_PAGE: ("if (!frame.registered) return <LegalFrame terms={terms}><LegalDocView doc={doc} /></LegalFrame>;",
+                       '<SiteFrame frame={frame} page="legal" session={session} dataMode={dataMode}>'),
+        }
+        for path, (fallback, framed) in frames.items():
+            src = read(path)
+            rel = os.path.relpath(path, SDK_ROOT)
+            self.assertIn('import { resolveSiteFrame } from "@/components/custom/landing/site-frame";', src, rel)
+            self.assertIn('import { SiteFrame } from "@/components/custom/site-frame";', src, rel)
+            self.assertIn('import { getPlatformSession } from "@/app/services/base/session";', src, rel)
+            self.assertIn("resolveSiteFrame({ plans: [], session, dataMode }),", src, rel)
+            self.assertIn(fallback, src, rel)
+            self.assertIn(framed, src, rel)
+            self.assertLess(src.index(fallback), src.index(framed), f"{rel}: the fallback is decided first")
+            body = code_of(path)
+            self.assertNotIn("lms", body.lower(), rel)
+            self.assertNotIn("agent_sdk", body.lower(), rel)
+            self.assertNotIn("frame: true", body, f"{rel} marks nothing; the home SDK does")
+        # The document page still 404s before it frames anything.
+        doc = read(DOC_PAGE)
+        self.assertLess(doc.index("if (!doc) notFound();"), doc.index("if (!frame.registered)"))
+        # The fallback frames are what they were: their own header and footer.
+        for path in (COMPANY_FRAME, FRAME):
+            src = read(path)
+            self.assertIn('<Link href="/" className="font-bold tracking-tight">', src)
+            self.assertIn("<FooterChromeRow config={config} />", src)
+            self.assertNotIn("site-frame", src)
+        changelog = read(CHANGELOG)
+        self.assertIn("## 1.2.0", changelog)
+        self.assertIn("we have no way to get here", changelog)
+        self.assertIn("we have no way to get here", self.manifest["_comment"]["about"])
 
     # -- changelog ------------------------------------------------------------
 

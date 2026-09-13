@@ -55,19 +55,22 @@
 // that nav, the INSTALL OFFER (components/custom/install-offer.tsx; Ray,
 // same day: "it should check the platform and offer app of that
 // platform"), which reads the visitor's platform after mount and offers
-// the download declared for it, or the browser's install prompt. Nothing
-// is drawn when no download is declared.
+// the download declared for it and, since 1.46.0, the browser's install
+// prompt as an action beside it. Nothing is drawn when no download is
+// declared. Since 1.46.0 the buttons are components/custom/download-buttons.tsx,
+// which hides the one entry the offer already shows (Ray, 2026-09-11
+// 20:33:16Z: "they become double when you tell user to download for that
+// platform, i think should hide the normal one when showing the other")
+// after mount - the server HTML still carries every icon.
 
 import React from "react";
 import Link from "next/link";
 
 import { getPlatformStatus } from "@/app/actions/base/status";
+import { DownloadButtons } from "@/components/custom/download-buttons";
 import { InstallOffer } from "@/components/custom/install-offer";
 import { NetworkStrip } from "@/components/custom/network-strip";
-import {
-  downloadTitle,
-  normaliseDownloads,
-} from "@/components/custom/landing/download-platform";
+import { normaliseDownloads } from "@/components/custom/landing/download-platform";
 import {
   FOOTER_CHROME_CONFIG,
   FOOTER_CHROME_LABELS,
@@ -75,10 +78,6 @@ import {
   type FooterChromeConfig,
   type PlatformStatus,
 } from "@/components/custom/landing/footer-chrome-config";
-import {
-  DOWNLOAD_BUTTON_CLASS,
-  DownloadMark,
-} from "@/components/custom/landing/platform-glyphs";
 
 export interface FooterChromeRowProps {
   /** Defaults to [FOOTER_CHROME_CONFIG], which reads the environment. */
@@ -221,20 +220,7 @@ export function FooterChromeRow({
               data-footer-downloads={downloads.length}
             >
               {installOffer && <InstallOffer downloads={downloads} className="mr-2" />}
-              {downloads.map((entry) => (
-                <a
-                  key={entry.id}
-                  href={entry.href}
-                  target={entry.external ? "_blank" : undefined}
-                  rel={entry.external ? "noreferrer" : undefined}
-                  aria-label={entry.label}
-                  title={downloadTitle(entry)}
-                  data-download-platform={entry.platform}
-                  className={DOWNLOAD_BUTTON_CLASS}
-                >
-                  <DownloadMark entry={entry} />
-                </a>
-              ))}
+              <DownloadButtons downloads={downloads} />
             </nav>
           )}
         </div>

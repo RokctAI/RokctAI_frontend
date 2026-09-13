@@ -29,7 +29,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { HEADER_MENU } from './header-menu.ts';
+import { HEADER_MENU, anchorHrefOn, resolveHeaderMenu, sameAnchorHref } from './header-menu.ts';
 import { HERO_CONFIG } from './hero-config.ts';
 import { HERO_COPY } from './hero-copy.ts';
 import { LANDING_CONFIG } from './landing-config.ts';
@@ -52,10 +52,18 @@ import {
   DEFAULT_PAGE_SLOT,
   PAGE_SECTIONS,
   PAGE_SLOTS,
+  sectionFramesSite,
   sectionPageOf,
   type PageSectionMeta,
   type PageSectionModule,
 } from './page-sections.ts';
+import {
+  SITE_FRAME_ROOT_CLASS,
+  arrangeSiteFrame,
+  frameSectionsOf,
+  landingNavItemsOf,
+  resolveSiteFrame,
+} from './site-frame.ts';
 
 // A section component stub: the arrangement never renders it.
 const Section = () => null;
@@ -629,5 +637,144 @@ describe('page slots (1.38.0)', () => {
     } finally {
       PAGE_SECTIONS.splice(0, PAGE_SECTIONS.length);
     }
+  });
+});
+
+// base_sdk 1.47.0: the site frame - the home SDK's theme and footer around
+// a page that is not the landing, and the header menu resolved against
+// the landing's nav with anchors on the landing route.
+describe('site frame', () => {
+  const MENU = {
+    anchors: ['pricing', 'faq'],
+    links: [{ id: 'about', label: 'About', href: '/about' }],
+    groups: [
+      { id: 'explore', label: 'Explore', items: [{ anchor: 'sessions' }, { anchor: 'missing' }] },
+      { id: 'apps', label: 'Apps', items: [{ id: 'web', label: 'Web', href: '/web' }] },
+    ],
+    actions: [
+      { id: 'login', label: 'Log in', href: '/login' },
+      { id: 'docs', label: 'Docs', href: '/docs' },
+    ],
+  };
+  const loaded = [
+    section('footer-section', { order: 95, nav: [], frame: true }),
+    section('theme', { order: -2, nav: [], rootClass: ' acme-theme font-a ', frame: true }),
+    section('pricing', { order: 40, nav: [{ id: 'pricing', label: 'Pricing' }], rootClass: 'landing-only' }),
+    section('sessions', { order: 10, nav: [{ id: 'sessions', label: 'Sessions' }] }),
+    section('faq', { order: 50, nav: [{ id: 'faq', label: 'FAQ' }], renders: (ctx) => ctx.plans.length > 0 }),
+    section('banner', { order: -1, nav: [], frame: true, renders: (ctx) => ctx.dataMode === 'local' }),
+    section('founder', { page: 'about', frame: true, order: 5, nav: [] }),
+  ];
+
+  it('sectionFramesSite is true for frame: true and nothing else', () => {
+    assert.equal(sectionFramesSite({ frame: true }), true);
+    assert.equal(sectionFramesSite({}), false);
+    assert.equal(sectionFramesSite(undefined), false);
+    assert.equal(sectionFramesSite({ frame: 1 as never }), false);
+  });
+
+  it('anchorHrefOn puts the anchor on the route; the default keeps it on the page', () => {
+    assert.equal(sameAnchorHref('pricing'), '#pricing');
+    assert.equal(anchorHrefOn('/landing')('pricing'), '/landing#pricing');
+    assert.equal(anchorHrefOn(' /landing#old ')('faq'), '/landing#faq');
+    const nav = [{ id: 'pricing', label: 'Pricing' }];
+    assert.deepEqual(resolveHeaderMenu(MENU, nav).items.map((i) => i.href), ['#pricing', '/about']);
+    assert.deepEqual(
+      resolveHeaderMenu(MENU, nav, anchorHrefOn('/landing')).items.map((i) => i.href),
+      ['/landing#pricing', '/about'],
+    );
+  });
+
+  it('frameSectionsOf keeps the marked sections, asks renders and sorts by order', () => {
+    assert.deepEqual(frameSectionsOf(loaded, CTX).map((s) => s.id), ['theme', 'founder', 'footer-section']);
+    assert.deepEqual(
+      frameSectionsOf(loaded, { ...CTX, dataMode: 'local' }).map((s) => s.id),
+      ['theme', 'banner', 'founder', 'footer-section'],
+    );
+    assert.deepEqual(frameSectionsOf([], CTX), []);
+  });
+
+  it('landingNavItemsOf is the landing nav: hero, present landing sections, footer', () => {
+    assert.deepEqual(landingNavItemsOf(loaded, CTX).map((n) => n.id), ['hero', 'sessions', 'pricing', 'footer']);
+    assert.deepEqual(
+      landingNavItemsOf(loaded, { plans: [{ name: 'p' } as never], session: null }).map((n) => n.id),
+      ['hero', 'sessions', 'pricing', 'faq', 'footer'],
+    );
+  });
+
+  it('arrangeSiteFrame splits before and after, joins rootClass from frame sections only', () => {
+    const frame = arrangeSiteFrame(loaded, CTX, MENU);
+    assert.equal(frame.registered, true);
+    assert.deepEqual(frame.before.map((s) => s.id), ['theme']);
+    assert.deepEqual(frame.after.map((s) => s.id), ['founder', 'footer-section']);
+    assert.equal(frame.rootClass, 'acme-theme font-a');
+    assert.ok(!frame.rootClass.includes('landing-only'));
+    assert.deepEqual(frame.navItems.map((n) => n.id), ['hero', 'sessions', 'pricing', 'footer']);
+    assert.equal(SITE_FRAME_ROOT_CLASS, 'flex flex-col min-h-screen bg-white dark:bg-black');
+  });
+
+  it('arrangeSiteFrame resolves the menu against the landing nav with anchors on the landing route', () => {
+    const frame = arrangeSiteFrame(loaded, CTX, MENU);
+    assert.deepEqual(
+      frame.menu.items.map((i) => [i.key, i.href]),
+      [['pricing', '/landing#pricing'], ['about', '/about']],
+    );
+    assert.deepEqual(frame.menu.groups.map((g) => g.id), ['explore', 'apps']);
+    assert.deepEqual(frame.menu.groups[0].items.map((i) => i.href), ['/landing#sessions']);
+    assert.deepEqual(frame.menu.groups[1].items.map((i) => i.href), ['/web']);
+    assert.deepEqual(frame.menu.actions.map((a) => a.id), ['login', 'docs']);
+    const elsewhere = arrangeSiteFrame(loaded, CTX, MENU, '/home');
+    assert.equal(elsewhere.menu.items[0].href, '/home#pricing');
+    const withPlans = arrangeSiteFrame(loaded, { plans: [{ name: 'p' } as never], session: null }, MENU);
+    assert.deepEqual(withPlans.menu.items.map((i) => i.href), ['/landing#pricing', '/landing#faq', '/about']);
+  });
+
+  it('arrangeSiteFrame applies the local rule to the actions and answers an empty menu with none', () => {
+    const local = arrangeSiteFrame(loaded, { ...CTX, dataMode: 'local' }, MENU);
+    assert.deepEqual(local.menu.actions.map((a) => a.id), ['docs']);
+    const none = arrangeSiteFrame(loaded, CTX, null);
+    assert.deepEqual(none.menu, { items: [], groups: [], actions: [], megaLabel: null });
+    assert.equal(none.registered, true);
+  });
+
+  it('a frame with nothing marked is not registered, and the page keeps its own', () => {
+    const bare = arrangeSiteFrame(
+      [section('pricing', { order: 40 }), section('theme', { order: -2, nav: [], rootClass: 'x' })],
+      CTX,
+      MENU,
+    );
+    assert.equal(bare.registered, false);
+    assert.deepEqual(bare.before, []);
+    assert.deepEqual(bare.after, []);
+    assert.equal(bare.rootClass, '');
+    assert.deepEqual(bare.menu.items.map((i) => i.href), ['/landing#pricing', '/about']);
+    const only = arrangeSiteFrame(
+      [section('banner', { order: -1, nav: [], frame: true, renders: () => false })],
+      CTX,
+      MENU,
+    );
+    assert.equal(only.registered, false, 'a frame section renders turns down is not a frame');
+  });
+
+  it('resolveSiteFrame loads the registries: neutral answers unregistered, a marked entry registers', async () => {
+    const { result: neutral } = await quietly(() => resolveSiteFrame());
+    assert.equal(neutral.registered, false);
+    assert.deepEqual(neutral.menu, { items: [], groups: [], actions: [], megaLabel: null });
+    assert.deepEqual(neutral.navItems.map((n) => n.id), ['hero', 'footer']);
+    const { result: frame, logged } = await quietly(() =>
+      resolveSiteFrame(CTX, [
+        { id: 'acme-theme', load: async () => ({ default: Section, meta: { order: -2, nav: [], rootClass: 'acme', frame: true } }) },
+        { id: 'acme-broken', load: async () => { throw new Error('nope'); } },
+        { id: 'acme-courses', load: async () => ({ default: Section, meta: { nav: [{ id: 'courses', label: 'Courses' }] } }) },
+        { id: 'acme-footer', load: async () => ({ default: Section, meta: { order: 95, nav: [], frame: true } }) },
+      ]),
+    );
+    assert.equal(frame.registered, true);
+    assert.deepEqual(frame.before.map((s) => s.id), ['acme-theme']);
+    assert.deepEqual(frame.after.map((s) => s.id), ['acme-footer']);
+    assert.equal(frame.rootClass, 'acme');
+    assert.deepEqual(frame.navItems.map((n) => n.id), ['hero', 'courses', 'footer']);
+    assert.equal(logged.length, 1);
+    assert.match(logged[0], /acme-broken/);
   });
 });

@@ -678,6 +678,7 @@ migrate_working_dir/
 /components/custom/company/team-grid.tsx
 /components/custom/copied-pricing.client.tsx
 /components/custom/copied-pricing.tsx
+/components/custom/download-buttons.tsx
 /components/custom/faq-section.client.tsx
 /components/custom/faq-section.tsx
 /components/custom/floating-nav.client.tsx
@@ -718,6 +719,7 @@ migrate_working_dir/
 /components/custom/landing/page-sections.ts
 /components/custom/landing/plans-query.ts
 /components/custom/landing/platform-glyphs.tsx
+/components/custom/landing/site-frame.ts
 /components/custom/landing/site-metadata.ts
 /components/custom/landing/testimonials-marquee.tsx
 /components/custom/left-sidebar.tsx
@@ -743,6 +745,7 @@ migrate_working_dir/
 /components/custom/pricing.tsx
 /components/custom/right-plane.tsx
 /components/custom/session-provider.tsx
+/components/custom/site-frame.tsx
 /components/custom/site-theme.tsx
 /components/custom/social-section.client.tsx
 /components/custom/social-section.tsx
