@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.48.0
+
+* The landing hero, two faults visible on every composed storefront and a
+  seam its forms were missing.
+  * `components/custom/hero-view.tsx`: the headline box is `min-h-[1.2em]`
+    rather than `h-[1.2em]`. It still reserves one line so the hero does not
+    jump as the word rotates, but a headline that wraps is no longer clipped
+    to a 19px box it overflows upward: measured on juvo's storefront at
+    390px, the wrapped `<h1>` is 115px tall and ate all but 11px of the
+    6.7rem gap under the wordmark (63px of it at 1440px). Both ends of the
+    headline now sit where the spacing says.
+  * `components/custom/hero-view.tsx`: a headline word with no verb renders
+    no verb span. The empty one took a `gap-4` of its own and, having no
+    text, left the `<h1>` reading "Intercity parcelson a white-label
+    delivery platform" to a screen reader and to a crawler; a
+    whitespace-only child now separates the word from the suffix, which
+    costs no layout (a whitespace-only anonymous flex item is not rendered).
+  * `components/custom/landing/hero-form.ts`: `HeroFormProps.nav`
+    (optional), the page's live nav - the list the floating nav and the
+    header menu are already built from, so it names the sections that ARE
+    on this render after each `meta.renders` has answered. A form whose
+    call to action is an in-page anchor reads it before drawing that
+    button. `components/custom/hero.tsx` (`HeroProps.nav`),
+    `components/custom/hero-view.tsx` (`HeroViewProps.nav`) and
+    `app/landing/page.tsx` (`nav={page.navItems}`) hand it down. A form
+    that ignores it behaves exactly as before.
+
 ## 1.47.0
 
 * The site frame: the shell a composed page that is not the landing sits

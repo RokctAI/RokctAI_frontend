@@ -148,6 +148,7 @@ export default async function LandingPage() {
         <Hero
           id={LANDING_CONFIG.nav.hero.id}
           signupUrl={LANDING_CONFIG.signupUrl}
+          nav={page.navItems}
         />
       }
       sections={

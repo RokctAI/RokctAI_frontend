@@ -45,6 +45,7 @@ import React from "react";
 
 import { PLATFORM_NAME } from "@/app/config/platform";
 import { HeroView, type HeroViewCopy } from "@/components/custom/hero-view";
+import type { LandingNavItem } from "@/components/custom/landing/landing-config";
 import {
   resolveHeroConfig,
   resolveHeroWordmark,
@@ -55,9 +56,15 @@ export { hasBadgeIcon } from "@/components/custom/hero-view";
 export interface HeroProps {
   signupUrl?: string;
   id?: string;
+  /**
+   * The page's live nav, passed straight through to the registered hero form
+   * (see HeroFormProps.nav) so a form whose call to action is an in-page
+   * anchor can tell whether that section is on this render.
+   */
+  nav?: LandingNavItem[];
 }
 
-export async function Hero({ signupUrl = "/register", id }: HeroProps) {
+export async function Hero({ signupUrl = "/register", id, nav }: HeroProps) {
   const { fallbackHref: _fallbackHref, ...copy } = await resolveHeroConfig();
   const hero: HeroViewCopy = copy;
   return (
@@ -66,6 +73,7 @@ export async function Hero({ signupUrl = "/register", id }: HeroProps) {
       wordmark={resolveHeroWordmark(hero.brand, PLATFORM_NAME)}
       signupUrl={signupUrl}
       id={id}
+      nav={nav}
     />
   );
 }
