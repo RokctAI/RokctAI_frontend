@@ -54,6 +54,7 @@ import type {
   HeroConfig,
   HeroWord,
 } from "@/components/custom/landing/hero-config";
+import type { LandingNavItem } from "@/components/custom/landing/landing-config";
 
 /** What the hero hands the registered form. */
 export type HeroFormProps = {
@@ -67,6 +68,19 @@ export type HeroFormProps = {
   onActiveChange?: (active: boolean) => void;
   /** Add words to the hero's headline rotation (a form whose sections carry copy of their own). */
   onHeadlineWordsChange?: (words: HeroWord[]) => void;
+  /**
+   * The page's live nav - the very list the floating nav and the header menu
+   * are built from, so it names exactly the sections that ARE on this render
+   * after each one's `meta.renders` has answered.
+   *
+   * A form whose call to action is an in-page anchor reads it before drawing
+   * that button: a hero that links `#pricing` while the pricing section has
+   * turned itself down (no plans to price - what every shell shows while its
+   * backend is not deployed) offers a button that does nothing. Optional, and
+   * absent on a host that does not hand it over, which a form should read as
+   * "no list to check against" and draw what it would have drawn before.
+   */
+  nav?: LandingNavItem[];
 };
 
 export type HeroFormComponent = ComponentType<HeroFormProps>;
