@@ -30,8 +30,12 @@ export class DatabasesService {
     websiteName: string,
     newPassword: string,
   ) {
-    return ControlBaseService.update("Hosted Website", websiteName, {
-      db_password: newPassword,
-    });
+    return ControlBaseService.call(
+      "rpanel.hosting.doctype.hosted_website.hosted_website.update_database_password",
+      {
+        website: websiteName,
+        new_password: newPassword,
+      },
+    );
   }
 }

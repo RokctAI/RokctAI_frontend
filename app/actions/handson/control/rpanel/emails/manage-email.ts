@@ -41,6 +41,10 @@ export async function createEmailAccount(
     );
 
     if (res.exc) throw new Error(JSON.stringify(res.exc));
+    const result = res?.message || res;
+    if (result?.success === false) {
+      return { success: false, error: result.error };
+    }
 
     revalidatePath("/rpanel/emails");
     return { success: true };
@@ -62,6 +66,10 @@ export async function updateEmailPassword(
     );
 
     if (res.exc) throw new Error(JSON.stringify(res.exc));
+    const result = res?.message || res;
+    if (result?.success === false) {
+      return { success: false, error: result.error };
+    }
 
     revalidatePath("/rpanel/emails");
     return { success: true };
@@ -75,6 +83,10 @@ export async function deleteEmailAccount(website: string, emailUser: string) {
     const res = await EmailsService.deleteEmailAccount(website, emailUser);
 
     if (res.exc) throw new Error(JSON.stringify(res.exc));
+    const result = res?.message || res;
+    if (result?.success === false) {
+      return { success: false, error: result.error };
+    }
 
     revalidatePath("/rpanel/emails");
     return { success: true };

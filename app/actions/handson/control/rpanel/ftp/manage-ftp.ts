@@ -37,6 +37,10 @@ export async function createFtpAccount(
     const res = await FtpService.createFtpAccount(website, username, password);
 
     if (res.exc) throw new Error(JSON.stringify(res.exc));
+    const result = res?.message || res;
+    if (result?.success === false) {
+      return { success: false, error: result.error };
+    }
 
     revalidatePath("/rpanel/ftp");
     return { success: true };
@@ -50,6 +54,10 @@ export async function updateFtpPassword(name: string, newPassword: string) {
     const res = await FtpService.updateFtpPassword(name, newPassword);
 
     if (res.exc) throw new Error(JSON.stringify(res.exc));
+    const result = res.message || res;
+    if (result?.success === false) {
+      return { success: false, error: result.error };
+    }
 
     return { success: true };
   } catch (e: any) {
@@ -62,6 +70,10 @@ export async function deleteFtpAccount(name: string) {
     const res = await FtpService.deleteFtpAccount(name);
 
     if (res && res.exc) throw new Error(JSON.stringify(res.exc));
+    const result = res?.message || res;
+    if (result?.success === false) {
+      return { success: false, error: result.error };
+    }
 
     revalidatePath("/rpanel/ftp");
     return { success: true };

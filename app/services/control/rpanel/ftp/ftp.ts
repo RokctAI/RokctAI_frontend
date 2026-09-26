@@ -41,13 +41,23 @@ export class FtpService {
     );
   }
 
+  // FTP Account is named by username, so `name` is the username.
   static async updateFtpPassword(name: string, newPassword: string) {
-    return ControlBaseService.update("FTP Account", name, {
-      password: newPassword,
-    });
+    return ControlBaseService.call(
+      "rpanel.hosting.utils.ftp_manager.change_ftp_password",
+      {
+        username: name,
+        new_password: newPassword,
+      },
+    );
   }
 
   static async deleteFtpAccount(name: string) {
-    return ControlBaseService.delete("FTP Account", name);
+    return ControlBaseService.call(
+      "rpanel.hosting.utils.ftp_manager.delete_ftp_account",
+      {
+        username: name,
+      },
+    );
   }
 }
