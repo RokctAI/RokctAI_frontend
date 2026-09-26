@@ -17,6 +17,7 @@
 "use server";
 
 import { platformCall } from "@/app/services/base/platform-gateway";
+import { routeControlCmd } from "@/app/services/control/base";
 
 /**
  * Control-plane calls through the ONE platform gateway (ADR-005, a
@@ -41,7 +42,7 @@ import { platformCall } from "@/app/services/base/platform-gateway";
 export async function getFiles(website: string, path: string) {
   try {
     const res = await platformCall<Record<string, any>>(
-      "rpanel.hosting.file_manager.get_file_list",
+      routeControlCmd("rpanel.hosting.file_manager.get_file_list"),
       { website_name: website, path: path },
       {
         baseUrl:
@@ -60,7 +61,7 @@ export async function getFiles(website: string, path: string) {
 export async function deleteFile(website: string, filePath: string) {
   try {
     await platformCall(
-      "rpanel.hosting.file_manager.delete_file",
+      routeControlCmd("rpanel.hosting.file_manager.delete_file"),
       { website_name: website, file_path: filePath },
       {
         baseUrl:

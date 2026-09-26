@@ -39,7 +39,7 @@ export class RoadmapPublicService {
    */
   static async getPublicRoadmap() {
     return platformCall<Record<string, any>>(
-      "roadmap.doctype.roadmap_settings.roadmap_settings.get_public_roadmap_content",
+      "api.roadmap.get_public_roadmap_content",
       undefined,
       {
         baseUrl:

@@ -50,6 +50,8 @@ export async function getControlClient() {
 
   // Explicitly ignore siteName from session to ensure we connect to the Control Plane (default URL)
   // getFrappeClient falls back to process.env.NEXT_PUBLIC_FRAPPE_URL if url is undefined
+  // Deliberate: the NEXT_PUBLIC_FRAPPE_URL -> ROKCT_BASE_URL order is intended (it matches
+  // the rpanel actions' explicit baseUrl), so this deployment's configured Frappe URL wins.
   return getFrappeClient({ apiKey, apiSecret });
 }
 
