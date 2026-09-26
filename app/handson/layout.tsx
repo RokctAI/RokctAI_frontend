@@ -96,6 +96,9 @@ const controlItems = [
     roles: SYSTEM_ROLES,
   },
   // --- Hosting ---
+  // Hosting entries: injected by hosting_sdk (hardware hosting/nextjs,
+  // app_type.rokctapp) with the rpanel pages it installs.
+  // @rokct-sdk-control-nav-start
   {
     title: "Hosting Dashboard",
     href: "/handson/control/rpanel",
@@ -138,6 +141,7 @@ const controlItems = [
     icon: Clock,
     roles: HOSTING_ROLES,
   },
+  // @rokct-sdk-control-nav-end
 
   // --- Operations ---
   {
