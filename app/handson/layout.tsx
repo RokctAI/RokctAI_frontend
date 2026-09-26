@@ -21,7 +21,6 @@ import {
   FINANCE_ROLES,
   SYSTEM_ROLES,
   EMPLOYEE_ROLES,
-  HOSTING_ROLES,
   TELEPHONY_ROLES,
   LMS_ROLES,
 } from "@/app/lib/role_constants";
@@ -36,7 +35,6 @@ import {
   Code,
   Menu,
   Users,
-  Mail,
   Search,
   BrainCircuit,
   Printer,
@@ -58,12 +56,6 @@ import {
   Plane,
   Banknote,
   UserCheck,
-  HardDrive,
-  Globe,
-  Database,
-  Folder,
-  ShieldCheck,
-  Clock,
   GraduationCap,
 } from "lucide-react";
 
@@ -94,49 +86,6 @@ const controlItems = [
     href: "/handson/control/subscriptions",
     icon: CreditCard,
     roles: SYSTEM_ROLES,
-  },
-  // --- Hosting ---
-  {
-    title: "Hosting Dashboard",
-    href: "/handson/control/rpanel",
-    icon: HardDrive,
-    roles: HOSTING_ROLES,
-  },
-  {
-    title: "Websites",
-    href: "/handson/control/rpanel/websites",
-    icon: Globe,
-    roles: HOSTING_ROLES,
-  },
-  {
-    title: "Databases",
-    href: "/handson/control/rpanel/databases",
-    icon: Database,
-    roles: HOSTING_ROLES,
-  },
-  {
-    title: "Emails",
-    href: "/handson/control/rpanel/emails",
-    icon: Mail,
-    roles: HOSTING_ROLES,
-  },
-  {
-    title: "FTP",
-    href: "/handson/control/rpanel/ftp",
-    icon: Folder,
-    roles: HOSTING_ROLES,
-  },
-  {
-    title: "Backups",
-    href: "/handson/control/rpanel/backups",
-    icon: ShieldCheck,
-    roles: HOSTING_ROLES,
-  },
-  {
-    title: "Cron Jobs",
-    href: "/handson/control/rpanel/cron",
-    icon: Clock,
-    roles: HOSTING_ROLES,
   },
 
   // --- Operations ---

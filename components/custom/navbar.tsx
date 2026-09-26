@@ -16,6 +16,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { HOSTING_URL } from "@/app/config/constants";
 import { HardDrive, User, Settings, LogOut } from "lucide-react";
 
 import { auth, signOut } from "@/app/(auth)/auth";
@@ -116,17 +117,14 @@ export const Navbar = async () => {
               <HandsOnButton canUseAI={canUseAI} />
 
               {/* 2. RPanel Link (Conditional) */}
-              {showRPanel && (
+              {showRPanel && HOSTING_URL && (
                 <Button variant="ghost" size="sm" asChild>
-                  <Link
-                    href="/handson/control/rpanel"
-                    className="flex items-center gap-2"
-                  >
+                  <a href={HOSTING_URL} className="flex items-center gap-2">
                     <HardDrive className="h-4 w-4" />
                     <span className="hidden md:inline">
                       {t("navbar.rpanel")}
                     </span>
-                  </Link>
+                  </a>
                 </Button>
               )}
 
