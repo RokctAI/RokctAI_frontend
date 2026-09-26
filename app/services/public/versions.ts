@@ -106,7 +106,8 @@ export function readVersionMap(answer: unknown): PlatformVersions {
     const row = value as Record<string, unknown>;
     if (typeof row.version !== "string" || row.version.trim() === "") continue;
     entries[key] = {
-      title: typeof row.title === "string" && row.title.trim() ? row.title : key,
+      title:
+        typeof row.title === "string" && row.title.trim() ? row.title : key,
       version: row.version,
     };
   }
