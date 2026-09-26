@@ -39,6 +39,10 @@ export async function updateDatabasePassword(
     );
 
     if (res.exc) throw new Error(JSON.stringify(res.exc));
+    const result = res.message || res;
+    if (result?.success === false) {
+      return { success: false, error: result.error };
+    }
 
     revalidatePath("/rpanel/databases");
     return { success: true };

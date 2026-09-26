@@ -23,7 +23,7 @@ export async function getServerInfo() {
   try {
     const [infoRes, versionRes] = await Promise.allSettled([
       DashboardService.getServerInfo(),
-      ControlBaseService.call("rpanel.api.get_version"),
+      ControlBaseService.call("rpanel.version.get_version"),
     ]);
 
     const info =
