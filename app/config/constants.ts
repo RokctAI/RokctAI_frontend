@@ -29,3 +29,7 @@ export const VOUCHER_OFFSET_Y = "6";
 export const BRANDING_COUNTRY_INDEX = 5; // Insertion position (0=prefix, 5=suffix for ROKCT)
 export const BRANDING_COUNTRY_Y_OFFSET = "-0.2em"; // Sits at cap-height of 't', not above
 export const BRANDING_COUNTRY_SCALE = "0.28em"; // Noticeably small superscript
+
+// The hosting web shell (RokctAI/hosting), where the rpanel control pages
+// live. Unset means no hosting link is shown.
+export const HOSTING_URL = process.env.NEXT_PUBLIC_HOSTING_URL || "";

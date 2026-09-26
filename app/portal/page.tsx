@@ -36,6 +36,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
+import { HOSTING_URL } from "@/app/config/constants";
 import { Separator } from "@/components/ui/separator";
 
 export default function ClientPortalPage() {
@@ -144,11 +145,13 @@ export default function ClientPortalPage() {
                     <div className="text-sm text-muted-foreground mb-4">
                       Next Billing: {sub.next_billing_date || "N/A"}
                     </div>
-                    <Button asChild className="w-full">
-                      <Link href="/handson/control/rpanel">
-                        Go to RPanel <ExternalLink className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
+                    {HOSTING_URL && (
+                      <Button asChild className="w-full">
+                        <a href={HOSTING_URL}>
+                          Go to RPanel <ExternalLink className="ml-2 h-4 w-4" />
+                        </a>
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               ))}
