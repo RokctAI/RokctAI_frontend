@@ -21,6 +21,20 @@ export interface ServiceOptions {
   headers?: Record<string, string>;
 }
 
+/**
+ * Maps a cmd onto the key the control gateway actually dispatches.
+ *
+ * The control site's gateway only accepts cmds carrying the `control:`
+ * prefix, so an app-prefixed `rpanel.<dotted.path>` cmd was routed nowhere
+ * and every rpanel screen failed. The control app registers each rpanel
+ * endpoint under `control:rpanel.<dotted.path>` (control hooks.py), so
+ * `rpanel.*` cmds are sent under that key. Everything else (already
+ * `control:`-prefixed, or a `frappe.*` framework method) passes through.
+ */
+export function routeControlCmd(cmd: string): string {
+  return cmd.startsWith("rpanel.") ? `control:${cmd}` : cmd;
+}
+
 export class ControlBaseService {
   /**
    * Executes a whitelisted dotted method against the Control Plane through
@@ -34,7 +48,7 @@ export class ControlBaseService {
     options: ServiceOptions = {},
   ) {
     const client = await getControlClient();
-    return gatewayCall(client, method, args, options.headers);
+    return gatewayCall(client, routeControlCmd(method), args, options.headers);
   }
 
   public static async getList(

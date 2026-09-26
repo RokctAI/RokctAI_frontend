@@ -17,6 +17,7 @@
 "use server";
 
 import { platformCall } from "@/app/services/base/platform-gateway";
+import { routeControlCmd } from "@/app/services/control/base";
 
 /**
  * Client usage for the rpanel dashboard, through the ONE platform gateway
@@ -33,7 +34,9 @@ import { platformCall } from "@/app/services/base/platform-gateway";
 export async function getClientUsage() {
   try {
     const response = await platformCall<Record<string, any>>(
-      "rpanel.hosting.doctype.hosting_client.hosting_client.get_client_usage",
+      routeControlCmd(
+        "rpanel.hosting.doctype.hosting_client.hosting_client.get_client_usage",
+      ),
       undefined,
       {
         baseUrl:
