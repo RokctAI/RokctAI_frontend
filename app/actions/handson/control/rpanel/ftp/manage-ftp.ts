@@ -50,6 +50,10 @@ export async function updateFtpPassword(name: string, newPassword: string) {
     const res = await FtpService.updateFtpPassword(name, newPassword);
 
     if (res.exc) throw new Error(JSON.stringify(res.exc));
+    const result = res.message || res;
+    if (result?.success === false) {
+      return { success: false, error: result.error };
+    }
 
     return { success: true };
   } catch (e: any) {
