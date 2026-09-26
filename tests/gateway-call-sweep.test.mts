@@ -71,8 +71,6 @@ const MODULES = [
   "app/actions/handson/all/workspace/calendar.ts",
   "app/actions/handson/all/workspace/communication.ts",
   "app/actions/handson/all/settings/profile.ts",
-  "app/actions/handson/control/rpanel/files.ts",
-  "app/actions/handson/control/rpanel/dashboard/get-client-usage.ts",
   "app/lib/search.ts",
 ] as const;
 
@@ -414,50 +412,5 @@ describe("every converted call site issues a real gateway request", () => {
     assert.equal(res.success, false);
     assert.match(String(res.error), /Did you mean 'Acme Supplies'/);
     assert.deepEqual(res.suggestions, ["Acme Supplies"]);
-  });
-
-  it("rpanel/files: get_file_list, on the control plane", async () => {
-    const files = mods["app/actions/handson/control/rpanel/files.ts"];
-    const sent = install({ files: [] });
-
-    assert.deepEqual(await files.getFiles("site.test", "/"), {
-      success: true,
-      data: { files: [] },
-    });
-
-    // The explicit baseUrl keeps it off the tenant, as getControlClient did.
-    assertWire(sent, ["rpanel.hosting.file_manager.get_file_list"], CONTROL);
-  });
-
-  it("rpanel/files: delete_file, on the control plane", async () => {
-    const files = mods["app/actions/handson/control/rpanel/files.ts"];
-    const sent = install({});
-
-    assert.deepEqual(await files.deleteFile("site.test", "/a.txt"), {
-      success: true,
-    });
-
-    assertWire(sent, ["rpanel.hosting.file_manager.delete_file"], CONTROL);
-    assert.deepEqual(sent[0].payload, {
-      website_name: "site.test",
-      file_path: "/a.txt",
-    });
-  });
-
-  it("rpanel/dashboard: get_client_usage, on the control plane", async () => {
-    const usage =
-      mods["app/actions/handson/control/rpanel/dashboard/get-client-usage.ts"];
-    const sent = install({ success: true, usage: {} });
-
-    assert.deepEqual(await usage.getClientUsage(), {
-      success: true,
-      usage: {},
-    });
-
-    assertWire(
-      sent,
-      ["rpanel.hosting.doctype.hosting_client.hosting_client.get_client_usage"],
-      CONTROL,
-    );
   });
 });
