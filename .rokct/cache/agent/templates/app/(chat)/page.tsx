@@ -108,7 +108,7 @@ export default async function Page({
         }
 
         // Delete the old raw chat session completely to keep DB clean
-        await deleteChatById({ id: lastChat.id, userId: session.user.id });
+        await deleteChatById({ id: lastChat.id });
         console.log(`[Auto-Archive] Cleaned up completed session ${lastChat.id} from local chat logs.`);
       }
     }
