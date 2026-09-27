@@ -14,7 +14,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { platformCall } from "@/app/services/base/platform-gateway";
+import {
+  platformCall,
+  resolveTenantBaseUrl,
+} from "@/app/services/base/platform-gateway";
+
+/**
+ * The backend's chat_with_rok waits up to 60 s on the completions loop;
+ * give it headroom so the gateway never aborts a call ROK is still
+ * answering.
+ */
+const ROK_CHAT_TIMEOUT_MS = 75_000;
 
 export class OnboardingService {
   /**
@@ -64,6 +74,11 @@ export class OnboardingService {
     sessionId?: string,
     model?: string,
   ) {
+    // A chat send is not idempotent: every delivery is a ROK turn and a
+    // tick on the free daily quota. Pinning the resolved origin as an
+    // explicit baseUrl turns off platformCall's one retry on the tenant's
+    // alternate origin, so a slow or dropped send is never delivered twice.
+    const baseUrl = await resolveTenantBaseUrl();
     return platformCall<Record<string, any>>(
       "api.plan_builder.chat_with_rok",
       {
@@ -71,7 +86,7 @@ export class OnboardingService {
         session_id: sessionId,
         model,
       },
-      { throwOnError: true },
+      { throwOnError: true, baseUrl, timeout: ROK_CHAT_TIMEOUT_MS },
     );
   }
 }
