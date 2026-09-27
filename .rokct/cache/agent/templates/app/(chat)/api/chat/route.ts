@@ -140,7 +140,7 @@ export async function POST(request: Request) {
       // Delete the old raw chat session completely to keep DB clean
       try {
         const { deleteChatById } = await import("@/db/queries");
-        await deleteChatById({ id });
+        await deleteChatById({ id, userId: session.user.id });
         console.log(`[Auto-Clean] Cleaned up completed session ${id} from local logs.`);
       } catch (err) {
         console.error("Failed to clean up old session:", err);
@@ -257,7 +257,7 @@ export async function POST(request: Request) {
       // Delete the onboarding chat session
       try {
         const { deleteChatById } = await import("@/db/queries");
-        await deleteChatById({ id });
+        await deleteChatById({ id, userId: session.user.id });
         console.log(`[Auto-Clean] Cleaned up onboarding session ${id} from logs.`);
       } catch (err) {
         console.error("Failed to clean up onboarding session:", err);
@@ -275,6 +275,10 @@ export async function POST(request: Request) {
   // Save the chat locally for web history persistence
   const targetIdToSave = newSessionId || id;
   try {
+    const existingChat = await getChatById({ id: targetIdToSave });
+    if (existingChat && existingChat.userId !== session.user.id) {
+      return new Response("Unauthorized", { status: 401 });
+    }
     await saveChat({
       id: targetIdToSave,
       messages: [
@@ -380,7 +384,7 @@ export async function DELETE(request: Request) {
       return new Response("Unauthorized", { status: 401 });
     }
 
-    await deleteChatById({ id });
+    await deleteChatById({ id, userId: session.user.id });
     return new Response("Chat deleted", { status: 200 });
   } catch (error) {
     return new Response("An error occurred while processing your request", {
