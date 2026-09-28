@@ -16,20 +16,20 @@
 
 "use client";
 
-import { Message } from "ai";
+import type { AppendMessage } from "@/lib/agent-chat-messages";
 import React from "react";
 
 import { Button } from "../ui/button";
 
 interface DisambiguateTaskProps {
   taskTitle: string;
-  append: (message: Message | Omit<Message, "id">) => Promise<string | null>;
+  append?: AppendMessage;
 }
 
 export function DisambiguateTask({ taskTitle, append }: DisambiguateTaskProps) {
   const handleSelectTaskType = (taskType: "Project" | "CRM" | "Personal") => {
     const clarifiedPrompt = `Create a ${taskType} task: ${taskTitle}`;
-    append({
+    append?.({
       role: "user",
       content: clarifiedPrompt,
     });

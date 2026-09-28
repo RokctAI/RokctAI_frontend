@@ -15,9 +15,16 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/app/(auth)/auth";
 import { intentClassifierService } from "@/app/services/server/intent-classifier";
 
 export async function POST(request: NextRequest) {
+  // The chat input calls this on every keystroke; only a signed-in visitor may.
+  const session = await auth();
+  if (!session || !session.user) {
+    return NextResponse.json({ status: "error", message: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { text, context } = await request.json();
 
@@ -36,6 +43,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error("Intent Classification Error:", error);
-    return NextResponse.json({ status: "error", message: error.message }, { status: 500 });
+    return NextResponse.json({ status: "error", message: "Intent classification failed." }, { status: 500 });
   }
 }

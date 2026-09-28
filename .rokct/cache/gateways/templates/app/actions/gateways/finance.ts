@@ -22,8 +22,9 @@ import { paasCall } from "@/app/services/base/platform-gateway";
 
 export async function getWallet() {
   try {
-    const wallet = await paasCall("api.user.get_user_wallet");
-    return wallet;
+    // get_user_wallet returns api_response(data=<Wallet doc>).
+    const res = await paasCall<any>("api.user.get_user_wallet");
+    return res?.data ?? null;
   } catch (error) {
     console.error("Failed to fetch wallet:", error);
     return null;
@@ -32,18 +33,32 @@ export async function getWallet() {
 
 export async function getWalletHistory() {
   try {
-    const history = await paasCall("api.user.get_wallet_history");
-    return history;
+    // get_wallet_history returns api_response(data=[...Wallet History rows]).
+    const res = await paasCall<any>("api.user.get_wallet_history");
+    return Array.isArray(res?.data) ? res.data : [];
   } catch (error) {
     console.error("Failed to fetch wallet history:", error);
     return [];
   }
 }
 
-export async function topUpWallet(amount: number) {
+export async function getSavedCards() {
   try {
+    // get_saved_cards returns a bare list of Saved Card rows.
+    const cards = await paasCall<any>("api.payment.get_saved_cards");
+    return Array.isArray(cards) ? cards : [];
+  } catch (error) {
+    console.error("Failed to fetch saved cards:", error);
+    return [];
+  }
+}
+
+export async function topUpWallet(amount: number, savedCard: string) {
+  try {
+    // process_wallet_top_up charges a Saved Card by its docname.
     const result = await paasCall("api.payment.process_wallet_top_up", {
       amount: amount,
+      saved_card: savedCard,
     });
     return result;
   } catch (error) {
@@ -94,8 +109,15 @@ export async function getPartnerPayments() {
 
 export async function getPayouts() {
   try {
-    const payouts = await paasCall("api.seller_payout.get_seller_payouts");
-    return payouts;
+    // There is no Seller Payout doctype: a seller's payouts are their own
+    // Wallet Payout Requests. Shaped for the payouts table.
+    const requests = await paasCall("api.payout.list_payout_requests");
+    return (Array.isArray(requests) ? requests : []).map((r: any) => ({
+      name: r.id,
+      amount: r.amount,
+      status: r.status,
+      payout_date: r.resolved_at ?? r.requested_at,
+    }));
   } catch (error) {
     console.error("Failed to fetch payouts:", error);
     return [];

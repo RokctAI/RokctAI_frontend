@@ -45,10 +45,10 @@ export default function AdminFAQsPage() {
   const [formData, setFormData] = useState({
     question: "",
     answer: "", // Note: API might expect 'answer' or similar, checking schema...
-    // Looking at API: fields=["name", "question", "faq_category", "is_active"]
+    // FAQ doctype fields: question, answer, type, active
     // It seems 'answer' is missing from the list fields but likely exists in doctype.
     // Assuming 'answer' is the field name.
-    is_active: 1,
+    active: 1,
   });
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function AdminFAQsPage() {
     try {
       await createFAQ(formData);
       toast.success("FAQ created");
-      setFormData({ question: "", answer: "", is_active: 1 });
+      setFormData({ question: "", answer: "", active: 1 });
       setIsDialogOpen(false);
       fetchFaqs();
     } catch (error) {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+* fix(admin reports): `getReportData` sends the required `fields` argument, and the Overview report reads `get_admin_statistics` cards (Overview is not a doctype).
+
 ## 1.2.0
 
 * The server actions call the platform through `paasCall` from the

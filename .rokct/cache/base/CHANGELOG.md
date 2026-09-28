@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.50.0
+
+* feat: admin nav Finance section gains **Customer Subscriptions**
+  (`nav.admin.customer_subscriptions`, `/admin/finance/customer-subscriptions`)
+  next to Shop Subscriptions. The page ships in the loyalty SDK.
+
+## 1.49.1
+
+* fix: `platformCall` unwraps the Frappe `message` envelope by key presence,
+  not truthiness. An empty list, `0`, `false` or `null` result now comes back
+  as itself instead of as `{message: ...}`, so `.length`/`.map` on an empty
+  page no longer crash.
+
+## 1.49.0
+
+* fix: admin FAQ form writes `active` (the FAQ doctype field) instead of
+  `is_active`. `getCareerCategories`, `getPaymentMethods` and
+  `getSocialSettings` now have backend functions. `getGallery` still has none
+  in core.
+
 ## 1.48.0
 
 * The landing hero, two faults visible on every composed storefront and a

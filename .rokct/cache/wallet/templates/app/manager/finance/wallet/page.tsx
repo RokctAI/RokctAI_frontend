@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import {
+  getSavedCards,
   getWallet,
   getWalletHistory,
   topUpWallet,
@@ -55,6 +56,20 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/utils";
 
+// Wallet History.transaction_type values that add money to the wallet.
+const CREDIT_TYPES = new Set([
+  "Topup",
+  "Referral",
+  "Loan Disbursement",
+  "Refund",
+  "Payout Reversal",
+  "Deposit",
+]);
+
+function isCredit(item: any): boolean {
+  return CREDIT_TYPES.has(item?.transaction_type);
+}
+
 export default function WalletPage() {
   const [wallet, setWallet] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
@@ -62,6 +77,8 @@ export default function WalletPage() {
   const [topUpAmount, setTopUpAmount] = useState("");
   const [isTopUpOpen, setIsTopUpOpen] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [cards, setCards] = useState<any[]>([]);
+  const [savedCard, setSavedCard] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -69,9 +86,15 @@ export default function WalletPage() {
 
   async function fetchData() {
     try {
-      const [w, h] = await Promise.all([getWallet(), getWalletHistory()]);
+      const [w, h, c] = await Promise.all([
+        getWallet(),
+        getWalletHistory(),
+        getSavedCards(),
+      ]);
       setWallet(w);
-      setHistory(h);
+      setHistory(Array.isArray(h) ? h : []);
+      setCards(c);
+      if (c.length > 0) setSavedCard((prev) => prev || c[0].name);
     } catch (error) {
       console.error("Error fetching wallet data:", error);
       toast.error("Failed to load wallet data");
@@ -86,10 +109,14 @@ export default function WalletPage() {
       toast.error("Please enter a valid amount");
       return;
     }
+    if (!savedCard) {
+      toast.error("Add a saved card before topping up");
+      return;
+    }
 
     setProcessing(true);
     try {
-      await topUpWallet(amount);
+      await topUpWallet(amount, savedCard);
       toast.success("Wallet topped up successfully!");
       setIsTopUpOpen(false);
       setTopUpAmount("");
@@ -147,9 +174,32 @@ export default function WalletPage() {
                   placeholder="0.00"
                 />
               </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="saved-card" className="text-right">
+                  Card
+                </Label>
+                {cards.length === 0 ? (
+                  <p className="col-span-3 text-sm text-muted-foreground">
+                    No saved cards. Save a card first to top up.
+                  </p>
+                ) : (
+                  <select
+                    id="saved-card"
+                    value={savedCard}
+                    onChange={(e) => setSavedCard(e.target.value)}
+                    className="col-span-3 h-9 rounded-md border bg-transparent px-3 text-sm"
+                  >
+                    {cards.map((card) => (
+                      <option key={card.name} value={card.name}>
+                        {(card.card_type || "Card") + " •••• " + (card.last_four || "")}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleTopUp} disabled={processing}>
+              <Button onClick={handleTopUp} disabled={processing || !savedCard}>
                 {processing ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (
@@ -171,7 +221,7 @@ export default function WalletPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(wallet?.wallet_balance || 0)}
+              {formatCurrency(wallet?.balance || 0)}
             </div>
           </CardContent>
         </Card>
@@ -208,15 +258,17 @@ export default function WalletPage() {
                 history.map((item) => (
                   <TableRow key={item.name}>
                     <TableCell>
-                      {format(new Date(item.created_at), "MMM d, yyyy HH:mm")}
+                      {item.creation
+                        ? format(new Date(item.creation), "MMM d, yyyy HH:mm")
+                        : "-"}
                     </TableCell>
-                    <TableCell>{item.type}</TableCell>
+                    <TableCell>{item.description || item.transaction_type}</TableCell>
                     <TableCell>{item.status}</TableCell>
                     <TableCell
-                      className={`text-right font-medium ${item.type === "Credit" ? "text-green-600" : "text-red-600"}`}
+                      className={`text-right font-medium ${isCredit(item) ? "text-green-600" : "text-red-600"}`}
                     >
-                      {item.type === "Credit" ? "+" : "-"}
-                      {formatCurrency(item.price)}
+                      {isCredit(item) ? "+" : "-"}
+                      {formatCurrency(item.amount || 0)}
                     </TableCell>
                   </TableRow>
                 ))

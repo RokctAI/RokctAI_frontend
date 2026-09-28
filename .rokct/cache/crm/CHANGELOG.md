@@ -1,3 +1,7 @@
+## 1.0.2
+
+* fix(support, call logs): list queries select real columns: Issue sla_resolution_date, Warranty Claim complaint_date/complaint, Call Log type (no title).
+
 ## 1.0.1
 
 * The server actions under `app/actions/handson/all/crm/` that called the

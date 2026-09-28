@@ -191,8 +191,8 @@ export function readPlatformVersion(answer: unknown): string | null {
  * standing where the backend should be - it says nothing about the
  * platform, so `getPlatformStatus` treats it as no answer and falls
  * through to the next probe, then to `offline`. The gateway's own
- * `message` envelope is looked through: `platformCall` hands back
- * `data.message || data`, so a body of `{"message": null}` arrives as the
+ * `message` envelope is still looked through for callers that hand in a raw
+ * body, where `{"message": null}` would arrive as the
  * envelope itself, and an envelope whose only field is an empty `message`
  * is exactly as empty as `null`.
  */

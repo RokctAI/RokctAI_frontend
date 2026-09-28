@@ -16,7 +16,10 @@
 
 "use client";
 
-import { Attachment, ChatRequestOptions, Message } from "ai";
+import type {
+  AppendMessage,
+  ChatAttachment as Attachment,
+} from "@/lib/agent-chat-messages";
 import { motion } from "framer-motion";
 import * as chrono from "chrono-node";
 import { format } from "date-fns";
@@ -70,6 +73,12 @@ import { cn } from "@/lib/utils";
 import { getAttendanceStatus } from "@/app/actions/ai/hr";
 import { verifyCrmRole } from "@/app/lib/roles";
 
+// chat_with_rok takes the message, the session and the model, and no
+// attachments, so an uploaded file would reach nobody: the attach menu stays
+// off until the bridge accepts files (agent_sdk 1.20.0). The upload path
+// below is kept whole for that day.
+const ATTACHMENTS_ENABLED = false;
+
 const suggestedActions = [
   {
     title: "Help me book a flight",
@@ -110,16 +119,13 @@ export function MultimodalInput({
   stop: () => void;
   attachments: Array<Attachment>;
   setAttachments: Dispatch<SetStateAction<Array<Attachment>>>;
-  messages: Array<Message>;
-  append: (
-    message: Message | any,
-    chatRequestOptions?: ChatRequestOptions,
-  ) => Promise<string | null | undefined>;
+  messages: ReadonlyArray<unknown>;
+  append: AppendMessage;
   handleSubmit: (
     event?: {
       preventDefault?: () => void;
     },
-    chatRequestOptions?: ChatRequestOptions,
+    chatRequestOptions?: { body?: { attachments?: Array<Attachment> } },
   ) => void;
   onLocalSubmit?: (intent: string, details: any, text: string) => boolean;
   className?: string;
@@ -221,6 +227,29 @@ export function MultimodalInput({
     determineContext();
   }, []);
 
+  // Classify-intent answers can arrive out of order while the user types;
+  // only the answer to the latest request is applied.
+  const classifySeq = useRef(0);
+  const classify = useCallback(
+    (text: string, context: { entity: string | null } | null) => {
+      const seq = ++classifySeq.current;
+      fetch("/api/ai/classify-intent", {
+        method: "POST",
+        body: JSON.stringify({ text, context }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (seq !== classifySeq.current) return;
+          if (data.status === "success") {
+            setIntent(data.intent);
+            setDetails(data.details);
+          }
+        })
+        .catch(() => {});
+    },
+    [],
+  );
+
   const handlePinClick = () => {
     if (pinOptions.length === 0) return;
 
@@ -236,40 +265,14 @@ export function MultimodalInput({
       if (input === "Check In" || input === "Check Out") setInput("");
 
       // Trigger classification via API
-      fetch("/api/ai/classify-intent", {
-        method: "POST",
-        body: JSON.stringify({
-          text: input || " ",
-          context: { entity: "competitor" },
-        }),
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "success") {
-          setIntent(data.intent);
-          setDetails(data.details);
-        }
-      });
+      classify(input || " ", { entity: "competitor" });
     } else {
       // Standard Command (Check In / Out)
       setActivePinContext(null);
       setInput(selectedOption);
       setTimeout(() => {
         adjustHeight();
-        fetch("/api/ai/classify-intent", {
-          method: "POST",
-          body: JSON.stringify({
-            text: selectedOption,
-            context: null,
-          }),
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "success") {
-            setIntent(data.intent);
-            setDetails(data.details);
-          }
-        });
+        classify(selectedOption, null);
       }, 0);
     }
   };
@@ -293,6 +296,7 @@ export function MultimodalInput({
     adjustHeight();
 
     if (!newValue.trim()) {
+      classifySeq.current++; // drop any answer still in flight
       setIntent("Unknown");
       return;
     }
@@ -300,20 +304,7 @@ export function MultimodalInput({
     // Extract Date locally
     const dateResult = chrono.parseDate(newValue);
 
-    fetch("/api/ai/classify-intent", {
-      method: "POST",
-      body: JSON.stringify({
-        text: newValue,
-        context: { entity: activePinContext },
-      }),
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === "success") {
-        setIntent(data.intent);
-        setDetails(data.details);
-      }
-    });
+    classify(newValue, { entity: activePinContext });
 
     // Optimistic Update for Date
     if (dateResult) {
@@ -335,6 +326,9 @@ export function MultimodalInput({
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
   const submitForm = useCallback(() => {
+    // Every exit below (a local card or the send) ends this input's
+    // classification: an answer still in flight must not land afterwards.
+    classifySeq.current++;
     // Client-Side Interception for Tasks and Competitors
 
     // 1. Task Creation (Local Interception - Date is optional)
@@ -422,11 +416,25 @@ export function MultimodalInput({
     });
 
     setAttachments([]);
+    setIntent("Unknown");
+    setDetails(null);
 
     if (width && width > 768) {
       textareaRef.current?.focus();
     }
-  }, [attachments, handleSubmit, setAttachments, width]);
+  }, [
+    intent,
+    details,
+    input,
+    onLocalSubmit,
+    hasCrmAccess,
+    hasHrAccess,
+    attachments,
+    handleSubmit,
+    setAttachments,
+    setInput,
+    width,
+  ]);
 
   const uploadFile = async (file: File) => {
     const formData = new FormData();
@@ -741,6 +749,7 @@ export function MultimodalInput({
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           {/* Plus Menu (Dropdown) */}
+          {ATTACHMENTS_ENABLED && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -787,6 +796,7 @@ export function MultimodalInput({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          )}
 
           {/* Smart Pin / Context Button */}
           {true && // Always show layout space, conditionally show content

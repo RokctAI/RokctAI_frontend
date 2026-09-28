@@ -65,46 +65,54 @@ export async function updateSmartStatus({
   let doc = null;
   let type = document_type;
 
-  if (!type) {
-    // Fuzzy Search Strategy:
-    // Try Quotation (CRM)
-    if (isCrm) {
-      const quotes = await fuzzySearch("Quotation", query);
-      if (quotes.length > 0) {
-        doc = quotes[0]; // Pick best match
-        type = "Quotation";
-      }
-    }
-    // Try Sales Order
-    if (!doc && isCrm) {
-      const orders = await fuzzySearch("Sales Order", query);
-      if (orders.length > 0) {
-        doc = orders[0];
-        type = "Sales Order";
-      }
-    }
-    // Try Project (Generic)
-    if (!doc) {
-      const projects = await fuzzySearch("Project", query);
-      if (projects.length > 0) {
-        doc = projects[0];
-        type = "Project";
-      }
-    }
-  } else {
-    const results = await fuzzySearch(type, query);
-    if (results.length > 0) doc = results[0];
-  }
-
-  if (!doc) {
-    return {
-      success: false,
-      message: `Could not find any matching document for "${query}".`,
-    };
-  }
-
-  // 3. Execute Action based on Status
   try {
+    if (!type) {
+      // Fuzzy Search Strategy:
+      // Try Quotation (CRM)
+      if (isCrm) {
+        const quotes = await fuzzySearch("Quotation", query);
+        if (quotes.length > 0) {
+          doc = quotes[0]; // Pick best match
+          type = "Quotation";
+        }
+      }
+      // Try Sales Order
+      if (!doc && isCrm) {
+        const orders = await fuzzySearch("Sales Order", query);
+        if (orders.length > 0) {
+          doc = orders[0];
+          type = "Sales Order";
+        }
+      }
+      // Try Purchase Order (Buying)
+      if (!doc && isSupply) {
+        const pos = await fuzzySearch("Purchase Order", query);
+        if (pos.length > 0) {
+          doc = pos[0];
+          type = "Purchase Order";
+        }
+      }
+      // Try Project (Generic)
+      if (!doc) {
+        const projects = await fuzzySearch("Project", query);
+        if (projects.length > 0) {
+          doc = projects[0];
+          type = "Project";
+        }
+      }
+    } else {
+      const results = await fuzzySearch(type, query);
+      if (results.length > 0) doc = results[0];
+    }
+
+    if (!doc) {
+      return {
+        success: false,
+        message: `Could not find any matching document for "${query}".`,
+      };
+    }
+
+    // 3. Execute Action based on Status
     if (type === "Quotation") {
       if (status === "Approved") {
         // Convert to Sales Order
@@ -118,6 +126,10 @@ export async function updateSmartStatus({
         return await convertOrderToDelivery(doc.name);
       } else if (status === "Cancelled") {
         return await updateDocStatus("Sales Order", doc.name, "Cancelled");
+      }
+    } else if (type === "Purchase Order") {
+      if (status === "Cancelled") {
+        return await updateDocStatus("Purchase Order", doc.name, "Cancelled");
       }
     } else if (type === "Project" || type === "Task") {
       // Simple Status Update
@@ -138,29 +150,61 @@ export async function updateSmartStatus({
 
 // --- Helper Functions ---
 
-async function fuzzySearch(doctype: string, query: string) {
+// "Invoice" in SmartActionInput is the user-facing label for ERPNext's
+// "Sales Invoice"; there is no doctype called "Invoice".
+const DOCTYPE_ALIASES: Record<string, string> = {
+  Invoice: "Sales Invoice",
+};
+
+// Real columns per doctype: the list fields to return and the party/title
+// field a free-text query is matched against when the name doesn't match.
+const SEARCH_FIELDS: Record<string, { fields: string[]; party: string }> = {
+  Quotation: {
+    fields: ["name", "customer_name", "status", "grand_total"],
+    party: "customer_name",
+  },
+  "Sales Order": {
+    fields: ["name", "customer_name", "status", "grand_total"],
+    party: "customer_name",
+  },
+  "Sales Invoice": {
+    fields: ["name", "customer_name", "status", "grand_total"],
+    party: "customer_name",
+  },
+  "Purchase Order": {
+    fields: ["name", "supplier_name", "status", "grand_total"],
+    party: "supplier_name",
+  },
+  Project: {
+    fields: ["name", "project_name", "status", "customer"],
+    party: "project_name",
+  },
+  Task: { fields: ["name", "subject", "status", "project"], party: "subject" },
+};
+
+async function fuzzySearch(doctypeOrLabel: string, query: string) {
   const client = await getClient();
-  // Search by Name OR Customer Name
-  // Using 'or_filters' if strictly needed, or just multiple calls.
+  const doctype = DOCTYPE_ALIASES[doctypeOrLabel] ?? doctypeOrLabel;
+  const spec = SEARCH_FIELDS[doctype] ?? { fields: ["name", "status"], party: "" };
+
   // Simple approach: filter by name like query
   const results = await gatewayCall(client, "frappe.client.get_list", {
-      doctype,
-      filters: [["name", "like", `%${query}%`]],
-      fields: ["name", "customer_name", "status", "grand_total"],
-      limit_page_length: 5,
-    });
+    doctype,
+    filters: [["name", "like", `%${query}%`]],
+    fields: spec.fields,
+    limit_page_length: 5,
+  });
 
-  // If no results by ID, search by customer/party name?
-  // This is optional but powerful.
-  if (!results?.message?.length) {
-    const customerResults = await gatewayCall(client, "frappe.client.get_list", {
-        doctype,
-        filters: [["customer_name", "like", `%${query}%`]],
-        fields: ["name", "customer_name", "status"],
-        limit_page_length: 5,
-        order_by: "creation desc", // prioritize recent
-      });
-    return customerResults?.message || [];
+  // If no results by ID, search by the doctype's party/title field.
+  if (!results?.message?.length && spec.party) {
+    const partyResults = await gatewayCall(client, "frappe.client.get_list", {
+      doctype,
+      filters: [[spec.party, "like", `%${query}%`]],
+      fields: spec.fields,
+      limit_page_length: 5,
+      order_by: "creation desc", // prioritize recent
+    });
+    return partyResults?.message || [];
   }
 
   return results?.message || [];

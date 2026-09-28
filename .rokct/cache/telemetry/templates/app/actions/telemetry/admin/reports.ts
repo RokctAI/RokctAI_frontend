@@ -18,12 +18,34 @@
 
 import { paasCall } from "@/app/services/base/platform-gateway";
 
-export async function getReportData(reportType: string, filters: any = {}) {
+export async function getReportData(
+  reportType: string,
+  filters: any = {},
+  fields: string[] = ["*"],
+) {
   try {
-    return await paasCall("api.admin_reports.get_admin_report", {
-      doctype: reportType, // Mapping reportType to DocType or specific report logic
-      filters: filters,
+    if (reportType === "Overview") {
+      // "Overview" is not a doctype: it is the admin dashboard's card set,
+      // flattened into {metric, value} rows for the generic report table.
+      const stats: any = await paasCall(
+        "api.admin_reports.get_admin_statistics",
+      );
+      const cards = stats?.cards ?? {};
+      return Object.entries(cards).map(([key, value]) => ({
+        metric: key
+          .split("_")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" "),
+        value,
+      }));
+    }
+    // get_admin_report requires `fields` (a JSON list of columns).
+    const rows = await paasCall("api.admin_reports.get_admin_report", {
+      doctype: reportType,
+      fields: JSON.stringify(fields),
+      filters: JSON.stringify(filters ?? {}),
     });
+    return Array.isArray(rows) ? rows : [];
   } catch (error) {
     console.error(`Failed to fetch ${reportType} report:`, error);
     return [];

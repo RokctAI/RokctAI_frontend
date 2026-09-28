@@ -80,13 +80,14 @@ export default async function Page({
               session_id: lastChat.id,
               messages: JSON.stringify(lastChat.messages),
             });
-            summary = sumRes?.summary || "";
+            summary = sumRes?.message?.summary || "";
           }
         } catch (sumErr) {
           console.error("Failed to summarize old session during archive:", sumErr);
         }
 
         // Archive summary in local User table JSON field (onboardingData.lastSummary)
+        let summarySaved = false;
         if (summary) {
           const dbUser = await db
             .select()
@@ -104,12 +105,16 @@ export default async function Page({
               },
             })
             .where(eq(userTable.id, session.user.id));
+          summarySaved = true;
           console.log(`[Auto-Archive] Summary stored in user's engramMemory ledger.`);
         }
 
-        // Delete the old raw chat session completely to keep DB clean
-        await deleteChatById({ id: lastChat.id });
-        console.log(`[Auto-Archive] Cleaned up completed session ${lastChat.id} from local chat logs.`);
+        // Delete the old raw chat session only once its summary is saved, so
+        // a failed summary never loses the conversation.
+        if (summarySaved) {
+          await deleteChatById({ id: lastChat.id, userId: session.user.id });
+          console.log(`[Auto-Archive] Cleaned up completed session ${lastChat.id} from local chat logs.`);
+        }
       }
     }
   } catch (e) {

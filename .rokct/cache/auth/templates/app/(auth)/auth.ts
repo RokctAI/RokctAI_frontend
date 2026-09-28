@@ -123,18 +123,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           let authData: any = {};
           let apiKey = null;
           let apiSecret = null;
+          let refreshToken: string | null = null;
           let roles: string[] = [];
           let name = "";
           let homePage = "/"; // Default to root (Chat)
 
           if (isPaaSLogin) {
-            const result = responseData.message || responseData;
-            if (result.status !== true) return null;
+            // api.user.login answers through api_response: HTTP 200 with
+            // { data, message: "Logged In", status_code } -- there is no
+            // `status` flag, and `message` is a plain string (platformCall
+            // already unwrapped Frappe's own `message` envelope). A rejected
+            // login carries status_code 401/403 and no data.
+            const result = responseData || {};
+            const code = Number(result.status_code ?? 200);
+            if (code >= 400 || !result.data?.access_token) return null;
 
             authData = result.data;
             if (authData.access_token) {
               [apiKey, apiSecret] = authData.access_token.split(":");
             }
+            // Kept so refreshTokens() (actions.ts) can renew the session.
+            refreshToken = authData.refresh_token || null;
             if (authData.user) {
               name = authData.user.firstname || (email as string).split("@")[0];
               if (authData.user.role) roles = [authData.user.role];
@@ -272,6 +281,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             name: name,
             apiKey: apiKey,
             apiSecret: apiSecret,
+            refreshToken: refreshToken,
             homePage: homePage,
             siteName: siteName || new URL(baseUrl).hostname,
             roles: roles,
@@ -296,6 +306,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id;
         token.apiKey = (user as any).apiKey;
         token.apiSecret = (user as any).apiSecret;
+        token.refreshToken = (user as any).refreshToken;
         token.roles = (user as any).roles;
         token.siteName = (user as any).siteName;
         token.isPaaS = (user as any).isPaaS;
@@ -314,6 +325,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.id as string;
         (session.user as any).apiKey = token.apiKey;
         (session.user as any).apiSecret = token.apiSecret;
+        (session.user as any).refreshToken = token.refreshToken;
         (session.user as any).roles = token.roles;
         (session.user as any).siteName = token.siteName;
         (session.user as any).isPaaS = token.isPaaS;

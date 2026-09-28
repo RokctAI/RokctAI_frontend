@@ -16,13 +16,11 @@
 
 "use client";
 
-import {
-  Attachment,
-  ChatRequestOptions,
-  CreateUIMessage as CreateMessage,
-  UIMessage as Message,
-  UIToolInvocation as ToolInvocation,
-} from "ai";
+import type {
+  AppendMessage,
+  ChatAttachment,
+  ChatToolInvocation,
+} from "@/lib/agent-chat-messages";
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
@@ -69,12 +67,9 @@ export const PreviewMessage = ({
   chatId: string;
   role: string;
   content: string | ReactNode;
-  toolInvocations: Array<ToolInvocation> | undefined;
-  attachments?: Array<Attachment>;
-  append?: (
-    message: Message | CreateMessage,
-    chatRequestOptions?: ChatRequestOptions,
-  ) => Promise<string | null | undefined>;
+  toolInvocations: Array<ChatToolInvocation> | undefined;
+  attachments?: Array<ChatAttachment>;
+  append?: AppendMessage;
 }) => {
   return (
     <motion.div
@@ -99,7 +94,7 @@ export const PreviewMessage = ({
               const { toolName, toolCallId, state } = toolInvocation;
 
               if (state === "result") {
-                const { result } = toolInvocation;
+                const result: any = toolInvocation.result;
 
                 return (
                   <div key={toolCallId}>
@@ -108,9 +103,9 @@ export const PreviewMessage = ({
                     ) : toolName === "displayFlightStatus" ? (
                       <FlightStatus flightStatus={result} />
                     ) : toolName === "searchFlights" ? (
-                      <ListFlights chatId={chatId} results={result} />
+                      <ListFlights chatId={chatId} results={result} append={append} />
                     ) : toolName === "selectSeats" ? (
-                      <SelectSeats chatId={chatId} availability={result} />
+                      <SelectSeats chatId={chatId} availability={result} append={append} />
                     ) : toolName === "createReservation" ? (
                       Object.keys(result).includes("error") ? null : (
                         <CreateReservation reservation={result} />
@@ -130,14 +125,14 @@ export const PreviewMessage = ({
                     ) : toolName === "disambiguate_task_type" ? (
                       <DisambiguateTask
                         taskTitle={result.taskTitle}
-                        append={append as any}
+                        append={append}
                       />
                     ) : toolName === "display_task_with_reminders" ? (
                       <div className="flex flex-col gap-2">
                         <PersonalTask task={result.task} />
                         <SetReminder
                           taskId={result.task.id}
-                          append={append as any}
+                          append={append}
                         />
                       </div>
                     ) : toolName === "displayProjectCard" ? (
@@ -216,7 +211,7 @@ export const PreviewMessage = ({
           </div>
         )}
 
-        {attachments && (
+        {attachments && attachments.length > 0 && (
           <div className="flex flex-row gap-2">
             {attachments.map((attachment) => (
               <PreviewAttachment key={attachment.url} attachment={attachment} />

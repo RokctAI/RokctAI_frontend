@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1
+
+* Category edit/delete send `uuid`, the argument `update_category`/`delete_category` take.
+* Manager product list and revalidation use `/manager/products/<id>` instead of the removed `/dashboard` route.
+
 ## 1.2.0
 
 * The server actions call the platform through `paasCall` from the base

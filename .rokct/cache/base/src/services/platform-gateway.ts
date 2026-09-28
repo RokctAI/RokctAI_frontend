@@ -433,7 +433,13 @@ export async function platformCall<T = unknown>(
 
     const data = await res.json();
     // Frappe wraps whitelisted returns in a top-level `message` envelope.
-    return (data?.message || data) as T;
+    // Unwrap on key presence, not truthiness: an empty list, 0, false or
+    // null result must come back as itself, not as the envelope.
+    return (
+      data !== null && typeof data === 'object' && 'message' in data
+        ? data.message
+        : data
+    ) as T;
   } catch (e) {
     if (e instanceof PlatformGatewayError) throw e;
     console.error(`Platform gateway call failed: ${cmd}`, e);

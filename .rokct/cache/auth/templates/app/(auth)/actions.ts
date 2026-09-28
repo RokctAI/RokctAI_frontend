@@ -20,11 +20,15 @@ import { AuthError } from "next-auth";
 
 import { headers } from "next/headers";
 
-import { platformCall } from "@/app/services/base/platform-gateway";
+import {
+  PlatformGatewayError,
+  platformCall,
+} from "@/app/services/base/platform-gateway";
 import { TENANT_SITE_HEADER } from "@/app/services/base/tenant-host-control";
 import { signIn, auth } from "./auth";
 import { linkRegisteredAccount } from "./register-link";
 import { loadRegisterProvisioner } from "./register-provision";
+import { resolveRegisterBaseUrl } from "./register-provision-default";
 import { loadTenantLink } from "./tenant-link";
 
 export async function getCurrentSession() {
@@ -73,7 +77,15 @@ export async function refreshTokens() {
 
 export type ActionState = {
   error?: string;
-  status?: "idle" | "success" | "failed" | "invalid_data" | "user_exists";
+  status?:
+    | "idle"
+    | "success"
+    | "failed"
+    | "invalid_data"
+    | "user_exists"
+    | "verify_email";
+  /** With `verify_email`: the site the account was created on, for the code step. */
+  siteName?: string | null;
 };
 
 export async function login(
@@ -190,8 +202,17 @@ export async function register(
           redirect: false,
         });
       } catch (loginError) {
-        // The account exists; a sign-in that fails leaves the visitor at
-        // the login, as before.
+        // The account exists but the site will not sign it in until the
+        // emailed code is entered: hand the page its code step.
+        if (outcome.verifyEmail) {
+          return {
+            status: "verify_email",
+            siteName: outcome.signIn.siteName ?? tenantSite,
+            error: outcome.message,
+          };
+        }
+        // Otherwise a sign-in that fails leaves the visitor at the login,
+        // as before.
         console.warn("Auto-login failed:", loginError);
       }
     }
@@ -199,6 +220,86 @@ export async function register(
   } catch (error) {
     console.error("Registration Error:", error);
     return { status: "failed", error: "Could not create user." };
+  }
+}
+
+/** The platform's guest email-code check (users_sdk's `api.user.verify_email_code`). */
+const VERIFY_EMAIL_CODE_CMD = "api.user.verify_email_code";
+/** The platform's guest code re-send (users_sdk's `api.user.resend_verification_email`). */
+const RESEND_CODE_CMD = "api.user.resend_verification_email";
+
+/**
+ * The register page's code step: check the 6-digit code register_user
+ * emailed, then sign the account in with the credentials the visitor just
+ * registered with (api.user.login stops answering 403 once it is spent).
+ */
+export async function verifyRegistrationEmail(input: {
+  email: string;
+  password: string;
+  code: string;
+  siteName: string | null;
+}): Promise<ActionState> {
+  const email = input.email.trim();
+  const code = input.code.trim();
+  if (!email || !code) {
+    return { status: "invalid_data", error: "Enter the code we emailed you." };
+  }
+  const target = await resolveRegisterBaseUrl(input.siteName);
+  if (!target.baseUrl) return { status: "failed", error: "error" in target ? target.error : "No site to register on." };
+
+  try {
+    const result = await platformCall<{ status_code?: number; message?: string }>(
+      VERIFY_EMAIL_CODE_CMD,
+      { email, otp: code },
+      { baseUrl: target.baseUrl, session: null, requireAuth: false, throwOnError: true },
+    );
+    // verify_email_code answers through api_response: a wrong or expired code
+    // is HTTP 200 with status_code 401 (400/403/404/500 for the other
+    // failures) in the body, never a `status: false` flag.
+    if (!result || Number(result.status_code ?? 200) >= 400) {
+      return { status: "failed", error: result?.message || "Invalid or expired verification code." };
+    }
+  } catch (e) {
+    if (e instanceof PlatformGatewayError && e.reason === "http_error") {
+      return { status: "failed", error: "Invalid or expired verification code." };
+    }
+    console.error("[auth] verify_email_code failed:", e);
+    return { status: "failed", error: "Could not reach the site." };
+  }
+
+  try {
+    await signIn("credentials", {
+      email,
+      password: input.password,
+      ...(input.siteName ? { site_name: input.siteName } : {}),
+      is_paas: "true",
+      redirect: false,
+    });
+  } catch (loginError) {
+    // Verified, but not signed in: the visitor can still use the login.
+    console.warn("Sign-in after verification failed:", loginError);
+    return { status: "failed", error: "Your email is verified. Please sign in." };
+  }
+  return { status: "success" };
+}
+
+/** Re-send the registration code; the site answers the same whether or not one went out. */
+export async function resendRegistrationCode(input: {
+  email: string;
+  siteName: string | null;
+}): Promise<ActionState> {
+  const target = await resolveRegisterBaseUrl(input.siteName);
+  if (!target.baseUrl) return { status: "failed", error: "error" in target ? target.error : "No site to register on." };
+  try {
+    await platformCall(
+      RESEND_CODE_CMD,
+      { email: input.email.trim() },
+      { baseUrl: target.baseUrl, session: null, requireAuth: false, throwOnError: true },
+    );
+    return { status: "success" };
+  } catch (e) {
+    console.error("[auth] resend_verification_email failed:", e);
+    return { status: "failed", error: "Could not send a new code. Try again shortly." };
   }
 }
 

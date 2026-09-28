@@ -1,5 +1,69 @@
 # Changelog
 
+## 1.20.0
+
+Requires base_sdk >= 1.40.0 and auth_sdk >= 1.7.0 as before, and the host's
+db/queries.ts from RokctAI_frontend #186 (`deleteChatById({ id, userId })`,
+`saveChat` filtered on `userId`). New install: lib/agent-chat-messages.ts.
+
+* The web chat speaks AI SDK 6. The manifest pins ai 6.0.44 and
+  @ai-sdk/react ^3.0.71, but chat.tsx, multimodal-input.tsx and the chat
+  route were written against AI SDK 4 (`input`, `handleSubmit`, `append`,
+  `isLoading`, `initialMessages`, `m.content`, the `0:"..."` text stream).
+  chat.tsx now drives `useChat` through a `DefaultChatTransport` and
+  `sendMessage`; the route reads UIMessage `parts` and answers with
+  `createUIMessageStreamResponse`. lib/agent-chat-messages.ts converts the
+  stored (4-style) history rows, which the history table keeps, to and
+  from UIMessages. The flight and task cards send through the chat's own
+  `sendMessage` instead of a second `useChat`.
+* New chats open. `/` redirects to `/chat/<uuid>`, and chat/[id] 404'd when
+  the id had no row yet; it now renders an empty chat. Someone else's chat
+  is still a 404.
+* The chat route checks the chat's owner (`getChatById`) before any save or
+  delete, and passes `userId` to `deleteChatById`, so one user can no
+  longer overwrite or delete another's chat by id.
+* A chat is deleted only after its summary is saved: the 20-message
+  roll-over, the onboarding roll-over and the root page's archive.
+* The roll-over no longer repeats on every later turn. The new session
+  starts from the summary plus the last turn, the route saves only that
+  turn under the new id and names it in a `data-session` stream part, and
+  the chat moves to it (URL included) instead of putting the old id back.
+* Errors are errors. A quota, seat or plan refusal (403 from the bridge) is
+  a 403 to the browser, detected by status rather than by matching
+  "Quota Exceeded"; a bridge `status: "error"` reply or a failed call is a
+  502, and neither is saved into the history as the assistant's answer.
+* The Paperclip hop no longer sends the latest user message twice.
+* Attachments: `chat_with_rok` takes no files, so the attach menu is
+  switched off (`ATTACHMENTS_ENABLED`, upload code kept) and a files-only
+  turn names its files instead of failing with a 400.
+* multimodal-input.tsx's `submitForm` has complete `useCallback` deps and a
+  late classify-intent answer no longer overwrites a newer one.
+* `/api/ai/classify-intent` requires a session.
+* Review follow-ups: the chat follows a roll-over as soon as the stream
+  names the new session, so stopping mid-answer no longer strands the old
+  id; an empty summary does not roll; a failed chat lookup is a 503, not
+  "no chat"; a 403's reason is read from `message`/`exception` or parsed
+  out of `_server_messages`; only the daily quota refusal (marked
+  `X-Rok-Refusal: quota`) sends the user to the offline flow, while seat
+  and plan refusals just show their line; "New session" starts a new chat
+  id instead of overwriting the stored chat.
+
+## 1.19.4
+
+Requires base_sdk >= 1.40.0 and auth_sdk >= 1.7.0 as before. No install,
+integration or floor changes.
+
+* Tenant-plan sign-up works. `provisionNewTenant`
+  (app/(auth)/agent-register-helpers.ts) never sent `password`, a required
+  argument of `control:provision_new_tenant`, so every tenant-plan
+  registration failed with a missing-argument TypeError. It now sends the
+  password the visitor registered with, as `provisionServiceSubscription`
+  already did.
+
+## 1.19.3
+
+* fix(chat): the control-user session summary is read from `sumRes.message.summary`. ControlBaseService keeps the Frappe `{message}` envelope, so the summary was always empty and the archived chat lost its memory.
+
 ## 1.19.2
 
 Requires base_sdk >= 1.40.0 and auth_sdk >= 1.7.0 as before. No install,

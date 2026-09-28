@@ -1,3 +1,7 @@
+## 1.0.1
+
+* fix(manager wallet): balance reads `balance`, history rows read transaction_type/amount/creation, and top-up picks a saved card (the page crashed on the {data} history and top-up always failed). Needs gateways 1.1.2.
+
 ## 1.0.0
 
 * First Next.js half of the wallet SDK. Consolidates the wallet pages that

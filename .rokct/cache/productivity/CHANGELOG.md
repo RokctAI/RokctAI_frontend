@@ -1,3 +1,11 @@
+## 1.0.3
+
+* fix(ai smart status): `fuzzySearch` asks each doctype only for columns it has (Project: project_name/customer, Task: subject/project, Purchase Order: supplier_name; customer_name/grand_total only on the selling doctypes) and falls back to that doctype's party/title field. The "Invoice" label maps to the real `Sales Invoice` doctype. Purchase Order is tried in the guessed-type path (Supply Chain role) and gets a Cancelled branch. The document lookup now runs inside the try, so a gateway error returns `{ success: false }` instead of throwing.
+
+## 1.0.2
+
+* fix(ai strategy): HRMS Goal is read by goal_name, filtered on Pending/In Progress (there is no "Open" status).
+
 ## 1.0.1
 
 * The server actions under `app/actions/handson/all/` that called the

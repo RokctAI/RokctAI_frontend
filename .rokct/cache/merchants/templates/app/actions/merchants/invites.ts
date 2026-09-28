@@ -21,7 +21,8 @@ import { paasCall } from "@/app/services/base/platform-gateway";
 export async function getSellerInvites() {
   try {
     const response = await paasCall("api.seller_invites.get_seller_invites");
-    return response.message || [];
+    // paasCall already unwraps the {message} envelope.
+    return Array.isArray(response) ? response : [];
   } catch (error) {
     console.error("Failed to fetch seller invites:", error);
     return [];

@@ -32,9 +32,9 @@ export async function getCallLogs(page = 1, limit = 20) {
       doctype: "Call Log",
       fields: [
         "name",
-        "title",
+        // erp Call Log has no title, and its direction column is `type`.
         "status",
-        "call_type",
+        "type as call_type",
         "start_time",
         "duration",
         "owner",

@@ -1,6 +1,9 @@
 {
   "name": "base_sdk",
-  "version": "1.48.0",
+  "version": "1.50.0",
+  "_comment_version_1_50_0": "1.49.1 -> 1.50.0: admin nav gains Finance > Customer Subscriptions (/admin/finance/customer-subscriptions, page from the loyalty SDK).",
+  "_comment_version_1_49_1": "1.49.0 -> 1.49.1: platformCall unwraps the message envelope by key presence, so empty/falsy results are returned as themselves.",
+  "_comment_version_1_49_0": "1.48.0 -> 1.49.0: Admin actions getCareerCategories, getPaymentMethods and getSocialSettings now resolve (backend functions added in base/frappe); the FAQ form writes the doctype's active field instead of is_active.",
   "installs": [
     {
       "from": "src/services",

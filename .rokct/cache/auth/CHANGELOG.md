@@ -1,3 +1,54 @@
+## 1.8.3
+
+* **`next build` type-checks again.** `verifyRegistrationEmail` read
+  `result.message` inside `if (!result || ...)`, where `result` is possibly
+  null (TS18047 under Next 16's type check). It now reads `result?.message`.
+
+## 1.8.2
+
+* **Web password login works again.** `api.user.login` answers through
+  `api_response` (`{ data, message: "Logged In", status_code }`, no
+  `status` flag), so the credentials check `result.status !== true`
+  rejected every login. It now accepts a body with status_code below 400
+  and an access token. The login's `refresh_token` is now kept on the
+  session (`session.user.refreshToken`), which `refreshTokens()` reads.
+* **A wrong emailed code is rejected.** `verifyRegistrationEmail` checked
+  `status === false`, but `api.user.verify_email_code` answers a wrong code
+  with HTTP 200 and `status_code: 401`; it now fails on status_code >= 400.
+
+## 1.8.1
+
+* **`next build` type-checks again under stricter shell tsconfigs.**
+  `app/(auth)/actions.ts` (two places) and
+  `app/(auth)/register-provision-default.ts` read `target.error` on
+  `{ baseUrl: string } | { baseUrl: null; error: string }` after
+  `if (!target.baseUrl)`, which does not narrow the union when
+  `strictNullChecks` is off. They now narrow with
+  `"error" in target ? target.error : ...`, which works under any config.
+
+## 1.8.0
+
+* **Web email sign-up asks for the emailed code.** The default
+  provisioner's `api.user.register_user` emails a 6-digit code, and
+  `api.user.login` answers 403 "Account not verified" until it is
+  entered, so the auto sign-in after registering failed silently and the
+  visitor was stuck. The register page now shows a code step when that
+  sign-in fails: `verifyRegistrationEmail` (app/(auth)/actions.ts) checks
+  the code with users_sdk's guest `api.user.verify_email_code`, signs in
+  with the credentials just registered, then continues to the home SDK's
+  post-account steps (or straight on, signed in, when there are none). A
+  Resend code button calls `api.user.resend_verification_email`.
+* **`RegisterOutcome` success gains `verifyEmail`.** A provisioner sets it
+  when the site emailed a code and will not sign the account in until it
+  is entered; the default provisioner does. It only matters when the
+  sign-in fails, so a provisioner answering `signIn: false` (a
+  verification mail it handles itself) or one whose sign-in succeeds is
+  unchanged. The register action answers `status: "verify_email"` with the
+  site name in that case.
+* The site resolution the default provisioner used inline is exported as
+  `resolveRegisterBaseUrl`, so the code step talks to the same tenant site
+  (never the control site) the account was created on.
+
 ## 1.7.3
 
 * **The sign-in heading prints the brand, not the address.** Ray,

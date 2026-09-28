@@ -65,6 +65,40 @@ const STATUSES = [
   "Failed",
 ];
 
+/**
+ * The Order doctype carries order_items (product/quantity/price),
+ * total_price, address and tax, not the ERPNext Sales Order shape
+ * (items/qty/rate/grand_total/delivery_address) this page renders; map
+ * the real fields onto it.
+ */
+function normalizeOrder(data: any) {
+  if (!data) return data;
+  const rows: any[] = data.items ?? data.order_items ?? [];
+  const items = rows.map((row: any) => {
+    const qty = Number(row.qty ?? row.quantity ?? 0) || 0;
+    const rate = Number(row.rate ?? row.price ?? 0) || 0;
+    const code = String(row.item_code ?? row.product ?? row.name ?? "");
+    return {
+      ...row,
+      item_code: code,
+      item_name: row.item_name ?? row.product_title ?? code,
+      qty,
+      rate,
+      amount: Number(row.amount ?? qty * rate - (row.discount || 0)) || 0,
+    };
+  });
+  return {
+    ...data,
+    items,
+    grand_total: Number(data.grand_total ?? data.total_price ?? 0) || 0,
+    tax: Number(data.tax ?? 0) || 0,
+    delivery_fee: Number(data.delivery_fee ?? 0) || 0,
+    delivery_address:
+      data.delivery_address ??
+      (typeof data.address === "string" ? data.address : undefined),
+  };
+}
+
 export default function OrderDetailsPage({
   params,
 }: {
@@ -81,7 +115,7 @@ export default function OrderDetailsPage({
       try {
         const data = await getOrder(params.id);
         if (data) {
-          setOrder(data);
+          setOrder(normalizeOrder(data));
           setStatus(data.status);
         } else {
           toast.error("Order not found");
@@ -105,7 +139,7 @@ export default function OrderDetailsPage({
       toast.success(`Order status updated to ${newStatus}`);
       // Refresh order data
       const updatedOrder = await getOrder(params.id);
-      setOrder(updatedOrder);
+      setOrder(normalizeOrder(updatedOrder));
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("Failed to update status");

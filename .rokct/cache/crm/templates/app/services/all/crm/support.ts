@@ -30,7 +30,8 @@ export class SupportService {
           "priority",
           "raised_by",
           "opening_date",
-          "resolution_date",
+          // Issue has no resolution_date; the SLA resolution date is it.
+          "sla_resolution_date as resolution_date",
         ],
         limit_start: start,
         limit_page_length: limit,
@@ -143,11 +144,12 @@ export class SupportService {
           "customer",
           "item_code",
           "status",
-          "claim_date",
-          "issue_description",
+          // Warranty Claim columns are complaint_date and complaint.
+          "complaint_date as claim_date",
+          "complaint as issue_description",
         ],
         limit_page_length: 50,
-        order_by: "claim_date desc",
+        order_by: "complaint_date desc",
       },
       options,
     );

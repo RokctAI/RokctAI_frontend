@@ -45,18 +45,32 @@ export const REGISTER_USER_CMD = "api.user.register_user";
 /** Frappe's duplicate-account answer, as register_user words it. */
 const USER_EXISTS_RE = /already (registered|exists)/i;
 
+/**
+ * The site a guest sign-up (and its email verification) talks to: the
+ * tenant site the request named, else base_sdk's resolved backend - never
+ * the control site. `null` with the reason when there is none.
+ */
+export async function resolveRegisterBaseUrl(
+  tenantSite: string | null,
+): Promise<{ baseUrl: string } | { baseUrl: null; error: string }> {
+  const baseUrl =
+    normalizeSiteUrl(tenantSite) ??
+    (await resolveTenantBaseUrl({ session: null }));
+  if (!baseUrl) return { baseUrl: null, error: "No site to register on." };
+  const control = controlBaseUrl();
+  if (control && sameSite(baseUrl, control)) {
+    return { baseUrl: null, error: "Registration is not offered here." };
+  }
+  return { baseUrl };
+}
+
 const defaultProvisioner: RegisterProvisioner = {
   async provision(submission: RegisterSubmission): Promise<RegisterOutcome> {
-    const baseUrl =
-      normalizeSiteUrl(submission.tenantSite) ??
-      (await resolveTenantBaseUrl({ session: null }));
-    if (!baseUrl) {
-      return { status: "failed", error: "No site to register on." };
+    const target = await resolveRegisterBaseUrl(submission.tenantSite);
+    if (!target.baseUrl) {
+      return { status: "failed", error: "error" in target ? target.error : "No site to register on." };
     }
-    const control = controlBaseUrl();
-    if (control && sameSite(baseUrl, control)) {
-      return { status: "failed", error: "Registration is not offered here." };
-    }
+    const baseUrl = target.baseUrl;
 
     try {
       const result = await platformCall<{
@@ -85,6 +99,10 @@ const defaultProvisioner: RegisterProvisioner = {
           password: submission.password,
           siteName: submission.tenantSite,
         },
+        // register_user emails a 6-digit code and api.user.login answers
+        // 403 "Account not verified" until it is entered, so the sign-in
+        // above fails until the register page's code step has run.
+        verifyEmail: true,
         message: message || undefined,
       };
     } catch (e) {

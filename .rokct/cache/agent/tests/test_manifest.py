@@ -58,6 +58,8 @@ LOGOS = os.path.join(TEMPLATES, "components", "custom", "logos.tsx")
 LOGOS_CLIENT = os.path.join(TEMPLATES, "components", "custom", "logos.client.tsx")
 CUSTOM = os.path.join(TEMPLATES, "components", "custom")
 LOGOS_TRACK = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-logos.ts")
+# 1.20.0: the chat's message shapes on AI SDK 6.
+CHAT_MESSAGES = os.path.join(TEMPLATES, "lib", "agent-chat-messages.ts")
 LANDING_CONFIG = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-landing-config.ts")
 # 1.15.0: the Chrome Web Store mark on the hero's badge and the header's
 # extension button. 1.16.0: the files are base_sdk 1.26.0's, installed
@@ -79,6 +81,7 @@ STAGED = {
     "agent-network-strip.ts": NETWORK_STRIP,
     "agent-hero-copy.ts": HERO_COPY,
     "agent-logos.ts": LOGOS_TRACK,
+    "agent-chat-messages.ts": CHAT_MESSAGES,
 }
 NODE_SUITES = [
     "register-config.test.mts",
@@ -86,6 +89,7 @@ NODE_SUITES = [
     "network-strip.test.mts",
     "hero-copy.test.mts",
     "logos-track.test.mts",
+    "chat-messages.test.mts",
 ]
 
 # The two registry lines this SDK injects, exactly as auth_sdk's README
@@ -771,7 +775,7 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn("## 1.19.1", latest)
         for word in ('"juvo platforms"', "use caps in logos", "`uppercase`"):
             self.assertIn(word, latest)
-        self.assertEqual(load_manifest()["version"], "1.19.2")
+        self.assertEqual(load_manifest()["version"], "1.20.0")
 
     def test_behaviour_under_node(self):
         node = shutil.which("node")
@@ -1117,7 +1121,9 @@ class TestChatIdPage(unittest.TestCase):
         self.assertIn("chatFromDb = await getChatById({ id });", guard.group(1))
         self.assertIn("console.error(", guard.group(2))
         self.assertIn("notFound();", guard.group(2))
-        # The existing checks stand, unchanged.
-        self.assertIn("if (!chatFromDb) {\n    notFound();", self.page)
         self.assertIn("if (!session || !session.user) {\n    return notFound();", self.page)
-        self.assertIn("if (session.user.id !== chat.userId) {\n    return notFound();", self.page)
+        # 1.20.0: someone else's chat is still a 404, but an id with no row
+        # yet is the new chat the root page redirected to: it renders empty.
+        self.assertIn("if (chatFromDb && session.user.id !== chatFromDb.userId) {\n    return notFound();", self.page)
+        self.assertNotIn("if (!chatFromDb) {\n    notFound();", self.page)
+        self.assertIn("chatFromDb ? storedToUIMessages(chatFromDb.messages) : []", self.page)

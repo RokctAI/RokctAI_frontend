@@ -119,7 +119,7 @@ class ManifestTests(unittest.TestCase):
             self.manifest = json.load(fh)
 
     def test_version(self):
-        self.assertEqual(self.manifest["version"], "1.0.1")
+        self.assertEqual(self.manifest["version"], "1.0.3")
 
     def test_requires_gateway_rpc(self):
         self.assertIn(GATEWAY_RPC, self.manifest["requires"])
