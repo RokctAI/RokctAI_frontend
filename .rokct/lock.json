@@ -247,7 +247,7 @@
       "git": "https://github.com/RokctAI/agent",
       "path": "../agent/agent/nextjs",
       "ref": "main",
-      "commit": "d007583063be71eeba939653c1a10464de51c20e",
+      "commit": "981bd584be1058f4c3592db85cebd02864d8e608",
       "version": "1.21.0",
       "install_py_sha256": "c629e669d7aeba008b2e1c23a845eb65628f09e8538f738abbfa1385bf1088a3",
       "content_sha256": "c3cc5c7b8336a3e20ccdd3fbcd57eafc7b080c3efdc35e6a33a829abe9875b63"
