@@ -82,6 +82,7 @@ STAGED = {
     "agent-hero-copy.ts": HERO_COPY,
     "agent-logos.ts": LOGOS_TRACK,
     "agent-chat-messages.ts": CHAT_MESSAGES,
+    "agent-opportunity-cards.ts": os.path.join(TEMPLATES, "lib", "agent-opportunity-cards.ts"),
 }
 NODE_SUITES = [
     "register-config.test.mts",
@@ -90,6 +91,7 @@ NODE_SUITES = [
     "hero-copy.test.mts",
     "logos-track.test.mts",
     "chat-messages.test.mts",
+    "opportunity-cards.test.mts",
 ]
 
 # The two registry lines this SDK injects, exactly as auth_sdk's README
@@ -336,7 +338,12 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn('extra: { is_onboarding: "true" }', provision)
         self.assertIn('"control:provision_service_subscription"', helpers)
         self.assertIn('"control:provision_new_tenant"', helpers)
-        self.assertIn("get_pricing_metadata", helpers)
+        self.assertIn('PRICING_METADATA_CMD = "control:get_pricing_metadata"', helpers)
+        # The pricing read rides the platform gateway as a guest cmd; no
+        # client call bypasses rokct.platform.api here.
+        self.assertIn("requireAuth: false", helpers)
+        self.assertNotIn("fetch(", helpers)
+        self.assertNotIn("/api/method/", helpers)
         self.assertIn("PROVISIONING_TIMEOUT_MS = 60000", helpers)
         self.assertIn('"frappe.client.get_list"', read(ACTIONS))
         self.assertIn('doctype: "Industry Type"', read(ACTIONS))
@@ -775,7 +782,7 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn("## 1.19.1", latest)
         for word in ('"juvo platforms"', "use caps in logos", "`uppercase`"):
             self.assertIn(word, latest)
-        self.assertEqual(load_manifest()["version"], "1.20.0")
+        self.assertEqual(load_manifest()["version"], "1.21.0")
 
     def test_behaviour_under_node(self):
         node = shutil.which("node")
@@ -847,6 +854,7 @@ CONTROL_CMDS_OF_OTHER_MODULES = {
     "control:get_public_opportunities": "corporate tender/frappe manifest",
     "control:provision_service_subscription": "control/hooks.py override_whitelisted_methods",
     "control:provision_new_tenant": "control/hooks.py override_whitelisted_methods",
+    "control:get_pricing_metadata": "control/hooks.py override_whitelisted_methods (allow_guest)",
 }
 
 

@@ -106,6 +106,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             }
           } else {
             // Standard Login (via /login): Use Standard API
+            // bypasses gateway: needs the Frappe sid Set-Cookie from native /api/method/login (read below for control:get_my_subscription); platformCall returns only the body and api.user.login issues API keys, not a sid.
             loginRes = await fetch(`${baseUrl}/api/method/login`, {
               method: "POST",
               headers: {

@@ -26,7 +26,7 @@ import provisioner from './agent-register-provision.ts';
 import {
   DEFAULT_COUNTRY,
   DEFAULT_CURRENCY,
-  PRICING_METADATA_PATH,
+  PRICING_METADATA_CMD,
   PROVISIONING_TIMEOUT_MS,
   isAiPlan,
   isServicePlan,
@@ -60,19 +60,21 @@ const plans = (...rows: Record<string, unknown>[]) => {
   catalogue.answer = { success: true, data: rows };
 };
 
-/** A pricing-metadata answer, or a failed read. */
+type Call = (typeof gateway.calls)[number];
+
+/** The provisioning answer; a test replaces it. Pricing reads are answered separately. */
+let provisionAnswer: (call: Call) => unknown = () => null;
+let pricingAnswer: { currency?: string; country_name?: string } | null = null;
+
+/** A pricing-metadata answer, or (null) a failed read. */
 function pricing(answer: { currency?: string; country_name?: string } | null) {
-  const urls: string[] = [];
-  globalThis.fetch = (async (input: string | URL) => {
-    urls.push(String(input));
-    if (!answer) throw new Error('offline');
-    return {
-      ok: true,
-      json: async () => ({ message: answer }),
-    } as unknown as Response;
-  }) as typeof fetch;
-  return urls;
+  pricingAnswer = answer;
 }
+
+/** The pricing reads, which ride the gateway as control:get_pricing_metadata. */
+const pricingCalls = () => gateway.calls.filter((c) => c.cmd === PRICING_METADATA_CMD);
+/** Every other gateway call: the provisioning ones. */
+const provisionCalls = () => gateway.calls.filter((c) => c.cmd !== PRICING_METADATA_CMD);
 
 const silenced = async <T>(fn: () => Promise<T>): Promise<T> => {
   const error = console.error;
@@ -87,19 +89,22 @@ const silenced = async <T>(fn: () => Promise<T>): Promise<T> => {
   }
 };
 
-const realFetch = globalThis.fetch;
-
 describe('the provisioner', () => {
   beforeEach(() => {
     process.env.ROKCT_BASE_URL = CONTROL;
     admin.answer = ADMIN;
     gateway.reset();
-    gateway.answer = () => ({ site_name: 'a-company.rokct.invalid' });
+    provisionAnswer = () => ({ site_name: 'a-company.rokct.invalid' });
+    gateway.answer = (call) => {
+      if (call.cmd !== PRICING_METADATA_CMD) return provisionAnswer(call);
+      if (!pricingAnswer) throw new PlatformGatewayError('network_error');
+      return pricingAnswer;
+    };
     plans({ plan_name: 'Team', plan_type: 'Tenant', is_ai: 1 });
     pricing({ currency: 'KES', country_name: 'Kenya' });
   });
   afterEach(() => {
-    globalThis.fetch = realFetch;
+    gateway.reset();
   });
 
   it('is the module\'s default export', () => {
@@ -113,22 +118,26 @@ describe('the provisioner', () => {
       status: 'failed',
       error: 'System not initialized. Administrator must login first.',
     });
-    assert.deepEqual(gateway.calls, []);
+    assert.deepEqual(provisionCalls(), []);
   });
 
   it('stops without ROKCT_BASE_URL', async () => {
     delete process.env.ROKCT_BASE_URL;
     const outcome = await silenced(() => provisioner.provision(submission({})));
     assert.deepEqual(outcome, { status: 'failed', error: 'Could not create user.' });
-    assert.deepEqual(gateway.calls, []);
+    assert.deepEqual(provisionCalls(), []);
   });
 
   it('resolves country and currency at the control site\'s get_pricing_metadata', async () => {
-    const urls = pricing({ currency: 'KES', country_name: 'Kenya' });
+    pricing({ currency: 'KES', country_name: 'Kenya' });
     await provisioner.provision(submission({ country: 'kenya' }));
-    assert.equal(urls.length, 1);
-    assert.equal(urls[0], `${CONTROL}${PRICING_METADATA_PATH}?country=kenya`);
-    const payload = gateway.calls[0].payload as Record<string, unknown>;
+    const reads = pricingCalls();
+    assert.equal(reads.length, 1);
+    assert.deepEqual(reads[0].payload, { country: 'kenya' });
+    // A guest read through the gateway at the control site, no raw fetch.
+    assert.equal(reads[0].options?.baseUrl, CONTROL);
+    assert.equal(reads[0].options?.requireAuth, false);
+    const payload = provisionCalls()[0].payload as Record<string, unknown>;
     assert.equal(payload.currency, 'KES');
     assert.equal(payload.country, 'Kenya');
   });
@@ -136,26 +145,26 @@ describe('the provisioner', () => {
   it('keeps the input country and the default currency when that read fails', async () => {
     pricing(null);
     await silenced(() => provisioner.provision(submission({ country: 'Kenya' })));
-    const payload = gateway.calls[0].payload as Record<string, unknown>;
+    const payload = provisionCalls()[0].payload as Record<string, unknown>;
     assert.equal(payload.currency, DEFAULT_CURRENCY);
     assert.equal(DEFAULT_CURRENCY, 'USD');
     assert.equal(payload.country, 'Kenya');
   });
 
   it('falls back to South Africa when the form named no country', async () => {
-    const urls = pricing(null);
+    pricing(null);
     await silenced(() => provisioner.provision(submission({ country: '' })));
     assert.equal(DEFAULT_COUNTRY, 'South Africa');
-    assert.equal(urls[0], `${CONTROL}${PRICING_METADATA_PATH}?country=South%20Africa`);
-    assert.equal((gateway.calls[0].payload as Record<string, unknown>).country, 'South Africa');
+    assert.deepEqual(pricingCalls()[0].payload, { country: 'South Africa' });
+    assert.equal((provisionCalls()[0].payload as Record<string, unknown>).country, 'South Africa');
   });
 
   it('provisions a tenant plan at control:provision_new_tenant under the administrator', async () => {
     const outcome = await provisioner.provision(
       submission({ voucher_code: 'V1', domain: 'ignored.rokct.invalid' }),
     );
-    assert.equal(gateway.calls.length, 1);
-    const [call] = gateway.calls;
+    assert.equal(provisionCalls().length, 1);
+    const [call] = provisionCalls();
     assert.equal(call.cmd, 'control:provision_new_tenant');
     assert.deepEqual(call.payload, {
       email: 'owner@rokct.invalid',
@@ -206,7 +215,7 @@ describe('the provisioner', () => {
     const outcome = await provisioner.provision(
       submission({ plan: 'Hosted', domain: 'shop.rokct.invalid' }),
     );
-    const [call] = gateway.calls;
+    const [call] = provisionCalls();
     assert.equal(call.cmd, 'control:provision_service_subscription');
     assert.deepEqual(call.payload, {
       plan: 'Hosted',
@@ -237,14 +246,14 @@ describe('the provisioner', () => {
   it('provisions nothing without a company name', async () => {
     plans({ plan_name: 'Team', plan_type: 'Tenant', is_ai: 1 });
     const outcome = await provisioner.provision(submission({ company_name: '' }));
-    assert.deepEqual(gateway.calls, []);
+    assert.deepEqual(provisionCalls(), []);
     assert.equal(outcome.status, 'success');
     if (outcome.status !== 'success') return;
     assert.equal(outcome.siteName, null);
   });
 
   it('reports a non-2xx answer as the provisioning failure', async () => {
-    gateway.answer = () => {
+    provisionAnswer = () => {
       throw new PlatformGatewayError('http_error', 500);
     };
     assert.deepEqual(await provisioner.provision(submission({})), {
@@ -259,7 +268,7 @@ describe('the provisioner', () => {
   });
 
   it('reports any other provisioning error as an exception', async () => {
-    gateway.answer = () => {
+    provisionAnswer = () => {
       throw new PlatformGatewayError('timeout');
     };
     const outcome = await silenced(() => provisioner.provision(submission({})));
@@ -270,7 +279,7 @@ describe('the provisioner', () => {
   });
 
   it('takes a bare string answer as the site name', async () => {
-    gateway.answer = () => 'bare.rokct.invalid';
+    provisionAnswer = () => 'bare.rokct.invalid';
     const outcome = await provisioner.provision(submission({}));
     assert.equal(outcome.status, 'success');
     if (outcome.status !== 'success') return;

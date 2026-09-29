@@ -1,5 +1,35 @@
 # Changelog
 
+## 1.21.0
+
+New installs: app/opportunities and lib/agent-opportunity-cards.ts.
+
+* rokct.ai/opportunities/<grants|tenders|equity>/<slug>, the links the
+  landing search already builds, now render instead of 404ing. The pages
+  are built on the server from the public RokctAI/opportunities repo, read
+  from raw.githubusercontent.com with no auth and cached for an hour
+  (`revalidate = 3600`); no client call is made. Tenders resolve by the
+  `03_tenders/<slug>/` folder, equity by the `01_equity/<slug>.md` stem and
+  grants by the `02_grants/<slug>.md` stem, falling back to the
+  `grants.json` row.
+* A known slug shows its card (Quick Stats, Eligibility, Description, How
+  to Apply, Audit & Status) with the apply button on the page. One whose
+  deadline has passed says "This closed on <date>" and lists the open
+  ones of its kind under it. Any other link redirects to the new
+  /opportunities listing.
+
+## 1.20.1
+
+* The register flow's country and currency lookup rides the platform
+  gateway. `resolveRegisterLocale` raw-fetched the control site's
+  `/api/method/control.control.api.subscription.get_pricing_metadata`,
+  bypassing `rokct.platform.api`. It now calls
+  `platformCall("control:get_pricing_metadata", { country }, { baseUrl,
+  requireAuth: false })`, the guest-allowed cmd control already registers
+  in `hooks.py` `override_whitelisted_methods`. A failed read still keeps
+  the input country and USD. `PRICING_METADATA_PATH` is replaced by
+  `PRICING_METADATA_CMD`.
+
 ## 1.20.0
 
 Requires base_sdk >= 1.40.0 and auth_sdk >= 1.7.0 as before, and the host's
