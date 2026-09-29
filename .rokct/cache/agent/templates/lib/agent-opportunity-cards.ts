@@ -19,19 +19,15 @@
 // rokct.ai/opportunities/<grants|tenders|equity>/<slug>, the URLs the landing
 // search (agent-opportunities.tsx getOpportunityPath) and the factory's Reel
 // links point at. Built on the server from the public RokctAI/opportunities
-// repo (published/api/<type>.json and the markdown cards), read from
-// raw.githubusercontent.com with no auth and cached by Next's revalidate, the
-// way a blog renders posts from repo files. No client call is made here.
-// Slugs, as the repo lays them out:
-//   tenders: 03_tenders/<slug>/<slug>.md (the folder name)
-//   equity:  01_equity/<slug>.md (the file stem)
-//   grants:  02_grants/<slug>.md (the file stem); grants.json lists only a
-//            few, so the card is tried first and the json entry second.
-// This module is pure apart from fetchText/fetchJson, so node tests it.
-
-export const OPPORTUNITIES_RAW =
-  "https://raw.githubusercontent.com/RokctAI/opportunities/main";
-export const OPPORTUNITIES_REVALIDATE = 3600;
+// repo, read from raw.githubusercontent.com with no auth and cached by Next's
+// revalidate. No client call is made here.
+// agent_sdk 1.21.1: the rows come from OpportunityPublicService
+// (app/services/public/opportunities.ts), the same loader the landing search
+// uses: the backend (control:get_public_opportunities, which reads
+// published/api/<kind>.json) first, GitHub's published/api only as its
+// fallback. This module only turns those rows into the page's card and
+// summaries; the markdown cards are never fetched or parsed. It is pure, so
+// node tests it.
 
 export type OpportunityKind = "grants" | "tenders" | "equity";
 export const OPPORTUNITY_KINDS: OpportunityKind[] = ["grants", "tenders", "equity"];
@@ -74,13 +70,6 @@ export function isOpportunityKind(value: string): value is OpportunityKind {
 
 export function isValidSlug(slug: string): boolean {
   return SLUG_RE.test(slug) && !slug.includes("..");
-}
-
-export function cardPath(kind: OpportunityKind, slug: string): string {
-  const s = encodeURIComponent(slug);
-  if (kind === "tenders") return `03_tenders/${s}/${s}.md`;
-  if (kind === "equity") return `01_equity/${s}.md`;
-  return `02_grants/${s}.md`;
 }
 
 export function opportunityHref(kind: OpportunityKind, slug: string): string {
@@ -129,51 +118,7 @@ function firstUrl(value: string | null): string | null {
   return m ? m[0] : null;
 }
 
-// Parse a card: "# Title", then "## Section" blocks of "- **Label**: value"
-// lines and free text. Nested "### Heading" lines become text headings.
-export function parseCard(kind: OpportunityKind, slug: string, md: string): OpportunityCard | null {
-  const lines = md.replace(/\r\n/g, "\n").split("\n");
-  let title = "";
-  const sections: CardSection[] = [];
-  let current: CardSection | null = null;
-  for (const raw of lines) {
-    const line = raw.trimEnd();
-    if (/^---\s*$/.test(line)) break;
-    if (!title && /^#\s+/.test(line)) {
-      title = cleanTitle(line);
-      continue;
-    }
-    const h2 = /^##\s+(.+)$/.exec(line);
-    if (h2) {
-      current = { heading: h2[1].trim(), fields: [], text: [] };
-      sections.push(current);
-      continue;
-    }
-    if (!current || !line.trim()) continue;
-    const field = /^\s*[-*]\s+\*\*(.+?)\*\*:?\s*(.*)$/.exec(line);
-    if (field) {
-      current.fields.push({ label: field[1].replace(/:$/, "").trim(), value: cleanValue(field[2]) });
-      continue;
-    }
-    const link = /^\s*[-*]\s+\[(.+?)\]\((https?:[^)]+)\)/.exec(line);
-    if (link) {
-      current.fields.push({ label: link[1].trim(), value: link[2].trim() });
-      continue;
-    }
-    const text = line.replace(/^#{3,}\s*/, "").replace(/^\s*[-*]\s+/, "").trim();
-    if (text) current.text.push(text);
-  }
-  if (!title) return null;
-  const deadline = parseDate(fieldOf(sections, "Deadline", "Closing Date"));
-  const applyUrl = firstUrl(
-    fieldOf(sections, "Applying Link", "Direct Link", "Website", "Source / Verification", "Source"),
-  );
-  const organization = fieldOf(sections, "Organization", "Institution");
-  return { kind, slug, title, sections, deadline, applyUrl, organization };
-}
-
-// A published/api/<kind>.json row turned into a card, for a grant whose
-// markdown card is not in the repo under that slug.
+// A published/api/<kind>.json row turned into the page's card.
 export function cardFromRow(kind: OpportunityKind, row: Record<string, any>): OpportunityCard {
   const skip = new Set(["title", "slug", "category"]);
   const fields = Object.entries(row)
@@ -220,38 +165,16 @@ export function openSummaries(
     });
 }
 
-async function fetchText(path: string): Promise<string | null> {
-  try {
-    const res = await fetch(`${OPPORTUNITIES_RAW}/${path}`, {
-      next: { revalidate: OPPORTUNITIES_REVALIDATE },
-    } as RequestInit);
-    return res.ok ? await res.text() : null;
-  } catch {
-    return null;
-  }
+// A published row for a slug, as the page's card; null when there is none.
+export function cardForSlug(
+  kind: OpportunityKind,
+  slug: string,
+  row: Record<string, any> | null | undefined,
+): OpportunityCard | null {
+  if (!isValidSlug(slug) || !row || row.slug !== slug) return null;
+  return cardFromRow(kind, row);
 }
 
-export async function loadRows(kind: OpportunityKind): Promise<Record<string, any>[]> {
-  const text = await fetchText(`published/api/${kind}.json`);
-  if (!text) return [];
-  try {
-    const rows = JSON.parse(text);
-    return Array.isArray(rows) ? rows : [];
-  } catch {
-    return [];
-  }
-}
-
-export async function loadSummaries(kind: OpportunityKind): Promise<OpportunitySummary[]> {
-  return (await loadRows(kind)).filter((r) => r && r.slug).map((r) => summaryFromRow(kind, r));
-}
-
-// The card for a slug, or null when the repo has no such opportunity.
-export async function loadCard(kind: OpportunityKind, slug: string): Promise<OpportunityCard | null> {
-  if (!isValidSlug(slug)) return null;
-  const md = await fetchText(cardPath(kind, slug));
-  const card = md ? parseCard(kind, slug, md) : null;
-  if (card) return card;
-  const row = (await loadRows(kind)).find((r) => r && r.slug === slug);
-  return row ? cardFromRow(kind, row) : null;
+export function summariesFromRows(kind: OpportunityKind, rows: Record<string, any>[]): OpportunitySummary[] {
+  return rows.filter((r) => r && r.slug).map((r) => summaryFromRow(kind, r));
 }

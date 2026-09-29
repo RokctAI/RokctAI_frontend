@@ -4,7 +4,7 @@
   "app_type": "rokctapp",
   "protocol": {
     "git": "https://github.com/RokctAI/The-Rokct-Protocol",
-    "ref": "111b33289dec7e1de06f480a0496c6b948d4bb2d",
+    "ref": "da145bae4fc5005ec902fe36165d77073a7bf3bb",
     "vendored": ".rokct/cache/_composer",
     "files": {
       "sdk_composer.py": "5fafad102ac00047506783d4fdf53f0c2a09c48aa56c57aba5f0ecc59d523178",
@@ -247,10 +247,10 @@
       "git": "https://github.com/RokctAI/agent",
       "path": "../agent/agent/nextjs",
       "ref": "main",
-      "commit": "981bd584be1058f4c3592db85cebd02864d8e608",
-      "version": "1.21.0",
+      "commit": "bff22f2e5ab4e5427cf0249822b956d4a1906f56",
+      "version": "1.21.1",
       "install_py_sha256": "c629e669d7aeba008b2e1c23a845eb65628f09e8538f738abbfa1385bf1088a3",
-      "content_sha256": "c3cc5c7b8336a3e20ccdd3fbcd57eafc7b080c3efdc35e6a33a829abe9875b63"
+      "content_sha256": "3e11d9f3752bc6f7ddbe958d713bff167bf6e2606249224fb9e9bb0c43723516"
     }
   ]
 }
