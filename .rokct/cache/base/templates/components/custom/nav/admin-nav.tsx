@@ -238,6 +238,10 @@ const menuItems = [
         url: "/admin/finance/subscriptions",
       },
       {
+        title: t("nav.admin.customer_subscriptions"),
+        url: "/admin/finance/customer-subscriptions",
+      },
+      {
         title: t("nav.admin.seller_payments"),
         url: "/admin/customers/payments/sellers",
       },

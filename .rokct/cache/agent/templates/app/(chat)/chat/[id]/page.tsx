@@ -14,13 +14,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { CoreMessage } from "ai";
 import { notFound } from "next/navigation";
 
 import { auth } from "@/app/(auth)/auth";
 import { Chat as PreviewChat } from "@/components/custom/chat";
-import { Chat } from "@/db/schema";
-import { convertToUIMessages } from "@/lib/utils";
+import { storedToUIMessages } from "@/lib/agent-chat-messages";
 
 export default async function Page({
   params,
@@ -49,19 +47,15 @@ export default async function Page({
     notFound();
   }
 
-  if (!chatFromDb) {
-    notFound();
-  }
-
-  // type casting and converting messages to UI messages
-  const chat: Chat = {
-    ...chatFromDb,
-    messages: convertToUIMessages(chatFromDb.messages as Array<CoreMessage>),
-  };
-
-  if (session.user.id !== chat.userId) {
+  // Someone else's chat is not found; an id with no row yet is a new chat
+  // (the root page sends every visitor to a fresh /chat/<uuid>, and the row
+  // is written with its first answer), so it renders empty.
+  if (chatFromDb && session.user.id !== chatFromDb.userId) {
     return notFound();
   }
+
+  // Stored rows (AI SDK 4 shape) become AI SDK 6 UIMessages for useChat.
+  const initialMessages = chatFromDb ? storedToUIMessages(chatFromDb.messages) : [];
 
   const isPaidUser =
     !session?.user?.is_free_plan &&
@@ -70,8 +64,8 @@ export default async function Page({
 
   return (
     <PreviewChat
-      id={chat.id}
-      initialMessages={chat.messages}
+      id={id}
+      initialMessages={initialMessages}
       isPaidUser={isPaidUser}
     />
   );

@@ -266,6 +266,7 @@ migrate_working_dir/
 /app/actions/handson/all/projects/timesheets.ts
 /app/actions/handson/all/workspace/dashboard.ts
 /app/actions/handson/all/workspace/events.ts
+/app/actions/loyalty/admin/customer-subscriptions.ts
 /app/actions/merchants/admin/shops.ts
 /app/actions/merchants/branches.ts
 /app/actions/merchants/business.ts
@@ -312,6 +313,7 @@ migrate_working_dir/
 /app/admin/customers/payments/sellers/page.tsx
 /app/admin/customers/subscribers/page.tsx
 /app/admin/customers/wallets/page.tsx
+/app/admin/finance/customer-subscriptions/page.tsx
 /app/admin/finance/payouts/page.tsx
 /app/admin/finance/payouts/requests/page.tsx
 /app/admin/finance/sales/page.tsx
@@ -869,6 +871,7 @@ migrate_working_dir/
 /drizzle.config.ts
 /hooks/use-mobile.tsx
 /lib/actions/getSubscriptionPlans.ts
+/lib/agent-chat-messages.ts
 /lib/drizzle/0000_faulty_black_crow.sql
 /lib/drizzle/0001_safe_mandarin.sql
 /lib/drizzle/meta/0000_snapshot.json

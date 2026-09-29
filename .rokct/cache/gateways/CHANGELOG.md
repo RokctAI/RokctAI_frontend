@@ -1,3 +1,16 @@
+## 1.1.3
+
+* fix(admin finance): payout requests list and approve/reject call the new
+  `api.payout.admin_list_payout_requests` / `approve_payout_request` /
+  `reject_payout_request` (reject asks for a reason); shop subscriptions
+  call `api.subscription.get_all_shop_subscriptions`. The manager payouts
+  page reads the seller's own `api.payout.list_payout_requests` — there is
+  no Seller Payout doctype.
+
+## 1.1.2
+
+* fix(finance): getWallet/getWalletHistory unwrap the `data` of api_response; new getSavedCards; topUpWallet sends the required `saved_card`.
+
 ## 1.1.1
 
 * `getPaymentPayloads` in `app/actions/gateways/admin/finance.ts` reaches

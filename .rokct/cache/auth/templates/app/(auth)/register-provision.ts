@@ -77,6 +77,14 @@ export type RegisterOutcome =
       signIn?: RegisterSignIn | false;
       /** A line the page shows on success (what to do next). */
       message?: string;
+      /**
+       * The site emailed the account a verification code (the platform's
+       * `api.user.register_user` does) and will not sign it in until the
+       * code is entered: when the sign-in fails, the register page asks
+       * for the code (`api.user.verify_email_code`), then signs in with
+       * `signIn`'s credentials. Ignored when the sign-in succeeds.
+       */
+      verifyEmail?: boolean;
     }
   | {
       status: "failed" | "user_exists" | "invalid_data";

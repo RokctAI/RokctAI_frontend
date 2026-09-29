@@ -17,9 +17,9 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { Attachment, Message } from "ai";
+import { DefaultChatTransport, type UIMessage } from "ai";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +27,7 @@ import { PreviewMessage } from "@/components/custom/message";
 import { useScrollToBottom } from "@/components/custom/use-scroll-to-bottom";
 
 import { AI_MODELS } from "@/ai/models";
-import { ModelId, ModelSelector } from "./model-selector";
+import { ModelSelector } from "./model-selector";
 import { MultimodalInput } from "./multimodal-input";
 import { Overview } from "./overview";
 import { RightPlane } from "./right-plane";
@@ -43,6 +43,28 @@ import { createDraftLead } from "@/ai/local/crm/actions";
 import { createDraftProfileUpdate } from "@/ai/local/hr/actions";
 import { aiStore } from "@/lib/ai-notification-store";
 import { AiStatusPill } from "@/components/custom/ai-status-pill";
+import {
+  type AppendMessage,
+  type ChatAttachment,
+  localExchange,
+  messageFiles,
+  messageText,
+  messageToolInvocations,
+} from "@/lib/agent-chat-messages";
+
+/** A non-2xx answer from /api/chat, with its status (403: a quota, seat or
+ * plan refusal; anything else: ROK could not answer). */
+class ChatHttpError extends Error {
+  status: number;
+  /** The route's `X-Rok-Refusal: quota`: the daily free quota is spent. */
+  quota: boolean;
+  constructor(message: string, status: number, quota = false) {
+    super(message);
+    this.name = "ChatHttpError";
+    this.status = status;
+    this.quota = quota;
+  }
+}
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
@@ -52,7 +74,7 @@ export function Chat({
   isPaidUser = false,
 }: {
   id: string;
-  initialMessages: Array<Message>;
+  initialMessages: Array<UIMessage>;
   isPaidUser?: boolean;
 }) {
   const router = useRouter();
@@ -88,37 +110,87 @@ export function Chat({
   };
 
   const handleNewSession = () => {
+    // A new session is a new chat id: sending under the old id would
+    // overwrite the stored chat. The old chat stays stored; the root page's
+    // archive summarizes it on the next visit to /.
+    const fresh = crypto.randomUUID();
+    sessionIdRef.current = fresh;
+    rolledToRef.current = null;
+    window.history.replaceState({}, "", `/chat/${fresh}`);
     setMessages([]);
     aiStore.push("New Work Session Started", "success");
   };
 
-  const {
-    messages,
-    handleSubmit,
-    input,
-    setInput,
-    append,
-    isLoading,
-    stop,
-    setMessages,
-  } = useChat({
+  // AI SDK 6 (ai 6, @ai-sdk/react 3): useChat keeps no input and posts
+  // through a transport. The session id and model are read at send time,
+  // because a roll-over moves this chat to a new session id without
+  // remounting it.
+  const sessionIdRef = useRef(id);
+  const modelRef = useRef(selectedModelId);
+  useEffect(() => {
+    modelRef.current = selectedModelId;
+  }, [selectedModelId]);
+  const rolledToRef = useRef<string | null>(null);
+
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport<UIMessage>({
+        api: "/api/chat",
+        prepareSendMessagesRequest: ({ messages }) => ({
+          body: {
+            id: sessionIdRef.current,
+            messages,
+            model: modelRef.current,
+          },
+        }),
+        fetch: (async (input: RequestInfo | URL, init?: RequestInit) => {
+          const res = await fetch(input, init);
+          if (!res.ok) {
+            const text = await res.text().catch(() => "");
+            throw new ChatHttpError(
+              text || res.statusText,
+              res.status,
+              res.headers.get("x-rok-refusal") === "quota",
+            );
+          }
+          return res;
+        }) as typeof fetch,
+      }),
+    [],
+  );
+
+  const { messages, sendMessage, status, stop, setMessages } = useChat<UIMessage>({
     id,
-    body: { id, model: selectedModelId },
-    initialMessages,
-    maxSteps: 10,
-    onResponse: (response) => {
-      const newSessionId = response.headers.get("x-new-session-id");
-      if (newSessionId) {
-        // Seamless background URL switch
-        router.replace(`/chat/${newSessionId}`);
-        aiStore.push("Session optimized & context compressed", "info");
+    messages: initialMessages,
+    transport,
+    onData: (part) => {
+      // The route names the new session when this turn rolled the old one.
+      if (part.type === "data-session") {
+        const next = (part.data as { id?: string } | undefined)?.id;
+        if (next) {
+          // The server has already moved the session; follow it now, so a
+          // stop before the answer finishes cannot leave the old id behind.
+          rolledToRef.current = next;
+          sessionIdRef.current = next;
+          window.history.replaceState({}, "", `/chat/${next}`);
+        }
       }
     },
-    onFinish: () => {
-      window.history.replaceState({}, "", `/chat/${id}`);
+    onFinish: ({ messages: finished }) => {
+      const next = rolledToRef.current;
+      rolledToRef.current = null;
+      if (!next) return;
+      // The new session starts from the summary plus this turn (the id and
+      // URL moved when the data part arrived): keep only this turn here too,
+      // finished or stopped, so the next send does not roll again.
+      setMessages(finished.slice(-2));
+      aiStore.push("Session optimized & context compressed", "info");
     },
     onError: (error) => {
-      if (error.message.includes("Quota Exceeded")) {
+      if (error instanceof ChatHttpError && error.status === 403 && !error.quota) {
+        // Seat or plan refusal: show its line, stay in the chat.
+        toast.warning(error.message || "ROK is not available on your plan.");
+      } else if (error instanceof ChatHttpError && error.quota) {
         const cleanMsg = error.message.replace(/^Quota Exceeded:\s*/i, "");
         toast.warning("Conversational ROK Limit Complete", {
           description: cleanMsg,
@@ -131,6 +203,39 @@ export function Chat({
       }
     },
   });
+
+  const isLoading = status === "submitted" || status === "streaming";
+  const [input, setInput] = useState("");
+
+  const handleSubmit = useCallback(
+    (
+      event?: { preventDefault?: () => void },
+      options?: { body?: { attachments?: Array<ChatAttachment> } },
+    ) => {
+      event?.preventDefault?.();
+      const files = options?.body?.attachments ?? [];
+      if (!input.trim() && files.length === 0) return;
+      void sendMessage({
+        text: input,
+        files: files.map((f) => ({
+          type: "file" as const,
+          url: f.url,
+          mediaType: f.contentType || "application/octet-stream",
+          filename: f.name,
+        })),
+      });
+      setInput("");
+    },
+    [input, sendMessage],
+  );
+
+  const append: AppendMessage = useCallback(
+    async (message) => {
+      await sendMessage({ text: message.content });
+      return null;
+    },
+    [sendMessage],
+  );
 
   // --- EXISTING EFFECTS (Holidays, Reminders) preserved ---
   useEffect(() => {
@@ -177,14 +282,14 @@ export function Chat({
             {
               id: `holiday-${Date.now()}`,
               role: "assistant",
-              content: "",
-              toolInvocations: [
+              parts: [
                 {
+                  type: "dynamic-tool",
                   toolName: "manage_holiday_work",
                   toolCallId: `auto-holiday-${Date.now()}`,
-                  state: "result",
-                  args: {},
-                  result: {
+                  state: "output-available",
+                  input: {},
+                  output: {
                     ui: "holiday_work_form",
                     holidayName: result.holiday.description || "Holiday",
                     holidayDate: result.holiday.holiday_date,
@@ -208,10 +313,9 @@ export function Chat({
   useEffect(() => {
     if (messages.length === 0) return;
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage.role !== "assistant" || !lastMessage.toolInvocations)
-      return;
+    if (lastMessage.role !== "assistant") return;
 
-    lastMessage.toolInvocations.forEach((tool) => {
+    messageToolInvocations(lastMessage).forEach((tool) => {
       if (tool.state === "result" && !seenToolIds.has(tool.toolCallId)) {
         const result = tool.result as any;
         if (result?.success) {
@@ -229,7 +333,7 @@ export function Chat({
 
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
-  const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+  const [attachments, setAttachments] = useState<Array<ChatAttachment>>([]);
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -286,13 +390,9 @@ export function Chat({
                   key={message.id}
                   chatId={id}
                   role={message.role}
-                  content={message.content}
-                  attachments={
-                    message.experimental_attachments
-                      ? message.experimental_attachments
-                      : message.attachments
-                  }
-                  toolInvocations={message.toolInvocations}
+                  content={messageText(message)}
+                  attachments={messageFiles(message)}
+                  toolInvocations={messageToolInvocations(message)}
                   append={append}
                 />
               ))}
@@ -323,25 +423,7 @@ export function Chat({
                       draftProject.data.modelId = selectedModelId;
                       setMessages((prev) => [
                         ...prev,
-                        {
-                          id: Date.now().toString(),
-                          role: "user",
-                          content: text,
-                        },
-                        {
-                          id: (Date.now() + 1).toString(),
-                          role: "assistant",
-                          content: "",
-                          toolInvocations: [
-                            {
-                              toolName: "displayProjectCard",
-                              toolCallId: `local-${Date.now()}`,
-                              state: "result",
-                              args: { project: draftProject.data },
-                              result: draftProject.data,
-                            },
-                          ],
-                        },
+                        ...localExchange(text, "displayProjectCard", { project: draftProject.data }, draftProject.data),
                       ]);
                       return true;
                     }
@@ -353,25 +435,7 @@ export function Chat({
                       draftTask.data.modelId = selectedModelId;
                       setMessages((prev) => [
                         ...prev,
-                        {
-                          id: Date.now().toString(),
-                          role: "user",
-                          content: text,
-                        },
-                        {
-                          id: (Date.now() + 1).toString(),
-                          role: "assistant",
-                          content: "",
-                          toolInvocations: [
-                            {
-                              toolName: "displayTaskStack",
-                              toolCallId: `local-${Date.now()}`,
-                              state: "result",
-                              args: { tasks: [draftTask] },
-                              result: { tasks: [draftTask] },
-                            },
-                          ],
-                        },
+                        ...localExchange(text, "displayTaskStack", { tasks: [draftTask] }, { tasks: [draftTask] }),
                       ]);
                       return true;
                     }
@@ -385,25 +449,7 @@ export function Chat({
                           .trim() || "New Competitor";
                       setMessages((prev) => [
                         ...prev,
-                        {
-                          id: Date.now().toString(),
-                          role: "user",
-                          content: text,
-                        },
-                        {
-                          id: (Date.now() + 1).toString(),
-                          role: "assistant",
-                          content: "",
-                          toolInvocations: [
-                            {
-                              toolName: "draft_competitor",
-                              toolCallId: `local-${Date.now()}`,
-                              state: "result",
-                              args: { name },
-                              result: { name },
-                            },
-                          ],
-                        },
+                        ...localExchange(text, "draft_competitor", { name }, { name }),
                       ]);
                       return true;
                     }
@@ -411,25 +457,7 @@ export function Chat({
                       const draftNote = createDraftNote(text);
                       setMessages((prev) => [
                         ...prev,
-                        {
-                          id: Date.now().toString(),
-                          role: "user",
-                          content: text,
-                        },
-                        {
-                          id: (Date.now() + 1).toString(),
-                          role: "assistant",
-                          content: "",
-                          toolInvocations: [
-                            {
-                              toolName: "displayNote",
-                              toolCallId: `local-${Date.now()}`,
-                              state: "result",
-                              args: { note: draftNote },
-                              result: draftNote,
-                            },
-                          ],
-                        },
+                        ...localExchange(text, "displayNote", { note: draftNote }, draftNote),
                       ]);
                       return true;
                     }
@@ -438,25 +466,7 @@ export function Chat({
                       draftLead.data.modelId = selectedModelId;
                       setMessages((prev) => [
                         ...prev,
-                        {
-                          id: Date.now().toString(),
-                          role: "user",
-                          content: text,
-                        },
-                        {
-                          id: (Date.now() + 1).toString(),
-                          role: "assistant",
-                          content: "",
-                          toolInvocations: [
-                            {
-                              toolName: "lead_creation",
-                              toolCallId: `local-${Date.now()}`,
-                              state: "result",
-                              args: {},
-                              result: draftLead.data,
-                            },
-                          ],
-                        },
+                        ...localExchange(text, "lead_creation", {}, draftLead.data),
                       ]);
                       return true;
                     }
@@ -465,25 +475,7 @@ export function Chat({
                       draftProfile.data.modelId = selectedModelId;
                       setMessages((prev) => [
                         ...prev,
-                        {
-                          id: Date.now().toString(),
-                          role: "user",
-                          content: text,
-                        },
-                        {
-                          id: (Date.now() + 1).toString(),
-                          role: "assistant",
-                          content: "",
-                          toolInvocations: [
-                            {
-                              toolName: "profile_update",
-                              toolCallId: `local-${Date.now()}`,
-                              state: "result",
-                              args: {},
-                              result: draftProfile.data,
-                            },
-                          ],
-                        },
+                        ...localExchange(text, "profile_update", {}, draftProfile.data),
                       ]);
                       return true;
                     }

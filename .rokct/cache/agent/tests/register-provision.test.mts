@@ -159,6 +159,7 @@ describe('the provisioner', () => {
     assert.equal(call.cmd, 'control:provision_new_tenant');
     assert.deepEqual(call.payload, {
       email: 'owner@rokct.invalid',
+      password: 'pw-for-test',
       company_name: 'A Company',
       plan: 'Team',
       first_name: 'First',

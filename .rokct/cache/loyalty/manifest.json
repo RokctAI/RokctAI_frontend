@@ -1,6 +1,6 @@
 {
   "name": "loyalty_sdk",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "installs": [
     {
       "from": "templates/app/admin/marketing/bonuses/page.tsx",
@@ -17,6 +17,14 @@
     {
       "from": "templates/app/manager/marketing/bonuses/page.tsx",
       "to": "app/manager/marketing/bonuses/page.tsx"
+    },
+    {
+      "from": "templates/app/actions/loyalty/admin/customer-subscriptions.ts",
+      "to": "app/actions/loyalty/admin/customer-subscriptions.ts"
+    },
+    {
+      "from": "templates/app/admin/finance/customer-subscriptions/page.tsx",
+      "to": "app/admin/finance/customer-subscriptions/page.tsx"
     }
   ],
   "dependencies": {},
@@ -25,6 +33,7 @@
   "requires": [
     "app/actions/promotions/admin/marketing.ts",
     "app/actions/promotions/marketing.ts",
+    "app/services/base/platform-gateway.ts",
     "components/ui/badge.tsx",
     "components/ui/button.tsx",
     "components/ui/card.tsx",

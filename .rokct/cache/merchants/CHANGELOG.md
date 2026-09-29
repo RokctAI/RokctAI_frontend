@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2
+
+* Seller invites read the already-unwrapped list instead of `response.message`.
+
 ## 1.1.1
 
 * The three `frappe.client.*` reads and writes that still went through the

@@ -58,7 +58,7 @@ export async function createCategory(data: any) {
 export async function updateCategory(id: string, data: any) {
   try {
     const category = await paasCall("api.category.update_category", {
-      category_id: id,
+      uuid: id,
       category_data: data,
     });
     revalidatePath("/manager/products/categories");
@@ -72,7 +72,7 @@ export async function updateCategory(id: string, data: any) {
 export async function deleteCategory(id: string) {
   try {
     await paasCall("api.category.delete_category", {
-      category_id: id,
+      uuid: id,
     });
     revalidatePath("/manager/products/categories");
     return { success: true };

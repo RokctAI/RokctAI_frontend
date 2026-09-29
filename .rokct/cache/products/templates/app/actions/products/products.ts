@@ -111,7 +111,7 @@ export async function adjustInventory(
       warehouse: warehouse,
       new_qty: newQty,
     });
-    revalidatePath(`/dashboard/products/${itemCode}`);
+    revalidatePath(`/manager/products/${itemCode}`);
     return { success: true };
   } catch (error) {
     console.error("Failed to adjust inventory:", error);

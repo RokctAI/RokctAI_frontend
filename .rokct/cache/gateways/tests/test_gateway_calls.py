@@ -121,7 +121,7 @@ class ReleaseContract(unittest.TestCase):
         with open(CHANGELOG, encoding="utf-8") as fh:
             top = next(line for line in fh if line.startswith("## "))
         self.assertEqual(top.strip(), f"## {manifest['version']}")
-        self.assertEqual(manifest["version"], "1.1.1")
+        self.assertEqual(manifest["version"], "1.1.3")
 
 
 if __name__ == "__main__":

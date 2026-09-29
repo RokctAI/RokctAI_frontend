@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Message } from "ai";
+import type { AppendMessage } from "@/lib/agent-chat-messages";
 import React from "react";
 
 import { Button } from "../ui/button";
@@ -25,14 +25,14 @@ import t from "@/app/lib/i18n";
 
 interface SetReminderProps {
   taskId: string;
-  append: (message: Message | Omit<Message, "id">) => Promise<string | null>;
+  append?: AppendMessage;
 }
 
 export function SetReminder({ taskId, append }: SetReminderProps) {
   const handleSetReminder = (when: "today" | "tomorrow" | "next_week") => {
     const displayWhen = when === "next_week" ? "Next Week" : when === "tomorrow" ? "Tomorrow" : "Today";
     const prompt = `Set a reminder for task ${taskId} for ${displayWhen}`;
-    append({
+    append?.({
       role: "user",
       content: prompt,
     });

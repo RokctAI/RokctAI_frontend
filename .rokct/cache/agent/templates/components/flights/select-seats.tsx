@@ -16,7 +16,7 @@
 
 "use client";
 
-import { useChat } from "@ai-sdk/react";
+import type { AppendMessage } from "@/lib/agent-chat-messages";
 import cx from "classnames";
 
 interface Seat {
@@ -73,15 +73,17 @@ const SAMPLE: { seats: Seat[][] } = {
 export function SelectSeats({
   chatId,
   availability = SAMPLE,
+  append,
 }: {
   chatId: string;
   availability?: typeof SAMPLE;
+  append?: AppendMessage;
 }) {
-  const { append } = useChat({
-    id: chatId,
-    body: { id: chatId },
-    maxSteps: 5,
-  });
+  // The chat's own sendMessage (AI SDK 6 has no shared useChat by id, so a
+  // second useChat here would post a one-message chat under this id).
+  const send = (content: string) => {
+    if (append) void append({ role: "user", content });
+  };
 
   return (
     <div className="flex flex-col gap-2 bg-muted rounded-lg">
@@ -111,10 +113,7 @@ export function SelectSeats({
                 <div
                   key={seat.seatNumber}
                   onClick={() => {
-                    append({
-                      role: "user",
-                      content: `I'd like to go with seat ${seat.seatNumber}`,
-                    });
+                    send(`I'd like to go with seat ${seat.seatNumber}`);
                   }}
                   className={cx(
                     "cursor-pointer group relative size-8 sm:size-10 flex-shrink-0 flex rounded-sm flex-row items-center justify-center",

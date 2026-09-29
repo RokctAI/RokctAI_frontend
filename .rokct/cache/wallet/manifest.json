@@ -1,6 +1,6 @@
 {
   "name": "wallet_sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "installs": [
     {
       "from": "templates/app/admin/business/wallet/page.tsx",

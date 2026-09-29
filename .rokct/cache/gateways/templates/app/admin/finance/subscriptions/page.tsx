@@ -88,7 +88,7 @@ export default function ShopSubscriptionsPage() {
                   <TableCell>
                     {format(new Date(sub.start_date), "PPP")}
                   </TableCell>
-                  <TableCell>{format(new Date(sub.end_date), "PPP")}</TableCell>
+                  <TableCell>{sub.end_date ? format(new Date(sub.end_date), "PPP") : "—"}</TableCell>
                   <TableCell>
                     <Badge variant={sub.active ? "default" : "secondary"}>
                       {sub.active ? "Active" : "Expired"}

@@ -42,8 +42,9 @@ export async function getMyOkrs(data: { modelId?: string } = {}) {
 
     const goals = await gatewayCall(client, "frappe.client.get_list", {
         doctype: "Goal",
-        filters: { employee: employee, status: "Open" },
-        fields: ["name", "goal", "progress", "end_date"],
+        // HRMS Goal: the title is goal_name and there is no "Open" status.
+        filters: { employee: employee, status: ["in", ["Pending", "In Progress"]] },
+        fields: ["name", "goal_name as goal", "progress", "end_date"],
         limit_page_length: 5,
       });
 

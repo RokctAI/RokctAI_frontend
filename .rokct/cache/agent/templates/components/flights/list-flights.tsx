@@ -16,7 +16,7 @@
 
 "use client";
 
-import { useChat } from "@ai-sdk/react";
+import type { AppendMessage } from "@/lib/agent-chat-messages";
 import { differenceInHours, format } from "date-fns";
 
 const SAMPLE = {
@@ -92,15 +92,17 @@ const SAMPLE = {
 export function ListFlights({
   chatId,
   results = SAMPLE,
+  append,
 }: {
   chatId: string;
   results?: typeof SAMPLE;
+  append?: AppendMessage;
 }) {
-  const { append } = useChat({
-    id: chatId,
-    body: { id: chatId },
-    maxSteps: 5,
-  });
+  // The chat's own sendMessage (AI SDK 6 has no shared useChat by id, so a
+  // second useChat here would post a one-message chat under this id).
+  const send = (content: string) => {
+    if (append) void append({ role: "user", content });
+  };
 
   return (
     <div className="rounded-lg bg-muted px-4 py-1.5 flex flex-col">
@@ -109,10 +111,7 @@ export function ListFlights({
           key={flight.id}
           className="cursor-pointer flex flex-row border-b dark:border-zinc-700 py-2 last-of-type:border-none group"
           onClick={() => {
-            append({
-              role: "user",
-              content: `I would like to book the ${flight.airlines} one!`,
-            });
+            send(`I would like to book the ${flight.airlines} one!`);
           }}
         >
           <div className="flex flex-col w-full gap-0.5 justify-between">

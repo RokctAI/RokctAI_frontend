@@ -84,7 +84,7 @@ export default function AdminPayoutsPage() {
                   <TableCell>
                     {format(new Date(payout.payout_date), "PPP")}
                   </TableCell>
-                  <TableCell>{payout.shop}</TableCell>
+                  <TableCell>{payout.user}</TableCell>
                   <TableCell className="font-medium">
                     ${payout.amount.toFixed(2)}
                   </TableCell>

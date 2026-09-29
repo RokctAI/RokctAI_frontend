@@ -52,6 +52,8 @@ export async function POST(request: Request) {
         session_id: sessionId,
         messages: JSON.stringify(messages),
       });
+      // ControlBaseService.call keeps the Frappe {message} envelope.
+      sumRes = sumRes?.message;
     }
 
     return Response.json({ success: true, summary: sumRes?.summary || sumRes });

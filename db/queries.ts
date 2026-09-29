@@ -124,7 +124,7 @@ export async function saveChat({
         .set({
           messages: JSON.stringify(messages),
         })
-        .where(eq(chat.id, id));
+        .where(and(eq(chat.id, id), eq(chat.userId, userId)));
     }
 
     return await db.insert(chat).values({
@@ -139,9 +139,17 @@ export async function saveChat({
   }
 }
 
-export async function deleteChatById({ id }: { id: string }) {
+export async function deleteChatById({
+  id,
+  userId,
+}: {
+  id: string;
+  userId: string;
+}) {
   try {
-    return await db.delete(chat).where(eq(chat.id, id));
+    return await db
+      .delete(chat)
+      .where(and(eq(chat.id, id), eq(chat.userId, userId)));
   } catch (error) {
     console.error("Failed to delete chat by id from database");
     throw error;

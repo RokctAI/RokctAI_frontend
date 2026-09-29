@@ -55,9 +55,14 @@ export default function PayoutRequestsPage() {
     }
   }
 
-  async function handleStatusUpdate(name: string, status: string) {
+  async function handleStatusUpdate(name: string, status: "Paid" | "Rejected") {
+    let reason: string | undefined;
+    if (status === "Rejected") {
+      reason = window.prompt("Reason for rejecting this payout")?.trim();
+      if (!reason) return;
+    }
     try {
-      await updatePayoutRequest(name, status);
+      await updatePayoutRequest(name, status, reason);
       toast.success(`Request ${status.toLowerCase()} successfully`);
       fetchRequests();
     } catch (error) {
@@ -99,13 +104,15 @@ export default function PayoutRequestsPage() {
             ) : (
               requests.map((req) => (
                 <TableRow key={req.name}>
-                  <TableCell>{format(new Date(req.creation), "PPP")}</TableCell>
-                  <TableCell>{req.owner_name}</TableCell>
+                  <TableCell>
+                    {format(new Date(req.requested_at), "PPP")}
+                  </TableCell>
+                  <TableCell>{req.user}</TableCell>
                   <TableCell>${req.amount.toFixed(2)}</TableCell>
                   <TableCell>
                     <Badge
                       variant={
-                        req.status === "Approved"
+                        req.status === "Paid"
                           ? "default"
                           : req.status === "Rejected"
                             ? "destructive"
@@ -116,15 +123,13 @@ export default function PayoutRequestsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    {req.status === "Pending" && (
+                    {req.status === "Requested" && (
                       <div className="flex justify-end gap-2">
                         <Button
                           size="sm"
                           variant="outline"
                           className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                          onClick={() =>
-                            handleStatusUpdate(req.name, "Approved")
-                          }
+                          onClick={() => handleStatusUpdate(req.name, "Paid")}
                         >
                           <Check className="size-4" />
                         </Button>

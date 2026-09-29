@@ -146,7 +146,7 @@ export default function OrdersPage() {
                     {new Date(order.creation).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Link href={`/dashboard/orders/${order.name}`}>
+                    <Link href={`/manager/orders/${order.name}`}>
                       <Button variant="ghost" size="icon">
                         <Eye className="size-4" />
                       </Button>

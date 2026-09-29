@@ -35,7 +35,7 @@ export async function getTransactions(page: number = 1, limit: number = 20) {
 export async function getPayoutRequests(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_finance.get_payout_requests", {
+    return await paasCall("api.payout.admin_list_payout_requests", {
       limit_start: start,
       limit_page_length: limit,
     });
@@ -64,7 +64,7 @@ export async function getShopSubscriptions(
 ) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_finance.get_shop_subscriptions", {
+    return await paasCall("api.subscription.get_all_shop_subscriptions", {
       limit_start: start,
       limit_page_length: limit,
     });
@@ -74,12 +74,22 @@ export async function getShopSubscriptions(
   }
 }
 
-export async function updatePayoutRequest(name: string, status: string) {
+export async function updatePayoutRequest(
+  name: string,
+  status: "Paid" | "Rejected",
+  reason?: string,
+) {
   try {
-    await paasCall("api.admin_finance.update_payout_request", {
-      request_name: name,
-      status: status,
-    });
+    if (status === "Paid") {
+      await paasCall("api.payout.approve_payout_request", {
+        request_id: name,
+      });
+    } else {
+      await paasCall("api.payout.reject_payout_request", {
+        request_id: name,
+        reason: reason ?? "",
+      });
+    }
     revalidatePath("/admin/finance/payouts/requests");
     return { success: true };
   } catch (error) {

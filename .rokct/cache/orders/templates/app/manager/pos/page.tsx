@@ -59,7 +59,16 @@ export default function POSPage() {
   async function fetchProducts() {
     try {
       const data = await getProducts(1, 100); // Fetch first 100 products for now
-      setProducts(data);
+      // get_seller_products returns Product rows (title/price), not the
+      // ERPNext Item shape (item_name/standard_rate) this page renders.
+      const rows = Array.isArray(data) ? data : [];
+      setProducts(
+        rows.map((p: any) => ({
+          ...p,
+          item_name: String(p.item_name ?? p.title ?? p.name ?? ""),
+          standard_rate: Number(p.standard_rate ?? p.price ?? 0) || 0,
+        })),
+      );
     } catch (error) {
       console.error("Error fetching products:", error);
       toast.error("Failed to load products");
@@ -133,7 +142,7 @@ export default function POSPage() {
   };
 
   const filteredProducts = products.filter((p) =>
-    p.item_name.toLowerCase().includes(searchQuery.toLowerCase()),
+    (p.item_name ?? "").toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   if (loading) {

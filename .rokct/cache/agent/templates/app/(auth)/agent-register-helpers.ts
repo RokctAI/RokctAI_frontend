@@ -224,6 +224,10 @@ export async function provisionNewTenant(
       "control:provision_new_tenant",
       {
         email: input.email,
+        // Required by provision_new_tenant (it seeds the tenant's first
+        // user with it); without it Frappe raised a missing-argument
+        // TypeError and every tenant-plan sign-up failed.
+        password: input.password,
         company_name: input.companyName,
         plan: input.plan,
         first_name: input.firstName,

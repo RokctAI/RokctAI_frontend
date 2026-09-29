@@ -117,7 +117,7 @@ export async function getCareerCategories(
 export async function getGallery(page: number = 1, limit: number = 20) {
   const start = (page - 1) * limit;
   try {
-    return await paasCall("api.admin_content.get_shop_gallery", {
+    return await paasCall("api.admin_shop_gallery.get_shop_gallery", {
       limit_start: start,
       limit_page_length: limit,
     });

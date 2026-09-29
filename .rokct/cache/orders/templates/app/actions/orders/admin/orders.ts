@@ -27,15 +27,14 @@ export async function getOrders(
 ) {
   const start = (page - 1) * limit;
 
-  const filters: any = {};
-  if (type && type !== "all") filters.order_type = type;
-  if (status && status !== "all") filters.status = status;
-
+  // get_all_orders takes status directly (no filters dict, no type
+  // filter), so a nested filters object was silently dropped.
+  void type;
   try {
     return await paasCall("api.admin_records.get_all_orders", {
       limit_start: start,
       limit_page_length: limit,
-      filters: filters,
+      ...(status && status !== "all" ? { status } : {}),
     });
   } catch (error) {
     console.error("Failed to fetch orders:", error);

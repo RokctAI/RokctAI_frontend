@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.2
+
+* Admin POS calls real cmds: products from `api.seller_product.get_seller_products`, categories from `api.category.get_categories`, and the sale through `api.order.create_order` with `order_data` holding `shop` / `order_items[].product` + `quantity` (the PosSaleQueue contract). The `api.admin_management.*` POS cmds never existed.
+
+## 1.1.1
+
+* Admin orders list sends `status` directly to `get_all_orders` (the nested `filters` object was dropped).
+* Manager order list links to `/manager/orders/<id>` instead of the removed `/dashboard` route.
+* Manager POS maps Product `title`/`price` onto the page (no more `item_name` crash or NaN totals); order detail maps `order_items`/`total_price` onto the rendered shape.
+
 ## 1.1.0
 
 * The server actions call the platform through `paasCall` from the base

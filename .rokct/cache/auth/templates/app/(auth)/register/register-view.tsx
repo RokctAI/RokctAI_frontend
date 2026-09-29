@@ -24,12 +24,23 @@
 // the fields down already resolved; the fields' option loaders and the
 // steps themselves, being functions, are read here from the same registry.
 
-import { Suspense, useEffect, useState, type ComponentType } from "react";
+import {
+  Suspense,
+  useEffect,
+  useState,
+  type ComponentType,
+  type FormEvent,
+} from "react";
 import Link from "next/link";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 
-import { register, type ActionState } from "@/app/(auth)/actions";
+import {
+  register,
+  resendRegistrationCode,
+  verifyRegistrationEmail,
+  type ActionState,
+} from "@/app/(auth)/actions";
 import { AuthForm } from "@/components/custom/auth-form";
 import {
   loadRegisterConfig,
@@ -41,6 +52,8 @@ import {
 import { BrandLogo } from "@/components/custom/brand-logo";
 import { Header } from "@/components/custom/header";
 import { SubmitButton } from "@/components/custom/submit-button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export interface RegisterViewProps {
   copy: Required<RegisterCopy>;
@@ -137,9 +150,101 @@ function StepRunner({
   );
 }
 
+/**
+ * The email code step: the site emailed a 6-digit code on sign-up and will
+ * not sign the account in until it is entered (api.user.login answers 403
+ * "Account not verified"). Checks the code, signs in, then hands back.
+ */
+function VerifyEmailStep({
+  email,
+  password,
+  siteName,
+  message,
+  onVerified,
+}: {
+  email: string;
+  password: string;
+  siteName: string | null;
+  message?: string;
+  onVerified: () => void;
+}) {
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    const result = await verifyRegistrationEmail({ email, password, code, siteName });
+    setBusy(false);
+    if (result.status === "success") onVerified();
+    else setError(result.error ?? "Could not verify the code.");
+  };
+
+  const resend = async () => {
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    const result = await resendRegistrationCode({ email, siteName });
+    setBusy(false);
+    if (result.status === "success") setNotice("A new code is on its way.");
+    else setError(result.error ?? "Could not send a new code.");
+  };
+
+  return (
+    <form
+      onSubmit={submit}
+      className="bg-card border border-border backdrop-blur-sm rounded-2xl shadow-xl p-8 space-y-4"
+    >
+      <p className="text-sm text-muted-foreground text-center">
+        {message ?? `We emailed a verification code to ${email}.`} Enter it
+        below to finish creating your account.
+      </p>
+      <div className="grid gap-2">
+        <Label htmlFor="verification_code">Verification code</Label>
+        <Input
+          id="verification_code"
+          name="verification_code"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          placeholder="123456"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={busy || !code.trim()}
+        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 rounded-lg shadow-md disabled:opacity-60"
+      >
+        Verify email
+      </button>
+      {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+      {notice && <p className="text-muted-foreground text-sm text-center">{notice}</p>}
+      <div className="text-center text-sm">
+        <button
+          type="button"
+          onClick={resend}
+          disabled={busy}
+          className="font-semibold text-primary hover:text-primary/80 disabled:opacity-60"
+        >
+          Resend code
+        </button>
+      </div>
+    </form>
+  );
+}
+
 function RegisterViewInner({ copy, fields, hasSteps, prefilled }: RegisterViewProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  // Held only until the code step signs the new account in.
+  const [password, setPassword] = useState("");
+  const [verified, setVerified] = useState(false);
   const [liveFields, setLiveFields] = useState<RegisterField[]>(fields);
   const [steps, setSteps] = useState<RegisterStep[]>([]);
   const [state, formAction] = useActionState<ActionState, FormData>(register, {
@@ -163,7 +268,9 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled }: RegisterViewPr
   const finish = () => router.refresh();
 
   const handleSubmit = (formData: FormData) => {
-    setEmail((formData.get("email") as string) ?? "");
+    setEmail(((formData.get("email") as string) ?? "").trim());
+    setPassword((formData.get("password") as string) ?? "");
+    setVerified(false);
     formAction(formData);
   };
 
@@ -171,7 +278,15 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled }: RegisterViewPr
     router.push(path);
   };
 
-  const done = state?.status === "success";
+  const needsCode = state?.status === "verify_email" && !verified;
+  const done = state?.status === "success" || (state?.status === "verify_email" && verified);
+
+  const onVerified = () => {
+    setPassword("");
+    setVerified(true);
+    // With no post-account steps there is nothing left here: go on signed in.
+    if (steps.length === 0) finish();
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -198,11 +313,24 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled }: RegisterViewPr
             <p className="mt-2 text-sm text-muted-foreground">{copy.subtitle}</p>
           </div>
 
-          {done && steps.length > 0 ? (
-            <StepRunner steps={steps} email={email} siteName={null} onDone={finish} />
+          {needsCode ? (
+            <VerifyEmailStep
+              email={email}
+              password={password}
+              siteName={state.siteName ?? null}
+              message={state.error}
+              onVerified={onVerified}
+            />
+          ) : done && steps.length > 0 ? (
+            <StepRunner
+              steps={steps}
+              email={email}
+              siteName={state?.siteName ?? null}
+              onDone={finish}
+            />
           ) : done ? (
             <div className="bg-card border border-border backdrop-blur-sm rounded-2xl shadow-xl p-8 text-center text-sm text-muted-foreground">
-              {state.error ?? "Your account is ready."}
+              {verified ? "Your account is ready." : (state.error ?? "Your account is ready.")}
             </div>
           ) : (
             <div className="bg-card border border-border backdrop-blur-sm rounded-2xl shadow-xl p-8">

@@ -352,3 +352,29 @@ describe('an explicit baseUrl', () => {
     assert.deepEqual(gateway.sent.map((s) => s.origin), [BACKEND]);
   });
 });
+
+describe('the message envelope', () => {
+  const bodies: Array<[string, unknown, unknown]> = [
+    ['an empty list', { message: [] }, []],
+    ['zero', { message: 0 }, 0],
+    ['false', { message: false }, false],
+    ['null', { message: null }, null],
+    ['an empty string', { message: '' }, ''],
+    ['a list', { message: [1, 2] }, [1, 2]],
+    ['a body with no envelope', { data: 1 }, { data: 1 }],
+  ];
+  for (const [label, body, expected] of bodies) {
+    it(`unwraps ${label} to the result itself`, async () => {
+      globalThis.fetch = (async () =>
+        new Response(JSON.stringify(body), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })) as typeof fetch;
+      const result = await platformCall('api.lms.get_courses', undefined, {
+        request: requestOn(SITE),
+        session: null,
+      });
+      assert.deepEqual(result, expected);
+    });
+  }
+});

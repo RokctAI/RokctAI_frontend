@@ -16,6 +16,10 @@
 
 "use server";
 
+// Known gap, left alone on purpose: the backend cmds this file calls have
+// no whitelisted implementation yet (bug hunt b7). The actions stay wired
+// to the intended names until the backend lands; do not re-flag.
+
 import { paasCall } from "@/app/services/base/platform-gateway";
 import { revalidatePath } from "next/cache";
 

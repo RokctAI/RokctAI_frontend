@@ -69,9 +69,15 @@ export const History = ({ user }: { user: User | undefined }) => {
     data: history,
     isLoading,
     mutate,
-  } = useSWR<Array<Chat>>(user ? "/api/history" : null, fetcher, {
-    fallbackData: [],
-  });
+  } = useSWR<Array<Chat>>(
+    // Keyed per user so one account's cached history is never shown to
+    // the next account signed in on the same tab.
+    user?.id ? ["/api/history", user.id] : null,
+    ([url]: [string, string]) => fetcher(url),
+    {
+      fallbackData: [],
+    },
+  );
 
   useEffect(() => {
     mutate();
