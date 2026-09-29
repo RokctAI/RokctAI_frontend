@@ -605,6 +605,9 @@ migrate_working_dir/
 /app/manager/settings/parcel/page.tsx
 /app/manager/settings/working-hours/page.tsx
 /app/opengraph-image.tsx
+/app/opportunities/\[type\]/\[slug\]/page.tsx
+/app/opportunities/opportunity-list.tsx
+/app/opportunities/page.tsx
 /app/services/all/accounting/assets.ts
 /app/services/all/accounting/budgets.ts
 /app/services/all/accounting/buying.ts
@@ -872,6 +875,7 @@ migrate_working_dir/
 /hooks/use-mobile.tsx
 /lib/actions/getSubscriptionPlans.ts
 /lib/agent-chat-messages.ts
+/lib/agent-opportunity-cards.ts
 /lib/drizzle/0000_faulty_black_crow.sql
 /lib/drizzle/0001_safe_mandarin.sql
 /lib/drizzle/meta/0000_snapshot.json
