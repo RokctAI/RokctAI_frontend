@@ -339,5 +339,19 @@ class TestTenantHostSwitch(unittest.TestCase):
         self.assertGreaterEqual(int(passed.group(1)), 20)
 
 
+class TestGatewayBypassesAreMarked(unittest.TestCase):
+    # Ray's rule: every client call goes through rokct.platform.api; a raw
+    # /api/method/ fetch is allowed only when there is no other way, and
+    # then says why on the line above it.
+    def test_every_raw_method_fetch_says_why(self):
+        lines = read(os.path.join(AUTH_GROUP, "auth.ts")).splitlines()
+        hits = [i for i, line in enumerate(lines) if "fetch(" in line and "/api/method/" in line]
+        self.assertTrue(hits, "expected the native /api/method/login bypass")
+        for i in hits:
+            with self.subTest(line=i + 1):
+                self.assertIn("// bypasses gateway:", lines[i - 1])
+                self.assertIn("sid", lines[i - 1])
+
+
 if __name__ == "__main__":
     unittest.main()

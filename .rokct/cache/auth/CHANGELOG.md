@@ -1,3 +1,15 @@
+## 1.8.4
+
+* **The one native login call says why it bypasses the gateway.** Ray's
+  rule: every client call goes through `rokct.platform.api` unless there is
+  no other way. The standard (control-site) branch of `auth.ts` still posts
+  to `/api/method/login`, because it needs Frappe's `sid` Set-Cookie for the
+  follow-up `control:get_my_subscription` read, and `platformCall` returns
+  only the body while `api.user.login` issues API keys, not a `sid`. A
+  one-line `// bypasses gateway:` comment now sits above it, and a test
+  requires that comment on any raw `/api/method/` fetch in `auth.ts`. The
+  PaaS branch already logs in through the gateway. No behaviour change.
+
 ## 1.8.3
 
 * **`next build` type-checks again.** `verifyRegistrationEmail` read

@@ -17,7 +17,7 @@
 // auth_sdk's app/(auth)/actions.ts register() carried inline until 1.6.0,
 // moved out of auth_sdk with auth 1.7.0 and into this SDK, each as it was:
 // the country and currency lookup at the control site's
-// get_pricing_metadata, the two provisioning calls
+// control:get_pricing_metadata gateway cmd, the two provisioning calls
 // (control:provision_service_subscription for a Service plan,
 // control:provision_new_tenant for a tenant plan) under the platform
 // administrator's keys, and the plan-catalogue read the auto-login rule
@@ -47,9 +47,15 @@ export const DEFAULT_COUNTRY = "South Africa";
 /** The currency when the control site names none. */
 export const DEFAULT_CURRENCY = "USD";
 
-/** The control site's per-method path for the pricing metadata read. */
-export const PRICING_METADATA_PATH =
-  "/api/method/control.control.api.subscription.get_pricing_metadata";
+/**
+ * The control site's gateway cmd for the pricing metadata read. Registered
+ * in control's hooks.py override_whitelisted_methods; the target is
+ * `allow_guest`, so it goes out without credentials.
+ */
+export const PRICING_METADATA_CMD = "control:get_pricing_metadata";
+
+/** The pricing read runs before the provisioning call; keep it short. */
+export const PRICING_METADATA_TIMEOUT_MS = 10000;
 
 export interface RegisterLocale {
   country: string;
@@ -57,11 +63,10 @@ export interface RegisterLocale {
 }
 
 /**
- * Resolve Currency from Country (via Control Site API). Still a per-method
- * URL: the control site registers no `control:` gateway cmd for
- * get_pricing_metadata (only the subscription-plans catalogue), so this
- * guest read cannot ride the platform gateway yet. A failed read keeps the
- * input country and the default currency, as before.
+ * Resolve Currency from Country (via Control Site API), through the
+ * platform gateway (`platformCall` posts `{cmd, payload}` to
+ * PLATFORM_GATEWAY_PATH on `baseUrl`) as a guest read. A failed read keeps
+ * the input country and the default currency, as before.
  */
 export async function resolveRegisterLocale(
   countryInput: string,
@@ -71,21 +76,21 @@ export async function resolveRegisterLocale(
   let country = countryInput;
   try {
     if (baseUrl) {
-      const pricingRes = await fetch(
-        `${baseUrl}${PRICING_METADATA_PATH}?country=${encodeURIComponent(countryInput)}`,
+      const data = await platformCall<{
+        currency?: string;
+        country_name?: string;
+      }>(
+        PRICING_METADATA_CMD,
+        { country: countryInput },
         {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
+          baseUrl,
+          requireAuth: false,
+          timeout: PRICING_METADATA_TIMEOUT_MS,
         },
       );
-
-      if (pricingRes.ok) {
-        const pricingData = await pricingRes.json();
-        const data = pricingData.message;
-        if (data) {
-          if (data.currency) currency = data.currency;
-          if (data.country_name) country = data.country_name; // Normalize Country Name
-        }
+      if (data) {
+        if (data.currency) currency = data.currency;
+        if (data.country_name) country = data.country_name; // Normalize Country Name
       }
     }
   } catch (err) {
