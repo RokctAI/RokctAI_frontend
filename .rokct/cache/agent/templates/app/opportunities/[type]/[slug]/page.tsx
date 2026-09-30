@@ -21,6 +21,8 @@
 // redirects to /opportunities. The host's root layout reads headers, so the
 // route renders per request; the repo reads behind it are fetch-cached for
 // an hour, so new cards appear without a rebuild.
+// agent_sdk 1.21.1: rows come from OpportunityPublicService (backend first,
+// GitHub's published/api as its fallback), never from the markdown cards.
 
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -32,10 +34,11 @@ import {
   type OpportunityKind,
   isClosed,
   isOpportunityKind,
-  loadCard,
-  loadSummaries,
+  cardForSlug,
   openSummaries,
+  summariesFromRows,
 } from "@/lib/agent-opportunity-cards";
+import { OpportunityPublicService } from "@/app/services/public/opportunities";
 
 import { OpportunityList } from "../../opportunity-list";
 
@@ -48,7 +51,12 @@ type Params = Promise<{ type: string; slug: string }>;
 async function resolve(params: Params) {
   const { type, slug } = await params;
   if (!isOpportunityKind(type)) return null;
-  return loadCard(type, decodeURIComponent(slug));
+  const key = decodeURIComponent(slug);
+  return cardForSlug(type, key, await OpportunityPublicService.bySlug(type, key));
+}
+
+async function loadSummaries(kind: OpportunityKind) {
+  return summariesFromRows(kind, await OpportunityPublicService.rows(kind));
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {

@@ -18,7 +18,9 @@
 // opportunities.ts), installed to app/services/public/opportunities.ts in the
 // host. The landing hero (components/custom/hero.tsx) imports
 // OpportunityPublicService and Opportunity from here for its opportunity
-// search. platformCall comes from base_sdk's platform gateway, which is
+// search, and the /opportunities pages (agent_sdk 1.21.1) read their rows
+// through rows() and bySlug(), so both go backend first and GitHub's
+// published/api only as the fallback. platformCall comes from base_sdk's platform gateway, which is
 // listed under this manifest's requires.
 
 import { platformCall } from "@/app/services/base/platform-gateway";
@@ -42,7 +44,57 @@ function cleanTitle(title: string): string {
     .replace(/^Equity Opportunity:\s*/i, "Equity: ");
 }
 
+// GitHub's published/api, read only when the backend returns nothing.
+const PUBLISHED_API =
+  "https://raw.githubusercontent.com/RokctAI/opportunities/main/published/api";
+
+function asRows(result: any): Record<string, any>[] {
+  const rows = result?.data ?? result;
+  return Array.isArray(rows) ? rows : [];
+}
+
+async function publishedRows(type: string): Promise<Record<string, any>[]> {
+  try {
+    const res = await fetch(`${PUBLISHED_API}/${type}.json`, {
+      next: { revalidate: 3600 },
+    } as RequestInit);
+    return res.ok ? asRows(await res.json()) : [];
+  } catch {
+    return [];
+  }
+}
+
+async function backendRows(type: string, filters?: Record<string, unknown>) {
+  try {
+    return asRows(
+      await platformCall<any>(
+        "control:get_public_opportunities",
+        JSON.stringify({
+          opportunity_type: type,
+          ...(filters ? { filters: JSON.stringify(filters) } : {}),
+        }),
+        { method: "GET", fetchOptions: { next: { revalidate: 60 } } },
+      ),
+    );
+  } catch {
+    return [];
+  }
+}
+
 export class OpportunityPublicService {
+  // Every published row of a type: the backend, else GitHub's published/api.
+  static async rows(type: string): Promise<Record<string, any>[]> {
+    const rows = await backendRows(type);
+    return rows.length > 0 ? rows : publishedRows(type);
+  }
+
+  // The published row for a slug, or null: the backend's slug filter first,
+  // else the same row from GitHub's published/api.
+  static async bySlug(type: string, slug: string): Promise<Record<string, any> | null> {
+    const hit = (rows: Record<string, any>[]) => rows.find((r) => r && r.slug === slug) ?? null;
+    return hit(await backendRows(type, { slug })) ?? hit(await publishedRows(type));
+  }
+
   static async search(query: string) {
     const types = ["tenders", "grants", "equity"];
 

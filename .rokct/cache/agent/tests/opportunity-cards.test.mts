@@ -14,61 +14,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// agent_sdk 1.21.0: the opportunity pages' card reader, run by
+// agent_sdk 1.21.1: the opportunity pages' published/api row reader, run by
 // tests/test_manifest.py against a staged lib/agent-opportunity-cards.ts.
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
-  cardFromRow, cardPath, isClosed, isOpportunityKind, isValidSlug, openSummaries, parseCard, parseDate,
+  cardForSlug, cardFromRow, isClosed, isOpportunityKind, isValidSlug, openSummaries, parseDate, summariesFromRows,
 } from './agent-opportunity-cards.ts';
 
-const GRANT = `# Grant Opportunity: KSHITIJ 2.0 (India)
-
-## Quick Stats
-- **Organization**: ICAR
-- **Deadline**: 2026-07-31
-- **Funding Amount**: Incubation support
-
-## Eligibility
-- Fish farmers and early-stage startups
-
-## Description
-A 2-month virtual incubation programme.
-
-## How to Apply
-- **Applying Link**: https://apply.test/kshitij
-- **Source Card**: sources/x.md
-
-## Audit & Status
-- **Verification Status**: UNVERIFIED
-`;
-
-const TENDER = `# Tender Opportunity: RFQ25 Working tools
-
-## Quick Stats
-- **Institution**: Musina Local Municipality
-- **Closing Date**: See Documents
-
-## Documents & Links
-- **Direct Link**: https://musina.test/rfq25.pdf
-- **Tender Documents**:
-    - [RFQ Document](https://musina.test/rfq25.pdf)
-
-## Audit & Status
-- **Status**: ACTIVE
----
-# Trigger build: 2026-05-09
-`;
-
 describe('agent-opportunity-cards', () => {
-  it('maps each kind to its card path in the repo', () => {
-    assert.equal(cardPath('tenders', 'musina-rfq25'), '03_tenders/musina-rfq25/musina-rfq25.md');
-    assert.equal(cardPath('equity', '10x_group'), '01_equity/10x_group.md');
-    assert.equal(cardPath('grants', '2026-07-31_A_B'), '02_grants/2026-07-31_A_B.md');
-  });
-
   it('accepts only the three kinds and safe slugs', () => {
     assert.ok(isOpportunityKind('grants') && isOpportunityKind('equity') && isOpportunityKind('tenders'));
     assert.ok(!isOpportunityKind('opportunities'));
@@ -76,28 +32,7 @@ describe('agent-opportunity-cards', () => {
     for (const bad of ['../README', 'a/b', '', '.env']) assert.ok(!isValidSlug(bad), bad);
   });
 
-  it('reads a grant card: title, sections, deadline, apply link', () => {
-    const card = parseCard('grants', 'k', GRANT);
-    assert.ok(card);
-    assert.equal(card.title, 'KSHITIJ 2.0 (India)');
-    assert.deepEqual(card.sections.map((s) => s.heading),
-      ['Quick Stats', 'Eligibility', 'Description', 'How to Apply', 'Audit & Status']);
-    assert.equal(card.deadline, '2026-07-31');
-    assert.equal(card.applyUrl, 'https://apply.test/kshitij');
-    assert.equal(card.organization, 'ICAR');
-    assert.deepEqual(card.sections[2].text, ['A 2-month virtual incubation programme.']);
-  });
-
-  it('reads a tender card and stops at the trailer', () => {
-    const card = parseCard('tenders', 'musina-rfq25', TENDER);
-    assert.ok(card);
-    assert.equal(card.deadline, null);
-    assert.equal(card.applyUrl, 'https://musina.test/rfq25.pdf');
-    assert.ok(!card.sections.some((s) => s.heading.includes('Trigger')));
-    assert.ok(card.sections[1].fields.some((f) => f.label === 'RFQ Document'));
-  });
-
-  it('builds a card from a json row when the markdown is missing', () => {
+  it('builds the page card from a published/api row', () => {
     const card = cardFromRow('grants', {
       title: 'Grant Opportunity: X', slug: 'x', organization: 'Org', deadline: '2026-04-17',
       applying_link: 'https://a.test', flag: 'N/A',
@@ -106,6 +41,18 @@ describe('agent-opportunity-cards', () => {
     assert.equal(card.deadline, '2026-04-17');
     assert.equal(card.applyUrl, 'https://a.test');
     assert.ok(!card.sections[0].fields.some((f) => f.label === 'Flag'));
+  });
+
+  it('resolves a slug only from its published row', () => {
+    const row = { title: 'Equity Opportunity: 3one4 Capital', slug: '10_3one4_capital', organization: '3one4 Capital' };
+    const card = cardForSlug('equity', '10_3one4_capital', row);
+    assert.ok(card);
+    assert.equal(card.title, '3one4 Capital');
+    assert.equal(card.organization, '3one4 Capital');
+    assert.equal(cardForSlug('equity', '10_3one4_capital', null), null);
+    assert.equal(cardForSlug('equity', 'other', row), null);
+    assert.equal(cardForSlug('equity', '../x', { ...row, slug: '../x' }), null);
+    assert.deepEqual(summariesFromRows('equity', [row, { title: 'no slug' }]).map((s) => s.slug), ['10_3one4_capital']);
   });
 
   it('marks past deadlines closed and lists only open ones', () => {

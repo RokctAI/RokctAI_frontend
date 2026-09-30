@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.21.1
+
+* Equity opportunity pages (rokct.ai/opportunities/equity/<slug>) no longer
+  redirect to /opportunities. Nearly every `01_equity/*.md` card opens with
+  a `---` line, which `parseCard` treated as the end of the card, so it read
+  no title.
+* The opportunity pages now load through `OpportunityPublicService`
+  (`app/services/public/opportunities.ts`), the loader the landing search
+  already uses: the backend (`control:get_public_opportunities`, which reads
+  `published/api/<kind>.json`) first, GitHub's `published/api` only as its
+  fallback. New `rows(type)` and `bySlug(type, slug)` (the backend's slug
+  filter) serve the pages; the separate raw-GitHub loader in
+  `lib/agent-opportunity-cards.ts` is gone. A slug resolves only to its
+  published row (`cardForSlug`), never to a markdown card; unknown slugs
+  still redirect (307) to /opportunities and closed rows keep their closed
+  notice. `parseCard`, `cardPath` and their tests are removed; nothing else
+  used them.
+
 ## 1.21.0
 
 New installs: app/opportunities and lib/agent-opportunity-cards.ts.

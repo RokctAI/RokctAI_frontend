@@ -18,15 +18,18 @@
 // agent_sdk 1.21.0: rokct.ai/opportunities, the page every unknown
 // opportunity link falls back to. Lists the open grants, tenders and equity
 // funders from the RokctAI/opportunities repo (lib/agent-opportunity-cards).
+// agent_sdk 1.21.1: rows come from OpportunityPublicService.rows (backend
+// first, GitHub's published/api as its fallback).
 
 import Link from "next/link";
 
 import {
   KIND_LABEL,
   OPPORTUNITY_KINDS,
-  loadSummaries,
   openSummaries,
+  summariesFromRows,
 } from "@/lib/agent-opportunity-cards";
+import { OpportunityPublicService } from "@/app/services/public/opportunities";
 
 import { OpportunityList } from "./opportunity-list";
 
@@ -45,7 +48,7 @@ export default async function OpportunitiesPage() {
   const lists = await Promise.all(
     OPPORTUNITY_KINDS.map(async (kind) => ({
       kind,
-      items: openSummaries(await loadSummaries(kind)),
+      items: openSummaries(summariesFromRows(kind, await OpportunityPublicService.rows(kind))),
     })),
   );
   return (

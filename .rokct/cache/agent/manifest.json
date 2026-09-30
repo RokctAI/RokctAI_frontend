@@ -1,6 +1,7 @@
 {
   "name": "agent_sdk",
-  "version": "1.21.0",
+  "version": "1.21.1",
+  "_comment_version_1_21_1": "1.21.0 -> 1.21.1: the /opportunities pages load rows through app/services/public/opportunities.ts (new rows() and bySlug(): backend control:get_public_opportunities first, GitHub published/api as fallback); lib/agent-opportunity-cards.ts is pure (cardForSlug, summariesFromRows) and its raw-GitHub loader and markdown card reader (parseCard, cardPath) are removed.",
   "_comment_version_1_21_0": "1.20.1 -> 1.21.0: opportunity detail pages. New installs app/opportunities (the /opportunities listing and /opportunities/[type]/[slug]) and lib/agent-opportunity-cards.ts. The pages read the public RokctAI/opportunities repo (published/api/<type>.json and the markdown cards) from raw.githubusercontent.com on the server with revalidate 3600, so the landing search links resolve instead of 404ing. A known slug renders its card with the apply button; a past deadline shows 'This closed on <date>' with open ones under it; an unknown slug redirects to /opportunities.",
   "_comment_version_1_20_1": "1.20.0 -> 1.20.1: the register flow's country/currency lookup rides the platform gateway (Ray: every client call goes through rokct.platform.api; bypass only when there is no other way). resolveRegisterLocale in app/(auth)/agent-register-helpers.ts no longer raw-fetches /api/method/control.control.api.subscription.get_pricing_metadata; it calls platformCall('control:get_pricing_metadata', {country}, {baseUrl, requireAuth: false}), the guest cmd control already registers in hooks.py override_whitelisted_methods. PRICING_METADATA_PATH is replaced by PRICING_METADATA_CMD.",
   "installs": [
