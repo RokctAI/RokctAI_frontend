@@ -41,6 +41,7 @@ import {
   verifyRegistrationEmail,
   type ActionState,
 } from "@/app/(auth)/actions";
+import { withReturnPath } from "@/app/(auth)/return-to";
 import { AuthForm } from "@/components/custom/auth-form";
 import {
   loadRegisterConfig,
@@ -63,6 +64,8 @@ export interface RegisterViewProps {
   hasSteps: boolean;
   /** Values for `fromQuery` fields, read from the URL by the server page. */
   prefilled: Record<string, string | null>;
+  /** The same-site path to land on once the account exists (auth_sdk 1.9.0). */
+  next?: string | null;
 }
 
 /** Card-shaped placeholder matching the form's box, so the page does not jump. */
@@ -239,7 +242,7 @@ function VerifyEmailStep({
   );
 }
 
-function RegisterViewInner({ copy, fields, hasSteps, prefilled }: RegisterViewProps) {
+function RegisterViewInner({ copy, fields, hasSteps, prefilled, next = null }: RegisterViewProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   // Held only until the code step signs the new account in.
@@ -265,7 +268,7 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled }: RegisterViewPr
     };
   }, [hasSteps]);
 
-  const finish = () => router.refresh();
+  const finish = () => (next ? router.replace(next) : router.refresh());
 
   const handleSubmit = (formData: FormData) => {
     setEmail(((formData.get("email") as string) ?? "").trim());
@@ -291,7 +294,7 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled }: RegisterViewPr
   return (
     <div className="flex flex-col min-h-screen">
       <Header
-        openLoginPopup={() => handleNavigation("/login")}
+        openLoginPopup={() => handleNavigation(withReturnPath("/login", next))}
         openSignupPopup={() => handleNavigation("/register")}
       />
 
@@ -360,7 +363,7 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled }: RegisterViewPr
               <div className="mt-6 text-center text-sm">
                 <span className="text-muted-foreground">{copy.signInPrompt} </span>
                 <Link
-                  href="/login"
+                  href={withReturnPath("/login", next)}
                   className="font-semibold text-primary hover:text-primary/80 hover:underline"
                 >
                   {copy.signInLabel}

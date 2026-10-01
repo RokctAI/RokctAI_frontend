@@ -782,7 +782,7 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn("## 1.19.1", latest)
         for word in ('"juvo platforms"', "use caps in logos", "`uppercase`"):
             self.assertIn(word, latest)
-        self.assertEqual(load_manifest()["version"], "1.21.1")
+        self.assertEqual(load_manifest()["version"], "1.22.0")
 
     def test_behaviour_under_node(self):
         node = shutil.which("node")

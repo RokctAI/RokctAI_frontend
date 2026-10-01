@@ -55,12 +55,14 @@ STAGED = {
     "register-link.ts": os.path.join(AUTH_GROUP, "register-link.ts"),
     "tenant-link.ts": os.path.join(AUTH_GROUP, "tenant-link.ts"),
     "brand-heading.ts": os.path.join(AUTH_GROUP, "login", "brand-heading.ts"),
+    "return-to.ts": os.path.join(AUTH_GROUP, "return-to.ts"),
 }
 NODE_SUITES = [
     "tenant-host.test.mts",
     "register-registry.test.mts",
     "register-link.test.mts",
     "login-heading.test.mts",
+    "return-to.test.mts",
 ]
 
 # Words no fixture, copy or comment of this SDK's new files may carry.
@@ -70,6 +72,7 @@ NEW_FILES = [
     os.path.join(AUTH_GROUP, "register-provision.ts"),
     os.path.join(AUTH_GROUP, "register-provision-default.ts"),
     os.path.join(AUTH_GROUP, "register-link.ts"),
+    os.path.join(AUTH_GROUP, "return-to.ts"),
     os.path.join(AUTH_GROUP, "register", "page.tsx"),
     os.path.join(AUTH_GROUP, "register", "register-view.tsx"),
     os.path.join(AUTH_GROUP, "login", "page.tsx"),
@@ -281,10 +284,10 @@ class TestTenantHostSwitch(unittest.TestCase):
         self.assertIn("(await headers()).get(TENANT_SITE_HEADER)", page)
         self.assertIn("params.site_name", page)
         self.assertLess(page.index("if (tenantSite) return <PaaSLogin tenantSite={tenantSite} />;"),
-                        page.index("return <LoginView />;"))
+                        page.index("return <LoginView next={safeReturnPath(params[RETURN_TO_PARAM])} />;"))
         view = read(os.path.join(AUTH_GROUP, "login", "login-view.tsx"))
         self.assertIn('"use client";', view)
-        self.assertIn("export function LoginView() {", view)
+        self.assertIn("export function LoginView({ next = null }: { next?: string | null } = {}) {", view)
         paas = read(os.path.join(TEMPLATES, "components", "custom", "paas-login.tsx"))
         self.assertIn('searchParams.get("site_name") || tenantSite || null', paas)
         self.assertIn('formData.append("site_name", siteName);', paas)

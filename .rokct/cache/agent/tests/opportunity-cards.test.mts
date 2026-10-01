@@ -21,7 +21,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
-  cardForSlug, cardFromRow, isClosed, isOpportunityKind, isValidSlug, openSummaries, parseDate, summariesFromRows,
+  bidHref, cardForSlug, cardFromRow, isClosed, isOpportunityKind, isValidSlug, openSummaries, parseDate, summariesFromRows,
 } from './agent-opportunity-cards.ts';
 
 describe('agent-opportunity-cards', () => {
@@ -68,5 +68,9 @@ describe('agent-opportunity-cards', () => {
       { kind: 'grants', slug: 'd', title: 'D', organization: null, deadline: '2026-10-01' },
     ] as const;
     assert.deepEqual(openSummaries([...rows], now, 'c').map((r) => r.slug), ['d', 'b']);
+  });
+
+  it('sends a tender bid through sign-up and back to the tender', () => {
+    assert.equal(bidHref('ABC 12/2026'), '/register?next=%2Fopportunities%2Ftenders%2FABC%252012%252F2026');
   });
 });

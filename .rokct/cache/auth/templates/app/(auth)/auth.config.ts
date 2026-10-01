@@ -18,6 +18,8 @@ import { NextAuthConfig } from "next-auth";
 
 import { AI_FIRST } from "@/app/config/compose";
 
+import { RETURN_TO_PARAM, safeReturnPath } from "./return-to";
+
 export const authConfig = {
   pages: {
     signIn: "/login",
@@ -35,7 +37,9 @@ export const authConfig = {
       let isOnLogin = nextUrl.pathname.startsWith("/login");
 
       if (isLoggedIn && (isOnLogin || isOnRegister)) {
-        return Response.redirect(new URL("/", nextUrl));
+        // Already signed in: straight on to where the link was going.
+        const next = safeReturnPath(nextUrl.searchParams.get(RETURN_TO_PARAM));
+        return Response.redirect(new URL(next ?? "/", nextUrl));
       }
 
       if (isOnRegister || isOnLogin) {

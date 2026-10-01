@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.22.0
+
+* An open tender's page offers **Bid with TenderAssist** ("TenderAssist,
+  your tender officer on demand."). It links to
+  `/register?next=<the tender page>` (`bidHref`), so a visitor who has to
+  sign up first comes back to the same tender, and one already signed in
+  goes straight back. That return needs auth_sdk 1.9.0; with an older
+  auth_sdk they land on the home page. Grants, equity and closed tenders
+  are unchanged.
+
 ## 1.21.1
 
 * Equity opportunity pages (rokct.ai/opportunities/equity/<slug>) no longer
