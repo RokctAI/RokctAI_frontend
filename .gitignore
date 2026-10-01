@@ -102,6 +102,7 @@ migrate_working_dir/
 /app/(auth)/register-provision.ts
 /app/(auth)/register/page.tsx
 /app/(auth)/register/register-view.tsx
+/app/(auth)/return-to.ts
 /app/(auth)/tenant-host.ts
 /app/(auth)/tenant-link-database.ts
 /app/(auth)/tenant-link-single.ts

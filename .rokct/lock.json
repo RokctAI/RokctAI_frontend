@@ -4,7 +4,7 @@
   "app_type": "rokctapp",
   "protocol": {
     "git": "https://github.com/RokctAI/The-Rokct-Protocol",
-    "ref": "da145bae4fc5005ec902fe36165d77073a7bf3bb",
+    "ref": "20e080be0627d91ad9f80f8dfadb37383d873d17",
     "vendored": ".rokct/cache/_composer",
     "files": {
       "sdk_composer.py": "5fafad102ac00047506783d4fdf53f0c2a09c48aa56c57aba5f0ecc59d523178",
@@ -43,10 +43,10 @@
       "git": "https://github.com/RokctAI/Users",
       "path": "../Users/auth/nextjs",
       "ref": "main",
-      "commit": "5c8b816e4c36c9db7b8693daf41fc0e581dfafea",
-      "version": "1.8.4",
+      "commit": "2865f8cb9b1cf13da10205809cda1c3a20a7e521",
+      "version": "1.9.0",
       "install_py_sha256": "b9b0d4156a68d46f528be2b885eed17cc7dba21f6b4b48b2991ba2c3274ae21b",
-      "content_sha256": "94191826ef588b43929c522c5912bb7724e98ff0f4125cf8d5dc4342b732a83c"
+      "content_sha256": "39ec614c39662d5e8f1ef02211c31f5840fee63dc839b80120fc30683ad091b6"
     },
     {
       "name": "corporate_sdk",
@@ -67,7 +67,7 @@
       "git": "https://github.com/RokctAI/Users",
       "path": "../Users/users/nextjs",
       "ref": "main",
-      "commit": "5c8b816e4c36c9db7b8693daf41fc0e581dfafea",
+      "commit": "2865f8cb9b1cf13da10205809cda1c3a20a7e521",
       "version": "1.1.0",
       "install_py_sha256": "3a1855f895916342fe2e421bdf54e4201e0c97490e4eba68259a3b653af597e2",
       "content_sha256": "f0642805fd09b3d4a648d55644a99dbd951f0ac11e332ac6b15f89ff43953fc5"
@@ -247,10 +247,10 @@
       "git": "https://github.com/RokctAI/agent",
       "path": "../agent/agent/nextjs",
       "ref": "main",
-      "commit": "bff22f2e5ab4e5427cf0249822b956d4a1906f56",
-      "version": "1.21.1",
+      "commit": "73fa9d67935e793211ec51550d432e5fe9d2a5ff",
+      "version": "1.22.0",
       "install_py_sha256": "c629e669d7aeba008b2e1c23a845eb65628f09e8538f738abbfa1385bf1088a3",
-      "content_sha256": "3e11d9f3752bc6f7ddbe958d713bff167bf6e2606249224fb9e9bb0c43723516"
+      "content_sha256": "f8698954997fc55267fde3448bf9f18863d7a127ad21516fd85538a3da001aad"
     }
   ]
 }

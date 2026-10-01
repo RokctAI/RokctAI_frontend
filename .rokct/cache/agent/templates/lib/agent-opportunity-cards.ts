@@ -76,6 +76,14 @@ export function opportunityHref(kind: OpportunityKind, slug: string): string {
   return `/opportunities/${kind}/${encodeURIComponent(slug)}`;
 }
 
+// agent_sdk 1.22.0: a tender page's "Bid with TenderAssist" goes through
+// sign-up and back to the same tender (auth_sdk >= 1.9.0 honours ?next=;
+// an older one just lands on the home page). Ray, 2026-10-01: a Reel viewer
+// must not lose the tender they saw because they had to sign up first.
+export function bidHref(slug: string): string {
+  return `/register?next=${encodeURIComponent(opportunityHref("tenders", slug))}`;
+}
+
 export function cleanTitle(title: string): string {
   return title
     .replace(/^#\s*/, "")

@@ -23,13 +23,15 @@ import { PLATFORM_NAME, getGuestBranding } from "@/app/config/platform";
 import { brandHeadingLabel } from "@/app/(auth)/login/brand-heading";
 import { toast } from "sonner";
 import { login, ActionState } from "@/app/(auth)/actions";
+import { withReturnPath } from "@/app/(auth)/return-to";
 import { AuthForm } from "@/components/custom/auth-form";
 import { BrandLogo } from "@/components/custom/brand-logo";
 import { SubmitButton } from "@/components/custom/submit-button";
 import { Header } from "@/components/custom/header";
 import React from "react";
 
-export function LoginView() {
+/** `next`: the same-site path to land on once signed in (auth_sdk 1.9.0). */
+export function LoginView({ next = null }: { next?: string | null } = {}) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [state, formAction] = useActionState<ActionState, FormData>(login, {
@@ -45,18 +47,21 @@ export function LoginView() {
     router.push(path);
   };
 
-  if (state.status === "success") {
-    // Just refresh or let middleware redirect
-    router.refresh();
-  } else if (state.status === "failed") {
-    toast.error("Invalid credentials!");
-  }
+  useEffect(() => {
+    if (state.status === "success") {
+      // Back to the page that sent them here, else let middleware redirect.
+      if (next) router.replace(next);
+      else router.refresh();
+    } else if (state.status === "failed") {
+      toast.error("Invalid credentials!");
+    }
+  }, [state, next, router]);
 
   return (
     <div className="flex flex-col min-h-screen">
       <Header
         openLoginPopup={() => handleNavigation("/login")}
-        openSignupPopup={() => handleNavigation("/register")}
+        openSignupPopup={() => handleNavigation(withReturnPath("/register", next))}
       />
       <div className="flex-1 flex flex-col items-center justify-center bg-background p-4">
         <div className="w-full max-w-md space-y-8">
@@ -101,7 +106,7 @@ export function LoginView() {
             <div className="mt-6">
               <div className="text-center text-sm">
                 <Link
-                  href="/register"
+                  href={withReturnPath("/register", next)}
                   className="font-semibold text-primary hover:text-primary/80"
                 >
                   Create an account
