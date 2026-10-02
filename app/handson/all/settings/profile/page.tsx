@@ -19,7 +19,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { User, Save } from "lucide-react";
+import { RiUserLine, RiSaveLine } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -168,7 +168,7 @@ export default function ProfilePage() {
 
             <div className="pt-4 flex justify-end">
               <Button onClick={handleSave} disabled={loading}>
-                <Save className="mr-2 h-4 w-4" />
+                <RiSaveLine className="mr-2 h-4 w-4" />
                 {loading ? "Saving..." : "Save Changes"}
               </Button>
             </div>

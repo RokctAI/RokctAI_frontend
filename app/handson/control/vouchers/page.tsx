@@ -17,20 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Loader2,
-  Plus,
-  Pencil,
-  Trash2,
-  Ticket,
-  CheckCircle2,
-  XCircle,
-  Calendar,
-  Users,
-  Percent,
-  DollarSign,
-  Clock,
-} from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiPencilLine, RiDeleteBinLine, RiTicketLine, RiCheckboxCircleLine, RiCloseCircleLine, RiCalendarLine, RiGroupLine, RiPercentLine, RiMoneyDollarCircleLine, RiTimeLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -219,7 +206,7 @@ export default function VouchersPage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -236,7 +223,7 @@ export default function VouchersPage() {
           </p>
         </div>
         <Button onClick={() => openDialog()}>
-          <Plus className="mr-2 h-4 w-4" /> {t("app.control.vouchers.btn_new")}
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("app.control.vouchers.btn_new")}
         </Button>
       </div>
       <Card>
@@ -289,7 +276,7 @@ export default function VouchersPage() {
                     <TableCell>
                       {v.voucher_type === "Trial Extension" ? (
                         <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400">
-                          <Calendar className="w-4 h-4" />
+                          <RiCalendarLine className="w-4 h-4" />
                           <span>
                             {t("app.control.vouchers.benefit_trial", {
                               days: v.trial_days,
@@ -299,9 +286,9 @@ export default function VouchersPage() {
                       ) : (
                         <div className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
                           {v.discount_type === "Percentage" ? (
-                            <Percent className="w-4 h-4" />
+                            <RiPercentLine className="w-4 h-4" />
                           ) : (
-                            <DollarSign className="w-4 h-4" />
+                            <RiMoneyDollarCircleLine className="w-4 h-4" />
                           )}
                           <span>
                             {v.discount_type === "Percentage"
@@ -318,7 +305,7 @@ export default function VouchersPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <Users className="w-4 h-4" />
+                        <RiGroupLine className="w-4 h-4" />
                         <span>
                           {v.used_count || 0}
                           {v.max_uses ? ` / ${v.max_uses}` : ""}
@@ -328,7 +315,7 @@ export default function VouchersPage() {
                     <TableCell>
                       {v.is_active ? (
                         <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 hover:bg-green-100 border-none flex items-center gap-1 w-fit">
-                          <CheckCircle2 className="w-3 h-3" />{" "}
+                          <RiCheckboxCircleLine className="w-3 h-3" />{" "}
                           {t("app.control.vouchers.status_active")}
                         </Badge>
                       ) : (
@@ -336,7 +323,7 @@ export default function VouchersPage() {
                           variant="outline"
                           className="text-muted-foreground flex items-center gap-1 w-fit"
                         >
-                          <XCircle className="w-3 h-3" />{" "}
+                          <RiCloseCircleLine className="w-3 h-3" />{" "}
                           {t("app.control.vouchers.status_inactive")}
                         </Badge>
                       )}
@@ -347,7 +334,7 @@ export default function VouchersPage() {
                         size="icon"
                         onClick={() => openDialog(v)}
                       >
-                        <Pencil className="h-4 w-4" />
+                        <RiPencilLine className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -355,7 +342,7 @@ export default function VouchersPage() {
                         className="text-red-500 hover:text-red-600"
                         onClick={() => onDelete(v.name)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <RiDeleteBinLine className="h-4 w-4" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -390,7 +377,7 @@ export default function VouchersPage() {
                     </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Ticket className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                        <RiTicketLine className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                         <Input
                           className="pl-9 font-mono font-bold uppercase tracking-widest"
                           placeholder={t("app.control.vouchers.ph_code")}
@@ -473,7 +460,7 @@ export default function VouchersPage() {
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Calendar className="absolute left-3 top-3 w-4 h-4 text-blue-500" />
+                          <RiCalendarLine className="absolute left-3 top-3 w-4 h-4 text-blue-500" />
                           <Input
                             type="number"
                             className="pl-9 bg-white dark:bg-zinc-950"
@@ -564,7 +551,7 @@ export default function VouchersPage() {
                             </FormLabel>
                             <FormControl>
                               <div className="relative">
-                                <Percent className="absolute left-3 top-3 w-4 h-4 text-green-500" />
+                                <RiPercentLine className="absolute left-3 top-3 w-4 h-4 text-green-500" />
                                 <Input
                                   type="number"
                                   className="pl-9 bg-white dark:bg-zinc-950"
@@ -587,7 +574,7 @@ export default function VouchersPage() {
                             </FormLabel>
                             <FormControl>
                               <div className="relative">
-                                <DollarSign className="absolute left-3 top-3 w-4 h-4 text-green-500" />
+                                <RiMoneyDollarCircleLine className="absolute left-3 top-3 w-4 h-4 text-green-500" />
                                 <Input
                                   type="number"
                                   className="pl-9 bg-white dark:bg-zinc-950"
@@ -611,7 +598,7 @@ export default function VouchersPage() {
                             </FormLabel>
                             <FormControl>
                               <div className="relative">
-                                <Clock className="absolute left-3 top-3 w-4 h-4 text-green-500" />
+                                <RiTimeLine className="absolute left-3 top-3 w-4 h-4 text-green-500" />
                                 <Input
                                   type="number"
                                   className="pl-9 bg-white dark:bg-zinc-950"
@@ -649,7 +636,7 @@ export default function VouchersPage() {
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Users className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                          <RiGroupLine className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                           <Input
                             type="number"
                             className="pl-9"

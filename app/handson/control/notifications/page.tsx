@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Mail, Save, Edit2, Plus, Info } from "lucide-react";
+import { RiMailLine, RiSaveLine, RiEdit2Line, RiAddLine, RiInformationLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -163,7 +163,7 @@ export default function NotificationTemplatesPage() {
           </p>
         </div>
         <Button onClick={openNew}>
-          <Plus className="mr-2 h-4 w-4" /> New Template
+          <RiAddLine className="mr-2 h-4 w-4" /> New Template
         </Button>
       </div>
 
@@ -197,7 +197,7 @@ export default function NotificationTemplatesPage() {
                 <TableRow key={t.name}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <RiMailLine className="h-4 w-4 text-muted-foreground" />
                       {t.name}
                     </div>
                   </TableCell>
@@ -210,7 +210,7 @@ export default function NotificationTemplatesPage() {
                       size="icon"
                       onClick={() => openEdit(t)}
                     >
-                      <Edit2 className="h-4 w-4" />
+                      <RiEdit2Line className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -298,7 +298,7 @@ export default function NotificationTemplatesPage() {
               Cancel
             </Button>
             <Button onClick={handleSave}>
-              <Save className="mr-2 h-4 w-4" />
+              <RiSaveLine className="mr-2 h-4 w-4" />
               Save Template
             </Button>
           </DialogFooter>

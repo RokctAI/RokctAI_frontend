@@ -36,7 +36,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { updateNamingSeries } from "@/app/actions/handson/all/settings/general";
-import { Loader2 } from "lucide-react";
+import { RiLoader4Line } from "@remixicon/react";
 import t from "@/app/lib/i18n";
 
 const DOC_SERIES_OPTIONS = [
@@ -153,7 +153,7 @@ export function NamingSeriesForm({ doctype }: { doctype?: string }) {
       </div>
 
       <Button onClick={handleUpdate} disabled={loading} className="w-full">
-        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {loading && <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />}
         Update Series
       </Button>
     </div>

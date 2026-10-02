@@ -25,17 +25,7 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  QrCode,
-  CheckCircle2,
-  Wifi,
-  WifiOff,
-  AlertCircle,
-  RefreshCw,
-  Smartphone,
-  LogOut,
-  Loader2,
-} from "lucide-react";
+import { RiQrCodeLine, RiCheckboxCircleLine, RiWifiLine, RiWifiOffLine, RiErrorWarningLine, RiRefreshLine, RiSmartphoneLine, RiLogoutBoxLine, RiLoader4Line } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -160,7 +150,7 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
     return (
       <Card className="border border-muted/50 bg-background/50 backdrop-blur-md">
         <CardContent className="flex items-center justify-center p-12">
-          <Loader2 className="size-8 animate-spin text-primary" />
+          <RiLoader4Line className="size-8 animate-spin text-primary" />
         </CardContent>
       </Card>
     );
@@ -181,7 +171,7 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <CardTitle className="text-xl flex items-center gap-2">
-              <Smartphone className="size-5 text-primary" />
+              <RiSmartphoneLine className="size-5 text-primary" />
               ROKCT WhatsApp Web Link
             </CardTitle>
             <CardDescription className="text-xs text-muted-foreground">
@@ -199,7 +189,7 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                 exit={{ opacity: 0, scale: 0.8 }}
                 className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
               >
-                <Wifi className="size-3.5 animate-pulse" />
+                <RiWifiLine className="size-3.5 animate-pulse" />
                 Linked
               </motion.div>
             ) : (
@@ -209,7 +199,7 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                 exit={{ opacity: 0, scale: 0.8 }}
                 className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20"
               >
-                <WifiOff className="size-3.5" />
+                <RiWifiOffLine className="size-3.5" />
                 Unlinked
               </motion.div>
             )}
@@ -250,9 +240,9 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                   className="w-full sm:w-auto shadow-lg shadow-destructive/10"
                 >
                   {actionLoading ? (
-                    <Loader2 className="mr-2 size-4 animate-spin" />
+                    <RiLoader4Line className="mr-2 size-4 animate-spin" />
                   ) : (
-                    <LogOut className="mr-2 size-4" />
+                    <RiLogoutBoxLine className="mr-2 size-4" />
                   )}
                   Unlink Channel
                 </Button>
@@ -264,12 +254,12 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                 >
                   {connState === "connecting" ? (
                     <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      <RiLoader4Line className="mr-2 size-4 animate-spin" />
                       Connecting...
                     </>
                   ) : (
                     <>
-                      <QrCode className="mr-2 size-4" />
+                      <RiQrCodeLine className="mr-2 size-4" />
                       Generate Link QR Code
                     </>
                   )}
@@ -291,7 +281,7 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                   className="text-center space-y-4"
                 >
                   <div className="inline-flex p-4 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                    <CheckCircle2 className="size-12 animate-bounce" />
+                    <RiCheckboxCircleLine className="size-12 animate-bounce" />
                   </div>
                   <div className="space-y-1">
                     <p className="font-semibold text-lg text-foreground">
@@ -337,7 +327,7 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                   className="text-center space-y-4"
                 >
                   <div className="inline-flex p-4 rounded-full bg-primary/10 text-primary border border-primary/20">
-                    <Loader2 className="size-10 animate-spin" />
+                    <RiLoader4Line className="size-10 animate-spin" />
                   </div>
                   <div className="space-y-1">
                     <p className="font-medium text-sm text-foreground">
@@ -359,7 +349,7 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                   exit={{ opacity: 0 }}
                   className="text-center space-y-3 text-muted-foreground p-6"
                 >
-                  <QrCode className="size-12 mx-auto stroke-[1.2] text-muted-foreground/60" />
+                  <RiQrCodeLine className="size-12 mx-auto stroke-[1.2] text-muted-foreground/60" />
                   <p className="text-xs">
                     No active pairing session. Click generate to start.
                   </p>
@@ -376,7 +366,7 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                   className="text-center space-y-4"
                 >
                   <div className="inline-flex p-4 rounded-full bg-destructive/10 text-destructive border border-destructive/20">
-                    <AlertCircle className="size-10 animate-shake" />
+                    <RiErrorWarningLine className="size-10 animate-shake" />
                   </div>
                   <div className="space-y-1">
                     <p className="font-semibold text-sm text-destructive">
@@ -392,7 +382,7 @@ export default function WhatsAppLinkCard({ tenantId }: WhatsAppLinkCardProps) {
                     onClick={startPairing}
                     className="mt-2 text-xs"
                   >
-                    <RefreshCw className="size-3 mr-1.5" />
+                    <RiRefreshLine className="size-3 mr-1.5" />
                     Retry
                   </Button>
                 </motion.div>

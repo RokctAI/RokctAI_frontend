@@ -17,14 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Loader2,
-  Plus,
-  Trash2,
-  MapPin,
-  Building,
-  LandPlot,
-} from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine, RiMapPinLine, RiBuildingLine, RiMap2Line } from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -228,7 +221,7 @@ export default function LookupsPage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -267,7 +260,7 @@ export default function LookupsPage() {
         <TabsContent value="provinces" className="space-y-4 mt-4">
           <div className="flex justify-end">
             <Button onClick={() => setIsProvinceDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />{" "}
+              <RiAddLine className="mr-2 h-4 w-4" />{" "}
               {t("app.settings.lookups.btn_new_province")}
             </Button>
           </div>
@@ -292,7 +285,7 @@ export default function LookupsPage() {
                   {provinces.map((prov) => (
                     <TableRow key={prov.name}>
                       <TableCell className="font-medium flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-blue-500" />
+                        <RiMapPinLine className="h-4 w-4 text-blue-500" />
                         {prov.province_name}
                       </TableCell>
                       <TableCell className="text-right">
@@ -302,7 +295,7 @@ export default function LookupsPage() {
                           className="text-red-500 hover:text-red-600"
                           onClick={() => onDelete("province", prov.name)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <RiDeleteBinLine className="h-4 w-4" />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -317,7 +310,7 @@ export default function LookupsPage() {
         <TabsContent value="locations" className="space-y-4 mt-4">
           <div className="flex justify-end">
             <Button onClick={() => setIsLocTypeDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />{" "}
+              <RiAddLine className="mr-2 h-4 w-4" />{" "}
               {t("app.settings.lookups.btn_new_type")}
             </Button>
           </div>
@@ -345,7 +338,7 @@ export default function LookupsPage() {
                   {locationTypes.map((loc) => (
                     <TableRow key={loc.name}>
                       <TableCell className="font-medium flex items-center gap-2">
-                        <LandPlot className="h-4 w-4 text-green-500" />
+                        <RiMap2Line className="h-4 w-4 text-green-500" />
                         {loc.location_type_name}
                       </TableCell>
                       <TableCell>{loc.industry}</TableCell>
@@ -356,7 +349,7 @@ export default function LookupsPage() {
                           className="text-red-500 hover:text-red-600"
                           onClick={() => onDelete("location", loc.name)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <RiDeleteBinLine className="h-4 w-4" />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -371,7 +364,7 @@ export default function LookupsPage() {
         <TabsContent value="organs" className="space-y-4 mt-4">
           <div className="flex justify-end">
             <Button onClick={() => setIsOrganDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />{" "}
+              <RiAddLine className="mr-2 h-4 w-4" />{" "}
               {t("app.settings.lookups.btn_new_entity")}
             </Button>
           </div>
@@ -397,7 +390,7 @@ export default function LookupsPage() {
                   {organs.map((org) => (
                     <TableRow key={org.name}>
                       <TableCell className="font-medium flex items-center gap-2">
-                        <Building className="h-4 w-4 text-orange-500" />
+                        <RiBuildingLine className="h-4 w-4 text-orange-500" />
                         {org.organ_name}
                       </TableCell>
                       <TableCell>{org.type}</TableCell>
@@ -408,7 +401,7 @@ export default function LookupsPage() {
                           className="text-red-500 hover:text-red-600"
                           onClick={() => onDelete("organ", org.name)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <RiDeleteBinLine className="h-4 w-4" />
                         </Button>
                       </TableCell>
                     </TableRow>

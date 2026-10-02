@@ -21,7 +21,7 @@ import { Header } from "@/components/custom/header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { RiErrorWarningLine, RiCheckboxCircleLine, RiTimeLine } from "@remixicon/react";
 import { callPublicApi } from "@/app/services/common/api";
 
 interface LogEntry {
@@ -78,9 +78,9 @@ export default function StatusPage() {
                 }`}
               >
                 {isOperational ? (
-                  <CheckCircle2 className="w-6 h-6" />
+                  <RiCheckboxCircleLine className="w-6 h-6" />
                 ) : (
-                  <Clock className="w-6 h-6 animate-pulse" />
+                  <RiTimeLine className="w-6 h-6 animate-pulse" />
                 )}
                 {data?.status || "Unknown"}
               </div>
@@ -96,7 +96,7 @@ export default function StatusPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-muted-foreground" />
+                <RiErrorWarningLine className="w-5 h-5 text-muted-foreground" />
                 Recent Updates
               </CardTitle>
             </CardHeader>

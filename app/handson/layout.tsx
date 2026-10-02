@@ -25,39 +25,7 @@ import {
   LMS_ROLES,
 } from "@/app/lib/role_constants";
 import Link from "next/link";
-import {
-  LayoutDashboard,
-  CreditCard,
-  Phone,
-  FileText,
-  Wallet,
-  Settings,
-  Code,
-  Menu,
-  Users,
-  Search,
-  BrainCircuit,
-  Printer,
-  BarChart3,
-  ScrollText,
-  Workflow,
-  Target,
-  Megaphone,
-  Lightbulb,
-  Bell,
-  Map,
-  Calculator,
-  Briefcase,
-  LifeBuoy,
-  UserCog,
-  PieChart,
-  CalendarCheck,
-  Receipt,
-  Plane,
-  Banknote,
-  UserCheck,
-  GraduationCap,
-} from "lucide-react";
+import { RiDashboardLine, RiBankCardLine, RiPhoneLine, RiFileTextLine, RiWalletLine, RiSettings3Line, RiCodeLine, RiMenuLine, RiGroupLine, RiSearchLine, RiBrainLine, RiPrinterLine, RiBarChartBoxLine, RiFileList3Line, RiFlowChart, RiFocus3Line, RiMegaphoneLine, RiLightbulbLine, RiNotification3Line, RiMapLine, RiCalculatorLine, RiBriefcaseLine, RiLifebuoyLine, RiUserSettingsLine, RiPieChartLine, RiCalendarCheckLine, RiReceiptLine, RiPlaneLine, RiMoneyDollarBoxLine, RiUserFollowLine, RiGraduationCapLine } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -70,7 +38,7 @@ const controlItems = [
   {
     title: "Dashboard",
     href: "/handson/control",
-    icon: LayoutDashboard,
+    icon: RiDashboardLine,
     roles: SYSTEM_ROLES,
   }, // Restricted to System Roles (Admins)
 
@@ -78,13 +46,13 @@ const controlItems = [
   {
     title: "Finance",
     href: "/handson/control/finance",
-    icon: Wallet,
+    icon: RiWalletLine,
     roles: FINANCE_ROLES,
   },
   {
     title: "Subscriptions",
     href: "/handson/control/subscriptions",
-    icon: CreditCard,
+    icon: RiBankCardLine,
     roles: SYSTEM_ROLES,
   },
 
@@ -92,19 +60,19 @@ const controlItems = [
   {
     title: "Telephony",
     href: "/handson/control/telephony",
-    icon: Phone,
+    icon: RiPhoneLine,
     roles: TELEPHONY_ROLES,
   },
   {
     title: "Tender & Tasks",
     href: "/handson/control/tender",
-    icon: FileText,
+    icon: RiFileTextLine,
     roles: SYSTEM_ROLES,
   },
   {
     title: "Global Workflows",
     href: "/handson/control/workflows",
-    icon: Workflow,
+    icon: RiFlowChart,
     roles: SYSTEM_ROLES,
   },
 
@@ -112,25 +80,25 @@ const controlItems = [
   {
     title: "System",
     href: "/handson/control/system",
-    icon: Settings,
+    icon: RiSettings3Line,
     roles: SYSTEM_ROLES,
   },
   {
     title: "Terms & Conditions",
     href: "/handson/control/terms",
-    icon: ScrollText,
+    icon: RiFileList3Line,
     roles: SYSTEM_ROLES,
   },
   {
     title: "Print Formats",
     href: "/handson/control/print-formats",
-    icon: Printer,
+    icon: RiPrinterLine,
     roles: SYSTEM_ROLES,
   },
   {
     title: "Notification Specs",
     href: "/handson/control/notifications",
-    icon: Bell,
+    icon: RiNotification3Line,
     roles: SYSTEM_ROLES,
   },
 
@@ -138,7 +106,7 @@ const controlItems = [
   {
     title: "Announcements",
     href: "/handson/control/announcements",
-    icon: Megaphone,
+    icon: RiMegaphoneLine,
     roles: SYSTEM_ROLES,
   },
 
@@ -146,34 +114,34 @@ const controlItems = [
   {
     title: "Report Builder",
     href: "/handson/control/reports",
-    icon: BarChart3,
+    icon: RiBarChartBoxLine,
     roles: SYSTEM_ROLES,
   },
   {
     title: "Developer",
     href: "/handson/control/developer",
-    icon: Code,
+    icon: RiCodeLine,
     roles: SYSTEM_ROLES,
   },
 ];
 
 const tenantItems = [
   // --- Overview ---
-  { title: "Dashboard", href: "/handson/tenant", icon: LayoutDashboard },
+  { title: "Dashboard", href: "/handson/tenant", icon: RiDashboardLine },
 
   // --- Communication ---
   {
     title: "Announcements",
     href: "/handson/tenant/announcements",
-    icon: Lightbulb,
+    icon: RiLightbulbLine,
   },
-  { title: "Support", href: "/handson/tenant/support", icon: LifeBuoy },
+  { title: "Support", href: "/handson/tenant/support", icon: RiLifebuoyLine },
 
   // --- Settings ---
   {
     title: "Settings",
     href: "/handson/tenant/settings",
-    icon: Settings,
+    icon: RiSettings3Line,
     roles: SYSTEM_ROLES,
   },
 ];
@@ -181,19 +149,19 @@ const tenantItems = [
 // Items visible to everyone (Shared Modules)
 const commonItems = [
   // --- Utilities ---
-  { title: "Reports", href: "/handson/all/reports", icon: PieChart },
-  { title: "Lookups", href: "/handson/all/lookups", icon: Search },
+  { title: "Reports", href: "/handson/all/reports", icon: RiPieChartLine },
+  { title: "Lookups", href: "/handson/all/lookups", icon: RiSearchLine },
 
   // --- Global Settings ---
   {
     title: "Global Settings",
     href: "/handson/all/settings",
-    icon: Settings,
+    icon: RiSettings3Line,
     roles: SYSTEM_ROLES,
   },
 
   // --- Product ---
-  { title: "Roadmap", href: "/handson/all/roadmap", icon: Map },
+  { title: "Roadmap", href: "/handson/all/roadmap", icon: RiMapLine },
 ];
 
 export default async function HandsOnLayout({
@@ -297,7 +265,7 @@ export default async function HandsOnLayout({
           <Sheet>
             <SheetTrigger asChild>
               <Button size="icon" variant="outline" className="sm:hidden">
-                <Menu className="h-5 w-5" />
+                <RiMenuLine className="h-5 w-5" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>

@@ -17,15 +17,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import {
-  RefreshCw,
-  Send,
-  MessageSquare,
-  CheckCircle2,
-  AlertTriangle,
-  Clock,
-  Terminal,
-} from "lucide-react";
+import { RiRefreshLine, RiSendPlaneLine, RiMessage2Line, RiCheckboxCircleLine, RiAlertLine, RiTimeLine, RiTerminalBoxLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -188,7 +180,7 @@ export function JulesInteractive({
           disabled={loading}
           className="h-8 w-8 p-0"
         >
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          <RiRefreshLine className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
         </Button>
       </div>
 
@@ -198,7 +190,7 @@ export function JulesInteractive({
           variant="warning"
           className="m-4 border-amber-200 bg-amber-50 text-amber-900 rounded-md"
         >
-          <AlertTriangle className="h-4 w-4 text-amber-600" />
+          <RiAlertLine className="h-4 w-4 text-amber-600" />
           <AlertTitle>Approval Required</AlertTitle>
           <AlertDescription className="flex items-center justify-between mt-1">
             <span>
@@ -209,7 +201,7 @@ export function JulesInteractive({
               onClick={handleApprovePlan}
               className="bg-amber-600 hover:bg-amber-700 text-white border-none"
             >
-              <CheckCircle2 className="mr-2 h-3 w-3" /> Approve Plan
+              <RiCheckboxCircleLine className="mr-2 h-3 w-3" /> Approve Plan
             </Button>
           </AlertDescription>
         </Alert>
@@ -219,7 +211,7 @@ export function JulesInteractive({
       <ScrollArea className="flex-1 p-4" ref={scrollRef}>
         {activities.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground opacity-50 gap-2 mt-10">
-            <MessageSquare className="h-8 w-8" />
+            <RiMessage2Line className="h-8 w-8" />
             <p>No activity yet.</p>
           </div>
         ) : (
@@ -240,7 +232,7 @@ export function JulesInteractive({
           className="flex-1"
         />
         <Button type="submit" size="icon" disabled={sending || !message.trim()}>
-          <Send className="h-4 w-4" />
+          <RiSendPlaneLine className="h-4 w-4" />
         </Button>
       </form>
     </Card>

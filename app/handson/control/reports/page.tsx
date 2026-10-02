@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { BarChart3, Plus, Trash2, Save, PlayCircle, Eye } from "lucide-react";
+import { RiBarChartBoxLine, RiAddLine, RiDeleteBinLine, RiSaveLine, RiPlayCircleLine, RiEyeLine } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -150,7 +150,7 @@ export default function ReportsPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <BarChart3 className="h-8 w-8" /> Report Builder
+            <RiBarChartBoxLine className="h-8 w-8" /> Report Builder
           </h1>
           <p className="text-muted-foreground">
             Define SQL-based analytics to push to all tenants.
@@ -158,11 +158,11 @@ export default function ReportsPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleSeed}>
-            <PlayCircle className="mr-2 h-4 w-4" />{" "}
+            <RiPlayCircleLine className="mr-2 h-4 w-4" />{" "}
             {t("app.control.reports.seed_examples")}
           </Button>
           <Button onClick={openNew}>
-            <Plus className="mr-2 h-4 w-4" /> New Report
+            <RiAddLine className="mr-2 h-4 w-4" /> New Report
           </Button>
         </div>
       </div>
@@ -209,7 +209,7 @@ export default function ReportsPage() {
 
       {reports.length === 0 && !loading && (
         <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
-          <BarChart3 className="mx-auto h-12 w-12 opacity-20 mb-4" />
+          <RiBarChartBoxLine className="mx-auto h-12 w-12 opacity-20 mb-4" />
           <p>{t("app.control.reports.no_reports_desc")}</p>
         </div>
       )}
@@ -282,7 +282,7 @@ export default function ReportsPage() {
 
             <div className="space-y-3 border p-4 rounded-lg bg-muted/20">
               <h4 className="font-semibold text-sm flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" /> Visualization Config
+                <RiBarChartBoxLine className="h-4 w-4" /> Visualization Config
               </h4>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
@@ -368,7 +368,7 @@ export default function ReportsPage() {
               Cancel
             </Button>
             <Button onClick={handleSave}>
-              <Save className="mr-2 h-4 w-4" /> Save Definition
+              <RiSaveLine className="mr-2 h-4 w-4" /> Save Definition
             </Button>
           </DialogFooter>
         </DialogContent>

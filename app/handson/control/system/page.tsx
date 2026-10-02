@@ -18,15 +18,7 @@
 
 import t from "@/app/lib/i18n";
 import { useEffect, useState } from "react";
-import {
-  Loader2,
-  RefreshCw,
-  Trash2,
-  Check,
-  X,
-  ShieldCheck,
-  Globe,
-} from "lucide-react";
+import { RiLoader4Line, RiRefreshLine, RiDeleteBinLine, RiCheckLine, RiCloseLine, RiShieldCheckLine, RiGlobalLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -198,7 +190,7 @@ export default function SystemPage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -218,7 +210,7 @@ export default function SystemPage() {
           onClick={fetchData}
           title="Refresh"
         >
-          <RefreshCw className="h-4 w-4" />
+          <RiRefreshLine className="h-4 w-4" />
         </Button>
       </div>
 
@@ -352,7 +344,7 @@ export default function SystemPage() {
                         <TableCell>
                           {item.status === "Authorized" ? (
                             <span className="flex items-center text-green-600">
-                              <ShieldCheck className="w-4 h-4 mr-1" />{" "}
+                              <RiShieldCheckLine className="w-4 h-4 mr-1" />{" "}
                               Authorized
                             </span>
                           ) : item.status === "Rejected" ? (
@@ -377,7 +369,7 @@ export default function SystemPage() {
                                 onClick={() => handleApprove(item.name)}
                                 title="Approve"
                               >
-                                <Check className="h-4 w-4" />
+                                <RiCheckLine className="h-4 w-4" />
                               </Button>
                               <Button
                                 variant="ghost"
@@ -386,7 +378,7 @@ export default function SystemPage() {
                                 onClick={() => handleReject(item.name)}
                                 title="Reject"
                               >
-                                <X className="h-4 w-4" />
+                                <RiCloseLine className="h-4 w-4" />
                               </Button>
                             </>
                           )}
@@ -397,7 +389,7 @@ export default function SystemPage() {
                             onClick={() => handleDeleteAuth(item.name)}
                             title="Delete"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <RiDeleteBinLine className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -426,7 +418,7 @@ export default function SystemPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {saving && <RiLoader4Line className="h-4 w-4 animate-spin" />}
                   <Switch
                     disabled={saving}
                     checked={globalSettings?.isBetaMode ?? true}
@@ -451,7 +443,7 @@ export default function SystemPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {saving && <RiLoader4Line className="h-4 w-4 animate-spin" />}
                   <Switch
                     disabled={saving}
                     checked={globalSettings?.isDebugMode ?? false}
@@ -504,7 +496,7 @@ export default function SystemPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 w-[250px]">
-                  {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {saving && <RiLoader4Line className="h-4 w-4 animate-spin" />}
                   <Select
                     disabled={saving}
                     value={publicRoadmapId || "none"}

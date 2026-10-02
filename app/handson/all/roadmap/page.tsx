@@ -17,19 +17,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Loader2,
-  RefreshCw,
-  Trash2,
-  Plus,
-  Edit,
-  Bot,
-  Eye,
-  EyeOff,
-  ExternalLink,
-  GitPullRequest,
-  Wand2,
-} from "lucide-react";
+import { RiLoader4Line, RiRefreshLine, RiDeleteBinLine, RiAddLine, RiEditLine, RiRobot2Line, RiEyeLine, RiEyeOffLine, RiExternalLinkLine, RiGitPullRequestLine, RiMagicLine } from "@remixicon/react";
 import { JulesInteractive } from "@/components/handson/JulesInteractive";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -321,7 +309,7 @@ export default function UnifiedRoadmapPage() {
   if (loading && roadmaps.length === 0) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -342,9 +330,9 @@ export default function UnifiedRoadmapPage() {
             disabled={isJulesRunning}
           >
             {isJulesRunning ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              <Bot className="mr-2 h-4 w-4" />
+              <RiRobot2Line className="mr-2 h-4 w-4" />
             )}
             Run Jules Now
           </Button>
@@ -354,7 +342,7 @@ export default function UnifiedRoadmapPage() {
             onClick={fetchData}
             title="Refresh"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RiRefreshLine className="h-4 w-4" />
           </Button>
           <Dialog
             open={isRoadmapDialogOpen}
@@ -370,7 +358,7 @@ export default function UnifiedRoadmapPage() {
                     setIsRoadmapDialogOpen(true);
                   }}
                 >
-                  <Plus className="mr-2 h-4 w-4" /> New Roadmap
+                  <RiAddLine className="mr-2 h-4 w-4" /> New Roadmap
                 </Button>
               </DialogTrigger>
             </DialogTrigger>
@@ -429,7 +417,7 @@ export default function UnifiedRoadmapPage() {
                         ])
                       }
                     >
-                      <Plus className="mr-2 h-3 w-3" /> Add Tag
+                      <RiAddLine className="mr-2 h-3 w-3" /> Add Tag
                     </Button>
                   </div>
                   <div className="space-y-2">
@@ -481,7 +469,7 @@ export default function UnifiedRoadmapPage() {
                             )
                           }
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <RiDeleteBinLine className="h-4 w-4" />
                         </Button>
                       </div>
                     ))}
@@ -535,9 +523,9 @@ export default function UnifiedRoadmapPage() {
                           onClick={() => setShowKey(!showKey)}
                         >
                           {showKey ? (
-                            <EyeOff className="h-4 w-4" />
+                            <RiEyeOffLine className="h-4 w-4" />
                           ) : (
-                            <Eye className="h-4 w-4" />
+                            <RiEyeLine className="h-4 w-4" />
                           )}
                         </Button>
                       </div>
@@ -663,7 +651,7 @@ export default function UnifiedRoadmapPage() {
                     setIsFeatureDialogOpen(true);
                   }}
                 >
-                  <Plus className="mr-2 h-4 w-4" /> Add Feature
+                  <RiAddLine className="mr-2 h-4 w-4" /> Add Feature
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-lg">
@@ -864,7 +852,7 @@ export default function UnifiedRoadmapPage() {
                                 )
                               }
                             >
-                              <Trash2 className="h-3 w-3" />
+                              <RiDeleteBinLine className="h-3 w-3" />
                             </button>
                           </Badge>
                         ))}
@@ -874,7 +862,7 @@ export default function UnifiedRoadmapPage() {
                   {editingFeature?.jules_session_id && (
                     <div className="space-y-2 pt-4 border-t">
                       <Label className="text-sm font-semibold flex items-center gap-2">
-                        <Bot className="h-4 w-4" /> Jules Interactive Session
+                        <RiRobot2Line className="h-4 w-4" /> Jules Interactive Session
                       </Label>
                       <JulesInteractive
                         sessionId={editingFeature.jules_session_id}
@@ -952,7 +940,7 @@ export default function UnifiedRoadmapPage() {
                               window.open(item.pull_request_url, "_blank")
                             }
                           >
-                            <GitPullRequest className="h-4 w-4 text-orange-600" />
+                            <RiGitPullRequestLine className="h-4 w-4 text-orange-600" />
                           </Button>
                         )}
                         {item.jules_session_id && (
@@ -967,7 +955,7 @@ export default function UnifiedRoadmapPage() {
                               )
                             }
                           >
-                            <ExternalLink className="h-4 w-4 text-blue-600" />
+                            <RiExternalLinkLine className="h-4 w-4 text-blue-600" />
                           </Button>
                         )}
                         <Button
@@ -979,7 +967,7 @@ export default function UnifiedRoadmapPage() {
                             setIsJulesDialogOpen(true);
                           }}
                         >
-                          <Bot className="h-4 w-4 text-purple-600" />
+                          <RiRobot2Line className="h-4 w-4 text-purple-600" />
                         </Button>
                         {/* Edit/Delete Buttons */}
                       </TableCell>
@@ -991,7 +979,7 @@ export default function UnifiedRoadmapPage() {
               {features.length === 0 && (
                 <div className="flex flex-col items-center justify-center p-12 space-y-4 border rounded-lg border-dashed mt-4 bg-muted/10">
                   <div className="rounded-full bg-blue-100 p-3">
-                    <Wand2 className="h-6 w-6 text-blue-600" />
+                    <RiMagicLine className="h-6 w-6 text-blue-600" />
                   </div>
                   <h3 className="text-lg font-medium">
                     {t("app.roadmap.view.no_features_title")}
@@ -1008,7 +996,7 @@ export default function UnifiedRoadmapPage() {
                         setIsFeatureDialogOpen(true);
                       }}
                     >
-                      <Plus className="mr-2 h-4 w-4" />{" "}
+                      <RiAddLine className="mr-2 h-4 w-4" />{" "}
                       {t("app.roadmap.view.btn_add_manually")}
                     </Button>
                     <Button
@@ -1029,9 +1017,9 @@ export default function UnifiedRoadmapPage() {
                       disabled={isJulesRunning}
                     >
                       {isJulesRunning ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
                       ) : (
-                        <Bot className="mr-2 h-4 w-4" />
+                        <RiRobot2Line className="mr-2 h-4 w-4" />
                       )}
                       {t("app.roadmap.view.btn_generate_ideas")}
                     </Button>

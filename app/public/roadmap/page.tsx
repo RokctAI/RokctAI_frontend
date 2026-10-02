@@ -23,7 +23,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Map, AlertCircle } from "lucide-react";
+import { RiMapLine, RiErrorWarningLine } from "@remixicon/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -49,7 +49,7 @@ export default async function PublicRoadmapPage() {
     return (
       <div className="container mx-auto py-20 px-4 text-center">
         <div className="flex flex-col items-center gap-4">
-          <Map className="h-12 w-12 text-muted-foreground opacity-50" />
+          <RiMapLine className="h-12 w-12 text-muted-foreground opacity-50" />
           <h1 className="text-2xl font-bold">No Public Roadmap Available</h1>
           <p className="text-muted-foreground">
             The team hasn't published a roadmap yet.

@@ -19,15 +19,7 @@
 import t from "@/app/lib/i18n";
 import { useEffect, useState } from "react";
 import { request } from "http";
-import {
-  Loader2,
-  RefreshCw,
-  Trash2,
-  Plus,
-  Pencil,
-  X,
-  LogIn,
-} from "lucide-react";
+import { RiLoader4Line, RiRefreshLine, RiDeleteBinLine, RiAddLine, RiPencilLine, RiCloseLine, RiLoginBoxLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -363,7 +355,7 @@ export default function SubscriptionsPage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -458,7 +450,7 @@ export default function SubscriptionsPage() {
                               title="Login as Tenant"
                               onClick={() => handleLoginAs(customer.name)}
                             >
-                              <LogIn className="h-4 w-4" />
+                              <RiLoginBoxLine className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
@@ -466,9 +458,9 @@ export default function SubscriptionsPage() {
                               onClick={() => openSubDialog(customer.name, sub)}
                             >
                               {sub ? (
-                                <Pencil className="h-4 w-4" />
+                                <RiPencilLine className="h-4 w-4" />
                               ) : (
-                                <Plus className="h-4 w-4" />
+                                <RiAddLine className="h-4 w-4" />
                               )}
                             </Button>
                             {sub && (
@@ -478,7 +470,7 @@ export default function SubscriptionsPage() {
                                 className="text-red-500 hover:text-red-600"
                                 onClick={() => onDeleteSub(sub.name)}
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <RiDeleteBinLine className="h-4 w-4" />
                               </Button>
                             )}
                           </TableCell>
@@ -496,7 +488,7 @@ export default function SubscriptionsPage() {
         <TabsContent value="plans" className="space-y-4 mt-4">
           <div className="flex justify-end">
             <Button onClick={() => openPlanDialog()}>
-              <Plus className="mr-2 h-4 w-4" /> New Plan
+              <RiAddLine className="mr-2 h-4 w-4" /> New Plan
             </Button>
           </div>
           <Card>
@@ -548,7 +540,7 @@ export default function SubscriptionsPage() {
                             size="icon"
                             onClick={() => openPlanDialog(plan)}
                           >
-                            <Pencil className="h-4 w-4" />
+                            <RiPencilLine className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -556,7 +548,7 @@ export default function SubscriptionsPage() {
                             className="text-red-500 hover:text-red-600"
                             onClick={() => onDeletePlan(plan.name)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <RiDeleteBinLine className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -810,7 +802,7 @@ export default function SubscriptionsPage() {
                     size="sm"
                     onClick={() => appendModule({ module: "" })}
                   >
-                    <Plus className="h-4 w-4 mr-1" /> Add Module
+                    <RiAddLine className="h-4 w-4 mr-1" /> Add Module
                   </Button>
                 </div>
                 <div className="space-y-2">
@@ -851,7 +843,7 @@ export default function SubscriptionsPage() {
                         size="icon"
                         onClick={() => removeModule(index)}
                       >
-                        <X className="h-4 w-4 text-muted-foreground" />
+                        <RiCloseLine className="h-4 w-4 text-muted-foreground" />
                       </Button>
                     </div>
                   ))}

@@ -22,13 +22,7 @@ import { JobsService } from "@/app/services/control/jobs";
 import { BrandLogo } from "./brand-logo";
 import { Branding } from "./branding";
 import { RoadmapPublicService } from "@/app/services/public/roadmap";
-import {
-  Twitter,
-  Youtube,
-  Linkedin,
-  Instagram,
-  ChevronDown,
-} from "lucide-react";
+import { RiTwitterXLine, RiYoutubeLine, RiLinkedinLine, RiInstagramLine, RiArrowDownSLine } from "@remixicon/react";
 import t from "@/app/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { NetworkStrip } from "@/components/custom/network-strip";
@@ -168,25 +162,25 @@ export async function Footer() {
                 href="#"
                 className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
               >
-                <Twitter className="w-6 h-6" />
+                <RiTwitterXLine className="w-6 h-6" />
               </Link>
               <Link
                 href="#"
                 className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
               >
-                <Youtube className="w-6 h-6" />
+                <RiYoutubeLine className="w-6 h-6" />
               </Link>
               <Link
                 href="#"
                 className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
               >
-                <Linkedin className="w-6 h-6" />
+                <RiLinkedinLine className="w-6 h-6" />
               </Link>
               <Link
                 href="#"
                 className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
               >
-                <Instagram className="w-6 h-6" />
+                <RiInstagramLine className="w-6 h-6" />
               </Link>
             </div>
           </div>

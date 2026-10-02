@@ -16,7 +16,7 @@
 
 /**
  * Author: ROKCT Code Generator
- * Integrations settings page supporting general integrations (Slack, Calendar)
+ * Integrations settings page supporting general integrations (RiSlackLine, RiCalendarLine)
  * and the first-class ROKCT WhatsApp Web Link native integration card
  */
 
@@ -25,15 +25,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import {
-  Calendar,
-  Slack,
-  Video,
-  CheckCircle2,
-  XCircle,
-  Settings2,
-  Smartphone,
-} from "lucide-react";
+import { RiCalendarLine, RiSlackLine, RiVideoOnLine, RiCheckboxCircleLine, RiCloseCircleLine, RiSettings4Line, RiSmartphoneLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -66,9 +58,9 @@ import t from "@/app/lib/i18n";
 
 // Map icon strings to components
 const iconMap: Record<string, any> = {
-  Calendar: Calendar,
-  Slack: Slack,
-  Video: Video,
+  Calendar: RiCalendarLine,
+  Slack: RiSlackLine,
+  Video: RiVideoOnLine,
 };
 
 export default function IntegrationsPage() {
@@ -185,7 +177,7 @@ export default function IntegrationsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Dynamic Integrations list */}
           {services.map((service) => {
-            const Icon = iconMap[service.icon] || Settings2;
+            const Icon = iconMap[service.icon] || RiSettings4Line;
             return (
               <Card
                 key={service.name}
@@ -207,7 +199,7 @@ export default function IntegrationsPage() {
                         variant="default"
                         className="bg-green-600 hover:bg-green-700"
                       >
-                        <CheckCircle2 className="mr-1 h-3 w-3" />{" "}
+                        <RiCheckboxCircleLine className="mr-1 h-3 w-3" />{" "}
                         {t("app.integrations.status_connected")}
                       </Badge>
                     ) : (
@@ -215,7 +207,7 @@ export default function IntegrationsPage() {
                         variant="outline"
                         className="text-muted-foreground"
                       >
-                        <XCircle className="mr-1 h-3 w-3" />{" "}
+                        <RiCloseCircleLine className="mr-1 h-3 w-3" />{" "}
                         {t("app.integrations.status_disconnected")}
                       </Badge>
                     )}
@@ -232,7 +224,7 @@ export default function IntegrationsPage() {
                         size="icon"
                         onClick={() => handleDisconnect(service)}
                       >
-                        <XCircle className="h-4 w-4" />
+                        <RiCloseCircleLine className="h-4 w-4" />
                       </Button>
                     </div>
                   ) : (
@@ -255,7 +247,7 @@ export default function IntegrationsPage() {
               <CardTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-600">
                 {t("app.integrations.whatsapp_title")}
               </CardTitle>
-              <Smartphone className="h-6 w-6 text-primary animate-pulse" />
+              <RiSmartphoneLine className="h-6 w-6 text-primary animate-pulse" />
             </CardHeader>
             <CardContent className="flex-1 pt-4">
               <CardDescription className="text-sm text-muted-foreground mb-4">
@@ -267,7 +259,7 @@ export default function IntegrationsPage() {
                     variant="default"
                     className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
                   >
-                    <CheckCircle2 className="mr-1 h-3 w-3" />{" "}
+                    <RiCheckboxCircleLine className="mr-1 h-3 w-3" />{" "}
                     {t("app.integrations.status_connected")}
                   </Badge>
                 ) : (
@@ -275,7 +267,7 @@ export default function IntegrationsPage() {
                     variant="outline"
                     className="text-muted-foreground font-medium"
                   >
-                    <XCircle className="mr-1 h-3 w-3" />{" "}
+                    <RiCloseCircleLine className="mr-1 h-3 w-3" />{" "}
                     {t("app.integrations.status_disconnected")}
                   </Badge>
                 )}

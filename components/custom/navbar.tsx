@@ -17,7 +17,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HOSTING_URL } from "@/app/config/constants";
-import { HardDrive, User, Settings, LogOut } from "lucide-react";
+import { RiHardDrive2Line, RiUserLine, RiSettings3Line, RiLogoutBoxLine } from "@remixicon/react";
 
 import { auth, signOut } from "@/app/(auth)/auth";
 import { AI_FIRST } from "@/app/config/compose";
@@ -120,7 +120,7 @@ export const Navbar = async () => {
               {showRPanel && HOSTING_URL && (
                 <Button variant="ghost" size="sm" asChild>
                   <a href={HOSTING_URL} className="flex items-center gap-2">
-                    <HardDrive className="h-4 w-4" />
+                    <RiHardDrive2Line className="h-4 w-4" />
                     <span className="hidden md:inline">
                       {t("navbar.rpanel")}
                     </span>
@@ -166,13 +166,13 @@ export const Navbar = async () => {
                   <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
                       <Link href="/handson/settings/profile">
-                        <User className="mr-2 h-4 w-4" />
+                        <RiUserLine className="mr-2 h-4 w-4" />
                         <span>{t("common.profile")}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/handson/settings/users">
-                        <Settings className="mr-2 h-4 w-4" />
+                        <RiSettings3Line className="mr-2 h-4 w-4" />
                         <span>{t("common.settings")}</span>
                       </Link>
                     </DropdownMenuItem>
@@ -190,7 +190,7 @@ export const Navbar = async () => {
                         type="submit"
                         className="flex w-full items-center text-red-600"
                       >
-                        <LogOut className="mr-2 h-4 w-4" />
+                        <RiLogoutBoxLine className="mr-2 h-4 w-4" />
                         <span>{t("auth.sign_out")}</span>
                       </button>
                     </form>

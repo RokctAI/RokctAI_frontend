@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Printer, Save, Eye, Code, LayoutTemplate } from "lucide-react";
+import { RiPrinterLine, RiSaveLine, RiEyeLine, RiCodeLine, RiLayoutLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -184,7 +184,7 @@ export default function PrintSettingsPage() {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Printer className="h-6 w-6" /> {t("app.printing_settings.title")}
+            <RiPrinterLine className="h-6 w-6" /> {t("app.printing_settings.title")}
           </h1>
           <Select
             value={selectedFormat?.name}
@@ -225,7 +225,7 @@ export default function PrintSettingsPage() {
               </Button>
             )}
           <Button onClick={handleSave}>
-            <Save className="mr-2 h-4 w-4" />{" "}
+            <RiSaveLine className="mr-2 h-4 w-4" />{" "}
             {t("app.printing_settings.btn_save")}
           </Button>
         </div>
@@ -236,7 +236,7 @@ export default function PrintSettingsPage() {
         <Card className="flex flex-col h-full overflow-hidden">
           <CardHeader className="py-2 bg-muted/30 border-b">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Code className="h-4 w-4" />{" "}
+              <RiCodeLine className="h-4 w-4" />{" "}
               {t("app.printing_settings.editor_title")}
             </CardTitle>
           </CardHeader>
@@ -253,7 +253,7 @@ export default function PrintSettingsPage() {
         <Card className="flex flex-col h-full overflow-hidden bg-white">
           <CardHeader className="py-2 bg-muted/30 border-b">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Eye className="h-4 w-4" />{" "}
+              <RiEyeLine className="h-4 w-4" />{" "}
               {t("app.printing_settings.preview_title")}
             </CardTitle>
           </CardHeader>

@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Lightbulb, Calendar } from "lucide-react";
+import { RiLightbulbLine, RiCalendarLine } from "@remixicon/react";
 import {
   Card,
   CardContent,
@@ -43,7 +43,7 @@ export default function TenantAnnouncementsPage() {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold flex items-center gap-2">
-          <Lightbulb className="h-8 w-8 text-yellow-500" /> Announcements
+          <RiLightbulbLine className="h-8 w-8 text-yellow-500" /> Announcements
         </h1>
         <p className="text-muted-foreground">
           Updates and news from the platform team.
@@ -62,7 +62,7 @@ export default function TenantAnnouncementsPage() {
               <div className="flex justify-between items-start">
                 <CardTitle className="text-lg">{ann.title}</CardTitle>
                 <span className="text-xs text-muted-foreground flex items-center">
-                  <Calendar className="mr-1 h-3 w-3" />
+                  <RiCalendarLine className="mr-1 h-3 w-3" />
                   {ann.creation
                     ? new Date(ann.creation).toLocaleDateString()
                     : "Just now"}
