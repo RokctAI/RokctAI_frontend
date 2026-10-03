@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Megaphone, Plus, Trash2, Save, Send } from "lucide-react";
+import { RiMegaphoneLine, RiAddLine, RiDeleteBinLine, RiSaveLine, RiSendPlaneLine } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -139,7 +139,7 @@ export default function AnnouncementsPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Megaphone className="h-8 w-8" /> Announcements
+            <RiMegaphoneLine className="h-8 w-8" /> Announcements
           </h1>
           <p className="text-muted-foreground">
             Broadcast updates to tenants based on their plan.
@@ -150,7 +150,7 @@ export default function AnnouncementsPage() {
             Seed Examples
           </Button>
           <Button onClick={openNew}>
-            <Plus className="mr-2 h-4 w-4" /> New Broadcast
+            <RiAddLine className="mr-2 h-4 w-4" /> New Broadcast
           </Button>
         </div>
       </div>
@@ -267,7 +267,7 @@ export default function AnnouncementsPage() {
           </div>
           <DialogFooter>
             <Button onClick={handleSave}>
-              <Send className="mr-2 h-4 w-4" /> Save & Publish
+              <RiSendPlaneLine className="mr-2 h-4 w-4" /> Save & Publish
             </Button>
           </DialogFooter>
         </DialogContent>

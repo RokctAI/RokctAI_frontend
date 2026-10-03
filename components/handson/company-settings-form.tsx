@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Save, Building } from "lucide-react";
+import { RiLoader4Line, RiSaveLine, RiBuildingLine } from "@remixicon/react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -107,7 +107,7 @@ export function CompanySettingsForm() {
     return (
       <Card>
         <CardContent className="p-6 flex justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <RiLoader4Line className="h-6 w-6 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
     );
@@ -117,7 +117,7 @@ export function CompanySettingsForm() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Building className="h-5 w-5 text-muted-foreground" />
+          <RiBuildingLine className="h-5 w-5 text-muted-foreground" />
           Company Settings
         </CardTitle>
         <CardDescription>
@@ -216,7 +216,7 @@ export function CompanySettingsForm() {
             <div className="flex justify-end">
               <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 Save Settings
               </Button>

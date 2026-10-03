@@ -18,14 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import {
-  Workflow,
-  Plus,
-  Trash2,
-  Save,
-  PlayCircle,
-  Settings2,
-} from "lucide-react";
+import { RiFlowChart, RiAddLine, RiDeleteBinLine, RiSaveLine, RiPlayCircleLine, RiSettings4Line } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -224,17 +217,17 @@ export default function WorkflowsPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Workflow className="h-8 w-8" /> {t("app.workflows.title")}
+            <RiFlowChart className="h-8 w-8" /> {t("app.workflows.title")}
           </h1>
           <p className="text-muted-foreground">{t("app.workflows.desc")}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleSeed}>
-            <PlayCircle className="mr-2 h-4 w-4" />{" "}
+            <RiPlayCircleLine className="mr-2 h-4 w-4" />{" "}
             {t("app.workflows.btn_seed")}
           </Button>
           <Button onClick={openNew}>
-            <Plus className="mr-2 h-4 w-4" /> {t("app.workflows.btn_new")}
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("app.workflows.btn_new")}
           </Button>
         </div>
       </div>
@@ -344,7 +337,7 @@ export default function WorkflowsPage() {
 
       {rules.length === 0 && !loading && (
         <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
-          <Workflow className="mx-auto h-12 w-12 opacity-20 mb-4" />
+          <RiFlowChart className="mx-auto h-12 w-12 opacity-20 mb-4" />
           <p>{t("app.workflows.no_rules")}</p>
         </div>
       )}
@@ -428,7 +421,7 @@ export default function WorkflowsPage() {
                 {t("app.workflows.conditions_title")}
               </h4>
               <Button size="sm" variant="outline" onClick={addCondition}>
-                <Plus className="h-3 w-3 mr-1" /> {t("app.workflows.btn_add")}
+                <RiAddLine className="h-3 w-3 mr-1" /> {t("app.workflows.btn_add")}
               </Button>
             </div>
             {editingRule.conditions.map((c, i) => (
@@ -470,7 +463,7 @@ export default function WorkflowsPage() {
                   className="text-muted-foreground"
                   onClick={() => removeCondition(i)}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <RiDeleteBinLine className="h-4 w-4" />
                 </Button>
               </div>
             ))}
@@ -483,7 +476,7 @@ export default function WorkflowsPage() {
                 {t("app.workflows.actions_title")}
               </h4>
               <Button size="sm" variant="outline" onClick={addAction}>
-                <Plus className="h-3 w-3 mr-1" /> {t("app.workflows.btn_add")}
+                <RiAddLine className="h-3 w-3 mr-1" /> {t("app.workflows.btn_add")}
               </Button>
             </div>
             {editingRule.actions.map((a, i) => (
@@ -513,7 +506,7 @@ export default function WorkflowsPage() {
                     className="ml-auto text-muted-foreground"
                     onClick={() => removeAction(i)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <RiDeleteBinLine className="h-4 w-4" />
                   </Button>
                 </div>
 
@@ -558,7 +551,7 @@ export default function WorkflowsPage() {
               {t("common.cancel")}
             </Button>
             <Button onClick={handleSave}>
-              <Save className="mr-2 h-4 w-4" /> {t("app.workflows.btn_save")}
+              <RiSaveLine className="mr-2 h-4 w-4" /> {t("app.workflows.btn_save")}
             </Button>
           </DialogFooter>
         </DialogContent>

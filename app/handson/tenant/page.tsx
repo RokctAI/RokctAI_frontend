@@ -18,15 +18,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  LayoutDashboard,
-  CreditCard,
-  Megaphone,
-  LifeBuoy,
-  Settings,
-  ArrowRight,
-  Loader2,
-} from "lucide-react";
+import { RiDashboardLine, RiBankCardLine, RiMegaphoneLine, RiLifebuoyLine, RiSettings3Line, RiArrowRightLine, RiLoader4Line } from "@remixicon/react";
 
 import {
   Card,
@@ -76,7 +68,7 @@ export default function TenantDashboardPage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -112,7 +104,7 @@ export default function TenantDashboardPage() {
             <CardTitle className="text-sm font-medium">
               Subscription Status
             </CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <RiBankCardLine className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -129,7 +121,7 @@ export default function TenantDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">System Health</CardTitle>
-            <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
+            <RiDashboardLine className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">Operational</div>
@@ -140,7 +132,7 @@ export default function TenantDashboardPage() {
         <Card className="md:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Announcements</CardTitle>
-            <Megaphone className="h-4 w-4 text-muted-foreground" />
+            <RiMegaphoneLine className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -178,7 +170,7 @@ export default function TenantDashboardPage() {
           <Link href="/handson/tenant/settings">
             <Card className="hover:bg-muted/50 transition-colors cursor-pointer h-full">
               <CardHeader>
-                <Settings className="h-6 w-6 text-primary mb-2" />
+                <RiSettings3Line className="h-6 w-6 text-primary mb-2" />
                 <CardTitle className="text-lg">Settings</CardTitle>
                 <CardDescription>
                   Configure email, printing, and legal terms.
@@ -186,7 +178,7 @@ export default function TenantDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center text-sm text-primary font-medium">
-                  Manage Settings <ArrowRight className="ml-1 h-4 w-4" />
+                  Manage Settings <RiArrowRightLine className="ml-1 h-4 w-4" />
                 </div>
               </CardContent>
             </Card>
@@ -195,7 +187,7 @@ export default function TenantDashboardPage() {
           <Link href="/handson/tenant/support">
             <Card className="hover:bg-muted/50 transition-colors cursor-pointer h-full">
               <CardHeader>
-                <LifeBuoy className="h-6 w-6 text-blue-600 mb-2" />
+                <RiLifebuoyLine className="h-6 w-6 text-blue-600 mb-2" />
                 <CardTitle className="text-lg">Support</CardTitle>
                 <CardDescription>
                   Contact provider support or view ticket history.
@@ -203,7 +195,7 @@ export default function TenantDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center text-sm text-primary font-medium">
-                  Get Help <ArrowRight className="ml-1 h-4 w-4" />
+                  Get Help <RiArrowRightLine className="ml-1 h-4 w-4" />
                 </div>
               </CardContent>
             </Card>
@@ -212,7 +204,7 @@ export default function TenantDashboardPage() {
           <Link href="/handson/tenant/announcements">
             <Card className="hover:bg-muted/50 transition-colors cursor-pointer h-full">
               <CardHeader>
-                <Megaphone className="h-6 w-6 text-yellow-500 mb-2" />
+                <RiMegaphoneLine className="h-6 w-6 text-yellow-500 mb-2" />
                 <CardTitle className="text-lg">Announcements</CardTitle>
                 <CardDescription>
                   Read the latest updates and news.
@@ -220,7 +212,7 @@ export default function TenantDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center text-sm text-primary font-medium">
-                  View All <ArrowRight className="ml-1 h-4 w-4" />
+                  View All <RiArrowRightLine className="ml-1 h-4 w-4" />
                 </div>
               </CardContent>
             </Card>

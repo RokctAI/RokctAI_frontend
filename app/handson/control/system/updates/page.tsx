@@ -17,13 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Loader2,
-  RefreshCw,
-  CheckCircle,
-  XCircle,
-  GitBranch,
-} from "lucide-react";
+import { RiLoader4Line, RiRefreshLine, RiCheckboxCircleLine, RiCloseCircleLine, RiGitBranchLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -97,7 +91,7 @@ export default function UpdatesPage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -117,7 +111,7 @@ export default function UpdatesPage() {
           onClick={fetchData}
           title="Refresh"
         >
-          <RefreshCw className="h-4 w-4" />
+          <RiRefreshLine className="h-4 w-4" />
         </Button>
       </div>
 
@@ -158,7 +152,7 @@ export default function UpdatesPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <GitBranch className="h-3 w-3 text-muted-foreground" />
+                        <RiGitBranchLine className="h-3 w-3 text-muted-foreground" />
                         {update.new_branch_name || "Default"}
                       </div>
                     </TableCell>
@@ -190,7 +184,7 @@ export default function UpdatesPage() {
                             className="text-green-600 hover:text-green-700 hover:bg-green-50"
                             onClick={() => onApprove(update.name)}
                           >
-                            <CheckCircle className="h-4 w-4" />
+                            <RiCheckboxCircleLine className="h-4 w-4" />
                           </Button>
                           <Button
                             size="sm"
@@ -198,7 +192,7 @@ export default function UpdatesPage() {
                             className="text-red-600 hover:text-red-700 hover:bg-red-50"
                             onClick={() => onReject(update.name)}
                           >
-                            <XCircle className="h-4 w-4" />
+                            <RiCloseCircleLine className="h-4 w-4" />
                           </Button>
                         </div>
                       )}

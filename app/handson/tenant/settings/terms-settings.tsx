@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Plus, Download, Edit2, Trash2, Save, ScrollText } from "lucide-react";
+import { RiAddLine, RiDownloadLine, RiEdit2Line, RiDeleteBinLine, RiSaveLine, RiFileList3Line } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -145,10 +145,10 @@ export default function TermsSettings() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleOpenImport}>
-            <Download className="mr-2 h-4 w-4" /> Import Standard
+            <RiDownloadLine className="mr-2 h-4 w-4" /> Import Standard
           </Button>
           <Button onClick={() => openEdit()}>
-            <Plus className="mr-2 h-4 w-4" /> Create Custom
+            <RiAddLine className="mr-2 h-4 w-4" /> Create Custom
           </Button>
         </div>
       </div>
@@ -191,7 +191,7 @@ export default function TermsSettings() {
                       size="icon"
                       onClick={() => openEdit(t)}
                     >
-                      <Edit2 className="h-4 w-4" />
+                      <RiEdit2Line className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -199,7 +199,7 @@ export default function TermsSettings() {
                       className="text-destructive"
                       onClick={() => handleDelete(t.name)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <RiDeleteBinLine className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -249,7 +249,7 @@ export default function TermsSettings() {
               Cancel
             </Button>
             <Button onClick={handleSave}>
-              <Save className="mr-2 h-4 w-4" /> Save
+              <RiSaveLine className="mr-2 h-4 w-4" /> Save
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -274,7 +274,7 @@ export default function TermsSettings() {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <ScrollText className="h-4 w-4 text-muted-foreground" />
+                      <RiFileList3Line className="h-4 w-4 text-muted-foreground" />
                       <span className="font-semibold">{mt.title}</span>
                     </div>
                     <p className="text-xs text-muted-foreground line-clamp-2">

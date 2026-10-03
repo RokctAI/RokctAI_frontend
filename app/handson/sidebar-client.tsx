@@ -18,12 +18,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LucideIcon, Package } from "lucide-react";
+import { type RemixiconComponentType, RiBox3Line } from "@remixicon/react";
 
 interface MenuItem {
   title: string;
   href: string;
-  icon: LucideIcon;
+  icon: RemixiconComponentType;
 }
 
 // Entries below are appended by the Rokct SDK installer
@@ -88,7 +88,7 @@ export function HandsOnSidebarClient({
           href={item.href}
           className={linkClassName(item.href)}
         >
-          <Package className={`h-4 w-4 ${mobile ? "h-5 w-5" : ""}`} />
+          <RiBox3Line className={`h-4 w-4 ${mobile ? "h-5 w-5" : ""}`} />
           {item.label}
         </Link>
       ))}

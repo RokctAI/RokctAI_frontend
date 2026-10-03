@@ -20,7 +20,7 @@ import { Header } from "@/components/custom/header";
 import { Footer } from "@/components/custom/footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Briefcase, ArrowRight } from "lucide-react";
+import { RiMapPinLine, RiBriefcaseLine, RiArrowRightLine } from "@remixicon/react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -66,13 +66,13 @@ export default async function CareersPage() {
                   <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
                     {job.department && (
                       <span className="flex items-center gap-1">
-                        <Briefcase className="w-4 h-4" />
+                        <RiBriefcaseLine className="w-4 h-4" />
                         {job.department}
                       </span>
                     )}
                     {job.location && (
                       <span className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
+                        <RiMapPinLine className="w-4 h-4" />
                         {job.location}
                       </span>
                     )}
@@ -87,7 +87,7 @@ export default async function CareersPage() {
                 <div className="flex items-center gap-4">
                   <Button asChild>
                     <Link href={`/careers/${job.name}`}>
-                      Apply Now <ArrowRight className="ml-2 w-4 h-4" />
+                      Apply Now <RiArrowRightLine className="ml-2 w-4 h-4" />
                     </Link>
                   </Button>
                 </div>

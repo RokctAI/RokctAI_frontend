@@ -35,7 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { LifeBuoy, Send, AlertCircle } from "lucide-react";
+import { RiLifebuoyLine, RiSendPlaneLine, RiErrorWarningLine } from "@remixicon/react";
 import { toast } from "sonner";
 import {
   submitProviderTicket,
@@ -90,7 +90,7 @@ export default function TenantSupportPage() {
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
       <div className="flex items-center gap-4">
         <div className="p-3 bg-blue-100 rounded-lg">
-          <LifeBuoy className="h-8 w-8 text-blue-600" />
+          <RiLifebuoyLine className="h-8 w-8 text-blue-600" />
         </div>
         <div>
           <h1 className="text-3xl font-bold">{t("app.support.title")}</h1>
@@ -201,7 +201,7 @@ export default function TenantSupportPage() {
                     t("app.support.btn_sending")
                   ) : (
                     <>
-                      <Send className="mr-2 h-4 w-4" />{" "}
+                      <RiSendPlaneLine className="mr-2 h-4 w-4" />{" "}
                       {t("app.support.btn_submit")}
                     </>
                   )}

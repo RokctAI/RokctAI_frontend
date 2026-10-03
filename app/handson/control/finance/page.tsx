@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, RefreshCw, Trash2 } from "lucide-react";
+import { RiLoader4Line, RiRefreshLine, RiDeleteBinLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -114,7 +114,7 @@ export default function FinancePage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -134,7 +134,7 @@ export default function FinancePage() {
           onClick={fetchData}
           title="Refresh"
         >
-          <RefreshCw className="h-4 w-4" />
+          <RiRefreshLine className="h-4 w-4" />
         </Button>
       </div>
 
@@ -190,7 +190,7 @@ export default function FinancePage() {
                             className="text-red-500 hover:text-red-600"
                             onClick={() => handleDeleteWallet(item.name)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <RiDeleteBinLine className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -253,7 +253,7 @@ export default function FinancePage() {
                             className="text-red-500 hover:text-red-600"
                             onClick={() => handleDeleteLedger(item.name)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <RiDeleteBinLine className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -319,7 +319,7 @@ export default function FinancePage() {
                             className="text-red-500 hover:text-red-600"
                             onClick={() => handleDeletePayout(item.name)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <RiDeleteBinLine className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>

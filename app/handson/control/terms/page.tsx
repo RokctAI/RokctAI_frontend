@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ScrollText, Save, Edit2, Plus, Trash2 } from "lucide-react";
+import { RiFileList3Line, RiSaveLine, RiEdit2Line, RiAddLine, RiDeleteBinLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -129,7 +129,7 @@ export default function MasterTermsPage() {
           </p>
         </div>
         <Button onClick={openNew}>
-          <Plus className="mr-2 h-4 w-4" /> New Term
+          <RiAddLine className="mr-2 h-4 w-4" /> New Term
         </Button>
       </div>
 
@@ -163,7 +163,7 @@ export default function MasterTermsPage() {
                 <TableRow key={t.name}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
-                      <ScrollText className="h-4 w-4 text-muted-foreground" />
+                      <RiFileList3Line className="h-4 w-4 text-muted-foreground" />
                       {t.title}
                     </div>
                   </TableCell>
@@ -176,7 +176,7 @@ export default function MasterTermsPage() {
                       size="icon"
                       onClick={() => openEdit(t)}
                     >
-                      <Edit2 className="h-4 w-4" />
+                      <RiEdit2Line className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -184,7 +184,7 @@ export default function MasterTermsPage() {
                       className="text-destructive"
                       onClick={() => handleDelete(t.name)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <RiDeleteBinLine className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -239,7 +239,7 @@ export default function MasterTermsPage() {
               Cancel
             </Button>
             <Button onClick={handleSave}>
-              <Save className="mr-2 h-4 w-4" />
+              <RiSaveLine className="mr-2 h-4 w-4" />
               Save Term
             </Button>
           </DialogFooter>

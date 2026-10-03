@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Printer, Save, Edit2, Plus, Trash2, Eye, Code } from "lucide-react";
+import { RiPrinterLine, RiSaveLine, RiEdit2Line, RiAddLine, RiDeleteBinLine, RiEyeLine, RiCodeLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -278,7 +278,7 @@ export default function MasterPrintFormatsPage() {
         <div className="flex justify-between items-center bg-background py-2">
           <div className="flex items-center gap-4">
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Edit2 className="h-6 w-6" />{" "}
+              <RiEdit2Line className="h-6 w-6" />{" "}
               {isNew
                 ? t("app.control.print_formats.new_title")
                 : "Editing " + editingFormat.name}
@@ -289,7 +289,7 @@ export default function MasterPrintFormatsPage() {
               {t("app.control.print_formats.cancel")}
             </Button>
             <Button onClick={handleSave}>
-              <Save className="mr-2 h-4 w-4" />{" "}
+              <RiSaveLine className="mr-2 h-4 w-4" />{" "}
               {t("app.control.print_formats.save")}
             </Button>
           </div>
@@ -349,7 +349,7 @@ export default function MasterPrintFormatsPage() {
           <Card className="flex flex-col h-full overflow-hidden">
             <CardHeader className="py-2 bg-muted/30 border-b">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Code className="h-4 w-4" />{" "}
+                <RiCodeLine className="h-4 w-4" />{" "}
                 {t("app.control.print_formats.source_code")}
               </CardTitle>
             </CardHeader>
@@ -367,7 +367,7 @@ export default function MasterPrintFormatsPage() {
           <Card className="flex flex-col h-full overflow-hidden bg-white">
             <CardHeader className="py-2 bg-muted/30 border-b">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Eye className="h-4 w-4" />{" "}
+                <RiEyeLine className="h-4 w-4" />{" "}
                 {t("app.control.print_formats.preview")}
               </CardTitle>
             </CardHeader>
@@ -422,7 +422,7 @@ export default function MasterPrintFormatsPage() {
           </p>
         </div>
         <Button onClick={openNew}>
-          <Plus className="mr-2 h-4 w-4" />{" "}
+          <RiAddLine className="mr-2 h-4 w-4" />{" "}
           {t("app.control.print_formats.btn_new")}
         </Button>
       </div>
@@ -461,7 +461,7 @@ export default function MasterPrintFormatsPage() {
                 <TableRow key={f.name}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
-                      <Printer className="h-4 w-4 text-muted-foreground" />
+                      <RiPrinterLine className="h-4 w-4 text-muted-foreground" />
                       {f.name}
                     </div>
                   </TableCell>
@@ -472,7 +472,7 @@ export default function MasterPrintFormatsPage() {
                       size="icon"
                       onClick={() => openEdit(f)}
                     >
-                      <Edit2 className="h-4 w-4" />
+                      <RiEdit2Line className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -480,7 +480,7 @@ export default function MasterPrintFormatsPage() {
                       className="text-destructive"
                       onClick={() => handleDelete(f.name)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <RiDeleteBinLine className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>

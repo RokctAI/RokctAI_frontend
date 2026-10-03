@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { Loader2, Filter } from "lucide-react";
+import { RiLoader4Line, RiFilterLine } from "@remixicon/react";
 import { toast } from "sonner";
 import t from "@/app/lib/i18n";
 import {
@@ -112,7 +112,7 @@ export default function FinancialReportsPage() {
     if (loading) {
       return (
         <div className="flex justify-center p-12">
-          <Loader2 className="animate-spin h-8 w-8 text-primary" />
+          <RiLoader4Line className="animate-spin h-8 w-8 text-primary" />
         </div>
       );
     }

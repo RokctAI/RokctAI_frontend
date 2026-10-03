@@ -17,7 +17,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { RiArrowRightLine } from "@remixicon/react";
 import { AI_MODELS } from "@/ai/models";
 
 export function Banner() {

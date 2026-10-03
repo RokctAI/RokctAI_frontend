@@ -20,7 +20,7 @@ export interface IntegrationApp {
   name: string; // e.g. "google_calendar", "slack"
   label: string;
   description: string;
-  icon: string; // lucide icon name
+  icon: string; // icon key (see iconMap in integrations page)
   is_connected: boolean;
   settings?: any;
 }

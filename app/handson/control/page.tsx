@@ -17,16 +17,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  CreditCard,
-  Phone,
-  FileText,
-  Wallet,
-  Settings,
-  Code,
-  ArrowRight,
-  ScrollText,
-} from "lucide-react";
+import { RiBankCardLine, RiPhoneLine, RiFileTextLine, RiWalletLine, RiSettings3Line, RiCodeLine, RiArrowRightLine, RiFileList3Line } from "@remixicon/react";
 
 import {
   Card,
@@ -43,56 +34,56 @@ const modules = [
     title: "Subscriptions",
     description: "Manage company subscriptions and plans.",
     href: "/handson/control/subscriptions",
-    icon: CreditCard,
+    icon: RiBankCardLine,
     color: "text-blue-500",
   },
   {
     title: "Vouchers",
     description: "Create and manage trial and discount vouchers.",
     href: "/handson/control/vouchers",
-    icon: Wallet,
+    icon: RiWalletLine,
     color: "text-indigo-500",
   },
   {
     title: "Telephony",
     description: "Configure telephony settings and DIDs.",
     href: "/handson/control/telephony",
-    icon: Phone,
+    icon: RiPhoneLine,
     color: "text-green-500",
   },
   {
     title: "Tender & Tasks",
     description: "Control tender workflows and tasks.",
     href: "/handson/control/tender",
-    icon: FileText,
+    icon: RiFileTextLine,
     color: "text-orange-500",
   },
   {
     title: "Finance",
     description: "Manage wallets, ledgers, and payouts.",
     href: "/handson/control/finance",
-    icon: Wallet,
+    icon: RiWalletLine,
     color: "text-purple-500",
   },
   {
     title: "System",
     description: "Configure system-wide settings.",
     href: "/handson/control/system",
-    icon: Settings,
+    icon: RiSettings3Line,
     color: "text-gray-500",
   },
   {
     title: "Developer",
     description: "Swagger settings, logs, and caches.",
     href: "/handson/control/developer",
-    icon: Code,
+    icon: RiCodeLine,
     color: "text-red-500",
   },
   {
     title: "Terms & Conditions",
     description: "Manage master legal templates.",
     href: "/handson/control/terms",
-    icon: ScrollText,
+    icon: RiFileList3Line,
     color: "text-amber-500",
   },
 ];
@@ -124,7 +115,7 @@ export default function AdminDashboardPage() {
                   {module.description}
                 </CardDescription>
                 <div className="flex items-center text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                  Access Module <ArrowRight className="ml-1 h-4 w-4" />
+                  Access Module <RiArrowRightLine className="ml-1 h-4 w-4" />
                 </div>
               </CardContent>
             </Card>

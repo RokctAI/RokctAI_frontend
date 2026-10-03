@@ -17,7 +17,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Zap, CheckCircle, AlertCircle, Info } from "lucide-react";
+import { RiFlashlightLine, RiCheckboxCircleLine, RiErrorWarningLine, RiInformationLine } from "@remixicon/react";
 import React, { useEffect, useState, ReactNode } from "react";
 import { aiStore } from "@/lib/ai-notification-store";
 import { AI_MODELS } from "@/ai/models";
@@ -32,7 +32,7 @@ interface AiStatusPillProps {
 export function AiStatusPill({
   className,
   defaultText = `${AI_MODELS.PAID.id.replace(/-/g, " ")} is live on ${PLATFORM_NAME}`,
-  defaultIcon = <Zap className="size-4 text-yellow-500 fill-yellow-500" />,
+  defaultIcon = <RiFlashlightLine className="size-4 text-yellow-500 fill-yellow-500" />,
 }: AiStatusPillProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [currentNotification, setCurrentNotification] = useState<{
@@ -61,10 +61,10 @@ export function AiStatusPill({
         let icon = item.icon;
         if (!icon) {
           if (item.type === "success")
-            icon = <CheckCircle className="size-4 text-green-500" />;
+            icon = <RiCheckboxCircleLine className="size-4 text-green-500" />;
           else if (item.type === "alert")
-            icon = <AlertCircle className="size-4 text-red-500" />;
-          else icon = <Info className="size-4 text-blue-500" />;
+            icon = <RiErrorWarningLine className="size-4 text-red-500" />;
+          else icon = <RiInformationLine className="size-4 text-blue-500" />;
         }
 
         setCurrentNotification({

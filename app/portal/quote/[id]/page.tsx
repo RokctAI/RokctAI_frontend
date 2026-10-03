@@ -18,7 +18,7 @@
 
 import React, { useState, useEffect } from "react";
 // import { uploadFile } from "@/app/actions/system"; // We would implement this
-import { Loader2, Camera, CheckCircle, Smartphone } from "lucide-react";
+import { RiLoader4Line, RiCameraLine, RiCheckboxCircleLine, RiSmartphoneLine } from "@remixicon/react";
 import { toast } from "sonner";
 
 // STUB: `getLoanApplication`/`updateLoanApplicationStatus` used to come from
@@ -75,14 +75,14 @@ export default function QuoteAcceptancePage({
   if (loading)
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <RiLoader4Line className="w-8 h-8 animate-spin text-blue-600" />
       </div>
     );
 
   if (step === "success")
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-green-50 p-6 text-center">
-        <CheckCircle className="w-20 h-20 text-green-500 mb-6" />
+        <RiCheckboxCircleLine className="w-20 h-20 text-green-500 mb-6" />
         <h1 className="text-3xl font-bold text-green-900 mb-2">
           {t("app.portal.quote.success_title")}
         </h1>
@@ -166,7 +166,7 @@ export default function QuoteAcceptancePage({
                   />
                 ) : (
                   <div className="text-center text-gray-400">
-                    <Camera className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <RiCameraLine className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     <span className="text-xs">
                       {t("app.portal.quote.ph_capture")}
                     </span>
@@ -184,7 +184,7 @@ export default function QuoteAcceptancePage({
                     className="hidden"
                   />
                   <div className="w-full bg-gray-900 text-white py-3 rounded-xl font-bold flex items-center justify-center space-x-2 hover:bg-gray-800 transition">
-                    <Camera className="w-5 h-5" />
+                    <RiCameraLine className="w-5 h-5" />
                     <span>
                       {selfie
                         ? t("app.portal.quote.btn_retake")

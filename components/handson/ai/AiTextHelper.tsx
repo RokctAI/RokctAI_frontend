@@ -17,7 +17,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sparkles, Loader2, Check, X, Wand2 } from "lucide-react";
+import { RiSparklingLine, RiLoader4Line, RiCheckLine, RiCloseLine, RiMagicLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -153,14 +153,14 @@ export function AiTextHelper({ text, onAccept, className }: AiTextHelperProps) {
             title={quotaExceeded ? "Quota Exceeded" : "AI Assistant"}
             disabled={quotaExceeded}
           >
-            <Sparkles className="h-4 w-4" />
+            <RiSparklingLine className="h-4 w-4" />
           </Button>
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end">
         {loading ? (
           <div className="flex flex-col items-center justify-center p-8 space-y-2">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <RiLoader4Line className="h-8 w-8 animate-spin text-primary" />
             <p className="text-xs text-muted-foreground">
               Magic in progress...
             </p>
@@ -197,7 +197,7 @@ export function AiTextHelper({ text, onAccept, className }: AiTextHelperProps) {
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 onClick={accept}
               >
-                <Check className="mr-2 h-3 w-3" />
+                <RiCheckLine className="mr-2 h-3 w-3" />
                 Replace
               </Button>
             </div>
@@ -212,7 +212,7 @@ export function AiTextHelper({ text, onAccept, className }: AiTextHelperProps) {
                 className="h-6 w-6 p-0"
                 onClick={() => setMode("menu")}
               >
-                <X className="h-3 w-3" />
+                <RiCloseLine className="h-3 w-3" />
               </Button>
             </div>
             <Input
@@ -228,7 +228,7 @@ export function AiTextHelper({ text, onAccept, className }: AiTextHelperProps) {
               onClick={() => handleGenerate("custom", customPrompt)}
               disabled={!customPrompt.trim()}
             >
-              <Wand2 className="mr-2 h-3 w-3" /> Generate
+              <RiMagicLine className="mr-2 h-3 w-3" /> Generate
             </Button>
           </div>
         ) : (

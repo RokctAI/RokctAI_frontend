@@ -18,14 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import {
-  BarChart3,
-  TrendingUp,
-  PieChart,
-  Table as TableIcon,
-  RefreshCw,
-  AlertTriangle,
-} from "lucide-react";
+import { RiBarChartBoxLine, RiLineChartLine, RiPieChartLine, RiTableLine as TableIcon, RiRefreshLine, RiAlertLine } from "@remixicon/react";
 import {
   BarChart,
   Bar,
@@ -244,7 +237,7 @@ export default function TenantReportsPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <BarChart3 className="h-8 w-8" /> Analytics
+            <RiBarChartBoxLine className="h-8 w-8" /> Analytics
           </h1>
           <p className="text-muted-foreground">
             Insights and reports powered by HQ.
@@ -256,7 +249,7 @@ export default function TenantReportsPage() {
             onClick={() => selectedReport && runReport(selectedReport)}
             disabled={loading || !selectedReport}
           >
-            <RefreshCw
+            <RiRefreshLine
               className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`}
             />{" "}
             Refresh
@@ -278,13 +271,13 @@ export default function TenantReportsPage() {
                   {rep.category}
                 </Badge>
                 {rep.chart_type === "bar" && (
-                  <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                  <RiBarChartBoxLine className="h-4 w-4 text-muted-foreground" />
                 )}
                 {rep.chart_type === "line" && (
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  <RiLineChartLine className="h-4 w-4 text-muted-foreground" />
                 )}
                 {rep.chart_type === "pie" && (
-                  <PieChart className="h-4 w-4 text-muted-foreground" />
+                  <RiPieChartLine className="h-4 w-4 text-muted-foreground" />
                 )}
                 {rep.chart_type === "table" && (
                   <TableIcon className="h-4 w-4 text-muted-foreground" />
@@ -317,13 +310,13 @@ export default function TenantReportsPage() {
           <CardContent>
             {error ? (
               <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
+                <RiAlertLine className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             ) : loading ? (
               <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                <RefreshCw className="mr-2 h-6 w-6 animate-spin" /> Loading
+                <RiRefreshLine className="mr-2 h-6 w-6 animate-spin" /> Loading
                 data...
               </div>
             ) : data.length > 0 && selectedReport ? (

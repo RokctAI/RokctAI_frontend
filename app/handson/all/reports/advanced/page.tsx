@@ -19,7 +19,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { Filter, Download, RefreshCw, ChevronDown } from "lucide-react";
+import { RiFilterLine, RiDownloadLine, RiRefreshLine, RiArrowDownSLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -175,13 +175,13 @@ function AdvancedReportViewer() {
             onClick={() => runReport(doctype, columns)}
             disabled={loading}
           >
-            <RefreshCw
+            <RiRefreshLine
               className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`}
             />
             Refresh Data
           </Button>
           <Button variant="secondary">
-            <Download className="mr-2 h-4 w-4" />{" "}
+            <RiDownloadLine className="mr-2 h-4 w-4" />{" "}
             {t("app.reports.advanced.export_csv")}
           </Button>
         </div>
@@ -223,7 +223,7 @@ function AdvancedReportViewer() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="w-[200px] justify-between">
                 {columns.length} Selected{" "}
-                <ChevronDown className="h-4 w-4 opacity-50" />
+                <RiArrowDownSLine className="h-4 w-4 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">

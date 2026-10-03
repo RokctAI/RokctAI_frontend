@@ -27,14 +27,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Loader2,
-  Phone,
-  Server,
-  Wallet,
-  ExternalLink,
-  RefreshCw,
-} from "lucide-react";
+import { RiLoader4Line, RiPhoneLine, RiServerLine, RiWalletLine, RiExternalLinkLine, RiRefreshLine } from "@remixicon/react";
 import Link from "next/link";
 import { HOSTING_URL } from "@/app/config/constants";
 import { Separator } from "@/components/ui/separator";
@@ -57,7 +50,7 @@ export default function ClientPortalPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -81,7 +74,7 @@ export default function ClientPortalPage() {
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={loadData}>
-          <RefreshCw className="mr-2 h-4 w-4" /> Refresh
+          <RiRefreshLine className="mr-2 h-4 w-4" /> Refresh
         </Button>
       </div>
 
@@ -92,7 +85,7 @@ export default function ClientPortalPage() {
             <CardTitle className="text-sm font-medium">
               Active Services
             </CardTitle>
-            <Server className="h-4 w-4 text-muted-foreground" />
+            <RiServerLine className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalServices}</div>
@@ -106,7 +99,7 @@ export default function ClientPortalPage() {
               <CardTitle className="text-sm font-medium">
                 Wallet Balance
               </CardTitle>
-              <Wallet className="h-4 w-4 text-muted-foreground" />
+              <RiWalletLine className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">R {balance.toFixed(2)}</div>
@@ -123,7 +116,7 @@ export default function ClientPortalPage() {
         {hasHosting && (
           <div>
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Server className="h-5 w-5" /> Hosting Services
+              <RiServerLine className="h-5 w-5" /> Hosting Services
             </h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {hosting.map((sub: any) => (
@@ -148,7 +141,7 @@ export default function ClientPortalPage() {
                     {HOSTING_URL && (
                       <Button asChild className="w-full">
                         <a href={HOSTING_URL}>
-                          Go to RPanel <ExternalLink className="ml-2 h-4 w-4" />
+                          Go to RPanel <RiExternalLinkLine className="ml-2 h-4 w-4" />
                         </a>
                       </Button>
                     )}
@@ -163,7 +156,7 @@ export default function ClientPortalPage() {
         {hasTelephony && (
           <div>
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Phone className="h-5 w-5" /> Telephony Services
+              <RiPhoneLine className="h-5 w-5" /> Telephony Services
             </h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {telephony.map((sub: any) => (

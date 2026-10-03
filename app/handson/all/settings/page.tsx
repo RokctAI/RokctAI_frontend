@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Save } from "lucide-react";
+import { RiLoader4Line, RiSaveLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -101,7 +101,7 @@ export default function BrandingSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[50vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -194,7 +194,7 @@ export default function BrandingSettingsPage() {
               </div>
 
               <Button type="submit">
-                <Save className="mr-2 h-4 w-4" /> Save Branding
+                <RiSaveLine className="mr-2 h-4 w-4" /> Save Branding
               </Button>
             </form>
           </Form>

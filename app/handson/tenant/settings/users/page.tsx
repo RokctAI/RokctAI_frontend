@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, User, Mail, Shield } from "lucide-react";
+import { RiAddLine, RiUserLine, RiMailLine, RiShieldLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -144,7 +144,7 @@ export default function UsersPage() {
           <p className="text-muted-foreground">{t("app.users.desc")}</p>
         </div>
         <Button onClick={openDialog}>
-          <Plus className="mr-2 h-4 w-4" /> {t("app.users.btn_add")}
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("app.users.btn_add")}
         </Button>
       </div>
 
@@ -179,7 +179,7 @@ export default function UsersPage() {
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
                         <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <User className="h-4 w-4 text-primary" />
+                          <RiUserLine className="h-4 w-4 text-primary" />
                         </div>
                         {user.first_name} {user.last_name}
                       </div>
