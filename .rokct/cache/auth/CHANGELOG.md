@@ -1,3 +1,15 @@
+## 1.9.0
+
+* **Sign-up brings the visitor back to where they were.** `/login` and
+  `/register` take `?next=<same-site path>`, and once the account is signed
+  in or created the visitor lands on that path instead of the home page.
+  Ray's case: a Reel viewer opens a tender, has to sign up first, and must
+  not lose the tender. `app/(auth)/return-to.ts` (`safeReturnPath`) honours
+  only a path on this site: no other host (`//x`, `/\x`, a scheme), no
+  control characters or backslashes, not an auth page, at most 512
+  characters. The links between login and register keep it, and an already
+  signed-in visitor opening either page with it goes straight there.
+
 ## 1.8.4
 
 * **The one native login call says why it bypasses the gateway.** Ray's

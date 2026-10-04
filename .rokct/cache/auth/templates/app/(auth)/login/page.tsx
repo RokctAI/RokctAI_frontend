@@ -30,6 +30,8 @@ import { resolveTenantSite } from "@/app/(auth)/tenant-host";
 import { TENANT_SITE_HEADER } from "@/app/services/base/tenant-host-control";
 import { PaaSLogin } from "@/components/custom/paas-login";
 
+import { RETURN_TO_PARAM, safeReturnPath } from "../return-to";
+
 import { LoginView } from "./login-view";
 
 export default async function LoginPage({
@@ -43,5 +45,5 @@ export default async function LoginPage({
     (await headers()).get(TENANT_SITE_HEADER),
   );
   if (tenantSite) return <PaaSLogin tenantSite={tenantSite} />;
-  return <LoginView />;
+  return <LoginView next={safeReturnPath(params[RETURN_TO_PARAM])} />;
 }

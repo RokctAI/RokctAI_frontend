@@ -30,6 +30,7 @@ import { redirect } from "next/navigation";
 
 import {
   KIND_LABEL,
+  bidHref,
   OPPORTUNITY_KINDS,
   type OpportunityKind,
   isClosed,
@@ -114,6 +115,18 @@ export default async function OpportunityPage({ params }: { params: Params }) {
             Apply
           </a>
         )
+      )}
+
+      {!closed && card.kind === "tenders" && (
+        <div className="mt-6 rounded-lg border border-border px-4 py-4">
+          <p className="font-medium">TenderAssist, your tender officer on demand.</p>
+          <Link
+            href={bidHref(card.slug)}
+            className="mt-3 inline-flex rounded-md border border-primary px-5 py-2.5 font-medium text-primary hover:bg-primary/10"
+          >
+            Bid with TenderAssist
+          </Link>
+        </div>
       )}
 
       {card.sections.map((section) => (

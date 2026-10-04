@@ -30,6 +30,8 @@ import {
   serialisableFields,
 } from "@/components/custom/auth/register-registry";
 
+import { RETURN_TO_PARAM, safeReturnPath } from "../return-to";
+
 import { RegisterView } from "./register-view";
 
 export default async function RegisterPage({
@@ -55,6 +57,7 @@ export default async function RegisterPage({
       fields={serialisableFields(config.fields)}
       hasSteps={config.steps.length > 0}
       prefilled={prefilled}
+      next={safeReturnPath(params[RETURN_TO_PARAM])}
     />
   );
 }
