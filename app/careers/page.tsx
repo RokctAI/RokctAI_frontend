@@ -20,7 +20,11 @@ import { Header } from "@/components/custom/header";
 import { Footer } from "@/components/custom/footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { RiMapPinLine, RiBriefcaseLine, RiArrowRightLine } from "@remixicon/react";
+import {
+  RiMapPinLine,
+  RiBriefcaseLine,
+  RiArrowRightLine,
+} from "@remixicon/react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";

@@ -27,7 +27,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { RiLoader4Line, RiPhoneLine, RiServerLine, RiWalletLine, RiExternalLinkLine, RiRefreshLine } from "@remixicon/react";
+import {
+  RiLoader4Line,
+  RiPhoneLine,
+  RiServerLine,
+  RiWalletLine,
+  RiExternalLinkLine,
+  RiRefreshLine,
+} from "@remixicon/react";
 import Link from "next/link";
 import { HOSTING_URL } from "@/app/config/constants";
 import { Separator } from "@/components/ui/separator";
@@ -141,7 +148,8 @@ export default function ClientPortalPage() {
                     {HOSTING_URL && (
                       <Button asChild className="w-full">
                         <a href={HOSTING_URL}>
-                          Go to RPanel <RiExternalLinkLine className="ml-2 h-4 w-4" />
+                          Go to RPanel{" "}
+                          <RiExternalLinkLine className="ml-2 h-4 w-4" />
                         </a>
                       </Button>
                     )}

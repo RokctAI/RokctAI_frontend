@@ -17,7 +17,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { RiAddLine, RiUserLine, RiMailLine, RiShieldLine } from "@remixicon/react";
+import {
+  RiAddLine,
+  RiUserLine,
+  RiMailLine,
+  RiShieldLine,
+} from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

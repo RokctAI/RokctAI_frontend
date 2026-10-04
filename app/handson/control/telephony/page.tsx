@@ -17,7 +17,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { RiLoader4Line, RiRefreshLine, RiDeleteBinLine } from "@remixicon/react";
+import {
+  RiLoader4Line,
+  RiRefreshLine,
+  RiDeleteBinLine,
+} from "@remixicon/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 

@@ -18,7 +18,15 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { RiPrinterLine, RiSaveLine, RiEdit2Line, RiAddLine, RiDeleteBinLine, RiEyeLine, RiCodeLine } from "@remixicon/react";
+import {
+  RiPrinterLine,
+  RiSaveLine,
+  RiEdit2Line,
+  RiAddLine,
+  RiDeleteBinLine,
+  RiEyeLine,
+  RiCodeLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

@@ -25,7 +25,15 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { RiCalendarLine, RiSlackLine, RiVideoOnLine, RiCheckboxCircleLine, RiCloseCircleLine, RiSettings4Line, RiSmartphoneLine } from "@remixicon/react";
+import {
+  RiCalendarLine,
+  RiSlackLine,
+  RiVideoOnLine,
+  RiCheckboxCircleLine,
+  RiCloseCircleLine,
+  RiSettings4Line,
+  RiSmartphoneLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,

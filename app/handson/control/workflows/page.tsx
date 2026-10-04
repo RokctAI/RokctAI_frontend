@@ -18,7 +18,14 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { RiFlowChart, RiAddLine, RiDeleteBinLine, RiSaveLine, RiPlayCircleLine, RiSettings4Line } from "@remixicon/react";
+import {
+  RiFlowChart,
+  RiAddLine,
+  RiDeleteBinLine,
+  RiSaveLine,
+  RiPlayCircleLine,
+  RiSettings4Line,
+} from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -421,7 +428,8 @@ export default function WorkflowsPage() {
                 {t("app.workflows.conditions_title")}
               </h4>
               <Button size="sm" variant="outline" onClick={addCondition}>
-                <RiAddLine className="h-3 w-3 mr-1" /> {t("app.workflows.btn_add")}
+                <RiAddLine className="h-3 w-3 mr-1" />{" "}
+                {t("app.workflows.btn_add")}
               </Button>
             </div>
             {editingRule.conditions.map((c, i) => (
@@ -476,7 +484,8 @@ export default function WorkflowsPage() {
                 {t("app.workflows.actions_title")}
               </h4>
               <Button size="sm" variant="outline" onClick={addAction}>
-                <RiAddLine className="h-3 w-3 mr-1" /> {t("app.workflows.btn_add")}
+                <RiAddLine className="h-3 w-3 mr-1" />{" "}
+                {t("app.workflows.btn_add")}
               </Button>
             </div>
             {editingRule.actions.map((a, i) => (
@@ -551,7 +560,8 @@ export default function WorkflowsPage() {
               {t("common.cancel")}
             </Button>
             <Button onClick={handleSave}>
-              <RiSaveLine className="mr-2 h-4 w-4" /> {t("app.workflows.btn_save")}
+              <RiSaveLine className="mr-2 h-4 w-4" />{" "}
+              {t("app.workflows.btn_save")}
             </Button>
           </DialogFooter>
         </DialogContent>

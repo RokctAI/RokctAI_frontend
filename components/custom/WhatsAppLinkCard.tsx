@@ -25,7 +25,17 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { RiQrCodeLine, RiCheckboxCircleLine, RiWifiLine, RiWifiOffLine, RiErrorWarningLine, RiRefreshLine, RiSmartphoneLine, RiLogoutBoxLine, RiLoader4Line } from "@remixicon/react";
+import {
+  RiQrCodeLine,
+  RiCheckboxCircleLine,
+  RiWifiLine,
+  RiWifiOffLine,
+  RiErrorWarningLine,
+  RiRefreshLine,
+  RiSmartphoneLine,
+  RiLogoutBoxLine,
+  RiLoader4Line,
+} from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import {

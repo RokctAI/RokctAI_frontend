@@ -17,7 +17,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { RiSparklingLine, RiLoader4Line, RiCheckLine, RiCloseLine, RiMagicLine } from "@remixicon/react";
+import {
+  RiSparklingLine,
+  RiLoader4Line,
+  RiCheckLine,
+  RiCloseLine,
+  RiMagicLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,

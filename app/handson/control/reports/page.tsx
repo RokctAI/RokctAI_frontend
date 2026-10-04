@@ -18,7 +18,14 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { RiBarChartBoxLine, RiAddLine, RiDeleteBinLine, RiSaveLine, RiPlayCircleLine, RiEyeLine } from "@remixicon/react";
+import {
+  RiBarChartBoxLine,
+  RiAddLine,
+  RiDeleteBinLine,
+  RiSaveLine,
+  RiPlayCircleLine,
+  RiEyeLine,
+} from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
