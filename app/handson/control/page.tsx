@@ -17,7 +17,16 @@
 "use client";
 
 import Link from "next/link";
-import { RiBankCardLine, RiPhoneLine, RiFileTextLine, RiWalletLine, RiSettings3Line, RiCodeLine, RiArrowRightLine, RiFileList3Line } from "@remixicon/react";
+import {
+  RiBankCardLine,
+  RiPhoneLine,
+  RiFileTextLine,
+  RiWalletLine,
+  RiSettings3Line,
+  RiCodeLine,
+  RiArrowRightLine,
+  RiFileList3Line,
+} from "@remixicon/react";
 
 import {
   Card,

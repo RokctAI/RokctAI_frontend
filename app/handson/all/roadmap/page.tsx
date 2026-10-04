@@ -17,7 +17,19 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { RiLoader4Line, RiRefreshLine, RiDeleteBinLine, RiAddLine, RiEditLine, RiRobot2Line, RiEyeLine, RiEyeOffLine, RiExternalLinkLine, RiGitPullRequestLine, RiMagicLine } from "@remixicon/react";
+import {
+  RiLoader4Line,
+  RiRefreshLine,
+  RiDeleteBinLine,
+  RiAddLine,
+  RiEditLine,
+  RiRobot2Line,
+  RiEyeLine,
+  RiEyeOffLine,
+  RiExternalLinkLine,
+  RiGitPullRequestLine,
+  RiMagicLine,
+} from "@remixicon/react";
 import { JulesInteractive } from "@/components/handson/JulesInteractive";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -862,7 +874,8 @@ export default function UnifiedRoadmapPage() {
                   {editingFeature?.jules_session_id && (
                     <div className="space-y-2 pt-4 border-t">
                       <Label className="text-sm font-semibold flex items-center gap-2">
-                        <RiRobot2Line className="h-4 w-4" /> Jules Interactive Session
+                        <RiRobot2Line className="h-4 w-4" /> Jules Interactive
+                        Session
                       </Label>
                       <JulesInteractive
                         sessionId={editingFeature.jules_session_id}

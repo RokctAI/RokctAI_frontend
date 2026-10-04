@@ -16,7 +16,12 @@
 
 "use client";
 
-import { RiDashboardLine, RiBox3Line, RiMoneyDollarCircleLine, RiUserLine } from "@remixicon/react";
+import {
+  RiDashboardLine,
+  RiBox3Line,
+  RiMoneyDollarCircleLine,
+  RiUserLine,
+} from "@remixicon/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import t from "@/app/lib/i18n";

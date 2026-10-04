@@ -18,7 +18,12 @@
 
 import React, { useState, useEffect } from "react";
 // import { uploadFile } from "@/app/actions/system"; // We would implement this
-import { RiLoader4Line, RiCameraLine, RiCheckboxCircleLine, RiSmartphoneLine } from "@remixicon/react";
+import {
+  RiLoader4Line,
+  RiCameraLine,
+  RiCheckboxCircleLine,
+  RiSmartphoneLine,
+} from "@remixicon/react";
 import { toast } from "sonner";
 
 // STUB: `getLoanApplication`/`updateLoanApplicationStatus` used to come from

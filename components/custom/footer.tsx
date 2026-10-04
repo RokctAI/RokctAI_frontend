@@ -22,7 +22,13 @@ import { JobsService } from "@/app/services/control/jobs";
 import { BrandLogo } from "./brand-logo";
 import { Branding } from "./branding";
 import { RoadmapPublicService } from "@/app/services/public/roadmap";
-import { RiTwitterXLine, RiYoutubeLine, RiLinkedinLine, RiInstagramLine, RiArrowDownSLine } from "@remixicon/react";
+import {
+  RiTwitterXLine,
+  RiYoutubeLine,
+  RiLinkedinLine,
+  RiInstagramLine,
+  RiArrowDownSLine,
+} from "@remixicon/react";
 import t from "@/app/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { NetworkStrip } from "@/components/custom/network-strip";

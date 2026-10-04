@@ -18,7 +18,14 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { RiBarChartBoxLine, RiLineChartLine, RiPieChartLine, RiTableLine as TableIcon, RiRefreshLine, RiAlertLine } from "@remixicon/react";
+import {
+  RiBarChartBoxLine,
+  RiLineChartLine,
+  RiPieChartLine,
+  RiTableLine as TableIcon,
+  RiRefreshLine,
+  RiAlertLine,
+} from "@remixicon/react";
 import {
   BarChart,
   Bar,

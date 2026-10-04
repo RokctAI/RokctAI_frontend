@@ -18,7 +18,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { RiDashboardLine, RiBankCardLine, RiMegaphoneLine, RiLifebuoyLine, RiSettings3Line, RiArrowRightLine, RiLoader4Line } from "@remixicon/react";
+import {
+  RiDashboardLine,
+  RiBankCardLine,
+  RiMegaphoneLine,
+  RiLifebuoyLine,
+  RiSettings3Line,
+  RiArrowRightLine,
+  RiLoader4Line,
+} from "@remixicon/react";
 
 import {
   Card,

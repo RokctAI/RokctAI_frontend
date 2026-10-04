@@ -17,7 +17,15 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { RiRefreshLine, RiSendPlaneLine, RiMessage2Line, RiCheckboxCircleLine, RiAlertLine, RiTimeLine, RiTerminalBoxLine } from "@remixicon/react";
+import {
+  RiRefreshLine,
+  RiSendPlaneLine,
+  RiMessage2Line,
+  RiCheckboxCircleLine,
+  RiAlertLine,
+  RiTimeLine,
+  RiTerminalBoxLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -180,7 +188,9 @@ export function JulesInteractive({
           disabled={loading}
           className="h-8 w-8 p-0"
         >
-          <RiRefreshLine className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          <RiRefreshLine
+            className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+          />
         </Button>
       </div>
 

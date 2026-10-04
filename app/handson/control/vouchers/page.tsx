@@ -17,7 +17,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { RiLoader4Line, RiAddLine, RiPencilLine, RiDeleteBinLine, RiTicketLine, RiCheckboxCircleLine, RiCloseCircleLine, RiCalendarLine, RiGroupLine, RiPercentLine, RiMoneyDollarCircleLine, RiTimeLine } from "@remixicon/react";
+import {
+  RiLoader4Line,
+  RiAddLine,
+  RiPencilLine,
+  RiDeleteBinLine,
+  RiTicketLine,
+  RiCheckboxCircleLine,
+  RiCloseCircleLine,
+  RiCalendarLine,
+  RiGroupLine,
+  RiPercentLine,
+  RiMoneyDollarCircleLine,
+  RiTimeLine,
+} from "@remixicon/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -223,7 +236,8 @@ export default function VouchersPage() {
           </p>
         </div>
         <Button onClick={() => openDialog()}>
-          <RiAddLine className="mr-2 h-4 w-4" /> {t("app.control.vouchers.btn_new")}
+          <RiAddLine className="mr-2 h-4 w-4" />{" "}
+          {t("app.control.vouchers.btn_new")}
         </Button>
       </div>
       <Card>

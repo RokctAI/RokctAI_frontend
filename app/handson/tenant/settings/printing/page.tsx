@@ -18,7 +18,13 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { RiPrinterLine, RiSaveLine, RiEyeLine, RiCodeLine, RiLayoutLine } from "@remixicon/react";
+import {
+  RiPrinterLine,
+  RiSaveLine,
+  RiEyeLine,
+  RiCodeLine,
+  RiLayoutLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -184,7 +190,8 @@ export default function PrintSettingsPage() {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <RiPrinterLine className="h-6 w-6" /> {t("app.printing_settings.title")}
+            <RiPrinterLine className="h-6 w-6" />{" "}
+            {t("app.printing_settings.title")}
           </h1>
           <Select
             value={selectedFormat?.name}

@@ -21,7 +21,11 @@ import { Header } from "@/components/custom/header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RiErrorWarningLine, RiCheckboxCircleLine, RiTimeLine } from "@remixicon/react";
+import {
+  RiErrorWarningLine,
+  RiCheckboxCircleLine,
+  RiTimeLine,
+} from "@remixicon/react";
 import { callPublicApi } from "@/app/services/common/api";
 
 interface LogEntry {

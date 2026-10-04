@@ -17,7 +17,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HOSTING_URL } from "@/app/config/constants";
-import { RiHardDrive2Line, RiUserLine, RiSettings3Line, RiLogoutBoxLine } from "@remixicon/react";
+import {
+  RiHardDrive2Line,
+  RiUserLine,
+  RiSettings3Line,
+  RiLogoutBoxLine,
+} from "@remixicon/react";
 
 import { auth, signOut } from "@/app/(auth)/auth";
 import { AI_FIRST } from "@/app/config/compose";
