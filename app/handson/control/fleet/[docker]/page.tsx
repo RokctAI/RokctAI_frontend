@@ -192,7 +192,9 @@ export default function DockerDetailPage() {
         </Fact>
       </dl>
 
-      {canAct && source !== "fallback" && <FleetActions detail={detail} onDone={load} />}
+      {canAct && source !== "fallback" && (
+        <FleetActions detail={detail} onDone={load} />
+      )}
 
       <Card data-tour="fleet-placements">
         <CardHeader>
