@@ -57,6 +57,7 @@ import {
   RiMoneyDollarBoxLine,
   RiUserFollowLine,
   RiGraduationCapLine,
+  RiServerLine,
 } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
@@ -89,6 +90,12 @@ const controlItems = [
   },
 
   // --- Operations ---
+  {
+    title: "Fleet",
+    href: "/handson/control/fleet",
+    icon: RiServerLine,
+    roles: SYSTEM_ROLES,
+  },
   {
     title: "Telephony",
     href: "/handson/control/telephony",

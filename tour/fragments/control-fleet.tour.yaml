@@ -1,0 +1,29 @@
+# Guided tour fragment: control persona, fleet board (federated hubs WP1b).
+#
+# A fragment, not tour/app.tour.yaml: this shell has no tour manifest yet, so
+# adding app.tour.yaml would switch on the guided-tour workflow before its
+# runner exists. The manifest includes this file once it lands. Run the build
+# with ROKCT_DEMO_DATA=1 so the board shows the fixtures in
+# app/lib/fleet/demo.ts (one docker of each health colour).
+fragment: control-fleet
+persona: control
+requires_role: System Manager
+env:
+  ROKCT_DEMO_DATA: "1"
+steps:
+  - id: fleet_board
+    route: /handson/control/fleet
+    target: '[data-tour="fleet-summary"]'
+    caption: Every docker the hub runs, counted by heartbeat health. Tap a colour to filter.
+  - id: fleet_list
+    route: /handson/control/fleet
+    target: '[data-tour="fleet-list"]'
+    caption: Dockers grouped by server, with last beat, settings applied versus desired, and site count.
+  - id: fleet_detail
+    route: /handson/control/fleet/tenant-a71q
+    target: '[data-tour="fleet-placements"]'
+    caption: Open a docker to see its sites and where each tenant stands in its lifecycle.
+  - id: fleet_usage
+    route: /handson/control/fleet/tenant-a71q
+    target: '[data-tour="fleet-revisions"]'
+    caption: Recent usage samples and the settings revisions the hub issued, newest first.
