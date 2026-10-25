@@ -26,6 +26,7 @@ import {
   RiCodeLine,
   RiArrowRightLine,
   RiFileList3Line,
+  RiServerLine,
 } from "@remixicon/react";
 
 import {
@@ -45,6 +46,13 @@ const modules = [
     href: "/handson/control/subscriptions",
     icon: RiBankCardLine,
     color: "text-blue-500",
+  },
+  {
+    title: "Fleet",
+    description: "Dockers, heartbeats and settings sync across servers.",
+    href: "/handson/control/fleet",
+    icon: RiServerLine,
+    color: "text-emerald-500",
   },
   {
     title: "Vouchers",
