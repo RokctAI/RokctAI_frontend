@@ -38,7 +38,8 @@ lock SHA), then:
 - **Sites and lifecycle**: Company Subscriptions placed on the docker with
   billing status and `lifecycle_state` (Active, Lapsed, ReadOnly,
   ExportWindow, Stopped, Archived, Removed), since when and the next timer.
-  Display only. Lifecycle actions arrive with WP4.
+  System Managers can extend a site or request its export from the
+  **Staff actions** card below.
 - **Usage samples**: the daily rows from the beat (requests, active users,
   storage, CPU seconds, errors).
 - **Settings revisions**: newest first, who issued each, the diff, and
@@ -56,7 +57,8 @@ module yet, the board falls back to the fixtures and says so in a banner.
 
 The docker detail view has a **Staff actions** card (System Manager only).
 Every action asks for confirmation, then sends a `control:` cmd through
-`POST /api/v1/method/rokct.platform.api`, shows a toast and reloads the view.
+`POST /api/v1/method/rokct.platform.api`, shows a toast and refetches the detail view. The card is hidden for
+users without the System Manager role; the server enforces the same check.
 
 | Action         | Cmd                          | Payload                                    |
 | -------------- | ---------------------------- | ------------------------------------------ |

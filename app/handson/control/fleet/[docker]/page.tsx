@@ -18,7 +18,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RiArrowLeftLine, RiLoader4Line } from "@remixicon/react";
 import { format, formatDistanceToNowStrict } from "date-fns";
 import { toast } from "sonner";
@@ -41,6 +41,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { getDockerDetail } from "@/app/actions/handson/control/fleet/fleet";
+import { canRunFleetActions } from "@/app/actions/handson/control/fleet/fleet-actions";
 import {
   deriveHealth,
   parseFrappeDate,
@@ -77,24 +78,33 @@ export default function DockerDetailPage() {
   const [demo, setDemo] = useState(false);
   const [notice, setNotice] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
+  const [canAct, setCanAct] = useState(false);
+
+  const load = useCallback(async () => {
+    try {
+      const res = await getDockerDetail(name);
+      setDetail(res.data);
+      setDemo(res.demo);
+      setNotice(res.notice);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to load the docker",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [name]);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await getDockerDetail(name);
-        setDetail(res.data);
-        setDemo(res.demo);
-        setNotice(res.notice);
-      } catch (error) {
-        console.error(error);
-        toast.error(
-          error instanceof Error ? error.message : "Failed to load the docker",
-        );
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [name]);
+    load();
+  }, [load]);
+
+  useEffect(() => {
+    canRunFleetActions()
+      .then(setCanAct)
+      .catch(() => setCanAct(false));
+  }, []);
 
   if (loading) {
     return (
@@ -179,15 +189,15 @@ export default function DockerDetailPage() {
         </Fact>
       </dl>
 
-      <FleetActions detail={detail} onDone={() => window.location.reload()} />
+      {canAct && <FleetActions detail={detail} onDone={load} />}
 
       <Card data-tour="fleet-placements">
         <CardHeader>
           <CardTitle>Sites and lifecycle</CardTitle>
           <CardDescription>
             Tenants placed on this docker and where each stands in its
-            lifecycle. Display only; lifecycle actions arrive with the lifecycle
-            engine.
+            lifecycle. System Managers can extend a site or request its export
+            from the Staff actions card.
           </CardDescription>
         </CardHeader>
         <CardContent>

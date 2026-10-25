@@ -74,13 +74,22 @@ function isMissingCmd(msg: string) {
   return /cmd not found|unknown cmd|not registered|no handler/i.test(msg);
 }
 
+async function isSystemManager(): Promise<boolean> {
+  const session = await auth();
+  const roles: string[] = (session?.user as any)?.roles || [];
+  return roles.some((r) => SYSTEM_ROLES.includes(r));
+}
+
+/** Whether the current user may see and run fleet staff actions. */
+export async function canRunFleetActions(): Promise<boolean> {
+  return isSystemManager();
+}
+
 export async function runFleetAction(
   kind: FleetActionKind,
   payload: Record<string, unknown>,
 ): Promise<FleetActionResult> {
-  const session = await auth();
-  const roles: string[] = (session?.user as any)?.roles || [];
-  if (!roles.some((r) => SYSTEM_ROLES.includes(r))) {
+  if (!(await isSystemManager())) {
     return {
       ok: false,
       message: "Fleet actions are for System Managers only.",
