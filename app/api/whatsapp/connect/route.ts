@@ -44,10 +44,22 @@ export async function GET(req: NextRequest) {
       },
     );
   }
+  const BRIDGE_TOKEN = process.env.WHATSAPP_BRIDGE_TOKEN;
+  if (!BRIDGE_TOKEN) {
+    return new Response(
+      JSON.stringify({ error: "WhatsApp Bridge token is not configured" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  }
   const targetUrl = `${BRIDGE_URL}/sessions/init?tenantId=${tenantId}`;
 
   try {
-    const response = await fetch(targetUrl);
+    const response = await fetch(targetUrl, {
+      headers: { Authorization: `Bearer ${BRIDGE_TOKEN}` },
+    });
 
     if (!response.ok) {
       return new Response(

@@ -45,10 +45,23 @@ export async function POST(req: NextRequest) {
         },
       );
     }
+    const BRIDGE_TOKEN = process.env.WHATSAPP_BRIDGE_TOKEN;
+    if (!BRIDGE_TOKEN) {
+      return new Response(
+        JSON.stringify({ error: "WhatsApp Bridge token is not configured" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
 
     const res = await fetch(`${BRIDGE_URL}/sessions/disconnect`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${BRIDGE_TOKEN}`,
+      },
       body: JSON.stringify({ tenantId }),
     });
 
