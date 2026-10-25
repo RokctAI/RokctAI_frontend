@@ -63,7 +63,11 @@ export async function getFleet(): Promise<FleetResult<DockerRow[]>> {
   if (DEMO) return { data: demoDockers(), demo: true, source: "env-demo" };
   try {
     const board = await FleetService.board();
-    return { data: board.dockers.map(toDockerRow), demo: false, source: "live" };
+    return {
+      data: board.dockers.map(toDockerRow),
+      demo: false,
+      source: "live",
+    };
   } catch (error) {
     console.error("[fleet] control:fleet_board failed", error);
     return {
@@ -79,7 +83,8 @@ export async function getDockerDetail(
   name: string,
 ): Promise<FleetResult<DockerDetail | null>> {
   await assertStaff();
-  if (DEMO) return { data: demoDockerDetail(name), demo: true, source: "env-demo" };
+  if (DEMO)
+    return { data: demoDockerDetail(name), demo: true, source: "env-demo" };
   try {
     const res = await FleetService.docker(name);
     const usage = [...(res.usage_samples || [])].sort((a: any, b: any) =>
