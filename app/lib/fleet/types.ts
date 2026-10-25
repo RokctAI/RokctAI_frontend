@@ -66,11 +66,12 @@ export interface SettingsRevisionRow {
 export interface PlacementRow {
   name: string;
   company: string;
+  site_name?: string;
   plan?: string;
   status?: string;
   lifecycle_state?: string | null;
-  lifecycle_since?: string | null;
-  lifecycle_next_at?: string | null;
+  state_entered_at?: string | null;
+  next_transition_at?: string | null;
 }
 
 export interface DockerDetail {
@@ -83,7 +84,7 @@ export interface DockerDetail {
 export interface FleetResult<T> {
   data: T;
   demo: boolean;
-  /** Set when the live registry could not be read (doctype missing, etc.). */
+  /** Set when the fleet cmd errored and demo data is shown instead. */
   notice?: string;
 }
 

@@ -228,11 +228,12 @@ function demoPlacements(d: DockerRow, now: number): PlacementRow[] {
     return {
       name: `SUB-${d.docker_id}-${i + 1}`,
       company,
+      site_name: `${company.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.rokct.ai`,
       plan: d.hosting_tier === "Shared" ? "ERP Starter" : "ERP Dedicated",
       status: lifecycle === "Active" ? "Active" : "Past Due",
       lifecycle_state: lifecycle,
-      lifecycle_since: iso(60 * 24 * (i + 2), now),
-      lifecycle_next_at:
+      state_entered_at: iso(60 * 24 * (i + 2), now),
+      next_transition_at:
         lifecycle === "Active"
           ? null
           : new Date(now + (i + 3) * 86_400_000).toISOString(),

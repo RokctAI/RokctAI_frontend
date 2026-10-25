@@ -214,7 +214,14 @@ export default function DockerDetailPage() {
               ) : (
                 placements.map((p) => (
                   <TableRow key={p.name}>
-                    <TableCell className="font-medium">{p.company}</TableCell>
+                    <TableCell className="font-medium">
+                      {p.company}
+                      {p.site_name && (
+                        <div className="text-xs font-normal text-muted-foreground">
+                          {p.site_name}
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell className="text-muted-foreground">
                       {p.plan || "—"}
                     </TableCell>
@@ -225,11 +232,11 @@ export default function DockerDetailPage() {
                       <LifecyclePill state={p.lifecycle_state} />
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {when(p.lifecycle_since, "d MMM")}
+                      {when(p.state_entered_at, "d MMM")}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {p.lifecycle_next_at
-                        ? when(p.lifecycle_next_at, "d MMM")
+                      {p.next_transition_at
+                        ? when(p.next_transition_at, "d MMM")
                         : "—"}
                     </TableCell>
                   </TableRow>

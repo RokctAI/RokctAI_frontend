@@ -17,81 +17,73 @@
 import { ControlBaseService } from "./base";
 
 /**
- * Fleet registry reads for the control persona (federated hubs, WP1b).
+ * Fleet registry reads for the control persona (federated hubs, spec 6.4).
  *
- * Read-only. Every call goes through the one platform gateway with the
- * generic `frappe.client.*` cmds this shell already uses for doctypes,
- * because the hub has no dedicated fleet list cmd yet (`control:fleet_board`
- * is named in the spec, section 6.4, but not built). When it lands, swap
- * `listDockers` over to it and keep the return shape.
+ * Read-only. Both calls go through the one platform gateway to the hub's
+ * staff cmds (System Manager only):
+ *   control:fleet_board  -> {servers, dockers}
+ *   control:fleet_docker -> {docker, usage_samples, settings_revisions, sites}
  */
 
-export const DOCKER_FIELDS = [
-  "name",
-  "docker_id",
-  "docker_type",
-  "server",
-  "ownership",
-  "hosting_tier",
-  "state",
-  "state_since",
-  "app_version",
-  "lock_sha",
-  "template",
-  "settings_revision_desired",
-  "settings_revision_applied",
-  "last_heartbeat_at",
-  "heartbeat_status",
-  "site_count",
-  "tenant_count",
-];
+export interface FleetBoardResponse {
+  servers: {
+    name: string;
+    dockers_count: number;
+    sites_count: number;
+    red: number;
+  }[];
+  dockers: {
+    name: string;
+    docker_type: string;
+    server: string;
+    state: string;
+    hosting_tier?: string;
+    last_heartbeat_at?: string | null;
+    health?: string;
+    settings_revision_desired?: number;
+    settings_revision_applied?: number;
+    app_version?: string;
+    sites_count?: number;
+  }[];
+}
+
+export interface FleetDockerResponse {
+  docker: FleetBoardResponse["dockers"][number];
+  usage_samples: any[];
+  settings_revisions: any[];
+  sites: {
+    company: string;
+    plan?: string;
+    site_name?: string;
+    status?: string;
+    lifecycle_state?: string | null;
+    state_entered_at?: string | null;
+    next_transition_at?: string | null;
+  }[];
+}
+
+function unwrap<T>(response: any): T {
+  return (response?.message ?? response) as T;
+}
 
 export class FleetService {
-  static async listDockers() {
-    return ControlBaseService.getList("Docker Instance", {
-      fields: DOCKER_FIELDS,
-      order_by: "server asc, docker_type asc",
-      limit_page_length: 0,
-    });
+  static async board(): Promise<FleetBoardResponse> {
+    const res = unwrap<FleetBoardResponse>(
+      await ControlBaseService.call("control:fleet_board", {}),
+    );
+    if (!res || !Array.isArray(res.dockers)) {
+      throw new Error("control:fleet_board returned no dockers list");
+    }
+    return res;
   }
 
-  /** Full doc, including the `usage_latest` Usage Sample child rows. */
-  static async getDocker(name: string) {
-    return ControlBaseService.getDoc("Docker Instance", name);
-  }
-
-  static async listSettingsRevisions(docker: string, limit = 10) {
-    return ControlBaseService.getList("Settings Revision", {
-      filters: { docker },
-      fields: [
-        "name",
-        "revision",
-        "created_at",
-        "created_by",
-        "applied_at",
-        "apply_result",
-        "diff",
-      ],
-      order_by: "revision desc",
-      limit_page_length: limit,
-    });
-  }
-
-  /** Sites placed on this docker, with their lifecycle state (spec 7.2). */
-  static async listPlacements(docker: string) {
-    return ControlBaseService.getList("Company Subscription", {
-      filters: { docker },
-      fields: [
-        "name",
-        "company",
-        "plan",
-        "status",
-        "lifecycle_state",
-        "lifecycle_since",
-        "lifecycle_next_at",
-      ],
-      order_by: "company asc",
-      limit_page_length: 0,
-    });
+  static async docker(docker: string): Promise<FleetDockerResponse> {
+    const res = unwrap<FleetDockerResponse>(
+      await ControlBaseService.call("control:fleet_docker", { docker }),
+    );
+    if (!res || !res.docker) {
+      throw new Error("control:fleet_docker returned no docker");
+    }
+    return res;
   }
 }

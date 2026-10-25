@@ -24,6 +24,7 @@ import type {
   DockerDetail,
   DockerRow,
   FleetResult,
+  PlacementRow,
 } from "@/app/lib/fleet/types";
 
 /**
@@ -42,20 +43,34 @@ async function assertStaff() {
   }
 }
 
-function missingRegistry(error: unknown): string {
+function cmdFailed(cmd: string, error: unknown): string {
   const msg = error instanceof Error ? error.message : String(error);
-  return `Live registry unavailable (${msg.slice(0, 140)}). Showing demo data until the hub's fleet module is installed.`;
+  return `${cmd} failed (${msg.slice(0, 140)}). Showing demo data.`;
+}
+
+/** Map a board/detail docker row onto the shape the pages render. */
+function toDockerRow(d: any): DockerRow {
+  return {
+    ...d,
+    docker_id: d.docker_id || d.name,
+    heartbeat_status: d.heartbeat_status || d.health,
+    site_count: d.site_count ?? d.sites_count,
+  };
 }
 
 export async function getFleet(): Promise<FleetResult<DockerRow[]>> {
   await assertStaff();
   if (DEMO) return { data: demoDockers(), demo: true };
   try {
-    const rows = (await FleetService.listDockers()) as DockerRow[];
-    return { data: rows || [], demo: false };
+    const board = await FleetService.board();
+    return { data: board.dockers.map(toDockerRow), demo: false };
   } catch (error) {
-    console.error("[fleet] listDockers failed", error);
-    return { data: demoDockers(), demo: true, notice: missingRegistry(error) };
+    console.error("[fleet] control:fleet_board failed", error);
+    return {
+      data: demoDockers(),
+      demo: true,
+      notice: cmdFailed("control:fleet_board", error),
+    };
   }
 }
 
@@ -65,24 +80,34 @@ export async function getDockerDetail(
   await assertStaff();
   if (DEMO) return { data: demoDockerDetail(name), demo: true };
   try {
-    const doc = await FleetService.getDocker(name);
-    if (!doc) return { data: null, demo: false };
-    const [revisions, placements] = await Promise.all([
-      FleetService.listSettingsRevisions(name).catch(() => []),
-      FleetService.listPlacements(name).catch(() => []),
-    ]);
-    const usage = [...(doc.usage_latest || [])].sort((a: any, b: any) =>
+    const res = await FleetService.docker(name);
+    const usage = [...(res.usage_samples || [])].sort((a: any, b: any) =>
       String(b.date).localeCompare(String(a.date)),
     );
+    const revisions = (res.settings_revisions || []).map((r: any) => ({
+      ...r,
+      created_at: r.created_at || r.creation,
+    }));
+    const placements: PlacementRow[] = (res.sites || []).map((p, i) => ({
+      name: p.site_name || `${p.company}-${i}`,
+      company: p.company,
+      site_name: p.site_name,
+      plan: p.plan,
+      status: p.status,
+      lifecycle_state: p.lifecycle_state ?? null,
+      state_entered_at: p.state_entered_at ?? null,
+      next_transition_at: p.next_transition_at ?? null,
+    }));
     return {
-      data: { docker: doc, usage, revisions, placements },
+      data: { docker: toDockerRow(res.docker), usage, revisions, placements },
       demo: false,
     };
   } catch (error) {
-    console.error("[fleet] getDocker failed", error);
+    console.error("[fleet] control:fleet_docker failed", error);
+    const notice = cmdFailed("control:fleet_docker", error);
     const fallback = demoDockerDetail(name);
     return fallback
-      ? { data: fallback, demo: true, notice: missingRegistry(error) }
-      : { data: null, demo: false, notice: missingRegistry(error) };
+      ? { data: fallback, demo: true, notice }
+      : { data: null, demo: false, notice };
   }
 }
