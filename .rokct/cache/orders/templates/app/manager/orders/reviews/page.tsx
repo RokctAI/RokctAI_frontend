@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Star, Loader2 } from "lucide-react";
+import { RiStarLine, RiLoader4Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -52,7 +52,7 @@ export default function ReviewsPage() {
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
-      <Star
+      <RiStarLine
         key={i}
         className={`size-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
       />
@@ -62,7 +62,7 @@ export default function ReviewsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }

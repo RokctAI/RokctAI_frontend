@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Upload, X, Image as ImageIcon } from "lucide-react";
+import { RiLoader4Line, RiUploadLine, RiCloseLine, RiImageLine as ImageIcon } from "@remixicon/react";
 import Image from "next/image";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
@@ -106,7 +106,7 @@ export function ImageUpload({
             className="absolute top-2 right-2"
             onClick={handleRemove}
           >
-            <X className="size-4" />
+            <RiCloseLine className="size-4" />
           </Button>
         </div>
       ) : (
@@ -116,7 +116,7 @@ export function ImageUpload({
             className="flex flex-col items-center justify-center size-full cursor-pointer"
           >
             {uploading ? (
-              <Loader2 className="size-12 animate-spin text-muted-foreground" />
+              <RiLoader4Line className="size-12 animate-spin text-muted-foreground" />
             ) : (
               <>
                 <ImageIcon className="size-12 text-muted-foreground mb-2" />

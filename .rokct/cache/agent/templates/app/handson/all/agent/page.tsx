@@ -17,7 +17,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Brain, Loader2, Search, Sparkles } from "lucide-react";
+import { RiBrainLine, RiLoader4Line, RiSearchLine, RiSparklingLine } from "@remixicon/react";
 import t from "@/app/lib/i18n";
 import {
   searchEngrams,
@@ -103,7 +103,7 @@ export default function AgentMemoryPage() {
         </div>
 
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <RiSearchLine className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={query}
@@ -123,11 +123,11 @@ export default function AgentMemoryPage() {
           className="px-6 py-2.5 bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-200 active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2"
         >
           {isSearching ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <RiLoader4Line className="w-4 h-4 animate-spin" />
           ) : mode === "semantic" ? (
-            <Sparkles className="w-4 h-4" />
+            <RiSparklingLine className="w-4 h-4" />
           ) : (
-            <Search className="w-4 h-4" />
+            <RiSearchLine className="w-4 h-4" />
           )}
           {t("app.agent.search_cta")}
         </button>
@@ -142,7 +142,7 @@ export default function AgentMemoryPage() {
       {!hasSearched ? (
         <div className="py-16 flex flex-col items-center justify-center text-center bg-white rounded-2xl border border-dashed border-gray-300">
           <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-            <Brain className="w-8 h-8 text-gray-300" />
+            <RiBrainLine className="w-8 h-8 text-gray-300" />
           </div>
           <h3 className="text-lg font-medium text-gray-900">
             {t("app.agent.search_hint")}
@@ -151,7 +151,7 @@ export default function AgentMemoryPage() {
       ) : results.length === 0 && !isSearching ? (
         <div className="py-16 flex flex-col items-center justify-center text-center bg-white rounded-2xl border border-dashed border-gray-300">
           <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-            <Search className="w-8 h-8 text-gray-300" />
+            <RiSearchLine className="w-8 h-8 text-gray-300" />
           </div>
           <h3 className="text-lg font-medium text-gray-900">
             {t("app.agent.no_results")}

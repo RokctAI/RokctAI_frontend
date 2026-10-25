@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.0
+
+* `/team`'s title carries the number of cards on the page as a badge
+  (Ray, 2026-10-03: "Team [45]", the number in a rectangle). NEW
+  `components/custom/company/team-count.tsx` (`TeamCount`, a client
+  component, and `sumTeamCounts`) sums the `data/team.json` members the
+  page draws and every `data-team-count` a home-SDK section on the page
+  declares on its wrapper (Supacharge: lms_sdk 1.36.9's team section).
+  Nothing is hard-coded and no home SDK is imported; a section that
+  declares nothing adds nothing, and a 0 sum hides the badge. The badge
+  is neutral (`data-team-count-badge`, `border-current`); the home SDK's
+  theme may style it.
+
 ## 1.2.0
 
 * The pages sit in the shell's site frame. Ray, 2026-09-11 20:44Z, of

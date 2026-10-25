@@ -19,7 +19,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus, Briefcase, Search, Filter } from "lucide-react";
+import {
+  RiAddLine,
+  RiBriefcaseLine,
+  RiFilterLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -61,7 +66,7 @@ export function JobOpeningList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="relative w-72">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search jobs..."
             className="pl-8"
@@ -72,7 +77,7 @@ export function JobOpeningList() {
         <Button
           onClick={() => router.push("/handson/all/hr/recruitment/jobs/new")}
         >
-          <Plus className="mr-2 h-4 w-4" /> Post Job
+          <RiAddLine className="mr-2 h-4 w-4" /> Post Job
         </Button>
       </div>
 
@@ -111,7 +116,7 @@ export function JobOpeningList() {
                 >
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
-                      <Briefcase className="h-4 w-4 text-muted-foreground" />
+                      <RiBriefcaseLine className="h-4 w-4 text-muted-foreground" />
                       {job.job_title}
                     </div>
                   </TableCell>

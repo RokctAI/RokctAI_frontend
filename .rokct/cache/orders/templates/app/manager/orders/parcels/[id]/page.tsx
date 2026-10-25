@@ -16,18 +16,7 @@
 
 "use client";
 
-import {
-  Loader2,
-  ArrowLeft,
-  MapPin,
-  Phone,
-  User,
-  Package,
-  Truck,
-  CheckCircle,
-  XCircle,
-  Clock,
-} from "lucide-react";
+import { RiLoader4Line, RiArrowLeftLine, RiMapPinLine, RiPhoneLine, RiUserLine, RiBox3Line, RiTruckLine, RiCheckboxCircleLine, RiCloseCircleLine, RiTimeLine } from "@remixicon/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -95,7 +84,7 @@ export default function ParcelOrderDetailsPage({
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -114,7 +103,7 @@ export default function ParcelOrderDetailsPage({
       <div className="flex items-center gap-4">
         <Link href="/manager/orders/parcels">
           <Button variant="ghost" size="icon">
-            <ArrowLeft className="size-4" />
+            <RiArrowLeftLine className="size-4" />
           </Button>
         </Link>
         <h1 className="text-3xl font-bold">Order Details</h1>
@@ -193,7 +182,7 @@ export default function ParcelOrderDetailsPage({
             {/* Parcel Info */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center gap-3">
-                <Package className="size-5 text-muted-foreground" />
+                <RiBox3Line className="size-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Type</p>
                   <p className="text-muted-foreground">
@@ -202,7 +191,7 @@ export default function ParcelOrderDetailsPage({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Clock className="size-5 text-muted-foreground" />
+                <RiTimeLine className="size-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Delivery Time</p>
                   <p className="text-muted-foreground">
@@ -229,7 +218,7 @@ export default function ParcelOrderDetailsPage({
                 onClick={() => handleStatusUpdate("Canceled")}
                 disabled={updating}
               >
-                <XCircle className="mr-2 size-4" />
+                <RiCloseCircleLine className="mr-2 size-4" />
                 Cancel Order
               </Button>
             )}
@@ -240,7 +229,7 @@ export default function ParcelOrderDetailsPage({
                 onClick={() => handleStatusUpdate(nextStatus)}
                 disabled={updating}
               >
-                <CheckCircle className="mr-2 size-4" />
+                <RiCheckboxCircleLine className="mr-2 size-4" />
                 Mark as {nextStatus}
               </Button>
             )}
@@ -283,7 +272,7 @@ export default function ParcelOrderDetailsPage({
               </CardHeader>
               <CardContent className="flex items-center gap-3">
                 <div className="size-10 rounded-full bg-gray-100 flex items-center justify-center">
-                  <User className="size-5 text-gray-500" />
+                  <RiUserLine className="size-5 text-gray-500" />
                 </div>
                 <div>
                   <p className="font-medium">{order.delivery_man}</p>

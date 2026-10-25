@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Users, ChefHat, Bike } from "lucide-react";
+import { RiLoader4Line, RiGroupLine, RiRestaurant2Line, RiBikeLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -94,7 +94,7 @@ export default function StaffPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -113,16 +113,16 @@ export default function StaffPage() {
       <Tabs defaultValue="waiters" className="space-y-4">
         <TabsList>
           <TabsTrigger value="waiters" className="flex items-center gap-2">
-            <Users className="size-4" />
+            <RiGroupLine className="size-4" />
             {t("app.paas.dashboard.restaurant.staff.waiters")} ({waiters.length}
             )
           </TabsTrigger>
           <TabsTrigger value="cooks" className="flex items-center gap-2">
-            <ChefHat className="size-4" />
+            <RiRestaurant2Line className="size-4" />
             {t("app.paas.dashboard.restaurant.staff.cooks")} ({cooks.length})
           </TabsTrigger>
           <TabsTrigger value="delivery" className="flex items-center gap-2">
-            <Bike className="size-4" />
+            <RiBikeLine className="size-4" />
             {t("app.paas.dashboard.restaurant.staff.delivery")} (
             {deliveryMen.length})
           </TabsTrigger>

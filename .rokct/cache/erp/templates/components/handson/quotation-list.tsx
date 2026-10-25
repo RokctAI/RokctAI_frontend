@@ -20,7 +20,12 @@ import { useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, Edit, Plus, Search } from "lucide-react";
+import {
+  RiAddLine,
+  RiDeleteBinLine,
+  RiEditLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -68,7 +73,7 @@ export function QuotationList({ quotations }: QuotationListProps) {
         <h1 className="text-2xl font-bold">Quotations</h1>
         <div className="flex gap-4">
           <div className="relative w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
               value={searchTerm}
@@ -78,7 +83,7 @@ export function QuotationList({ quotations }: QuotationListProps) {
           </div>
           <Link href="/handson/all/commercial/selling/new">
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Quotation
+              <RiAddLine className="mr-2 h-4 w-4" /> New Quotation
             </Button>
           </Link>
         </div>
@@ -135,7 +140,7 @@ export function QuotationList({ quotations }: QuotationListProps) {
                     <div className="flex gap-2 justify-end">
                       <Link href={`/handson/all/commercial/selling/${q.name}`}>
                         <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4" />
+                          <RiEditLine className="h-4 w-4" />
                         </Button>
                       </Link>
                       <Button
@@ -144,7 +149,7 @@ export function QuotationList({ quotations }: QuotationListProps) {
                         className="text-destructive hover:text-destructive"
                         onClick={() => handleDelete(q.name)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <RiDeleteBinLine className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

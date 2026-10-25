@@ -17,7 +17,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { RiAddLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -57,7 +57,7 @@ export function SimpleList({
         {newItemUrl && (
           <Link href={newItemUrl}>
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New
+              <RiAddLine className="mr-2 h-4 w-4" /> New
             </Button>
           </Link>
         )}

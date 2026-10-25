@@ -52,7 +52,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Chrome } from "lucide-react";
+import { RiChromeLine } from "@remixicon/react";
 
 import { BrandLogo } from "@/components/custom/brand-logo";
 import { markImageClass } from "@/components/custom/landing/brand-marks";
@@ -138,7 +138,7 @@ export function hasBadgeIcon(badge: Pick<HeroBadge, "icon">): boolean {
 function BadgeIcon({ icon }: { icon: HeroBadge["icon"] }) {
   if (!icon) return null;
   if (icon === "chrome") {
-    return <Chrome className="w-6 h-6" aria-hidden="true" />;
+    return <RiChromeLine className="w-6 h-6" aria-hidden="true" />;
   }
   if (icon === "app-store") {
     return (

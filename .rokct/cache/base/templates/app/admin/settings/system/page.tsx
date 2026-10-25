@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Server, CheckCircle2 } from "lucide-react";
+import { RiLoader4Line, RiServerLine, RiCheckboxCircleLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getSystemInfo } from "@/app/actions/base/admin/settings";
@@ -43,7 +43,7 @@ export default function AdminSystemInfoPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -56,7 +56,7 @@ export default function AdminSystemInfoPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-base font-medium">API Status</CardTitle>
-            <CheckCircle2 className="size-4 text-green-500" />
+            <RiCheckboxCircleLine className="size-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -71,7 +71,7 @@ export default function AdminSystemInfoPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-base font-medium">App Version</CardTitle>
-            <Server className="size-4 text-muted-foreground" />
+            <RiServerLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

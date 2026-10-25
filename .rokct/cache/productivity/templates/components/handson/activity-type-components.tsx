@@ -17,7 +17,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link"; // Added
-import { Plus } from "lucide-react"; // Added
+import { RiAddLine } from "@remixicon/react"; // Added
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -44,7 +44,7 @@ export function ActivityTypeList({ items }: { items: any[] }) {
         </div>
         <Link href="/handson/all/work_management/projects/activity-type/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> New Type
+            <RiAddLine className="mr-2 h-4 w-4" /> New Type
           </Button>
         </Link>
       </div>

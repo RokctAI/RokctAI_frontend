@@ -17,7 +17,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Search, FileText } from "lucide-react";
+import { RiAddLine, RiFileTextLine, RiSearchLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -53,7 +53,7 @@ export function NoteList({ notes }: { notes: any[] }) {
         <div className="flex gap-4">
           <Link href="/handson/all/commercial/crm/note/new">
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Note
+              <RiAddLine className="mr-2 h-4 w-4" /> New Note
             </Button>
           </Link>
         </div>
@@ -72,7 +72,7 @@ export function NoteList({ notes }: { notes: any[] }) {
             {filtered.map((n) => (
               <TableRow key={n.name}>
                 <TableCell className="font-medium flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  <RiFileTextLine className="h-4 w-4 text-muted-foreground" />
                   {n.title}
                 </TableCell>
                 <TableCell>{n.public ? "Yes" : "No"}</TableCell>

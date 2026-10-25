@@ -42,7 +42,7 @@ export async function getDocTypeMeta(
   const client = await getClient();
 
   try {
-    const meta = await gatewayCall(client, "frappe.client.get_meta", { doctype });
+    const meta = await gatewayCall(client, "api.crm.records.get_meta", { doctype });
 
     // Simplified meta for frontend consumption
     const fields = meta.message.fields.map((f: any) => ({

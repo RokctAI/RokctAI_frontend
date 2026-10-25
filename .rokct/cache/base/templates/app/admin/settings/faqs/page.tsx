@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Trash2, Edit, Save, X } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine, RiPencilLine, RiSaveLine, RiCloseLine } from "@remixicon/react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -134,7 +134,7 @@ export default function FAQsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="size-8 animate-spin" />
+        <RiLoader4Line className="size-8 animate-spin" />
       </div>
     );
   }
@@ -151,7 +151,7 @@ export default function FAQsPage() {
           </p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
-          <Plus className="mr-2 size-4" />
+          <RiAddLine className="mr-2 size-4" />
           {t("app.paas.admin.settings.faqs.btn_add")}
         </Button>
       </div>
@@ -181,7 +181,7 @@ export default function FAQsPage() {
                     size="icon"
                     onClick={() => handleOpenDialog(faq)}
                   >
-                    <Edit className="size-4" />
+                    <RiPencilLine className="size-4" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -189,7 +189,7 @@ export default function FAQsPage() {
                     className="text-destructive"
                     onClick={() => handleDelete(faq.name)}
                   >
-                    <Trash2 className="size-4" />
+                    <RiDeleteBinLine className="size-4" />
                   </Button>
                 </div>
               </div>

@@ -17,43 +17,43 @@
 "use client";
 
 import {
-  LayoutDashboard,
-  ShoppingBag,
-  Store,
-  Users,
-  Truck,
-  FileText,
-  Settings,
-  BarChart3,
-  CreditCard,
-  Globe,
-  Database,
-  Info,
-  Layers,
-  Image as ImageIcon,
-  MessageSquare,
-  Bell,
-  Share2,
-  Smartphone,
-  File,
-  Languages,
-  RotateCcw,
-  List,
-  Tags,
-  Star,
-  Utensils,
-  Box,
-  Map as MapIcon,
-  Wallet,
-  Mail,
-  DollarSign,
-  Calendar,
-  Flag,
-  Percent,
-  Gift,
-  ChevronRight,
-  Megaphone,
-} from "lucide-react";
+  RiDashboardLine,
+  RiShoppingBagLine,
+  RiStore2Line,
+  RiGroupLine,
+  RiTruckLine,
+  RiFileTextLine,
+  RiSettings3Line,
+  RiBarChartBoxLine,
+  RiBankCardLine,
+  RiGlobalLine,
+  RiDatabase2Line,
+  RiInformationLine,
+  RiStackLine,
+  RiImageLine as ImageIcon,
+  RiMessage2Line,
+  RiNotification3Line,
+  RiShareLine,
+  RiSmartphoneLine,
+  RiFileLine,
+  RiTranslate2,
+  RiArrowGoBackLine,
+  RiListUnordered,
+  RiPriceTag3Line,
+  RiStarLine,
+  RiRestaurantLine,
+  RiBox3Line,
+  RiMapLine as MapIcon,
+  RiWalletLine,
+  RiMailLine,
+  RiMoneyDollarCircleLine,
+  RiCalendarLine,
+  RiFlagLine,
+  RiPercentLine,
+  RiGiftLine,
+  RiArrowRightSLine,
+  RiMegaphoneLine,
+} from "@remixicon/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import t from "@/app/lib/i18n";
@@ -78,11 +78,11 @@ const menuItems = [
   {
     title: t("nav.admin.dashboard"),
     url: "/admin",
-    icon: LayoutDashboard,
+    icon: RiDashboardLine,
   },
   {
     title: t("nav.admin.product_mgmt"),
-    icon: ShoppingBag,
+    icon: RiShoppingBagLine,
     items: [
       { title: t("nav.admin.products"), url: "/admin/products" },
       {
@@ -99,7 +99,7 @@ const menuItems = [
   },
   {
     title: t("nav.admin.order_mgmt"),
-    icon: List,
+    icon: RiListUnordered,
     items: [
       { title: t("nav.admin.all_orders"), url: "/admin/orders" },
       { title: t("nav.admin.parcel_orders"), url: "/admin/orders/parcel" },
@@ -119,7 +119,7 @@ const menuItems = [
   },
   {
     title: t("nav.admin.shop_mgmt"),
-    icon: Store,
+    icon: RiStore2Line,
     items: [
       { title: t("nav.admin.shops"), url: "/admin/shops" },
       {
@@ -133,7 +133,7 @@ const menuItems = [
   },
   {
     title: t("nav.admin.content_mgmt"),
-    icon: Layers,
+    icon: RiStackLine,
     items: [
       { title: t("nav.admin.brands"), url: "/admin/content/brands" },
       { title: t("nav.admin.banners"), url: "/admin/content/banners" },
@@ -148,7 +148,7 @@ const menuItems = [
   },
   {
     title: t("nav.admin.delivery_mgmt"),
-    icon: Truck,
+    icon: RiTruckLine,
     items: [
       {
         title: t("nav.admin.deliveries_list"),
@@ -182,7 +182,7 @@ const menuItems = [
   },
   {
     title: t("nav.admin.customer_mgmt"),
-    icon: Users,
+    icon: RiGroupLine,
     items: [
       { title: t("nav.admin.users"), url: "/admin/users" },
       { title: t("nav.admin.roles"), url: "/admin/users/roles" },
@@ -199,7 +199,7 @@ const menuItems = [
   },
   {
     title: t("nav.admin.marketing_ads"),
-    icon: Megaphone,
+    icon: RiMegaphoneLine,
     items: [
       { title: t("nav.admin.ads_list"), url: "/admin/marketing/ads" },
       {
@@ -223,7 +223,7 @@ const menuItems = [
   },
   {
     title: t("nav.admin.transactions"),
-    icon: DollarSign,
+    icon: RiMoneyDollarCircleLine,
     items: [
       {
         title: t("nav.admin.all_transactions"),
@@ -249,7 +249,7 @@ const menuItems = [
   },
   {
     title: t("nav.admin.reports_analytics"),
-    icon: BarChart3,
+    icon: RiBarChartBoxLine,
     items: [
       {
         title: t("nav.admin.overview_report"),
@@ -272,7 +272,7 @@ const menuItems = [
   },
   {
     title: t("nav.admin.business_settings"),
-    icon: Settings,
+    icon: RiSettings3Line,
     items: [
       {
         title: t("nav.admin.general_settings"),
@@ -323,7 +323,7 @@ const menuItems = [
   },
   {
     title: t("nav.admin.system_settings"),
-    icon: Database,
+    icon: RiDatabase2Line,
     items: [
       { title: t("nav.admin.languages"), url: "/admin/system/languages" },
       {
@@ -359,7 +359,7 @@ export function AdminNav() {
                   <SidebarMenuButton tooltip={item.title}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    <RiArrowRightSLine className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>

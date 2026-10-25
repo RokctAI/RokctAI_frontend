@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Save } from "lucide-react";
+import { RiLoader4Line, RiSaveLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getSocialSettings } from "@/app/actions/base/admin/settings";
@@ -46,7 +46,7 @@ export default function SocialSettingsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -56,7 +56,7 @@ export default function SocialSettingsPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Social Media Settings</h1>
         <Button>
-          <Save className="mr-2 size-4" />
+          <RiSaveLine className="mr-2 size-4" />
           Save Changes
         </Button>
       </div>

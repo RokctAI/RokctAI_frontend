@@ -1,0 +1,37 @@
+{
+  "name": "studio_sdk",
+  "version": "1.1.1",
+  "installs": [
+    {
+      "from": "templates/app/services/all/studio",
+      "to": "app/services/all/studio"
+    },
+    {
+      "from": "templates/app/actions/studio",
+      "to": "app/actions/studio"
+    },
+    {
+      "from": "templates/app/studio",
+      "to": "app/studio"
+    }
+  ],
+  "dependencies": {
+    "@remixicon/react": "^4.6.0",
+    "sonner": "^2.0.7"
+  },
+  "devDependencies": {},
+  "integrations": [],
+  "requires": [
+    "app/services/base/platform-gateway.ts",
+    "components/ui/badge.tsx",
+    "components/ui/button.tsx",
+    "components/ui/card.tsx"
+  ],
+  "_comment": {
+    "app/services/base/platform-gateway.ts": "core/base (base_sdk >= 1.3.0: paasCall + platformCall with requireAuth:false for the public review page)",
+    "components/ui/badge.tsx": "host shell",
+    "components/ui/button.tsx": "host shell",
+    "components/ui/card.tsx": "host shell",
+    "cmds": "every gateway cmd sent here is whitelisted by ../frappe/manifest.json (co-location rule)"
+  }
+}

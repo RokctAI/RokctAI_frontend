@@ -26,7 +26,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
+import { RiAddLine } from "@remixicon/react";
 import { GenericForm } from "@/components/handson/generic-form";
 import { createContract } from "@/app/actions/handson/all/crm/contracts";
 import { DocTypeMeta } from "@/app/actions/handson/all/crm/meta";
@@ -52,7 +52,7 @@ export function CreateContractDialog({ meta }: { meta: DocTypeMeta }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="mr-2 h-4 w-4" />
+          <RiAddLine className="mr-2 h-4 w-4" />
           Create Contract
         </Button>
       </DialogTrigger>

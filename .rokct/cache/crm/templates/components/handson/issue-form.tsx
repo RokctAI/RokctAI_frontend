@@ -18,7 +18,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, MessageSquare, Send } from "lucide-react";
+import {
+  RiArrowLeftLine,
+  RiMessage2Line,
+  RiSaveLine,
+  RiSendPlaneLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -129,7 +134,7 @@ export function IssueForm({
           <div className="flex gap-4 items-center">
             <Link href="/handson/all/commercial/support/issue">
               <Button variant="outline" size="icon">
-                <ArrowLeft className="h-4 w-4" />
+                <RiArrowLeftLine className="h-4 w-4" />
               </Button>
             </Link>
             <h1 className="text-2xl font-bold">
@@ -137,7 +142,7 @@ export function IssueForm({
             </h1>
           </div>
           <Button type="submit" disabled={loading}>
-            <Save className="mr-2 h-4 w-4" /> Save Details
+            <RiSaveLine className="mr-2 h-4 w-4" /> Save Details
           </Button>
         </div>
         <Card>
@@ -209,7 +214,7 @@ export function IssueForm({
         <Card className="bg-slate-50 border-slate-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" /> Discussion
+              <RiMessage2Line className="h-5 w-5" /> Discussion
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -255,7 +260,7 @@ export function IssueForm({
                 onClick={handleSendComment}
                 disabled={chatLoading || !newComment.trim()}
               >
-                <Send className="h-4 w-4" />
+                <RiSendPlaneLine className="h-4 w-4" />
               </Button>
             </div>
           </CardContent>

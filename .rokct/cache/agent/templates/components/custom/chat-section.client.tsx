@@ -25,7 +25,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { PLATFORM_NAME } from "@/app/config/platform";
-import { MoveRight } from "lucide-react";
+import { RiArrowRightLine } from "@remixicon/react";
 import {
   Carousel,
   CarouselContent,
@@ -57,7 +57,7 @@ export function ChatSection({ id }: { id?: string }) {
             className="flex w-max items-center rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-2.5 text-sm font-semibold shadow hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
           >
             Explore now
-            <MoveRight className="ml-2 size-4" />
+            <RiArrowRightLine className="ml-2 size-4" />
           </Link>
         </div>
       </div>

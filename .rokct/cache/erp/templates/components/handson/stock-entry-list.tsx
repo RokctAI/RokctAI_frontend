@@ -18,7 +18,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Search } from "lucide-react";
+import { RiAddLine, RiSearchLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -46,7 +46,7 @@ export function StockEntryList({ entries }: { entries: any[] }) {
         <div className="flex gap-4">
           <Link href="/handson/all/supply_chain/stock/entry/new">
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Entry
+              <RiAddLine className="mr-2 h-4 w-4" /> New Entry
             </Button>
           </Link>
         </div>

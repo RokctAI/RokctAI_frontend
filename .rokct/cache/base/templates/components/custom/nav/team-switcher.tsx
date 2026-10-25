@@ -17,7 +17,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronsUpDown, Plus } from "lucide-react";
+import { RiExpandUpDownLine, RiAddLine } from "@remixicon/react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 

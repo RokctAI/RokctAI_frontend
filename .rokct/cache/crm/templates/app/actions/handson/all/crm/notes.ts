@@ -28,7 +28,7 @@ export async function getNotes(page = 1, limit = 20) {
   try {
     const start = (page - 1) * limit;
 
-    const notes = await gatewayCall(client, "frappe.client.get_list", {
+    const notes = await gatewayCall(client, "api.crm.records.get_list", {
       doctype: "Sales Note",
       fields: ["name", "title", "content", "owner", "modified"],
       order_by: "modified desc",
@@ -36,7 +36,7 @@ export async function getNotes(page = 1, limit = 20) {
       limit_page_length: limit,
     });
 
-    const countRes = await gatewayCall(client, "frappe.client.get_count", {
+    const countRes = await gatewayCall(client, "api.crm.records.get_count", {
       doctype: "Sales Note",
     });
 

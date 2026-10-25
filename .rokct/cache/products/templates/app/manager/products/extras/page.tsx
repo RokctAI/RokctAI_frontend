@@ -16,14 +16,7 @@
 
 "use client";
 
-import {
-  Loader2,
-  Plus,
-  Pencil,
-  Trash2,
-  ChevronRight,
-  ChevronDown,
-} from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiPencilLine, RiDeleteBinLine, RiArrowRightSLine, RiArrowDownSLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -187,7 +180,7 @@ export default function ExtrasPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -210,7 +203,7 @@ export default function ExtrasPage() {
             setIsGroupDialogOpen(true);
           }}
         >
-          <Plus className="mr-2 size-4" />{" "}
+          <RiAddLine className="mr-2 size-4" />{" "}
           {t("app.paas.dashboard.products.extras.btn_add_group")}
         </Button>
       </div>
@@ -234,9 +227,9 @@ export default function ExtrasPage() {
                     <CollapsibleTrigger asChild>
                       <Button variant="ghost" size="sm">
                         {expandedGroups.includes(group.name) ? (
-                          <ChevronDown className="size-4" />
+                          <RiArrowDownSLine className="size-4" />
                         ) : (
-                          <ChevronRight className="size-4" />
+                          <RiArrowRightSLine className="size-4" />
                         )}
                       </Button>
                     </CollapsibleTrigger>
@@ -252,7 +245,7 @@ export default function ExtrasPage() {
                         setIsValueDialogOpen(true);
                       }}
                     >
-                      <Plus className="mr-2 size-4" />{" "}
+                      <RiAddLine className="mr-2 size-4" />{" "}
                       {t("app.paas.dashboard.products.extras.btn_add_value")}
                     </Button>
                     <Button
@@ -264,7 +257,7 @@ export default function ExtrasPage() {
                         setIsGroupDialogOpen(true);
                       }}
                     >
-                      <Pencil className="size-4" />
+                      <RiPencilLine className="size-4" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -272,7 +265,7 @@ export default function ExtrasPage() {
                       className="text-red-500 hover:text-red-600"
                       onClick={() => handleDeleteGroup(group.name)}
                     >
-                      <Trash2 className="size-4" />
+                      <RiDeleteBinLine className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -302,7 +295,7 @@ export default function ExtrasPage() {
                                   handleDeleteValue(val.name, group.name)
                                 }
                               >
-                                <Trash2 className="size-4" />
+                                <RiDeleteBinLine className="size-4" />
                               </Button>
                             </div>
                           ))}
@@ -350,7 +343,7 @@ export default function ExtrasPage() {
           <DialogFooter>
             <Button onClick={handleGroupSubmit} disabled={processing}>
               {processing ? (
-                <Loader2 className="size-4 animate-spin" />
+                <RiLoader4Line className="size-4 animate-spin" />
               ) : (
                 t("common.save")
               )}
@@ -409,7 +402,7 @@ export default function ExtrasPage() {
           <DialogFooter>
             <Button onClick={handleValueSubmit} disabled={processing}>
               {processing ? (
-                <Loader2 className="size-4 animate-spin" />
+                <RiLoader4Line className="size-4 animate-spin" />
               ) : (
                 t("common.create")
               )}

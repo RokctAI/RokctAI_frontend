@@ -17,13 +17,13 @@
 "use client";
 
 import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+  RiVerifiedBadgeLine,
+  RiNotification3Line,
+  RiExpandUpDownLine,
+  RiBankCardLine,
+  RiLogoutBoxRLine,
+  RiSparklingLine,
+} from "@remixicon/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -65,7 +65,7 @@ export function NavUser({ user }: { user: any }) {
                 <span className="truncate font-semibold">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <RiExpandUpDownLine className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -89,28 +89,28 @@ export function NavUser({ user }: { user: any }) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Sparkles />
+                <RiSparklingLine />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheck />
+                <RiVerifiedBadgeLine />
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
+                <RiBankCardLine />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell />
+                <RiNotification3Line />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>
-              <LogOut />
+              <RiLogoutBoxRLine />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -17,7 +17,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { RiAddLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -52,7 +52,7 @@ export function BudgetList({ items }: { items: any[] }) {
         </div>
         <Link href="/handson/all/financials/accounts/budget/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> New Budget
+            <RiAddLine className="mr-2 h-4 w-4" /> New Budget
           </Button>
         </Link>
       </div>

@@ -17,15 +17,15 @@
 "use client";
 
 import {
-  Loader2,
-  Package,
-  ShoppingCart,
-  DollarSign,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Star,
-} from "lucide-react";
+  RiLoader4Line,
+  RiArchiveLine,
+  RiShoppingCartLine,
+  RiMoneyDollarCircleLine,
+  RiErrorWarningLine,
+  RiCheckboxCircleLine,
+  RiCloseCircleLine,
+  RiStarLine,
+} from "@remixicon/react";
 import { useEffect, useState } from "react";
 import t from "@/app/lib/i18n";
 
@@ -67,7 +67,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -87,7 +87,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               {t("app.paas.dashboard.stats.in_progress")}
             </CardTitle>
-            <ShoppingCart className="size-4 text-muted-foreground" />
+            <RiShoppingCartLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -100,7 +100,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               {t("app.paas.dashboard.stats.cancelled")}
             </CardTitle>
-            <XCircle className="size-4 text-red-500" />
+            <RiCloseCircleLine className="size-4 text-red-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -113,7 +113,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               {t("app.paas.dashboard.stats.delivered")}
             </CardTitle>
-            <CheckCircle className="size-4 text-green-500" />
+            <RiCheckboxCircleLine className="size-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -126,7 +126,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               {t("app.paas.dashboard.stats.reviews")}
             </CardTitle>
-            <Star className="size-4 text-yellow-500" />
+            <RiStarLine className="size-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.reviews_count}</div>
@@ -141,7 +141,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               {t("app.paas.dashboard.stats.total_products")}
             </CardTitle>
-            <Package className="size-4 text-muted-foreground" />
+            <RiArchiveLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.products_count}</div>
@@ -152,7 +152,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               {t("app.paas.dashboard.stats.out_of_stock")}
             </CardTitle>
-            <AlertCircle className="size-4 text-red-500" />
+            <RiErrorWarningLine className="size-4 text-red-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -169,7 +169,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               {t("app.paas.dashboard.stats.total_earned")}
             </CardTitle>
-            <DollarSign className="size-4 text-muted-foreground" />
+            <RiMoneyDollarCircleLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -182,7 +182,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               {t("app.paas.dashboard.stats.delivery_earnings")}
             </CardTitle>
-            <DollarSign className="size-4 text-muted-foreground" />
+            <RiMoneyDollarCircleLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -195,7 +195,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               {t("app.paas.dashboard.stats.tax_collected")}
             </CardTitle>
-            <DollarSign className="size-4 text-muted-foreground" />
+            <RiMoneyDollarCircleLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -208,7 +208,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               {t("app.paas.dashboard.stats.commission_paid")}
             </CardTitle>
-            <DollarSign className="size-4 text-muted-foreground" />
+            <RiMoneyDollarCircleLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

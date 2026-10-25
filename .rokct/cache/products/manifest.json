@@ -1,6 +1,6 @@
 {
   "name": "products_sdk",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "installs": [
     {
       "from": "templates/app/actions/products/upload.ts",
@@ -131,7 +131,9 @@
       "to": "app/manager/settings/gallery/page.tsx"
     }
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@remixicon/react": "^4.6.0"
+  },
   "devDependencies": {},
   "integrations": [],
   "requires": [

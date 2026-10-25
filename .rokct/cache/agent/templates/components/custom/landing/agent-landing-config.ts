@@ -31,15 +31,8 @@
 // copy alone on later composes). The chat section keeps its copy inline in
 // chat-section.tsx; the hero's copy stays in base_sdk's hero-config.ts.
 
-import type { LucideIcon } from "lucide-react";
-import {
-  Briefcase,
-  ChartLine,
-  ClipboardList,
-  Code,
-  GraduationCap,
-  Megaphone,
-} from "lucide-react";
+import type { RemixiconComponentType } from "@remixicon/react";
+import { RiBriefcaseLine, RiLineChartLine, RiFileList3Line, RiCodeLine, RiGraduationCapLine, RiMegaphoneLine } from "@remixicon/react";
 
 import { AI_MODELS } from "@/ai/models";
 import { PLATFORM_NAME } from "@/app/config/platform";
@@ -80,7 +73,7 @@ export interface FeaturesConfig {
 export interface WorkflowPersona {
   id: string;
   title: string;
-  icon: LucideIcon;
+  icon: RemixiconComponentType;
   /** Tailwind background class for the icon disc. */
   color: string;
   query: string;
@@ -272,7 +265,7 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
       {
         id: "students",
         title: "Students",
-        icon: GraduationCap,
+        icon: RiGraduationCapLine,
         color: "bg-blue-700",
         query: "How do I nail my research assignments, ace my exams and learn effectively?",
         solutions: [
@@ -284,7 +277,7 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
       {
         id: "marketers",
         title: "Marketers and creators",
-        icon: Megaphone,
+        icon: RiMegaphoneLine,
         color: "bg-indigo-700",
         query: "How do I generate creative, SEO-friendly collateral suited to my brand voice over-and-over, effortlessly?",
         solutions: [
@@ -296,7 +289,7 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
       {
         id: "entrepreneurs",
         title: "Entrepreneurs",
-        icon: Briefcase,
+        icon: RiBriefcaseLine,
         color: "bg-violet-700",
         query: "How do I brainstorm ideas effectively, communicate like a boss and 10x my productivity at work?",
         solutions: [
@@ -308,7 +301,7 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
       {
         id: "developers",
         title: "Developers",
-        icon: Code,
+        icon: RiCodeLine,
         color: "bg-purple-700",
         query: "How do I iterate on code effectively, debug with context and save time on creating boilerplate code components?",
         solutions: [
@@ -320,7 +313,7 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
       {
         id: "consultants",
         title: "Consultants and PMs",
-        icon: ClipboardList,
+        icon: RiFileList3Line,
         color: "bg-fuchsia-700",
         query: "How do I research in real-time, organise my research and visualise it effectively for presentations?",
         solutions: [
@@ -332,7 +325,7 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
       {
         id: "analysts",
         title: "Analysts",
-        icon: ChartLine,
+        icon: RiLineChartLine,
         color: "bg-blue-900",
         query: "How do I write accurate queries faster, analyse data without having to build dashboards and present my insights better?",
         solutions: [

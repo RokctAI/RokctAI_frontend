@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Filter, ArrowLeft } from "lucide-react";
+import { RiArrowLeftLine, RiFilterLine, RiSearchLine } from "@remixicon/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,7 +75,7 @@ export default function GeneralLedgerPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-4 w-4" />
+          <RiArrowLeftLine className="h-4 w-4" />
         </Button>
          <div>
            <h1 className="text-3xl font-bold">{t('app.accounting.general_ledger')}</h1>
@@ -87,7 +87,7 @@ export default function GeneralLedgerPage() {
 
       <div className="flex items-center justify-between">
         <div className="relative w-96">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
            <Input
              placeholder={t('app.accounting.search_account')}
              className="pl-8"

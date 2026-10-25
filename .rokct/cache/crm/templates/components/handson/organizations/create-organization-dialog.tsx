@@ -19,7 +19,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GenericForm } from "@/components/handson/generic-form";
-import { Plus } from "lucide-react";
+import { RiAddLine } from "@remixicon/react";
 import { DocTypeMeta } from "@/app/actions/handson/all/crm/meta";
 import {
   Dialog,
@@ -37,7 +37,7 @@ export function CreateOrganizationDialog({ meta }: { meta: DocTypeMeta }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="mr-2 h-4 w-4" /> Create Organization
+          <RiAddLine className="mr-2 h-4 w-4" /> Create Organization
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">

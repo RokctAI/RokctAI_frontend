@@ -17,12 +17,12 @@
 "use client";
 
 import {
-  LayoutDashboard,
-  CreditCard,
-  UserCircle,
-  Server,
-  Phone,
-} from "lucide-react";
+  RiDashboardLine,
+  RiBankCardLine,
+  RiUserLine,
+  RiServerLine,
+  RiPhoneLine,
+} from "@remixicon/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import t from "@/app/lib/i18n";
@@ -38,22 +38,22 @@ import {
 const clientMenuItems = [
   {
     title: t("nav.client.dashboard"),
-    icon: LayoutDashboard,
+    icon: RiDashboardLine,
     url: "/portal",
   },
   {
     title: t("nav.client.rpanel"),
-    icon: Server,
+    icon: RiServerLine,
     url: "/handson/control/rpanel",
   },
   {
     title: t("nav.client.billing"),
-    icon: CreditCard,
+    icon: RiBankCardLine,
     url: "/portal/billing",
   },
   {
     title: t("nav.client.profile"),
-    icon: UserCircle,
+    icon: RiUserLine,
     url: "/portal/profile",
   },
 ];

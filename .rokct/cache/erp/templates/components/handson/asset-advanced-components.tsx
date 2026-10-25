@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Loader2, Plus, ArrowLeft } from "lucide-react";
+import { RiAddLine, RiArrowLeftLine, RiLoader4Line } from "@remixicon/react";
 import { toast } from "sonner";
 import t from "@/app/lib/i18n";
 import { getAssetCapitalizations } from "@/app/actions/handson/all/accounting/assets/capitalization/getAssetCapitalizations";
@@ -74,7 +74,7 @@ export function AssetCapitalizationList() {
             router.push("/handson/all/financials/assets/capitalization/new")
           }
         >
-          <Plus className="h-4 w-4 mr-2" /> New Entry
+          <RiAddLine className="h-4 w-4 mr-2" /> New Entry
         </Button>
       </div>
       <Card>
@@ -130,7 +130,7 @@ export function AssetCapitalizationForm() {
   return (
     <div className="space-y-6 max-w-xl mx-auto">
       <Button variant="ghost" size="icon" onClick={() => router.back()}>
-        <ArrowLeft className="h-4 w-4" />
+        <RiArrowLeftLine className="h-4 w-4" />
       </Button>
       <Card>
         <CardHeader>
@@ -171,7 +171,7 @@ export function AssetCapitalizationForm() {
             </Select>
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
-            {loading ? <Loader2 className="animate-spin" /> : "Submit"}
+            {loading ? <RiLoader4Line className="animate-spin" /> : "Submit"}
           </Button>
         </CardContent>
       </Card>
@@ -204,7 +204,7 @@ export function AssetRepairList() {
             router.push("/handson/all/financials/assets/repair/new")
           }
         >
-          <Plus className="h-4 w-4 mr-2" /> New Repair
+          <RiAddLine className="h-4 w-4 mr-2" /> New Repair
         </Button>
       </div>
       <Card>
@@ -263,7 +263,7 @@ export function AssetRepairForm() {
   return (
     <div className="space-y-6 max-w-xl mx-auto">
       <Button variant="ghost" size="icon" onClick={() => router.back()}>
-        <ArrowLeft className="h-4 w-4" />
+        <RiArrowLeftLine className="h-4 w-4" />
       </Button>
       <Card>
         <CardHeader>
@@ -354,7 +354,7 @@ export function AssetMovementList() {
             router.push("/handson/all/financials/assets/movement/new")
           }
         >
-          <Plus className="h-4 w-4 mr-2" /> New Movement
+          <RiAddLine className="h-4 w-4 mr-2" /> New Movement
         </Button>
       </div>
       <Card>
@@ -410,7 +410,7 @@ export function AssetMovementForm() {
   return (
     <div className="space-y-6 max-w-xl mx-auto">
       <Button variant="ghost" size="icon" onClick={() => router.back()}>
-        <ArrowLeft className="h-4 w-4" />
+        <RiArrowLeftLine className="h-4 w-4" />
       </Button>
       <Card>
         <CardHeader>

@@ -532,6 +532,10 @@ def install_sdk_files(sdk_name):
                         ):
                             insert_idx = idx
                             break
+                    if insert_idx < len(lines) and not lines[insert_idx].strip():
+                        # The template already has a blank line here; keep
+                        # exactly one, as prettier would.
+                        banner = banner[:-1]
                     lines.insert(insert_idx, banner)
                     content = "".join(lines)
 

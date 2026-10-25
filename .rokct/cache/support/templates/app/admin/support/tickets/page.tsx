@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, MessageSquare } from "lucide-react";
+import { RiLoader4Line, RiMessage2Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -58,7 +58,7 @@ export default function AdminTicketsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -89,7 +89,7 @@ export default function AdminTicketsPage() {
                 <div className="flex items-center justify-between mt-2">
                   <div className="text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <MessageSquare className="size-4" />
+                      <RiMessage2Line className="size-4" />
                       <span>{ticket.user}</span>
                     </div>
                     <div className="mt-1">

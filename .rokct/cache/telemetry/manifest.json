@@ -1,6 +1,6 @@
 {
   "name": "telemetry_sdk",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "installs": [
     {
       "from": "templates/components/admin/GenericReport.tsx",
@@ -36,7 +36,7 @@
     }
   ],
   "dependencies": {
-    "lucide-react": "^0.563.0",
+    "@remixicon/react": "^4.6.0",
     "sonner": "^2.0.7"
   },
   "devDependencies": {},

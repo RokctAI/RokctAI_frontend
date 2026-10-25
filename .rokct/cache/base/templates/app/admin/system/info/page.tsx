@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Trash2, RefreshCw } from "lucide-react";
+import { RiLoader4Line, RiDeleteBinLine, RiRefreshLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -58,7 +58,7 @@ export default function SystemInfoPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -69,7 +69,7 @@ export default function SystemInfoPage() {
         <h1 className="text-3xl font-bold">System Information</h1>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => window.location.reload()}>
-            <RefreshCw className="mr-2 size-4" />
+            <RiRefreshLine className="mr-2 size-4" />
             Refresh
           </Button>
           <Button
@@ -78,9 +78,9 @@ export default function SystemInfoPage() {
             disabled={clearing}
           >
             {clearing ? (
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <RiLoader4Line className="mr-2 size-4 animate-spin" />
             ) : (
-              <Trash2 className="mr-2 size-4" />
+              <RiDeleteBinLine className="mr-2 size-4" />
             )}
             Clear Cache
           </Button>

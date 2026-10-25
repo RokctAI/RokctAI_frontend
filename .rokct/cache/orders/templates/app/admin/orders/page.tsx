@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { RiLoader4Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getOrders } from "@/app/actions/orders/admin/orders";
@@ -92,7 +92,7 @@ export default function AdminOrdersPage() {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={7} className="h-24 text-center">
-                    <Loader2 className="size-6 animate-spin mx-auto" />
+                    <RiLoader4Line className="size-6 animate-spin mx-auto" />
                   </TableCell>
                 </TableRow>
               ) : orders.length === 0 ? (

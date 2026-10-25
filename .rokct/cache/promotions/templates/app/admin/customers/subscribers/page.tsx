@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Mail } from "lucide-react";
+import { RiLoader4Line, RiMailLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getSubscribers } from "@/app/actions/users/admin/customers";
@@ -64,7 +64,7 @@ export default function SubscribersPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={2} className="h-24 text-center">
-                  <Loader2 className="size-6 animate-spin mx-auto" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             ) : subscribers.length === 0 ? (
@@ -80,7 +80,7 @@ export default function SubscribersPage() {
               subscribers.map((sub) => (
                 <TableRow key={sub.name}>
                   <TableCell className="flex items-center gap-2">
-                    <Mail className="size-4 text-muted-foreground" />
+                    <RiMailLine className="size-4 text-muted-foreground" />
                     {sub.email}
                   </TableCell>
                   <TableCell>{format(new Date(sub.creation), "PPP")}</TableCell>

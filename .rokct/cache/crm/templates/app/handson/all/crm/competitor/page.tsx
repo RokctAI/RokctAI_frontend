@@ -18,17 +18,17 @@
 
 import { useEffect, useState } from "react";
 import {
-  Loader2,
-  RefreshCw,
-  Trash2,
-  Plus,
-  Pencil,
-  ExternalLink,
-  MapPin,
-  Building2,
-  Globe,
-  Map,
-} from "lucide-react";
+  RiAddLine,
+  RiBuilding2Line,
+  RiDeleteBinLine,
+  RiExternalLinkLine,
+  RiGlobalLine,
+  RiLoader4Line,
+  RiMapLine,
+  RiMapPinLine,
+  RiPencilLine,
+  RiRefreshLine,
+} from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -334,7 +334,7 @@ export default function CompetitorPage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -359,7 +359,7 @@ export default function CompetitorPage() {
           )}
           {canEdit && (
             <Button onClick={() => openDialog()}>
-              <Plus className="mr-2 h-4 w-4" /> {t('app.crm.competitor.new_competitor')}
+              <RiAddLine className="mr-2 h-4 w-4" /> {t('app.crm.competitor.new_competitor')}
             </Button>
           )}
         </div>
@@ -384,7 +384,7 @@ export default function CompetitorPage() {
                       {comp.competitor_name}
                     </CardTitle>
                      <CardDescription className="flex items-center mt-1">
-                       <Building2 className="h-3 w-3 mr-1" />
+                       <RiBuilding2Line className="h-3 w-3 mr-1" />
                        {comp.industry || t('app.crm.competitor.unknown_industry')}
                      </CardDescription>
                   </div>
@@ -404,7 +404,7 @@ export default function CompetitorPage() {
                   <div className="space-y-2 text-sm">
                     {comp.website && (
                       <div className="flex items-center text-blue-600">
-                        <Globe className="h-4 w-4 mr-2" />
+                        <RiGlobalLine className="h-4 w-4 mr-2" />
                         <a
                           href={comp.website}
                           target="_blank"
@@ -417,7 +417,7 @@ export default function CompetitorPage() {
                     )}
                     {comp.headquarters_location && (
                       <div className="flex items-center text-muted-foreground">
-                        <MapPin className="h-4 w-4 mr-2" />
+                        <RiMapPinLine className="h-4 w-4 mr-2" />
                         {comp.headquarters_location}
                       </div>
                     )}
@@ -430,7 +430,7 @@ export default function CompetitorPage() {
                            size="sm"
                            onClick={() => openDialog(comp)}
                          >
-                           <Pencil className="h-4 w-4 mr-2" /> {t('app.crm.competitor.edit')}
+                           <RiPencilLine className="h-4 w-4 mr-2" /> {t('app.crm.competitor.edit')}
                          </Button>
                         <Button
                           variant="ghost"
@@ -438,7 +438,7 @@ export default function CompetitorPage() {
                           className="text-red-500 hover:text-red-600"
                           onClick={() => onDelete(comp.name)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <RiDeleteBinLine className="h-4 w-4" />
                         </Button>
                       </>
                     )}
@@ -699,7 +699,7 @@ export default function CompetitorPage() {
                        size="sm"
                        onClick={() => appendProduct({ their_product_name: "" })}
                      >
-                       <Plus className="h-4 w-4 mr-1" /> {t('app.crm.competitor.btn_add')}
+                       <RiAddLine className="h-4 w-4 mr-1" /> {t('app.crm.competitor.btn_add')}
                      </Button>
                    </div>
                   <div className="space-y-3">
@@ -792,7 +792,7 @@ export default function CompetitorPage() {
                             size="icon"
                             onClick={() => removeProduct(index)}
                           >
-                            <Trash2 className="h-4 w-4 text-muted-foreground" />
+                            <RiDeleteBinLine className="h-4 w-4 text-muted-foreground" />
                           </Button>
                         </div>
                       </div>
@@ -808,7 +808,7 @@ export default function CompetitorPage() {
                        size="sm"
                        onClick={() => appendLocation({ location_name: "" })}
                      >
-                       <Plus className="h-4 w-4 mr-1" /> {t('app.crm.competitor.btn_add')}
+                       <RiAddLine className="h-4 w-4 mr-1" /> {t('app.crm.competitor.btn_add')}
                      </Button>
                    </div>
                   <div className="space-y-3">
@@ -870,7 +870,7 @@ export default function CompetitorPage() {
                                  openMap(field.location_geolocation as string)
                                }
                              >
-                               <Map className="h-3 w-3 mr-1" /> {t('app.crm.competitor.btn_view')}
+                               <RiMapLine className="h-3 w-3 mr-1" /> {t('app.crm.competitor.btn_view')}
                              </Button>
                           )}
                           <Button
@@ -879,7 +879,7 @@ export default function CompetitorPage() {
                             size="icon"
                             onClick={() => removeLocation(index)}
                           >
-                            <Trash2 className="h-4 w-4 text-muted-foreground" />
+                            <RiDeleteBinLine className="h-4 w-4 text-muted-foreground" />
                           </Button>
                         </div>
                       </div>

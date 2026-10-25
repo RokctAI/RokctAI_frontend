@@ -25,7 +25,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { RiLoader4Line } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -125,7 +125,7 @@ export function ListForm({ onSuccess, onError, defaultValues }: ListFormProps) {
             <Button type="submit" disabled={submitting} className="w-full">
               {submitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
                   Executing...
                 </>
               ) : (

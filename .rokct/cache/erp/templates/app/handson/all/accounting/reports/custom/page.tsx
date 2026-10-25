@@ -27,14 +27,14 @@ import {
 } from "@/components/ui/card";
 import { runFinancialReport } from "@/app/actions/handson/all/reports/financial";
 import {
-  Loader2,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  PieChart,
-  ShoppingCart,
-  Download,
-} from "lucide-react";
+  RiArrowRightDownLine,
+  RiArrowRightUpLine,
+  RiDownloadLine,
+  RiLoader4Line,
+  RiMoneyDollarCircleLine,
+  RiPieChartLine,
+  RiShoppingCartLine,
+} from "@remixicon/react";
 import t from "@/app/lib/i18n";
 import {
   Select,
@@ -116,7 +116,7 @@ export default function FinancialDashboard() {
   if (loading) {
     return (
       <div className="p-12 flex justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -148,7 +148,7 @@ export default function FinancialDashboard() {
             </SelectContent>
           </Select>
           <Button variant="outline">
-            <Download className="mr-2 h-4 w-4" /> {t('common.export') || 'Export'}
+            <RiDownloadLine className="mr-2 h-4 w-4" /> {t('common.export') || 'Export'}
           </Button>
         </div>
       </div>
@@ -167,7 +167,7 @@ export default function FinancialDashboard() {
                 <CardTitle className="text-sm font-medium">
                   Total Income
                 </CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <RiMoneyDollarCircleLine className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
@@ -184,7 +184,7 @@ export default function FinancialDashboard() {
                 <CardTitle className="text-sm font-medium">
                   Total Expenses
                 </CardTitle>
-                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                <RiShoppingCartLine className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-red-600">
@@ -201,7 +201,7 @@ export default function FinancialDashboard() {
                 <CardTitle className="text-sm font-medium">
                   Net Profit
                 </CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                <RiArrowRightUpLine className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div

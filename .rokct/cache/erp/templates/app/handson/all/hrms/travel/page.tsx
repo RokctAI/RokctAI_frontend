@@ -25,7 +25,12 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plane, Plus, MapPin, Calendar } from "lucide-react";
+import {
+  RiAddLine,
+  RiCalendarLine,
+  RiMapPinLine,
+  RiPlaneLine,
+} from "@remixicon/react";
 import Link from "next/link";
 import { getTravelRequests } from "@/app/actions/handson/all/hrms/travel";
 import { format } from "date-fns";
@@ -54,7 +59,7 @@ export default function TravelPage() {
         </div>
         <Link href="/handson/all/hr/travel/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> New Travel Request
+            <RiAddLine className="mr-2 h-4 w-4" /> New Travel Request
           </Button>
         </Link>
       </div>
@@ -62,7 +67,7 @@ export default function TravelPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {requests.length === 0 ? (
           <div className="col-span-full text-center py-12 text-muted-foreground border rounded-lg bg-slate-50 flex flex-col items-center gap-2">
-            <Plane className="h-10 w-10 opacity-20" />
+            <RiPlaneLine className="h-10 w-10 opacity-20" />
             No travel requests found.
           </div>
         ) : (
@@ -89,11 +94,11 @@ export default function TravelPage() {
               </CardHeader>
               <CardContent className="pt-4 space-y-3">
                 <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <MapPin className="h-4 w-4 text-primary" />
+                  <RiMapPinLine className="h-4 w-4 text-primary" />
                   <span className="font-medium">{req.destination}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <RiCalendarLine className="h-4 w-4 text-muted-foreground" />
                   <span>
                     {format(new Date(req.start_date), "MMM d")} -{" "}
                     {format(new Date(req.end_date), "MMM d, yyyy")}

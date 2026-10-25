@@ -16,7 +16,7 @@
 
 "use client";
 
-import { CheckIcon, ChevronDownIcon } from "@radix-ui/react-icons";
+import { RiCheckLine, RiArrowDownSLine } from "@remixicon/react";
 import * as React from "react";
 
 import { AI_MODELS } from "@/ai/models";
@@ -58,7 +58,7 @@ export function ModelSelector({
               ? models.PAID.label
               : models.FREE.label}
           </span>
-          <ChevronDownIcon className="size-3 text-zinc-500" />
+          <RiArrowDownSLine className="size-3 text-zinc-500" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-[200px]">
@@ -73,7 +73,7 @@ export function ModelSelector({
             </span>
           </div>
           {selectedModelId === models.FREE.id && (
-            <CheckIcon className="size-4 text-emerald-500" />
+            <RiCheckLine className="size-4 text-emerald-500" />
           )}
         </DropdownMenuItem>
 
@@ -102,7 +102,7 @@ export function ModelSelector({
             </span>
           </div>
           {selectedModelId === models.PAID.id && (
-            <CheckIcon className="size-4 text-emerald-500" />
+            <RiCheckLine className="size-4 text-emerald-500" />
           )}
         </DropdownMenuItem>
       </DropdownMenuContent>

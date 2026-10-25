@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { RiLoader4Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -94,7 +94,7 @@ export default function LanguagesPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  <Loader2 className="size-6 animate-spin mx-auto" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             ) : languages.length === 0 ? (
@@ -128,7 +128,7 @@ export default function LanguagesPage() {
                         }
                       />
                       {saving === lang.name && (
-                        <Loader2 className="size-4 animate-spin text-muted-foreground" />
+                        <RiLoader4Line className="size-4 animate-spin text-muted-foreground" />
                       )}
                     </div>
                   </TableCell>

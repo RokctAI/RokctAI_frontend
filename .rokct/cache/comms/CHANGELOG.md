@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+* fix(icons): every `lucide-react` icon moves to its `@remixicon/react`
+  equivalent (one icon set across the fleet). The manifest depends on
+  `@remixicon/react` `^4.6.0` instead of `lucide-react`. Icons only.
+
 ## 1.1.0
 
 * The server actions call the platform through `paasCall` from the

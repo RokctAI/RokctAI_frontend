@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Loader2, Plus, ArrowLeft } from "lucide-react";
+import { RiAddLine, RiArrowLeftLine, RiLoader4Line } from "@remixicon/react";
 import { toast } from "sonner";
 import {
   getSubscriptionPlans,
@@ -72,7 +72,7 @@ export function SubscriptionPlanList() {
             router.push("/handson/all/commercial/subscriptions/plan/new")
           }
         >
-          <Plus className="h-4 w-4 mr-2" /> New Plan
+          <RiAddLine className="h-4 w-4 mr-2" /> New Plan
         </Button>
       </div>
       <Card>
@@ -124,7 +124,7 @@ export function SubscriptionPlanForm() {
   return (
     <div className="space-y-6 max-w-xl mx-auto">
       <Button variant="ghost" size="icon" onClick={() => router.back()}>
-        <ArrowLeft className="h-4 w-4" />
+        <RiArrowLeftLine className="h-4 w-4" />
       </Button>
       <Card>
         <CardHeader>
@@ -212,7 +212,7 @@ export function SubscriptionList() {
             )
           }
         >
-          <Plus className="h-4 w-4 mr-2" /> New Subscription
+          <RiAddLine className="h-4 w-4 mr-2" /> New Subscription
         </Button>
       </div>
       <Card>
@@ -272,7 +272,7 @@ export function SubscriptionForm() {
   return (
     <div className="space-y-6 max-w-xl mx-auto">
       <Button variant="ghost" size="icon" onClick={() => router.back()}>
-        <ArrowLeft className="h-4 w-4" />
+        <RiArrowLeftLine className="h-4 w-4" />
       </Button>
       <Card>
         <CardHeader>

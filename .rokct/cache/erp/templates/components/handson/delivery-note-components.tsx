@@ -17,7 +17,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { RiAddLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -39,7 +39,7 @@ export function DeliveryNoteList({ notes }: { notes: any[] }) {
         <h1 className="text-2xl font-bold">Delivery Notes</h1>
         <Link href="/handson/all/commercial/selling/delivery-note/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> Ship Goods
+            <RiAddLine className="mr-2 h-4 w-4" /> Ship Goods
           </Button>
         </Link>
       </div>

@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { RiLoader4Line, RiPencilLine, RiAddLine, RiDeleteBinLine } from "@remixicon/react";
 import { useCallback, useEffect, useState } from "react";
 
 import {
@@ -167,7 +167,7 @@ function SubscribersTab() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center">
-                  <Loader2 className="size-6 animate-spin mx-auto" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             ) : rows.length === 0 ? (
@@ -313,7 +313,7 @@ export default function CustomerSubscriptionsPage() {
             setEditing({ ...EMPTY_PLAN, benefits: [...EMPTY_PLAN.benefits] })
           }
         >
-          <Plus className="size-4 mr-2" /> New plan
+          <RiAddLine className="size-4 mr-2" /> New plan
         </Button>
         )}
       </div>
@@ -356,7 +356,7 @@ export default function CustomerSubscriptionsPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
-                  <Loader2 className="size-6 animate-spin mx-auto" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             ) : plans.length === 0 ? (
@@ -399,7 +399,7 @@ export default function CustomerSubscriptionsPage() {
                         setEditing({ ...plan, benefits: [...plan.benefits] })
                       }
                     >
-                      <Pencil className="size-4" />
+                      <RiPencilLine className="size-4" />
                     </Button>
                     <Button
                       size="icon"
@@ -407,7 +407,7 @@ export default function CustomerSubscriptionsPage() {
                       aria-label="Delete"
                       onClick={() => onDelete(plan)}
                     >
-                      <Trash2 className="size-4" />
+                      <RiDeleteBinLine className="size-4" />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -515,7 +515,7 @@ export default function CustomerSubscriptionsPage() {
                       })
                     }
                   >
-                    <Plus className="size-4 mr-1" /> Add benefit
+                    <RiAddLine className="size-4 mr-1" /> Add benefit
                   </Button>
                 </div>
                 {editing.benefits.map((b, i) => (
@@ -572,7 +572,7 @@ export default function CustomerSubscriptionsPage() {
                         })
                       }
                     >
-                      <Trash2 className="size-4" />
+                      <RiDeleteBinLine className="size-4" />
                     </Button>
                   </div>
                 ))}
@@ -585,7 +585,7 @@ export default function CustomerSubscriptionsPage() {
               Cancel
             </Button>
             <Button onClick={onSave} disabled={saving || !editing?.plan_name}>
-              {saving && <Loader2 className="size-4 mr-2 animate-spin" />}
+              {saving && <RiLoader4Line className="size-4 mr-2 animate-spin" />}
               Save
             </Button>
           </DialogFooter>

@@ -64,9 +64,10 @@ export const dynamic = "force-dynamic";
 // so a shared /landing link unfurls right even before the host layout
 // adopts buildSiteMetadata(). The page form keeps the title absolute, so a
 // layout that already applies the `%s — <siteName>` template does not
-// suffix it twice.
+// suffix it twice. Its canonical is its own address (1.52.0): `/` only
+// redirects here, so it cannot be the canonical one.
 export async function generateMetadata() {
-  return buildPageMetadata();
+  return buildPageMetadata(undefined, "/landing");
 }
 
 /**

@@ -1,3 +1,9 @@
+## 1.1.4
+
+* fix(icons): lucide-react icons replaced with `@remixicon/react`
+  components per the fleet icon standard; the manifest deps swap
+  `lucide-react` for `@remixicon/react` ^4.6.0.
+
 ## 1.1.3
 
 * fix(admin finance): payout requests list and approve/reject call the new

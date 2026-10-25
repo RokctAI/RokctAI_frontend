@@ -18,7 +18,13 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Target, Award, Plus, Calendar, TrendingUp } from "lucide-react";
+import {
+  RiAddLine,
+  RiArrowRightUpLine,
+  RiAwardLine,
+  RiCalendarLine,
+  RiFocus3Line,
+} from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -106,7 +112,7 @@ export default function PerformancePage() {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold flex items-center gap-2">
-          <Target className="h-8 w-8" /> Performance & Goals
+          <RiFocus3Line className="h-8 w-8" /> Performance & Goals
         </h1>
         <p className="text-muted-foreground">
           Track employee targets and appraisals.
@@ -123,7 +129,7 @@ export default function PerformancePage() {
           <div className="flex justify-end">
             {canEdit && (
               <Button onClick={() => setIsGoalOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" /> New Goal
+                <RiAddLine className="mr-2 h-4 w-4" /> New Goal
               </Button>
             )}
           </div>
@@ -146,7 +152,7 @@ export default function PerformancePage() {
                       {goal.status}
                     </Badge>
                     <span className="text-xs text-muted-foreground flex items-center">
-                      <Calendar className="mr-1 h-3 w-3" />{" "}
+                      <RiCalendarLine className="mr-1 h-3 w-3" />{" "}
                       {goal.end_date || "No Deadline"}
                     </span>
                   </div>
@@ -178,7 +184,7 @@ export default function PerformancePage() {
                 <CardHeader>
                   <div className="flex justify-between">
                     <CardTitle className="flex items-center gap-2">
-                      <Award className="h-5 w-5 text-yellow-500" />
+                      <RiAwardLine className="h-5 w-5 text-yellow-500" />
                       {app.employee_name}
                     </CardTitle>
                     <Badge>{app.status}</Badge>

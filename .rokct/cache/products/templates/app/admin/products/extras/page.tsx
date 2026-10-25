@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { RiLoader4Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getAllProductExtraGroups } from "@/app/actions/products/admin/products";
@@ -65,7 +65,7 @@ export default function ProductExtrasPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={3} className="h-24 text-center">
-                  <Loader2 className="size-6 animate-spin mx-auto" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             ) : extras.length === 0 ? (

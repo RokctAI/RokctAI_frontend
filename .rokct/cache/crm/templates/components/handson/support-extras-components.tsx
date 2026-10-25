@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Loader2, Plus, ArrowLeft } from "lucide-react";
+import { RiAddLine, RiArrowLeftLine, RiLoader4Line } from "@remixicon/react";
 import { toast } from "sonner";
 import {
   getServiceLevelAgreements,
@@ -73,7 +73,7 @@ export function ServiceLevelAgreementList() {
         <Button
           onClick={() => router.push("/handson/all/commercial/support/sla/new")}
         >
-          <Plus className="h-4 w-4 mr-2" /> New SLA
+          <RiAddLine className="h-4 w-4 mr-2" /> New SLA
         </Button>
       </div>
       <Card>
@@ -124,7 +124,7 @@ export function ServiceLevelAgreementForm() {
   return (
     <div className="space-y-6 max-w-xl mx-auto">
       <Button variant="ghost" size="icon" onClick={() => router.back()}>
-        <ArrowLeft className="h-4 w-4" />
+        <RiArrowLeftLine className="h-4 w-4" />
       </Button>
       <Card>
         <CardHeader>
@@ -192,7 +192,7 @@ export function WarrantyClaimList() {
             router.push("/handson/all/commercial/support/warranty/new")
           }
         >
-          <Plus className="h-4 w-4 mr-2" /> New Claim
+          <RiAddLine className="h-4 w-4 mr-2" /> New Claim
         </Button>
       </div>
       <Card>
@@ -253,7 +253,7 @@ export function WarrantyClaimForm() {
   return (
     <div className="space-y-6 max-w-xl mx-auto">
       <Button variant="ghost" size="icon" onClick={() => router.back()}>
-        <ArrowLeft className="h-4 w-4" />
+        <RiArrowLeftLine className="h-4 w-4" />
       </Button>
       <Card>
         <CardHeader>

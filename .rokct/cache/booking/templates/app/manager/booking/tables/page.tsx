@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Pencil, Trash2, Armchair } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiPencilLine, RiDeleteBinLine, RiSofaLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -233,7 +233,7 @@ export default function TablesPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -263,7 +263,7 @@ export default function TablesPage() {
               variant="ghost"
               onClick={() => handleOpenSectionDialog()}
             >
-              <Plus className="size-4" />
+              <RiAddLine className="size-4" />
             </Button>
           </CardHeader>
           <CardContent className="pt-4">
@@ -285,7 +285,7 @@ export default function TablesPage() {
                         handleOpenSectionDialog(section);
                       }}
                     >
-                      <Pencil className="size-3" />
+                      <RiPencilLine className="size-3" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -296,7 +296,7 @@ export default function TablesPage() {
                         handleDeleteSection(section.name);
                       }}
                     >
-                      <Trash2 className="size-3" />
+                      <RiDeleteBinLine className="size-3" />
                     </Button>
                   </div>
                 </div>
@@ -328,7 +328,7 @@ export default function TablesPage() {
             </div>
             {selectedSection && (
               <Button onClick={() => handleOpenTableDialog()}>
-                <Plus className="mr-2 size-4" />
+                <RiAddLine className="mr-2 size-4" />
                 {t("app.paas.dashboard.booking.tables.btn_add_table")}
               </Button>
             )}
@@ -336,7 +336,7 @@ export default function TablesPage() {
           <CardContent>
             {!selectedSection ? (
               <div className="flex flex-col items-center justify-center h-48 text-muted-foreground">
-                <Armchair className="size-12 mb-4 opacity-20" />
+                <RiSofaLine className="size-12 mb-4 opacity-20" />
                 <p>
                   {t(
                     "app.paas.dashboard.booking.tables.select_zone_placeholder",
@@ -378,7 +378,7 @@ export default function TablesPage() {
                             size="icon"
                             onClick={() => handleOpenTableDialog(table)}
                           >
-                            <Pencil className="size-4" />
+                            <RiPencilLine className="size-4" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -386,7 +386,7 @@ export default function TablesPage() {
                             className="text-red-500 hover:text-red-600"
                             onClick={() => handleDeleteTable(table.name)}
                           >
-                            <Trash2 className="size-4" />
+                            <RiDeleteBinLine className="size-4" />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -431,7 +431,7 @@ export default function TablesPage() {
           <DialogFooter>
             <Button onClick={handleSectionSubmit} disabled={processing}>
               {processing ? (
-                <Loader2 className="size-4 animate-spin" />
+                <RiLoader4Line className="size-4 animate-spin" />
               ) : editingSection ? (
                 t("app.paas.dashboard.booking.tables.btn_update_zone")
               ) : (
@@ -487,7 +487,7 @@ export default function TablesPage() {
           <DialogFooter>
             <Button onClick={handleTableSubmit} disabled={processing}>
               {processing ? (
-                <Loader2 className="size-4 animate-spin" />
+                <RiLoader4Line className="size-4 animate-spin" />
               ) : editingTable ? (
                 t("app.paas.dashboard.booking.tables.btn_update_table")
               ) : (

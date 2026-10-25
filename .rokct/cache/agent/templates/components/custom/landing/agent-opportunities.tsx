@@ -31,7 +31,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ExternalLink, Loader2, X } from "lucide-react";
+import { RiArrowDownSLine, RiExternalLinkLine, RiLoader4Line, RiCloseLine } from "@remixicon/react";
 
 import { searchPublicOpportunities } from "@/app/actions/ai/opportunities";
 import t from "@/app/lib/i18n";
@@ -236,7 +236,7 @@ export default function AgentOpportunitiesSection({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-1 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-[20px] hover:text-zinc-900 dark:hover:text-white transition-all text-sm font-medium border border-zinc-200 dark:border-zinc-700">
-                    {activeFilter} <ChevronDown size={14} />
+                    {activeFilter} <RiArrowDownSLine size={14} />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
@@ -261,7 +261,7 @@ export default function AgentOpportunitiesSection({
                 className="p-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
                 aria-label={t("common.close_results")}
               >
-                <X size={18} />
+                <RiCloseLine size={18} />
               </button>
             </div>
           )}
@@ -269,7 +269,7 @@ export default function AgentOpportunitiesSection({
           <div className="max-h-[400px] overflow-y-auto p-4 space-y-6">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-10 space-y-4">
-                <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+                <RiLoader4Line className="w-8 h-8 animate-spin text-purple-500" />
                 <p className="text-zinc-500 dark:text-zinc-400 animate-pulse">
                   {LOADING_MESSAGES[loadingStep]}
                 </p>
@@ -294,7 +294,7 @@ export default function AgentOpportunitiesSection({
                     className="text-xl text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center gap-2"
                   >
                     {result.title}
-                    <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <RiExternalLinkLine className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <div className="flex flex-wrap items-center gap-2 mt-1">
                     <Badge

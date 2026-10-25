@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, RefreshCw } from "lucide-react";
+import { RiLoader4Line, RiRefreshLine } from "@remixicon/react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -76,7 +76,7 @@ export default function SystemUpdatePage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <Alert>
-            <RefreshCw className="size-4" />
+            <RiRefreshLine className="size-4" />
             <AlertTitle>Note</AlertTitle>
             <AlertDescription>
               For tenant sites, this action will only run database migrations
@@ -86,7 +86,7 @@ export default function SystemUpdatePage() {
           </Alert>
 
           <Button onClick={handleUpdate} disabled={loading}>
-            {loading && <Loader2 className="mr-2 size-4 animate-spin" />}
+            {loading && <RiLoader4Line className="mr-2 size-4 animate-spin" />}
             Trigger Update
           </Button>
         </CardContent>

@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Trash2, Package } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine, RiBox3Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -97,7 +97,7 @@ export default function CombosPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -114,7 +114,7 @@ export default function CombosPage() {
           </p>
         </div>
         <Button onClick={() => setIsDialogOpen(true)}>
-          <Plus className="mr-2 size-4" />{" "}
+          <RiAddLine className="mr-2 size-4" />{" "}
           {t("app.paas.dashboard.products.combos.btn_add")}
         </Button>
       </div>
@@ -133,7 +133,7 @@ export default function CombosPage() {
                 <CardTitle className="text-sm font-medium">
                   {combo.name}
                 </CardTitle>
-                <Package className="size-4 text-muted-foreground" />
+                <RiBox3Line className="size-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between items-center mt-4">
@@ -144,7 +144,7 @@ export default function CombosPage() {
                     className="text-red-500"
                     onClick={() => handleDelete(combo.name)}
                   >
-                    <Trash2 className="size-4" />
+                    <RiDeleteBinLine className="size-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -195,7 +195,7 @@ export default function CombosPage() {
           <DialogFooter>
             <Button onClick={handleSubmit} disabled={processing}>
               {processing ? (
-                <Loader2 className="size-4 animate-spin" />
+                <RiLoader4Line className="size-4 animate-spin" />
               ) : (
                 t("common.create")
               )}

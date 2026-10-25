@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Save, ArrowLeft } from "lucide-react";
+import { RiLoader4Line, RiSaveLine, RiArrowLeftLine } from "@remixicon/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -107,7 +107,7 @@ export default function WorkingHoursPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -117,7 +117,7 @@ export default function WorkingHoursPage() {
       <div className="flex items-center gap-4">
         <Link href="/manager/settings">
           <Button variant="ghost" size="icon">
-            <ArrowLeft className="size-4" />
+            <RiArrowLeftLine className="size-4" />
           </Button>
         </Link>
         <h1 className="text-3xl font-bold">
@@ -195,12 +195,12 @@ export default function WorkingHoursPage() {
           <Button type="submit" disabled={saving} size="lg">
             {saving ? (
               <>
-                <Loader2 className="mr-2 size-4 animate-spin" />
+                <RiLoader4Line className="mr-2 size-4 animate-spin" />
                 {t("common.saving")}
               </>
             ) : (
               <>
-                <Save className="mr-2 size-4" />
+                <RiSaveLine className="mr-2 size-4" />
                 {t("app.paas.dashboard.settings.working_hours.btn_save")}
               </>
             )}

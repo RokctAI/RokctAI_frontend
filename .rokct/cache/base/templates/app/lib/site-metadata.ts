@@ -263,6 +263,17 @@ export interface BuildSiteMetadataOptions {
    * template a second time.
    */
   scope?: "layout" | "page";
+  /**
+   * The path this Metadata is served at, e.g. "/landing" (1.52.0). When
+   * given it becomes the page's canonical URL and its Open Graph `url`;
+   * without it the result carries neither, so a search engine takes the
+   * page's own address. Before 1.52.0 every Metadata hard-coded
+   * `canonical: "/"`, and since a layout's `alternates` is inherited by
+   * every page below it, /about, /login and the rest all told Google they
+   * were copies of the home page - which, in a shell whose `/` redirects
+   * to /landing, is a URL that is itself a redirect.
+   */
+  path?: string;
 }
 
 /**
@@ -303,10 +314,10 @@ export async function buildSiteMetadata(
     ...(copy.keywords && copy.keywords.length > 0
       ? { keywords: copy.keywords }
       : {}),
-    alternates: { canonical: "/" },
+    ...(options.path ? { alternates: { canonical: options.path } } : {}),
     openGraph: {
       type: "website",
-      url: "/",
+      ...(options.path ? { url: options.path } : {}),
       siteName,
       title,
       description,
@@ -336,9 +347,11 @@ export async function buildSiteMetadata(
  * it): the title is absolute, so a layout that already applies the
  * `%s — <siteName>` template does not suffix it twice, and it carries NO
  * `icons` (1.20.0), so the layout stays the single owner of the favicon.
+ * `path` (1.52.0) is the page's own address, its canonical URL.
  */
 export function buildPageMetadata(
   overrides?: Partial<Metadata>,
+  path?: string,
 ): Promise<Metadata> {
-  return buildSiteMetadata(overrides, { scope: "page" });
+  return buildSiteMetadata(overrides, { scope: "page", path });
 }

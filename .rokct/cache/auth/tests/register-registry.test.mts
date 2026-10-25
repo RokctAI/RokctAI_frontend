@@ -22,6 +22,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
+  APP_ROLE_FIELD,
   DEFAULT_REGISTER_CONFIG,
   loadRegisterConfig,
   registerOffered,
@@ -57,7 +58,10 @@ describe('nothing injected: auth_sdk\'s own register page', () => {
   it('is offered, with the account fields only and the platform\'s words', async () => {
     const config = await loadRegisterConfig([]);
     assert.equal(config.enabled, true);
-    assert.deepEqual(config.fields, []);
+    // The account fields, plus the hidden role a ?role= link asks for.
+    assert.deepEqual(config.fields, [APP_ROLE_FIELD]);
+    assert.equal(APP_ROLE_FIELD.type, 'hidden');
+    assert.equal(APP_ROLE_FIELD.fromQuery, 'role');
     assert.deepEqual(config.steps, []);
     assert.deepEqual(config.copy, DEFAULT_REGISTER_CONFIG.copy);
     assert.equal(registerOffered(null), true);

@@ -1,5 +1,41 @@
 # Changelog
 
+## 1.52.1
+
+* fix: `components/ui/select.tsx` is prettier-formatted (its icon import is
+  wrapped). The fleet linter reformatted it in every app that tracks it, and
+  the next compose put the long line back (supacharge-web a0e95f6, #82).
+  Ray asked for that fix at source; the installer banner's double blank line
+  is fixed in the protocol.
+
+## 1.52.0
+
+* fix(seo): `buildSiteMetadata()` no longer sets `canonical: "/"` and
+  `og:url` "/" on every page. A layout's `alternates` is inherited by every
+  page below it, so /about, /login and the rest all declared themselves
+  copies of `/`, which in an lms or agent shell is itself a redirect to
+  /landing. A new `path` option (and a second `buildPageMetadata()`
+  argument) sets the canonical and `og:url`; the landing page passes
+  `/landing`. Pages that pass no path carry no canonical. Existing callers
+  keep compiling unchanged.
+
+## 1.51.0
+
+* feat: the 25 shadcn primitives every host carried as an identical copy now
+  ship as templates (`templates/components/ui/` -> `components/ui/`): alert,
+  avatar, badge, breadcrumb, button, calendar, card, collapsible, dialog,
+  dropdown-menu, input, label, popover, progress, radio-group, scroll-area,
+  select, separator, sheet, sidebar, skeleton, switch, table, tabs, tooltip.
+  The ones listed under `requires` leave it. `textarea.tsx` and
+  `components/custom/theme-toggle.tsx` stay host-owned because hosts customise
+  them. Hosts can drop their own copies after a compose refresh.
+
+## 1.50.1
+
+* fix(icons): every `lucide-react` icon moves to its `@remixicon/react`
+  equivalent (one icon set across the fleet). The manifest depends on
+  `@remixicon/react` `^4.6.0` instead of `lucide-react`. Icons only.
+
 ## 1.50.0
 
 * feat: admin nav Finance section gains **Customer Subscriptions**

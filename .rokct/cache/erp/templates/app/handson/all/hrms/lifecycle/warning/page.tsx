@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, Plus } from "lucide-react";
+import { RiAddLine, RiAlertLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -101,7 +101,7 @@ export default function WarningPage() {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button variant="destructive">
-              <Plus className="mr-2 h-4 w-4" /> Issue Warning
+              <RiAddLine className="mr-2 h-4 w-4" /> Issue Warning
             </Button>
           </DialogTrigger>
           <DialogContent>

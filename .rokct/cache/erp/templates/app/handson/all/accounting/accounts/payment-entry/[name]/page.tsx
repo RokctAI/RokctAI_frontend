@@ -20,13 +20,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  ArrowLeft,
-  Loader2,
-  Ban,
-  Copy,
-  CheckCircle,
-  AlertOctagon,
-} from "lucide-react";
+  RiArrowLeftLine,
+  RiCheckboxCircleLine,
+  RiErrorWarningLine,
+  RiFileCopyLine,
+  RiForbidLine,
+  RiLoader4Line,
+} from "@remixicon/react";
 import { auth } from "@/app/(auth)/auth";
 import { getSessionCurrency } from "@/app/actions/currency"; // New import
 import { Button } from "@/components/ui/button";
@@ -126,7 +126,7 @@ export default function PaymentDetailPage({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4" />
+            <RiArrowLeftLine className="h-4 w-4" />
           </Button>
           <div>
             <h1 className="text-2xl font-bold">{payment.name}</h1>
@@ -141,16 +141,16 @@ export default function PaymentDetailPage({
               disabled={cancelLoading}
             >
               {cancelLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <Ban className="mr-2 h-4 w-4" />
+                <RiForbidLine className="mr-2 h-4 w-4" />
               )}
               Cancel
             </Button>
           )}
           {payment.docstatus === 2 && ( // 2 = Cancelled
             <Button variant="default" onClick={handleAmend}>
-              <Copy className="mr-2 h-4 w-4" />
+              <RiFileCopyLine className="mr-2 h-4 w-4" />
               Amend
             </Button>
           )}

@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft } from "lucide-react";
+import { RiArrowLeftLine, RiSaveLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -85,12 +85,12 @@ export default function NewSeparationPage() {
       <div className="flex justify-between items-center">
         <Link href="/handson/all/hr/personnel">
           <Button variant="outline" size="icon">
-            <ArrowLeft className="h-4 w-4" />
+            <RiArrowLeftLine className="h-4 w-4" />
           </Button>
         </Link>
         <h1 className="text-2xl font-bold">Record Resignation</h1>
         <Button type="submit" disabled={loading} variant="destructive">
-          <Save className="mr-2 h-4 w-4" /> Submit
+          <RiSaveLine className="mr-2 h-4 w-4" /> Submit
         </Button>
       </div>
 

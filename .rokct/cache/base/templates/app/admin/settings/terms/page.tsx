@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Trash2, Edit, Save, X } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine, RiPencilLine, RiSaveLine, RiCloseLine } from "@remixicon/react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -124,7 +124,7 @@ export default function TermsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="size-8 animate-spin" />
+        <RiLoader4Line className="size-8 animate-spin" />
       </div>
     );
   }
@@ -141,7 +141,7 @@ export default function TermsPage() {
           </p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
-          <Plus className="mr-2 size-4" />
+          <RiAddLine className="mr-2 size-4" />
           Add Term
         </Button>
       </div>
@@ -170,7 +170,7 @@ export default function TermsPage() {
                     size="icon"
                     onClick={() => handleOpenDialog(term)}
                   >
-                    <Edit className="size-4" />
+                    <RiPencilLine className="size-4" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -178,7 +178,7 @@ export default function TermsPage() {
                     className="text-destructive"
                     onClick={() => handleDelete(term.name)}
                   >
-                    <Trash2 className="size-4" />
+                    <RiDeleteBinLine className="size-4" />
                   </Button>
                 </div>
               </div>

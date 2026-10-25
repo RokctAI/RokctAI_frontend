@@ -20,7 +20,7 @@ export class OrganizationService {
   static async getList(page = 1, limit = 20, options?: ServiceOptions) {
     const start = (page - 1) * limit;
     const response = await BaseService.call(
-      "frappe.client.get_list",
+      "api.crm.records.get_list",
       {
         doctype: "Prospect",
         fields: [
@@ -39,18 +39,14 @@ export class OrganizationService {
     );
 
     const countRes = await BaseService.call(
-      "frappe.client.get_value",
-      {
-        doctype: "Prospect",
-        filters: {},
-        fieldname: "count(name) as total",
-      },
+      "api.crm.records.get_count",
+      { doctype: "Prospect" },
       options,
     );
 
     return {
       data: response?.message || [],
-      total: countRes?.message?.total || 0,
+      total: countRes?.message || 0,
       page,
       limit,
     };
@@ -58,7 +54,7 @@ export class OrganizationService {
 
   static async get(name: string, options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.get",
+      "api.crm.records.get_doc",
       {
         doctype: "Prospect",
         name: name,

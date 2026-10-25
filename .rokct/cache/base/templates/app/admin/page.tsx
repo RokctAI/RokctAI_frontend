@@ -17,17 +17,17 @@
 "use client";
 
 import {
-  Loader2,
-  ShoppingBag,
-  Users,
-  DollarSign,
-  Store,
-  Package,
-  XCircle,
-  CheckCircle,
-  Star,
-  Box,
-} from "lucide-react";
+  RiLoader4Line,
+  RiShoppingBagLine,
+  RiGroupLine,
+  RiMoneyDollarCircleLine,
+  RiStore2Line,
+  RiArchiveLine,
+  RiCloseCircleLine,
+  RiCheckboxCircleLine,
+  RiStarLine,
+  RiBox3Line,
+} from "@remixicon/react";
 import { useEffect, useState } from "react";
 import {
   BarChart,
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -94,7 +94,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="size-4 text-muted-foreground" />
+            <RiMoneyDollarCircleLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <ShoppingBag className="size-4 text-muted-foreground" />
+            <RiShoppingBagLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{cards.total_orders || 0}</div>
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="size-4 text-muted-foreground" />
+            <RiGroupLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{cards.total_users || 0}</div>
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Shops</CardTitle>
-            <Store className="size-4 text-muted-foreground" />
+            <RiStore2Line className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{cards.total_shops || 0}</div>
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-            <Package className="size-4 text-blue-500" />
+            <RiArchiveLine className="size-4 text-blue-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Delivered</CardTitle>
-            <CheckCircle className="size-4 text-green-500" />
+            <RiCheckboxCircleLine className="size-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -164,7 +164,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Cancelled</CardTitle>
-            <XCircle className="size-4 text-red-500" />
+            <RiCloseCircleLine className="size-4 text-red-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -176,7 +176,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Products</CardTitle>
-            <Box className="size-4 text-muted-foreground" />
+            <RiBox3Line className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Reviews</CardTitle>
-            <Star className="size-4 text-yellow-500" />
+            <RiStarLine className="size-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{cards.total_reviews || 0}</div>

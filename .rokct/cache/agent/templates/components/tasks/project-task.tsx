@@ -16,7 +16,7 @@
 
 "use client";
 
-import { UserCircle2 } from "lucide-react";
+import { RiAccountCircleLine } from "@remixicon/react";
 import Image from "next/image";
 import React from "react";
 
@@ -123,7 +123,7 @@ export function ProjectTask({ task }: { task: ProjectTaskProps }) {
                   key={assignee.id}
                   className="inline-flex items-center justify-center size-8 rounded-full ring-2 ring-zinc-900 bg-zinc-700"
                 >
-                  <UserCircle2 className="size-6 text-zinc-400" />
+                  <RiAccountCircleLine className="size-6 text-zinc-400" />
                 </div>
               ),
             )

@@ -1,6 +1,6 @@
 {
   "name": "promotions_sdk",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "installs": [
     {
       "from": "templates/app/actions/promotions/admin/marketing.ts",
@@ -47,7 +47,9 @@
       "to": "app/manager/marketing/coupons/page.tsx"
     }
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@remixicon/react": "^4.6.0"
+  },
   "devDependencies": {},
   "integrations": [],
   "requires": [

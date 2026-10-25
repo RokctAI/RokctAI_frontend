@@ -17,14 +17,14 @@
 "use client";
 
 import {
-  BarChart3,
-  ShoppingBag,
-  Package,
-  Layers,
-  TrendingUp,
-  DollarSign,
-  PieChart,
-} from "lucide-react";
+  RiBarChartBoxLine,
+  RiShoppingBagLine,
+  RiArchiveLine,
+  RiStackLine,
+  RiLineChartLine,
+  RiMoneyDollarCircleLine,
+  RiPieChartLine,
+} from "@remixicon/react";
 import Link from "next/link";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,49 +33,49 @@ const reports = [
   {
     title: "Products Report",
     description: "Sales performance by product",
-    icon: Package,
+    icon: RiArchiveLine,
     href: "/admin/reports/products",
     color: "text-blue-500",
   },
   {
     title: "Orders Report",
     description: "Order volume and status trends",
-    icon: ShoppingBag,
+    icon: RiShoppingBagLine,
     href: "/admin/reports/orders",
     color: "text-green-500",
   },
   {
     title: "Stock Report",
     description: "Inventory levels and low stock alerts",
-    icon: Layers,
+    icon: RiStackLine,
     href: "/admin/reports/stock",
     color: "text-orange-500",
   },
   {
     title: "Categories Report",
     description: "Performance by product category",
-    icon: PieChart,
+    icon: RiPieChartLine,
     href: "/admin/reports/categories",
     color: "text-purple-500",
   },
   {
     title: "Overview Report",
     description: "High-level system metrics",
-    icon: BarChart3,
+    icon: RiBarChartBoxLine,
     href: "/admin/reports/overview",
     color: "text-indigo-500",
   },
   {
     title: "Revenue Report",
     description: "Financial performance and earnings",
-    icon: DollarSign,
+    icon: RiMoneyDollarCircleLine,
     href: "/admin/reports/revenue",
     color: "text-emerald-500",
   },
   {
     title: "Variation Report",
     description: "Sales by product variations/extras",
-    icon: TrendingUp,
+    icon: RiLineChartLine,
     href: "/admin/reports/variation",
     color: "text-pink-500",
   },

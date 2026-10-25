@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Wallet } from "lucide-react";
+import { RiLoader4Line, RiWalletLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getWallets } from "@/app/actions/users/admin/customers";
@@ -64,7 +64,7 @@ export default function WalletsPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={3} className="h-24 text-center">
-                  <Loader2 className="size-6 animate-spin mx-auto" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             ) : wallets.length === 0 ? (
@@ -82,7 +82,7 @@ export default function WalletsPage() {
                   <TableCell className="font-medium">{wallet.user}</TableCell>
                   <TableCell>{wallet.type}</TableCell>
                   <TableCell className="text-right font-bold flex items-center justify-end gap-2">
-                    <Wallet className="size-4 text-muted-foreground" />$
+                    <RiWalletLine className="size-4 text-muted-foreground" />$
                     {wallet.balance.toFixed(2)}
                   </TableCell>
                 </TableRow>

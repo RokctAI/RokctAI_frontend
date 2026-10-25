@@ -26,7 +26,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Save } from "lucide-react";
+import { RiSaveLine } from "@remixicon/react";
 import { toast } from "sonner";
 
 export default function CrmSettingsPage() {
@@ -45,7 +45,7 @@ export default function CrmSettingsPage() {
           </p>
         </div>
         <Button onClick={handleSave}>
-          <Save className="mr-2 h-4 w-4" />
+          <RiSaveLine className="mr-2 h-4 w-4" />
           Save Changes
         </Button>
       </div>

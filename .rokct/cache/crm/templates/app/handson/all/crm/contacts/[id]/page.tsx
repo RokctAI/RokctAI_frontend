@@ -22,15 +22,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ActivityTimeline } from "@/components/handson/activity-timeline";
 import {
-  ArrowLeft,
-  Building2,
-  UserCircle,
-  Briefcase,
-  Mail,
-  Phone,
-  Calendar,
-  MapPin,
-} from "lucide-react";
+  RiAccountCircleLine,
+  RiArrowLeftLine,
+  RiBriefcaseLine,
+  RiBuilding2Line,
+  RiCalendarLine,
+  RiMailLine,
+  RiMapPinLine,
+  RiPhoneLine,
+} from "@remixicon/react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -59,7 +59,7 @@ export default async function ContactDetails({
       <div className="flex items-center gap-4">
         <Button asChild variant="outline" size="icon">
           <Link href="/handson/all/crm/contacts">
-            <ArrowLeft className="w-4 h-4" />
+            <RiArrowLeftLine className="w-4 h-4" />
           </Link>
         </Button>
         <div className="flex items-center gap-4 flex-1">
@@ -78,7 +78,7 @@ export default async function ContactDetails({
               </Badge>
             </h1>
             <p className="text-muted-foreground flex items-center gap-2">
-              <UserCircle className="w-4 h-4" />
+              <RiAccountCircleLine className="w-4 h-4" />
               <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">
                 {contact.name}
               </span>
@@ -98,7 +98,7 @@ export default async function ContactDetails({
             <div className="flex flex-col gap-4">
               {contact.email_id && (
                 <div className="flex items-center gap-3 p-3 border rounded-lg">
-                  <Mail className="w-4 h-4 text-muted-foreground" />
+                  <RiMailLine className="w-4 h-4 text-muted-foreground" />
                   <a
                     href={`mailto:${contact.email_id} `}
                     className="hover:underline"
@@ -109,7 +109,7 @@ export default async function ContactDetails({
               )}
               {contact.mobile_no && (
                 <div className="flex items-center gap-3 p-3 border rounded-lg">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  <RiPhoneLine className="w-4 h-4 text-muted-foreground" />
                   <a
                     href={`tel:${contact.mobile_no} `}
                     className="hover:underline"
@@ -123,7 +123,7 @@ export default async function ContactDetails({
             {/* Organization Link */}
             {contact.company_name && (
               <div className="flex items-center gap-3 p-4 bg-muted/40 rounded-lg">
-                <Building2 className="w-5 h-5 text-muted-foreground" />
+                <RiBuilding2Line className="w-5 h-5 text-muted-foreground" />
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
                     Organization
@@ -138,7 +138,7 @@ export default async function ContactDetails({
             {/* Designation / Job Title */}
             {contact.designation && (
               <div className="flex items-center gap-3">
-                <Briefcase className="w-4 h-4 text-muted-foreground" />
+                <RiBriefcaseLine className="w-4 h-4 text-muted-foreground" />
                 <span>{contact.designation}</span>
                 {contact.department && (
                   <span className="text-muted-foreground">
@@ -151,7 +151,7 @@ export default async function ContactDetails({
             {/* Gender */}
             {contact.gender && (
               <div className="flex items-center gap-3">
-                <UserCircle className="w-4 h-4 text-muted-foreground" />
+                <RiAccountCircleLine className="w-4 h-4 text-muted-foreground" />
                 <span>{contact.gender}</span>
               </div>
             )}
@@ -159,7 +159,7 @@ export default async function ContactDetails({
             {/* Date of Birth */}
             {contact.date_of_birth && (
               <div className="flex items-center gap-3">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <RiCalendarLine className="w-4 h-4 text-muted-foreground" />
                 <span>
                   {new Date(contact.date_of_birth).toLocaleDateString()}
                 </span>
@@ -173,7 +173,7 @@ export default async function ContactDetails({
               contact.pincode ||
               contact.country) && (
               <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
+                <RiMapPinLine className="w-4 h-4 text-muted-foreground mt-1" />
                 <div className="flex flex-col">
                   {contact.address_line1 && (
                     <span>{contact.address_line1}</span>

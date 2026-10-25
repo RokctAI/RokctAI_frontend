@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Banknote, FileText } from "lucide-react";
+import { RiFileTextLine, RiMoneyDollarBoxLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -76,7 +76,7 @@ export default function PayrollPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center">
-            <Banknote className="mr-3 h-8 w-8" />
+            <RiMoneyDollarBoxLine className="mr-3 h-8 w-8" />
             Payroll
           </h1>
           <p className="text-muted-foreground">
@@ -85,7 +85,7 @@ export default function PayrollPage() {
         </div>
         {canProcess && (
           <Button>
-            <Banknote className="mr-2 h-4 w-4" /> Process Payroll
+            <RiMoneyDollarBoxLine className="mr-2 h-4 w-4" /> Process Payroll
           </Button>
         )}
       </div>
@@ -156,7 +156,7 @@ export default function PayrollPage() {
                     <TableCell>
                       <Link href={`/handson/all/hr/payroll/${slip.name}`}>
                         <Button variant="ghost" size="sm">
-                          <FileText className="h-4 w-4" />
+                          <RiFileTextLine className="h-4 w-4" />
                         </Button>
                       </Link>
                     </TableCell>

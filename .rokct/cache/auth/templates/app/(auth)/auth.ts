@@ -23,7 +23,12 @@ import {
 } from "@/app/services/base/platform-gateway";
 
 import { authConfig } from "./auth.config";
-import { loadTenantLink } from "./tenant-link";
+import { loadTenantLink, type TenantLinkRecord } from "./tenant-link";
+
+/** Minimum gap between subscription re-checks for a pending session. */
+const SUBSCRIPTION_RETRY_MS = 60_000;
+/** The longest a session read waits on the subscription re-check. */
+const SUBSCRIPTION_CALL_TIMEOUT_MS = 5_000;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -43,7 +48,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           // record later anyway, to decide whether there is anything to
           // remember the login against).
           const tenantLink = await loadTenantLink();
-          const link = await tenantLink.resolveLink(email as string);
+          // The link is a convenience: it remembers which site an email signed
+          // in against. A lookup that fails (no POSTGRES_URL, database down)
+          // must not decide the login. Log it and let the backend answer.
+          let link: TenantLinkRecord | null = null;
+          let linkLookupFailed = false;
+          try {
+            link = await tenantLink.resolveLink(email as string);
+          } catch (linkError) {
+            linkLookupFailed = true;
+            console.error(
+              "[auth] tenant link lookup failed:",
+              linkError,
+            );
+          }
+          // With the lookup down and no site named, the default backend is a
+          // guess: on a multi-tenant host it may not be this user's tenant.
+          // Refuse rather than sign into the wrong site. A single-tenant host
+          // has no lookup to fail (ROKCT_TENANT_LINK=single-tenant).
+          if (linkLookupFailed && !siteName) return null;
 
           if (siteName) {
             // Ensure protocol is present for the URL construction
@@ -166,6 +189,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           let modules: string[] = [];
           let allowed_models: string[] = [];
           let subscriptionFetched = false;
+          // True when the PaaS subscription call did not answer. The defaults
+          // above (Free, no modules) stand until the jwt callback gets an answer.
+          let subscriptionPending = false;
 
           if (isPaaSLogin) {
             try {
@@ -238,6 +264,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             }
           }
 
+          if (isPaaSLogin && !subscriptionFetched) subscriptionPending = true;
+
           // Fallback / Admin Logic
           if (!subscriptionFetched) {
             if (
@@ -267,11 +295,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           // (Persistence). Still conditional on a record existing, for the
           // same reason the drizzle version was: a login never creates one.
           if (link) {
-            await tenantLink.rememberLogin(email as string, {
-              apiKey: apiKey, // Might be null for tenants
-              apiSecret: apiSecret, // Might be null for tenants
-              siteName: siteName || new URL(baseUrl).hostname,
-            });
+            try {
+              await tenantLink.rememberLogin(email as string, {
+                apiKey: apiKey, // Might be null for tenants
+                apiSecret: apiSecret, // Might be null for tenants
+                siteName: siteName || new URL(baseUrl).hostname,
+              });
+            } catch (rememberError) {
+              // The login itself succeeded; only the saved link is lost.
+              console.error("[auth] could not remember login:", rememberError);
+            }
           }
 
           // 5. Return User Details
@@ -293,6 +326,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             is_ai: is_ai,
             modules: modules,
             allowed_models: allowed_models,
+            subscriptionPending: subscriptionPending,
           };
         } catch (e) {
           console.error("Frappe Login Error:", e);
@@ -303,7 +337,65 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
+      // A login whose subscription call failed carries the Free defaults
+      // (see authorize). Re-ask the backend here, at most once a minute, so
+      // a transient outage does not leave the paid plan withheld for the
+      // whole session.
+      if (
+        !user &&
+        token.subscriptionPending &&
+        token.apiKey &&
+        token.apiSecret &&
+        token.siteName &&
+        Date.now() - Number(token.subscriptionCheckedAt ?? 0) >=
+          SUBSCRIPTION_RETRY_MS
+      ) {
+        token.subscriptionCheckedAt = Date.now();
+        try {
+          const site = String(token.siteName);
+          const baseUrl = site.startsWith("http") ? site : `https://${site}`;
+          // session: null - this runs inside the session callback, so the
+          // gateway must not resolve the session again (that would re-enter
+          // this callback). The explicit Authorization header is the credential.
+          // Capped: this runs while a session is being read, so a slow backend
+          // must not hold that request. On timeout the defaults stand and the
+          // next check is a minute away.
+          let timer: ReturnType<typeof setTimeout> | undefined;
+          const details = await Promise.race([
+            platformCall<any>("tenant.api.get_subscription_details", undefined, {
+              baseUrl,
+              session: null,
+              requireAuth: false,
+              headers: {
+                Authorization: `token ${token.apiKey}:${token.apiSecret}`,
+              },
+            }),
+            new Promise<never>((_, reject) => {
+              timer = setTimeout(
+                () => reject(new Error("subscription refresh timed out")),
+                SUBSCRIPTION_CALL_TIMEOUT_MS,
+              );
+            }),
+          ]).finally(() => clearTimeout(timer));
+          if (details) {
+            const match = details.plan
+              ? String(details.plan).match(/^([^\(]+)/)
+              : null;
+            token.plan = match ? match[1].trim() : details.plan || "Free";
+            token.status = details.status || "Free";
+            token.is_free_plan =
+              details.is_free_plan !== undefined ? details.is_free_plan : 1;
+            token.is_ai = details.is_ai !== undefined ? details.is_ai : 1;
+            token.modules = details.modules || [];
+            token.subscriptionPending = false;
+          }
+        } catch (e) {
+          console.warn("Subscription refresh failed; keeping Free until it succeeds", e);
+        }
+      }
       if (user) {
+        token.subscriptionPending = (user as any).subscriptionPending ?? false;
+        token.subscriptionCheckedAt = token.subscriptionPending ? Date.now() : 0;
         token.id = user.id;
         token.apiKey = (user as any).apiKey;
         token.apiSecret = (user as any).apiSecret;

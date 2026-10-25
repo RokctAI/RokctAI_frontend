@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.22.1
+
+* Icons move to Remixicon (`.rokct/decision_log.md`, "Icon package
+  standard"): every `lucide-react` and `@radix-ui/react-icons` icon is now the matching
+  `@remixicon/react` component and the manifest's deps carry
+  `"@remixicon/react": "^4.6.0"` in place of `lucide-react` and `@radix-ui/react-icons`. Icons only.
+
 ## 1.22.0
 
 * An open tender's page offers **Bid with TenderAssist** ("TenderAssist,

@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Loader2, Plus, ArrowLeft } from "lucide-react";
+import { RiAddLine, RiArrowLeftLine, RiLoader4Line } from "@remixicon/react";
 import { toast } from "sonner";
 import {
   getPickLists,
@@ -64,7 +64,7 @@ export function PickListList() {
   if (loading)
     return (
       <div className="text-center p-4">
-        <Loader2 className="animate-spin inline mr-2" />
+        <RiLoader4Line className="animate-spin inline mr-2" />
         Loading...
       </div>
     );
@@ -78,7 +78,7 @@ export function PickListList() {
             router.push("/handson/all/supply_chain/stock/pick-list/new")
           }
         >
-          <Plus className="mr-2 h-4 w-4" /> New Pick List
+          <RiAddLine className="mr-2 h-4 w-4" /> New Pick List
         </Button>
       </div>
       <Card>
@@ -134,7 +134,7 @@ export function PickListForm() {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-4 w-4" />
+          <RiArrowLeftLine className="h-4 w-4" />
         </Button>
         <h1 className="text-2xl font-bold">New Pick List</h1>
       </div>
@@ -201,7 +201,7 @@ export function PickListForm() {
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
             {loading ? (
-              <Loader2 className="animate-spin" />
+              <RiLoader4Line className="animate-spin" />
             ) : (
               "Create Pick List"
             )}
@@ -229,7 +229,7 @@ export function ShipmentList() {
   if (loading)
     return (
       <div className="text-center p-4">
-        <Loader2 className="animate-spin inline mr-2" />
+        <RiLoader4Line className="animate-spin inline mr-2" />
         Loading...
       </div>
     );
@@ -243,7 +243,7 @@ export function ShipmentList() {
             router.push("/handson/all/supply_chain/stock/shipment/new")
           }
         >
-          <Plus className="mr-2 h-4 w-4" /> New Shipment
+          <RiAddLine className="mr-2 h-4 w-4" /> New Shipment
         </Button>
       </div>
       <Card>
@@ -296,7 +296,7 @@ export function ShipmentForm() {
     <div className="space-y-6 max-w-xl mx-auto">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-4 w-4" />
+          <RiArrowLeftLine className="h-4 w-4" />
         </Button>
         <h1 className="text-2xl font-bold">New Shipment</h1>
       </div>

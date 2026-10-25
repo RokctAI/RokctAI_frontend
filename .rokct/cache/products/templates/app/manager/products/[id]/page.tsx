@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, ArrowLeft, Save } from "lucide-react";
+import { RiLoader4Line, RiArrowLeftLine, RiSaveLine } from "@remixicon/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -122,7 +122,7 @@ export default function ProductFormPage({ params }: ProductFormProps) {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -132,7 +132,7 @@ export default function ProductFormPage({ params }: ProductFormProps) {
       <div className="flex items-center gap-4">
         <Link href="/manager/products">
           <Button variant="ghost" size="icon">
-            <ArrowLeft className="size-4" />
+            <RiArrowLeftLine className="size-4" />
           </Button>
         </Link>
         <h1 className="text-3xl font-bold">
@@ -265,12 +265,12 @@ export default function ProductFormPage({ params }: ProductFormProps) {
         <Button type="submit" className="w-full" disabled={saving}>
           {saving ? (
             <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <RiLoader4Line className="mr-2 size-4 animate-spin" />
               {t("common.saving")}
             </>
           ) : (
             <>
-              <Save className="mr-2 size-4" />
+              <RiSaveLine className="mr-2 size-4" />
               {t("app.paas.dashboard.products.form.btn_save")}
             </>
           )}

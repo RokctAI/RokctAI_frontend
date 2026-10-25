@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Database, Download } from "lucide-react";
+import { RiLoader4Line, RiDatabase2Line, RiDownloadLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -71,9 +71,9 @@ export default function BackupsPage() {
         <h1 className="text-3xl font-bold">Database Backups</h1>
         <Button onClick={handleCreateBackup} disabled={creating}>
           {creating ? (
-            <Loader2 className="mr-2 size-4 animate-spin" />
+            <RiLoader4Line className="mr-2 size-4 animate-spin" />
           ) : (
-            <Database className="mr-2 size-4" />
+            <RiDatabase2Line className="mr-2 size-4" />
           )}
           Create Backup
         </Button>
@@ -93,7 +93,7 @@ export default function BackupsPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  <Loader2 className="size-6 animate-spin mx-auto" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             ) : backups.length === 0 ? (
@@ -117,7 +117,7 @@ export default function BackupsPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <Button size="sm" variant="outline">
-                      <Download className="size-4 mr-2" />
+                      <RiDownloadLine className="size-4 mr-2" />
                       Download
                     </Button>
                   </TableCell>

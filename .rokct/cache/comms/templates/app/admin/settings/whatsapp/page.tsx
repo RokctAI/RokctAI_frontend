@@ -23,12 +23,12 @@
 "use client";
 
 import {
-  Loader2,
-  Save,
-  ExternalLink,
-  Smartphone,
-  MessageSquare,
-} from "lucide-react";
+  RiLoader4Line,
+  RiSaveLine,
+  RiExternalLinkLine,
+  RiSmartphoneLine,
+  RiMessage2Line,
+} from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -119,7 +119,7 @@ export default function WhatsAppSettingsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
-        <Loader2 className="size-8 animate-spin text-primary" />
+        <RiLoader4Line className="size-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -144,7 +144,7 @@ export default function WhatsAppSettingsPage() {
               target="_blank"
               className="flex items-center"
             >
-              <ExternalLink className="mr-2 size-4" />
+              <RiExternalLinkLine className="mr-2 size-4" />
               {t("app.paas.admin.settings.whatsapp.meta_dashboard")}
             </Link>
           </Button>
@@ -161,7 +161,7 @@ export default function WhatsAppSettingsPage() {
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          <Smartphone className="size-4" />
+          <RiSmartphoneLine className="size-4" />
           ROKCT Web Link (Baileys)
         </button>
         <button
@@ -172,7 +172,7 @@ export default function WhatsAppSettingsPage() {
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          <MessageSquare className="size-4" />
+          <RiMessage2Line className="size-4" />
           Meta Cloud API
         </button>
       </div>
@@ -349,12 +349,12 @@ export default function WhatsAppSettingsPage() {
             >
               {saving ? (
                 <>
-                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  <RiLoader4Line className="mr-2 size-4 animate-spin" />
                   Saving...
                 </>
               ) : (
                 <>
-                  <Save className="mr-2 size-4" />
+                  <RiSaveLine className="mr-2 size-4" />
                   Save Configuration
                 </>
               )}

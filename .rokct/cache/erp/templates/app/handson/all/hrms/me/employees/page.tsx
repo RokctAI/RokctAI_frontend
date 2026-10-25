@@ -17,7 +17,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Search, Filter } from "lucide-react";
+import {
+  RiAddLine,
+  RiDeleteBinLine,
+  RiFilterLine,
+  RiPencilLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -334,7 +340,7 @@ export default function EmployeesPage() {
                           className="hover:bg-slate-200"
                           onClick={() => openDialog(emp)}
                         >
-                          <Pencil className="h-4 w-4 mr-2" />
+                          <RiPencilLine className="h-4 w-4 mr-2" />
                           Edit Profile
                         </Button>
                       </TableCell>

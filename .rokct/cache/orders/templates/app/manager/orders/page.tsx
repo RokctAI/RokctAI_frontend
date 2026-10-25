@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Eye } from "lucide-react";
+import { RiLoader4Line, RiEyeLine } from "@remixicon/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -105,7 +105,7 @@ export default function OrdersPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center h-24">
-                  <Loader2 className="size-6 animate-spin mx-auto text-gray-500" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto text-gray-500" />
                 </TableCell>
               </TableRow>
             ) : orders.length === 0 ? (
@@ -148,7 +148,7 @@ export default function OrdersPage() {
                   <TableCell className="text-right">
                     <Link href={`/manager/orders/${order.name}`}>
                       <Button variant="ghost" size="icon">
-                        <Eye className="size-4" />
+                        <RiEyeLine className="size-4" />
                       </Button>
                     </Link>
                   </TableCell>

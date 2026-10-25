@@ -17,12 +17,12 @@
 "use client";
 
 import {
-  Loader2,
-  TrendingUp,
-  ShoppingCart,
-  Package,
-  DollarSign,
-} from "lucide-react";
+  RiLoader4Line,
+  RiLineChartLine,
+  RiShoppingCartLine,
+  RiArchiveLine,
+  RiMoneyDollarCircleLine,
+} from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -61,7 +61,7 @@ export default function ReportsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -79,7 +79,7 @@ export default function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Earned</CardTitle>
-            <DollarSign className="size-4 text-muted-foreground" />
+            <RiMoneyDollarCircleLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -96,7 +96,7 @@ export default function ReportsPage() {
             <CardTitle className="text-sm font-medium">
               Delivered Orders
             </CardTitle>
-            <ShoppingCart className="size-4 text-muted-foreground" />
+            <RiShoppingCartLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -111,7 +111,7 @@ export default function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-            <TrendingUp className="size-4 text-muted-foreground" />
+            <RiLineChartLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -126,7 +126,7 @@ export default function ReportsPage() {
             <CardTitle className="text-sm font-medium">
               Active Products
             </CardTitle>
-            <Package className="size-4 text-muted-foreground" />
+            <RiArchiveLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

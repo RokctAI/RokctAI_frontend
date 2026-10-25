@@ -17,7 +17,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Clock, LogIn, LogOut, History, User } from "lucide-react";
+import {
+  RiHistoryLine,
+  RiLoginBoxLine,
+  RiLogoutBoxRLine,
+  RiTimeLine,
+  RiUserLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -154,7 +160,7 @@ export default function AttendancePage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center">
-            <Clock className="mr-3 h-8 w-8" />
+            <RiTimeLine className="mr-3 h-8 w-8" />
             Attendance
           </h1>
           <p className="text-muted-foreground">
@@ -186,7 +192,7 @@ export default function AttendancePage() {
                   {employees.map((e) => (
                     <SelectItem key={e.name} value={e.name}>
                       <div className="flex items-center">
-                        <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <RiUserLine className="mr-2 h-4 w-4 text-muted-foreground" />
                         {e.employee_name}
                       </div>
                     </SelectItem>
@@ -221,7 +227,7 @@ export default function AttendancePage() {
                       size="lg"
                       className="w-full max-w-xs bg-orange-100 text-orange-700 hover:bg-orange-200"
                     >
-                      <LogOut className="mr-2 h-5 w-5" />
+                      <RiLogoutBoxRLine className="mr-2 h-5 w-5" />
                       Check Out
                     </Button>
                   )
@@ -232,7 +238,7 @@ export default function AttendancePage() {
                     size="lg"
                     className="w-full max-w-xs bg-green-600 hover:bg-green-700"
                   >
-                    <LogIn className="mr-2 h-5 w-5" />
+                    <RiLoginBoxLine className="mr-2 h-5 w-5" />
                     Check In
                   </Button>
                 )}
@@ -277,7 +283,7 @@ export default function AttendancePage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <History className="mr-2 h-5 w-5" />
+            <RiHistoryLine className="mr-2 h-5 w-5" />
             Attendance Log
           </CardTitle>
         </CardHeader>

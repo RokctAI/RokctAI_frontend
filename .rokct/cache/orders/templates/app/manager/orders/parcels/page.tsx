@@ -16,14 +16,7 @@
 
 "use client";
 
-import {
-  Loader2,
-  Eye,
-  Package,
-  Truck,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
+import { RiLoader4Line, RiEyeLine, RiBox3Line, RiTruckLine, RiCheckboxCircleLine, RiCloseCircleLine } from "@remixicon/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -98,7 +91,7 @@ export default function ParcelOrdersPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -233,7 +226,7 @@ export default function ParcelOrdersPage() {
                               }
                               title="Accept"
                             >
-                              <CheckCircle className="size-4" />
+                              <RiCheckboxCircleLine className="size-4" />
                             </Button>
                             <Button
                               size="icon"
@@ -244,7 +237,7 @@ export default function ParcelOrdersPage() {
                               }
                               title="Cancel"
                             >
-                              <XCircle className="size-4" />
+                              <RiCloseCircleLine className="size-4" />
                             </Button>
                           </>
                         )}
@@ -252,7 +245,7 @@ export default function ParcelOrdersPage() {
                           href={`/manager/orders/parcels/${order.name}`}
                         >
                           <Button variant="ghost" size="icon">
-                            <Eye className="size-4" />
+                            <RiEyeLine className="size-4" />
                           </Button>
                         </Link>
                       </div>

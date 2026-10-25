@@ -20,7 +20,7 @@ export class SupportService {
   static async getIssues(page = 1, limit = 20, options?: ServiceOptions) {
     const start = (page - 1) * limit;
     const response = await BaseService.call(
-      "frappe.client.get_list",
+      "api.crm.records.get_list",
       {
         doctype: "Issue",
         fields: [
@@ -41,18 +41,14 @@ export class SupportService {
     );
 
     const countRes = await BaseService.call(
-      "frappe.client.get_value",
-      {
-        doctype: "Issue",
-        filters: {},
-        fieldname: "count(name) as total",
-      },
+      "api.crm.records.get_count",
+      { doctype: "Issue" },
       options,
     );
 
     return {
       data: response?.message || [],
-      total: countRes?.message?.total || 0,
+      total: countRes?.message || 0,
       page,
       limit,
     };
@@ -60,7 +56,7 @@ export class SupportService {
 
   static async getIssue(name: string, options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.get",
+      "api.crm.records.get_doc",
       {
         doctype: "Issue",
         name: name,
@@ -72,10 +68,8 @@ export class SupportService {
 
   static async createIssue(data: any, options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.insert",
-      {
-        doc: { doctype: "Issue", ...data },
-      },
+      "api.crm.records.insert_doc",
+      { doctype: "Issue", doc: data },
       options,
     );
     return response?.message;
@@ -83,11 +77,11 @@ export class SupportService {
 
   static async updateIssue(name: string, data: any, options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.set_value",
+      "api.crm.records.set_value",
       {
         doctype: "Issue",
         name: name,
-        fieldname: data,
+        values: data,
       },
       options,
     );
@@ -96,7 +90,7 @@ export class SupportService {
 
   static async deleteIssue(name: string, options?: ServiceOptions) {
     await BaseService.call(
-      "frappe.client.delete",
+      "api.crm.records.delete_doc",
       {
         doctype: "Issue",
         name: name,
@@ -108,7 +102,7 @@ export class SupportService {
   // SLA Methods
   static async getServiceLevelAgreements(options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.get_list",
+      "api.crm.records.get_list",
       {
         doctype: "Service Level Agreement",
         fields: ["name", "service_level", "default_priority", "enabled"],
@@ -124,10 +118,8 @@ export class SupportService {
     options?: ServiceOptions,
   ) {
     const response = await BaseService.call(
-      "frappe.client.insert",
-      {
-        doc: { doctype: "Service Level Agreement", ...data },
-      },
+      "api.crm.records.insert_doc",
+      { doctype: "Service Level Agreement", doc: data },
       options,
     );
     return response?.message;
@@ -136,7 +128,7 @@ export class SupportService {
   // Warranty Methods
   static async getWarrantyClaims(options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.get_list",
+      "api.crm.records.get_list",
       {
         doctype: "Warranty Claim",
         fields: [
@@ -158,10 +150,8 @@ export class SupportService {
 
   static async createWarrantyClaim(data: any, options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.insert",
-      {
-        doc: { doctype: "Warranty Claim", ...data },
-      },
+      "api.crm.records.insert_doc",
+      { doctype: "Warranty Claim", doc: data },
       options,
     );
     return response?.message;
@@ -170,7 +160,7 @@ export class SupportService {
   // Notes
   static async getNotes(options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.get_list",
+      "api.crm.records.get_list",
       {
         doctype: "Note",
         fields: ["name", "title", "public", "notify_on_login"],
@@ -184,10 +174,8 @@ export class SupportService {
 
   static async createNote(data: any, options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.insert",
-      {
-        doc: { doctype: "Note", ...data },
-      },
+      "api.crm.records.insert_doc",
+      { doctype: "Note", doc: data },
       options,
     );
     return response?.message;
@@ -196,7 +184,7 @@ export class SupportService {
   static async getIssueNotes(issueName: string, options?: ServiceOptions) {
     // Fetch Communications (Comments) linked to the Issue
     const response = await BaseService.call(
-      "frappe.client.get_list",
+      "api.crm.records.get_list",
       {
         doctype: "Communication",
         filters: {

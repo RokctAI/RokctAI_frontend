@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Receipt, Plus } from "lucide-react";
+import { RiAddLine, RiReceiptLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -77,7 +77,7 @@ export default function ExpensesPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center">
-            <Receipt className="mr-3 h-8 w-8" />
+            <RiReceiptLine className="mr-3 h-8 w-8" />
             Expense Claims
           </h1>
           <p className="text-muted-foreground">
@@ -86,7 +86,7 @@ export default function ExpensesPage() {
         </div>
         <Link href="/handson/all/hr/expenses/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
+            <RiAddLine className="mr-2 h-4 w-4" />
             New Claim
           </Button>
         </Link>

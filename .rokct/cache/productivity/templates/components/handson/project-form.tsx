@@ -18,7 +18,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft } from "lucide-react";
+import { RiArrowLeftLine, RiSaveLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -104,7 +104,7 @@ export function ProjectForm({ initialData, isEdit = false }: ProjectFormProps) {
         <div className="flex items-center gap-4">
           <Link href="/handson/all/work_management/projects">
             <Button variant="outline" size="icon" type="button">
-              <ArrowLeft className="h-4 w-4" />
+              <RiArrowLeftLine className="h-4 w-4" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold">
@@ -112,7 +112,7 @@ export function ProjectForm({ initialData, isEdit = false }: ProjectFormProps) {
           </h1>
         </div>
         <Button type="submit" disabled={loading}>
-          <Save className="mr-2 h-4 w-4" />
+          <RiSaveLine className="mr-2 h-4 w-4" />
           {loading ? "Saving..." : "Save"}
         </Button>
       </div>

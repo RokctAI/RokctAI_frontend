@@ -16,7 +16,7 @@
 
 "use client";
 
-import { ChevronLeft, ChevronRight, Loader2, Plus, Search } from "lucide-react";
+import { RiArrowLeftSLine, RiArrowRightSLine, RiLoader4Line, RiAddLine, RiSearchLine } from "@remixicon/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -219,7 +219,7 @@ export default function TranslationsPage() {
           </p>
         </div>
         <Button onClick={openCreate}>
-          <Plus className="mr-2 size-4" />
+          <RiAddLine className="mr-2 size-4" />
           New key
         </Button>
       </div>
@@ -236,7 +236,7 @@ export default function TranslationsPage() {
                 className="w-40"
               />
               <div className="relative w-72">
-                <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
+                <RiSearchLine className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
                 <Input
                   placeholder={t(
                     "app.paas.admin.system.translations.ph_search",
@@ -252,7 +252,7 @@ export default function TranslationsPage() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <Loader2 className="size-8 animate-spin" />
+              <RiLoader4Line className="size-8 animate-spin" />
             </div>
           ) : (
             <Table>
@@ -322,7 +322,7 @@ export default function TranslationsPage() {
                 disabled={page <= 1 || loading}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
-                <ChevronLeft className="size-4" />
+                <RiArrowLeftSLine className="size-4" />
                 Previous
               </Button>
               <Button
@@ -332,7 +332,7 @@ export default function TranslationsPage() {
                 onClick={() => setPage((p) => p + 1)}
               >
                 Next
-                <ChevronRight className="size-4" />
+                <RiArrowRightSLine className="size-4" />
               </Button>
             </div>
           </div>
@@ -410,7 +410,7 @@ export default function TranslationsPage() {
                 default language.
               </p>
               <Button onClick={handleSave} disabled={saving} className="w-full">
-                {saving && <Loader2 className="mr-2 size-4 animate-spin" />}
+                {saving && <RiLoader4Line className="mr-2 size-4 animate-spin" />}
                 {editor.mode === "create" ? "Create" : "Save"}
               </Button>
             </div>

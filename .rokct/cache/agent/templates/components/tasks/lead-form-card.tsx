@@ -28,7 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2, UserPlus, CheckCircle, AlertCircle } from "lucide-react";
+import { RiLoader4Line, RiUserAddLine, RiCheckboxCircleLine, RiErrorWarningLine } from "@remixicon/react";
 
 interface LeadFormCardProps {
   initialData?: {
@@ -74,7 +74,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
     return (
       <Card className="w-full max-w-md bg-green-50/50 border-green-200 backdrop-blur-sm">
         <CardContent className="pt-6 flex flex-col items-center text-center">
-          <CheckCircle className="h-12 w-12 text-green-500 mb-2" />
+          <RiCheckboxCircleLine className="h-12 w-12 text-green-500 mb-2" />
           <h3 className="font-semibold text-green-800 text-sm">Lead Created</h3>
           <p className="text-xs text-green-700">
             {formData.lead_name} has been added to the CRM.
@@ -88,7 +88,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
     <Card className="w-full max-w-md shadow-lg glass-card">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <UserPlus className="h-4 w-4 text-cyan-500" />
+          <RiUserAddLine className="h-4 w-4 text-cyan-500" />
           New CRM Lead
         </CardTitle>
       </CardHeader>
@@ -171,7 +171,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
 
           {status === "error" && (
             <div className="text-[10px] text-red-500 bg-red-50 p-2 rounded flex items-center gap-2">
-              <AlertCircle className="h-3 w-3" /> {message}
+              <RiErrorWarningLine className="h-3 w-3" /> {message}
             </div>
           )}
         </CardContent>
@@ -182,7 +182,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
             disabled={status === "submitting"}
           >
             {status === "submitting" && (
-              <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+              <RiLoader4Line className="mr-2 h-3 w-3 animate-spin" />
             )}
             Create Lead
           </Button>

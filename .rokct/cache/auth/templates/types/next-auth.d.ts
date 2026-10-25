@@ -63,6 +63,10 @@ declare module "next-auth" {
     is_ai?: number;
     modules?: string[];
     allowed_models?: string[];
+    /** Returned by authorize; read by the jwt callback and refreshTokens(). */
+    refreshToken?: string | null;
+    /** The subscription call failed at login; the defaults above are provisional. */
+    subscriptionPending?: boolean;
     isOnboarded?: boolean;
     location?: string | null;
     company?: CompanyContext;
@@ -84,6 +88,10 @@ declare module "next-auth/jwt" {
     is_ai?: number;
     modules?: string[];
     allowed_models?: string[];
+    /** True while the subscription is unconfirmed (see the jwt callback). */
+    subscriptionPending?: boolean;
+    /** Epoch ms of the last subscription re-check for a pending session. */
+    subscriptionCheckedAt?: number;
     isOnboarded?: boolean;
     location?: string | null;
     company?: CompanyContext;

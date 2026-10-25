@@ -18,7 +18,7 @@
 
 import * as React from "react";
 import { addDays, format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { RiCalendarLine as CalendarIcon } from "@remixicon/react";
 import { DateRange } from "react-day-picker";
 
 import { cn } from "@/lib/utils";

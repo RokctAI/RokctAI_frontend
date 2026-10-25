@@ -1,13 +1,15 @@
 {
   "name": "kitchen_sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "installs": [
     {
       "from": "templates/app/manager/restaurant/kitchens/page.tsx",
       "to": "app/manager/restaurant/kitchens/page.tsx"
     }
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@remixicon/react": "^4.6.0"
+  },
   "devDependencies": {},
   "integrations": [],
   "requires": [

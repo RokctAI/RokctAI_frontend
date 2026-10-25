@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { RiLoader4Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getShopBonuses } from "@/app/actions/promotions/admin/marketing";
@@ -51,7 +51,7 @@ export default function AdminBonusesPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }

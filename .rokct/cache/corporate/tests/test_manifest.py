@@ -62,6 +62,8 @@ COMPANY_SECTIONS = os.path.join(COMPANY_COMPONENTS, "company-sections.tsx")
 MARKDOWN_PARSER = os.path.join(COMPANY_COMPONENTS, "markdown-parser.ts")
 MARKDOWN_VIEW = os.path.join(COMPANY_COMPONENTS, "markdown.tsx")
 TEAM_GRID = os.path.join(COMPANY_COMPONENTS, "team-grid.tsx")
+# 1.3.0: the card count beside the /team title.
+TEAM_COUNT = os.path.join(COMPANY_COMPONENTS, "team-count.tsx")
 MARKDOWN_TESTS = os.path.join(HERE, "markdown.test.mts")
 # 1.2.0: the loader's rule, executed under node against stubs.
 LOADER_TESTS = os.path.join(HERE, "load-legal-doc.test.mts")
@@ -131,7 +133,7 @@ class TestCorporateNextjs(unittest.TestCase):
     def test_identity_and_version(self):
         self.assertEqual(self.manifest["name"], "corporate_sdk")
         self.assertRegex(self.manifest["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual(self.manifest["version"], "1.2.0")
+        self.assertEqual(self.manifest["version"], "1.3.0")
         self.assertIn("sdk_name = 'corporate_sdk'", read(INSTALL_PY))
         self.assertTrue(read(INSTALL_PY).startswith("# " + LICENSE_HEAD))
         # Same shape as the sibling halves: one flat installs list, no
@@ -350,6 +352,26 @@ class TestCorporateNextjs(unittest.TestCase):
         body = code_of(ABOUT_PAGE)
         for word in ("platformCall", "getPublicTerm", "notFound"):
             self.assertNotIn(word, body)
+
+    def test_team_title_carries_the_card_count(self):
+        """1.3.0 (Ray, 2026-10-03: "Team [45]"): the badge sits in the h1,
+        starts from the members the page draws and adds what each section
+        declares - never a literal number."""
+        pairs = {(e["from"], e["to"]) for e in self.manifest["installs"]}
+        self.assertIn(("templates/components/custom/company/team-count.tsx",
+                       "components/custom/company/team-count.tsx"), pairs)
+        page = code_of(TEAM_PAGE)
+        h1 = re.search(r"<h1[^>]*>(.*?)</h1>", page, re.S).group(1)
+        self.assertIn("{COMPANY_PAGES.team.label}", h1)
+        self.assertIn("<TeamCount members={members.length} />", h1)
+        badge = code_of(TEAM_COUNT)
+        self.assertRegex(badge, re.compile(r"""^\s*["']use client["'];""", re.M))
+        self.assertIn('closest("[data-team-page]")', badge)
+        self.assertIn('querySelectorAll("[data-team-count]")', badge)
+        self.assertIn("members +", badge)
+        self.assertIn("data-team-count-badge={count}", badge)
+        self.assertIn("hidden={count === 0}", badge)
+        self.assertNotRegex(badge, r"useState\(\d")
 
     def test_team_page_reads_the_folder_and_the_slot(self):
         src = read(TEAM_PAGE)

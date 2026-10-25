@@ -18,7 +18,12 @@
 
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Check, X, Clock } from "lucide-react";
+import {
+  RiCalendarLine,
+  RiCheckLine,
+  RiCloseLine,
+  RiTimeLine,
+} from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -222,7 +227,7 @@ export default function AttendancePage() {
                               ) : (
                                 <span>Pick a date</span>
                               )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              <RiCalendarLine className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>

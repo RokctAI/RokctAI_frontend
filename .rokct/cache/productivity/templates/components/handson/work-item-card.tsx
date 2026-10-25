@@ -18,7 +18,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, CheckSquare, ClipboardList, StickyNote } from "lucide-react";
+import {
+  RiCalendarLine,
+  RiCheckboxLine,
+  RiClipboardLine,
+  RiStickyNoteLine,
+} from "@remixicon/react";
 import { cn } from "@/lib/utils";
 
 interface WorkItemProps {
@@ -31,13 +36,13 @@ export function WorkItemCard({ item }: WorkItemProps) {
   const getIcon = () => {
     switch (item.type) {
       case "todo":
-        return <CheckSquare className="h-5 w-5 text-blue-500" />;
+        return <RiCheckboxLine className="h-5 w-5 text-blue-500" />;
       case "task":
-        return <ClipboardList className="h-5 w-5 text-orange-500" />;
+        return <RiClipboardLine className="h-5 w-5 text-orange-500" />;
       case "note":
-        return <StickyNote className="h-5 w-5 text-yellow-500" />;
+        return <RiStickyNoteLine className="h-5 w-5 text-yellow-500" />;
       default:
-        return <CheckSquare className="h-5 w-5" />;
+        return <RiCheckboxLine className="h-5 w-5" />;
     }
   };
 
@@ -102,7 +107,7 @@ export function WorkItemCard({ item }: WorkItemProps) {
                 isOverdue && "text-red-500 font-bold",
               )}
             >
-              <Calendar className="h-3 w-3" />
+              <RiCalendarLine className="h-3 w-3" />
               {item.due_date}
             </div>
           )}

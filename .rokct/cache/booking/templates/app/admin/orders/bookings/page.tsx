@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Calendar, Users } from "lucide-react";
+import { RiLoader4Line, RiCalendarLine, RiGroupLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getBookings } from "@/app/actions/orders/admin/orders";
@@ -45,7 +45,7 @@ export default function AdminBookingsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -77,13 +77,13 @@ export default function AdminBookingsPage() {
               <CardContent>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2">
-                    <Calendar className="size-4 text-muted-foreground" />
+                    <RiCalendarLine className="size-4 text-muted-foreground" />
                     <span>
                       {format(new Date(booking.booking_date), "PPP p")}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users className="size-4 text-muted-foreground" />
+                    <RiGroupLine className="size-4 text-muted-foreground" />
                     <span>{booking.number_of_guests} Guests</span>
                   </div>
                   <div className="text-xs text-muted-foreground mt-2">

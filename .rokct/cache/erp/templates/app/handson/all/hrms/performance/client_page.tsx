@@ -18,7 +18,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { Plus, Search, Filter } from "lucide-react";
+import { RiAddLine, RiFilterLine, RiSearchLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -149,12 +149,12 @@ export default function ClientPerformancePage({
         <h1 className="text-3xl font-bold">Performance Management</h1>
         {activeTab === "goals" && (
           <Button onClick={() => setIsGoalDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> New Goal
+            <RiAddLine className="mr-2 h-4 w-4" /> New Goal
           </Button>
         )}
         {activeTab === "appraisals" && (
           <Button onClick={() => setIsAppraisalDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Schedule Appraisal
+            <RiAddLine className="mr-2 h-4 w-4" /> Schedule Appraisal
           </Button>
         )}
       </div>

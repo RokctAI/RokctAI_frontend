@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Eye, CheckCircle, XCircle } from "lucide-react";
+import { RiLoader4Line, RiEyeLine, RiCheckboxCircleLine, RiCloseCircleLine } from "@remixicon/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -88,7 +88,7 @@ export default function BookingsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -170,7 +170,7 @@ export default function BookingsPage() {
                               }
                               title="Approve"
                             >
-                              <CheckCircle className="size-4" />
+                              <RiCheckboxCircleLine className="size-4" />
                             </Button>
                             <Button
                               size="icon"
@@ -181,13 +181,13 @@ export default function BookingsPage() {
                               }
                               title="Reject"
                             >
-                              <XCircle className="size-4" />
+                              <RiCloseCircleLine className="size-4" />
                             </Button>
                           </>
                         )}
                         <Link href={`/manager/bookings/${res.name}`}>
                           <Button variant="ghost" size="icon">
-                            <Eye className="size-4" />
+                            <RiEyeLine className="size-4" />
                           </Button>
                         </Link>
                       </div>

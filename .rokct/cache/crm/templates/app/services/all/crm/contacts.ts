@@ -20,7 +20,7 @@ export class ContactService {
   static async getList(page = 1, limit = 20, options?: ServiceOptions) {
     const start = (page - 1) * limit;
     const response = await BaseService.call(
-      "frappe.client.get_list",
+      "api.crm.records.get_list",
       {
         doctype: "Contact",
         fields: [
@@ -45,18 +45,14 @@ export class ContactService {
     );
 
     const countRes = await BaseService.call(
-      "frappe.client.get_value",
-      {
-        doctype: "Contact",
-        filters: {},
-        fieldname: "count(name) as total",
-      },
+      "api.crm.records.get_count",
+      { doctype: "Contact" },
       options,
     );
 
     return {
       data: response?.message || [],
-      total: countRes?.message?.total || 0,
+      total: countRes?.message || 0,
       page,
       limit,
     };
@@ -64,7 +60,7 @@ export class ContactService {
 
   static async get(name: string, options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.get",
+      "api.crm.records.get_doc",
       {
         doctype: "Contact",
         name: name,

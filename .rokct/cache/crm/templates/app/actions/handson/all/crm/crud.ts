@@ -33,12 +33,16 @@ export async function saveDoc(
     let result;
     // Check if updating or creating
     if (data.name) {
-      result = await gatewayCall(client, "frappe.client.save", {
-        doc: { doctype, ...data },
+      const { name, ...values } = data;
+      result = await gatewayCall(client, "api.crm.records.set_value", {
+        doctype,
+        name,
+        values,
       });
     } else {
-      result = await gatewayCall(client, "frappe.client.insert", {
-        doc: { doctype, ...data },
+      result = await gatewayCall(client, "api.crm.records.insert_doc", {
+        doctype,
+        doc: data,
       });
     }
 
