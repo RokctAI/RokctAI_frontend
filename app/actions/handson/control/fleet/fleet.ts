@@ -60,15 +60,16 @@ function toDockerRow(d: any): DockerRow {
 
 export async function getFleet(): Promise<FleetResult<DockerRow[]>> {
   await assertStaff();
-  if (DEMO) return { data: demoDockers(), demo: true };
+  if (DEMO) return { data: demoDockers(), demo: true, source: "env-demo" };
   try {
     const board = await FleetService.board();
-    return { data: board.dockers.map(toDockerRow), demo: false };
+    return { data: board.dockers.map(toDockerRow), demo: false, source: "live" };
   } catch (error) {
     console.error("[fleet] control:fleet_board failed", error);
     return {
       data: demoDockers(),
       demo: true,
+      source: "fallback",
       notice: cmdFailed("control:fleet_board", error),
     };
   }
@@ -78,7 +79,7 @@ export async function getDockerDetail(
   name: string,
 ): Promise<FleetResult<DockerDetail | null>> {
   await assertStaff();
-  if (DEMO) return { data: demoDockerDetail(name), demo: true };
+  if (DEMO) return { data: demoDockerDetail(name), demo: true, source: "env-demo" };
   try {
     const res = await FleetService.docker(name);
     const usage = [...(res.usage_samples || [])].sort((a: any, b: any) =>
@@ -101,13 +102,14 @@ export async function getDockerDetail(
     return {
       data: { docker: toDockerRow(res.docker), usage, revisions, placements },
       demo: false,
+      source: "live",
     };
   } catch (error) {
     console.error("[fleet] control:fleet_docker failed", error);
     const notice = cmdFailed("control:fleet_docker", error);
     const fallback = demoDockerDetail(name);
     return fallback
-      ? { data: fallback, demo: true, notice }
-      : { data: null, demo: false, notice };
+      ? { data: fallback, demo: true, source: "fallback", notice }
+      : { data: null, demo: false, source: "fallback", notice };
   }
 }

@@ -75,3 +75,6 @@ Rollouts are driven from the **Rollouts** panel by entering the rollout id.
 These cmds ship with pending control updates. If the hub answers `cmd not
 found`, the toast says the action is not available yet and nothing changes.
 With `ROKCT_DEMO_DATA=1` actions are no-ops and the toast is marked "demo".
+When a fleet cmd fails and the page falls back to demo fixtures (outside
+`ROKCT_DEMO_DATA=1`), the actions panel is hidden and the server refuses any
+action that names a fixture docker or subscription id.

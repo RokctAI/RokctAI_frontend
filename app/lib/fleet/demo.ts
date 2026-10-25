@@ -254,3 +254,15 @@ export function demoDockerDetail(
     placements: demoPlacements(docker, now),
   };
 }
+
+/**
+ * True when `id` is a fixture docker name or fixture subscription id. Used by
+ * runFleetAction to refuse fixture ids outside ROKCT_DEMO_DATA mode, so a page
+ * showing fallback fixtures can never send real hub cmds for them.
+ */
+export function isFixtureId(id: unknown): boolean {
+  if (typeof id !== "string" || !id) return false;
+  const names = demoDockers(0).map((d) => d.docker_id);
+  if (names.includes(id)) return true;
+  return names.some((n) => new RegExp(`^SUB-${n}-\\d+$`).test(id));
+}

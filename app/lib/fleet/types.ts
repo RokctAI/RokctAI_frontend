@@ -81,9 +81,17 @@ export interface DockerDetail {
   placements: PlacementRow[];
 }
 
+export type FleetSource = "live" | "env-demo" | "fallback";
+
 export interface FleetResult<T> {
   data: T;
   demo: boolean;
+  /**
+   * Where `data` came from: `live` (hub), `env-demo` (ROKCT_DEMO_DATA=1, actions
+   * are no-ops), or `fallback` (hub cmd failed, fixtures shown). Staff actions
+   * render only for `live` and `env-demo`.
+   */
+  source: FleetSource;
   /** Set when the fleet cmd errored and demo data is shown instead. */
   notice?: string;
 }

@@ -18,6 +18,7 @@
 
 import { auth } from "@/app/(auth)/auth";
 import { SYSTEM_ROLES } from "@/app/lib/role_constants";
+import { isFixtureId } from "@/app/lib/fleet/demo";
 import {
   FleetActionsService,
   type FleetActionKind,
@@ -104,6 +105,14 @@ export async function runFleetAction(
       ok: true,
       demo: true,
       message: `Demo: ${LABEL[kind].toLowerCase()} (nothing was sent).`,
+    };
+  }
+
+  if (isFixtureId(payload.docker) || isFixtureId(payload.subscription)) {
+    return {
+      ok: false,
+      message:
+        "This page is showing fallback demo data, so actions are disabled. Reload once the hub is reachable.",
     };
   }
 

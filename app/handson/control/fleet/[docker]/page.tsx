@@ -47,6 +47,7 @@ import {
   parseFrappeDate,
   revisionSync,
   type DockerDetail,
+  type FleetSource,
 } from "@/app/lib/fleet/types";
 
 import {
@@ -76,6 +77,7 @@ export default function DockerDetailPage() {
   const name = decodeURIComponent(params.docker);
   const [detail, setDetail] = useState<DockerDetail | null>(null);
   const [demo, setDemo] = useState(false);
+  const [source, setSource] = useState<FleetSource>("live");
   const [notice, setNotice] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
   const [canAct, setCanAct] = useState(false);
@@ -85,6 +87,7 @@ export default function DockerDetailPage() {
       const res = await getDockerDetail(name);
       setDetail(res.data);
       setDemo(res.demo);
+      setSource(res.source);
       setNotice(res.notice);
     } catch (error) {
       console.error(error);
@@ -189,7 +192,7 @@ export default function DockerDetailPage() {
         </Fact>
       </dl>
 
-      {canAct && <FleetActions detail={detail} onDone={load} />}
+      {canAct && source !== "fallback" && <FleetActions detail={detail} onDone={load} />}
 
       <Card data-tour="fleet-placements">
         <CardHeader>
