@@ -14,6 +14,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// ==========================================
+// [GENERATED TEMPLATE FILE]
+// This file was installed from: base_sdk
+// Feel free to modify and customize this code.
+// Note: If you edit this file, the SDK installer will detect your changes
+// and automatically skip overwriting it during future upgrades.
+// ==========================================
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
