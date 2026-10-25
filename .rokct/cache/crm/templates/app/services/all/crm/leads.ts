@@ -20,7 +20,7 @@ export class LeadService {
   static async getList(page = 1, limit = 20, options?: ServiceOptions) {
     const start = (page - 1) * limit;
     const response = await BaseService.call(
-      "frappe.client.get_list",
+      "api.crm.records.get_list",
       {
         doctype: "Lead",
         fields: [
@@ -44,18 +44,14 @@ export class LeadService {
     );
 
     const countRes = await BaseService.call(
-      "frappe.client.get_value",
-      {
-        doctype: "Lead",
-        filters: {},
-        fieldname: "count(name) as total",
-      },
+      "api.crm.records.get_count",
+      { doctype: "Lead" },
       options,
     );
 
     return {
       data: response?.message || [],
-      total: countRes?.message?.total || 0,
+      total: countRes?.message || 0,
       page,
       limit,
     };
@@ -63,7 +59,7 @@ export class LeadService {
 
   static async get(name: string, options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.get",
+      "api.crm.records.get_doc",
       {
         doctype: "Lead",
         name: name,
@@ -80,8 +76,8 @@ export class LeadService {
       first_name: data.first_name || data.lead_name,
     };
     const response = await BaseService.call(
-      "frappe.client.insert",
-      { doc: payload },
+      "api.crm.records.insert_doc",
+      { doctype: "Lead", doc: payload },
       options,
     );
     return response?.message;
@@ -89,11 +85,11 @@ export class LeadService {
 
   static async update(name: string, data: any, options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.set_value",
+      "api.crm.records.set_value",
       {
         doctype: "Lead",
         name: name,
-        fieldname: data,
+        values: data,
       },
       options,
     );
@@ -102,7 +98,7 @@ export class LeadService {
 
   static async delete(name: string, options?: ServiceOptions) {
     await BaseService.call(
-      "frappe.client.delete",
+      "api.crm.records.delete_doc",
       {
         doctype: "Lead",
         name: name,

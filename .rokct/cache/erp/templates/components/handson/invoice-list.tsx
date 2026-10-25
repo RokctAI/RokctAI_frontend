@@ -20,7 +20,12 @@ import { useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, Edit, Plus, Search } from "lucide-react";
+import {
+  RiAddLine,
+  RiDeleteBinLine,
+  RiEditLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -69,7 +74,7 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
         <h1 className="text-2xl font-bold">Sales Invoices</h1>
         <div className="flex gap-4">
           <div className="relative w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
              <Input
                placeholder={t('common.ph_search')}
                value={searchTerm}
@@ -79,7 +84,7 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
           </div>
           <Link href="/handson/all/financials/accounts/new">
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Invoice
+              <RiAddLine className="mr-2 h-4 w-4" /> New Invoice
             </Button>
           </Link>
         </div>
@@ -142,7 +147,7 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
                         href={`/handson/all/financials/accounts/${inv.name}`}
                       >
                         <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4" />
+                          <RiEditLine className="h-4 w-4" />
                         </Button>
                       </Link>
                       <Button
@@ -151,7 +156,7 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
                         className="text-destructive hover:text-destructive"
                         onClick={() => handleDelete(inv.name)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <RiDeleteBinLine className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

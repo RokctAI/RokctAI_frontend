@@ -17,7 +17,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarRange, Plus, Shield } from "lucide-react";
+import {
+  RiAddLine,
+  RiCalendarScheduleLine,
+  RiShieldLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -58,7 +62,7 @@ export default function ShiftPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center">
-            <CalendarRange className="mr-3 h-8 w-8" />
+            <RiCalendarScheduleLine className="mr-3 h-8 w-8" />
             Shift Management
           </h1>
           <p className="text-muted-foreground">
@@ -67,7 +71,7 @@ export default function ShiftPage() {
         </div>
         <Link href="/handson/all/hr/shift/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
+            <RiAddLine className="mr-2 h-4 w-4" />
             Assign Shift
           </Button>
         </Link>

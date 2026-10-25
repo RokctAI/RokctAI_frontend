@@ -19,7 +19,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Save, ArrowLeft } from "lucide-react";
+import { RiArrowLeftLine, RiCalendarLine, RiSaveLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,7 +43,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -131,7 +130,7 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
         <div className="flex items-center gap-4">
           <Link href="/handson/all/financials/assets">
             <Button variant="outline" size="icon" type="button">
-              <ArrowLeft className="h-4 w-4" />
+              <RiArrowLeftLine className="h-4 w-4" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold">
@@ -139,7 +138,7 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
           </h1>
         </div>
         <Button type="submit" disabled={loading}>
-          <Save className="mr-2 h-4 w-4" />
+          <RiSaveLine className="mr-2 h-4 w-4" />
           {loading ? "Saving..." : "Save"}
         </Button>
       </div>
@@ -201,7 +200,7 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
                       !purchaseDate && "text-muted-foreground",
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <RiCalendarLine className="mr-2 h-4 w-4" />
                     {purchaseDate ? (
                       format(purchaseDate, "PPP")
                     ) : (

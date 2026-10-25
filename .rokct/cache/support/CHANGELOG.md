@@ -1,3 +1,7 @@
+## 1.1.1
+
+* fix(icons): templates use `@remixicon/react` (`Ri*Line`) instead of `lucide-react`; the manifest deps swap `lucide-react` for `@remixicon/react` ^4.6.0.
+
 ## 1.1.0
 
 * The server actions call the platform through `paasCall` from the base

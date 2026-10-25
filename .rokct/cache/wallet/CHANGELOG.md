@@ -1,3 +1,9 @@
+## 1.0.2
+
+* fix(icons): lucide-react icons replaced with `@remixicon/react`
+  components per the fleet icon standard; the manifest deps swap
+  `lucide-react` for `@remixicon/react` ^4.6.0.
+
 ## 1.0.1
 
 * fix(manager wallet): balance reads `balance`, history rows read transaction_type/amount/creation, and top-up picks a saved card (the page crashed on the {data} history and top-up always failed). Needs gateways 1.1.2.

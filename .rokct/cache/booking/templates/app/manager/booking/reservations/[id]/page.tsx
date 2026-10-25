@@ -16,17 +16,7 @@
 
 "use client";
 
-import {
-  Loader2,
-  ArrowLeft,
-  Calendar,
-  Clock,
-  Users,
-  Utensils,
-  CheckCircle,
-  XCircle,
-  Ban,
-} from "lucide-react";
+import { RiLoader4Line, RiArrowLeftLine, RiCalendarLine, RiTimeLine, RiGroupLine, RiRestaurantLine, RiCheckboxCircleLine, RiCloseCircleLine, RiForbidLine } from "@remixicon/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -97,7 +87,7 @@ export default function BookingDetailsPage({
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -109,7 +99,7 @@ export default function BookingDetailsPage({
       <div className="flex items-center gap-4">
         <Link href="/manager/booking/reservations">
           <Button variant="ghost" size="icon">
-            <ArrowLeft className="size-4" />
+            <RiArrowLeftLine className="size-4" />
           </Button>
         </Link>
         <h1 className="text-3xl font-bold">Booking Details</h1>
@@ -144,7 +134,7 @@ export default function BookingDetailsPage({
         <CardContent className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-3">
-              <Calendar className="size-5 text-muted-foreground" />
+              <RiCalendarLine className="size-5 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Date</p>
                 <p className="text-muted-foreground">
@@ -156,7 +146,7 @@ export default function BookingDetailsPage({
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Clock className="size-5 text-muted-foreground" />
+              <RiTimeLine className="size-5 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Time</p>
                 <p className="text-muted-foreground">
@@ -165,7 +155,7 @@ export default function BookingDetailsPage({
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Users className="size-5 text-muted-foreground" />
+              <RiGroupLine className="size-5 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Guests</p>
                 <p className="text-muted-foreground">
@@ -174,7 +164,7 @@ export default function BookingDetailsPage({
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Utensils className="size-5 text-muted-foreground" />
+              <RiRestaurantLine className="size-5 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Table</p>
                 <p className="text-muted-foreground">
@@ -202,7 +192,7 @@ export default function BookingDetailsPage({
                 onClick={() => handleStatusUpdate("Rejected")}
                 disabled={updating}
               >
-                <XCircle className="mr-2 size-4" />
+                <RiCloseCircleLine className="mr-2 size-4" />
                 Reject
               </Button>
               <Button
@@ -210,7 +200,7 @@ export default function BookingDetailsPage({
                 onClick={() => handleStatusUpdate("Approved")}
                 disabled={updating}
               >
-                <CheckCircle className="mr-2 size-4" />
+                <RiCheckboxCircleLine className="mr-2 size-4" />
                 Approve
               </Button>
             </>
@@ -222,7 +212,7 @@ export default function BookingDetailsPage({
               onClick={() => handleStatusUpdate("Cancelled")}
               disabled={updating}
             >
-              <Ban className="mr-2 size-4" />
+              <RiForbidLine className="mr-2 size-4" />
               Cancel Booking
             </Button>
           )}

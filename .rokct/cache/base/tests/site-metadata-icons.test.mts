@@ -51,3 +51,23 @@ describe('icons and the metadata scope', () => {
     assert.deepEqual(page.icons, icons);
   });
 });
+
+// base_sdk 1.52.0: the canonical URL is the page's own, never a blanket "/".
+describe('canonical and the Open Graph url', () => {
+  it('the layout carries no canonical, so no page inherits the home page as its own', async () => {
+    const layout = await buildSiteMetadata();
+    assert.equal('alternates' in layout, false, JSON.stringify(layout.alternates));
+    assert.equal('url' in (layout.openGraph as object), false);
+  });
+
+  it('a page given its path declares that path canonical', async () => {
+    const page = await buildPageMetadata(undefined, '/landing');
+    assert.deepEqual(page.alternates, { canonical: '/landing' });
+    assert.equal((page.openGraph as { url?: string }).url, '/landing');
+  });
+
+  it('a page without a path carries no canonical', async () => {
+    const page = await buildPageMetadata({ title: 'About' });
+    assert.equal('alternates' in page, false);
+  });
+});

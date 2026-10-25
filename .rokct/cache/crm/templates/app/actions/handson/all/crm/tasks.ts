@@ -27,7 +27,8 @@ export async function getTasks(page = 1, limit = 20) {
   const start = (page - 1) * limit;
 
   try {
-    const tasks = await (client as any).get_list("Sales Task", {
+    const tasks = await gatewayCall(client, "api.crm.records.get_list", {
+      doctype: "Sales Task",
       fields: [
         "name",
         "title",
@@ -44,15 +45,13 @@ export async function getTasks(page = 1, limit = 20) {
       order_by: "creation desc",
     });
 
-    const countRes = await gatewayCall(client, "frappe.client.get_value", {
+    const countRes = await gatewayCall(client, "api.crm.records.get_count", {
       doctype: "Sales Task",
-      filters: {},
-      fieldname: "count(name) as total",
     });
 
     return {
-      data: tasks,
-      total: countRes?.message?.total || 0,
+      data: tasks?.message || [],
+      total: countRes?.message || 0,
       page: page,
       limit: limit,
     };

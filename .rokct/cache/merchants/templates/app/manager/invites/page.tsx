@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Check, X } from "lucide-react";
+import { RiLoader4Line, RiCheckLine, RiCloseLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -94,7 +94,7 @@ export default function InvitesPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -164,9 +164,9 @@ export default function InvitesPage() {
                             disabled={!!processingId}
                           >
                             {processingId === invite.name ? (
-                              <Loader2 className="size-4 animate-spin" />
+                              <RiLoader4Line className="size-4 animate-spin" />
                             ) : (
-                              <Check className="size-4" />
+                              <RiCheckLine className="size-4" />
                             )}
                           </Button>
                           <Button
@@ -179,9 +179,9 @@ export default function InvitesPage() {
                             disabled={!!processingId}
                           >
                             {processingId === invite.name ? (
-                              <Loader2 className="size-4 animate-spin" />
+                              <RiLoader4Line className="size-4 animate-spin" />
                             ) : (
-                              <X className="size-4" />
+                              <RiCloseLine className="size-4" />
                             )}
                           </Button>
                         </>

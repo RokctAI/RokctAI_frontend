@@ -19,7 +19,7 @@
 import { useState } from "react";
 import t from "@/app/lib/i18n";
 import Link from "next/link";
-import { Plus, Search, AlertCircle } from "lucide-react";
+import { RiAddLine, RiErrorWarningLine, RiSearchLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -64,7 +64,7 @@ export function IssueList({ issues }: { issues: any[] }) {
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
              <Input
                placeholder={t('common.ph_search_issues')}
                value={searchTerm}
@@ -74,7 +74,7 @@ export function IssueList({ issues }: { issues: any[] }) {
           </div>
           <Link href="/handson/all/commercial/support/issue/new">
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Ticket
+              <RiAddLine className="mr-2 h-4 w-4" /> New Ticket
             </Button>
           </Link>
         </div>
@@ -104,7 +104,7 @@ export function IssueList({ issues }: { issues: any[] }) {
               filtered.map((i) => (
                 <TableRow key={i.name}>
                   <TableCell className="font-medium flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                    <RiErrorWarningLine className="h-4 w-4 text-muted-foreground" />
                     {i.subject}
                   </TableCell>
                   <TableCell>

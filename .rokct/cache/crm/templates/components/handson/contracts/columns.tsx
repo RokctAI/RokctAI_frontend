@@ -20,7 +20,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { RiArrowUpDownLine, RiMoreLine } from "@remixicon/react";
 import {
   DropdownMenu,
   DropdownMenuContent,

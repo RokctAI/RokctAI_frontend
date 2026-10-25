@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Wallet, Plus } from "lucide-react";
+import { RiAddLine, RiWalletLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -77,7 +77,7 @@ export default function AdvancesPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold flex items-center">
-            <Wallet className="mr-3 h-8 w-8" />
+            <RiWalletLine className="mr-3 h-8 w-8" />
             Employee Advances
           </h1>
           <p className="text-muted-foreground">
@@ -86,7 +86,7 @@ export default function AdvancesPage() {
         </div>
         <Link href="/handson/all/hr/advances/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
+            <RiAddLine className="mr-2 h-4 w-4" />
             New Advance
           </Button>
         </Link>

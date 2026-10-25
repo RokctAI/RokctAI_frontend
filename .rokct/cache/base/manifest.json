@@ -1,6 +1,10 @@
 {
   "name": "base_sdk",
-  "version": "1.50.0",
+  "version": "1.52.1",
+  "_comment_version_1_52_1": "1.52.0 -> 1.52.1: components/ui/select.tsx is prettier-formatted, so the fleet linter no longer rewrites it in every app that tracks it.",
+  "_comment_version_1_52_0": "1.51.0 -> 1.52.0: buildSiteMetadata() stops stamping canonical \"/\" on every page; a path option sets the canonical, and the landing page passes /landing.",
+  "_comment_version_1_51_0": "1.50.1 -> 1.51.0: the 25 shadcn primitives every host carried verbatim (components/ui/alert ... tooltip) ship as templates and leave requires; textarea and theme-toggle stay host-owned.",
+  "_comment_version_1_50_1": "1.50.0 -> 1.50.1: icons move from lucide-react to @remixicon/react (one icon set); lucide-react dropped from dependencies.",
   "_comment_version_1_50_0": "1.49.1 -> 1.50.0: admin nav gains Finance > Customer Subscriptions (/admin/finance/customer-subscriptions, page from the loyalty SDK).",
   "_comment_version_1_49_1": "1.49.0 -> 1.49.1: platformCall unwraps the message envelope by key presence, so empty/falsy results are returned as themselves.",
   "_comment_version_1_49_0": "1.48.0 -> 1.49.0: Admin actions getCareerCategories, getPaymentMethods and getSocialSettings now resolve (backend functions added in base/frappe); the FAQ form writes the doctype's active field instead of is_active.",
@@ -353,12 +357,112 @@
     {
       "from": "templates/app/manager/page.tsx",
       "to": "app/manager/page.tsx"
+    },
+    {
+      "from": "templates/components/ui/alert.tsx",
+      "to": "components/ui/alert.tsx"
+    },
+    {
+      "from": "templates/components/ui/avatar.tsx",
+      "to": "components/ui/avatar.tsx"
+    },
+    {
+      "from": "templates/components/ui/badge.tsx",
+      "to": "components/ui/badge.tsx"
+    },
+    {
+      "from": "templates/components/ui/breadcrumb.tsx",
+      "to": "components/ui/breadcrumb.tsx"
+    },
+    {
+      "from": "templates/components/ui/button.tsx",
+      "to": "components/ui/button.tsx"
+    },
+    {
+      "from": "templates/components/ui/calendar.tsx",
+      "to": "components/ui/calendar.tsx"
+    },
+    {
+      "from": "templates/components/ui/card.tsx",
+      "to": "components/ui/card.tsx"
+    },
+    {
+      "from": "templates/components/ui/collapsible.tsx",
+      "to": "components/ui/collapsible.tsx"
+    },
+    {
+      "from": "templates/components/ui/dialog.tsx",
+      "to": "components/ui/dialog.tsx"
+    },
+    {
+      "from": "templates/components/ui/dropdown-menu.tsx",
+      "to": "components/ui/dropdown-menu.tsx"
+    },
+    {
+      "from": "templates/components/ui/input.tsx",
+      "to": "components/ui/input.tsx"
+    },
+    {
+      "from": "templates/components/ui/label.tsx",
+      "to": "components/ui/label.tsx"
+    },
+    {
+      "from": "templates/components/ui/popover.tsx",
+      "to": "components/ui/popover.tsx"
+    },
+    {
+      "from": "templates/components/ui/progress.tsx",
+      "to": "components/ui/progress.tsx"
+    },
+    {
+      "from": "templates/components/ui/radio-group.tsx",
+      "to": "components/ui/radio-group.tsx"
+    },
+    {
+      "from": "templates/components/ui/scroll-area.tsx",
+      "to": "components/ui/scroll-area.tsx"
+    },
+    {
+      "from": "templates/components/ui/select.tsx",
+      "to": "components/ui/select.tsx"
+    },
+    {
+      "from": "templates/components/ui/separator.tsx",
+      "to": "components/ui/separator.tsx"
+    },
+    {
+      "from": "templates/components/ui/sheet.tsx",
+      "to": "components/ui/sheet.tsx"
+    },
+    {
+      "from": "templates/components/ui/sidebar.tsx",
+      "to": "components/ui/sidebar.tsx"
+    },
+    {
+      "from": "templates/components/ui/skeleton.tsx",
+      "to": "components/ui/skeleton.tsx"
+    },
+    {
+      "from": "templates/components/ui/switch.tsx",
+      "to": "components/ui/switch.tsx"
+    },
+    {
+      "from": "templates/components/ui/table.tsx",
+      "to": "components/ui/table.tsx"
+    },
+    {
+      "from": "templates/components/ui/tabs.tsx",
+      "to": "components/ui/tabs.tsx"
+    },
+    {
+      "from": "templates/components/ui/tooltip.tsx",
+      "to": "components/ui/tooltip.tsx"
     }
   ],
   "dependencies": {
+    "@remixicon/react": "^4.6.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.29.0",
-    "lucide-react": "^0.563.0",
     "next-auth": "5.0.0-beta.30",
     "next-themes": "^0.4.6",
     "recharts": "^2.15.4",
@@ -383,25 +487,6 @@
     "components/custom/nav/merchant-nav.tsx",
     "components/custom/session-provider.tsx",
     "components/custom/theme-toggle.tsx",
-    "components/ui/alert.tsx",
-    "components/ui/avatar.tsx",
-    "components/ui/badge.tsx",
-    "components/ui/breadcrumb.tsx",
-    "components/ui/button.tsx",
-    "components/ui/calendar.tsx",
-    "components/ui/card.tsx",
-    "components/ui/collapsible.tsx",
-    "components/ui/dialog.tsx",
-    "components/ui/dropdown-menu.tsx",
-    "components/ui/input.tsx",
-    "components/ui/label.tsx",
-    "components/ui/popover.tsx",
-    "components/ui/select.tsx",
-    "components/ui/separator.tsx",
-    "components/ui/sidebar.tsx",
-    "components/ui/switch.tsx",
-    "components/ui/table.tsx",
-    "components/ui/tabs.tsx",
     "components/ui/textarea.tsx",
     "lib/utils.ts"
   ],

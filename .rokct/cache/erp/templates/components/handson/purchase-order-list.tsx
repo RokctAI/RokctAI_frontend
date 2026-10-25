@@ -20,7 +20,13 @@ import { useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, Edit, Plus, Search, CreditCard } from "lucide-react";
+import {
+  RiAddLine,
+  RiBankCardLine,
+  RiDeleteBinLine,
+  RiEditLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -70,7 +76,7 @@ export function PurchaseOrderList({ orders, canEdit }: PurchaseOrderListProps) {
         <h1 className="text-2xl font-bold">Purchase Orders</h1>
         <div className="flex gap-4">
           <div className="relative w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
               value={searchTerm}
@@ -81,7 +87,7 @@ export function PurchaseOrderList({ orders, canEdit }: PurchaseOrderListProps) {
           {canEdit && (
             <Link href="/handson/all/supply_chain/buying/new">
               <Button>
-                <Plus className="mr-2 h-4 w-4" /> New Order
+                <RiAddLine className="mr-2 h-4 w-4" /> New Order
               </Button>
             </Link>
           )}
@@ -139,14 +145,14 @@ export function PurchaseOrderList({ orders, canEdit }: PurchaseOrderListProps) {
                         href={`/handson/all/financials/accounts/purchase-invoice/new?from_po=${order.name}`}
                       >
                         <Button variant="ghost" size="icon" title={t("Make Bill")}>
-                          <CreditCard className="h-4 w-4 text-green-600" />
+                          <RiBankCardLine className="h-4 w-4 text-green-600" />
                         </Button>
                       </Link>
                       <Link
                         href={`/handson/all/supply_chain/buying/${order.name}`}
                       >
                         <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4" />
+                          <RiEditLine className="h-4 w-4" />
                         </Button>
                       </Link>
                       {canEdit && (
@@ -156,7 +162,7 @@ export function PurchaseOrderList({ orders, canEdit }: PurchaseOrderListProps) {
                           className="text-destructive hover:text-destructive"
                           onClick={() => handleDelete(order.name)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <RiDeleteBinLine className="h-4 w-4" />
                         </Button>
                       )}
                     </div>

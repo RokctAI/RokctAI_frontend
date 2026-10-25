@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Megaphone } from "lucide-react";
+import { RiLoader4Line, RiMegaphoneLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getAds } from "@/app/actions/promotions/admin/marketing";
@@ -44,7 +44,7 @@ export default function AdminAdsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -65,7 +65,7 @@ export default function AdminAdsPage() {
                 <CardTitle className="text-base font-medium">
                   {ad.title}
                 </CardTitle>
-                <Megaphone className="size-4 text-muted-foreground" />
+                <RiMegaphoneLine className="size-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-sm text-muted-foreground mt-2">

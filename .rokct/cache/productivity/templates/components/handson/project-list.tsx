@@ -20,7 +20,13 @@ import { useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, Edit, Plus, Search, Copy } from "lucide-react";
+import {
+  RiAddLine,
+  RiDeleteBinLine,
+  RiEditLine,
+  RiFileCopyLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -104,7 +110,7 @@ export function ProjectList({ projects }: ProjectListProps) {
         <h1 className="text-2xl font-bold">Projects</h1>
         <div className="flex gap-4">
           <div className="relative w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
               value={searchTerm}
@@ -114,7 +120,7 @@ export function ProjectList({ projects }: ProjectListProps) {
           </div>
           <Link href="/handson/all/work_management/projects/new">
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Project
+              <RiAddLine className="mr-2 h-4 w-4" /> New Project
             </Button>
           </Link>
         </div>
@@ -181,7 +187,7 @@ export function ProjectList({ projects }: ProjectListProps) {
                         href={`/handson/all/work_management/projects/${p.name}`}
                       >
                         <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4" />
+                          <RiEditLine className="h-4 w-4" />
                         </Button>
                       </Link>
                       <Button
@@ -190,7 +196,7 @@ export function ProjectList({ projects }: ProjectListProps) {
                         onClick={() => openClone(p)}
                         title="Duplicate Project"
                       >
-                        <Copy className="h-4 w-4" />
+                        <RiFileCopyLine className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -198,7 +204,7 @@ export function ProjectList({ projects }: ProjectListProps) {
                         className="text-destructive hover:text-destructive"
                         onClick={() => handleDelete(p.name)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <RiDeleteBinLine className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Loader2, Plus, ArrowLeft } from "lucide-react";
+import { RiAddLine, RiArrowLeftLine, RiLoader4Line } from "@remixicon/react";
 import { toast } from "sonner";
 import t from "@/app/lib/i18n";
 import {
@@ -62,7 +62,7 @@ export function BlanketOrderList() {
   if (loading)
     return (
       <div className="text-center p-4">
-        <Loader2 className="animate-spin inline mr-2" />
+        <RiLoader4Line className="animate-spin inline mr-2" />
         Loading...
       </div>
     );
@@ -76,7 +76,7 @@ export function BlanketOrderList() {
             router.push("/handson/all/supply_chain/buying/blanket-order/new")
           }
         >
-          <Plus className="mr-2 h-4 w-4" /> New Blanket Order
+          <RiAddLine className="mr-2 h-4 w-4" /> New Blanket Order
         </Button>
       </div>
       <Card>
@@ -161,7 +161,7 @@ export function BlanketOrderForm() {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-4 w-4" />
+          <RiArrowLeftLine className="h-4 w-4" />
         </Button>
         <h1 className="text-2xl font-bold">New Blanket Order</h1>
       </div>
@@ -204,7 +204,7 @@ export function BlanketOrderForm() {
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Items</h3>
               <Button variant="outline" size="sm" onClick={handleAddItem}>
-                <Plus className="h-4 w-4 mr-2" /> Add Item
+                <RiAddLine className="h-4 w-4 mr-2" /> Add Item
               </Button>
             </div>
             <div className="border rounded-md">
@@ -270,7 +270,7 @@ export function BlanketOrderForm() {
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
             {loading ? (
-              <Loader2 className="animate-spin mr-2" />
+              <RiLoader4Line className="animate-spin mr-2" />
             ) : (
               "Create Blanket Order"
             )}

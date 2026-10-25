@@ -22,13 +22,13 @@ import { Button } from "@/components/ui/button";
 import { ActivityTimeline } from "@/components/handson/activity-timeline";
 import Link from "next/link";
 import {
-  ArrowLeft,
-  Globe,
-  Building,
-  MapPin,
-  Calendar,
-  Briefcase,
-} from "lucide-react";
+  RiArrowLeftLine,
+  RiBriefcaseLine,
+  RiBuildingLine,
+  RiCalendarLine,
+  RiGlobalLine,
+  RiMapPinLine,
+} from "@remixicon/react";
 import { notFound } from "next/navigation";
 
 export default async function OrganizationDetails({
@@ -57,7 +57,7 @@ export default async function OrganizationDetails({
       <div className="flex items-center gap-4">
         <Button asChild variant="outline" size="icon">
           <Link href="/handson/all/crm/organizations">
-            <ArrowLeft className="w-4 h-4" />
+            <RiArrowLeftLine className="w-4 h-4" />
           </Link>
         </Button>
         <div className="flex items-center gap-4 flex-1">
@@ -86,7 +86,7 @@ export default async function OrganizationDetails({
             <div className="flex flex-col sm:flex-row gap-4">
               {org.website && (
                 <div className="flex items-center gap-3 p-3 border rounded-lg flex-1">
-                  <Globe className="w-4 h-4 text-muted-foreground" />
+                  <RiGlobalLine className="w-4 h-4 text-muted-foreground" />
                   <a
                     href={org.website}
                     target="_blank"
@@ -98,7 +98,7 @@ export default async function OrganizationDetails({
               )}
               {org.industry && (
                 <div className="flex items-center gap-3 p-3 border rounded-lg flex-1">
-                  <Building className="w-4 h-4 text-muted-foreground" />
+                  <RiBuildingLine className="w-4 h-4 text-muted-foreground" />
                   <span>{org.industry}</span>
                 </div>
               )}
@@ -116,7 +116,7 @@ export default async function OrganizationDetails({
             {org.primary_address && (
               <div className="p-4 border rounded-md">
                 <div className="flex items-center gap-2 mb-2 font-medium">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
+                  <RiMapPinLine className="w-4 h-4 text-muted-foreground" />
                   <span>Primary Address</span>
                 </div>
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">

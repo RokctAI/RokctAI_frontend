@@ -22,7 +22,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { RiArrowLeftLine, RiLoader4Line, RiSaveLine } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -86,7 +86,7 @@ export default function NewJobPage() {
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-4 w-4" />
+          <RiArrowLeftLine className="h-4 w-4" />
         </Button>
         <div>
           <h1 className="text-2xl font-bold">Post New Job</h1>
@@ -216,9 +216,9 @@ export default function NewJobPage() {
             </Button>
             <Button type="submit" disabled={loading}>
               {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <Save className="mr-2 h-4 w-4" />
+                <RiSaveLine className="mr-2 h-4 w-4" />
               )}
               Post Job
             </Button>

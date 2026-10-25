@@ -18,7 +18,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, Save, ArrowLeft } from "lucide-react";
+import {
+  RiAddLine,
+  RiArrowLeftLine,
+  RiDeleteBinLine,
+  RiSaveLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -149,7 +154,7 @@ export function PurchaseOrderForm({
         <div className="flex items-center gap-4">
           <Link href="/handson/all/supply_chain/buying">
             <Button variant="outline" size="icon" type="button">
-              <ArrowLeft className="h-4 w-4" />
+              <RiArrowLeftLine className="h-4 w-4" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold">
@@ -157,7 +162,7 @@ export function PurchaseOrderForm({
           </h1>
         </div>
         <Button type="submit" disabled={loading}>
-          <Save className="mr-2 h-4 w-4" />
+          <RiSaveLine className="mr-2 h-4 w-4" />
           {loading ? "Saving..." : "Save"}
         </Button>
       </div>
@@ -195,7 +200,7 @@ export function PurchaseOrderForm({
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Items</CardTitle>
           <Button type="button" variant="outline" size="sm" onClick={addItem}>
-            <Plus className="mr-2 h-4 w-4" /> Add Item
+            <RiAddLine className="mr-2 h-4 w-4" /> Add Item
           </Button>
         </CardHeader>
         <CardContent>
@@ -263,7 +268,7 @@ export function PurchaseOrderForm({
                         className="text-destructive"
                         onClick={() => removeItem(index)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <RiDeleteBinLine className="h-4 w-4" />
                       </Button>
                     </TableCell>
                   </TableRow>

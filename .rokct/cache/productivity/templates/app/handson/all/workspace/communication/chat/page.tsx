@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, MessageCircle } from "lucide-react";
+import { RiChat1Line, RiSendPlaneLine } from "@remixicon/react";
 import {
   getCommunications,
   addComment,
@@ -102,7 +102,7 @@ export default function ChatPage() {
     <div className="flex flex-col h-[calc(100vh-100px)] p-6 gap-4">
       <div>
         <h1 className="text-3xl font-bold flex items-center gap-2">
-          <MessageCircle className="h-8 w-8 text-primary" />
+          <RiChat1Line className="h-8 w-8 text-primary" />
           Team Chat
         </h1>
         <p className="text-muted-foreground">
@@ -170,7 +170,7 @@ export default function ChatPage() {
                 disabled={loading || !newMessage.trim()}
                 size="icon"
               >
-                <Send className="h-4 w-4" />
+                <RiSendPlaneLine className="h-4 w-4" />
               </Button>
             </div>
             <div className="text-[10px] text-muted-foreground mt-2 text-right">

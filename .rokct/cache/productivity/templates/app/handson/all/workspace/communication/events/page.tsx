@@ -22,12 +22,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
 import {
-  Calendar as CalendarIcon,
-  Loader2,
-  Plus,
-  Trash2,
-  Clock,
-} from "lucide-react";
+  RiAddLine,
+  RiCalendarLine,
+  RiDeleteBinLine,
+  RiLoader4Line,
+  RiTimeLine,
+} from "@remixicon/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -168,7 +168,7 @@ export default function EventsPage() {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
              <Button>
-               <Plus className="mr-2 h-4 w-4" /> {t('app.workspace.events.btn_create')}
+               <RiAddLine className="mr-2 h-4 w-4" /> {t('app.workspace.events.btn_create')}
              </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
@@ -218,7 +218,7 @@ export default function EventsPage() {
                                    ) : (
                                      <span>{t('app.workspace.events.ph_pick_date')}</span>
                                    )}
-                                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                   <RiCalendarLine className="ml-auto h-4 w-4 opacity-50" />
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
@@ -244,7 +244,7 @@ export default function EventsPage() {
                                  <FormLabel>{t('app.workspace.events.label_time')}</FormLabel>
                                  <FormControl>
                           <div className="relative">
-                            <Clock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <RiTimeLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                               className="pl-8"
                               placeholder="09:00"
@@ -301,7 +301,7 @@ export default function EventsPage() {
                      disabled={form.formState.isSubmitting}
                    >
                      {form.formState.isSubmitting && (
-                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                       <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
                      )}
                      {t('app.workspace.events.btn_save')}
                    </Button>
@@ -346,17 +346,17 @@ export default function EventsPage() {
 
         <div className="md:col-span-2 space-y-4">
            <h2 className="text-xl font-semibold flex items-center">
-             <Clock className="mr-2 h-5 w-5 text-primary" />
+             <RiTimeLine className="mr-2 h-5 w-5 text-primary" />
              {t('app.workspace.events.schedule_title', { date: date ? format(date, "MMMM do, yyyy") : "All Events" })}
            </h2>
 
           {loading ? (
             <div className="flex justify-center p-8">
-              <Loader2 className="h-6 w-6 animate-spin" />
+              <RiLoader4Line className="h-6 w-6 animate-spin" />
             </div>
           ) : selectedDateEvents.length === 0 ? (
              <div className="flex flex-col items-center justify-center p-12 border border-dashed rounded bg-slate-50">
-               <CalendarIcon className="h-10 w-10 text-muted-foreground mb-3" />
+               <RiCalendarLine className="h-10 w-10 text-muted-foreground mb-3" />
                <p className="text-muted-foreground font-medium">
                  {t('app.workspace.events.no_events')}
                </p>
@@ -382,14 +382,14 @@ export default function EventsPage() {
                         className="h-6 w-6 text-muted-foreground hover:text-destructive"
                         onClick={() => handleDelete(event.name)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <RiDeleteBinLine className="h-4 w-4" />
                       </Button>
                     </div>
                   </CardHeader>
                   <CardContent className="p-4 pt-0 text-sm space-y-1">
                     <div className="flex gap-4 text-muted-foreground">
                       <span className="flex items-center">
-                        <Clock className="mr-1 h-3 w-3" />
+                        <RiTimeLine className="mr-1 h-3 w-3" />
                         {format(new Date(event.starts_on), "h:mm a")}
                       </span>
                       <span className="bg-slate-100 px-2 rounded text-xs border text-slate-600">

@@ -30,7 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
-import { Loader2, Plus, ArrowLeft } from "lucide-react";
+import { RiAddLine, RiArrowLeftLine, RiLoader4Line } from "@remixicon/react";
 import { toast } from "sonner";
 import {
   getRoutings,
@@ -52,7 +52,7 @@ export function RoutingList() {
   if (loading)
     return (
       <div className="text-center p-4">
-        <Loader2 className="animate-spin inline mr-2" />
+        <RiLoader4Line className="animate-spin inline mr-2" />
         Loading...
       </div>
     );
@@ -66,7 +66,7 @@ export function RoutingList() {
             router.push("/handson/all/supply_chain/manufacturing/routing/new")
           }
         >
-          <Plus className="mr-2 h-4 w-4" /> New Routing
+          <RiAddLine className="mr-2 h-4 w-4" /> New Routing
         </Button>
       </div>
       <Card>
@@ -117,7 +117,7 @@ export function RoutingForm() {
     <div className="space-y-6 max-w-xl mx-auto">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-4 w-4" />
+          <RiArrowLeftLine className="h-4 w-4" />
         </Button>
         <h1 className="text-2xl font-bold">New Routing</h1>
       </div>

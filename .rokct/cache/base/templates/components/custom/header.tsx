@@ -136,7 +136,7 @@ import React, { useCallback, useEffect, useId, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight, Menu, X } from "lucide-react";
+import { RiArrowRightSLine, RiMenuLine, RiCloseLine } from "@remixicon/react";
 
 import { PLATFORM_NAME } from "@/app/config/platform";
 import t from "@/app/lib/i18n";
@@ -726,7 +726,7 @@ export function Header({
           {collapse ? (
             <div className="flex shrink-0 items-center">
               {brandLink}
-              <ChevronRight
+              <RiArrowRightSLine
                 aria-hidden="true"
                 className="ml-1 h-3.5 w-3.5 text-muted-foreground transition-opacity duration-500"
                 style={{ opacity: collapsed ? 1 : 0 }}
@@ -766,9 +766,9 @@ export function Header({
               onClick={() => setOpen((v) => !v)}
             >
               {open ? (
-                <X aria-hidden="true" className="h-6 w-6" />
+                <RiCloseLine aria-hidden="true" className="h-6 w-6" />
               ) : (
-                <Menu aria-hidden="true" className="h-6 w-6" />
+                <RiMenuLine aria-hidden="true" className="h-6 w-6" />
               )}
             </button>
           )}

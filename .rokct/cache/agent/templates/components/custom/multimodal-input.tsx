@@ -43,19 +43,7 @@ import useWindowSize from "./use-window-size";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import {
-  Brain,
-  ListTodo,
-  StickyNote,
-  MapPin,
-  Loader2,
-  Sparkles,
-  ChevronDown,
-  Mic,
-  FileText,
-  Receipt,
-  File,
-} from "lucide-react";
+import { RiBrainLine, RiTodoLine, RiStickyNoteLine, RiMapPinLine, RiLoader4Line, RiSparklingLine, RiArrowDownSLine, RiMicLine, RiFileTextLine, RiBillLine, RiFileLine } from "@remixicon/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -700,9 +688,9 @@ export function MultimodalInput({
                     ) : effectiveEntity === "item" ? (
                       <span className="text-xs mr-1">📦</span>
                     ) : effectiveIntent === "Task" ? (
-                      <ListTodo className="h-3 w-3" />
+                      <RiTodoLine className="h-3 w-3" />
                     ) : effectiveIntent === "Note" ? (
-                      <StickyNote className="h-3 w-3" />
+                      <RiStickyNoteLine className="h-3 w-3" />
                     ) : null}
 
                     {entityText}
@@ -771,7 +759,7 @@ export function MultimodalInput({
                 }}
                 className="cursor-pointer"
               >
-                <File className="mr-2 h-4 w-4" />
+                <RiFileLine className="mr-2 h-4 w-4" />
                 <span>Document</span>
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -781,7 +769,7 @@ export function MultimodalInput({
                 }}
                 className="cursor-pointer"
               >
-                <FileText className="mr-2 h-4 w-4" />
+                <RiFileTextLine className="mr-2 h-4 w-4" />
                 <span>Invoice</span>
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -791,7 +779,7 @@ export function MultimodalInput({
                 }}
                 className="cursor-pointer"
               >
-                <Receipt className="mr-2 h-4 w-4" />
+                <RiBillLine className="mr-2 h-4 w-4" />
                 <span>Receipt</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -848,7 +836,7 @@ export function MultimodalInput({
                 >
                   {models.find((m) => m.id === selectedModelId)?.name ||
                     "Model"}
-                  <ChevronDown className="ml-1 h-3 w-3 opacity-50" />
+                  <RiArrowDownSLine className="ml-1 h-3 w-3 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -896,7 +884,7 @@ export function MultimodalInput({
                 toast.info("Voice Mode coming soon!");
               }}
             >
-              <Mic className="h-5 w-5" />
+              <RiMicLine className="h-5 w-5" />
             </Button>
           )}
         </div>

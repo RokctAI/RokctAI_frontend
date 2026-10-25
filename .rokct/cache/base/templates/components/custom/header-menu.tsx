@@ -48,18 +48,18 @@
 import React, { useCallback, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  ArrowUpRight,
-  Box,
-  ChevronDown,
-  Chrome,
-  FileText,
-  Globe,
-  MessageSquare,
-  Smartphone,
-  Wrench,
-  Zap,
-  type LucideIcon,
-} from "lucide-react";
+  RiArrowRightUpLine,
+  RiBox3Line,
+  RiArrowDownSLine,
+  RiChromeLine,
+  RiFileTextLine,
+  RiGlobalLine,
+  RiMessage2Line,
+  RiSmartphoneLine,
+  RiToolsLine,
+  RiFlashlightLine,
+  type RemixiconComponentType,
+} from "@remixicon/react";
 
 import type {
   HeaderMenuAction,
@@ -135,17 +135,17 @@ const INLINE_LINK =
 /**
  * The closed set of glyphs an item or action may name (HeaderMenuIcon).
  * Named imports, so the header bundles these eight and not the whole of
- * lucide-react; "chrome" is lucide's own mark, no third-party asset.
+ * @remixicon/react; "chrome" is Remixicon's own mark, no third-party asset.
  */
-const MENU_ICONS: Record<HeaderMenuIcon, LucideIcon> = {
-  box: Box,
-  globe: Globe,
-  smartphone: Smartphone,
-  "message-square": MessageSquare,
-  zap: Zap,
-  wrench: Wrench,
-  "file-text": FileText,
-  chrome: Chrome,
+const MENU_ICONS: Record<HeaderMenuIcon, RemixiconComponentType> = {
+  box: RiBox3Line,
+  globe: RiGlobalLine,
+  smartphone: RiSmartphoneLine,
+  "message-square": RiMessage2Line,
+  zap: RiFlashlightLine,
+  wrench: RiToolsLine,
+  "file-text": RiFileTextLine,
+  chrome: RiChromeLine,
 };
 
 /** An item with a description or an icon is drawn as a card, not a link. */
@@ -158,7 +158,7 @@ const isCard = (item: HeaderMenuItem) => !!(item.description || item.icon);
  */
 function actionIcon(
   icon: HeaderMenuAction["icon"],
-): { glyph: LucideIcon } | { image: HeaderMenuImage } | null {
+): { glyph: RemixiconComponentType } | { image: HeaderMenuImage } | null {
   if (!icon) return null;
   if (typeof icon === "string") return { glyph: MENU_ICONS[icon] };
   return icon.src.trim() ? { image: icon } : null;
@@ -214,7 +214,7 @@ function MenuCard({ item, onNavigate }: { item: HeaderMenuItem; onNavigate?: () 
           )}
         </span>
       </span>
-      <ArrowUpRight
+      <RiArrowRightUpLine
         aria-hidden="true"
         className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
       />
@@ -406,7 +406,7 @@ function DesktopMegaMenu({
       >
         <span>{label}</span>
         {lead.badge && <MenuLabel badge={lead.badge} />}
-        <ChevronDown
+        <RiArrowDownSLine
           aria-hidden="true"
           className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")}
         />

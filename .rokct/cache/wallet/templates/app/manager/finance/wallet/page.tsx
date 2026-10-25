@@ -17,7 +17,11 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Wallet as WalletIcon, ArrowUpCircle } from "lucide-react";
+import {
+  RiArrowUpCircleLine,
+  RiLoader4Line,
+  RiWalletLine,
+} from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -132,7 +136,7 @@ export default function WalletPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -149,7 +153,7 @@ export default function WalletPage() {
         <Dialog open={isTopUpOpen} onOpenChange={setIsTopUpOpen}>
           <DialogTrigger asChild>
             <Button>
-              <ArrowUpCircle className="mr-2 size-4" />
+              <RiArrowUpCircleLine className="mr-2 size-4" />
               Top Up Wallet
             </Button>
           </DialogTrigger>
@@ -201,7 +205,7 @@ export default function WalletPage() {
             <DialogFooter>
               <Button onClick={handleTopUp} disabled={processing || !savedCard}>
                 {processing ? (
-                  <Loader2 className="size-4 animate-spin" />
+                  <RiLoader4Line className="size-4 animate-spin" />
                 ) : (
                   "Confirm Top Up"
                 )}
@@ -217,7 +221,7 @@ export default function WalletPage() {
             <CardTitle className="text-sm font-medium">
               Current Balance
             </CardTitle>
-            <WalletIcon className="size-4 text-muted-foreground" />
+            <RiWalletLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

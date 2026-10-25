@@ -19,7 +19,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, Search } from "lucide-react";
+import { RiAddLine, RiSearchLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -47,7 +47,7 @@ export function SubcontractingOrderList({ orders }: { orders: any[] }) {
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
               value={searchTerm}
@@ -57,7 +57,7 @@ export function SubcontractingOrderList({ orders }: { orders: any[] }) {
           </div>
           <Link href="/handson/all/supply_chain/subcontracting/order/new">
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Order
+              <RiAddLine className="mr-2 h-4 w-4" /> New Order
             </Button>
           </Link>
         </div>

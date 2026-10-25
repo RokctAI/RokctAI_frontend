@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3
+
+* fix(icons): icons come from `@remixicon/react` (the fleet's one icon set)
+  instead of `lucide-react`. `@remixicon/react` ^4.6.0 is declared in
+  `dependencies`. Icons only.
+
 ## 1.1.2
 
 * Seller invites read the already-unwrapped list instead of `response.message`.

@@ -33,7 +33,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { saveDoc } from "@/app/actions/handson/all/crm/crud";
 import { DocField, DocTypeMeta } from "@/app/actions/handson/all/crm/meta";
-import { Loader2 } from "lucide-react";
+import { RiLoader4Line } from "@remixicon/react";
 
 interface GenericFormProps {
   doctype: string;
@@ -190,7 +190,7 @@ export function GenericForm({
       </div>
       <div className="flex justify-end pt-4">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {isSubmitting && <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />}
           Save {doctype}
         </Button>
       </div>

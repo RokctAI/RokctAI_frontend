@@ -18,7 +18,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
+import {
+  RiAddLine,
+  RiArrowLeftLine,
+  RiDeleteBinLine,
+  RiSaveLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -82,7 +87,7 @@ export function SubcontractingOrderForm({
         <div className="flex gap-4 items-center">
           <Link href="/handson/all/supply_chain/subcontracting/order">
             <Button variant="outline" size="icon">
-              <ArrowLeft className="h-4 w-4" />
+              <RiArrowLeftLine className="h-4 w-4" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold">
@@ -91,7 +96,7 @@ export function SubcontractingOrderForm({
         </div>
         {!isEdit && (
           <Button type="submit" disabled={loading}>
-            <Save className="mr-2 h-4 w-4" /> Save
+            <RiSaveLine className="mr-2 h-4 w-4" /> Save
           </Button>
         )}
       </div>
@@ -114,7 +119,7 @@ export function SubcontractingOrderForm({
           <CardTitle>Items</CardTitle>
           {!isEdit && (
             <Button type="button" size="sm" onClick={addItem}>
-              <Plus className="h-4 w-4" /> Add
+              <RiAddLine className="h-4 w-4" /> Add
             </Button>
           )}
         </CardHeader>
@@ -154,7 +159,7 @@ export function SubcontractingOrderForm({
                         variant="ghost"
                         onClick={() => removeItem(i)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <RiDeleteBinLine className="h-4 w-4" />
                       </Button>
                     )}
                   </TableCell>

@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Calendar } from "lucide-react";
+import { RiCalendarLine } from "@remixicon/react";
 import {
   Card,
   CardContent,
@@ -55,7 +55,7 @@ export default function HolidayListPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold flex items-center">
-          <Calendar className="mr-3 h-8 w-8" />
+          <RiCalendarLine className="mr-3 h-8 w-8" />
           Holiday List
         </h1>
         <p className="text-muted-foreground">

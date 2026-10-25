@@ -18,7 +18,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check, X, Users, User, Building } from "lucide-react";
+import { RiCheckLine, RiCloseLine, RiGroupLine, RiUserLine, RiBuildingLine } from "@remixicon/react";
 import { announceHolidayWork } from "@/app/actions/ai/holiday";
 import { getDepartments } from "@/app/actions/handson/all/hrms/departments";
 
@@ -67,7 +67,7 @@ export const HolidayWorkForm = ({
   if (step === "done") {
     return (
       <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300">
-        <Check className="w-5 h-5 inline mr-2" />
+        <RiCheckLine className="w-5 h-5 inline mr-2" />
         Work schedule confirmed for {holidayName}.
       </div>
     );
@@ -95,13 +95,13 @@ export const HolidayWorkForm = ({
               onClick={() => setStep("audience")}
               className="flex-1 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 flex justify-center items-center gap-2"
             >
-              <Check className="w-4 h-4" /> Yes
+              <RiCheckLine className="w-4 h-4" /> Yes
             </button>
             <button
               onClick={() => setStep("done")} // Logic: If No, we effectively do nothing or log removal? For now treating as "Done"
               className="flex-1 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 px-4 py-2 rounded-md text-sm font-medium hover:bg-zinc-200 dark:hover:bg-zinc-600 flex justify-center items-center gap-2"
             >
-              <X className="w-4 h-4" /> No
+              <RiCloseLine className="w-4 h-4" /> No
             </button>
           </div>
         </div>
@@ -114,9 +114,9 @@ export const HolidayWorkForm = ({
 
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: "me_only", icon: User, label: t("Me Only") },
-                { id: "all", icon: Users, label: t("All Staff") },
-                { id: "departments", icon: Building, label: t("Depts") },
+                { id: "me_only", icon: RiUserLine, label: t("Me Only") },
+                { id: "all", icon: RiGroupLine, label: t("All Staff") },
+                { id: "departments", icon: RiBuildingLine, label: t("Depts") },
               ].map((opt) => (
                 <button
                   key={opt.id}

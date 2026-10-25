@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Save } from "lucide-react";
+import { RiLoader4Line, RiSaveLine } from "@remixicon/react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -110,7 +110,7 @@ export default function FlutterSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="size-8 animate-spin" />
+        <RiLoader4Line className="size-8 animate-spin" />
       </div>
     );
   }
@@ -241,7 +241,7 @@ export default function FlutterSettingsPage() {
 
               <div className="flex justify-end pt-4">
                 <Button onClick={handleSaveAppConfig}>
-                  <Save className="mr-2 size-4" />
+                  <RiSaveLine className="mr-2 size-4" />
                   Save Configuration
                 </Button>
               </div>
@@ -277,7 +277,7 @@ export default function FlutterSettingsPage() {
 
               <div className="flex justify-end pt-4">
                 <Button onClick={handleSaveBuildSettings}>
-                  <Save className="mr-2 size-4" />
+                  <RiSaveLine className="mr-2 size-4" />
                   Save Build Settings
                 </Button>
               </div>

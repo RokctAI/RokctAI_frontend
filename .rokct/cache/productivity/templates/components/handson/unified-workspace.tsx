@@ -23,7 +23,7 @@ import {
 } from "@/app/actions/handson/all/workspace/dashboard";
 import { WorkItemCard } from "@/components/handson/work-item-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
+import { RiLoader4Line } from "@remixicon/react";
 
 export function UnifiedWorkspace() {
   const [loading, setLoading] = useState(true);
@@ -59,7 +59,7 @@ export function UnifiedWorkspace() {
   if (loading) {
     return (
       <div className="flex justify-center p-8">
-        <Loader2 className="animate-spin" />
+        <RiLoader4Line className="animate-spin" />
       </div>
     );
   }
@@ -153,7 +153,7 @@ export function UnifiedWorkspace() {
                 className="w-full mt-4"
               >
                 {creating ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   "Create"
                 )}

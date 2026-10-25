@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, PlusCircle, Edit, Trash2 } from "lucide-react";
+import { RiLoader4Line, RiAddCircleLine, RiEditLine, RiDeleteBinLine } from "@remixicon/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -66,7 +66,7 @@ export default function ProductsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -77,7 +77,7 @@ export default function ProductsPage() {
         <h1 className="text-3xl font-bold">Products</h1>
         <Link href="/manager/products/new">
           <Button>
-            <PlusCircle className="mr-2 size-4" />
+            <RiAddCircleLine className="mr-2 size-4" />
             Add Product
           </Button>
         </Link>
@@ -141,7 +141,7 @@ export default function ProductsPage() {
                     <div className="flex justify-end gap-2">
                       <Link href={`/manager/products/${product.name}`}>
                         <Button variant="ghost" size="icon">
-                          <Edit className="size-4" />
+                          <RiEditLine className="size-4" />
                         </Button>
                       </Link>
                       <Button
@@ -149,7 +149,7 @@ export default function ProductsPage() {
                         size="icon"
                         className="text-red-500"
                       >
-                        <Trash2 className="size-4" />
+                        <RiDeleteBinLine className="size-4" />
                       </Button>
                     </div>
                   </TableCell>

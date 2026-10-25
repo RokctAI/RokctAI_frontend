@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine } from "@remixicon/react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -104,7 +104,7 @@ export default function ReferralsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="size-8 animate-spin" />
+        <RiLoader4Line className="size-8 animate-spin" />
       </div>
     );
   }
@@ -121,7 +121,7 @@ export default function ReferralsPage() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2 size-4" />
+              <RiAddLine className="mr-2 size-4" />
               Add Referral
             </Button>
           </DialogTrigger>
@@ -200,7 +200,7 @@ export default function ReferralsPage() {
                       size="icon"
                       onClick={() => handleDelete(referral.name)}
                     >
-                      <Trash2 className="size-4 text-destructive" />
+                      <RiDeleteBinLine className="size-4 text-destructive" />
                     </Button>
                   </TableCell>
                 </TableRow>

@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Check, X } from "lucide-react";
+import { RiLoader4Line, RiCheckLine, RiCloseLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import t from "@/app/lib/i18n";
@@ -144,7 +144,7 @@ export default function ReservationsPage() {
         <CardContent>
           {loading ? (
             <div className="flex h-48 items-center justify-center">
-              <Loader2 className="size-8 animate-spin text-gray-500" />
+              <RiLoader4Line className="size-8 animate-spin text-gray-500" />
             </div>
           ) : (
             <Table>
@@ -222,7 +222,7 @@ export default function ReservationsPage() {
                                 handleStatusUpdate(res.name, "Accepted")
                               }
                             >
-                              <Check className="size-4 mr-1" />{" "}
+                              <RiCheckLine className="size-4 mr-1" />{" "}
                               {t(
                                 "app.paas.dashboard.booking.reservations.btn_accept",
                               )}
@@ -235,7 +235,7 @@ export default function ReservationsPage() {
                                 handleStatusUpdate(res.name, "Rejected")
                               }
                             >
-                              <X className="size-4 mr-1" />{" "}
+                              <RiCloseLine className="size-4 mr-1" />{" "}
                               {t(
                                 "app.paas.dashboard.booking.reservations.btn_reject",
                               )}

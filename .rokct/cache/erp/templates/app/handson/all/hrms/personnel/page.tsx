@@ -26,7 +26,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, TrendingUp, UserMinus, FileText } from "lucide-react";
+import {
+  RiAddLine,
+  RiArrowRightUpLine,
+  RiFileTextLine,
+  RiUserUnfollowLine,
+} from "@remixicon/react";
 import Link from "next/link";
 import { getPromotions } from "@/app/actions/handson/all/hrms/promotions";
 import { getSeparations } from "@/app/actions/handson/all/hrms/separations";
@@ -69,13 +74,13 @@ export default function PersonnelPage() {
         <TabsContent value="promotions" className="space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-600" />
+              <RiArrowRightUpLine className="h-5 w-5 text-green-600" />
               <h2 className="text-xl font-semibold">Employee Promotions</h2>
             </div>
             {canEdit && (
               <Link href="/handson/all/hr/personnel/promotion/new">
                 <Button>
-                  <Plus className="mr-2 h-4 w-4" /> Promote Employee
+                  <RiAddLine className="mr-2 h-4 w-4" /> Promote Employee
                 </Button>
               </Link>
             )}
@@ -113,7 +118,7 @@ export default function PersonnelPage() {
         <TabsContent value="separations" className="space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <UserMinus className="h-5 w-5 text-red-600" />
+              <RiUserUnfollowLine className="h-5 w-5 text-red-600" />
               <h2 className="text-xl font-semibold">
                 Resignations & Terminations
               </h2>
@@ -121,7 +126,7 @@ export default function PersonnelPage() {
             {canEdit && (
               <Link href="/handson/all/hr/personnel/separation/new">
                 <Button variant="destructive">
-                  <Plus className="mr-2 h-4 w-4" /> Record Exit
+                  <RiAddLine className="mr-2 h-4 w-4" /> Record Exit
                 </Button>
               </Link>
             )}

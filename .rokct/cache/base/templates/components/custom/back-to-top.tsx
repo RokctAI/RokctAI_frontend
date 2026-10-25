@@ -45,7 +45,7 @@
 // every page mounts `<BackToTop />` in its own root layout instead.
 
 import React from "react";
-import { ArrowUp } from "lucide-react";
+import { RiArrowUpLine } from "@remixicon/react";
 
 import {
   BACK_TO_TOP_LABEL,
@@ -135,7 +135,7 @@ export function BackToTop({
       className={`${BACK_TO_TOP_CLASS} ${visible ? "opacity-100" : "pointer-events-none opacity-0"} ${className}`}
       style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
-      <ArrowUp className="h-5 w-5" aria-hidden="true" />
+      <RiArrowUpLine className="h-5 w-5" aria-hidden="true" />
     </button>
   );
 }

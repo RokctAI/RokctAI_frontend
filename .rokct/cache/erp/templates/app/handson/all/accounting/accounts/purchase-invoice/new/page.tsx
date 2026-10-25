@@ -50,7 +50,7 @@ import { createPurchaseInvoice } from "@/app/actions/handson/all/accounting/purc
 import { getSuppliers } from "@/app/actions/handson/all/accounting/buying/supplier";
 import { getItems } from "@/app/actions/handson/all/accounting/inventory/item";
 import { getPurchaseOrder } from "@/app/actions/handson/all/accounting/buying/order";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { RiAddLine, RiDeleteBinLine, RiLoader4Line } from "@remixicon/react";
 import t from "@/app/lib/i18n";
 import {
   Table,
@@ -212,7 +212,7 @@ function NewPurchaseInvoiceContent() {
                        size="sm"
                        onClick={() => append({ item_code: "", qty: 1, rate: 0 })}
                      >
-                       <Plus className="mr-2 h-4 w-4" /> {t('app.accounting.add_item')}
+                       <RiAddLine className="mr-2 h-4 w-4" /> {t('app.accounting.add_item')}
                      </Button>
                 </div>
               </CardHeader>
@@ -304,7 +304,7 @@ function NewPurchaseInvoiceContent() {
                             className="text-destructive"
                             onClick={() => remove(index)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <RiDeleteBinLine className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -323,7 +323,7 @@ function NewPurchaseInvoiceContent() {
                  {t('common.cancel')}
                </Button>
                <Button type="submit" disabled={loading}>
-                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                 {loading && <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />}
                  {t('app.accounting.create_invoice')}
                </Button>
             </div>

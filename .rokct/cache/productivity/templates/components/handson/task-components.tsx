@@ -17,7 +17,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { RiAddLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -57,7 +57,7 @@ export function TaskList({ tasks }: { tasks: any[] }) {
         </div>
         <Link href="/handson/all/work_management/projects/task/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> New Task
+            <RiAddLine className="mr-2 h-4 w-4" /> New Task
           </Button>
         </Link>
       </div>

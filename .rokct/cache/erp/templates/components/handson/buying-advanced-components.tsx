@@ -17,7 +17,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { RiAddLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -46,7 +46,7 @@ export function RFQList({ items }: { items: any[] }) {
         </div>
         <Link href="/handson/all/supply_chain/buying/rfq/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> New RFQ
+            <RiAddLine className="mr-2 h-4 w-4" /> New RFQ
           </Button>
         </Link>
       </div>
@@ -121,7 +121,7 @@ export function SupplierQuotationList({ items }: { items: any[] }) {
         </div>
         <Link href="/handson/all/supply_chain/buying/supplier-quotation/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> New Quote
+            <RiAddLine className="mr-2 h-4 w-4" /> New Quote
           </Button>
         </Link>
       </div>
@@ -204,7 +204,7 @@ export function QualityInspectionList({ items }: { items: any[] }) {
         </div>
         <Link href="/handson/all/supply_chain/buying/quality/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> New Inspection
+            <RiAddLine className="mr-2 h-4 w-4" /> New Inspection
           </Button>
         </Link>
       </div>

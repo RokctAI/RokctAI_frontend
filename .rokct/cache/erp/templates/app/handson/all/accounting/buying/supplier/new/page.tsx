@@ -47,7 +47,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createSupplier } from "@/app/actions/handson/all/accounting/buying/supplier";
-import { Loader2 } from "lucide-react";
+import { RiLoader4Line } from "@remixicon/react";
 
 // Note: createSupplier action needs to be created or we use a generic create if it doesn't exist.
 // Checking supply_chain.ts... getSuppliers exists. createSupplier does NOT exist yet?
@@ -185,7 +185,7 @@ export default function NewSupplierPage() {
                   Cancel
                 </Button>
                 <Button type="submit" disabled={loading}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {loading && <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />}
                   Create Supplier
                 </Button>
               </div>

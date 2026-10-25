@@ -20,7 +20,7 @@ export class OpportunityService {
   static async getList(page = 1, limit = 20, options?: ServiceOptions) {
     const start = (page - 1) * limit;
     const response = await BaseService.call(
-      "frappe.client.get_list",
+      "api.crm.records.get_list",
       {
         doctype: "Opportunity",
         fields: [
@@ -44,18 +44,14 @@ export class OpportunityService {
 
     // Helper for counting
     const countRes = await BaseService.call(
-      "frappe.client.get_value",
-      {
-        doctype: "Opportunity",
-        filters: {},
-        fieldname: "count(name) as total",
-      },
+      "api.crm.records.get_count",
+      { doctype: "Opportunity" },
       options,
     );
 
     return {
       data: response?.message || [],
-      total: countRes?.message?.total || 0,
+      total: countRes?.message || 0,
       page,
       limit,
     };
@@ -63,7 +59,7 @@ export class OpportunityService {
 
   static async get(name: string, options?: ServiceOptions) {
     const response = await BaseService.call(
-      "frappe.client.get",
+      "api.crm.records.get_doc",
       {
         doctype: "Opportunity",
         name: name,
@@ -74,11 +70,11 @@ export class OpportunityService {
     const deal = response?.message;
     if (deal && deal.opportunity_owner) {
       const ownerRes = await BaseService.call(
-        "frappe.client.get_value",
+        "api.crm.records.get_value",
         {
           doctype: "User",
-          filters: { name: deal.opportunity_owner },
-          fieldname: ["user_image", "full_name"],
+          name: deal.opportunity_owner,
+          fields: ["user_image", "full_name"],
         },
         options,
       );
@@ -107,8 +103,8 @@ export class OpportunityService {
     // I'll stick to generic doc creation mostly, but keeping the specific logic in service is better for reuse.
 
     const response = await BaseService.call(
-      "frappe.client.insert",
-      { doc: doc },
+      "api.crm.records.insert_doc",
+      { doctype: "Opportunity", doc: doc },
       options,
     );
     return response?.message;
@@ -122,11 +118,11 @@ export class OpportunityService {
     Object.assign(doc, data);
 
     const response = await BaseService.call(
-      "frappe.client.set_value",
+      "api.crm.records.set_value",
       {
         doctype: "Opportunity",
         name: name,
-        fieldname: doc,
+        values: doc,
       },
       options,
     );
@@ -135,7 +131,7 @@ export class OpportunityService {
 
   static async delete(name: string, options?: ServiceOptions) {
     await BaseService.call(
-      "frappe.client.delete",
+      "api.crm.records.delete_doc",
       {
         doctype: "Opportunity",
         name: name,

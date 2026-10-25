@@ -17,7 +17,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { RiAddLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -35,7 +35,7 @@ export function PurchaseReceiptList({ receipts }: { receipts: any[] }) {
         <h1 className="text-2xl font-bold">Purchase Receipts</h1>
         <Link href="/handson/all/supply_chain/buying/receipt/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> Receive Goods
+            <RiAddLine className="mr-2 h-4 w-4" /> Receive Goods
           </Button>
         </Link>
       </div>

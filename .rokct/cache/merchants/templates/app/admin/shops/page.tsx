@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Trash2, Edit } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine, RiEditLine } from "@remixicon/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -66,7 +66,7 @@ export default function AdminShopsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -77,7 +77,7 @@ export default function AdminShopsPage() {
         <h1 className="text-3xl font-bold">Shop Management</h1>
         <Button asChild>
           <Link href="/admin/shops/new">
-            <Plus className="mr-2 size-4" />
+            <RiAddLine className="mr-2 size-4" />
             Add Shop
           </Link>
         </Button>
@@ -112,7 +112,7 @@ export default function AdminShopsPage() {
                     <div className="flex justify-end gap-2">
                       <Button variant="ghost" size="icon" asChild>
                         <Link href={`/admin/shops/${shop.name}`}>
-                          <Edit className="size-4" />
+                          <RiEditLine className="size-4" />
                         </Link>
                       </Button>
                       <Button
@@ -121,7 +121,7 @@ export default function AdminShopsPage() {
                         className="text-red-500 hover:text-red-600"
                         onClick={() => handleDelete(shop.name)}
                       >
-                        <Trash2 className="size-4" />
+                        <RiDeleteBinLine className="size-4" />
                       </Button>
                     </div>
                   </TableCell>

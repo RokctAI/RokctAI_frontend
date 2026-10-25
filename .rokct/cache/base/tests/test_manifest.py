@@ -1189,7 +1189,7 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertEqual(src.count("description: entry.description,"), 1)
         partials = read(os.path.join(SDK_ROOT, "templates", "components", "custom", "header-menu.tsx"))
         self.assertIn("function DesktopMegaMenu(", partials)
-        self.assertIn("const MENU_ICONS: Record<HeaderMenuIcon, LucideIcon>", partials)
+        self.assertIn("const MENU_ICONS: Record<HeaderMenuIcon, RemixiconComponentType>", partials)
         self.assertIn("{groups.length > 0 && <DesktopMegaMenu groups={groups} megaLabel={megaLabel} />}", partials)
         self.assertNotIn("function DesktopGroup(", partials)
         for hard_coded in ("yellow-", "zinc-", "gray-", "#0a0a0a"):
@@ -1265,8 +1265,8 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertIn("<HeaderBrand collapsed={collapsed} />", header)
         # The chevron and the fading nav wrapper exist only for a collapsing brand.
         self.assertIn("{collapse ? (", header)
-        self.assertIn("<ChevronRight", header)
-        self.assertRegex(header, r"import \{[^}]*\bChevronRight\b[^}]*\} from \"lucide-react\";")
+        self.assertIn("<RiArrowRightSLine", header)
+        self.assertRegex(header, r"import \{[^}]*\bRiArrowRightSLine\b[^}]*\} from \"@remixicon/react\";")
         code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", header))
         for hard_coded in ("yellow-", "zinc-", "gray-", "#0a0a0a", "#4f46e5"):
             self.assertNotIn(hard_coded, code, f"header.tsx paints a hard-coded colour: {hard_coded}")
@@ -1548,7 +1548,7 @@ class TestRegistryMarkers(unittest.TestCase):
     def test_header_menu_action_carries_an_icon(self):
         # base_sdk 1.20.0 (Ray, 2026-09-09: rokct "lost its chrome icon"):
         # an action may name a glyph from the same closed set as an item,
-        # drawn before the label in both layouts; "chrome" is lucide's own
+        # drawn before the label in both layouts; "chrome" is Remixicon's own
         # mark. An action without one renders the label alone, as before.
         src = read(os.path.join(LANDING, "header-menu.ts"))
         action = src[src.index("export interface HeaderMenuAction {"):]
@@ -1559,8 +1559,8 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertEqual(src.count("icon?: HeaderMenuIcon;"), 2)
         self.assertIn('| "chrome";', src)
         partials = read(os.path.join(SDK_ROOT, "templates", "components", "custom", "header-menu.tsx"))
-        self.assertIn("  chrome: Chrome,", partials)
-        self.assertRegex(partials, r"import \{[^}]*\bChrome\b[^}]*\} from \"lucide-react\";")
+        self.assertIn("  chrome: RiChromeLine,", partials)
+        self.assertRegex(partials, r"import \{[^}]*\bRiChromeLine\b[^}]*\} from \"@remixicon/react\";")
         actions = partials[partials.index("export function HeaderMenuActions("):partials.index("export interface HeaderMenuRowProps")]
         # With an icon it is drawn before the label; without one the guard
         # leaves the label alone - one content node used by both the
@@ -1740,7 +1740,7 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertIn("{badges.length > 0 && (", hero)
         self.assertIn("{badges.map((badge) => (", hero)
         self.assertNotIn("{hero.badges.map(", hero)
-        self.assertIn('import { Chrome } from "lucide-react";', hero)
+        self.assertIn('import { RiChromeLine } from "@remixicon/react";', hero)
         self.assertIn('if (icon === "chrome") {', hero)
 
     # -- 1.23.0: the network strip ------------------------------------------
@@ -3312,7 +3312,7 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertTrue(button.lstrip().startswith("/*"), "licence header first")
         self.assertIn('"use client";', button)
         self.assertLess(button.index('"use client";'), button.index("import React"))
-        self.assertIn('import { ArrowUp } from "lucide-react";', button)
+        self.assertIn('import { RiArrowUpLine } from "@remixicon/react";', button)
         for needle in (
             "export function BackToTop({",
             "export interface BackToTopProps {",
@@ -3337,7 +3337,7 @@ class TestRegistryMarkers(unittest.TestCase):
             "      tabIndex={visible ? 0 : -1}",
             '      data-back-to-top={visible ? "shown" : "hidden"}',
             '${visible ? "opacity-100" : "pointer-events-none opacity-0"}',
-            '<ArrowUp className="h-5 w-5" aria-hidden="true" />',
+            '<RiArrowUpLine className="h-5 w-5" aria-hidden="true" />',
             "export default BackToTop;",
         ):
             self.assertIn(needle, button, needle)
@@ -3423,7 +3423,7 @@ class TestRegistryMarkers(unittest.TestCase):
     def test_back_to_top_type_checks_under_tsc(self):
         """The component and its rules under tsc, strict and
         isolatedModules with `jsx: preserve`, against a stub of the react
-        hooks and event it uses and of lucide-react's ArrowUp, with the
+        hooks and event it uses and of @remixicon/react's RiArrowUpLine, with the
         `@/` import pointed at the stage. Skips when no tsc is reachable."""
         tsc = os.environ.get("ROKCT_TSC") or shutil.which("tsc")
         if not tsc or not os.path.exists(tsc):
@@ -3441,8 +3441,8 @@ declare module "react" {
   const React: { useState: typeof useState; useEffect: typeof useEffect };
   export default React;
 }
-declare module "lucide-react" {
-  export function ArrowUp(props: { className?: string; "aria-hidden"?: boolean | "true" | "false" }): JSX.Element;
+declare module "@remixicon/react" {
+  export function RiArrowUpLine(props: { className?: string; "aria-hidden"?: boolean | "true" | "false" }): JSX.Element;
 }
 """
         with tempfile.TemporaryDirectory() as tmp:

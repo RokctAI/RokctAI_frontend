@@ -17,7 +17,7 @@
 "use client";
 
 import { format, subDays } from "date-fns";
-import { Loader2, Search } from "lucide-react";
+import { RiLoader4Line, RiSearchLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import t from "@/app/lib/i18n";
 
@@ -105,9 +105,9 @@ export default function AdminSalesReportPage() {
           </div>
           <Button onClick={handleSearch} disabled={loading}>
             {loading ? (
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <RiLoader4Line className="mr-2 size-4 animate-spin" />
             ) : (
-              <Search className="mr-2 size-4" />
+              <RiSearchLine className="mr-2 size-4" />
             )}
             {t("paas.admin.finance.sales.btn_generate")}
           </Button>

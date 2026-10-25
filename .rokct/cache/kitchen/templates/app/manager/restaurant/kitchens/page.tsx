@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Trash2, ChefHat } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine, RiRestaurant2Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -97,7 +97,7 @@ export default function KitchensPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -114,7 +114,7 @@ export default function KitchensPage() {
           </p>
         </div>
         <Button onClick={() => setIsDialogOpen(true)}>
-          <Plus className="mr-2 size-4" />{" "}
+          <RiAddLine className="mr-2 size-4" />{" "}
           {t("app.paas.dashboard.restaurant.kitchens.btn_add")}
         </Button>
       </div>
@@ -133,7 +133,7 @@ export default function KitchensPage() {
                 <CardTitle className="text-sm font-medium">
                   {kitchen.name}
                 </CardTitle>
-                <ChefHat className="size-4 text-muted-foreground" />
+                <RiRestaurant2Line className="size-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between items-center mt-4">
@@ -148,7 +148,7 @@ export default function KitchensPage() {
                     className="text-red-500"
                     onClick={() => handleDelete(kitchen.name)}
                   >
-                    <Trash2 className="size-4" />
+                    <RiDeleteBinLine className="size-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -194,7 +194,7 @@ export default function KitchensPage() {
           <DialogFooter>
             <Button onClick={handleSubmit} disabled={processing}>
               {processing ? (
-                <Loader2 className="size-4 animate-spin" />
+                <RiLoader4Line className="size-4 animate-spin" />
               ) : (
                 t("common.create")
               )}

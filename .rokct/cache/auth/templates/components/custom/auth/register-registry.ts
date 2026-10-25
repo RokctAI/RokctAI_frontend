@@ -174,6 +174,23 @@ export const REGISTER_CONFIGS: RegisterEntry[] = [
 ];
 
 /** auth_sdk's own register page: offered, the account fields only, the platform's words. */
+/**
+ * The role a sign-up asks for, the web twin of the Dart session policy's
+ * `signup_app_role` ("Becoming a seller or driver"): a link to
+ * `/register?role=seller` signs the new account up as a seller, as the
+ * manager app does. Hidden; empty (a plain account) without the query
+ * parameter. The default provisioner sends it as register_user's
+ * `app_role`, and the backend grants only the roles it allows at sign-up
+ * (Seller) and ignores anything else. A home SDK that declares its own
+ * `fields` keeps this by listing it too.
+ */
+export const APP_ROLE_FIELD: RegisterField = {
+  name: "app_role",
+  label: "Role",
+  type: "hidden",
+  fromQuery: "role",
+};
+
 export const DEFAULT_REGISTER_CONFIG: Readonly<Required<Pick<RegisterConfig, "enabled" | "fields" | "steps">> & { copy: Required<RegisterCopy> }> = {
   enabled: true,
   copy: {
@@ -183,7 +200,7 @@ export const DEFAULT_REGISTER_CONFIG: Readonly<Required<Pick<RegisterConfig, "en
     signInPrompt: "Already have an account?",
     signInLabel: "Sign in",
   },
-  fields: [],
+  fields: [APP_ROLE_FIELD],
   steps: [],
 };
 

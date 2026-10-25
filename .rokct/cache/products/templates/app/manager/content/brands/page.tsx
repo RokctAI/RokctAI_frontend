@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiPencilLine, RiDeleteBinLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -146,7 +146,7 @@ export default function BrandsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -163,7 +163,7 @@ export default function BrandsPage() {
           </p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
-          <Plus className="mr-2 size-4" />
+          <RiAddLine className="mr-2 size-4" />
           {t("app.paas.dashboard.content.brands.btn_add")}
         </Button>
       </div>
@@ -219,7 +219,7 @@ export default function BrandsPage() {
                         size="icon"
                         onClick={() => handleOpenDialog(brand)}
                       >
-                        <Pencil className="size-4" />
+                        <RiPencilLine className="size-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -227,7 +227,7 @@ export default function BrandsPage() {
                         className="text-red-500 hover:text-red-600"
                         onClick={() => handleDelete(brand.uuid)}
                       >
-                        <Trash2 className="size-4" />
+                        <RiDeleteBinLine className="size-4" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -290,7 +290,7 @@ export default function BrandsPage() {
           <DialogFooter>
             <Button onClick={handleSubmit} disabled={processing}>
               {processing ? (
-                <Loader2 className="size-4 animate-spin" />
+                <RiLoader4Line className="size-4 animate-spin" />
               ) : editing ? (
                 t("app.paas.dashboard.content.brands.btn_update")
               ) : (

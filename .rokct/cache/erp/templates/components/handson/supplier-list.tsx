@@ -18,13 +18,13 @@
 
 import { useState } from "react";
 import {
-  Plus,
-  Search,
-  Filter,
-  MoreHorizontal,
-  FileText,
-  Truck,
-} from "lucide-react";
+  RiAddLine,
+  RiFileTextLine,
+  RiFilterLine,
+  RiMoreLine,
+  RiSearchLine,
+  RiTruckLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -71,7 +71,7 @@ export function SupplierList({ suppliers }: SupplierListProps) {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="relative w-72">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search suppliers..."
             value={search}
@@ -80,7 +80,7 @@ export function SupplierList({ suppliers }: SupplierListProps) {
           />
         </div>
         <Button>
-          <Plus className="mr-2 h-4 w-4" /> New Supplier
+          <RiAddLine className="mr-2 h-4 w-4" /> New Supplier
         </Button>
       </div>
 
@@ -125,7 +125,7 @@ export function SupplierList({ suppliers }: SupplierListProps) {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
+                            <RiMoreLine className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">

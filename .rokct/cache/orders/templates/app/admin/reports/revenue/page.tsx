@@ -17,7 +17,7 @@
 "use client";
 
 import { addDays, format } from "date-fns";
-import { Loader2, Download } from "lucide-react";
+import { RiLoader4Line, RiDownloadLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
@@ -79,7 +79,7 @@ export default function RevenueReportPage() {
         <div className="flex gap-4">
           <DatePickerWithRange date={date} setDate={setDate} />
           <Button variant="outline">
-            <Download className="mr-2 size-4" />
+            <RiDownloadLine className="mr-2 size-4" />
             Export
           </Button>
         </div>
@@ -122,7 +122,7 @@ export default function RevenueReportPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
-                  <Loader2 className="size-6 animate-spin mx-auto" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             ) : data.length === 0 ? (

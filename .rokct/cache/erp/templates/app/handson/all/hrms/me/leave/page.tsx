@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { Plus } from "lucide-react";
+import { RiAddLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -129,7 +129,7 @@ export default function LeavePage() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Request
+              <RiAddLine className="mr-2 h-4 w-4" /> New Request
             </Button>
           </DialogTrigger>
           <DialogContent>

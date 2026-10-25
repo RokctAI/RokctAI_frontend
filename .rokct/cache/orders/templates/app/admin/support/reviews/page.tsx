@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Trash2, Star } from "lucide-react";
+import { RiLoader4Line, RiDeleteBinLine, RiStarLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -58,7 +58,7 @@ export default function AdminReviewsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -78,7 +78,7 @@ export default function AdminReviewsPage() {
               <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
                 <div className="flex items-center gap-1">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
+                    <RiStarLine
                       key={i}
                       className={`size-4 ${i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
                     />
@@ -90,7 +90,7 @@ export default function AdminReviewsPage() {
                   className="text-red-500 hover:text-red-600 -mt-2 -mr-2"
                   onClick={() => handleDelete(review.name)}
                 >
-                  <Trash2 className="size-4" />
+                  <RiDeleteBinLine className="size-4" />
                 </Button>
               </CardHeader>
               <CardContent>

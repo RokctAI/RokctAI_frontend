@@ -18,16 +18,16 @@
 
 import { useEffect, useState } from "react";
 import {
-  Loader2,
-  Plus,
-  Pencil,
-  Trash2,
-  ChevronRight,
-  LayoutDashboard,
-  Target,
-  Flag,
-  Activity,
-} from "lucide-react";
+  RiAddLine,
+  RiArrowRightSLine,
+  RiDashboardLine,
+  RiDeleteBinLine,
+  RiFlagLine,
+  RiFocus3Line,
+  RiLoader4Line,
+  RiPencilLine,
+  RiPulseLine,
+} from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -267,7 +267,7 @@ export default function StrategyPage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -348,7 +348,7 @@ export default function StrategyPage() {
                   >
                     <CardHeader>
                       <div className="flex items-center gap-2 text-blue-600 mb-1">
-                        <LayoutDashboard className="h-4 w-4" />
+                        <RiDashboardLine className="h-4 w-4" />
                         <span className="text-xs font-semibold uppercase tracking-wider">
                           Strategic Pillar
                         </span>
@@ -360,7 +360,7 @@ export default function StrategyPage() {
                         getObjsForPillar(pillar.name).map((obj) => (
                           <div key={obj.name} className="space-y-3">
                             <div className="flex items-start gap-2">
-                              <Target className="h-4 w-4 mt-1 text-orange-500 shrink-0" />
+                              <RiFocus3Line className="h-4 w-4 mt-1 text-orange-500 shrink-0" />
                               <div>
                                 <h4 className="font-semibold text-sm leading-tight">
                                   {obj.title}
@@ -372,7 +372,7 @@ export default function StrategyPage() {
                                       key={kpi.name}
                                       className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 p-1.5 rounded"
                                     >
-                                      <Activity className="h-3 w-3 text-green-600" />
+                                      <RiPulseLine className="h-3 w-3 text-green-600" />
                                       <span>{kpi.title}</span>
                                     </div>
                                   ))}
@@ -425,7 +425,7 @@ export default function StrategyPage() {
               </p>
             </div>
             <Button onClick={() => openDialog("Goal")}>
-              <Plus className="mr-2 h-4 w-4" /> New Goal
+              <RiAddLine className="mr-2 h-4 w-4" /> New Goal
             </Button>
           </div>
 
@@ -444,7 +444,7 @@ export default function StrategyPage() {
                     variant="ghost"
                     onClick={() => openDialog("Goal", goal)}
                   >
-                    <Pencil className="h-4 w-4 mr-2" /> Edit
+                    <RiPencilLine className="h-4 w-4 mr-2" /> Edit
                   </Button>
                   <Button
                     size="sm"
@@ -452,7 +452,7 @@ export default function StrategyPage() {
                     className="text-red-500"
                     onClick={() => onDelete("Goal", goal.name)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <RiDeleteBinLine className="h-4 w-4" />
                   </Button>
                 </CardContent>
               </Card>
@@ -473,7 +473,7 @@ export default function StrategyPage() {
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center justify-between w-full pr-4">
                     <div className="flex items-center gap-2">
-                      <Flag className="h-4 w-4 text-primary" />
+                      <RiFlagLine className="h-4 w-4 text-primary" />
                       <span className="font-semibold text-lg">
                         {vision.title}
                       </span>
@@ -488,14 +488,14 @@ export default function StrategyPage() {
                       variant="outline"
                       onClick={() => openDialog("Vision", vision)}
                     >
-                      <Pencil className="h-3 w-3 mr-1" /> Edit Vision
+                      <RiPencilLine className="h-3 w-3 mr-1" /> Edit Vision
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => openDialog("Pillar", null, vision.name)}
                     >
-                      <Plus className="h-3 w-3 mr-1" /> Add Pillar
+                      <RiAddLine className="h-3 w-3 mr-1" /> Add Pillar
                     </Button>
                     <Button
                       size="sm"
@@ -503,7 +503,7 @@ export default function StrategyPage() {
                       className="text-red-500"
                       onClick={() => onDelete("Vision", vision.name)}
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <RiDeleteBinLine className="h-3 w-3" />
                     </Button>
                   </div>
 
@@ -515,7 +515,7 @@ export default function StrategyPage() {
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <LayoutDashboard className="h-4 w-4 text-blue-500" />
+                            <RiDashboardLine className="h-4 w-4 text-blue-500" />
                             <span className="font-semibold">
                               {pillar.title}
                             </span>
@@ -527,7 +527,7 @@ export default function StrategyPage() {
                               className="h-6 w-6"
                               onClick={() => openDialog("Pillar", pillar)}
                             >
-                              <Pencil className="h-3 w-3" />
+                              <RiPencilLine className="h-3 w-3" />
                             </Button>
                             <Button
                               size="icon"
@@ -535,7 +535,7 @@ export default function StrategyPage() {
                               className="h-6 w-6 text-red-500"
                               onClick={() => onDelete("Pillar", pillar.name)}
                             >
-                              <Trash2 className="h-3 w-3" />
+                              <RiDeleteBinLine className="h-3 w-3" />
                             </Button>
                             <Button
                               size="sm"
@@ -558,7 +558,7 @@ export default function StrategyPage() {
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                  <Target className="h-3 w-3 text-orange-500" />
+                                  <RiFocus3Line className="h-3 w-3 text-orange-500" />
                                   <span className="text-sm font-medium">
                                     {obj.title}
                                   </span>
@@ -572,7 +572,7 @@ export default function StrategyPage() {
                                       openDialog("Objective", obj, pillar.name)
                                     }
                                   >
-                                    <Pencil className="h-3 w-3" />
+                                    <RiPencilLine className="h-3 w-3" />
                                   </Button>
                                   <Button
                                     size="icon"
@@ -582,7 +582,7 @@ export default function StrategyPage() {
                                       onDelete("Objective", obj.name)
                                     }
                                   >
-                                    <Trash2 className="h-3 w-3" />
+                                    <RiDeleteBinLine className="h-3 w-3" />
                                   </Button>
                                   <Button
                                     size="sm"
@@ -604,7 +604,7 @@ export default function StrategyPage() {
                                     className="flex items-center justify-between text-xs text-muted-foreground hover:bg-muted/50 rounded px-1"
                                   >
                                     <div className="flex items-center gap-1">
-                                      <Activity className="h-3 w-3 text-green-500" />
+                                      <RiPulseLine className="h-3 w-3 text-green-500" />
                                       <span>{kpi.title}</span>
                                     </div>
                                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -616,7 +616,7 @@ export default function StrategyPage() {
                                           openDialog("KPI", kpi, obj.name)
                                         }
                                       >
-                                        <Pencil className="h-2 w-2" />
+                                        <RiPencilLine className="h-2 w-2" />
                                       </Button>
                                       <Button
                                         size="icon"
@@ -626,7 +626,7 @@ export default function StrategyPage() {
                                           onDelete("KPI", kpi.name)
                                         }
                                       >
-                                        <Trash2 className="h-2 w-2" />
+                                        <RiDeleteBinLine className="h-2 w-2" />
                                       </Button>
                                     </div>
                                   </div>

@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -92,7 +92,7 @@ export default function AdminFAQsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -104,7 +104,7 @@ export default function AdminFAQsPage() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2 size-4" />
+              <RiAddLine className="mr-2 size-4" />
               Add FAQ
             </Button>
           </DialogTrigger>
@@ -157,7 +157,7 @@ export default function AdminFAQsPage() {
                   className="text-red-500 hover:text-red-600 -mt-2 -mr-2"
                   onClick={() => handleDelete(faq.name)}
                 >
-                  <Trash2 className="size-4" />
+                  <RiDeleteBinLine className="size-4" />
                 </Button>
               </CardHeader>
             </Card>

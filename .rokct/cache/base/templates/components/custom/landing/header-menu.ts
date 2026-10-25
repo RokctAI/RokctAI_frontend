@@ -184,11 +184,11 @@ export interface HeaderMenuLink {
 
 /**
  * The icons a menu item or action may name (since 1.18.0). A closed set,
- * resolved by components/custom/header-menu.tsx from lucide-react, so the
+ * resolved by components/custom/header-menu.tsx from @remixicon/react, so the
  * header bundles a handful of glyphs and not the whole icon library: "box"
  * (a product), "globe" (the web), "smartphone" (mobile), "message-square"
  * (chat), "zap" (automation), "wrench" (tools), "file-text" (documents)
- * and, since 1.20.0, "chrome" (lucide's own Chrome mark, for a browser
+ * and, since 1.20.0, "chrome" (Remixicon's Chrome mark, for a browser
  * extension action - no third-party asset).
  */
 export type HeaderMenuIcon =

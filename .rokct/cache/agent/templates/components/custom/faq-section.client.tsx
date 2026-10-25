@@ -24,7 +24,7 @@
 
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Minus, Plus } from "lucide-react";
+import { RiSubtractLine, RiAddLine } from "@remixicon/react";
 
 import { AGENT_LANDING_CONFIG } from "@/components/custom/landing/agent-landing-config";
 
@@ -71,9 +71,9 @@ export function FaqSection({ id }: { id?: string }) {
                   </span>
                   <span className="flex-shrink-0 flex items-center justify-center w-7 h-7 md:w-10 md:h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
                     {open ? (
-                      <Minus className="w-3 h-3 md:w-5 md:h-5" />
+                      <RiSubtractLine className="w-3 h-3 md:w-5 md:h-5" />
                     ) : (
-                      <Plus className="w-3 h-3 md:w-5 md:h-5" />
+                      <RiAddLine className="w-3 h-3 md:w-5 md:h-5" />
                     )}
                   </span>
                 </button>

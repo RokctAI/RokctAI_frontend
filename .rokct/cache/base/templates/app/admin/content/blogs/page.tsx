@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Calendar } from "lucide-react";
+import { RiLoader4Line, RiCalendarLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getBlogs } from "@/app/actions/base/admin/content";
@@ -44,7 +44,7 @@ export default function AdminBlogsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -64,7 +64,7 @@ export default function AdminBlogsPage() {
               <CardHeader>
                 <CardTitle className="line-clamp-2">{blog.title}</CardTitle>
                 <div className="flex items-center text-sm text-muted-foreground mt-2">
-                  <Calendar className="mr-2 size-4" />
+                  <RiCalendarLine className="mr-2 size-4" />
                   {format(new Date(blog.published_on || blog.creation), "PPP")}
                 </div>
               </CardHeader>

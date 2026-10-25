@@ -15,7 +15,7 @@
  */
 
 import { format } from "date-fns";
-import { FlashlightIcon, PlaneTakeoffIcon } from "lucide-react";
+import { RiFlashlightLine, RiFlightTakeoffLine } from "@remixicon/react";
 
 const SAMPLE = {
   reservationId: "RES123456",
@@ -55,7 +55,7 @@ export function DisplayBoardingPass({ boardingPass = SAMPLE }) {
 
         <div className="absolute w-full flex flex-row justify-center">
           <div className="text-amber-800">
-            <PlaneTakeoffIcon />
+            <RiFlightTakeoffLine />
           </div>
         </div>
 

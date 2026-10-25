@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Plus, Calendar } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiCalendarLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -84,7 +84,7 @@ export default function AdsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -124,10 +124,10 @@ export default function AdsPage() {
                     onClick={() => handlePurchase(pkg.name)}
                   >
                     {purchasingId === pkg.name ? (
-                      <Loader2 className="size-4 animate-spin" />
+                      <RiLoader4Line className="size-4 animate-spin" />
                     ) : (
                       <>
-                        <Plus className="mr-2 size-4" />
+                        <RiAddLine className="mr-2 size-4" />
                         Purchase
                       </>
                     )}
@@ -154,12 +154,12 @@ export default function AdsPage() {
                       </div>
                       <div className="text-sm text-muted-foreground flex items-center gap-4 mt-1">
                         <span className="flex items-center gap-1">
-                          <Calendar className="size-3" />
+                          <RiCalendarLine className="size-3" />
                           Start:{" "}
                           {format(new Date(ad.start_date), "MMM d, yyyy")}
                         </span>
                         <span className="flex items-center gap-1">
-                          <Calendar className="size-3" />
+                          <RiCalendarLine className="size-3" />
                           End: {format(new Date(ad.end_date), "MMM d, yyyy")}
                         </span>
                       </div>

@@ -28,7 +28,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Printer } from "lucide-react";
+import { RiPrinterLine } from "@remixicon/react";
 import { getSalarySlip } from "@/app/actions/handson/all/hrms/payroll";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -66,7 +66,7 @@ export default function SalarySlipPage() {
           Back to List
         </Button>
         <Button onClick={() => window.print()}>
-          <Printer className="mr-2 h-4 w-4" /> Print Slip
+          <RiPrinterLine className="mr-2 h-4 w-4" /> Print Slip
         </Button>
       </div>
 

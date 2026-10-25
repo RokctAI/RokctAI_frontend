@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Trash2, Menu as MenuIcon } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine, RiMenuLine as MenuIcon } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -97,7 +97,7 @@ export default function MenusPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -114,7 +114,7 @@ export default function MenusPage() {
           </p>
         </div>
         <Button onClick={() => setIsDialogOpen(true)}>
-          <Plus className="mr-2 size-4" />{" "}
+          <RiAddLine className="mr-2 size-4" />{" "}
           {t("app.paas.dashboard.products.menus.btn_add")}
         </Button>
       </div>
@@ -143,7 +143,7 @@ export default function MenusPage() {
                     className="text-red-500"
                     onClick={() => handleDelete(menu.name)}
                   >
-                    <Trash2 className="size-4" />
+                    <RiDeleteBinLine className="size-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -177,7 +177,7 @@ export default function MenusPage() {
           <DialogFooter>
             <Button onClick={handleSubmit} disabled={processing}>
               {processing ? (
-                <Loader2 className="size-4 animate-spin" />
+                <RiLoader4Line className="size-4 animate-spin" />
               ) : (
                 t("common.create")
               )}

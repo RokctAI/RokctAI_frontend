@@ -1,3 +1,25 @@
+## 1.0.4
+
+* The CRM record actions and the contact service call the scoped
+  `api.crm.records.*` gateway cmds instead of the generic `frappe.client.*`
+  RPCs: `call_logs.ts`, `notes.ts`, `tasks.ts` (`get_list`, `get_count`),
+  `crud.ts` (`set_value` for edits, `insert_doc` for creates), `meta.ts`
+  (`get_meta`) and `services/all/crm/contacts.ts` (`get_list`, `get_count`,
+  `get_doc`). `tasks.ts` no longer uses the untyped `client.get_list`.
+  Counts are a plain number in `message`.
+* Needs the crm frappe app with `api.crm.records.get_count` and
+  `api.crm.records.get_meta`. Contacts are writable through these cmds.
+* `services/all/crm/organizations.ts`, `support.ts`, `leads.ts` and
+  `deals.ts` also move onto `api.crm.records.*`, using the new
+  `get_value` (deal owner card fields from User) and `delete_doc` cmds.
+* Every doctype with a create or edit form is writable, Prospect and
+  Contract included (Ray approved 2026-10-03), each write gated by
+  `has_permission` for the caller's role.
+
+## 1.0.3
+
+* fix(icons): templates use `@remixicon/react` (`Ri*Line`) instead of `lucide-react`; the manifest deps swap `lucide-react` for `@remixicon/react` ^4.6.0.
+
 ## 1.0.2
 
 * fix(support, call logs): list queries select real columns: Issue sla_resolution_date, Warranty Claim complaint_date/complaint, Call Log type (no title).

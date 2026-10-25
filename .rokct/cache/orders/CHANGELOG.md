@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3
+
+* fix(icons): icons come from `@remixicon/react` (the fleet's one icon set)
+  instead of `lucide-react`. `@remixicon/react` ^4.6.0 is declared in
+  `dependencies`. Icons only.
+
 ## 1.1.2
 
 * Admin POS calls real cmds: products from `api.seller_product.get_seller_products`, categories from `api.category.get_categories`, and the sale through `api.order.create_order` with `order_data` holding `shop` / `order_items[].product` + `quantity` (the PosSaleQueue contract). The `api.admin_management.*` POS cmds never existed.

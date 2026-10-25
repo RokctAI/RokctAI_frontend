@@ -1,3 +1,9 @@
+## 1.1.1
+
+* fix(icons): the admin users, roles and permissions pages import their
+  icons from `@remixicon/react` instead of lucide-react. The manifest now
+  declares `@remixicon/react` ^4.6.0 in place of lucide-react.
+
 ## 1.1.0
 
 * The server actions call the platform through `paasCall` from the base

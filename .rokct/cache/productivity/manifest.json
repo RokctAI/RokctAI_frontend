@@ -1,6 +1,6 @@
 {
   "name": "productivity_sdk",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "installs": [
     {
       "from": "templates/app/handson/all/projects",
@@ -74,7 +74,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "date-fns": "^4.1.0",
-    "lucide-react": "^0.563.0",
+    "@remixicon/react": "^4.6.0",
     "react-hook-form": "^7.68.0",
     "sonner": "^2.0.7",
     "zod": "^4.1.13"

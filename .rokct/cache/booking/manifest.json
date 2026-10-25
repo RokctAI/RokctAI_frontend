@@ -1,6 +1,6 @@
 {
   "name": "booking_sdk",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "installs": [
     {
       "from": "templates/app/admin/orders/bookings/page.tsx",
@@ -35,7 +35,9 @@
       "to": "app/manager/settings/booking/page.tsx"
     }
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@remixicon/react": "^4.6.0"
+  },
   "devDependencies": {},
   "integrations": [],
   "requires": [

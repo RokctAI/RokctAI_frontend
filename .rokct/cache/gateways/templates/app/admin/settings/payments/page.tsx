@@ -16,7 +16,13 @@
 
 "use client";
 
-import { Loader2, Settings2, Plus, Trash2, Save } from "lucide-react";
+import {
+  RiAddLine,
+  RiDeleteBinLine,
+  RiLoader4Line,
+  RiSaveLine,
+  RiSettings3Line,
+} from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -149,7 +155,7 @@ export default function PaymentMethodsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -182,7 +188,7 @@ export default function PaymentMethodsPage() {
                 className="w-full"
                 onClick={() => handleManage(method.name)}
               >
-                <Settings2 className="mr-2 size-4" />
+                <RiSettings3Line className="mr-2 size-4" />
                 Manage Configuration
               </Button>
             </CardContent>
@@ -202,7 +208,7 @@ export default function PaymentMethodsPage() {
 
           {loadingGateway || !editingGateway ? (
             <div className="flex justify-center p-8">
-              <Loader2 className="size-8 animate-spin text-gray-500" />
+              <RiLoader4Line className="size-8 animate-spin text-gray-500" />
             </div>
           ) : (
             <div className="space-y-6 py-4">
@@ -240,7 +246,7 @@ export default function PaymentMethodsPage() {
                 <div className="flex items-center justify-between">
                   <Label className="text-base">Payload / Secrets</Label>
                   <Button variant="ghost" size="sm" onClick={addSetting}>
-                    <Plus className="mr-2 size-4" /> Add Key
+                    <RiAddLine className="mr-2 size-4" /> Add Key
                   </Button>
                 </div>
 
@@ -277,7 +283,7 @@ export default function PaymentMethodsPage() {
                           onClick={() => removeSetting(index)}
                           className="text-red-500 hover:text-red-700"
                         >
-                          <Trash2 className="size-4" />
+                          <RiDeleteBinLine className="size-4" />
                         </Button>
                       </div>
                     ),
@@ -300,7 +306,7 @@ export default function PaymentMethodsPage() {
               disabled={savingGateway || loadingGateway}
             >
               {savingGateway && (
-                <Loader2 className="mr-2 size-4 animate-spin" />
+                <RiLoader4Line className="mr-2 size-4 animate-spin" />
               )}
               Save Configuration
             </Button>

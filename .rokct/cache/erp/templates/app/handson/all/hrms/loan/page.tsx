@@ -25,7 +25,11 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, DollarSign, Wallet } from "lucide-react";
+import {
+  RiAddLine,
+  RiMoneyDollarCircleLine,
+  RiWalletLine,
+} from "@remixicon/react";
 import Link from "next/link";
 import { getLoans } from "@/app/actions/handson/all/hrms/loans";
 import { Badge } from "@/components/ui/badge";
@@ -53,7 +57,7 @@ export default function EmployeeLoanPage() {
         </div>
         <Link href="/handson/all/hr/loan/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> Apply for Loan
+            <RiAddLine className="mr-2 h-4 w-4" /> Apply for Loan
           </Button>
         </Link>
       </div>
@@ -61,7 +65,7 @@ export default function EmployeeLoanPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loans.length === 0 ? (
           <div className="col-span-full text-center py-12 text-muted-foreground border rounded-lg bg-slate-50 flex flex-col items-center gap-2">
-            <Wallet className="h-10 w-10 opacity-20" />
+            <RiWalletLine className="h-10 w-10 opacity-20" />
             No active loans found.
           </div>
         ) : (
@@ -90,7 +94,7 @@ export default function EmployeeLoanPage() {
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-muted-foreground">Amount</span>
                   <span className="text-lg font-bold text-slate-900 flex items-center">
-                    <DollarSign className="h-4 w-4 text-green-600" />
+                    <RiMoneyDollarCircleLine className="h-4 w-4 text-green-600" />
                     {loan.loan_amount}
                   </span>
                 </div>

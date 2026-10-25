@@ -19,7 +19,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, Edit, Plus, Search, MapPin, Building2 } from "lucide-react";
+import {
+  RiAddLine,
+  RiBuilding2Line,
+  RiDeleteBinLine,
+  RiEditLine,
+  RiMapPinLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -72,7 +79,7 @@ export function ProspectList({ prospects }: ProspectListProps) {
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search Prospects..."
               value={searchTerm}
@@ -82,7 +89,7 @@ export function ProspectList({ prospects }: ProspectListProps) {
           </div>
           <Link href="/handson/all/commercial/crm/prospects/new">
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Prospect
+              <RiAddLine className="mr-2 h-4 w-4" /> New Prospect
             </Button>
           </Link>
         </div>
@@ -113,7 +120,7 @@ export function ProspectList({ prospects }: ProspectListProps) {
               filtered.map((prospect) => (
                 <TableRow key={prospect.name}>
                   <TableCell className="font-medium flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-muted-foreground" />
+                    <RiBuilding2Line className="h-4 w-4 text-muted-foreground" />
                     {prospect.company_name}
                   </TableCell>
                   <TableCell>{prospect.industry || "-"}</TableCell>
@@ -121,7 +128,7 @@ export function ProspectList({ prospects }: ProspectListProps) {
                   <TableCell>
                     {prospect.territory && (
                       <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <MapPin className="h-3 w-3" /> {prospect.territory}
+                        <RiMapPinLine className="h-3 w-3" /> {prospect.territory}
                       </span>
                     )}
                   </TableCell>
@@ -131,7 +138,7 @@ export function ProspectList({ prospects }: ProspectListProps) {
                         href={`/handson/all/commercial/crm/prospects/${prospect.name}`}
                       >
                         <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4" />
+                          <RiEditLine className="h-4 w-4" />
                         </Button>
                       </Link>
                       <Button
@@ -140,7 +147,7 @@ export function ProspectList({ prospects }: ProspectListProps) {
                         className="text-destructive hover:text-destructive"
                         onClick={() => handleDelete(prospect.name)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <RiDeleteBinLine className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

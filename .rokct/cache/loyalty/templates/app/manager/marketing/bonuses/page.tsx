@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Gift } from "lucide-react";
+import { RiLoader4Line, RiGiftLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -62,7 +62,7 @@ export default function BonusesPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -108,7 +108,7 @@ export default function BonusesPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center">
-                        <Gift className="mr-2 size-4 text-purple-500" />
+                        <RiGiftLine className="mr-2 size-4 text-purple-500" />
                         {bonus.reason}
                       </div>
                     </TableCell>

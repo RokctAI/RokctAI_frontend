@@ -18,14 +18,7 @@
 
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
-import {
-  Users,
-  Package,
-  Briefcase,
-  MessageSquare,
-  Plus,
-  PanelLeft,
-} from "lucide-react";
+import { RiGroupLine, RiBox3Line, RiBriefcaseLine, RiMessage2Line, RiAddLine, RiLayoutLeftLine } from "@remixicon/react";
 import {
   Sidebar,
   SidebarContent,
@@ -54,9 +47,9 @@ export function LeftSidebar({
   const { toggleSidebar } = useSidebar();
   const [isVisible, setIsVisible] = useState(false);
   const modules = [
-    { id: "HR", icon: Users, label: "HR Management" },
-    { id: "CRM", icon: Briefcase, label: "CRM & Sales" },
-    { id: "SCM", icon: Package, label: "Supply Chain" },
+    { id: "HR", icon: RiGroupLine, label: "HR Management" },
+    { id: "CRM", icon: RiBriefcaseLine, label: "CRM & Sales" },
+    { id: "SCM", icon: RiBox3Line, label: "Supply Chain" },
   ];
 
   useEffect(() => {

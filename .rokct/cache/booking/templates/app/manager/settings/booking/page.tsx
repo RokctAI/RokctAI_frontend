@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Trash2, Edit } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine, RiEditLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -149,7 +149,7 @@ export default function BookingSettingsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -180,7 +180,7 @@ export default function BookingSettingsPage() {
             >
               <DialogTrigger asChild>
                 <Button size="sm" variant="outline">
-                  <Plus className="size-4" />
+                  <RiAddLine className="size-4" />
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -236,7 +236,7 @@ export default function BookingSettingsPage() {
                       handleDeleteSection(section.name);
                     }}
                   >
-                    <Trash2 className="size-4" />
+                    <RiDeleteBinLine className="size-4" />
                   </Button>
                 </div>
               ))}
@@ -265,7 +265,7 @@ export default function BookingSettingsPage() {
             >
               <DialogTrigger asChild>
                 <Button size="sm" disabled={!selectedSection}>
-                  <Plus className="mr-2 size-4" />
+                  <RiAddLine className="mr-2 size-4" />
                   {t("app.paas.dashboard.settings.booking.btn_add_table")}
                 </Button>
               </DialogTrigger>
@@ -318,7 +318,7 @@ export default function BookingSettingsPage() {
           <CardContent className="pt-4">
             {loadingTables ? (
               <div className="flex justify-center py-8">
-                <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                <RiLoader4Line className="size-6 animate-spin text-muted-foreground" />
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -334,7 +334,7 @@ export default function BookingSettingsPage() {
                         className="h-6 w-6 text-destructive"
                         onClick={() => handleDeleteTable(table.name)}
                       >
-                        <Trash2 className="size-3" />
+                        <RiDeleteBinLine className="size-3" />
                       </Button>
                     </div>
                     <div className="bg-secondary/50 p-3 rounded-full">

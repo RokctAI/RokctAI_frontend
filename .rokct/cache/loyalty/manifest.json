@@ -1,6 +1,6 @@
 {
   "name": "loyalty_sdk",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "installs": [
     {
       "from": "templates/app/admin/marketing/bonuses/page.tsx",
@@ -27,7 +27,9 @@
       "to": "app/admin/finance/customer-subscriptions/page.tsx"
     }
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@remixicon/react": "^4.6.0"
+  },
   "devDependencies": {},
   "integrations": [],
   "requires": [

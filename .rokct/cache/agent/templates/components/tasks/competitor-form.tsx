@@ -28,7 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2, MapPin, CheckCircle, AlertCircle } from "lucide-react";
+import { RiLoader4Line, RiMapPinLine, RiCheckboxCircleLine, RiErrorWarningLine } from "@remixicon/react";
 
 interface CompetitorFormProps {
   name?: string;
@@ -101,7 +101,7 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
     return (
       <Card className="w-full max-w-md bg-green-50 border-green-200">
         <CardContent className="pt-6 flex flex-col items-center text-center">
-          <CheckCircle className="h-12 w-12 text-green-500 mb-2" />
+          <RiCheckboxCircleLine className="h-12 w-12 text-green-500 mb-2" />
           <h3 className="font-semibold text-green-800">Competitor Added</h3>
           <p className="text-sm text-green-700">{message}</p>
         </CardContent>
@@ -113,7 +113,7 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
     <Card className="w-full max-w-md shadown-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <MapPin className="h-5 w-5 text-blue-500" />
+          <RiMapPinLine className="h-5 w-5 text-blue-500" />
           Add Competitor
         </CardTitle>
       </CardHeader>
@@ -123,18 +123,18 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
           <div className="flex items-center gap-2 text-sm p-2 rounded bg-slate-100">
             {locStatus === "loading" && (
               <>
-                <Loader2 className="h-3 w-3 animate-spin" /> Locating you...
+                <RiLoader4Line className="h-3 w-3 animate-spin" /> Locating you...
               </>
             )}
             {locStatus === "success" && (
               <>
-                <CheckCircle className="h-3 w-3 text-green-500" /> Location
+                <RiCheckboxCircleLine className="h-3 w-3 text-green-500" /> Location
                 Locked ({location?.lat.toFixed(4)}, {location?.lng.toFixed(4)})
               </>
             )}
             {locStatus === "error" && (
               <>
-                <AlertCircle className="h-3 w-3 text-red-500" /> Location Access
+                <RiErrorWarningLine className="h-3 w-3 text-red-500" /> Location Access
                 Denied
               </>
             )}
@@ -196,7 +196,7 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
 
           {status === "error" && (
             <div className="text-sm text-red-500 bg-red-50 p-2 rounded flex items-center gap-2">
-              <AlertCircle className="h-4 w-4" /> {message}
+              <RiErrorWarningLine className="h-4 w-4" /> {message}
             </div>
           )}
         </CardContent>
@@ -207,7 +207,7 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
             disabled={status === "submitting"}
           >
             {status === "submitting" && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
             )}
             Save Competitor
           </Button>

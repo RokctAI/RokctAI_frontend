@@ -18,7 +18,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
+import {
+  RiAddLine,
+  RiArrowLeftLine,
+  RiDeleteBinLine,
+  RiSaveLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -145,7 +150,7 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
         <div className="flex items-center gap-4">
           <Link href="/handson/all/supply_chain/manufacturing/bom">
             <Button variant="outline" size="icon" type="button">
-              <ArrowLeft className="h-4 w-4" />
+              <RiArrowLeftLine className="h-4 w-4" />
             </Button>
           </Link>
           <h1 className="text-2xl font-bold">
@@ -154,7 +159,7 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
         </div>
         {!isEdit && (
           <Button type="submit" disabled={loading}>
-            <Save className="mr-2 h-4 w-4" />
+            <RiSaveLine className="mr-2 h-4 w-4" />
             {loading ? "Saving..." : "Save"}
           </Button>
         )}
@@ -212,7 +217,7 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
           <CardTitle>Raw Materials</CardTitle>
           {!isEdit && (
             <Button type="button" variant="outline" size="sm" onClick={addItem}>
-              <Plus className="h-4 w-4 mr-2" /> Add Item
+              <RiAddLine className="h-4 w-4 mr-2" /> Add Item
             </Button>
           )}
         </CardHeader>
@@ -254,7 +259,7 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
                         size="sm"
                         onClick={() => removeItem(index)}
                       >
-                        <Trash2 className="h-4 w-4 text-muted-foreground" />
+                        <RiDeleteBinLine className="h-4 w-4 text-muted-foreground" />
                       </Button>
                     )}
                   </TableCell>

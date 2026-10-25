@@ -1,0 +1,67 @@
+{
+  "name": "control_sdk",
+  "version": "1.6.1",
+  "installs": [],
+  "dependencies": {},
+  "devDependencies": {},
+  "app_type": {
+    "rokctapp": {
+      "installs": [
+        {
+          "from": "templates/app/handson/control/fleet",
+          "to": "app/handson/control/fleet"
+        },
+        {
+          "from": "templates/app/actions/handson/control/fleet",
+          "to": "app/actions/handson/control/fleet"
+        },
+        {
+          "from": "templates/app/services/control/fleet.ts",
+          "to": "app/services/control/fleet.ts"
+        },
+        {
+          "from": "templates/app/services/control/fleet-actions.ts",
+          "to": "app/services/control/fleet-actions.ts"
+        },
+        {
+          "from": "templates/app/lib/fleet",
+          "to": "app/lib/fleet"
+        },
+        {
+          "from": "templates/docs/guides/control-fleet-board.md",
+          "to": "docs/guides/control-fleet-board.md"
+        },
+        {
+          "from": "templates/tour/fragments/control-fleet.tour.yaml",
+          "to": "tour/fragments/control-fleet.tour.yaml"
+        }
+      ],
+      "dependencies": {
+        "@remixicon/react": "^4.6.0",
+        "date-fns": "^4.1.0",
+        "sonner": "^2.0.7"
+      },
+      "devDependencies": {},
+      "integrations": [],
+      "requires": [
+        "app/(auth)/auth.ts",
+        "app/lib/role_constants.ts",
+        "app/services/control/base.ts",
+        "components/ui/button.tsx",
+        "components/ui/card.tsx",
+        "components/ui/dialog.tsx",
+        "components/ui/input.tsx",
+        "components/ui/label.tsx",
+        "components/ui/switch.tsx",
+        "components/ui/table.tsx",
+        "components/ui/textarea.tsx",
+        "lib/utils.ts"
+      ]
+    }
+  },
+  "_comment": {
+    "about": "The Next.js half of the control app: the control fleet board (dockers, heartbeats, settings sync and the staff fleet actions) for the rokctapp shell (RokctAI_frontend). It moved here from RokctAI_frontend#204, which had added the pages to the shell directly; pages live in an SDK's nextjs layer and are composed in, as the rpanel pages come from hosting_sdk. The sidebar entry (app/handson/layout.tsx controlItems) and the control dashboard tile (app/handson/control/page.tsx) stay in the shell: both files are shell-owned and carry no @rokct-sdk marker for them. The demo fixtures (app/lib/fleet/demo.ts, used when ROKCT_DEMO_DATA=1 on guided-tour builds), the guide and the tour fragment ship with the pages.",
+    "app/services/control/base.ts": "host-owned in RokctAI_frontend (ControlBaseService over gateway-rpc); the fleet services extend it.",
+    "dependencies": "date-fns and sonner are already in the shell's package.json; listed at the shell's own ranges."
+  }
+}

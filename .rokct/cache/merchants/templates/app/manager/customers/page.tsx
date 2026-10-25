@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, User } from "lucide-react";
+import { RiLoader4Line, RiUserLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -61,7 +61,7 @@ export default function CustomersPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -110,7 +110,7 @@ export default function CustomersPage() {
                       <div className="flex items-center gap-3">
                         <Avatar>
                           <AvatarFallback>
-                            <User className="size-4" />
+                            <RiUserLine className="size-4" />
                           </AvatarFallback>
                         </Avatar>
                         <span className="font-medium">

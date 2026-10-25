@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Plus, Trash2, Image as ImageIcon } from "lucide-react";
+import { RiLoader4Line, RiAddLine, RiDeleteBinLine, RiImageLine as ImageIcon } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -114,7 +114,7 @@ export default function StoriesPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -129,7 +129,7 @@ export default function StoriesPage() {
           </p>
         </div>
         <Button onClick={handleOpenDialog}>
-          <Plus className="mr-2 size-4" />
+          <RiAddLine className="mr-2 size-4" />
           Add Story
         </Button>
       </div>
@@ -162,7 +162,7 @@ export default function StoriesPage() {
                   className="absolute top-2 right-2 size-8"
                   onClick={() => handleDelete(story.name)}
                 >
-                  <Trash2 className="size-4" />
+                  <RiDeleteBinLine className="size-4" />
                 </Button>
               </div>
               <CardContent className="p-3">
@@ -215,7 +215,7 @@ export default function StoriesPage() {
           <DialogFooter>
             <Button onClick={handleSubmit} disabled={processing}>
               {processing ? (
-                <Loader2 className="size-4 animate-spin" />
+                <RiLoader4Line className="size-4 animate-spin" />
               ) : (
                 "Add Story"
               )}

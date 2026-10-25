@@ -30,7 +30,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { CheckIcon } from "lucide-react";
+import { RiCheckLine } from "@remixicon/react";
 
 import type { LandingPlan } from "@/app/actions/base/landing";
 import {
@@ -328,7 +328,7 @@ export function Pricing({
                 <ul className="flex flex-col gap-3 text-left mb-8 flex-grow">
                   {features.map((feat, i) => (
                     <li key={i} className="flex items-start">
-                      <CheckIcon className="size-4 mr-2 text-wealth-green-500 mt-1 shrink-0" />
+                      <RiCheckLine className="size-4 mr-2 text-wealth-green-500 mt-1 shrink-0" />
                       {/* Feature lines are authored markup from the platform's own plan records. */}
                       <span
                         className="text-sm leading-snug"

@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Check, X } from "lucide-react";
+import { RiLoader4Line, RiCheckLine, RiCloseLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -100,7 +100,7 @@ export default function RefundsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -241,7 +241,7 @@ export default function RefundsPage() {
               onClick={() => handleUpdateStatus("Accepted")}
               disabled={processing}
             >
-              <Check className="size-4 mr-2" />
+              <RiCheckLine className="size-4 mr-2" />
               {t("app.paas.dashboard.orders.refunds.btn_accept")}
             </Button>
             <Button
@@ -250,7 +250,7 @@ export default function RefundsPage() {
               onClick={() => handleUpdateStatus("Canceled")}
               disabled={processing}
             >
-              <X className="size-4 mr-2" />
+              <RiCloseLine className="size-4 mr-2" />
               {t("app.paas.dashboard.orders.refunds.btn_reject")}
             </Button>
           </DialogFooter>

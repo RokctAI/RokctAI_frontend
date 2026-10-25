@@ -83,6 +83,11 @@ const defaultProvisioner: RegisterProvisioner = {
           password: submission.password,
           first_name: submission.firstName,
           last_name: submission.lastName,
+          // The role the register link asked for (?role=seller; the
+          // register config's app_role field). Absent: a plain account.
+          ...(submission.values.app_role
+            ? { app_role: submission.values.app_role }
+            : {}),
         },
         { baseUrl, session: null, requireAuth: false, throwOnError: true },
       );

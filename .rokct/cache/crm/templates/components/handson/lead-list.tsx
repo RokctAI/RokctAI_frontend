@@ -19,7 +19,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, Edit, Plus, Search, Phone, Mail } from "lucide-react";
+import {
+  RiAddLine,
+  RiDeleteBinLine,
+  RiEditLine,
+  RiMailLine,
+  RiPhoneLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -73,7 +80,7 @@ export function LeadList({ leads }: LeadListProps) {
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search Leads..."
               value={searchTerm}
@@ -83,7 +90,7 @@ export function LeadList({ leads }: LeadListProps) {
           </div>
           <Link href="/handson/all/commercial/crm/leads/new">
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Lead
+              <RiAddLine className="mr-2 h-4 w-4" /> New Lead
             </Button>
           </Link>
         </div>
@@ -121,12 +128,12 @@ export function LeadList({ leads }: LeadListProps) {
                     <div className="flex flex-col text-xs text-muted-foreground">
                       {lead.email_id && (
                         <span className="flex items-center gap-1">
-                          <Mail className="h-3 w-3" /> {lead.email_id}
+                          <RiMailLine className="h-3 w-3" /> {lead.email_id}
                         </span>
                       )}
                       {lead.mobile_no && (
                         <span className="flex items-center gap-1">
-                          <Phone className="h-3 w-3" /> {lead.mobile_no}
+                          <RiPhoneLine className="h-3 w-3" /> {lead.mobile_no}
                         </span>
                       )}
                     </div>
@@ -146,7 +153,7 @@ export function LeadList({ leads }: LeadListProps) {
                         href={`/handson/all/commercial/crm/leads/${lead.name}`}
                       >
                         <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4" />
+                          <RiEditLine className="h-4 w-4" />
                         </Button>
                       </Link>
                       <Button
@@ -155,7 +162,7 @@ export function LeadList({ leads }: LeadListProps) {
                         className="text-destructive hover:text-destructive"
                         onClick={() => handleDelete(lead.name)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <RiDeleteBinLine className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

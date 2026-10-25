@@ -19,7 +19,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus, User, Search } from "lucide-react";
+import { RiAddLine, RiSearchLine, RiUserLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -77,7 +77,7 @@ export function JobApplicantList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="relative w-72">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search candidates..."
             className="pl-8"
@@ -90,7 +90,7 @@ export function JobApplicantList() {
             router.push("/handson/all/hr/recruitment/candidates/new")
           }
         >
-          <Plus className="mr-2 h-4 w-4" /> Add Candidate
+          <RiAddLine className="mr-2 h-4 w-4" /> Add Candidate
         </Button>
       </div>
 
@@ -129,7 +129,7 @@ export function JobApplicantList() {
                 >
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
+                      <RiUserLine className="h-4 w-4 text-muted-foreground" />
                       {app.applicant_name}
                     </div>
                   </TableCell>

@@ -16,14 +16,7 @@
 
 "use client";
 
-import {
-  Loader2,
-  Search,
-  ShoppingCart,
-  Plus,
-  Minus,
-  Trash2,
-} from "lucide-react";
+import { RiLoader4Line, RiSearchLine, RiShoppingCartLine, RiAddLine, RiSubtractLine, RiDeleteBinLine } from "@remixicon/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -142,7 +135,7 @@ export default function POSPage() {
       <div className="flex-1 flex flex-col gap-4">
         <div className="flex gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
             <Input
               placeholder={t("app.paas.admin.pos.ph_search")}
               className="pl-8"
@@ -176,7 +169,7 @@ export default function POSPage() {
         <ScrollArea className="flex-1">
           {loading ? (
             <div className="flex justify-center p-8">
-              <Loader2 className="animate-spin" />
+              <RiLoader4Line className="animate-spin" />
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
@@ -219,7 +212,7 @@ export default function POSPage() {
       <Card className="w-[400px] flex flex-col">
         <div className="p-4 border-b">
           <h2 className="font-semibold flex items-center gap-2">
-            <ShoppingCart className="size-4" />
+            <RiShoppingCartLine className="size-4" />
             {t("app.paas.admin.pos.cart_title")}
           </h2>
         </div>
@@ -245,7 +238,7 @@ export default function POSPage() {
                       className="size-6"
                       onClick={() => updateQuantity(item.name, -1)}
                     >
-                      <Minus className="size-3" />
+                      <RiSubtractLine className="size-3" />
                     </Button>
                     <span className="text-sm w-4 text-center">
                       {item.quantity}
@@ -256,7 +249,7 @@ export default function POSPage() {
                       className="size-6"
                       onClick={() => updateQuantity(item.name, 1)}
                     >
-                      <Plus className="size-3" />
+                      <RiAddLine className="size-3" />
                     </Button>
                     <Button
                       size="icon"
@@ -264,7 +257,7 @@ export default function POSPage() {
                       className="size-6 text-red-500"
                       onClick={() => removeFromCart(item.name)}
                     >
-                      <Trash2 className="size-3" />
+                      <RiDeleteBinLine className="size-3" />
                     </Button>
                   </div>
                 </div>
@@ -283,7 +276,7 @@ export default function POSPage() {
             disabled={cart.length === 0 || processing}
             onClick={handleCheckout}
           >
-            {processing ? <Loader2 className="animate-spin mr-2" /> : null}
+            {processing ? <RiLoader4Line className="animate-spin mr-2" /> : null}
             {t("app.paas.admin.pos.btn_checkout")}
           </Button>
         </div>

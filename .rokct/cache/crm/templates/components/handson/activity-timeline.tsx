@@ -18,7 +18,7 @@
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Settings } from "lucide-react";
+import { RiMessage2Line, RiSettings3Line } from "@remixicon/react";
 
 interface TimelineItem {
   id: string;
@@ -61,7 +61,7 @@ export function ActivityTimeline({ items }: ActivityTimelineProps) {
                     }
                   >
                     {item.type === "system" ? (
-                      <Settings className="w-4 h-4" />
+                      <RiSettings3Line className="w-4 h-4" />
                     ) : (
                       getInitials(item.owner)
                     )}

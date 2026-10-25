@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, FileText } from "lucide-react";
+import { RiLoader4Line, RiFileTextLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -60,7 +60,7 @@ export default function ReceiptsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -103,7 +103,7 @@ export default function ReceiptsPage() {
                   <TableRow key={receipt.name}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        <FileText className="size-4 text-muted-foreground" />
+                        <RiFileTextLine className="size-4 text-muted-foreground" />
                         {receipt.name}
                       </div>
                     </TableCell>

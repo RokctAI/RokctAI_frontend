@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Calendar, FileText } from "lucide-react";
+import { RiAddLine, RiCalendarLine, RiFileTextLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -120,18 +120,18 @@ export default function LeaveDashboard() {
         <div className="flex space-x-2">
           <Link href="/handson/all/hr/leave/holidays">
             <Button variant="outline">
-              <Calendar className="mr-2 h-4 w-4" /> Holidays
+              <RiCalendarLine className="mr-2 h-4 w-4" /> Holidays
             </Button>
           </Link>
           <Link href="/handson/all/hr/leave/holidays">
             <Button variant="outline">
-              <Calendar className="mr-2 h-4 w-4" /> Holidays
+              <RiCalendarLine className="mr-2 h-4 w-4" /> Holidays
             </Button>
           </Link>
           {canApply && (
             <Link href="/handson/all/hr/leave/new">
               <Button>
-                <Plus className="mr-2 h-4 w-4" /> Apply Leave
+                <RiAddLine className="mr-2 h-4 w-4" /> Apply Leave
               </Button>
             </Link>
           )}
@@ -173,7 +173,7 @@ export default function LeaveDashboard() {
                   <CardTitle className="text-sm font-medium">
                     {alloc.leave_type}
                   </CardTitle>
-                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  <RiFileTextLine className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">

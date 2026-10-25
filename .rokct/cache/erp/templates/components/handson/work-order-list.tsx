@@ -19,7 +19,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Edit, Plus, Search } from "lucide-react";
+import { RiAddLine, RiEditLine, RiSearchLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -55,7 +55,7 @@ export function WorkOrderList({ orders }: WorkOrderListProps) {
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search Work Orders..."
               value={searchTerm}
@@ -65,7 +65,7 @@ export function WorkOrderList({ orders }: WorkOrderListProps) {
           </div>
           <Link href="/handson/all/supply_chain/manufacturing/work-order/new">
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Work Order
+              <RiAddLine className="mr-2 h-4 w-4" /> New Work Order
             </Button>
           </Link>
         </div>
@@ -115,7 +115,7 @@ export function WorkOrderList({ orders }: WorkOrderListProps) {
                         href={`/handson/all/supply_chain/manufacturing/work-order/${wo.name}`}
                       >
                         <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4" />
+                          <RiEditLine className="h-4 w-4" />
                         </Button>
                       </Link>
                     </div>

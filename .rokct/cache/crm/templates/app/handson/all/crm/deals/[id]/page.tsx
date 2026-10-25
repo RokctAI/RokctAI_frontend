@@ -29,13 +29,13 @@ import { Button } from "@/components/ui/button";
 import { ActivityTimeline } from "@/components/handson/activity-timeline";
 import Link from "next/link";
 import {
-  ArrowLeft,
-  User,
-  Building2,
-  DollarSign,
-  Percent,
-  Calendar,
-} from "lucide-react";
+  RiArrowLeftLine,
+  RiBuilding2Line,
+  RiCalendarLine,
+  RiMoneyDollarCircleLine,
+  RiPercentLine,
+  RiUserLine,
+} from "@remixicon/react";
 import { notFound } from "next/navigation";
 
 export default async function DealDetails({
@@ -57,7 +57,7 @@ export default async function DealDetails({
         <h1 className="text-2xl font-bold text-red-500">Deal Not Found</h1>
         <Button asChild variant="link" className="pl-0 mt-4">
           <Link href="/handson/all/crm/deals">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Deals
+            <RiArrowLeftLine className="w-4 h-4 mr-2" /> Back to Deals
           </Link>
         </Button>
       </div>
@@ -80,7 +80,7 @@ export default async function DealDetails({
       <div className="flex items-center gap-4">
         <Button asChild variant="outline" size="icon">
           <Link href="/handson/all/crm/deals">
-            <ArrowLeft className="w-4 h-4" />
+            <RiArrowLeftLine className="w-4 h-4" />
           </Link>
         </Button>
         <div className="flex-1">
@@ -126,7 +126,7 @@ export default async function DealDetails({
             {/* Key Metrics */}
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 border rounded-lg bg-card text-card-foreground shadow-sm flex items-center gap-3">
-                <Building2 className="w-5 h-5 text-muted-foreground" />
+                <RiBuilding2Line className="w-5 h-5 text-muted-foreground" />
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
                     Organization
@@ -137,7 +137,7 @@ export default async function DealDetails({
                 </div>
               </div>
               <div className="p-4 border rounded-lg bg-card text-card-foreground shadow-sm flex items-center gap-3">
-                <Percent className="w-5 h-5 text-muted-foreground" />
+                <RiPercentLine className="w-5 h-5 text-muted-foreground" />
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
                     Probability

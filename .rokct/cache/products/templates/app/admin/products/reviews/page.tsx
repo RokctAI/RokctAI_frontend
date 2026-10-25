@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Star } from "lucide-react";
+import { RiLoader4Line, RiStarLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getAllProductReviews } from "@/app/actions/products/admin/products";
@@ -68,7 +68,7 @@ export default function ProductReviewsPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
-                  <Loader2 className="size-6 animate-spin mx-auto" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             ) : reviews.length === 0 ? (
@@ -90,7 +90,7 @@ export default function ProductReviewsPage() {
                   <TableCell>{review.user}</TableCell>
                   <TableCell>
                     <div className="flex items-center">
-                      <Star className="size-4 fill-yellow-400 text-yellow-400 mr-1" />
+                      <RiStarLine className="size-4 fill-yellow-400 text-yellow-400 mr-1" />
                       {review.rating}
                     </div>
                   </TableCell>

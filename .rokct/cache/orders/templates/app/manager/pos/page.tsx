@@ -16,15 +16,7 @@
 
 "use client";
 
-import {
-  Loader2,
-  Search,
-  ShoppingCart,
-  Plus,
-  Minus,
-  Trash2,
-  CreditCard,
-} from "lucide-react";
+import { RiLoader4Line, RiSearchLine, RiShoppingCartLine, RiAddLine, RiSubtractLine, RiDeleteBinLine, RiBankCardLine } from "@remixicon/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -148,7 +140,7 @@ export default function POSPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -159,7 +151,7 @@ export default function POSPage() {
       <div className="flex-1 flex flex-col gap-4">
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
+            <RiSearchLine className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
             <Input
               placeholder={t("app.paas.dashboard.pos.ph_search")}
               value={searchQuery}
@@ -212,7 +204,7 @@ export default function POSPage() {
       <Card className="w-[400px] flex flex-col h-full">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2">
-            <ShoppingCart className="size-5" />
+            <RiShoppingCartLine className="size-5" />
             {t("app.paas.dashboard.pos.cart_title")}
           </CardTitle>
         </CardHeader>
@@ -239,7 +231,7 @@ export default function POSPage() {
                         className="size-6"
                         onClick={() => updateQuantity(item.name, -1)}
                       >
-                        <Minus className="size-3" />
+                        <RiSubtractLine className="size-3" />
                       </Button>
                       <span className="text-sm w-4 text-center">
                         {item.quantity}
@@ -250,7 +242,7 @@ export default function POSPage() {
                         className="size-6"
                         onClick={() => updateQuantity(item.name, 1)}
                       >
-                        <Plus className="size-3" />
+                        <RiAddLine className="size-3" />
                       </Button>
                     </div>
                     <div className="text-right min-w-[60px]">
@@ -263,7 +255,7 @@ export default function POSPage() {
                         className="size-6 text-red-500 hover:text-red-600 -mr-2"
                         onClick={() => removeFromCart(item.name)}
                       >
-                        <Trash2 className="size-3" />
+                        <RiDeleteBinLine className="size-3" />
                       </Button>
                     </div>
                   </div>
@@ -299,9 +291,9 @@ export default function POSPage() {
             onClick={handleCheckout}
           >
             {processing ? (
-              <Loader2 className="size-4 animate-spin mr-2" />
+              <RiLoader4Line className="size-4 animate-spin mr-2" />
             ) : (
-              <CreditCard className="size-4 mr-2" />
+              <RiBankCardLine className="size-4 mr-2" />
             )}
             {t("app.paas.dashboard.pos.btn_charge", {
               amount: total.toFixed(2),

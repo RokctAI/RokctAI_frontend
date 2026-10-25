@@ -19,7 +19,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, Edit, Plus, Search } from "lucide-react";
+import {
+  RiAddLine,
+  RiDeleteBinLine,
+  RiEditLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -124,7 +129,7 @@ export function AssetList({ assets, employees = [] }: AssetListProps) {
                         href={`/handson/all/financials/assets/${asset.name}`}
                       >
                         <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4" />
+                          <RiEditLine className="h-4 w-4" />
                         </Button>
                       </Link>
                       <Button
@@ -133,7 +138,7 @@ export function AssetList({ assets, employees = [] }: AssetListProps) {
                         className="text-destructive hover:text-destructive"
                         onClick={() => handleDelete(asset.name)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <RiDeleteBinLine className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

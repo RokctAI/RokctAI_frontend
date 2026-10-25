@@ -1,3 +1,7 @@
+## 1.0.4
+
+* fix(icons): templates use `@remixicon/react` (`Ri*Line`) instead of `lucide-react`; the manifest deps swap `lucide-react` for `@remixicon/react` ^4.6.0.
+
 ## 1.0.3
 
 * fix(ai smart status): `fuzzySearch` asks each doctype only for columns it has (Project: project_name/customer, Task: subject/project, Purchase Order: supplier_name; customer_name/grand_total only on the selling doctypes) and falls back to that doctype's party/title field. The "Invoice" label maps to the real `Sales Invoice` doctype. Purchase Order is tried in the guessed-type path (Supply Chain role) and gets a Cancelled branch. The document lookup now runs inside the try, so a gateway error returns `{ success: false }` instead of throwing.

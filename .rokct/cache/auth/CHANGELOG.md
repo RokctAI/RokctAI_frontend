@@ -1,3 +1,18 @@
+## 1.10.1
+
+* **A login does not depend on the local database.** The tenant-link lookup (`resolveLink`) and the save after a login (`rememberLogin`) run in their own `try` blocks in `auth.ts`. With no `POSTGRES_URL`, or a database that is down, the login goes to the backend and succeeds with the right password, instead of showing "Invalid credentials". A failed save is logged and does not fail the login.
+
+## 1.10.0
+
+* **Web sign-up can ask for a role, as the apps do.** A link to
+  `/register?role=seller` signs the new account up as a seller (the hidden
+  `app_role` field, `APP_ROLE_FIELD`, in the default register config). The
+  default provisioner sends it as `register_user`'s `app_role`. The backend
+  grants only Seller at sign-up and ignores anything else, so a plain
+  `/register` still makes a plain account. A seller then sees the merchant
+  dashboard for their own pending shop. A home SDK with its own `fields`
+  keeps the role link by listing `APP_ROLE_FIELD`.
+
 ## 1.9.0
 
 * **Sign-up brings the visitor back to where they were.** `/login` and

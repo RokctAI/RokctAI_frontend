@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, Trash2, Plus } from "lucide-react";
+import { RiAddLine, RiCalendarLine, RiDeleteBinLine } from "@remixicon/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -200,7 +200,7 @@ export default function NewExpensePage() {
                             ) : (
                               <span>Pick a date</span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <RiCalendarLine className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -232,7 +232,7 @@ export default function NewExpensePage() {
                 size="sm"
                 onClick={() => append({ amount: 0, description: "" } as any)}
               >
-                <Plus className="mr-2 h-4 w-4" /> Add Item
+                <RiAddLine className="mr-2 h-4 w-4" /> Add Item
               </Button>
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
@@ -363,7 +363,7 @@ export default function NewExpensePage() {
                       className="h-9 w-9 text-destructive"
                       onClick={() => remove(index)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <RiDeleteBinLine className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>

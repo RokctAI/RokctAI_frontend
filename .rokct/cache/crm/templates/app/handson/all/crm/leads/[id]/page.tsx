@@ -23,16 +23,16 @@ import { Button } from "@/components/ui/button";
 import { ActivityTimeline } from "@/components/handson/activity-timeline";
 import Link from "next/link";
 import {
-  ArrowLeft,
-  User,
-  Building2,
-  Mail,
-  Phone,
-  Calendar,
-  Globe,
-  MapPin,
-  Clock,
-} from "lucide-react";
+  RiArrowLeftLine,
+  RiBuilding2Line,
+  RiCalendarLine,
+  RiGlobalLine,
+  RiMailLine,
+  RiMapPinLine,
+  RiPhoneLine,
+  RiTimeLine,
+  RiUserLine,
+} from "@remixicon/react";
 import { notFound } from "next/navigation";
 
 export default async function LeadMetrics({
@@ -54,7 +54,7 @@ export default async function LeadMetrics({
         <h1 className="text-2xl font-bold text-red-500">Lead Not Found</h1>
         <Button asChild variant="link" className="pl-0 mt-4">
           <Link href="/handson/all/crm/leads">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Leads
+            <RiArrowLeftLine className="w-4 h-4 mr-2" /> Back to Leads
           </Link>
         </Button>
       </div>
@@ -77,7 +77,7 @@ export default async function LeadMetrics({
       <div className="flex items-center gap-4">
         <Button asChild variant="outline" size="icon">
           <Link href="/handson/all/crm/leads">
-            <ArrowLeft className="w-4 h-4" />
+            <RiArrowLeftLine className="w-4 h-4" />
           </Link>
         </Button>
         <div className="flex-1">
@@ -110,7 +110,7 @@ export default async function LeadMetrics({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {lead.email_id && (
                 <div className="flex items-center gap-3 p-3 border rounded-lg">
-                  <Mail className="w-4 h-4 text-muted-foreground" />
+                  <RiMailLine className="w-4 h-4 text-muted-foreground" />
                   <a
                     href={`mailto:${lead.email_id} `}
                     className="hover:underline"
@@ -121,7 +121,7 @@ export default async function LeadMetrics({
               )}
               {lead.mobile_no && (
                 <div className="flex items-center gap-3 p-3 border rounded-lg">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  <RiPhoneLine className="w-4 h-4 text-muted-foreground" />
                   <a
                     href={`tel:${lead.mobile_no} `}
                     className="hover:underline"
@@ -132,7 +132,7 @@ export default async function LeadMetrics({
               )}
               {lead.website && (
                 <div className="flex items-center gap-3 p-3 border rounded-lg sm:col-span-2">
-                  <Globe className="w-4 h-4 text-muted-foreground" />
+                  <RiGlobalLine className="w-4 h-4 text-muted-foreground" />
                   <a
                     href={lead.website}
                     target="_blank"

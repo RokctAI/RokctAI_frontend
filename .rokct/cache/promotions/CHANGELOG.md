@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.2
+
+* fix(icons): icons come from `@remixicon/react` (the fleet's one icon set)
+  instead of `lucide-react`. `@remixicon/react` ^4.6.0 is declared in
+  `dependencies`. Icons only.
+
 ## 1.1.1
 
 * The one `frappe.client.*` read that still went through the frappe-js-sdk

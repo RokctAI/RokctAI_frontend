@@ -26,6 +26,8 @@
 // SDK registered one, and in its own CompanyFrame otherwise (Ray,
 // 2026-09-11 20:44Z: "we have no way to get here and its so disconnected
 // to the rest of the site").
+// Since 1.3.0 the title carries the card count (components/custom/company/
+// team-count.tsx): the members here plus each section's data-team-count.
 
 import React from "react";
 import type { Metadata } from "next";
@@ -35,6 +37,7 @@ import { getPlatformSession } from "@/app/services/base/session";
 import { COMPANY_EMPTY_STATE, COMPANY_PAGES } from "@/components/custom/company/company-pages";
 import { CompanyFrame } from "@/components/custom/company/company-frame";
 import { CompanySections } from "@/components/custom/company/company-sections";
+import { TeamCount } from "@/components/custom/company/team-count";
 import { TeamGrid } from "@/components/custom/company/team-grid";
 import { pageSectionsFor } from "@/components/custom/landing/landing-page";
 import { resolveSiteFrame } from "@/components/custom/landing/site-frame";
@@ -60,7 +63,10 @@ export default async function TeamPage() {
   const empty = members.length === 0 && sections.length === 0;
   const body = (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-12" data-team-page="">
-      <h1 className="text-3xl font-bold tracking-tight">{COMPANY_PAGES.team.label}</h1>
+      <h1 className="flex items-center text-3xl font-bold tracking-tight" data-team-title="">
+        {COMPANY_PAGES.team.label}
+        <TeamCount members={members.length} />
+      </h1>
       <TeamGrid members={members} />
       <CompanySections sections={sections} session={session} dataMode={dataMode} />
       {empty && (

@@ -39,7 +39,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Loader2 } from "lucide-react";
+import { RiArrowRightLine, RiArrowRightUpLine, RiLoader4Line } from "@remixicon/react";
 
 import { BrandLogo } from "@/components/custom/brand-logo";
 import type {
@@ -369,11 +369,11 @@ export default function AgentHeroForm({
             }`}
           >
             {isBusy ? (
-              <Loader2 className="animate-spin" size={20} />
+              <RiLoader4Line className="animate-spin" size={20} />
             ) : query.trim().length > 0 ? (
-              <ArrowRight size={20} strokeWidth={2.5} />
+              <RiArrowRightLine size={20} />
             ) : (
-              <ArrowUpRight size={20} />
+              <RiArrowRightUpLine size={20} />
             )}
           </button>
         </div>

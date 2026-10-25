@@ -29,7 +29,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { RiCheckLine } from "@remixicon/react";
 
 import { PLATFORM_NAME } from "@/app/config/platform";
 import {
@@ -131,7 +131,7 @@ function OtherCard({
                   />
                 ) : (
                   <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
-                    <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                    <RiCheckLine className="w-3 h-3 text-white" />
                   </div>
                 )}
                 <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-200">
@@ -338,9 +338,8 @@ export function CopiedPricing({ id }: { id?: string }) {
                       {platform.benefits.map((benefit) => (
                         <div key={benefit} className="flex items-start gap-3">
                           <div className="mt-0.5 h-5 w-5 rounded-full bg-white/10 dark:bg-black/5 flex items-center justify-center shrink-0">
-                            <Check
+                            <RiCheckLine
                               className="w-3 h-3 text-emerald-400 dark:text-emerald-600 font-bold"
-                              strokeWidth={3}
                             />
                           </div>
                           <span className="font-semibold text-base">

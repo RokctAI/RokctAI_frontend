@@ -25,7 +25,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ChevronRight, Pointer } from "lucide-react";
+import { RiArrowRightSLine, RiCursorLine } from "@remixicon/react";
 
 import {
   Carousel,
@@ -63,7 +63,7 @@ export function WorkflowSection({ id }: { id?: string }) {
               className="flex w-max items-center rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground shadow hover:bg-primary/90 group transition-all"
             >
               {config.cta.label}
-              <ChevronRight className="ml-2 size-5" />
+              <RiArrowRightSLine className="ml-2 size-5" />
             </Link>
           </div>
         </div>
@@ -98,7 +98,7 @@ export function WorkflowSection({ id }: { id?: string }) {
                           {persona.query}
                         </p>
                         <div className="items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground flex gap-2 w-max">
-                          <Pointer className="size-3" aria-hidden="true" />
+                          <RiCursorLine className="size-3" aria-hidden="true" />
                           <p className="text-foreground font-sans font-light text-xs">
                             {config.hoverHint}
                           </p>

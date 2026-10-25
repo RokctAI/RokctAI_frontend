@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2
+
+* fix(icons): every `lucide-react` icon moves to its `@remixicon/react`
+  equivalent (one icon set across the fleet). The manifest depends on
+  `@remixicon/react` `^4.6.0` instead of `lucide-react`. Icons only.
+
 ## 1.2.1
 
 * fix(admin reports): `getReportData` sends the required `fields` argument, and the Overview report reads `get_admin_statistics` cards (Overview is not a doctype).

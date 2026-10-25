@@ -28,7 +28,7 @@ export async function getCallLogs(page = 1, limit = 20) {
   try {
     const start = (page - 1) * limit;
 
-    const logs = await gatewayCall(client, "frappe.client.get_list", {
+    const logs = await gatewayCall(client, "api.crm.records.get_list", {
       doctype: "Call Log",
       fields: [
         "name",
@@ -45,7 +45,7 @@ export async function getCallLogs(page = 1, limit = 20) {
       limit_page_length: limit,
     });
 
-    const countRes = await gatewayCall(client, "frappe.client.get_count", {
+    const countRes = await gatewayCall(client, "api.crm.records.get_count", {
       doctype: "Call Log",
     });
 

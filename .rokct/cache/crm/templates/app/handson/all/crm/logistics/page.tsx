@@ -17,7 +17,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Plus, Trash2, Map, MapPin } from "lucide-react";
+import {
+  RiAddLine,
+  RiDeleteBinLine,
+  RiLoader4Line,
+  RiMapLine,
+  RiMapPinLine,
+} from "@remixicon/react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -184,7 +190,7 @@ export default function LogisticsPage() {
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <RiLoader4Line className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -214,7 +220,7 @@ export default function LogisticsPage() {
         <TabsContent value="routes" className="space-y-4 mt-4">
           <div className="flex justify-end">
             <Button onClick={() => setIsRouteDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" /> New Route
+              <RiAddLine className="mr-2 h-4 w-4" /> New Route
             </Button>
           </div>
           <Card>
@@ -246,7 +252,7 @@ export default function LogisticsPage() {
                     routes.map((route) => (
                       <TableRow key={route.name}>
                         <TableCell className="font-medium flex items-center gap-2">
-                          <Map className="h-4 w-4 text-blue-500" />
+                          <RiMapLine className="h-4 w-4 text-blue-500" />
                           {route.route_name}
                         </TableCell>
                         <TableCell>{route.route_type}</TableCell>
@@ -260,7 +266,7 @@ export default function LogisticsPage() {
                             className="text-red-500 hover:text-red-600"
                             onClick={() => onDeleteRoute(route.name)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <RiDeleteBinLine className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -276,7 +282,7 @@ export default function LogisticsPage() {
         <TabsContent value="zones" className="space-y-4 mt-4">
           <div className="flex justify-end">
             <Button onClick={() => setIsZoneDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" /> New Zone
+              <RiAddLine className="mr-2 h-4 w-4" /> New Zone
             </Button>
           </div>
           <Card>
@@ -309,7 +315,7 @@ export default function LogisticsPage() {
                     zones.map((zone) => (
                       <TableRow key={zone.name}>
                         <TableCell className="font-medium flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-orange-500" />
+                          <RiMapPinLine className="h-4 w-4 text-orange-500" />
                           {zone.zone_name}
                         </TableCell>
                         <TableCell className="max-w-[300px] truncate">
@@ -322,7 +328,7 @@ export default function LogisticsPage() {
                             className="text-red-500 hover:text-red-600"
                             onClick={() => onDeleteZone(zone.name)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <RiDeleteBinLine className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>

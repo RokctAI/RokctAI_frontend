@@ -16,17 +16,7 @@
 
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import {
-  StickyNote,
-  CheckSquare,
-  Briefcase,
-  ShieldAlert,
-  List,
-  Calendar as CalendarIcon,
-  FileText,
-  Waypoints,
-  LayoutGrid,
-} from "lucide-react";
+import { RiStickyNoteLine, RiCheckboxLine, RiBriefcaseLine, RiShieldLine, RiListUnordered, RiCalendarLine as CalendarIcon, RiFileTextLine, RiRouteLine, RiLayoutGridLine } from "@remixicon/react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -256,7 +246,7 @@ function RightPlaneContent({
                 <div className="flex flex-col h-full">
                   <div className="p-4 border-b bg-muted/20">
                     <h3 className="font-semibold text-sm flex items-center gap-2">
-                      <ShieldAlert className="h-4 w-4 text-amber-500" />
+                      <RiShieldLine className="h-4 w-4 text-amber-500" />
                       {isHrManager ? "Pending Approvals" : "My Requests"}
                     </h3>
                   </div>
@@ -308,7 +298,7 @@ function RightPlaneContent({
                 <div className="flex flex-col h-full">
                   <div className="p-4 border-b bg-muted/20">
                     <h3 className="font-semibold text-sm flex items-center gap-2">
-                      <Briefcase className="h-4 w-4 text-blue-500" />
+                      <RiBriefcaseLine className="h-4 w-4 text-blue-500" />
                       Active Quotations
                     </h3>
                   </div>
@@ -491,14 +481,14 @@ function RightPlaneContent({
               value="notes"
               className="group relative w-10 h-10 rounded-2xl data-[state=active]:bg-transparent data-[state=active]:border-2 data-[state=active]:border-primary transition-all p-0 hover:bg-muted/20"
             >
-              <FileText className="h-5 w-5 text-muted-foreground group-data-[state=active]:text-primary" />
+              <RiFileTextLine className="h-5 w-5 text-muted-foreground group-data-[state=active]:text-primary" />
             </TabsTrigger>
 
             <TabsTrigger
               value="tasks"
               className="group relative w-10 h-10 rounded-2xl data-[state=active]:bg-transparent data-[state=active]:border-2 data-[state=active]:border-primary transition-all p-0 hover:bg-muted/20"
             >
-              <Waypoints className="h-5 w-5 text-muted-foreground group-data-[state=active]:text-primary" />
+              <RiRouteLine className="h-5 w-5 text-muted-foreground group-data-[state=active]:text-primary" />
             </TabsTrigger>
 
             <div className="w-8 h-[1px] bg-border/50 my-1" />
@@ -507,7 +497,7 @@ function RightPlaneContent({
               value="context"
               className="group relative w-10 h-10 rounded-2xl data-[state=active]:bg-transparent data-[state=active]:border-2 data-[state=active]:border-primary transition-all p-0 hover:bg-muted/20"
             >
-              <LayoutGrid className="h-5 w-5 text-muted-foreground group-data-[state=active]:text-primary" />
+              <RiLayoutGridLine className="h-5 w-5 text-muted-foreground group-data-[state=active]:text-primary" />
             </TabsTrigger>
           </TabsList>
         </div>

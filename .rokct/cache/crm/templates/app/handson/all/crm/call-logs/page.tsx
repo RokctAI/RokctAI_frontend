@@ -27,7 +27,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Phone, PhoneIncoming, PhoneOutgoing, PhoneMissed } from "lucide-react";
+import { RiPhoneLine } from "@remixicon/react";
 
 export default async function CallLogsPage({
   searchParams,
@@ -54,11 +54,11 @@ export default async function CallLogsPage({
   const getIcon = (type: string) => {
     switch (type) {
       case "Incoming":
-        return <PhoneIncoming className="w-4 h-4 text-blue-500" />;
+        return <RiPhoneLine className="w-4 h-4 text-blue-500" />;
       case "Outgoing":
-        return <PhoneOutgoing className="w-4 h-4 text-green-500" />;
+        return <RiPhoneLine className="w-4 h-4 text-green-500" />;
       default:
-        return <Phone className="w-4 h-4" />;
+        return <RiPhoneLine className="w-4 h-4" />;
     }
   };
 

@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MessageSquare, Plus } from "lucide-react";
+import { RiAddLine, RiMessage2Line } from "@remixicon/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -111,7 +111,7 @@ export default function GrievancePage() {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Complaint
+              <RiAddLine className="mr-2 h-4 w-4" /> New Complaint
             </Button>
           </DialogTrigger>
           <DialogContent>

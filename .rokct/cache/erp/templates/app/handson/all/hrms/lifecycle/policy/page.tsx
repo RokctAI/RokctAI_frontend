@@ -17,7 +17,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Download, FileText } from "lucide-react";
+import { RiAddLine, RiDownloadLine, RiFileTextLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -100,7 +100,7 @@ export default function PolicyPage() {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Policy
+              <RiAddLine className="mr-2 h-4 w-4" /> New Policy
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -171,7 +171,7 @@ export default function PolicyPage() {
                 <TableRow key={policy.name}>
                   <TableCell className="font-medium">
                     <div className="flex items-center">
-                      <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <RiFileTextLine className="mr-2 h-4 w-4 text-muted-foreground" />
                       {policy.title}
                     </div>
                   </TableCell>

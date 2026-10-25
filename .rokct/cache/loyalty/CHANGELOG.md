@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1
+
+* fix(icons): icons come from `@remixicon/react` (the fleet's one icon set)
+  instead of `lucide-react`. `@remixicon/react` ^4.6.0 is declared in
+  `dependencies`. Icons only.
+
 ## 1.2.0
 
 * Subscribers tab on `app/admin/finance/customer-subscriptions`: every customer enrolment with status (Pending, Active, Past Due, Cancelled, Expired), period, payment method (wallet or card), auto-renew and the last payment error, filterable by status, with Activate (Pending) and Cancel (immediate) through the existing `get_customer_subscriptions`, `activate_customer_subscription` and `cancel_customer_subscription_admin` endpoints.

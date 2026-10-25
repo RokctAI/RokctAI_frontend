@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Loader2, Save } from "lucide-react";
+import { RiLoader4Line, RiSaveLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -81,7 +81,7 @@ export default function GeneralSettingsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -92,9 +92,9 @@ export default function GeneralSettingsPage() {
         <h1 className="text-3xl font-bold">General Settings</h1>
         <Button onClick={handleSave} disabled={saving}>
           {saving ? (
-            <Loader2 className="mr-2 size-4 animate-spin" />
+            <RiLoader4Line className="mr-2 size-4 animate-spin" />
           ) : (
-            <Save className="mr-2 size-4" />
+            <RiSaveLine className="mr-2 size-4" />
           )}
           Save Changes
         </Button>

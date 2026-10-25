@@ -26,7 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
-import { StickyNote, Plus, Calendar } from "lucide-react";
+import { RiAddLine, RiCalendarLine, RiStickyNoteLine } from "@remixicon/react";
 
 export default async function NotesPage({
   searchParams,
@@ -50,14 +50,14 @@ export default async function NotesPage({
           </p>
         </div>
         <Button>
-          <Plus className="w-4 h-4 mr-2" />
+          <RiAddLine className="w-4 h-4 mr-2" />
           Create Note
         </Button>
       </div>
 
       {notes.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-12 border border-dashed rounded-lg bg-muted/10 h-64">
-          <StickyNote className="w-10 h-10 text-muted-foreground mb-4" />
+          <RiStickyNoteLine className="w-10 h-10 text-muted-foreground mb-4" />
           <p className="text-lg font-medium">No notes found</p>
         </div>
       ) : (
@@ -88,7 +88,7 @@ export default async function NotesPage({
                   <span className="truncate max-w-[80px]">{note.owner}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
+                  <RiCalendarLine className="w-3 h-3" />
                   <span>{new Date(note.modified).toLocaleDateString()}</span>
                 </div>
               </CardFooter>

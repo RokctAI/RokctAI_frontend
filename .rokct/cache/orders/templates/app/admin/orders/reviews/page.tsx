@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Star } from "lucide-react";
+import { RiLoader4Line, RiStarLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getOrderReviews } from "@/app/actions/orders/admin/orders";
@@ -44,7 +44,7 @@ export default function OrderReviewsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-gray-500" />
+        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -67,7 +67,7 @@ export default function OrderReviewsPage() {
                 </CardTitle>
                 <div className="flex items-center text-yellow-500">
                   <span className="font-bold mr-1">{review.rating}</span>
-                  <Star className="size-4 fill-current" />
+                  <RiStarLine className="size-4 fill-current" />
                 </div>
               </CardHeader>
               <CardContent>

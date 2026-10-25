@@ -28,7 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2, ShieldCheck, CheckCircle, AlertCircle } from "lucide-react";
+import { RiLoader4Line, RiShieldCheckLine, RiCheckboxCircleLine, RiErrorWarningLine } from "@remixicon/react";
 
 interface ProfileFormCardProps {
   initialData?: {
@@ -77,7 +77,7 @@ export function ProfileFormCard({
     return (
       <Card className="w-full max-w-md bg-purple-50/50 border-purple-200 backdrop-blur-sm">
         <CardContent className="pt-6 flex flex-col items-center text-center">
-          <CheckCircle className="h-12 w-12 text-purple-500 mb-2" />
+          <RiCheckboxCircleLine className="h-12 w-12 text-purple-500 mb-2" />
           <h3 className="font-semibold text-purple-800 text-sm">
             Profile Updated
           </h3>
@@ -93,7 +93,7 @@ export function ProfileFormCard({
     <Card className="w-full max-w-md shadow-lg glass-card border-purple-500/20">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <ShieldCheck className="h-4 w-4 text-purple-500" />
+          <RiShieldCheckLine className="h-4 w-4 text-purple-500" />
           Bank-Level Verification
         </CardTitle>
       </CardHeader>
@@ -193,7 +193,7 @@ export function ProfileFormCard({
 
           {status === "error" && (
             <div className="text-[10px] text-red-500 bg-red-50 p-2 rounded flex items-center gap-2">
-              <AlertCircle className="h-3 w-3" /> {message}
+              <RiErrorWarningLine className="h-3 w-3" /> {message}
             </div>
           )}
         </CardContent>
@@ -204,7 +204,7 @@ export function ProfileFormCard({
             disabled={status === "submitting"}
           >
             {status === "submitting" && (
-              <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+              <RiLoader4Line className="mr-2 h-3 w-3 animate-spin" />
             )}
             Save Verification Details
           </Button>

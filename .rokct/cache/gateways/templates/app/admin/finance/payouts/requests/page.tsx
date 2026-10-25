@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2, Check, X } from "lucide-react";
+import { RiCheckLine, RiCloseLine, RiLoader4Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -89,7 +89,7 @@ export default function PayoutRequestsPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
-                  <Loader2 className="size-6 animate-spin mx-auto" />
+                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
             ) : requests.length === 0 ? (
@@ -131,7 +131,7 @@ export default function PayoutRequestsPage() {
                           className="text-green-600 hover:text-green-700 hover:bg-green-50"
                           onClick={() => handleStatusUpdate(req.name, "Paid")}
                         >
-                          <Check className="size-4" />
+                          <RiCheckLine className="size-4" />
                         </Button>
                         <Button
                           size="sm"
@@ -141,7 +141,7 @@ export default function PayoutRequestsPage() {
                             handleStatusUpdate(req.name, "Rejected")
                           }
                         >
-                          <X className="size-4" />
+                          <RiCloseLine className="size-4" />
                         </Button>
                       </div>
                     )}

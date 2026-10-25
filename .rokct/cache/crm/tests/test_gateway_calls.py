@@ -23,7 +23,7 @@ sends nothing and resolves to a FrappeCall helper, so a surface written that
 way is silently empty (crm_sdk 1.0.1). Every server action reaches the
 backend through `gatewayCall(client, cmd, payload)` from
 `@/app/lib/gateway-rpc` (installed by base_sdk), with the cmd as a positional
-string literal, `frappe.client.*` cmds verbatim and never a dotted
+string literal, CRM record cmds as `api.crm.records.*` and never a dotted
 `/api/method/<name>` URL. Stdlib only.
 """
 
@@ -108,6 +108,25 @@ class GatewayCallTests(unittest.TestCase):
                     "%s: every gatewayCall must be gatewayCall(client, \"<cmd>\", ...)" % rel,
                 )
 
+    def test_crm_actions_use_records_cmds_not_frappe_client(self):
+        # crm_sdk 1.0.3: the CRM record surfaces go through the scoped
+        # api.crm.records.* cmds, never the generic frappe.client.* RPCs.
+        scoped = (
+            "templates/app/actions/handson/all/crm/call_logs.ts",
+            "templates/app/actions/handson/all/crm/crud.ts",
+            "templates/app/actions/handson/all/crm/meta.ts",
+            "templates/app/actions/handson/all/crm/notes.ts",
+            "templates/app/actions/handson/all/crm/tasks.ts",
+            "templates/app/services/all/crm/contacts.ts",
+        )
+        by_rel = dict(self.sources)
+        for rel in scoped:
+            with self.subTest(file=rel):
+                text = by_rel[rel]
+                self.assertNotIn('"frappe.client.', text)
+                self.assertNotIn("client as any", text)
+                self.assertIn('"api.crm.records.', text)
+
     def test_gateway_calls_present(self):
         # The sweep is not a no-op: the converted actions still call out.
         self.assertGreaterEqual(len(self._hits(GATEWAY_CALL_RE)), 9)
@@ -119,7 +138,7 @@ class ManifestTests(unittest.TestCase):
             self.manifest = json.load(fh)
 
     def test_version(self):
-        self.assertEqual(self.manifest["version"], "1.0.2")
+        self.assertEqual(self.manifest["version"], "1.0.4")
 
     def test_requires_gateway_rpc(self):
         self.assertIn(GATEWAY_RPC, self.manifest["requires"])

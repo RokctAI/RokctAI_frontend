@@ -1,3 +1,9 @@
+## 1.0.2
+
+* fix(icons): lucide-react icons replaced with `@remixicon/react`
+  components per the fleet icon standard; the manifest deps swap
+  `lucide-react` for `@remixicon/react` ^4.6.0.
+
 ## 1.0.1
 
 * The HRMS department and designation services sync from the control

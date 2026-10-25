@@ -17,7 +17,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, TableProperties } from "lucide-react";
+import { RiLayoutGridLine, RiTableLine } from "@remixicon/react";
 
 export function ViewToggle({
   view,
@@ -34,7 +34,7 @@ export function ViewToggle({
         className="h-7 px-2"
         onClick={() => onViewChange("list")}
       >
-        <TableProperties className="h-4 w-4 mr-1.5" /> List
+        <RiTableLine className="h-4 w-4 mr-1.5" /> List
       </Button>
       <Button
         variant={view === "kanban" ? "secondary" : "ghost"}
@@ -42,7 +42,7 @@ export function ViewToggle({
         className="h-7 px-2"
         onClick={() => onViewChange("kanban")}
       >
-        <LayoutGrid className="h-4 w-4 mr-1.5" /> Kanban
+        <RiLayoutGridLine className="h-4 w-4 mr-1.5" /> Kanban
       </Button>
     </div>
   );
