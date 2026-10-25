@@ -17,12 +17,12 @@ federated hubs plan, work package WP1b. Path: **Hands-on > Fleet**
 
 Taken from `last_heartbeat_at` against the one-minute beat (spec 7.5):
 
-| Colour | Meaning |
-|---|---|
-| green | beat within the last 3 intervals |
-| amber | 3 to 10 beats missed |
-| red | more than 10 missed, or the hub reports a failing health check |
-| grey | Stopped, Archived or Removed; no beat expected |
+| Colour | Meaning                                                        |
+| ------ | -------------------------------------------------------------- |
+| green  | beat within the last 3 intervals                               |
+| amber  | 3 to 10 beats missed                                           |
+| red    | more than 10 missed, or the hub reports a failing health check |
+| grey   | Stopped, Archived or Removed; no beat expected                 |
 
 ### Settings revision
 
@@ -51,3 +51,25 @@ All reads go through the platform gateway with `frappe.client.get_list` /
 Subscription. Set `ROKCT_DEMO_DATA=1` to show the fixtures in
 `app/lib/fleet/demo.ts` (used by the guided tour). If the hub has no fleet
 module yet, the board falls back to the fixtures and says so in a banner.
+
+## Staff actions
+
+The docker detail view has a **Staff actions** card (System Manager only).
+Every action asks for confirmation, then sends a `control:` cmd through
+`POST /api/v1/method/rokct.platform.api`, shows a toast and reloads the view.
+
+| Action         | Cmd                          | Payload                                    |
+| -------------- | ---------------------------- | ------------------------------------------ |
+| Stop docker    | `control:docker_stop`        | `docker`                                   |
+| Start docker   | `control:docker_start`       | `docker`                                   |
+| Extend a site  | `control:lifecycle_extend`   | `subscription`, `days` (1 to 90), `reason` |
+| Request export | `control:hub_request_export` | `subscription`                             |
+| Start rollout  | `control:rollout_start`      | `rollout`, `reset_failed`                  |
+| Pause rollout  | `control:rollout_pause`      | `rollout`, `reason`                        |
+| Roll back      | `control:rollout_rollback`   | `rollout`                                  |
+
+Rollouts are driven from the **Rollouts** panel by entering the rollout id.
+
+These cmds ship with pending control updates. If the hub answers `cmd not
+found`, the toast says the action is not available yet and nothing changes.
+With `ROKCT_DEMO_DATA=1` actions are no-ops and the toast is marked "demo".

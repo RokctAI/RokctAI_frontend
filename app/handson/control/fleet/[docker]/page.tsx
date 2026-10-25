@@ -56,6 +56,7 @@ import {
   StatePill,
   TypeTag,
 } from "../fleet-ui";
+import { FleetActions } from "../fleet-actions-ui";
 
 const when = (v?: string | null, fmt = "d MMM, HH:mm") => {
   const d = parseFrappeDate(v);
@@ -177,6 +178,8 @@ export default function DockerDetailPage() {
           </span>
         </Fact>
       </dl>
+
+      <FleetActions detail={detail} onDone={() => window.location.reload()} />
 
       <Card data-tour="fleet-placements">
         <CardHeader>

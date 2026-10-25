@@ -27,3 +27,7 @@ steps:
     route: /handson/control/fleet/tenant-a71q
     target: '[data-tour="fleet-revisions"]'
     caption: Recent usage samples and the settings revisions the hub issued, newest first.
+  - id: fleet_actions
+    route: /handson/control/fleet/tenant-a71q
+    target: '[data-tour="fleet-actions"]'
+    caption: Stop or start the docker, extend a tenant's lifecycle, request an export, or drive a rollout. Each asks to confirm; in demo mode nothing is sent.

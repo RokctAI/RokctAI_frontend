@@ -81,7 +81,10 @@ export async function runFleetAction(
   const session = await auth();
   const roles: string[] = (session?.user as any)?.roles || [];
   if (!roles.some((r) => SYSTEM_ROLES.includes(r))) {
-    return { ok: false, message: "Fleet actions are for System Managers only." };
+    return {
+      ok: false,
+      message: "Fleet actions are for System Managers only.",
+    };
   }
   if (!(kind in LABEL)) return { ok: false, message: "Unknown action." };
   const invalid = validate(kind, payload);
