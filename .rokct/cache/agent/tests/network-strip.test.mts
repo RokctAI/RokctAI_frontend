@@ -18,7 +18,9 @@
 // 1.17.0: the landing placement is "section" - the logos marquee carries
 // the strip on /landing (base_sdk 1.27.0); 1.19.0: the sites themselves
 // are declared here (base_sdk 1.40.0 carries none); 1.19.1: the juvo entry
-// is named "juvo platforms" (Ray, 2026-09-11 07:43Z). Run by
+// is named "juvo platforms" (Ray, 2026-09-11 07:43Z); 1.24.0: the
+// redesign has no client showcase, so the strip is drawn nowhere (the
+// sites stay declared). Run by
 // tests/test_manifest.py against a staged copy of
 // components/custom/landing/agent-network-strip.ts.
 
@@ -28,8 +30,8 @@ import { describe, it } from 'node:test';
 import config from './agent-network-strip.ts';
 
 describe('agent-network-strip: what rokct.ai registers', () => {
-  it('hands /landing to the logos section and keeps the footer row everywhere else', () => {
-    assert.deepEqual(config.placement, { landing: 'section', footer: true });
+  it('draws the strip nowhere on rokct.ai: no client showcase (1.24.0)', () => {
+    assert.deepEqual(config.placement, { landing: 'none', footer: false });
   });
 
   it('never names afterHero or beforeFooter: base would draw the strip twice on /landing', () => {

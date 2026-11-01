@@ -1,0 +1,1734 @@
+/*
+ * Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
+ * rokct.ai's landing (agent_sdk 1.24.0), the redesign Ray approved on
+ * 2026-11-01. Every rule is scoped to `.rk-landing`, the class the landing
+ * root carries (rokct-landing-classes.ts, handed to base_sdk as
+ * `meta.rootClass`), and every class of the page's own is prefixed `rk-`,
+ * so nothing here reaches another page or another shell.
+ *
+ * The colours are rokct.ai's own theme tokens (RokctAI_frontend
+ * app/globals.css): the yellow primary hsl(48 96% 53%), the ink and zinc
+ * greys of its light and dark grounds, and the indigo it uses for links
+ * (#4F46E5 on light, #818CF8 on dark). The shell switches theme with the
+ * `dark` class next-themes puts on <html>, so the dark tokens hang off
+ * `.dark .rk-landing`.
+ */
+
+.rk-landing {
+  --rk-bg: hsl(0 0% 100%);
+  --rk-bg-2: hsl(240 4.8% 95.9%);
+  --rk-panel: hsl(0 0% 100%);
+  --rk-panel-2: hsl(240 4.8% 95.9%);
+  --rk-ink: hsl(240 10% 3.9%);
+  --rk-ink-2: #3f3f46;
+  --rk-ink-3: hsl(240 3.8% 46.1%);
+  --rk-line: hsl(240 5.9% 90%);
+  --rk-line-2: #d4d4d8;
+  --rk-brand: hsl(48 96% 53%);
+  --rk-on-brand: hsl(0 0% 0%);
+  --rk-accent: #4f46e5;
+  --rk-accent-ink: #4338ca;
+  --rk-accent-soft: rgba(79, 70, 229, 0.08);
+  --rk-bad: #dc2626;
+  --rk-bad-soft: hsl(0 84.2% 60.2% / 0.12);
+  --rk-ok: #15803d;
+  --rk-ok-soft: rgba(21, 128, 61, 0.1);
+  --rk-warn: #b45309;
+  --rk-warn-soft: rgba(180, 83, 9, 0.1);
+  --rk-band: #4f46e5;
+  --rk-on-band: #ffffff;
+  --rk-band-2: rgba(255, 255, 255, 0.08);
+  --rk-band-line: rgba(255, 255, 255, 0.2);
+  --rk-shadow: 0 1px 0 rgba(9, 9, 11, 0.03), 0 24px 60px -28px rgba(9, 9, 11, 0.22);
+  --rk-display: var(--rk-font-display), ui-sans-serif, system-ui, sans-serif;
+  --rk-sans: var(--rk-font-sans), ui-sans-serif, system-ui, sans-serif;
+  --rk-mono: var(--rk-font-mono), ui-monospace, monospace;
+  --rk-gut: clamp(16px, 4vw, 56px);
+  --rk-max: 1280px;
+}
+.dark .rk-landing {
+  --rk-bg: hsl(240 10% 3.9%);
+  --rk-bg-2: #18181b;
+  --rk-panel: #18181b;
+  --rk-panel-2: hsl(240 3.7% 15.9%);
+  --rk-ink: hsl(0 0% 98%);
+  --rk-ink-2: hsl(240 5% 64.9%);
+  --rk-ink-3: #71717a;
+  --rk-line: hsl(240 3.7% 15.9%);
+  --rk-line-2: #3f3f46;
+  --rk-on-brand: hsl(240 5.9% 10%);
+  --rk-accent: #818cf8;
+  --rk-accent-ink: #a5b4fc;
+  --rk-accent-soft: rgba(129, 140, 248, 0.14);
+  --rk-bad: #f87171;
+  --rk-bad-soft: hsl(0 84.2% 60.2% / 0.16);
+  --rk-ok: #4ade80;
+  --rk-ok-soft: rgba(74, 222, 128, 0.12);
+  --rk-warn: #fbbf24;
+  --rk-warn-soft: rgba(251, 191, 36, 0.12);
+  --rk-shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 30px 70px -30px rgba(0, 0, 0, 0.85);
+}
+
+div.rk-landing {
+  background: var(--rk-bg);
+  color: var(--rk-ink);
+  font-family: var(--rk-sans);
+  font-size: 17px;
+  line-height: 1.55;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+/* resets weigh nothing (:where), so every rk- class below wins over them,
+   and so do the Tailwind utilities on the live sections (plan cards, funding
+   results) */
+:where(.rk-landing main) a {
+  color: inherit;
+  text-decoration: none;
+}
+:where(.rk-landing main) button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* base_sdk's own hero frame is not drawn on rokct.ai: rokct-hero.tsx is the hero. */
+.rk-landing #hero {
+  display: none;
+}
+
+/* ---------- the header (base_sdk's, mechanics untouched) ----------
+ * The bar keeps base's collapsing brand, chevron, fading nav, burger and
+ * theme toggle; these rules give it the concept's measure and look. The
+ * mark is the declared image (agent-header-menu.ts, rk-mark.svg) drawn at
+ * the concept's 32px instead of base's 44px; the wordmark is the host's
+ * Branding, set in the display face at the concept's size while its slot
+ * is open (aria-hidden="false") - once collapsed, base's inline width of 0
+ * applies again and the slot closes as it always has. The country code is
+ * not touched: it keeps the size and the superscript style rokct.ai's
+ * branding cache gives it. */
+.rk-landing header {
+  /* the browser's default size, as the live header's text inherits it, so
+     the country code's 0.28em resolves (and is floored) exactly as live */
+  font-size: medium;
+  line-height: 1.5;
+}
+.rk-landing header > div:first-child > div {
+  max-width: var(--rk-max);
+  height: 72px;
+  padding: 0 var(--rk-gut);
+  justify-content: flex-start;
+  gap: 28px;
+}
+.rk-landing header > div:first-child > div > div.gap-3,
+.rk-landing header > div:first-child > div > button {
+  margin-left: auto;
+}
+.rk-landing header a[href="/"] {
+  /* the shell's own face, as in the live header: the country code beside
+     the mark is drawn exactly as live (face, 0.28em of 16px, weight 300) */
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+.rk-landing header a[href="/"] img {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 9px;
+}
+.rk-landing header a[href="/"] > span[aria-hidden="false"] {
+  width: 82px !important;
+}
+.rk-landing header a[href="/"] > span[aria-hidden] > span {
+  padding-left: 2px;
+}
+.rk-landing header a[href="/"] [class*="text-[60px]"] {
+  font-family: var(--rk-display) !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase;
+  color: var(--rk-ink) !important;
+}
+.rk-landing header nav[aria-label="Sections"] {
+  gap: 26px;
+  font-size: 14.5px;
+}
+.rk-landing header nav[aria-label="Sections"] a {
+  color: var(--rk-ink-2);
+  font-size: 14.5px;
+  font-weight: 400;
+}
+.rk-landing header nav[aria-label="Sections"] a:hover {
+  color: var(--rk-ink);
+}
+.rk-landing header div.gap-3 {
+  gap: 10px;
+}
+.rk-landing header div.gap-3 > button {
+  order: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--rk-line);
+  color: var(--rk-ink);
+}
+.rk-landing header div.gap-3 > a[href="/login"] {
+  order: 2;
+  font-size: 14.5px;
+  color: var(--rk-ink-2);
+  padding: 0 8px;
+}
+.rk-landing header a.bg-primary {
+  order: 3;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--rk-on-brand);
+  box-shadow: 0 10px 30px -14px hsl(48 96% 45% / 0.9);
+}
+.rk-landing header [id] a.bg-primary {
+  height: auto;
+  padding: 16px 0;
+  border-radius: 16px;
+  font-size: 18px;
+}
+/* The toggle shows the theme it switches to, as the concept's does: the moon on light, the sun on dark. */
+.rk-landing header button svg.dark\:hidden {
+  display: none;
+}
+.rk-landing header button svg.dark\:block {
+  display: block;
+}
+.dark .rk-landing header button svg.dark\:hidden {
+  display: block;
+}
+.dark .rk-landing header button svg.dark\:block {
+  display: none;
+}
+/* The header's own Sign up pill: the declared "Start with ROKCT" action goes to the same page. */
+.rk-landing header a[href="/register"].bg-black {
+  display: none;
+}
+
+/* ---------- shared ---------- */
+.rk-landing .rk-ico {
+  width: 1.15em;
+  height: 1.15em;
+  fill: currentColor;
+  flex: none;
+  display: inline-block;
+  vertical-align: -0.18em;
+}
+.rk-wrap {
+  max-width: var(--rk-max);
+  margin: 0 auto;
+  padding: 0 var(--rk-gut);
+}
+.rk-eyebrow {
+  font-family: var(--rk-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rk-ink-3);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rk-landing .rk-h1,
+.rk-landing .rk-h2,
+.rk-landing .rk-h3 {
+  font-family: var(--rk-display);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  margin: 0;
+}
+.rk-landing .rk-h2 {
+  font-size: clamp(40px, 5.2vw, 76px);
+}
+.rk-landing .rk-h3 {
+  font-size: clamp(22px, 2.2vw, 28px);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-weight: 600;
+}
+.rk-lede {
+  font-size: clamp(17px, 1.5vw, 20px);
+  color: var(--rk-ink-2);
+  max-width: 56ch;
+  margin: 0;
+}
+.rk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 50px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15.5px;
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+.rk-btn-brand {
+  background: var(--rk-brand);
+  color: var(--rk-on-brand) !important;
+  box-shadow: 0 10px 30px -14px hsl(48 96% 45% / 0.9);
+}
+.rk-btn-brand:hover {
+  transform: translateY(-2px);
+}
+.rk-btn-line {
+  border: 1px solid var(--rk-line-2);
+}
+.rk-btn-line:hover {
+  background: var(--rk-panel);
+}
+.rk-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rk-brand);
+  display: inline-block;
+}
+.rk-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 8px 8px;
+  border-radius: 18px 18px 18px 4px;
+  background: var(--rk-brand);
+  color: var(--rk-on-brand);
+  font-family: var(--rk-mono);
+  font-size: 13px;
+  margin-bottom: 26px;
+}
+.rk-ask i {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #09090b;
+  color: var(--rk-brand);
+  display: grid;
+  place-items: center;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ---------- hero ---------- */
+.rk-hero {
+  position: relative;
+  padding: 56px 0 40px;
+  overflow: hidden;
+}
+.rk-hero-grid {
+  display: grid;
+  grid-template-columns: 1.02fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+.rk-landing .rk-hero .rk-h1 {
+  font-size: clamp(56px, 8.4vw, 128px);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 0.9;
+  margin: 26px 0 28px;
+}
+.rk-hl {
+  display: inline-block;
+  color: var(--rk-ink);
+  background: linear-gradient(transparent 60%, var(--rk-brand) 60%, var(--rk-brand) 88%, transparent 88%);
+  padding: 0 0.06em;
+  margin: 0 -0.06em;
+  position: relative;
+  min-width: 3ch;
+}
+.dark .rk-landing .rk-hl {
+  background: none;
+  color: var(--rk-brand);
+}
+.rk-rot span {
+  display: inline-block;
+  transition: opacity 0.35s, transform 0.35s, filter 0.35s;
+}
+.rk-rot span.rk-out {
+  opacity: 0;
+  transform: translateY(-0.25em);
+  filter: blur(6px);
+}
+.rk-rot span.rk-in {
+  opacity: 0;
+  transform: translateY(0.25em);
+  filter: blur(6px);
+}
+.rk-caret {
+  display: inline-block;
+  width: 0.09em;
+  height: 0.78em;
+  background: var(--rk-brand);
+  margin-left: 0.06em;
+  vertical-align: -0.04em;
+  animation: rk-blink 1.1s steps(1) infinite;
+}
+@keyframes rk-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.rk-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+.rk-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rk-line);
+  color: var(--rk-ink-3);
+  font-size: 14px;
+}
+.rk-hero-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.rk-hero-meta .rk-ico {
+  color: var(--rk-ink-2);
+}
+.rk-hero-bg {
+  position: absolute;
+  right: -6vw;
+  top: 2vw;
+  height: 72vw;
+  width: 58vw;
+  max-height: 1100px;
+  max-width: 886px;
+  fill: var(--rk-ink);
+  opacity: 0.035;
+  pointer-events: none;
+}
+
+/* ---------- chat console ---------- */
+.rk-console {
+  background: var(--rk-panel);
+  border: 1px solid var(--rk-line);
+  border-radius: 28px;
+  box-shadow: var(--rk-shadow);
+  display: flex;
+  flex-direction: column;
+  height: 620px;
+  overflow: hidden;
+  position: relative;
+}
+.rk-c-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--rk-line);
+}
+.rk-c-av {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--rk-brand);
+  display: grid;
+  place-items: center;
+}
+.rk-mark {
+  fill: currentColor;
+}
+.rk-c-av .rk-mark {
+  width: 15px;
+  height: 18px;
+  color: var(--rk-on-brand);
+}
+.rk-c-title {
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.2;
+}
+.rk-c-sub {
+  font-size: 12.5px;
+  color: var(--rk-ink-3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rk-c-sub::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--rk-ok);
+}
+.rk-c-tag {
+  margin-left: auto;
+  font-family: var(--rk-mono);
+  font-size: 11px;
+  color: var(--rk-ink-3);
+  border: 1px dashed var(--rk-line-2);
+  padding: 4px 9px;
+  border-radius: 99px;
+}
+.rk-c-body {
+  flex: 1;
+  overflow: hidden;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  justify-content: flex-end;
+}
+.rk-msg {
+  max-width: 88%;
+  animation: rk-rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes rk-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+.rk-msg-me {
+  align-self: flex-end;
+  background: var(--rk-brand);
+  color: var(--rk-on-brand);
+  padding: 11px 16px;
+  border-radius: 20px 20px 4px 20px;
+  font-size: 15px;
+}
+.rk-msg-rok {
+  align-self: flex-start;
+  font-size: 15px;
+  color: var(--rk-ink);
+}
+.rk-msg-rok p {
+  margin: 0 0 10px;
+}
+.rk-work {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--rk-mono);
+  font-size: 12px;
+  color: var(--rk-ink-3);
+  padding: 6px 11px;
+  border-radius: 99px;
+  background: var(--rk-panel-2);
+  border: 1px solid var(--rk-line);
+}
+.rk-work .rk-ico {
+  animation: rk-spin 1s linear infinite;
+  color: var(--rk-accent);
+}
+@keyframes rk-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.rk-card {
+  background: var(--rk-bg);
+  border: 1px solid var(--rk-line);
+  border-radius: 16px;
+  overflow: hidden;
+  font-size: 13.5px;
+}
+.rk-card-h {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rk-line);
+  font-family: var(--rk-mono);
+  font-size: 11.5px;
+  color: var(--rk-ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.rk-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--rk-line);
+}
+.rk-row:last-child {
+  border-bottom: 0;
+}
+.rk-row small {
+  display: block;
+  color: var(--rk-ink-3);
+  font-size: 12px;
+}
+.rk-num {
+  font-family: var(--rk-mono);
+  font-size: 13px;
+}
+.rk-pill {
+  font-family: var(--rk-mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.rk-pill-bad {
+  background: var(--rk-bad-soft);
+  color: var(--rk-bad);
+}
+.rk-pill-ok {
+  background: var(--rk-ok-soft);
+  color: var(--rk-ok);
+}
+.rk-pill-warn {
+  background: var(--rk-warn-soft);
+  color: var(--rk-warn);
+}
+.rk-card-a {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--rk-panel-2);
+  flex-wrap: wrap;
+}
+.rk-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--rk-line-2);
+  background: var(--rk-panel);
+}
+.rk-mini-solid {
+  background: var(--rk-brand);
+  color: var(--rk-on-brand);
+  border-color: transparent;
+}
+.rk-bar {
+  height: 6px;
+  border-radius: 9px;
+  background: var(--rk-line);
+  overflow: hidden;
+  width: 90px;
+}
+.rk-bar i {
+  display: block;
+  height: 100%;
+  background: var(--rk-warn);
+  border-radius: 9px;
+}
+.rk-c-foot {
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--rk-line);
+  background: var(--rk-panel);
+}
+.rk-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 10px;
+}
+.rk-chips::-webkit-scrollbar {
+  display: none;
+}
+.rk-landing .rk-chip {
+  flex: none;
+  font-size: 13px;
+  padding: 7px 13px;
+  border-radius: 99px;
+  border: 1px solid var(--rk-line-2);
+  color: var(--rk-ink-2);
+  transition: all 0.2s;
+}
+.rk-landing .rk-chip:hover {
+  color: var(--rk-ink);
+  border-color: var(--rk-ink);
+}
+.rk-landing .rk-chip.rk-on {
+  background: var(--rk-ink);
+  color: var(--rk-bg);
+  border-color: var(--rk-ink);
+}
+.rk-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 50px;
+  border-radius: 16px;
+  background: var(--rk-bg);
+  border: 1px solid var(--rk-line);
+  padding: 0 6px 0 16px;
+  color: var(--rk-ink-3);
+  font-size: 15px;
+}
+.rk-input .rk-t {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--rk-ink);
+}
+.rk-input .rk-t:empty::before {
+  content: attr(data-placeholder);
+  color: var(--rk-ink-3);
+}
+.rk-input input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: inherit;
+  font: inherit;
+}
+.rk-input input::placeholder {
+  color: var(--rk-ink-3);
+  opacity: 1;
+}
+.rk-send {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--rk-brand);
+  color: var(--rk-on-brand) !important;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+/* ---------- sections ---------- */
+section.rk-s {
+  padding: clamp(80px, 11vw, 150px) 0;
+}
+section.rk-s.rk-flush {
+  padding-top: 0;
+}
+.rk-s-head {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 40px;
+  align-items: end;
+  margin-bottom: 56px;
+}
+.rk-s-head .rk-lede {
+  justify-self: end;
+}
+
+/* modules */
+.rk-mods {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 28px;
+}
+.rk-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rk-landing .rk-tab {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  text-align: left;
+  border: 1px solid transparent;
+  transition: all 0.25s;
+}
+.rk-tab .rk-ti {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: var(--rk-panel);
+  border: 1px solid var(--rk-line);
+  font-size: 20px;
+}
+.rk-tab b {
+  font-family: var(--rk-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  display: block;
+  line-height: 1.1;
+}
+.rk-tab small {
+  color: var(--rk-ink-3);
+  font-size: 13px;
+}
+.rk-landing .rk-tab:hover {
+  background: var(--rk-panel);
+}
+.rk-landing .rk-tab.rk-on {
+  background: var(--rk-panel);
+  border-color: var(--rk-line);
+  box-shadow: var(--rk-shadow);
+}
+.rk-tab.rk-on .rk-ti {
+  background: var(--rk-brand);
+  color: var(--rk-on-brand);
+  border-color: transparent;
+}
+.rk-pane {
+  background: var(--rk-panel);
+  border: 1px solid var(--rk-line);
+  border-radius: 28px;
+  padding: clamp(24px, 3.5vw, 44px);
+  min-height: 520px;
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  box-shadow: var(--rk-shadow);
+}
+.rk-pane.rk-on {
+  display: grid;
+  animation: rk-rise 0.45s both;
+}
+.rk-pane .rk-big {
+  font-family: var(--rk-display);
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.rk-pane .rk-big q {
+  quotes: "\201C" "\201D";
+}
+.rk-pane .rk-big q::before,
+.rk-pane .rk-big q::after {
+  color: var(--rk-accent);
+}
+.rk-pane ul {
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.rk-pane li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--rk-line);
+  font-size: 15.5px;
+  color: var(--rk-ink-2);
+}
+.rk-pane li .rk-ico {
+  color: var(--rk-accent);
+  margin-top: 3px;
+}
+.rk-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+.rk-tag {
+  font-family: var(--rk-mono);
+  font-size: 12px;
+  padding: 6px 11px;
+  border-radius: 99px;
+  border: 1px solid var(--rk-line-2);
+  color: var(--rk-ink-2);
+}
+.rk-viz {
+  background: var(--rk-bg);
+  border: 1px solid var(--rk-line);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: stretch;
+}
+.rk-viz .rk-msg {
+  animation: none;
+  max-width: 100%;
+}
+
+/* how */
+.rk-how {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--rk-line-2);
+}
+.rk-step {
+  padding: 34px 30px 10px 0;
+  position: relative;
+}
+.rk-step + .rk-step {
+  padding-left: 30px;
+  border-left: 1px solid var(--rk-line);
+}
+.rk-step .rk-n {
+  font-family: var(--rk-mono);
+  font-size: 12px;
+  color: var(--rk-accent);
+  letter-spacing: 0.08em;
+}
+.rk-landing .rk-step .rk-h3 {
+  margin: 18px 0 12px;
+}
+.rk-step p {
+  color: var(--rk-ink-2);
+  font-size: 16px;
+  margin: 0;
+}
+.rk-diagram {
+  margin-top: 64px;
+  background: var(--rk-panel);
+  border: 1px solid var(--rk-line);
+  border-radius: 28px;
+  padding: clamp(20px, 3vw, 40px);
+  overflow: hidden;
+}
+.rk-diagram > svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.rk-dg-t {
+  font-family: var(--rk-sans);
+  font-size: 15px;
+  fill: var(--rk-ink);
+}
+.rk-dg-s {
+  font-family: var(--rk-mono);
+  font-size: 11.5px;
+  fill: var(--rk-ink-3);
+  letter-spacing: 0.04em;
+}
+.rk-dg-box {
+  fill: var(--rk-bg);
+  stroke: var(--rk-line-2);
+}
+.rk-dg-brand {
+  fill: var(--rk-brand);
+}
+.rk-dg-line {
+  stroke: var(--rk-line-2);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: 4 6;
+}
+.rk-dg-flow {
+  stroke: var(--rk-accent);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 6 10;
+  animation: rk-flow 1.6s linear infinite;
+}
+@keyframes rk-flow {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+/* makes: the drawn pictures */
+.rk-makes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.rk-mk {
+  margin: 0;
+  border: 1px solid var(--rk-line);
+  border-radius: 24px;
+  background: var(--rk-panel);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s;
+}
+.rk-mk:hover {
+  transform: translateY(-3px);
+}
+.rk-mk img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 720 / 500;
+  max-width: 100%;
+  background: #0c0c10;
+}
+.rk-mk figcaption {
+  padding: 16px 20px 20px;
+  display: grid;
+  gap: 4px;
+}
+.rk-mk figcaption b {
+  font-size: 17px;
+}
+.rk-mk figcaption span {
+  color: var(--rk-ink-2);
+  font-size: 14px;
+}
+.rk-mk.rk-more {
+  padding: 28px 26px;
+  justify-content: center;
+  gap: 12px;
+  background: var(--rk-brand);
+  color: var(--rk-on-brand);
+  border-color: transparent;
+}
+.rk-mk.rk-more b {
+  font-family: var(--rk-display);
+  font-size: 26px;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.rk-mk.rk-more span {
+  font-size: 15px;
+  opacity: 0.85;
+}
+.rk-landing .rk-more-a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* funding band */
+.rk-band {
+  background: var(--rk-band);
+  color: var(--rk-on-band);
+  border-radius: clamp(24px, 3vw, 40px);
+  margin: 0 clamp(8px, 1.4vw, 20px);
+  padding: clamp(56px, 8vw, 110px) 0;
+  position: relative;
+  overflow: hidden;
+}
+.rk-band .rk-lede {
+  color: color-mix(in srgb, var(--rk-on-band) 72%, transparent);
+  margin-top: 24px;
+}
+.rk-band .rk-ask {
+  background: var(--rk-brand);
+  color: #09090b;
+}
+.rk-landing .rk-band .rk-h2 {
+  font-size: clamp(40px, 4.6vw, 66px);
+}
+.rk-opp {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 56px;
+  align-items: center;
+  position: relative;
+}
+.rk-counts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin-top: 44px;
+  border-top: 1px solid var(--rk-band-line);
+}
+.rk-count {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--rk-band-line);
+}
+.rk-count:nth-child(odd) {
+  padding-right: 20px;
+  border-right: 1px solid var(--rk-band-line);
+}
+.rk-count:nth-child(even) {
+  padding-left: 24px;
+}
+.rk-count b {
+  font-family: var(--rk-display);
+  font-size: clamp(40px, 4.6vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  display: block;
+}
+.rk-count span {
+  font-size: 14px;
+  color: color-mix(in srgb, var(--rk-on-band) 65%, transparent);
+}
+.rk-src {
+  font-family: var(--rk-mono);
+  font-size: 11.5px;
+  color: color-mix(in srgb, var(--rk-on-band) 50%, transparent);
+  margin-top: 18px;
+}
+.rk-finder {
+  background: var(--rk-band-2);
+  border: 1px solid var(--rk-band-line);
+  border-radius: 24px;
+  padding: 18px;
+}
+.rk-finder .rk-input {
+  background: rgba(9, 9, 11, 0.22);
+  border-color: var(--rk-band-line);
+  color: var(--rk-on-band);
+}
+.rk-finder .rk-input input::placeholder {
+  color: color-mix(in srgb, var(--rk-on-band) 72%, transparent);
+}
+.rk-res {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 6px;
+  border-bottom: 1px solid var(--rk-band-line);
+}
+.rk-res:last-child {
+  border-bottom: 0;
+}
+.rk-res .rk-k {
+  font-family: var(--rk-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+  border-radius: 7px;
+  border: 1px solid var(--rk-band-line);
+  width: 74px;
+  text-align: center;
+}
+.rk-res .rk-k.rk-gold {
+  color: var(--rk-brand);
+  border-color: hsl(48 96% 53% / 0.6);
+}
+.rk-res b {
+  font-weight: 600;
+  font-size: 15px;
+  display: block;
+}
+.rk-res small {
+  font-size: 12.5px;
+  color: color-mix(in srgb, var(--rk-on-band) 58%, transparent);
+}
+.rk-res .rk-when {
+  font-family: var(--rk-mono);
+  font-size: 12px;
+  color: color-mix(in srgb, var(--rk-on-band) 65%, transparent);
+  text-align: right;
+}
+/* The live results (agent-opportunities.tsx) bring their own panel; it reads in the page's ink. */
+.rk-live {
+  color: var(--rk-ink);
+  text-align: left;
+}
+.rk-band-r {
+  position: absolute;
+  right: -80px;
+  bottom: -140px;
+  height: 520px;
+  width: 419px;
+  fill: var(--rk-brand);
+  opacity: 0.14;
+}
+
+/* plans ladder */
+.rk-ladder {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  align-items: end;
+}
+.rk-rung {
+  background: var(--rk-panel);
+  border: 1px solid var(--rk-line);
+  border-radius: 24px;
+  padding: 26px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+}
+.rk-rung:nth-child(1) {
+  min-height: 300px;
+}
+.rk-rung:nth-child(2) {
+  min-height: 350px;
+}
+.rk-rung:nth-child(3) {
+  min-height: 400px;
+}
+.rk-rung:nth-child(4) {
+  min-height: 450px;
+  background: var(--rk-brand);
+  color: #09090b;
+  border-color: var(--rk-brand);
+}
+.rk-rung:nth-child(4) .rk-lvl,
+.rk-rung:nth-child(4) .rk-r-list .rk-ico {
+  color: #09090b;
+}
+.rk-rung:nth-child(4) .rk-r-list li {
+  color: rgba(9, 9, 11, 0.78);
+  border-color: rgba(9, 9, 11, 0.16);
+}
+.rk-rung p {
+  color: var(--rk-ink-2);
+  font-size: 15px;
+  margin: 0;
+}
+.rk-rung:nth-child(4) p {
+  color: inherit;
+  opacity: 0.75;
+}
+.rk-rung .rk-lvl {
+  font-family: var(--rk-mono);
+  font-size: 12px;
+  color: var(--rk-accent);
+}
+.rk-landing .rk-rung .rk-h3 {
+  font-size: 26px;
+}
+.rk-r-list {
+  list-style: none;
+  margin: auto 0 0;
+  padding: 0;
+}
+.rk-r-list li {
+  font-size: 14.5px;
+  color: var(--rk-ink-2);
+  padding: 9px 0;
+  border-top: 1px solid var(--rk-line);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.rk-r-list .rk-ico {
+  color: var(--rk-accent);
+}
+.rk-plans-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+  padding: 22px 26px;
+  border: 1px dashed var(--rk-line-2);
+  border-radius: 20px;
+  color: var(--rk-ink-2);
+}
+.rk-plans-foot .rk-ico {
+  color: var(--rk-accent);
+}
+/* The live plan cards (pricing.tsx) sit under the ladder in the page's measure. */
+.rk-landing #prices {
+  padding-bottom: clamp(40px, 6vw, 80px);
+}
+
+/* own address */
+.rk-addr {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 56px;
+  align-items: center;
+}
+.rk-addr .rk-lede {
+  margin-top: 24px;
+}
+.rk-browser {
+  background: var(--rk-panel);
+  border: 1px solid var(--rk-line);
+  border-radius: 24px;
+  box-shadow: var(--rk-shadow);
+  overflow: hidden;
+}
+.rk-b-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--rk-line);
+}
+.rk-b-dots {
+  display: flex;
+  gap: 6px;
+}
+.rk-b-dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--rk-line-2);
+}
+.rk-b-url {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--rk-bg);
+  padding: 0 12px;
+  font-family: var(--rk-mono);
+  font-size: 13px;
+  color: var(--rk-ink-2);
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.rk-b-url .rk-ico {
+  color: var(--rk-ok);
+}
+.rk-b-url b {
+  color: var(--rk-ink);
+  font-weight: 500;
+}
+.rk-b-body {
+  padding: 22px;
+  display: grid;
+  gap: 12px;
+}
+.rk-dom {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid var(--rk-line);
+  border-radius: 16px;
+  background: var(--rk-bg);
+}
+.rk-dom .rk-di {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--rk-panel-2);
+  font-size: 18px;
+}
+.rk-dom b {
+  display: block;
+  font-weight: 600;
+  font-size: 15px;
+}
+.rk-dom small {
+  color: var(--rk-ink-3);
+  font-size: 12.5px;
+}
+.rk-track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 4px;
+}
+.rk-track span {
+  font-family: var(--rk-mono);
+  font-size: 11px;
+  color: var(--rk-ink-3);
+  padding-top: 10px;
+  border-top: 3px solid var(--rk-line);
+}
+.rk-track span.rk-done {
+  border-color: var(--rk-ok);
+  color: var(--rk-ok);
+}
+.rk-track span.rk-now {
+  border-color: var(--rk-brand);
+  color: var(--rk-ink);
+}
+.rk-b-body .rk-msg-rok {
+  font-size: 14.5px;
+  margin-top: 8px;
+  animation: none;
+}
+.rk-addr-list {
+  list-style: none;
+  margin: 30px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--rk-line);
+}
+.rk-addr-list li {
+  display: flex;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rk-line);
+  color: var(--rk-ink-2);
+}
+.rk-addr-list li b {
+  color: var(--rk-ink);
+  font-weight: 600;
+  display: block;
+}
+.rk-addr-list .rk-ico {
+  color: var(--rk-accent);
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+/* everywhere */
+.rk-where {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.rk-w {
+  border: 1px solid var(--rk-line);
+  border-radius: 24px;
+  padding: 26px 24px 24px;
+  background: var(--rk-panel);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 250px;
+  transition: transform 0.3s;
+}
+.rk-w:hover {
+  transform: translateY(-4px);
+}
+.rk-w .rk-wi {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  background: var(--rk-bg-2);
+}
+.rk-landing .rk-w .rk-h3 {
+  font-size: 22px;
+  margin-top: 26px;
+}
+.rk-w p {
+  color: var(--rk-ink-2);
+  font-size: 15px;
+  margin: 0;
+}
+.rk-w-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: auto;
+}
+.rk-w.rk-is-soon {
+  background: transparent;
+  border-style: dashed;
+}
+.rk-w.rk-is-soon .rk-wi {
+  opacity: 0.7;
+}
+.rk-soon {
+  font-family: var(--rk-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 99px;
+  border: 1px dashed var(--rk-line-2);
+  color: var(--rk-ink-3);
+  align-self: flex-start;
+  white-space: nowrap;
+}
+.rk-live-pill {
+  font-family: var(--rk-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 99px;
+  background: var(--rk-ok-soft);
+  color: var(--rk-ok);
+  align-self: flex-start;
+}
+
+/* faq */
+.rk-faq {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 56px;
+}
+.rk-faq details {
+  border-top: 1px solid var(--rk-line-2);
+}
+.rk-faq details:last-child {
+  border-bottom: 1px solid var(--rk-line-2);
+}
+.rk-faq summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 0;
+  font-family: var(--rk-display);
+  font-size: clamp(20px, 2vw, 25px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.rk-faq summary::-webkit-details-marker {
+  display: none;
+}
+.rk-faq summary .rk-ico {
+  transition: transform 0.3s;
+  color: var(--rk-accent);
+  font-size: 22px;
+}
+.rk-faq details[open] summary .rk-ico {
+  transform: rotate(45deg);
+}
+.rk-faq details p {
+  padding: 0 0 26px;
+  margin: 0;
+  color: var(--rk-ink-2);
+  max-width: 62ch;
+}
+
+/* final */
+.rk-final {
+  text-align: center;
+  padding: clamp(90px, 12vw, 170px) 0 clamp(70px, 9vw, 120px);
+  position: relative;
+  overflow: hidden;
+}
+.rk-landing .rk-final .rk-h2 {
+  font-size: clamp(56px, 10vw, 150px);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  margin-top: 22px;
+}
+.rk-final .rk-eyebrow {
+  justify-content: center;
+}
+.rk-final .rk-input {
+  text-align: left;
+  max-width: 640px;
+  margin: 44px auto 0;
+  height: 64px;
+  border-radius: 22px;
+  background: var(--rk-panel);
+  box-shadow: var(--rk-shadow);
+  font-size: 17px;
+  padding-left: 22px;
+}
+.rk-final .rk-send {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+}
+.rk-final .rk-note {
+  margin-top: 18px;
+  color: var(--rk-ink-3);
+  font-size: 14px;
+}
+.rk-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* reveal: only once the client is running (rk-js), so the page reads without scripts */
+.rk-js .rk-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.rk-js .rk-reveal.rk-vis {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- responsive ---------- */
+.rk-hero-grid > *,
+.rk-opp > *,
+.rk-addr > *,
+.rk-faq > *,
+.rk-mods > * {
+  min-width: 0;
+}
+@media (max-width: 1080px) {
+  .rk-hero-grid,
+  .rk-opp,
+  .rk-faq,
+  .rk-addr {
+    grid-template-columns: 1fr;
+  }
+  .rk-s-head {
+    grid-template-columns: 1fr;
+  }
+  .rk-s-head .rk-lede {
+    justify-self: start;
+  }
+  .rk-mods {
+    grid-template-columns: 1fr;
+  }
+  .rk-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin: 0 calc(-1 * var(--rk-gut));
+    padding: 4px var(--rk-gut) 10px;
+  }
+  .rk-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .rk-landing .rk-tab {
+    flex: none;
+    padding: 10px 14px 10px 10px;
+  }
+  .rk-tab small {
+    display: none;
+  }
+  .rk-tab b {
+    font-size: 17px;
+  }
+  .rk-tab .rk-ti {
+    width: 34px;
+    height: 34px;
+    font-size: 17px;
+    border-radius: 11px;
+  }
+  .rk-ladder {
+    grid-template-columns: 1fr 1fr;
+  }
+  .rk-where {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 900px) {
+  .rk-makes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 680px) {
+  div.rk-landing {
+    font-size: 16px;
+  }
+  .rk-hero {
+    padding: 30px 0;
+  }
+  .rk-landing .rk-hero .rk-h1 {
+    font-size: clamp(50px, 15vw, 72px);
+    margin: 20px 0 22px;
+  }
+  .rk-cta .rk-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .rk-console {
+    height: 660px;
+    border-radius: 24px;
+  }
+  .rk-c-body {
+    justify-content: flex-start;
+    padding: 16px 14px;
+  }
+  .rk-row {
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  .rk-c-tag {
+    display: none;
+  }
+  .rk-pane {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    border-radius: 22px;
+  }
+  .rk-how {
+    grid-template-columns: 1fr;
+  }
+  .rk-step,
+  .rk-step + .rk-step {
+    padding: 28px 0 16px;
+    border-left: 0;
+    border-bottom: 1px solid var(--rk-line);
+  }
+  .rk-diagram {
+    display: none;
+  }
+  .rk-count:nth-child(even) {
+    padding-left: 16px;
+  }
+  .rk-ladder {
+    grid-template-columns: 1fr;
+  }
+  .rk-rung:nth-child(n) {
+    min-height: 0;
+  }
+  .rk-where {
+    grid-template-columns: 1fr;
+  }
+  .rk-w {
+    min-height: 0;
+  }
+  .rk-track span {
+    font-size: 10px;
+  }
+  .rk-dom {
+    grid-template-columns: auto 1fr;
+  }
+  .rk-dom .rk-pill {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .rk-b-body {
+    padding: 14px;
+  }
+  .rk-res {
+    grid-template-columns: 1fr auto;
+  }
+  .rk-res .rk-k {
+    grid-column: 1 / -1;
+    width: auto;
+    justify-self: start;
+  }
+}
+@media (max-width: 560px) {
+  .rk-makes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rk-landing *,
+  .rk-landing *::before,
+  .rk-landing *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .rk-js .rk-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

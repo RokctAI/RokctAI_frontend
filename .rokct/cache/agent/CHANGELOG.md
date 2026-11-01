@@ -1,5 +1,60 @@
 # Changelog
 
+## 1.24.0
+
+rokct.ai's landing is the redesign Ray approved on 2026-11-01: "Everything
+is a chat away." No base_sdk change: everything goes through base's
+page-sections, header-menu, hero-copy and network-strip registries, and one
+stylesheet scoped to the landing root.
+
+New installs: `rokct-hero`, `rokct-platform`, `rokct-funding` and
+`rokct-closing` (each an entry and its `.client.tsx`), `rokct-how`,
+`rokct-plans`, and under `components/custom/landing/`
+`rokct-landing-content.ts`, `rokct-landing-classes.ts`, `rokct-ui.tsx`,
+`rokct-landing.css`, `rokct-fonts.ts` and `fonts/rokct/`. Removed installs:
+`floating-nav`, `chat-section`, `logos`, `social-section`,
+`all-features-section`, `workflow-section`, `copied-pricing`,
+`faq-section`, `testimonials-section` (with their `.client.tsx`),
+`landing/agent-hero-form.tsx`, `landing/agent-logos.ts` and
+`landing/agent-card-row.ts`. New `requires`: `app/(auth)/register/page.tsx`.
+
+* The page, top to bottom: the hero (the rotating headline, two calls to
+  action and a sample conversation with ROK that plays five scenarios and
+  answers a tapped chip), "One platform. Every desk in the business." (six
+  tabs), "You ask. ROK does the work. You stay in charge." with its
+  diagram, "A day's work, on one screen." (eleven pictures and an "Ask for
+  what isn't shown." card), the funding band (the registry's counts and
+  the real opportunities finder, which moves here from the hero), the
+  plans ladder with the live plan cards under it when the backend has
+  plans (`pricing`, now order 45 with the `prices` anchor), "Your company,
+  at your own address.", "Wherever you work.", the FAQ and "Ask ROK
+  anything."
+* All Merlin-era material is gone: the `social` and `features` blocks of
+  `agent-landing-config.ts` (which now holds only the plan cards' words),
+  the "Use OpenAI o1" chat card, the Chrome Web Store badge and header
+  button, the client logos marquee, the testimonials and the feature grid.
+  No client showcase, no browser-extension card.
+* Header: the five in-page links (Ask ROK, Platform, How it works,
+  Funding, Plans) are anchors resolved against the sections' `meta.nav`;
+  one action, "Start with ROKCT", to `/register`. The brand keeps base's
+  collapse (1500ms), the chevron, the nav that fades after the collapse
+  and returns on hover or scroll, and the country code from
+  `getBrandingSync()` in the same superscript size as the live site; the
+  mark is the redesign's yellow R tile (`public/landing/agent/rk-mark.svg`).
+  On a first visit, with no branding cache yet, the code comes from the
+  visitor's time zone for the countries the platform serves.
+* `agent-hero-copy.ts` empties base's hero frame (no badges, no trust
+  line); the frame itself is hidden by `rokct-landing.css`.
+* The network strip is drawn nowhere on rokct.ai (`placement: { landing:
+  "none", footer: false }`); the sites stay declared.
+* The eleven 1.23.0 pictures and the compare deck's three are replaced by
+  the redesign's eleven `rk-*.svg` drawings.
+* Faces: Bricolage Grotesque, Instrument Sans and JetBrains Mono, bundled
+  through `next/font/local` (latin subsets, SIL OFL 1.1, `OFL.txt`
+  beside them); nothing is fetched from a font host.
+* Icons are Remixicon only. Motion respects `prefers-reduced-motion`, and
+  the page reads in full without scripts.
+
 ## 1.23.0
 
 New install: `templates/public/landing/agent` -> `public/landing/agent`.
