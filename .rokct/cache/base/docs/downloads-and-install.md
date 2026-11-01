@@ -229,8 +229,10 @@ sends an anonymous visitor to `/landing` - has it with no host edit:
    covers it, and clear of the left edge and the vertical middle a home
    SDK's floating nav uses. The install offer above is inline in the
    footer's Downloads nav, never fixed, so the two never meet.
-3. A click scrolls to the top - `"smooth"`, or `"auto"` (the instant
-   jump) when `(prefers-reduced-motion: reduce)` matches
+3. A click scrolls to the top - `"smooth"`, or `"instant"` (since
+   1.56.0; `"auto"` before, which follows a page's CSS `scroll-behavior`
+   and so glided on a site that sets it smooth) when
+   `(prefers-reduced-motion: reduce)` matches
    (`scrollBehaviour`) - and blurs the button, which hides again.
 4. The scroll and resize listeners are passive and folded into one
    `requestAnimationFrame` per frame; every window read is in the effect
@@ -241,11 +243,193 @@ sends an anonymous visitor to `/landing` - has it with no host edit:
    with `aria-label` and `title` "Back to top" (`BACK_TO_TOP_LABEL`;
    `label` overrides).
 
-Lucide's `ArrowUp` is the icon; the classes are theme tokens only
-(`bg-background`, `border-border`, `text-primary`, `hover:bg-muted`,
-`ring-ring`). A host that wants the button on every page mounts
-`<BackToTop />` from `@/components/custom/back-to-top` in its own root
-layout; `className` adds to the button, `threshold` sets the distance.
+### Every page, every shell (1.56.0)
+
+Ray, 2026-10-31: "every app shell need the button to go up". Until
+1.56.0 only the landing shell and the site frame mounted the button, so
+an admin page, a dashboard or a home SDK's own page (the ROKCT studio
+home, a course page, the loans area) had none. Now:
+
+- **Mounted on every route.** base's theme seam,
+  `components/custom/theme-provider.tsx`, which every shell's root layout
+  already wraps its page in, mounts `<BackToTop scope="root" />` after the
+  page. No host edit, and no home SDK duplicates the component.
+- **One button per page.** `scope` is `"frame"` by default: the button
+  inside a site's own look (the landing shell, the site frame, a home
+  SDK's own page root). While any framed button is mounted, the root one
+  draws nothing (`yieldsToFrame`). A home SDK whose page is not drawn by
+  the landing shell or the site frame (hosting_sdk's studio home) mounts
+  `<BackToTop />` inside its own root, so the button wears that page's
+  variables.
+- **The site's own look.** Every colour is a CSS variable over a shadcn
+  token: `--back-to-top-bg` (else `--background`), `--back-to-top-fg`
+  (else `--primary`), `--back-to-top-border` (else `--border`),
+  `--back-to-top-hover-bg` / `--back-to-top-hover-fg` (else `--primary` /
+  `--primary-foreground`), `--back-to-top-ring` (else `--ring`). A site
+  that sets its tokens on its own root (a local-data site's `.cs-site`,
+  polaris' `.px-landing`) dresses its framed button with no code. A page
+  whose look lives in other variables (the studio's `--acc`, `--ink`)
+  names them on these. No colour is named in the component.
+- **Clear of the device and of other floating things.** `right` and
+  `bottom` add `env(safe-area-inset-right)` / `env(safe-area-inset-bottom)`
+  to the gap (`--back-to-top-gap`: 1rem, 1.5rem from `md`). Any element
+  fixed in the same bottom-right corner (a chat or WhatsApp bubble, a
+  cookie button) carries `data-rokct-floating` and the button rises
+  `FLOATING_GAP` (12px) above the highest one (`floatingLift`, measured
+  with the scroll check). A site can also lift it with
+  `--back-to-top-offset`. No SDK landing has such an element today.
+- **Shape.** 44px round `<button>`, `aria-label` "Back to top", a
+  2px focus ring in `--back-to-top-ring`. The arrow is Remixicon's
+  `ri-arrow-up-line`, drawn as inline SVG. The button fades and slides up
+  2px as it appears (`motion-safe:` only). Import it from
+  `@/components/custom/back-to-top`; `className` adds to the button and
+  `threshold` sets the distance.
+
+### Per site: the look, the place and the switch (1.56.0)
+
+Ray, 2026-10-31: the button is customisable per site (colour, position,
+icon, on/off), and it must NOT look the same on every site. base ships
+only the mechanism - the component, a `BackToTopConfig` and a neutral
+fallback - and every site gets its own default from the layer that owns
+its look. Three layers, each optional, a later one winning every field
+it sets (`resolveBackToTop`):
+
+1. **base's neutral fallback** (`DEFAULT_BACK_TO_TOP`): on, bottom right,
+   `ri-arrow-up-line` in a circle, every colour from the site's tokens.
+2. **The home SDK's style.** A home SDK installs a module whose default
+   export is a `BackToTopConfig` and registers it with one line at
+   `// @rokct-sdk-back-to-top-style-start` in
+   `components/custom/landing/back-to-top-style.ts` (the same contract as
+   `site-metadata.ts`):
+
+   ```json
+   {
+     "target": "components/custom/landing/back-to-top-style.ts",
+     "placeholder": "// @rokct-sdk-back-to-top-style-start",
+     "replacement": "  { id: \"lms-back-to-top\", load: () => import(\"@/components/custom/landing/lms-back-to-top\") },"
+   }
+   ```
+
+   That is how each product gets its own look on every route, backend
+   shells included, with no shell edit. A style names the site's own
+   tokens (`"var(--radius)"`, `"var(--font-display)"`,
+   `"hsl(var(--primary))"`) rather than copying their values, so it
+   follows the theme in light and dark. Give every `var()` a fallback
+   (the root button sits outside the page's own scope on other routes),
+   and do not lean on a name the shell's globals already define in
+   another syntax: shadcn's `--card`, `--border`, `--background` and
+   `--primary` are bare HSL triplets (`0 0% 100%`), so `var(--card)` is
+   not a colour outside a scope that redefines it - write
+   `hsl(var(--card))` or use a name of your own.
+3. **The shell's data/ folder.** A shell in `local` or `hybrid` data mode
+   sets `backToTop` in `data/theme.json` (validated at build time by
+   `lib/site-data/validate-site.mjs`; a bad field fails the build naming
+   it). Backend shells have no data/ and keep their home SDK's style.
+
+`components/custom/site-back-to-top.ts` resolves the three once per
+request on the server (never throwing: a broken layer leaves the neutral
+button), and the theme seam - now an async server component - hands the
+result to every button on the page through `<BackToTopProvider>`. The
+root button and any framed one read the same config, so the one-button
+rule holds and `enabled: false` removes both.
+
+| Field | Values | Default |
+| --- | --- | --- |
+| `enabled` | `true` / `false` | `true` |
+| `position` | `bottom-right`, `bottom-left`, `bottom-center` | `bottom-right` |
+| `icon` | `arrow-up`, `arrow-up-circle`, `chevron-up`, `rocket` (Remixicon, inline SVG) | `arrow-up` |
+| `shape` | `circle`, `rounded-square`, `pill-with-label`, `text-arrow` | `circle` |
+| `label` | the pill's words; the text-arrow's shaft | `"Top"`; the site's name |
+| `background`, `foreground`, `hoverBackground`, `hoverForeground`, `border`, `ring` | any CSS colour | `--background`, `--primary`, `--primary`, `--primary-foreground`, `--border`, `--ring` |
+| `halo` | the text-arrow's glow behind its words | `--background` at 85% |
+| `offset` | px of extra lift | 0 |
+| `showAfter` | px scrolled before it shows | one screen; half the scrollable distance on a short page |
+| `radius`, `size` | CSS lengths | per shape (`rounded-square`: the site's `--radius`); 2.75rem |
+| `fontFamily`, `fontWeight`, `textTransform`, `letterSpacing`, `fontSize` | the label's type | inherited face, 600, none, normal, 0.8125rem |
+| `borderWidth`, `borderStyle`, `shadow` | the outline and depth | 1px, solid, a soft shadow |
+| `duration`, `easing` | motion of the fade and hover (`motion-safe:` only) | 200ms, `cubic-bezier(0.4,0,0.2,1)` |
+
+Each CSS-valued field is written onto the button as its
+`--back-to-top-*` variable, so a site's own stylesheet can still set the
+same variable on an ancestor when no layer names it.
+
+- **Shapes.** `circle` and `rounded-square` show the icon alone in a
+  44px button; `pill-with-label` shows the icon and the label;
+  `text-arrow` is an upward arrow whose long shaft is the site's words,
+  set vertically (reading bottom to top) under a
+  `ri-arrow-up-s-fill` head, with nothing behind them - no fill, no
+  border, no shadow - in the primary colour with a soft halo of the
+  page's background so it stays legible over light and dark sections.
+  Every shape keeps a 44px hit area, the focus ring, the safe-area
+  insets and `aria-label` "Back to top"; the visible words are
+  `aria-hidden`.
+- **Contrast.** After paint the button measures its glyph against its
+  fill (`contrastTone`, through a canvas so any colour syntax reads) and,
+  below 3:1, switches to the primary as the fill with
+  primary-foreground as the glyph, else to black or white ink
+  (`data-back-to-top-tone`: `as-is`, `solid`, `ink`). It measures again
+  when the theme flips. A yellow primary on a white circle (1.6:1, the
+  hosting sign-in page) becomes a yellow button with a dark arrow.
+- **Short pages.** With no `showAfter`, the button shows after one
+  screen, or after half the scrollable distance when that is shorter,
+  so a sign-in page that scrolls a little still gets it.
+- **Floating elements** are cleared in the button's own place: the left
+  corner for `bottom-left`, the bottom middle for `bottom-center`.
+
+### How to customise
+
+A shell with a data/ folder (`"data": "local"` or `"hybrid"` in its
+`composer.json`) adds a `backToTop` block to `data/theme.json`; every
+field is optional and anything left out keeps the home SDK's style:
+
+```json
+{
+  "primary": "#7a4b2a",
+  "backToTop": {
+    "position": "bottom-left",
+    "icon": "rocket",
+    "shape": "pill-with-label",
+    "label": "Top",
+    "background": "#1f2937",
+    "foreground": "#fde68a",
+    "hoverBackground": "#111827",
+    "border": "transparent",
+    "offset": 8,
+    "showAfter": 600,
+    "fontFamily": "var(--font-display)",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.08em",
+    "duration": "160ms"
+  }
+}
+```
+
+To switch the button off on a site:
+
+```json
+{ "primary": "#7a4b2a", "backToTop": { "enabled": false } }
+```
+
+A product with no data/ folder sets its style in its home SDK's
+registered module (`components/custom/landing/<sdk>-back-to-top.ts`):
+
+```ts
+import type { BackToTopConfig } from "@/components/custom/landing/back-to-top";
+
+const style: BackToTopConfig = {
+  shape: "text-arrow",
+  foreground: "hsl(var(--primary))",
+  fontFamily: "var(--font-display)",
+  textTransform: "uppercase",
+  letterSpacing: "0.14em",
+};
+export default style;
+```
+
+One button still: framed copies (the landing shell, the site frame, a
+home SDK's page root) and the root copy all take this config from the
+theme seam; a framed copy can lay extra fields over it for itself with
+`<BackToTop config={{ ... }} />`, which is rarely needed.
 
 ## Tests
 

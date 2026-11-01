@@ -62,6 +62,13 @@
 // 20:33:16Z: "they become double when you tell user to download for that
 // platform, i think should hide the normal one when showing the other")
 // after mount - the server HTML still carries every icon.
+//
+// Since 1.54.0 the copyright line is the SITE CREDIT (Ray, 2026-10-31:
+// "all site will be copyright sitename then built with love (as heart) by
+// ROKCT"): components/custom/site-credit.tsx draws `© <year> <site name>
+// · Built with ♥ by ROKCT`, the site's name from `config.siteName`, else
+// the host's PLATFORM_NAME - never the legal entity, so
+// `config.copyrightHolder` is no longer drawn. The credit is always there.
 
 import React from "react";
 import Link from "next/link";
@@ -70,6 +77,7 @@ import { getPlatformStatus } from "@/app/actions/base/status";
 import { DownloadButtons } from "@/components/custom/download-buttons";
 import { InstallOffer } from "@/components/custom/install-offer";
 import { NetworkStrip } from "@/components/custom/network-strip";
+import { SiteCredit } from "@/components/custom/site-credit";
 import { normaliseDownloads } from "@/components/custom/landing/download-platform";
 import {
   FOOTER_CHROME_CONFIG,
@@ -144,8 +152,7 @@ export function FooterChromeRow({
   const groups = (config.links ?? []).filter((g) => g.items.length > 0);
   const downloads = normaliseDownloads(config.downloads);
 
-  const year = config.copyrightYear ?? new Date().getFullYear();
-  const holder = config.copyrightHolder?.trim();
+  const siteName = config.siteName?.trim() || undefined;
   const version = config.version?.trim();
 
   // `null` is "still asking"; `unconfigured` is "nothing to ask", and the
@@ -228,13 +235,12 @@ export function FooterChromeRow({
       <div
         className={`flex flex-row justify-between items-center gap-6 ${className}`}
       >
-        {holder ? (
-          <p className="text-sm opacity-70">
-            © Copyright {year} - {holder}
-          </p>
-        ) : (
-          <span />
-        )}
+        <SiteCredit
+          siteName={siteName}
+          year={config.copyrightYear}
+          separator={config.creditSeparator}
+          className="text-sm opacity-70"
+        />
         <div className="flex items-center gap-6">
           {showStatus && (
             <div

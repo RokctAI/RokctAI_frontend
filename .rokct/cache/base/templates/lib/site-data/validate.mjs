@@ -20,14 +20,36 @@
 // toolchain is involved; the types these checks enforce are `./kinds.ts`.
 // Every problem is one sentence naming the field, so a bad file fails the
 // build as "data/team.json: members[1].role must be a non-empty string".
+// The site-page kinds (site, sections, pricing, order, css) and the theme's
+// 1.53.0 fields live in ./validate-site.mjs.
+
+import {
+  validateOrder,
+  validatePricing,
+  validateSections,
+  validateSite,
+  validateSiteCss,
+  validateThemeExtras,
+} from "./validate-site.mjs";
 
 /** The kinds and where each lives, mirrored from ./kinds.ts. */
 export const SITE_DATA_MODES = ["local", "backend", "hybrid"];
 export const DEFAULT_SITE_DATA_MODE = "backend";
-export const JSON_KINDS = { theme: "theme.json", team: "team.json", stockists: "stockists.json", products: "products.json", network: "network.json" };
-export const MARKDOWN_KINDS = { about: "about.md" };
+export const JSON_KINDS = {
+  theme: "theme.json",
+  team: "team.json",
+  stockists: "stockists.json",
+  products: "products.json",
+  network: "network.json",
+  site: "site.json",
+  sections: "sections.json",
+  pricing: "pricing.json",
+  order: "order.json",
+};
+/** Kinds whose file is read as text, verbatim (since 1.53.0 not only markdown: site.css). */
+export const MARKDOWN_KINDS = { about: "about.md", css: "site.css" };
 export const LEGAL_DIR = "legal";
-export const SITE_DATA_KINDS = ["theme", "team", "stockists", "products", "about", "legal", "network"];
+export const SITE_DATA_KINDS = ["theme", "team", "stockists", "products", "about", "legal", "network", "site", "sections", "pricing", "order", "css"];
 
 const HEX_COLOUR = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
 
@@ -95,9 +117,11 @@ export function validateTheme(value) {
   checkHex(problems, "primary", value.primary, { required: true });
   checkHex(problems, "secondary", value.secondary);
   checkHex(problems, "accent", value.accent);
-  for (const extra of Object.keys(value).filter((k) => !["primary", "secondary", "accent"].includes(k))) {
-    problems.push(`${extra} is not a theme field (primary, secondary, accent)`);
+  const fields = ["primary", "secondary", "accent", "palette", "paletteDark", "fonts", "backToTop"];
+  for (const extra of Object.keys(value).filter((k) => !fields.includes(k))) {
+    problems.push(`${extra} is not a theme field (${fields.join(", ")})`);
   }
+  validateThemeExtras(problems, value);
   return problems;
 }
 
@@ -284,6 +308,11 @@ const VALIDATORS = {
   about: validateAbout,
   legal: validateLegal,
   network: validateNetwork,
+  site: validateSite,
+  sections: validateSections,
+  pricing: validatePricing,
+  order: validateOrder,
+  css: validateSiteCss,
 };
 
 /** Problems with a parsed value of `kind`; [] when it fits the kind's shape. */

@@ -79,13 +79,15 @@ describe('agent-network-strip: the sites rokct.ai declares (1.19.0, base_sdk 1.4
     }
   });
 
-  it('draws rokct.ai and juvo as their own glyphs, light and dark, and supacharge.school as its wordmark', () => {
+  it('draws rokct.ai as its own glyphs, light and dark, and supacharge.school and juvo platforms as wordmarks', () => {
     assert.equal(byKey.get('rokct')?.logo, 'https://rokct.ai/images/logo_dark.svg');
     assert.equal(byKey.get('rokct')?.logoDark, 'https://rokct.ai/images/logo.svg');
-    assert.equal(byKey.get('juvo')?.logo, 'https://juvo.app/images/logo_dark.svg');
-    assert.equal(byKey.get('juvo')?.logoDark, 'https://juvo.app/images/logo.svg');
-    assert.equal(byKey.get('supacharge')?.wordmark, true);
-    assert.equal(byKey.get('supacharge')?.logo, undefined);
+    // 1.23.0: juvo.app's glyphs are refused cross-origin (ERR_BLOCKED_BY_ORB).
+    for (const key of ['supacharge', 'juvo']) {
+      assert.equal(byKey.get(key)?.wordmark, true, key);
+      assert.equal(byKey.get(key)?.logo, undefined, key);
+      assert.equal(byKey.get(key)?.logoDark, undefined, key);
+    }
   });
 
   it('keeps hosting and telephony as hidden place-holders with no url', () => {

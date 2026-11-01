@@ -169,7 +169,8 @@ describe('the header menu', () => {
 
   it('keeps its anchors, links and groups', () => {
     assert.deepEqual(menu.anchors, ['pricing']);
-    assert.deepEqual((menu.links ?? []).map((l) => l.id), ['affiliate', 'teams']);
+    // 1.23.0: Affiliate and Teams are not drawn while their pages 404.
+    assert.deepEqual((menu.links ?? []).map((l) => l.id), []);
     assert.deepEqual(
       (menu.groups ?? []).map((g) => g.id),
       ['product', 'ai-chat', 'productivity', 'tools', 'summary'],

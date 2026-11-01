@@ -696,6 +696,7 @@ migrate_working_dir/
 /app/services/platform/orders/orders.ts
 /app/services/public/opportunities.ts
 /app/services/server/intent-classifier.ts
+/app/site-shots/\[file\]/route.ts
 /app/studio/campaigns/\[name\]/page.tsx
 /app/studio/campaigns/new/page.tsx
 /app/studio/campaigns/page.tsx
@@ -748,6 +749,7 @@ migrate_working_dir/
 /components/custom/download-buttons.tsx
 /components/custom/faq-section.client.tsx
 /components/custom/faq-section.tsx
+/components/custom/flip-card.tsx
 /components/custom/floating-nav.client.tsx
 /components/custom/floating-nav.tsx
 /components/custom/footer-chrome.tsx
@@ -768,6 +770,7 @@ migrate_working_dir/
 /components/custom/landing/agent-opportunities.tsx
 /components/custom/landing/agent-plans-query.ts
 /components/custom/landing/agent-site-metadata.ts
+/components/custom/landing/back-to-top-style.ts
 /components/custom/landing/back-to-top.ts
 /components/custom/landing/brand-marks.ts
 /components/custom/landing/download-platform.ts
@@ -786,8 +789,10 @@ migrate_working_dir/
 /components/custom/landing/page-sections.ts
 /components/custom/landing/plans-query.ts
 /components/custom/landing/platform-glyphs.tsx
+/components/custom/landing/site-credit.ts
 /components/custom/landing/site-frame.ts
 /components/custom/landing/site-metadata.ts
+/components/custom/landing/site-shots.ts
 /components/custom/landing/testimonials-marquee.tsx
 /components/custom/left-sidebar.tsx
 /components/custom/legal/legal-doc.tsx
@@ -812,6 +817,8 @@ migrate_working_dir/
 /components/custom/pricing.tsx
 /components/custom/right-plane.tsx
 /components/custom/session-provider.tsx
+/components/custom/site-back-to-top.ts
+/components/custom/site-credit.tsx
 /components/custom/site-frame.tsx
 /components/custom/site-theme.tsx
 /components/custom/social-section.client.tsx
@@ -950,8 +957,10 @@ migrate_working_dir/
 /lib/site-data/generate.mjs
 /lib/site-data/generated.ts
 /lib/site-data/kinds.ts
+/lib/site-data/order-email.ts
 /lib/site-data/read-site-data.ts
 /lib/site-data/site-theme.ts
+/lib/site-data/validate-site.mjs
 /lib/site-data/validate.mjs
 /middleware.ts
 /public/brand/marks/app-gallery.svg
@@ -959,6 +968,20 @@ migrate_working_dir/
 /public/brand/marks/chrome-web-store.svg
 /public/brand/marks/google-play.svg
 /public/brand/marks/windows.svg
+/public/landing/agent/code.svg
+/public/landing/agent/diagram.svg
+/public/landing/agent/knowledge.svg
+/public/landing/agent/mail.svg
+/public/landing/agent/others-pro.svg
+/public/landing/agent/others.svg
+/public/landing/agent/platform.svg
+/public/landing/agent/poster.svg
+/public/landing/agent/reasoning.svg
+/public/landing/agent/research.svg
+/public/landing/agent/social.svg
+/public/landing/agent/summary.svg
+/public/landing/agent/transcript.svg
+/public/landing/agent/video.svg
 /tour/fragments/control-fleet.tour.yaml
 /types/next-auth.d.ts
 # @rokct-composed-end

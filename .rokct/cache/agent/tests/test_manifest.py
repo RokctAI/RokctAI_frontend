@@ -385,13 +385,15 @@ class TestRegisterInjection(unittest.TestCase):
         # public/brand/marks/ on every host, so this SDK ships none of them
         # - no templates/public at all - and installs nothing under public/.
         # The 1.15.0 copies (chrome-web-store.svg, google-play.svg) and the
-        # public/brand mapping that carried them are gone.
+        # public/brand mapping that carried them are gone. 1.23.0: the one
+        # thing this SDK puts under public/ is its own landing pictures,
+        # public/landing/agent/ (TestLandingPictures) - still no mark.
         self.assertFalse(os.path.exists(MARKS_DIR), MARKS_DIR)
-        self.assertFalse(os.path.exists(PUBLIC), PUBLIC)
+        self.assertEqual(sorted(os.listdir(PUBLIC)), ["landing"])
+        self.assertEqual(sorted(os.listdir(os.path.join(PUBLIC, "landing"))), ["agent"])
         manifest = load_manifest()
-        for entry in manifest["installs"]:
-            self.assertFalse(entry["from"].startswith("templates/public"), entry["from"])
-            self.assertFalse(entry["to"].startswith("public"), entry["to"])
+        public = [e for e in manifest["installs"] if e["from"].startswith("templates/public") or e["to"].startswith("public")]
+        self.assertEqual(public, [{"from": "templates/public/landing/agent", "to": "public/landing/agent"}])
 
     def test_hero_copy_is_registered_where_base_looks(self):
         # 1.15.0: the same mark on the hero's Chrome Web Store badge, as
@@ -445,9 +447,8 @@ class TestRegisterInjection(unittest.TestCase):
         # The header menu and the hero copy name no host but the store the
         # button opens; cdn.getmerlin.in, which the old header hot-linked
         # the mark from, appears nowhere in them.
-        # (agent-landing-config.ts still hot-links its section images from
-        # that CDN - known placeholders under Ray's 15:02Z ruling, out of
-        # this release's scope and not asserted here.)
+        # (Since 1.23.0 agent-landing-config.ts names no picture host at
+        # all: TestLandingPictures holds that.)
         # The store the button opens, the SVG namespace, the licence header.
         allowed = {"chromewebstore.google.com", "www.w3.org", "www.gnu.org"}
         for path in (HEADER_MENU, HERO_COPY):
@@ -754,7 +755,9 @@ class TestRegisterInjection(unittest.TestCase):
             self.assertRegex(src, re.compile(rf'key: "{key}",\s*name: "{re.escape(name)}",\s*url: "{re.escape(url)}",', re.S), key)
         for wrong in ('name: "juvo",', 'name: "Juvo",', 'name: "Juvo Platforms",', 'name: "JUVO PLATFORMS",'):
             self.assertNotIn(wrong, src, wrong)
-        self.assertIn('      logo: "https://juvo.app/images/logo_dark.svg",\n      logoDark: "https://juvo.app/images/logo.svg",', src)
+        # 1.23.0: juvo.app's glyphs are blocked cross-origin; the name is drawn.
+        self.assertIn('name: "juvo platforms",\n      url: "https://juvo.app",\n      wordmark: true,', src)
+        self.assertNotIn("juvo.app/images", src)
         self.assertIn('name: "supacharge.school",\n      url: "https://supacharge.school",\n      wordmark: true,', src)
         for pending, name in (("hosting", "Hosting"), ("telephony", "Telephony")):
             self.assertIn(f'{{ key: "{pending}", name: "{name}", url: null, shown: false }},', src)
@@ -782,7 +785,7 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn("## 1.19.1", latest)
         for word in ('"juvo platforms"', "use caps in logos", "`uppercase`"):
             self.assertIn(word, latest)
-        self.assertEqual(load_manifest()["version"], "1.22.0")
+        self.assertEqual(load_manifest()["version"], "1.23.0")
 
     def test_behaviour_under_node(self):
         node = shutil.which("node")
@@ -961,6 +964,68 @@ class TestGatewayCalls(unittest.TestCase):
                 self.assertRegex(read(module), rf"@frappe\.whitelist\([^)]*\)\ndef {re.escape(parts[-1])}\(")
 
 
+class TestLandingPictures(unittest.TestCase):
+    """1.23.0 (Ray, 2026-11-01: "we can have our own"): every picture the
+    landing sections draw is a file this SDK installs under
+    public/landing/agent/, never a third party's URL - Merlin's CDN and
+    juvo.app refuse cross-origin loads, so a hot-link is a broken image."""
+
+    PUBLIC_FROM = "templates/public/landing/agent"
+    SURFACES = (LANDING_CONFIG, NETWORK_STRIP, HEADER_MENU, HERO_COPY,
+                os.path.join(TEMPLATES, "components/custom/chat-section.client.tsx"))
+
+    def setUp(self):
+        self.manifest = load_manifest()
+        self.public_dir = os.path.join(SDK_ROOT, self.PUBLIC_FROM)
+
+    def test_the_pictures_are_installed_into_public(self):
+        self.assertIn({"from": self.PUBLIC_FROM, "to": "public/landing/agent"}, self.manifest["installs"])
+        self.assertTrue(os.path.isdir(self.public_dir))
+
+    def test_no_template_names_a_borrowed_picture_host(self):
+        for dirpath, _, files in os.walk(TEMPLATES):
+            for fname in files:
+                if not fname.endswith((".ts", ".tsx")):
+                    continue
+                path = os.path.join(dirpath, fname)
+                src = read(path)
+                for host in ("getmerlin", "images.unsplash.com", "juvo.app/images"):
+                    self.assertFalse(host in src, f"{os.path.relpath(path, SDK_ROOT)} names {host}")
+
+    def test_every_landing_picture_path_is_a_file_this_sdk_ships(self):
+        shipped = set(os.listdir(self.public_dir))
+        named = set()
+        for path in self.SURFACES:
+            src = read(path)
+            named.update(re.findall(r'"/landing/agent/([^"]+)"', src))
+            if "const PICTURES = \"/landing/agent\";" in src:
+                named.update(re.findall(r"`\$\{PICTURES\}/([^`]+)`", src))
+        self.assertGreaterEqual(len(named), 14)
+        self.assertEqual(named - shipped, set(), "named but not shipped")
+        self.assertEqual(shipped - named, set(), "shipped but never drawn")
+
+    def test_the_pictures_are_small_self_contained_files(self):
+        for fname in os.listdir(self.public_dir):
+            path = os.path.join(self.public_dir, fname)
+            self.assertRegex(fname, r"^[a-z0-9-]+\.(svg|webp)$")
+            self.assertLess(os.path.getsize(path), 64 * 1024, fname)
+            if fname.endswith(".svg"):
+                svg = read(path)
+                self.assertTrue(svg.startswith("<svg "), fname)
+                # Nothing fetched from inside a picture: no external href,
+                # no script, no foreign font.
+                self.assertNotRegex(svg, r"(?:href|src)=\"(?:https?:)?//", fname)
+                self.assertNotIn("<script", svg)
+                self.assertNotIn("@import", svg)
+                self.assertIn('role="img"', svg)
+
+    def test_header_draws_no_link_to_a_missing_page(self):
+        src = read(HEADER_MENU)
+        self.assertIn("  links: [],", src)
+        for route in ('"/affiliate"', '"/teams"'):
+            self.assertNotIn(route, src)
+
+
 if __name__ == "__main__":
     unittest.main()
 
@@ -977,7 +1042,8 @@ if __name__ == "__main__":
 # balance, quotes), not the chat web app, so the href is left rather than
 # pointed at the wrong page. This set may only shrink: a fixed link comes
 # out of it, and a new dead one fails the test.
-KNOWN_DEAD_HREFS = frozenset({"/affiliate", "/teams", "/dashboard"})
+# 1.23.0: /affiliate and /teams came out - the header no longer draws them.
+KNOWN_DEAD_HREFS = frozenset({"/dashboard"})
 # The identifier form must not be a type annotation (`href: string;`).
 HREF_RE = re.compile(r'\bhref:\s*(?:"([^"]*)"|([A-Za-z_][A-Za-z0-9_]*)\b(?!\s*;))')
 CONST_RE = re.compile(r'^const ([A-Z_][A-Z0-9_]*)\s*=\s*"([^"]*)";', re.M)
@@ -1075,7 +1141,7 @@ class TestNavLinks(unittest.TestCase):
     def test_every_header_href_is_an_anchor_an_https_url_or_an_installed_route(self):
         hrefs = authored_hrefs(HEADER_MENU)
         self.assertIn("/chat", hrefs)
-        self.assertGreaterEqual(len(hrefs), 17)
+        self.assertGreaterEqual(len(hrefs), 15)
         dead = self.dead_hrefs(hrefs)
         self.assertEqual(
             dead, set(KNOWN_DEAD_HREFS),

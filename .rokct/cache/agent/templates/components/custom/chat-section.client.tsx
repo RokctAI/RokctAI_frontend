@@ -19,6 +19,11 @@
 // The chat section's CLIENT half (since 1.18.0): the carousel and the
 // framer cards, unchanged. Rendered by ./chat-section.tsx, the section's
 // entry, which holds `meta` where the server can read it.
+//
+// 1.23.0: the four card pictures are the shell's own files under
+// /landing/agent/ (installed from templates/public/landing/agent/), not
+// stock photos hot-linked from Unsplash: all four are drawn in code for
+// this page, in the landing config's style.
 
 import React from "react";
 import Image from "next/image";
@@ -84,8 +89,8 @@ export function ChatSection({ id }: { id?: string }) {
                   <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
                     <Image
                       unoptimized
-                      src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=600&auto=format&fit=crop"
-                      alt="Projects"
+                      src="/landing/agent/knowledge.svg"
+                      alt="Files and links feeding a project that answers with citations"
                       fill
                       className="rounded-lg object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
                     />
@@ -116,8 +121,8 @@ export function ChatSection({ id }: { id?: string }) {
                   <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
                     <Image
                       unoptimized
-                      src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&auto=format&fit=crop"
-                      alt="Infographics"
+                      src="/landing/agent/diagram.svg"
+                      alt="A flowchart drawn from a prompt"
                       fill
                       className="rounded-lg object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
                     />
@@ -148,8 +153,8 @@ export function ChatSection({ id }: { id?: string }) {
                   <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
                     <Image
                       unoptimized
-                      src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop"
-                      alt="App snippets"
+                      src="/landing/agent/code.svg"
+                      alt="A React component's code beside its live preview"
                       fill
                       className="rounded-lg object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
                     />
@@ -180,8 +185,8 @@ export function ChatSection({ id }: { id?: string }) {
                   <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
                     <Image
                       unoptimized
-                      src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=600&auto=format&fit=crop"
-                      alt="o1 model"
+                      src="/landing/agent/reasoning.svg"
+                      alt="Step-by-step reasoning checked against live web sources"
                       fill
                       className="rounded-lg object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
                     />

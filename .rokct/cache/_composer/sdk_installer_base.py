@@ -305,18 +305,21 @@ def _read_manifest(sdk_name):
 
 def _manifest_install_targets(manifest, sdk_path):
     """Every host-relative file path the given manifest's installs (top
-    level plus this host's app_type flavor block) would write, with
-    directory entries expanded exactly as install_sdk_files() expands
-    them."""
+    level, this host's app_type flavor block and - since only the home SDK
+    is asked - its "home" block) would write, with directory entries
+    expanded exactly as install_sdk_files() expands them."""
     current_app_type = resolve_app_type()
     flavor_block = (
         (manifest.get("app_type") or {}).get(current_app_type, {})
         if current_app_type
         else {}
     )
+    home_block = manifest.get("home") or {}
     targets = set()
-    for entry in list(manifest.get("installs") or []) + list(
-        flavor_block.get("installs") or []
+    for entry in (
+        list(manifest.get("installs") or [])
+        + list(flavor_block.get("installs") or [])
+        + list(home_block.get("installs") or [])
     ):
         from_rel = entry.get("from") if isinstance(entry, dict) else None
         to_rel = entry.get("to") if isinstance(entry, dict) else None
@@ -411,20 +414,6 @@ def install_sdk_files(sdk_name):
         else {}
     )
 
-    version = manifest.get("version", "1.0.0")
-    installs = manifest.get("installs", []) + flavor_block.get("installs", [])
-
-    check_app_alias()
-    check_requires(
-        sdk_name, manifest.get("requires", []) + flavor_block.get("requires", [])
-    )
-
-    state = load_state()
-    package_state = state["packages"].get(sdk_name, {"version": "0.0.0", "files": {}})
-    package_state["version"] = version
-
-    print(f"\n[*] Installing SDK: {sdk_name} (v{version})")
-
     # The home SDK owns every path its manifest installs. Other SDKs skip
     # those paths outright and, when the home SDK itself runs, it takes over
     # an unmodified copy another SDK installed earlier (this run or a
@@ -434,6 +423,37 @@ def install_sdk_files(sdk_name):
     home_sdk_name = resolve_home_sdk()
     is_home_sdk = sdk_name == home_sdk_name
     home_owned = set() if is_home_sdk else home_sdk_owned_files(home_sdk_name)
+
+    # The "home" block (same keys as an app_type block) merges in ONLY when
+    # this SDK is the shell's home SDK ("home_sdk": true in composer.json),
+    # whatever the app_type. It is how one SDK can be the home of a whole
+    # class of shells without a per-shell app_type key - corporate_sdk is
+    # the home of every local-data site and only the company pages
+    # elsewhere - and never touches a shell where it is not home.
+    home_block = (manifest.get("home") or {}) if is_home_sdk else {}
+    if home_block:
+        print(f'[i] {sdk_name} is the home SDK: its "home" block applies.')
+
+    version = manifest.get("version", "1.0.0")
+    installs = (
+        manifest.get("installs", [])
+        + flavor_block.get("installs", [])
+        + home_block.get("installs", [])
+    )
+
+    check_app_alias()
+    check_requires(
+        sdk_name,
+        manifest.get("requires", [])
+        + flavor_block.get("requires", [])
+        + home_block.get("requires", []),
+    )
+
+    state = load_state()
+    package_state = state["packages"].get(sdk_name, {"version": "0.0.0", "files": {}})
+    package_state["version"] = version
+
+    print(f"\n[*] Installing SDK: {sdk_name} (v{version})")
 
     # 1. Sync files
     for entry in installs:
@@ -554,15 +574,19 @@ def install_sdk_files(sdk_name):
     # integrations concatenate like installs.
     deps_config = dict(manifest.get("dependencies") or {})
     deps_config.update(flavor_block.get("dependencies") or {})
+    deps_config.update(home_block.get("dependencies") or {})
     if deps_config:
         package_state["dependencies"] = deps_config
     dev_deps_config = dict(manifest.get("devDependencies") or {})
     dev_deps_config.update(flavor_block.get("devDependencies") or {})
+    dev_deps_config.update(home_block.get("devDependencies") or {})
     if dev_deps_config:
         package_state["devDependencies"] = dev_deps_config
 
-    integrations_config = list(manifest.get("integrations") or []) + list(
-        flavor_block.get("integrations") or []
+    integrations_config = (
+        list(manifest.get("integrations") or [])
+        + list(flavor_block.get("integrations") or [])
+        + list(home_block.get("integrations") or [])
     )
     if integrations_config:
         package_state["integrations"] = integrations_config

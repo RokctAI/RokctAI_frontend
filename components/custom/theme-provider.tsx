@@ -31,6 +31,18 @@
  * `disableTransitionOnChange`, ...) is data and passes through unchanged;
  * a layout that passes "light" or "system" as `defaultTheme` still
  * overrides the platform rule and is still a host regression.
+ *
+ * Since 1.56.0 (Ray, 2026-10-31: "every app shell need the button to go
+ * up") the seam also mounts the floating "Back to top" button
+ * (./back-to-top.tsx) with `scope="root"`, after the page, so every route
+ * of every shell has it with no layout edit. It steps aside wherever a
+ * framed button already serves the page (the landing shell, the site
+ * frame, a home SDK's own page root), which wears that page's own look.
+ * The seam also resolves the site's button config once
+ * (./site-back-to-top.ts: base's fallback, the home SDK's registered
+ * style, data/theme.json `backToTop`) and hands it to every button on the
+ * page through <BackToTopProvider>, so the root and framed copies read the
+ * same config. That makes the seam an async server component.
  */
 
 // ==========================================
@@ -44,6 +56,8 @@
 import type { ThemeProviderProps } from "next-themes";
 import * as React from "react";
 
+import { BackToTop, BackToTopProvider } from "@/components/custom/back-to-top";
+import { loadSiteBackToTop } from "@/components/custom/site-back-to-top";
 import { SiteTheme } from "@/components/custom/site-theme";
 import {
   DEFAULT_THEME,
@@ -53,11 +67,20 @@ import {
 
 export { DEFAULT_THEME, THEME_ATTRIBUTE };
 
-export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+export async function ThemeProvider({
+  children,
+  ...props
+}: ThemeProviderProps) {
+  const backToTop = await loadSiteBackToTop();
   return (
     <>
       <SiteTheme />
-      <ThemeProviderClient {...props}>{children}</ThemeProviderClient>
+      <ThemeProviderClient {...props}>
+        <BackToTopProvider value={backToTop}>
+          {children}
+          <BackToTop scope="root" />
+        </BackToTopProvider>
+      </ThemeProviderClient>
     </>
   );
 }

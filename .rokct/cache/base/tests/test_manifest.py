@@ -157,7 +157,37 @@ DOWNLOADS_INSTALLS = {
 BACK_TO_TOP = os.path.join(SDK_ROOT, "templates", "components", "custom", "back-to-top.tsx")
 BACK_TO_TOP_RULES = os.path.join(LANDING, "back-to-top.ts")
 BACK_TO_TOP_TESTS = os.path.join(HERE, "back-to-top.test.mts")
+# base_sdk 1.56.0: per-site config - the home SDK style registry and the
+# server resolver the theme seam hands every button.
+BACK_TO_TOP_STYLE_REGISTRY = os.path.join(LANDING, "back-to-top-style.ts")
+SITE_BACK_TO_TOP = os.path.join(SDK_ROOT, "templates", "components", "custom", "site-back-to-top.ts")
+# Remixicon's ri-arrow-up-line, the only shape the button draws (1.56.0).
+RI_ARROW_UP_LINE_PATH = (
+    "M13.0001 7.82843V20H11.0001V7.82843L5.63614 13.1924L4.22192 11.7782L12.0001 4"
+    "L19.7783 11.7782L18.3641 13.1924L13.0001 7.82843Z"
+)
 LANDING_CONTENT = os.path.join(SDK_ROOT, "templates", "components", "custom", "landing-content.tsx")
+# base_sdk 1.54.0: the site credit (Ray, 2026-10-31: "all site will be
+# copyright sitename then built with love (as heart) by ROKCT"), pure rules
+# beside the server-safe component every footer draws its last line with.
+SITE_CREDIT = os.path.join(SDK_ROOT, "templates", "components", "custom", "site-credit.tsx")
+SITE_CREDIT_RULES = os.path.join(LANDING, "site-credit.ts")
+SITE_CREDIT_TESTS = os.path.join(HERE, "site-credit.test.mts")
+# base_sdk 1.55.0: site shots - every site serves its own pictures of its
+# first screen at /site-shots/, read from its repo's site-shots branch.
+SITE_SHOTS_RULES = os.path.join(LANDING, "site-shots.ts")
+SITE_SHOTS_ROUTE = os.path.join(SDK_ROOT, "templates", "app", "site-shots", "[file]", "route.ts")
+SITE_SHOTS_TESTS = os.path.join(HERE, "site-shots.test.mts")
+SITE_SHOTS_INSTALLS = {
+    "templates/components/custom/landing/site-shots.ts": "components/custom/landing/site-shots.ts",
+    "templates/app/site-shots": "app/site-shots",
+}
+# base_sdk 1.58.0: the shared flip card, lms_sdk's LmsFlipCard moved here.
+FLIP_CARD = os.path.join(SDK_ROOT, "templates", "components", "custom", "flip-card.tsx")
+SITE_CREDIT_INSTALLS = {
+    "templates/components/custom/site-credit.tsx": "components/custom/site-credit.tsx",
+    "templates/components/custom/landing/site-credit.ts": "components/custom/landing/site-credit.ts",
+}
 BACK_TO_TOP_INSTALLS = {
     "templates/components/custom/back-to-top.tsx": "components/custom/back-to-top.tsx",
     "templates/components/custom/landing/back-to-top.ts": "components/custom/landing/back-to-top.ts",
@@ -258,15 +288,19 @@ SITE_DATA_DIR = os.path.join(SDK_ROOT, "templates", "lib", "site-data")
 SITE_DATA_INSTALLS = {
     "templates/lib/site-data/kinds.ts": "lib/site-data/kinds.ts",
     "templates/lib/site-data/validate.mjs": "lib/site-data/validate.mjs",
+    "templates/lib/site-data/validate-site.mjs": "lib/site-data/validate-site.mjs",
     "templates/lib/site-data/generate.mjs": "lib/site-data/generate.mjs",
     "templates/lib/site-data/generated.ts": "lib/site-data/generated.ts",
     "templates/lib/site-data/read-site-data.ts": "lib/site-data/read-site-data.ts",
     "templates/lib/site-data/site-theme.ts": "lib/site-data/site-theme.ts",
+    "templates/lib/site-data/order-email.ts": "lib/site-data/order-email.ts",
     "templates/components/custom/site-theme.tsx": "components/custom/site-theme.tsx",
     "templates/components/custom/theme-provider.client.tsx": "components/custom/theme-provider.client.tsx",
 }
 SITE_DATA_TESTS = os.path.join(HERE, "site-data.test.mts")
 SITE_DATA_FIXTURE = os.path.join(HERE, "fixtures", "site-data", "acme")
+SITE_PAGE_TESTS = os.path.join(HERE, "site-page.test.mts")
+SITE_PAGE_FIXTURE = os.path.join(HERE, "fixtures", "site-data", "site-page")
 SITE_DATA_DOC = os.path.join(SDK_ROOT, "docs", "site-data.md")
 
 # What the theme-provider stage stands in for `react` and `next-themes`: the
@@ -281,8 +315,27 @@ declare namespace JSX {
 declare module "react" {
   export type ReactNode = unknown;
   export function createElement(...args: unknown[]): JSX.Element;
+  export interface MouseEvent<T = Element> { currentTarget: T }
+  export type CSSProperties = { [key: string]: string | number | undefined };
+  export interface Context<T> { Provider: (props: { value: T; children?: ReactNode }) => JSX.Element }
+  export function createContext<T>(initial: T): Context<T>;
+  export function useContext<T>(context: Context<T>): T;
+  export function useRef<T>(initial: T): { current: T };
+  export function useMemo<T>(factory: () => T, deps: readonly unknown[]): T;
+  export function useState<S>(initial: S | (() => S)): [S, (next: S | ((prev: S) => S)) => void];
+  export function useEffect(effect: () => void | (() => void), deps?: readonly unknown[]): void;
+  export function useSyncExternalStore<T>(
+    subscribe: (listener: () => void) => () => void, getSnapshot: () => T, getServerSnapshot?: () => T,
+  ): T;
+  const React: {
+    useState: typeof useState; useEffect: typeof useEffect; useSyncExternalStore: typeof useSyncExternalStore;
+    createContext: typeof createContext; useContext: typeof useContext; useRef: typeof useRef; useMemo: typeof useMemo;
+  };
+  namespace React { type ReactNode = unknown }
+  export default React;
 }
 declare module "server-only" {}
+declare module "@/app/config/platform" { export const PLATFORM_NAME: string; }
 declare module "next-themes" {
   import type { ReactNode } from "react";
   export type Attribute = `data-${string}` | "class";
@@ -722,7 +775,12 @@ class TestManifest(unittest.TestCase):
         self.assertIn('from "@/components/custom/theme-provider.client";', entry)
         self.assertIn('from "@/components/custom/site-theme";', entry)
         self.assertIn("<SiteTheme />", entry)
-        self.assertIn("<ThemeProviderClient {...props}>{children}</ThemeProviderClient>", entry)
+        self.assertIn(
+            "<ThemeProviderClient {...props}>\n        <BackToTopProvider value={backToTop}>\n"
+            "          {children}\n          <BackToTop scope=\"root\" />\n        </BackToTopProvider>\n"
+            "      </ThemeProviderClient>",
+            entry,
+        )
         self.assertIn("export { DEFAULT_THEME, THEME_ATTRIBUTE };", entry)
         self.assertIn("export default ThemeProvider;", entry)
         self.assertNotRegex(entry, r'defaultTheme = "(light|system)"')
@@ -761,14 +819,24 @@ class TestManifest(unittest.TestCase):
             raise unittest.SkipTest("no tsc reachable (set ROKCT_TSC to a tsc binary)")
         rewrites = {
             'from "@/components/custom/theme-provider.client"': 'from "./theme-provider.client"',
+            'from "@/components/custom/back-to-top"': 'from "./back-to-top"',
+            'from "@/components/custom/landing/back-to-top"': 'from "./back-to-top-rules"',
             'from "@/components/custom/site-theme"': 'from "./site-theme"',
             'from "@/lib/site-data/read-site-data"': 'from "./read-site-data"',
             'from "@/lib/site-data/site-theme"': 'from "./site-theme-css"',
             'from "@/lib/site-data/kinds"': 'from "./kinds"',
+            'from "@/components/custom/site-back-to-top"': 'from "./site-back-to-top"',
+            'from "@/components/custom/landing/back-to-top-style"': 'from "./back-to-top-style"',
+            'from "@/components/custom/landing/site-metadata"': 'from "./site-metadata"',
         }
         staged = {
+            "site-back-to-top.ts": SITE_BACK_TO_TOP,
+            "back-to-top-style.ts": BACK_TO_TOP_STYLE_REGISTRY,
+            "site-metadata.ts": os.path.join(LANDING, "site-metadata.ts"),
             "theme-provider.tsx": THEME_PROVIDER_TEMPLATE,
             "theme-provider.client.tsx": THEME_PROVIDER_CLIENT_TEMPLATE,
+            "back-to-top.tsx": BACK_TO_TOP,
+            "back-to-top-rules.ts": BACK_TO_TOP_RULES,
             "site-theme.tsx": SITE_THEME_COMPONENT,
             "site-theme-css.ts": os.path.join(SITE_DATA_DIR, "site-theme.ts"),
             "read-site-data.ts": os.path.join(SITE_DATA_DIR, "read-site-data.ts"),
@@ -778,6 +846,9 @@ class TestManifest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             for name, src in staged.items():
                 text = read(src)
+                if name == "back-to-top-style.ts":
+                    # The registry's sibling import names the rules.
+                    text = text.replace('from "./back-to-top"', 'from "./back-to-top-rules"')
                 for old, new in rewrites.items():
                     text = text.replace(old, new)
                 with open(os.path.join(tmp, name), "w", encoding="utf-8") as f:
@@ -873,6 +944,31 @@ class TestManifest(unittest.TestCase):
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
         self.assertGreaterEqual(int(passed.group(1)), 23)
+
+    def test_site_page_behaviour_under_node(self):
+        """tests/site-page.test.mts (1.53.0), run in place: the site-page
+        kinds' validators, the cross-kind rule, the home block's required
+        kinds and the generator against tests/fixtures/site-data/site-page."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute the site-page suite")
+        self.assertTrue(os.path.isdir(SITE_PAGE_FIXTURE))
+        run = subprocess.run(
+            [node, "--experimental-strip-types", "--no-warnings", "--test", SITE_PAGE_TESTS],
+            capture_output=True, text=True, timeout=180, cwd=HERE,
+        )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 12)
+
+    def test_site_page_fixture_names_no_real_thing(self):
+        """The site-page fixture is a made-up bakery: no brand, nobody real."""
+        for root, _, files in os.walk(SITE_PAGE_FIXTURE):
+            for name in files:
+                text = read(os.path.join(root, name)).lower()
+                for word in ("rokct", "supacharge", "south river", "southriver", "musina", "lorem"):
+                    self.assertNotIn(word, text, f"{name} carries {word}")
 
     def test_fixture_data_folder_names_no_real_thing(self):
         """The fixture data/ is acme.school's: no brand, nobody real."""
@@ -1697,6 +1793,10 @@ class TestRegistryMarkers(unittest.TestCase):
         "www.gnu.org",
         "twitter.com", "linkedin.com", "instagram.com", "facebook.com",
         "tenant-a.rokct.ai", "example.app", "tenant.localhost",
+        # 1.55.0: where a shell's own site-shots branch is read from, server
+        # side only (app/site-shots/[file]/route.ts). It is the shell's own
+        # repo, not a placeholder asset, and no browser ever loads from it.
+        "raw.githubusercontent.com",
     }
 
     def test_no_base_default_references_a_third_party_cdn(self):
@@ -2523,7 +2623,7 @@ class TestRegistryMarkers(unittest.TestCase):
         # The row sits between the strip and the copyright line.
         self.assertLess(footer.index('{networkStrip && <NetworkStrip surface="footer" />}'),
                         footer.index("{groups.length > 0 && ("))
-        self.assertLess(footer.index("{groups.length > 0 && ("), footer.index("© Copyright {year}"))
+        self.assertLess(footer.index("{groups.length > 0 && ("), footer.index("<SiteCredit"))
         # Still generic: no product, brand, host or copy.
         body = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", footer + config))
         for word in ("rokct.ai", "supacharge", "Privacy", "Terms of", "https://", "demo", "sample", "lorem"):
@@ -3021,7 +3121,7 @@ class TestRegistryMarkers(unittest.TestCase):
         # beside the link groups, both above the copyright line.
         self.assertLess(footer.index("<InstallOffer downloads={downloads}"), footer.index("<DownloadButtons downloads={downloads} />"))
         self.assertLess(footer.index('aria-label="Footer links"'), footer.index("aria-label={labels.downloads}"))
-        self.assertLess(footer.index("aria-label={labels.downloads}"), footer.index("© Copyright {year}"))
+        self.assertLess(footer.index("aria-label={labels.downloads}"), footer.index("<SiteCredit"))
         glyphs = read(PLATFORM_GLYPHS)
         for needle in (
             'import Image from "next/image";',
@@ -3312,7 +3412,12 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertTrue(button.lstrip().startswith("/*"), "licence header first")
         self.assertIn('"use client";', button)
         self.assertLess(button.index('"use client";'), button.index("import React"))
-        self.assertIn('import { RiArrowUpLine } from "@remixicon/react";', button)
+        # 1.56.0: the arrow is Remixicon's ri-arrow-up-line drawn inline
+        # (the paths live beside the rules, the component draws them).
+        self.assertNotIn("@remixicon/react", button)
+        self.assertNotIn("material", button.lower())
+        self.assertIn(RI_ARROW_UP_LINE_PATH, read(BACK_TO_TOP_RULES))
+        self.assertIn("<path d={BACK_TO_TOP_ICON_PATHS[config.icon]} />", button)
         for needle in (
             "export function BackToTop({",
             "export interface BackToTopProps {",
@@ -3321,7 +3426,8 @@ class TestRegistryMarkers(unittest.TestCase):
             "  className?: string;",
             "label = BACK_TO_TOP_LABEL,",
             "const [visible, setVisible] = React.useState(false);",
-            "setVisible(isPastThreshold(window.scrollY, resolveThreshold(threshold, window.innerHeight)));",
+            "const showAfter = threshold ?? config.showAfter;",
+            "setVisible(isPastThreshold(window.scrollY, resolveThreshold(showAfter, window.innerHeight, scrollable)));",
             "frame = window.requestAnimationFrame(check);",
             'window.addEventListener("scroll", onScroll, { passive: true });',
             'window.addEventListener("resize", onScroll, { passive: true });',
@@ -3336,40 +3442,46 @@ class TestRegistryMarkers(unittest.TestCase):
             "      aria-hidden={!visible}",
             "      tabIndex={visible ? 0 : -1}",
             '      data-back-to-top={visible ? "shown" : "hidden"}',
-            '${visible ? "opacity-100" : "pointer-events-none opacity-0"}',
-            '<RiArrowUpLine className="h-5 w-5" aria-hidden="true" />',
+            '${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"}',
             "export default BackToTop;",
         ):
             self.assertIn(needle, button, needle)
         # Fixed bottom right, under the header (z-50) and its mobile panel
-        # (z-40), in theme tokens only.
+        # (z-40), in the site's variables over theme tokens only (1.56.0).
         for token in (
-            "fixed bottom-4 right-4 z-30", "md:bottom-6 md:right-6", "rounded-full",
-            "border border-border bg-background text-primary", "hover:bg-muted",
-            "focus-visible:ring-2 focus-visible:ring-ring", "motion-safe:transition-opacity",
+            "fixed z-30", "min-h-11 min-w-11",
+            "[--back-to-top-gap:1rem] md:[--back-to-top-gap:1.5rem]",
+            "bg-[color:var(--back-to-top-bg,hsl(var(--background)))]",
+            "text-[color:var(--back-to-top-fg,hsl(var(--primary)))]",
+            "border-[color:var(--back-to-top-border,hsl(var(--border)))]",
+            "focus-visible:ring-2",
+            "focus-visible:ring-[color:var(--back-to-top-ring,hsl(var(--ring)))]",
+            "motion-safe:transition-",
         ):
             self.assertIn(token, button, token)
         header = read(HEADER)
         self.assertIn('className="sticky top-0 z-50 w-full"', header)
         self.assertIn("fixed inset-x-0 bottom-0 top-16 z-40", header)
         code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", button))
-        self.assertEqual(code.count("React.useEffect("), 1)
+        self.assertEqual(code.count("React.useEffect("), 3)
         self.assertNotIn("window", code.split("React.useEffect(")[0], "no window read at render")
         self.assertNotRegex(code, re.compile(r"#[0-9a-fA-F]{3,8}\b"), "no colour is named")
         rules = read(BACK_TO_TOP_RULES)
         for needle in (
             'export const BACK_TO_TOP_LABEL = "Back to top";',
             'export const REDUCED_MOTION_MEDIA_QUERY = "(prefers-reduced-motion: reduce)";',
-            "export function resolveThreshold(threshold: number | undefined, viewportHeight: number): number {",
+            "export function resolveThreshold(\n  threshold: number | undefined,\n  viewportHeight: number,\n  scrollable?: number,\n): number {",
             "export function isPastThreshold(scrollY: number, threshold: number): boolean {",
             "return Number.isFinite(scrollY) && scrollY > threshold;",
             "export function scrollBehaviour(reducedMotion: boolean): ScrollBehavior {",
-            'return reducedMotion ? "auto" : "smooth";',
+            'return reducedMotion ? "instant" : "smooth";',
         ):
             self.assertIn(needle, rules, needle)
         plain = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", rules + button)).lower()
         for word in ("rokct.ai", "supacharge", ".school", "https://", "document.", "localstorage", "window"):
-            if word == "window":
+            # 1.56.0: the button measures floating elements through
+            # document; the rules still never touch the DOM.
+            if word in ("window", "document."):
                 self.assertNotIn(word, LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", rules)).lower())
             else:
                 self.assertNotIn(word, plain, word)
@@ -3397,6 +3509,146 @@ class TestRegistryMarkers(unittest.TestCase):
             head,
         )
 
+    def test_back_to_top_is_on_every_page_of_every_shell(self):
+        """1.56.0 (Ray, 2026-10-31: "every app shell need the button to go
+        up"): base's theme seam, which every shell's root layout wraps its
+        page in, mounts the root button after the page; the landing shell
+        and the site frame keep their framed button, which the root one
+        yields to; the colours are the site's variables over shadcn tokens;
+        right and bottom clear the safe-area insets and a floating element
+        in the corner lifts the button; the manifest, CHANGELOG and doc say
+        so."""
+        manifest = load_manifest()
+        self.assertGreaterEqual(tuple(int(p) for p in manifest["version"].split(".")), (1, 56, 0))
+        seam = read(THEME_PROVIDER_TEMPLATE)
+        self.assertIn('import { BackToTop, BackToTopProvider } from "@/components/custom/back-to-top";', seam)
+        seam_code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", seam))
+        self.assertEqual(seam_code.count("<BackToTop "), 1)
+        self.assertIn('<BackToTop scope="root" />', seam_code)
+        self.assertLess(seam_code.index("{children}"), seam_code.index('<BackToTop scope="root" />'))
+        self.assertLess(seam_code.index('<BackToTop scope="root" />'), seam_code.index("</ThemeProviderClient>"))
+        # The framed mounts stay, at the default scope.
+        for path in (LANDING_CONTENT, SITE_FRAME):
+            code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(path)))
+            self.assertEqual(code.count("<BackToTop />"), 1, path)
+        button = read(BACK_TO_TOP)
+        for needle in (
+            "  scope?: BackToTopScope;",
+            'scope = "frame",',
+            "React.useSyncExternalStore(subscribeFrames, framesNow, framesOnServer);",
+            "const yielded = yieldsToFrame(scope, frames);",
+            'React.useEffect(() => (scope === "frame" ? registerFrame() : undefined), [scope]);',
+            "if (!drawn) return null;",
+            "document.querySelectorAll(FLOATING_SELECTOR)",
+            "setLift(floatingLift(boxes, window.innerWidth, window.innerHeight, config.position));",
+            "...horizontalFor(config.position),",
+            "bottom: bottomFor(lift),",
+            "data-back-to-top-scope={scope}",
+            "hover:bg-[color:var(--back-to-top-hover-bg,hsl(var(--primary)))]",
+            "hover:text-[color:var(--back-to-top-hover-fg,hsl(var(--primary-foreground)))]",
+        ):
+            self.assertIn(needle, button, needle)
+        rules = read(BACK_TO_TOP_RULES)
+        for needle in (
+            'export type BackToTopScope = "frame" | "root";',
+            "export function yieldsToFrame(scope: BackToTopScope, framesMounted: number): boolean {",
+            'export const FLOATING_ATTRIBUTE = "data-rokct-floating";',
+            "export function floatingLift(",
+            "env(safe-area-inset-bottom, 0px)",
+            "env(safe-area-inset-right, 0px)",
+            "var(--back-to-top-offset, 0px)",
+            "export function bottomFor(lift: number): string {",
+        ):
+            self.assertIn(needle, rules, needle)
+        self.assertIn("_comment_version_1_56_0", manifest)
+        changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
+        head = re.sub(r"\s+", " ", changelog.split("## 1.55.0", 1)[0])
+        self.assertIn("## 1.56.0", head)
+        self.assertIn('Ray, 2026-10-31: "every app shell need the button to go up"', head)
+        doc = read(DOWNLOADS_DOC)
+        for needle in ('<BackToTop scope="root" />', "data-rokct-floating", "--back-to-top-bg",
+                       "safe-area-inset-right", "ri-arrow-up-line"):
+            self.assertIn(needle, doc, needle)
+
+    def test_back_to_top_is_configured_per_site(self):
+        """1.56.0 (Ray, 2026-10-31: the button is customisable per site -
+        colour, position, icon, on/off - and must not look the same on every
+        site): base ships the mechanism and a neutral fallback; a home SDK
+        registers its own style at one marker (the site-metadata contract);
+        data/theme.json `backToTop` overrides it; the theme seam resolves the
+        layers once on the server and hands them to every button, root and
+        framed, through one provider; the shapes, icons, positions and the
+        contrast guarantee are in the component; the manifest installs the
+        two new files, and the CHANGELOG and docs carry a how-to with JSON."""
+        manifest = load_manifest()
+        installs = {e["from"]: e["to"] for e in manifest["installs"]}
+        for src in (BACK_TO_TOP_STYLE_REGISTRY, SITE_BACK_TO_TOP):
+            rel = os.path.relpath(src, SDK_ROOT).replace(os.sep, "/")
+            self.assertEqual(installs.get(rel), rel.replace("templates/", "", 1), rel)
+        registry = read(BACK_TO_TOP_STYLE_REGISTRY)
+        self.assertTrue(registry.lstrip().startswith("/*"), "licence header first")
+        for needle in (
+            "export const BACK_TO_TOP_STYLES: BackToTopStyleEntry[] = [",
+            "  // @rokct-sdk-back-to-top-style-start\n  // @rokct-sdk-back-to-top-style-end\n];",
+            "export async function loadBackToTopStyles(",
+            'import type { BackToTopConfig } from "./back-to-top";',
+        ):
+            self.assertIn(needle, registry, needle)
+        resolver = read(SITE_BACK_TO_TOP)
+        for needle in (
+            "export async function loadSiteBackToTop(): Promise<SiteBackToTop> {",
+            "loadBackToTopStyles(), loadSiteMetadata()",
+            'const theme = hasSiteData("theme") ? readSiteData("theme") : undefined;',
+            "config: resolveBackToTop(...styles, theme?.backToTop),",
+            "siteName: (site?.name || metadata.siteName || metadata.title || \"\").trim(),",
+            "return { config: { ...DEFAULT_BACK_TO_TOP }, siteName: \"\" };",
+        ):
+            self.assertIn(needle, resolver, needle)
+        seam = read(THEME_PROVIDER_TEMPLATE)
+        for needle in (
+            "export async function ThemeProvider(",
+            "const backToTop = await loadSiteBackToTop();",
+            "<BackToTopProvider value={backToTop}>",
+        ):
+            self.assertIn(needle, seam, needle)
+        button = read(BACK_TO_TOP)
+        for needle in (
+            "export function BackToTopProvider(",
+            "const site = React.useContext(BackToTopContext);",
+            "const drawn = config.enabled && !yielded;",
+            "if (!drawn) return null;",
+            "const next = contrastTone({ fg, bg }, solid, page);",
+            "data-back-to-top-shape={config.shape}",
+            "data-back-to-top-position={config.position}",
+            "data-back-to-top-tone={tone.tone}",
+            'writingMode: "vertical-rl", transform: "rotate(180deg)"',
+            "<path d={TEXT_ARROW_HEAD_PATH} />",
+            "bg-transparent border-0",
+            "motion-safe:[transition-duration:var(--back-to-top-duration,200ms)]",
+            "var(--back-to-top-radius, ${defaultRadius(config.shape)})",
+            "      aria-label={label}",
+        ):
+            self.assertIn(needle, button, needle)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", button))
+        self.assertNotRegex(code, re.compile(r"#[0-9a-fA-F]{3,8}\b"), "no colour is named in the component")
+        # The data validator and the rules agree on every enum.
+        rules = read(BACK_TO_TOP_RULES)
+        validator = read(os.path.join(SITE_DATA_DIR, "validate-site.mjs"))
+        for const in ("BACK_TO_TOP_POSITIONS", "BACK_TO_TOP_ICONS", "BACK_TO_TOP_SHAPES"):
+            in_rules = re.search(const + r"[^=]*= \[([^\]]*)\]", rules).group(1)
+            in_validator = re.search(const + r" = \[([^\]]*)\]", validator).group(1)
+            self.assertEqual(re.findall(r'"([^"]+)"', in_rules), re.findall(r'"([^"]+)"', in_validator), const)
+        kinds = read(os.path.join(SITE_DATA_DIR, "kinds.ts"))
+        self.assertIn("backToTop?: SiteBackToTop;", kinds)
+        changelog = read(os.path.join(SDK_ROOT, "CHANGELOG.md"))
+        head = changelog.split("## 1.55.0", 1)[0]
+        for needle in ("backToTop", "@rokct-sdk-back-to-top-style-start", "text-arrow", "3:1"):
+            self.assertIn(needle, head, needle)
+        doc = read(DOWNLOADS_DOC)
+        for needle in ("How to customise", '"backToTop": {', "data/theme.json", "back-to-top-style.ts",
+                       '"shape": "pill-with-label"', '"enabled": false'):
+            self.assertIn(needle, doc, needle)
+
     def test_back_to_top_rules_under_node(self):
         """The rules executed (tests/back-to-top.test.mts): the words, the
         threshold (configured, else one viewport height, else 0), strictly
@@ -3418,7 +3670,7 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
         passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
         self.assertIsNotNone(passed, run.stdout)
-        self.assertGreaterEqual(int(passed.group(1)), 11)
+        self.assertGreaterEqual(int(passed.group(1)), 59)
 
     def test_back_to_top_type_checks_under_tsc(self):
         """The component and its rules under tsc, strict and
@@ -3435,14 +3687,25 @@ declare namespace JSX {
   interface IntrinsicElements { [name: string]: unknown }
 }
 declare module "react" {
+  export type ReactNode = unknown;
   export interface MouseEvent<T = Element> { currentTarget: T }
+  export type CSSProperties = { [key: string]: string | number | undefined };
+  export interface Context<T> { Provider: (props: { value: T; children?: ReactNode }) => JSX.Element }
+  export function createContext<T>(initial: T): Context<T>;
+  export function useContext<T>(context: Context<T>): T;
+  export function useRef<T>(initial: T): { current: T };
+  export function useMemo<T>(factory: () => T, deps: readonly unknown[]): T;
   export function useState<S>(initial: S | (() => S)): [S, (next: S | ((prev: S) => S)) => void];
   export function useEffect(effect: () => void | (() => void), deps?: readonly unknown[]): void;
-  const React: { useState: typeof useState; useEffect: typeof useEffect };
+  export function useSyncExternalStore<T>(
+    subscribe: (listener: () => void) => () => void, getSnapshot: () => T, getServerSnapshot?: () => T,
+  ): T;
+  const React: {
+    useState: typeof useState; useEffect: typeof useEffect; useSyncExternalStore: typeof useSyncExternalStore;
+    createContext: typeof createContext; useContext: typeof useContext; useRef: typeof useRef; useMemo: typeof useMemo;
+  };
+  namespace React { type ReactNode = unknown }
   export default React;
-}
-declare module "@remixicon/react" {
-  export function RiArrowUpLine(props: { className?: string; "aria-hidden"?: boolean | "true" | "false" }): JSX.Element;
 }
 """
         with tempfile.TemporaryDirectory() as tmp:
@@ -3611,6 +3874,210 @@ declare module "@/components/custom/landing/brand-marks" {
                 [tsc, "-p", tmp], capture_output=True, text=True, timeout=300, cwd=tmp,
             )
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+
+class TestFlipCard(unittest.TestCase):
+    """1.58.0: the Supacharge tutor-card flip, shared by every shell."""
+
+    def test_flip_card_is_installed(self):
+        manifest = json.loads(read(MANIFEST))
+        self.assertGreaterEqual(tuple(int(p) for p in manifest["version"].split(".")), (1, 57, 0))
+        installs = {e["from"]: e["to"] for e in manifest["installs"]}
+        self.assertEqual(
+            installs.get("templates/components/custom/flip-card.tsx"),
+            "components/custom/flip-card.tsx",
+        )
+
+    def test_flip_card_keeps_the_tutor_card_behaviour(self):
+        src = read(FLIP_CARD)
+        self.assertTrue(src.lstrip().startswith("/*"), "licence header first")
+        self.assertIn('"use client";', src)
+        for needle in (
+            "export function useMediaQuery(query: string): boolean {",
+            "export const stopFlip = (event: React.SyntheticEvent) => event.stopPropagation();",
+            "export function FlipCard({",
+            "export default FlipCard;",
+            'role="button"',
+            "aria-pressed={flipped}",
+            "aria-label={flipped ? flipBackLabel : flipLabel}",
+            'useMediaQuery("(hover: hover) and (pointer: fine)")',
+            'useMediaQuery("(prefers-reduced-motion: reduce)")',
+            'transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)"',
+            "opacity: (isBack ? flipped : !flipped) ? 1 : 0",
+            'backfaceVisibility: "hidden"',
+            "inert={flipped}",
+            "inert={!flipped}",
+            'event.key === "Enter" || event.key === " "',
+            'event.key === "Escape" && flipped',
+            "export const FLIP_DURATION_MS = 420;",
+        ):
+            self.assertIn(needle, src, needle)
+
+    def test_flip_card_layouts_and_hooks(self):
+        src = read(FLIP_CARD)
+        for needle in (
+            'layout?: "fill" | "stack";',
+            'layout = "fill",',
+            "hoverDelayMs = 0,",
+            'gridArea: "1 / 1"',
+            "onFlip?.(next, \"press\");",
+            "onFlip?.(true, \"hover\");",
+            "ringClassName = FLIP_RING_CLASSES,",
+        ):
+            self.assertIn(needle, src, needle)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", src))
+        self.assertNotRegex(code, re.compile(r"#[0-9a-fA-F]{3,8}\b"), "no colour is named")
+        self.assertNotIn("--sc-", code, "no shell's tokens in base")
+
+
+class TestSiteCredit(unittest.TestCase):
+    """1.54.0: every site's footer reads `© <year> <site name> · Built with
+    ♥ by ROKCT` (Ray, 2026-10-31), the site's own name - never the legal
+    entity - and the heart an image named `love`."""
+
+    def test_site_credit_is_installed_and_drawn_by_the_footer_row(self):
+        manifest = json.loads(read(MANIFEST))
+        self.assertGreaterEqual(tuple(int(p) for p in manifest["version"].split(".")), (1, 54, 0))
+        installs = {e["from"]: e["to"] for e in manifest["installs"]}
+        for src, dst in SITE_CREDIT_INSTALLS.items():
+            self.assertEqual(installs.get(src), dst, src)
+            self.assertTrue(os.path.isfile(os.path.join(SDK_ROOT, src)), src)
+        credit = read(SITE_CREDIT)
+        self.assertTrue(credit.lstrip().startswith("/*"), "licence header first")
+        self.assertNotIn('"use client"', credit, "server-safe: a server footer imports it too")
+        for needle in (
+            'import { PLATFORM_NAME } from "@/app/config/platform";',
+            'from "@/components/custom/landing/site-credit";',
+            "export interface SiteCreditProps {",
+            "export function SiteCredit({",
+            "  siteName = PLATFORM_NAME,",
+            "  separator = SITE_CREDIT_SEPARATOR,",
+            "const copyright = siteCopyright(siteName, year);",
+            '{copyright && <span data-site-credit-copyright="">{copyright}</span>}',
+            '{copyright && <span aria-hidden="true">{separator}</span>}',
+            '<span role="img" aria-label={words.love} className={heartClassName}>',
+            "{SITE_CREDIT_HEART}",
+            "{words.by} {SITE_CREDIT_MAKER}",
+            "export default SiteCredit;",
+        ):
+            self.assertIn(needle, credit, needle)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", credit))
+        self.assertNotIn("LEGAL_COMPANY_NAME", code)
+        self.assertNotRegex(code, re.compile(r"#[0-9a-fA-F]{3,8}\b"), "no colour is named")
+        self.assertNotRegex(code, re.compile(r"\btext-(xs|sm|base|lg)\b"), "the footer owns the type")
+        rules = read(SITE_CREDIT_RULES)
+        for needle in (
+            'export const SITE_CREDIT_MAKER = "ROKCT";',
+            'export const SITE_CREDIT_HEART = "\u2665";',
+            'export const SITE_CREDIT_SEPARATOR = " \u00b7 ";',
+            '  builtWith: "Built with",',
+            '  love: "love",',
+            '  by: "by",',
+            "export function resolveCreditYear(",
+            "export function siteCopyright(",
+            "export function siteCreditText(",
+            "export function siteCreditLine(",
+        ):
+            self.assertIn(needle, rules, needle)
+        # The row draws the credit, naming config.siteName else PLATFORM_NAME
+        # (the component's default) - never the copyright holder.
+        footer = read(FOOTER_CHROME)
+        footer_code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", footer))
+        self.assertIn('import { SiteCredit } from "@/components/custom/site-credit";', footer)
+        self.assertIn("const siteName = config.siteName?.trim() || undefined;", footer)
+        self.assertIn("siteName={siteName}", footer)
+        self.assertIn("year={config.copyrightYear}", footer)
+        self.assertIn("separator={config.creditSeparator}", footer)
+        self.assertEqual(footer_code.count("<SiteCredit"), 1)
+        self.assertNotIn("copyrightHolder", footer_code)
+        self.assertNotIn("© Copyright", footer_code)
+        config = read(FOOTER_CHROME_CONFIG)
+        self.assertIn("  siteName?: string;", config)
+        self.assertIn("  copyrightHolder?: string;", config)
+        self.assertIn("  creditSeparator?: string;", config)
+        self.assertIn("@deprecated since 1.54.0", config)
+        self.assertNotIn("NEXT_PUBLIC_COPYRIGHT_HOLDER", LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", config)))
+
+    def test_site_credit_rules_under_node(self):
+        """The rules executed (tests/site-credit.test.mts): the words, the
+        year, `© 2026 Polaris · Built with ♥ by ROKCT`."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "node (22.6+) is needed to execute site-credit.ts")
+        with tempfile.TemporaryDirectory() as tmp:
+            staged = read(SITE_CREDIT_RULES)
+            self.assertNotIn('from "@/', staged, "site-credit.ts imports nothing")
+            with open(os.path.join(tmp, "site-credit.ts"), "w", encoding="utf-8") as f:
+                f.write(staged)
+            shutil.copy(SITE_CREDIT_TESTS, os.path.join(tmp, "site-credit.test.mts"))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 os.path.join(tmp, "site-credit.test.mts")],
+                capture_output=True, text=True, timeout=120, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 12)
+
+
+class TestSiteShots(unittest.TestCase):
+    """1.55.0: every site serves its own pictures of its first screen at
+    /site-shots/, read from the shell repo's site-shots branch, checked, and
+    kept: a failed regeneration throws so the last good picture stays."""
+
+    def test_installed(self):
+        manifest = json.loads(read(MANIFEST))
+        self.assertGreaterEqual(tuple(int(p) for p in manifest["version"].split(".")), (1, 55, 0))
+        self.assertIn("_comment_version_1_55_0", manifest)
+        installs = {e["from"]: e["to"] for e in manifest["installs"]}
+        for src, dst in SITE_SHOTS_INSTALLS.items():
+            self.assertEqual(installs.get(src), dst, src)
+            self.assertTrue(os.path.exists(os.path.join(SDK_ROOT, src)), src)
+        head = read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.54.0")[0]
+        self.assertIn("## 1.55.0", head)
+
+    def test_route(self):
+        route = read(SITE_SHOTS_ROUTE)
+        self.assertTrue(route.lstrip().startswith("/*"), "licence header first")
+        for needle in (
+            "export const revalidate = 3600;",
+            "export const dynamicParams = false;",
+            "return siteShotPaths().map((file) => ({ file }));",
+            "{ params }: { params: Promise<{ file: string }> }",
+            "const { file } = await params;",
+            "const repo = resolveSiteShotsRepo(process.env);",
+            "parseSiteShotsManifest(JSON.parse(new TextDecoder().decode(raw)), repo)",
+            "checkSiteShot(file, await readRaw(repo, `${manifest.dir}/${file}`), manifest)",
+            "next: { revalidate: SITE_SHOTS_REVALIDATE_SECONDS },",
+            'if (process.env.NEXT_PHASE === "phase-production-build") {',
+            "status: 404",
+            "throw error;",
+        ):
+            self.assertIn(needle, route, needle)
+        rules = read(SITE_SHOTS_RULES)
+        self.assertTrue(rules.lstrip().startswith("/*"), "licence header first")
+        self.assertNotIn('from "next', rules, "pure: no Next import")
+        self.assertIn('export const SITE_SHOTS_BRANCH = "site-shots";', rules)
+        self.assertIn("export const SITE_SHOTS_REVALIDATE_SECONDS = 3600;", rules)
+
+    def test_rules_run(self):
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node not on PATH")
+        with tempfile.TemporaryDirectory() as tmp:
+            shutil.copy(SITE_SHOTS_RULES, os.path.join(tmp, "site-shots.ts"))
+            shutil.copy(SITE_SHOTS_TESTS, os.path.join(tmp, "site-shots.test.mts"))
+            run = subprocess.run(
+                [node, "--experimental-strip-types", "--no-warnings", "--test",
+                 os.path.join(tmp, "site-shots.test.mts")],
+                capture_output=True, text=True, timeout=120, cwd=tmp,
+            )
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertRegex(run.stdout, re.compile(r"^# fail 0$", re.M), run.stdout)
+        passed = re.search(r"^# pass (\d+)$", run.stdout, re.M)
+        self.assertIsNotNone(passed, run.stdout)
+        self.assertGreaterEqual(int(passed.group(1)), 10)
+
 
 if __name__ == "__main__":
     unittest.main()

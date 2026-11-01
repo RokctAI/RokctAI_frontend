@@ -1,0 +1,6 @@
+{
+  "name": "site_page_web_composer",
+  "_comment": "Fixture shell root for tests/site-page.test.mts: a local shell whose home SDK draws its whole page from data/ (a made-up bakery).",
+  "data": "local",
+  "sdks": [{ "name": "corporate_sdk", "home_sdk": true }]
+}

@@ -120,6 +120,14 @@ export interface HeroConfig {
    * home SDK's hero copy; no shell changes until it does.
    */
   logo?: "tile" | "none";
+  /**
+   * Plain, serialisable data the home SDK's hero COPY module (loaded on
+   * the server) hands to its hero FORM (a client module) through the view
+   * (since 1.53.0). base never reads it. A local-data site's home SDK puts
+   * the data/sections.json hero here, so the form draws the site's own
+   * hero without a client bundle importing the server-only data reader.
+   */
+  formData?: unknown;
 }
 
 const CHROME_BADGE: HeroBadge = {

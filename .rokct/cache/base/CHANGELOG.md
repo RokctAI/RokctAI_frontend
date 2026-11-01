@@ -1,5 +1,235 @@
 # Changelog
 
+## 1.59.0
+
+* feat(site-data): the schema behind the South River render Ray approved
+  (Ray, 2026-11-01: "south river site doesnt have what we discussed
+  yet"). Every field is optional, so existing data/ folders validate
+  unchanged; corporate_sdk >= 1.5.0 draws them.
+  * `data/site.json`: `header.wordmark` (`false` when the `header.logo`
+    image already spells the name, so the header draws the image alone)
+    and `footer.logo` (a public path the footer draws in place of the type
+    wordmark).
+  * A bottle art's `labels`: more labels the bottle rolls through after
+    `label`, one at a time.
+  * A label's `mark`: a monogram of one or two characters, drawn in a
+    ring above the name.
+  * `data/pricing.json`: `perCase` (units in one case, such as 24
+    bottles) and, per tier, `fine` (`{ strong?, text }`, a small line under
+    `detail`), `art` (a picture drawn in the card) and `slider`
+    (`{ min, max, step?, label, count?, total?, breakdown? }`, a quantity
+    range with a running total). The words are templates over `{n}`,
+    `{units}`, `{price}`, `{each}` and `{total}`; `{units}` or `{each}`
+    without `perCase` fails, and so does a slider on a price with no
+    number in it.
+  * `priceAmount(price)` (`validate-site.mjs`): the first number in a
+    price string, `"R1,500"` -> 1500.
+* test: `tests/site-data.test.mts` "render fields (1.59.0)".
+
+## 1.58.1
+
+* style: `components/custom/theme-provider.tsx` is prettier-formatted (the
+  `ThemeProvider` signature is wrapped). The fleet linter reformatted it in
+  every shell that tracks it, and the next compose put the long line back
+  (hosting#29). Formatting only, no logic change.
+
+## 1.58.0
+
+* feat(flip-card): the flip card every shell shares. New
+  `components/custom/flip-card.tsx` (`FlipCard`, `useMediaQuery`,
+  `stopFlip`) is lms_sdk's `LmsFlipCard`, the Supacharge tutor and plan
+  card flip, moved here so other shells turn a card the same way (Ray,
+  2026-10-31: the studio portfolio card flips "exactly like the
+  Supacharge tutor card"). Click, tap, Enter or Space turns it; a fine
+  pointer also turns it on hover unless a click pinned it; Escape turns
+  it back; reduced motion crossfades instead of rotating; the hidden face
+  is `inert` and `aria-hidden`.
+* The defaults behave as LmsFlipCard did. New optional props: `layout`
+  (`"stack"`: both faces share one grid cell, so the card is as tall as
+  its taller face), `hoverDelayMs` (hover-intent), `onFlip(flipped,
+  cause)` (every turn, by press or hover) and `ringClassName` (the focus
+  ring; the default is the shell's `ring` token, so no colour is named
+  here).
+* lms_sdk >= 1.41.0 re-exports it from `landing/lms-flip-card.tsx`;
+  hosting_sdk >= 1.8.0 draws the studio portfolio card with it.
+* test: `TestFlipCard` in `tests/test_manifest.py`.
+
+## 1.57.0
+
+* feat(site-data): a site's order form goes by email, not WhatsApp (Ray,
+  2026-10-31: "orders@sitedomain"). `data/site.json` gains an optional
+  `email: { orders?, domain? }`; the address is `email.orders` if set,
+  else orders@`email.domain`, else orders@ the site's own host
+  (`templates/lib/site-data/order-email.ts`: `orderEmailAddress`,
+  `orderEmailMessage`, `orderMailto`). An order section no longer
+  requires a WhatsApp number; pricing and contact sections still do.
+  Every site offers all its channels by default (email, plus WhatsApp when
+  it has a number; `orderChannels`). `email.orderVia` (`"email"`,
+  `"whatsapp"`, `"both"`) narrows it; WhatsApp or both needs the number.
+  Backward compatible: existing site.json files validate unchanged.
+  The host's mail transport and its credentials are env secrets, set by Ray.
+
+## 1.56.0
+
+* feat(back-to-top): the "Back to top" button is on every page of every
+  shell (Ray, 2026-10-31: "every app shell need the button to go up").
+  Until now only the landing shell and the site frame mounted it, so
+  admin pages, dashboards and a home SDK's own pages had none.
+  `components/custom/theme-provider.tsx`, which every shell's root layout
+  already wraps its page in, now mounts `<BackToTop scope="root" />` after
+  the page. No host edit is needed.
+* `BackToTop` gains `scope` (`"frame"` by default, `"root"` for the
+  seam's). The root button draws nothing while a framed one is mounted
+  (`yieldsToFrame`), so a page never shows two, and the framed button
+  wears the look of the page it sits in.
+* The colours are now CSS variables over the shadcn tokens:
+  `--back-to-top-bg` / `-fg` / `-border` / `-hover-bg` / `-hover-fg` /
+  `-ring`, falling back to `--background`, `--primary`, `--border`,
+  `--primary` / `--primary-foreground`, `--ring`. On hover the button
+  fills with the site's primary.
+* Position: `right` and `bottom` add the right and bottom safe-area insets
+  to the gap (`--back-to-top-gap`, 1rem, 1.5rem from md). An element fixed
+  in the same corner that carries `data-rokct-floating` (a chat or
+  WhatsApp bubble, a cookie button) lifts the button 12px above it
+  (`floatingLift`, `bottomFor`). `--back-to-top-offset` lifts it by hand.
+* The arrow is Remixicon's ri-arrow-up-line drawn as inline SVG; the
+  component no longer imports `@remixicon/react`.
+* fix: under reduced motion the jump is `"instant"`, not `"auto"`.
+  `"auto"` follows the page's CSS `scroll-behavior`, so a site with
+  `html { scroll-behavior: smooth }` (the studio home) still glided.
+* feat(back-to-top): per site (Ray, 2026-10-31: the button is
+  customisable per site - colour, position, icon, on/off - and must not
+  look the same on every site; base supplies only the mechanism and a
+  neutral fallback). A `BackToTopConfig` - `enabled`, `position`
+  (bottom-right, bottom-left, bottom-center), `icon` (arrow-up,
+  arrow-up-circle, chevron-up, rocket: Remixicon paths, inline SVG),
+  `shape` (circle, rounded-square, pill-with-label, text-arrow), `label`,
+  the colours (`background`, `foreground`, `hoverBackground`,
+  `hoverForeground`, `border`, `ring`, `halo`), `offset`, `showAfter` and the
+  design language (`radius`, `size`, `fontFamily`, `fontWeight`,
+  `textTransform`, `letterSpacing`, `fontSize`, `borderWidth`,
+  `borderStyle`, `shadow`, `duration`, `easing`) - resolved from three
+  layers: base's neutral fallback, the home SDK's registered style (new
+  registry `components/custom/landing/back-to-top-style.ts`, marker
+  `// @rokct-sdk-back-to-top-style-start`, the site-metadata contract) and
+  the shell's `data/theme.json` `backToTop` (new, validated; local and
+  hybrid data modes). Unset fields fall back to the site's tokens through
+  the `--back-to-top-*` variables (`--radius` for a rounded square).
+* New `components/custom/site-back-to-top.ts` resolves the layers on the
+  server; the theme seam is now an async server component that hands the
+  result to every button through `<BackToTopProvider>`, so the root and
+  framed copies read the same config and `enabled: false` removes both.
+* `shape: "text-arrow"`: an upward arrow whose shaft is the site's words
+  (its name - data/site.json, else the site-metadata copy - unless
+  `label` says otherwise), set vertically under a ri-arrow-up-s-fill head,
+  with no fill, border or shadow, in the primary colour with a soft halo
+  of the page's background.
+* fix: the glyph keeps at least 3:1 against its fill (WCAG 1.4.11). The
+  button measures its painted colours (`contrastTone`) and, when the
+  derived pair falls short - a yellow primary on a white circle read
+  1.6:1 on the hosting sign-in page - switches to the primary as the fill
+  with primary-foreground as the glyph, else to black or white ink.
+* fix: on a short page the button shows after half the scrollable
+  distance when that is less than a screen (`resolveThreshold`'s new
+  `scrollable`), so a sign-in page still gets it.
+* `floatingLift` takes the position and clears the button's own place
+  (left corner, bottom middle).
+* docs: `docs/downloads-and-install.md` "Per site" and "How to customise"
+  (with JSON); `docs/site-data.md` lists `backToTop` on the theme kind.
+* test: `tests/back-to-top.test.mts` covers the scope rule, the corner
+  lift, the insets, the layered config (defaults, every option, disabled,
+  left and centre), the shapes' words, the icons, the contrast guarantee
+  and the short-page threshold (59 cases); `tests/site-data.test.mts`
+  validates `backToTop`; `test_manifest.py` checks the seam mount, the
+  registry, the resolver and the provider, and type-checks the seam with
+  the button, the resolver and the registry staged.
+
+## 1.55.0
+
+* feat(site-shots): every site serves its own pictures of its first screen
+  (Ray, 2026-10-31: the ROKCT studio's picture of each client site comes
+  from that site's latest good build, served by the site itself). Each
+  shell repo's "Site shots" workflow builds main, photographs the first
+  screen at 1440 and 390 wide in light and dark, runs a health gate, and
+  only on a pass commits `manifest.json` and `shots/<commit>/*.webp` to
+  the orphan `site-shots` branch. New `app/site-shots/[file]/route.ts`
+  serves `/site-shots/manifest.json` and the six
+  `/site-shots/<desktop|option|phone>-<light|dark>.webp` from that branch
+  (raw.githubusercontent.com). The repo is `SITE_SHOTS_REPO`, else the one
+  Vercel built from (`VERCEL_GIT_REPO_OWNER` / `VERCEL_GIT_REPO_SLUG`).
+* Each path is static and regenerated at most hourly. A regeneration
+  that fails (the branch is unreachable, the manifest is malformed or
+  names another repo, an image does not match its entry) throws, and Next
+  keeps serving the last good response. At build time a failure answers
+  404 until the first good regeneration.
+* New pure rules `components/custom/landing/site-shots.ts`
+  (`SITE_SHOT_FILES`, `resolveSiteShotsRepo`, `siteShotsRawUrl`,
+  `parseSiteShotsManifest`, `webpSize`, `checkSiteShot`,
+  `siteShotHeaders`). hosting_sdk >= 1.6.0 applies the same checks to a
+  client's `/site-shots/` for the studio page.
+* test: `tests/site-shots.test.mts` (run by test_manifest.py);
+  `TestSiteShots` checks the installs and the route.
+
+## 1.54.0
+
+* feat(footer): the site credit (Ray, 2026-10-31: "all site will be
+  copyright sitename then built with love (as heart) by ROKCT"). Every
+  site's footer now ends `© <year> <site name> · Built with ♥ by ROKCT`:
+  the SITE's own name, never the legal entity (Polaris read "© Copyright
+  2026 - ROKCT INTELLIGENCE (PTY) LTD"; it now reads "© 2026 Polaris ·
+  Built with ♥ by ROKCT"). New `components/custom/site-credit.tsx`
+  (`SiteCredit`: server-safe, `siteName` defaulting to the host's
+  `PLATFORM_NAME`, `year` defaulting to the current one, the footer's own
+  `separator` and type `className`, the heart a `role="img"` named `love`)
+  and its pure rules `components/custom/landing/site-credit.ts`
+  (`siteCopyright`, `siteCreditText`, `siteCreditLine`,
+  `resolveCreditYear`). A home SDK footer that draws its own markup imports
+  `SiteCredit` from `@/components/custom/site-credit`.
+* feat(footer-chrome): `FooterChromeRow` draws the credit in place of
+  `© Copyright <year> - <holder>`, naming `config.siteName`, else
+  `PLATFORM_NAME`; the credit is always drawn (a nameless site carries the
+  credit alone). `FooterChromeConfig` gains `siteName` and
+  `creditSeparator`; `copyrightHolder` is optional, deprecated and no
+  longer drawn, and `FOOTER_CHROME_CONFIG` no longer reads
+  `NEXT_PUBLIC_COPYRIGHT_HOLDER`.
+* docs(site-data): `site.json` `footer.legal` stays valid, but the credit
+  names the site's `name`, so no shipped footer draws it any more.
+* test: `tests/site-credit.test.mts` (run by test_manifest.py) drives the
+  rules; `TestSiteCredit` checks the installs, the component and the row.
+
+## 1.53.0
+
+* feat(site-data): a local-data site's whole page is data (Ray, 2026-10-31:
+  one shared site renderer, every client from data, no SDK per client).
+  New kinds, each validated down to the field by the new
+  `lib/site-data/validate-site.mjs` (installed beside `validate.mjs`):
+  * `site` (`data/site.json`): name, type wordmark, motto, place, since,
+    WhatsApp number, header logo and action, metadata, footer links, line
+    and `legal` (the copyright holder, else the shell's LEGAL_COMPANY_NAME);
+  * `sections` (`data/sections.json`): the page top to bottom, from a closed
+    library of section types (hero, intro, steps, pricing, gallery, facts,
+    order, contact), each with its fields, a layout `variant` and a `tone`;
+  * `pricing` (`data/pricing.json`): price tiers (with the quantity each
+    starts at, for the order form);
+  * `order` (`data/order.json`): the WhatsApp order form's fields, message
+    lines and label preview;
+  * `css` (`data/site.css`): the site's own stylesheet, plain CSS (no tags,
+    no `@import`).
+  `theme.json` gains `palette` / `paletteDark` (named tokens, hex) and
+  `fonts` (a display and a text face from a small allowed set, and the
+  display voice: weight, italic, capitals). Cross-kind rules fail the build
+  too: a page needs `site.json`; a pricing or order section needs its file;
+  anything that opens WhatsApp needs the number. base renders none of it -
+  corporate_sdk, the home SDK of every local-data site, does.
+* feat(site-data): `generate.mjs` also enforces the HOME SDK's
+  `home.site_data.requires` in a local build (the home recorded in
+  `.rokct/cache/install_state.json`, else the one `composer.json` flags).
+* feat(landing): `HeroConfig.formData` (optional, never read by base): plain
+  data a home SDK's server-loaded hero copy hands to its client hero form.
+* test: `tests/site-page.test.mts` (run by test_manifest.py) drives the new
+  validators, the cross-kind rule, the home block's required kinds and the
+  generator against `tests/fixtures/site-data/site-page/`, a made-up bakery.
+
 ## 1.52.1
 
 * fix: `components/ui/select.tsx` is prettier-formatted (its icon import is

@@ -1,6 +1,14 @@
 {
   "name": "base_sdk",
-  "version": "1.52.1",
+  "version": "1.59.0",
+  "_comment_version_1_59_0": "1.58.1 -> 1.59.0: site-data schema for the approved South River render (Ray, 2026-11-01: \"south river site doesnt have what we discussed yet\"). All optional and backward compatible: site.json header.wordmark and footer.logo; a bottle art's labels (it rolls through them) and a label's mark (a monogram); pricing.json perCase and a tier's fine, art and slider; priceAmount() in validate-site.mjs. corporate_sdk >= 1.5.0 draws them.",
+  "_comment_version_1_58_1": "1.58.0 -> 1.58.1: components/custom/theme-provider.tsx is prettier-formatted (the ThemeProvider signature is wrapped), so the fleet linter no longer rewrites it in every shell that tracks it (hosting#29). Formatting only.",
+  "_comment_version_1_58_0": "1.57.0 -> 1.58.0: the shared flip card. New components/custom/flip-card.tsx (FlipCard, useMediaQuery, stopFlip): lms_sdk's LmsFlipCard, the Supacharge tutor and plan card flip, moved to base so every shell turns a card the same way (Ray, 2026-10-31: the studio portfolio card flips 'exactly like the Supacharge tutor card'). Same behaviour by default; new optional props: layout 'stack' (the card is as tall as its taller face), hoverDelayMs (hover-intent), onFlip (every turn, by press or hover) and ringClassName (the focus ring; the default is the shell's ring token, lms_sdk passes the Supacharge primary). lms_sdk >= 1.41.0 re-exports it from landing/lms-flip-card.tsx; hosting_sdk >= 1.8.0 draws the studio portfolio card with it.",
+  "_comment_version_1_57_0": "1.56.0 -> 1.57.0: a site's order form goes by email (Ray, 2026-10-31: orders@<site domain>), with every channel the site has offered by default. site.json gains email {orders, domain, orderVia}; lib/site-data/order-email.ts (orderEmailAddress, orderChannels, orderEmailMessage, orderMailto) is installed. Backward compatible.",
+  "_comment_version_1_56_0": "1.55.0 -> 1.56.0: the Back to top button on every page of every shell (Ray, 2026-10-31: \"every app shell need the button to go up\"). components/custom/theme-provider.tsx mounts <BackToTop scope=\"root\" />, which yields to any framed button (landing shell, site frame, a home SDK's own page root); colours are --back-to-top-* variables over the shadcn tokens; right and bottom clear the safe-area insets; an element carrying data-rokct-floating in the same corner lifts the button above it; the arrow is ri-arrow-up-line drawn inline. Per site: a BackToTopConfig (enabled, position, icon, shape incl. text-arrow, label, colours, offset, showAfter, and the design language: radius, size, type, border, shadow, motion) resolved from base's neutral fallback, the home SDK's registered style (new landing/back-to-top-style.ts registry, marker @rokct-sdk-back-to-top-style-start) and data/theme.json backToTop (validated), by new components/custom/site-back-to-top.ts; the theme seam (now async) hands it to every button through BackToTopProvider, so root and framed copies read the same config. The glyph keeps 3:1 against its fill (contrastTone: else primary fill, else black/white ink); a short page shows the button after half its scrollable distance.",
+  "_comment_version_1_55_0": "1.54.0 -> 1.55.0: site shots. Every site serves its own pictures of its first screen at /site-shots/manifest.json and /site-shots/<desktop|option|phone>-<light|dark>.webp (new app/site-shots/[file]/route.ts), read from the shell repo's orphan `site-shots` branch (SITE_SHOTS_REPO, else Vercel's VERCEL_GIT_REPO_OWNER/SLUG), checked (new components/custom/landing/site-shots.ts: the manifest names this repo and all six files at their sizes; each image is a WebP matching its manifest entry's size, length and SHA-256) and regenerated at most hourly; a failed regeneration throws, so the last good picture keeps being served. hosting_sdk >= 1.6.0's studio reads them from each client's live site.",
+  "_comment_version_1_54_0": "1.53.0 -> 1.54.0: the site credit (Ray, 2026-10-31: every site's footer reads `© <year> <site name> · Built with ♥ by ROKCT`). New components/custom/site-credit.tsx (SiteCredit) and its pure rules components/custom/landing/site-credit.ts; FooterChromeRow draws it, naming config.siteName else the host's PLATFORM_NAME, never the legal entity; copyrightHolder is optional and no longer drawn.",
+  "_comment_version_1_53_0": "1.52.1 -> 1.53.0: site-page data kinds for local-data sites (site, sections, pricing, order, css; theme palette, paletteDark and fonts) with validators in lib/site-data/validate-site.mjs; the home SDK's home.site_data.requires is enforced in a local build; HeroConfig.formData hands a hero copy module's data to its hero form.",
   "_comment_version_1_52_1": "1.52.0 -> 1.52.1: components/ui/select.tsx is prettier-formatted, so the fleet linter no longer rewrites it in every app that tracks it.",
   "_comment_version_1_52_0": "1.51.0 -> 1.52.0: buildSiteMetadata() stops stamping canonical \"/\" on every page; a path option sets the canonical, and the landing page passes /landing.",
   "_comment_version_1_51_0": "1.50.1 -> 1.51.0: the 25 shadcn primitives every host carried verbatim (components/ui/alert ... tooltip) ship as templates and leave requires; textarea and theme-toggle stay host-owned.",
@@ -32,6 +40,14 @@
     {
       "from": "templates/components/custom/footer-chrome.tsx",
       "to": "components/custom/footer-chrome.tsx"
+    },
+    {
+      "from": "templates/components/custom/site-credit.tsx",
+      "to": "components/custom/site-credit.tsx"
+    },
+    {
+      "from": "templates/components/custom/flip-card.tsx",
+      "to": "components/custom/flip-card.tsx"
     },
     {
       "from": "templates/components/custom/install-offer.tsx",
@@ -94,6 +110,18 @@
       "to": "components/custom/landing/footer-chrome-config.ts"
     },
     {
+      "from": "templates/components/custom/landing/site-credit.ts",
+      "to": "components/custom/landing/site-credit.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/site-shots.ts",
+      "to": "components/custom/landing/site-shots.ts"
+    },
+    {
+      "from": "templates/app/site-shots",
+      "to": "app/site-shots"
+    },
+    {
       "from": "templates/components/custom/landing/download-platform.ts",
       "to": "components/custom/landing/download-platform.ts"
     },
@@ -104,6 +132,16 @@
     {
       "from": "templates/components/custom/landing/back-to-top.ts",
       "to": "components/custom/landing/back-to-top.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/back-to-top-style.ts",
+      "to": "components/custom/landing/back-to-top-style.ts",
+      "_comment": "Since 1.56.0 the Back to top button's style registry: a home SDK registers its own default style (a module whose default export is a BackToTopConfig) with one line at // @rokct-sdk-back-to-top-style-start, as with site-metadata.ts."
+    },
+    {
+      "from": "templates/components/custom/site-back-to-top.ts",
+      "to": "components/custom/site-back-to-top.ts",
+      "_comment": "Since 1.56.0: resolves the site's Back to top config on the server (base fallback, the home SDK's registered style, data/theme.json backToTop) for the theme seam to hand every button."
     },
     {
       "from": "templates/components/custom/landing/platform-glyphs.tsx",
@@ -158,6 +196,10 @@
       "to": "lib/site-data/validate.mjs"
     },
     {
+      "from": "templates/lib/site-data/validate-site.mjs",
+      "to": "lib/site-data/validate-site.mjs"
+    },
+    {
       "from": "templates/lib/site-data/generate.mjs",
       "to": "lib/site-data/generate.mjs"
     },
@@ -172,6 +214,10 @@
     {
       "from": "templates/lib/site-data/site-theme.ts",
       "to": "lib/site-data/site-theme.ts"
+    },
+    {
+      "from": "templates/lib/site-data/order-email.ts",
+      "to": "lib/site-data/order-email.ts"
     },
     {
       "from": "templates/components/custom/landing/plans-query.ts",

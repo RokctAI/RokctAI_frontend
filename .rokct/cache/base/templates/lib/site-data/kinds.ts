@@ -34,9 +34,13 @@
 // importable from anywhere (a client component may import the types) and
 // executable under node's test runner.
 //
-// The brand name is never in data/: it stays where it is declared (the
-// home SDK's site-metadata copy and the host's PLATFORM_NAME). data/ carries
-// what has no SDK home - colours, people, places, products, prose.
+// The brand name is not in data/ for a shell whose home SDK carries the
+// brand (its site-metadata copy and the host's PLATFORM_NAME). Since 1.53.0
+// a site whose WHOLE page is data - a local-data site, whose home SDK is
+// corporate_sdk - declares its name, its page and its look here too:
+// data/site.json, data/sections.json, data/pricing.json, data/order.json,
+// data/site.css and the theme's palette and fonts (Ray, 2026-10-31: one
+// shared site renderer, every client from data, no SDK per client).
 
 /** How the shell wants its data read; declared in composer.json `"data"`. */
 export type SiteDataMode = "local" | "backend" | "hybrid";
@@ -46,11 +50,83 @@ export const SITE_DATA_MODES: readonly SiteDataMode[] = ["local", "backend", "hy
 /** What an absent `"data"` key means: today's behaviour, no file is ever read. */
 export const DEFAULT_SITE_DATA_MODE: SiteDataMode = "backend";
 
+/**
+ * The palette tokens a local-data site's theme may set (1.53.0): hex
+ * colours, except `shadow`, a CSS box-shadow. The home SDK maps them to its
+ * own CSS variables and derives the shadcn tokens (--background,
+ * --primary, ...) from them.
+ */
+export type SitePaletteToken =
+  | "paper" | "card" | "alt" | "stroke" | "sub" | "ink" | "sec" | "faint"
+  | "brand" | "brandHi" | "brandDeep" | "brandDark" | "brandText" | "bandInk"
+  | "highlight" | "highlightInk" | "ok" | "onBrand" | "heroTop" | "heroLow"
+  | "shade" | "primary" | "shadow";
+
+export type SitePalette = Partial<Record<SitePaletteToken, string>>;
+
+/** The display faces a theme may choose (1.53.0), a small allowed set. */
+export type SiteDisplayFont = "montserrat" | "fraunces" | "space-grotesk" | "playfair-display";
+/** The text faces a theme may choose (1.53.0). */
+export type SiteTextFont = "figtree" | "inter" | "dm-sans";
+
+/**
+ * `data/theme.json` `backToTop` (1.56.0): the shell's own settings for the
+ * floating Back to top button, laid over its home SDK's registered style.
+ * The same shape as BackToTopConfig in
+ * components/custom/landing/back-to-top.ts (kept separate so this module
+ * imports nothing); validated by ./validate-site.mjs validateBackToTop.
+ */
+export interface SiteBackToTop {
+  enabled?: boolean;
+  position?: "bottom-right" | "bottom-left" | "bottom-center";
+  icon?: "arrow-up" | "arrow-up-circle" | "chevron-up" | "rocket";
+  shape?: "circle" | "rounded-square" | "pill-with-label" | "text-arrow";
+  label?: string;
+  background?: string;
+  foreground?: string;
+  hoverBackground?: string;
+  hoverForeground?: string;
+  border?: string;
+  ring?: string;
+  halo?: string;
+  offset?: number;
+  showAfter?: number;
+  radius?: string;
+  size?: string;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
+  letterSpacing?: string;
+  fontSize?: string;
+  borderWidth?: string;
+  borderStyle?: "solid" | "dashed" | "dotted" | "double" | "none";
+  shadow?: string;
+  duration?: string;
+  easing?: string;
+}
+
 /** `data/theme.json`: the shell's colours, as hex strings (`#rgb` or `#rrggbb`). */
 export interface SiteTheme {
   primary: string;
   secondary?: string;
   accent?: string;
+  /** Light-scheme palette tokens (1.53.0). */
+  palette?: SitePalette;
+  /** Dark-scheme overrides of `palette` (1.53.0). */
+  paletteDark?: SitePalette;
+  /**
+   * The two faces (1.53.0), from the allowed set, and the display face's
+   * voice: its weight, italic or not, set in capitals or not.
+   */
+  fonts?: {
+    display?: SiteDisplayFont;
+    text?: SiteTextFont;
+    displayWeight?: 400 | 500 | 600 | 700 | 800 | 900;
+    displayItalic?: boolean;
+    displayUppercase?: boolean;
+  };
+  /** The Back to top button's settings (1.56.0). */
+  backToTop?: SiteBackToTop;
 }
 
 /** One link on a team member's card. */
@@ -151,6 +227,263 @@ export interface SiteNetwork {
   sites: SiteNetworkSite[];
 }
 
+/**
+ * A link in site data (1.53.0). `href` is "whatsapp" (a chat with the
+ * site's WhatsApp number), an in-page `#anchor`, a `/path` or an http(s) URL.
+ */
+export interface SiteDataLink {
+  label: string;
+  href: string;
+}
+
+/** `data/site.json` (1.53.0): a local-data site's identity. */
+/** How the order form is sent: unset (default) offers every channel the site has: email, plus WhatsApp when site.whatsapp is set. "email" or "whatsapp" turns the other off; "both" requires site.whatsapp. */
+export type SiteOrderVia = "email" | "whatsapp" | "both";
+
+export interface SiteIdentity {
+  name: string;
+  /** The wordmark as type: a heavy `lead` (with an optional `mark` such as "®") over a light `rest`. */
+  wordmark?: { lead: string; mark?: string; rest?: string };
+  motto?: string;
+  place?: string;
+  since?: string;
+  /** `number`: international digits ("27150006069"); `display`: as printed ("015 000 6069"). */
+  whatsapp?: { number: string; display: string };
+  /**
+   * (1.57.0) Where the order form goes. `orders` overrides the address;
+   * without it the address is orders@`domain`, or orders@ the site's own host.
+   */
+  email?: { orders?: string; domain?: string; orderVia?: SiteOrderVia };
+  /** `wordmark` (1.59.0): false when the `logo` image already spells the name, so the header draws the image alone. */
+  header?: { logo?: "none" | "auto" | (string & {}); wordmark?: boolean; action?: SiteDataLink };
+  metadata: {
+    title: string;
+    tagline?: string;
+    description: string;
+    keywords?: string[];
+    themeColor?: string;
+    locale?: string;
+    icon?: string;
+  };
+  /** `links` absent: one link per section with a nav label. */
+  /**
+   * The footer: its links (else one per section with a nav label), a line
+   * under the motto, and `legal`, the legal holder. Since 1.54.0 the
+   * footer's copyright line is the site credit, which names the site
+   * (`name`), so no shipped footer draws `legal`; it stays valid data.
+   * `logo` (1.59.0): an image the footer draws in place of the type wordmark.
+   */
+  footer?: { links?: SiteDataLink[]; line?: string; legal?: string; logo?: string };
+}
+
+/** A label on a bottle: drawn from `name`/`sub`, or an `art` image (a public SVG/PNG) laid on the label. */
+export interface SiteLabel {
+  bg: string;
+  fg?: string;
+  name?: string;
+  sub?: string;
+  footer?: string;
+  art?: string;
+  /** (1.59.0) A monogram of one or two characters, drawn in a ring above the name. */
+  mark?: string;
+}
+
+/** A section's picture (1.53.0): the drawn bottle wearing a label, or the site's own image file. */
+export type SiteArt =
+  | {
+      kind: "bottle";
+      size?: "500 ml" | "1.25 L";
+      label: SiteLabel;
+      /** (1.59.0) More labels the bottle rolls through after `label`, one at a time. */
+      labels?: SiteLabel[];
+      cap?: string;
+    }
+  | { kind: "image"; src: string; alt: string; width?: number; height?: number };
+
+export type SiteSectionTone = "paper" | "alt" | "ink" | "brand";
+
+interface SiteSectionBase {
+  /** The DOM id, and the anchor the header and footer link to. */
+  id?: string;
+  /** The label of the section's header and footer link; needs `id`. */
+  nav?: string;
+  variant?: string;
+  tone?: SiteSectionTone;
+}
+
+export interface SiteHeroSection extends SiteSectionBase {
+  type: "hero";
+  variant?: "poster" | "split";
+  eyebrow?: string;
+  lines: string[];
+  accentLine?: number;
+  lede?: string;
+  cta?: SiteDataLink;
+  secondary?: SiteDataLink;
+  facts?: string[];
+  tag?: { price: string; text?: string };
+  art?: { back?: SiteArt; front?: SiteArt };
+}
+
+export interface SiteIntroSection extends SiteSectionBase {
+  type: "intro";
+  variant?: "stamp" | "plain";
+  year?: string;
+  text: string;
+  stamp?: { lines: string[]; center?: string };
+}
+
+export type SiteStepIcon = "upload" | "label" | "truck" | "chat" | "star" | "check";
+
+export interface SiteStepsSection extends SiteSectionBase {
+  type: "steps";
+  variant?: "band" | "cards";
+  eyebrow?: string;
+  heading: string;
+  steps: { title: string; text?: string; icon?: SiteStepIcon }[];
+}
+
+export interface SitePricingSection extends SiteSectionBase {
+  type: "pricing";
+  variant?: "cards";
+  eyebrow?: string;
+  heading: string;
+  note?: string;
+  own?: { eyebrow?: string; heading: string; text?: string; art?: SiteArt };
+}
+
+export interface SiteGallerySection extends SiteSectionBase {
+  type: "gallery";
+  variant?: "shelf" | "grid";
+  eyebrow?: string;
+  heading: string;
+  blurb?: string;
+  items: { title: string; text?: string; art: SiteArt }[];
+}
+
+export interface SiteFactsSection extends SiteSectionBase {
+  type: "facts";
+  variant?: "band" | "plain";
+  eyebrow?: string;
+  heading: string;
+  blurb?: string;
+  stats?: { label: string; value: string }[];
+  table?: { heading: string; note?: string; rows: { name: string; symbol?: string; value: string }[] };
+  chain?: { label: string; value: string }[];
+}
+
+export interface SiteOrderSection extends SiteSectionBase {
+  type: "order";
+  variant?: "card";
+  eyebrow?: string;
+  heading: string;
+  blurb?: string;
+}
+
+export interface SiteContactSection extends SiteSectionBase {
+  type: "contact";
+  variant?: "band" | "plain";
+  eyebrow?: string;
+  heading: string;
+  blurb?: string;
+  note?: string;
+  card?: { label: string; action: string };
+}
+
+export type SiteSection =
+  | SiteHeroSection
+  | SiteIntroSection
+  | SiteStepsSection
+  | SitePricingSection
+  | SiteGallerySection
+  | SiteFactsSection
+  | SiteOrderSection
+  | SiteContactSection;
+
+export type SiteSectionType = SiteSection["type"];
+
+/** `data/sections.json` (1.53.0): the page, top to bottom; a hero, when there is one, comes first. */
+export interface SiteSections {
+  sections: SiteSection[];
+}
+
+export interface SitePriceTier {
+  name: string;
+  price: string;
+  unit?: string;
+  detail?: string;
+  best?: boolean;
+  /** The smallest quantity this tier applies to; the order form picks the tier with the highest minQty not above the quantity. */
+  minQty?: number;
+  /** The line under the price in the order form's preview. */
+  previewNote?: string;
+  /** (1.59.0) A small line under `detail`; `strong` is drawn bold before `text`. */
+  fine?: { strong?: string; text: string };
+  /** (1.59.0) A picture drawn in the card beside its words, the card's full height. */
+  art?: SiteArt;
+  /** (1.59.0) A quantity range with a running total; see SitePriceSlider. */
+  slider?: SitePriceSlider;
+}
+
+/**
+ * (1.59.0) A tier's quantity slider, `min` to `max` (`step`, default 1).
+ * `count`, `breakdown` and `total` are templates over `{n}` (the quantity),
+ * `{units}` (n x perCase), `{price}` (the tier's price), `{each}` (price /
+ * perCase) and `{total}` (n x price); `label` names the range and `total`
+ * names the running total.
+ */
+export interface SitePriceSlider {
+  min: number;
+  max: number;
+  step?: number;
+  label: string;
+  count?: string;
+  total?: string;
+  breakdown?: string;
+}
+
+/** `data/pricing.json` (1.53.0). */
+export interface SitePricing {
+  tiers: SitePriceTier[];
+  /** (1.59.0) Units in one case (24 bottles), for `{units}` and `{each}` in a tier's words. */
+  perCase?: number;
+  ctaLabel?: string;
+  bestLabel?: string;
+}
+
+export interface SiteOrderField {
+  label: string;
+  placeholder?: string;
+  button?: string;
+}
+
+/** `data/order.json` (1.53.0): the order form, sent by email (see order-email.ts); see validate-site.mjs validateOrder. */
+export interface SiteOrder {
+  intro: string;
+  fields: {
+    business: SiteOrderField;
+    quantity: SiteOrderField;
+    phone: SiteOrderField;
+    area: SiteOrderField;
+    file?: SiteOrderField;
+  };
+  message: {
+    business: string;
+    quantity: string;
+    quantityPrice?: string;
+    area: string;
+    phone: string;
+    fileSent?: string;
+    fileLater?: string;
+  };
+  submit: string;
+  fine?: string;
+  preview?: { heading?: string; placeholderName: string; label: SiteLabel };
+}
+
+/** `data/site.css` (1.53.0): the site's own stylesheet, verbatim. */
+export type SiteCss = string;
+
 /** Every kind, keyed by the name a reader asks for. */
 export interface SiteDataKinds {
   theme: SiteTheme;
@@ -160,6 +493,11 @@ export interface SiteDataKinds {
   about: SiteAbout;
   legal: SiteLegal;
   network: SiteNetwork;
+  site: SiteIdentity;
+  sections: SiteSections;
+  pricing: SitePricing;
+  order: SiteOrder;
+  css: SiteCss;
 }
 
 export type SiteDataKind = keyof SiteDataKinds;
@@ -172,6 +510,11 @@ export const SITE_DATA_KINDS: readonly SiteDataKind[] = [
   "about",
   "legal",
   "network",
+  "site",
+  "sections",
+  "pricing",
+  "order",
+  "css",
 ];
 
 /** Where each kind lives under the shell root, as the error messages name it. */
@@ -183,6 +526,11 @@ export const SITE_DATA_FILES: Readonly<Record<SiteDataKind, string>> = {
   about: "data/about.md",
   legal: "data/legal/<slug>.md",
   network: "data/network.json",
+  site: "data/site.json",
+  sections: "data/sections.json",
+  pricing: "data/pricing.json",
+  order: "data/order.json",
+  css: "data/site.css",
 };
 
 /**

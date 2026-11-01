@@ -63,6 +63,7 @@ import {
   validateMode,
   validateSiteData,
 } from "./validate.mjs";
+import { checkSitePage } from "./validate-site.mjs";
 
 export const DATA_DIR = "data";
 export const GENERATED_REL = path.join("lib", "site-data", "generated.ts");
@@ -97,6 +98,31 @@ export function readDataMode(root) {
 }
 
 /**
+ * The shell's home SDK as the last compose recorded it
+ * (`.rokct/cache/install_state.json` "home_sdk", written by the Next.js
+ * composer), else the one composer.json flags; null when there is none.
+ */
+export function homeSdkName(root) {
+  const state = path.join(root, ".rokct", "cache", "install_state.json");
+  if (fs.existsSync(state)) {
+    try {
+      const recorded = readJson(state)?.home_sdk;
+      if (typeof recorded === "string" && recorded) return recorded;
+    } catch {
+      // fall through to composer.json
+    }
+  }
+  const composer = path.join(root, "composer.json");
+  if (!fs.existsSync(composer)) return null;
+  try {
+    const flagged = (readJson(composer)?.sdks ?? []).filter((s) => s && s.home_sdk === true && s.enabled !== false);
+    return flagged.length === 1 && typeof flagged[0].name === "string" ? flagged[0].name : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * The kinds the installed SDKs declare they need, from every manifest the
  * compose can see (`.rokct/cache/<sdk>/manifest.json`, `sdk/<name>/manifest.json`):
  * `"site_data": { "requires": ["about", "legal"] }`. Only a `local` build
@@ -104,6 +130,7 @@ export function readDataMode(root) {
  */
 export function requiredKinds(root) {
   const required = new Map();
+  const home = homeSdkName(root);
   for (const dir of [path.join(root, ".rokct", "cache"), path.join(root, "sdk")]) {
     if (!fs.existsSync(dir)) continue;
     for (const entry of fs.readdirSync(dir)) {
@@ -115,8 +142,13 @@ export function requiredKinds(root) {
       } catch {
         continue;
       }
-      const kinds = data?.site_data?.requires;
-      if (!Array.isArray(kinds)) continue;
+      // Since 1.53.0 the HOME SDK's "home" block may declare kinds too
+      // (corporate_sdk: a local-data site's page needs theme, site and
+      // sections); they count only in the shell where that SDK is home.
+      const own = Array.isArray(data?.site_data?.requires) ? data.site_data.requires : [];
+      const asHome = home !== null && data?.name === home && Array.isArray(data?.home?.site_data?.requires) ? data.home.site_data.requires : [];
+      const kinds = [...own, ...asHome];
+      if (!kinds.length) continue;
       for (const kind of kinds) {
         if (typeof kind !== "string") continue;
         if (!required.has(kind)) required.set(kind, new Set());
@@ -208,6 +240,7 @@ export function collectSiteData(root, mode) {
       sources.legal = from;
     }
   }
+  if (!problems.length) problems.push(...checkSitePage(files));
   if (problems.length) throw new SiteDataError(problems);
   return { mode, files, sources };
 }

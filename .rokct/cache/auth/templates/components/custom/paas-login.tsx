@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Branding } from "@/components/custom/branding";
+import { SiteCredit } from "@/components/custom/site-credit";
 // Added at seed time: the source file referenced PLATFORM_NAME without
 // importing it (masked upstream by `typescript.ignoreBuildErrors`).
 import { PLATFORM_NAME } from "@/app/config/platform";
@@ -135,9 +136,11 @@ export function PaaSLogin({ tenantSite = null }: { tenantSite?: string | null })
         </div>
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t border-gray-800">
-        <p className="text-xs text-gray-500">
-          © 2025 {PLATFORM_NAME}. All rights reserved.
-        </p>
+        {/* base_sdk 1.54.0's site credit (auth_sdk 1.10.2; Ray, 2026-10-31:
+            "all site will be copyright sitename then built with love (as
+            heart) by ROKCT"): `© <year> <PLATFORM_NAME> · Built with ♥ by
+            ROKCT`, in this footer's own type. */}
+        <SiteCredit siteName={PLATFORM_NAME} className="text-xs text-gray-500" />
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link
             className="text-xs hover:underline underline-offset-4 text-gray-500"

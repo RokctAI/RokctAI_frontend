@@ -1,6 +1,7 @@
 {
   "name": "agent_sdk",
-  "version": "1.22.1",
+  "version": "1.23.0",
+  "_comment_version_1_23_0": "1.22.1 -> 1.23.0: rokct.ai's landing pictures are the shell's own. New install templates/public/landing/agent -> public/landing/agent: eleven pictures drawn in code (mail, social, video, poster, knowledge, diagram, code, reasoning, research, summary, transcript) and three badges (platform, others, others-pro); no screenshot of a client site (Ray, 2026-11-01). agent-landing-config.ts and chat-section.client.tsx point at /landing/agent/ instead of cdn.getmerlin.in (refused by browsers: cross-origin-resource-policy same-origin) and images.unsplash.com; the compare rows lose the provider marks and the testimonials their avatars (initials are drawn). The network strip draws juvo platforms as a wordmark (juvo.app's glyphs are blocked cross-origin). The header menu draws no Affiliate or Teams link while neither route exists (both 404).",
   "_comment_version_1_22_0": "1.21.1 -> 1.22.0: an open tender's page (app/opportunities/[type]/[slug]/page.tsx) gains a 'TenderAssist, your tender officer on demand.' panel with Bid with TenderAssist, linking to /register?next=<this tender page> (lib/agent-opportunity-cards.ts bidHref). auth_sdk >= 1.9.0 brings the visitor back to the tender once signed up or, already signed in, straight back; an older auth_sdk lands them on the home page. Grants, equity and closed tenders are unchanged.",
   "_comment_version_1_21_1": "1.21.0 -> 1.21.1: the /opportunities pages load rows through app/services/public/opportunities.ts (new rows() and bySlug(): backend control:get_public_opportunities first, GitHub published/api as fallback); lib/agent-opportunity-cards.ts is pure (cardForSlug, summariesFromRows) and its raw-GitHub loader and markdown card reader (parseCard, cardPath) are removed.",
   "_comment_version_1_21_0": "1.20.1 -> 1.21.0: opportunity detail pages. New installs app/opportunities (the /opportunities listing and /opportunities/[type]/[slug]) and lib/agent-opportunity-cards.ts. The pages read the public RokctAI/opportunities repo (published/api/<type>.json and the markdown cards) from raw.githubusercontent.com on the server with revalidate 3600, so the landing search links resolve instead of 404ing. A known slug renders its card with the apply button; a past deadline shows 'This closed on <date>' with open ones under it; an unknown slug redirects to /opportunities.",
@@ -269,6 +270,10 @@
     {
       "from": "templates/lib/agent-chat-messages.ts",
       "to": "lib/agent-chat-messages.ts"
+    },
+    {
+      "from": "templates/public/landing/agent",
+      "to": "public/landing/agent"
     }
   ],
   "dependencies": {
