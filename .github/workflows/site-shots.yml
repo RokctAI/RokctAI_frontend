@@ -6,10 +6,11 @@ name: Site shots
 # instead of rebuilding it here this photographs the live production site
 # (SHOTS_URL, https://rokct.ai) after a push to main has had time to deploy,
 # and on demand (Actions > Site shots > Run workflow). It photographs the
-# first screen in Chromium at 1440 and 390 wide in the light and dark themes, and runs a health gate:
-# HTTP 200, no console errors, a <main> landmark, a hero heading in the first
-# screen, a page that is not blank, and a frame that holds still (every CSS
-# animation settled, a script-driven headline caught between changes).
+# first screen in Chromium at 1440 and 390 wide in the light and dark
+# themes, and runs a health gate: HTTP 200, no console errors, a <main>
+# landmark, a hero heading in the first screen, a page that is not blank,
+# and a frame that holds still (every CSS animation settled, a
+# script-driven headline caught between changes).
 #
 # Only when the gate passes are the six WebP files and manifest.json
 # committed to the orphan branch `site-shots` (appended to, never
