@@ -1,0 +1,344 @@
+name: Site shots
+
+# Pictures of this site's first screen for the ROKCT studio page (Ray,
+# 2026-10-31: each site's pictures come from the latest good build of that
+# site). This app's build needs a database and the base_sdk compose, so
+# instead of rebuilding it here this photographs the live production site
+# (SHOTS_URL, https://rokct.ai) after a push to main has had time to deploy,
+# and on demand (Actions > Site shots > Run workflow). It photographs the
+# first screen in Chromium at 1440 and 390 wide in the light and dark themes, and runs a health gate:
+# HTTP 200, no console errors, a <main> landmark, a hero heading in the first
+# screen, a page that is not blank, and a frame that holds still (every CSS
+# animation settled, a script-driven headline caught between changes).
+#
+# Only when the gate passes are the six WebP files and manifest.json
+# committed to the orphan branch `site-shots` (appended to, never
+# force-pushed; the tree keeps the five newest sets, history keeps all,
+# and latest/ is a copy of the newest set at a stable path).
+# When it fails the job goes red and the branch keeps the last good set.
+# The studio showcase card (.rokct/showcase.json) points at latest/.
+# Adapted from RokctAI/southriver-web's site-shots.yml.
+#
+# A pull request that changes this file runs everything and publishes to
+# `site-shots-preview` instead, so main's set is never touched by a PR.
+#
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/site-shots.yml'
+
+concurrency:
+  group: site-shots-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  # The live page photographed.
+  SHOTS_URL: https://rokct.ai/
+  # CSS animation name -> fraction of its duration to hold it at, for a
+  # looping animation that must be shown in one particular state.
+  SHOTS_FREEZE: '{}'
+  SHOTS_BRANCH: ${{ github.event_name == 'pull_request' && 'site-shots-preview' || 'site-shots' }}
+  # The commit of this repo at the time of the run (the live site is
+  # whatever Vercel serves then; on a push, normally this commit).
+  SHOTS_COMMIT: ${{ github.sha }}
+  PLAYWRIGHT_VERSION: '1.56.1'
+  SHARP_VERSION: '0.34.5'
+
+jobs:
+  shots:
+    name: Build, photograph, gate, publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      # Vercel deploys main on its own; give a fresh push time to go live
+      # before photographing it.
+      - name: Wait for the push to deploy
+        if: github.event_name == 'push'
+        run: sleep 480
+
+      - name: Install the camera (Playwright Chromium and sharp)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/shot-tools"
+          cd "$RUNNER_TEMP/shot-tools"
+          echo '{"name":"shot-tools","private":true}' > package.json
+          npm install --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION" "sharp@$SHARP_VERSION"
+          npx playwright install --with-deps chromium
+
+      - name: Write the camera
+        run: |
+          cat > "$RUNNER_TEMP/site-shots.mjs" <<'SHOTS_EOF'
+          // Site shots: photographs the first screen of the running site and checks
+          // it is healthy before anything is published. Writes six WebP files and
+          // manifest.json (plus gate.json and the raw PNGs) into SHOTS_OUT, or exits 1
+          // with the reason (the old set on the
+          // site-shots branch is then left exactly as it was).
+          // SHOTS_REPO and SHOTS_COMMIT go into the manifest.
+          //
+          //   desktop-<theme>.webp  1200 x 833  1440 x 1000 viewport  ("Our work" desktop proof)
+          //   option-<theme>.webp    800 x 500  top 1440 x 900 of it  ("How we design" option)
+          //   phone-<theme>.webp     560 x 1149 390 x 800 at 2x       ("Our work" phone proof)
+          //
+          // Env: SHOTS_URL (the page), SHOTS_OUT (output dir), SHOTS_TOOLS (dir with
+          // playwright and sharp installed), SHOTS_FREEZE (JSON: CSS animation name ->
+          // fraction of its duration to hold, for looping animations that must be
+          // shown in one particular state), SHOTS_CONSOLE_ALLOW (optional regex of
+          // console errors to tolerate).
+          import fs from "node:fs";
+          import path from "node:path";
+          import { createRequire } from "node:module";
+          import { createHash } from "node:crypto";
+
+          const req = createRequire(path.join(process.env.SHOTS_TOOLS || process.cwd(), "package.json"));
+          const { chromium } = req("playwright");
+          const sharp = req("sharp");
+
+          const URL_ = process.env.SHOTS_URL || "http://127.0.0.1:3000/";
+          const OUT = process.env.SHOTS_OUT || "shots";
+          const FREEZE = JSON.parse(process.env.SHOTS_FREEZE || "{}");
+          const ALLOW = process.env.SHOTS_CONSOLE_ALLOW ? new RegExp(process.env.SHOTS_CONSOLE_ALLOW) : null;
+          fs.mkdirSync(OUT, { recursive: true });
+
+          const SHOTS = [
+            { key: "desktop", viewport: { width: 1440, height: 1000 }, dpr: 1 },
+            { key: "phone", viewport: { width: 390, height: 800 }, dpr: 2 },
+          ];
+          const THEMES = ["light", "dark"];
+          const problems = [];
+          const report = { url: URL_, checks: [] };
+
+          // Every CSS/Web animation is brought to rest: a finite one to its end state,
+          // a looping one to the frame SHOTS_FREEZE names (or its first frame), paused.
+          function settle(freeze) {
+            for (const a of document.getAnimations()) {
+              try {
+                const name = a.animationName || "";
+                const t = a.effect && a.effect.getComputedTiming();
+                if (name in freeze && t && typeof t.duration === "number") {
+                  a.currentTime = t.duration * freeze[name];
+                  a.pause();
+                } else if (t && t.iterations === Infinity) {
+                  a.currentTime = 0;
+                  a.pause();
+                } else {
+                  a.finish();
+                }
+              } catch {
+                /* an animation that cannot be seeked is left alone */
+              }
+            }
+          }
+
+          const browser = await chromium.launch();
+          try {
+            for (const shot of SHOTS) {
+              for (const theme of THEMES) {
+                const label = `${shot.key}-${theme}`;
+                const ctx = await browser.newContext({
+                  viewport: shot.viewport,
+                  deviceScaleFactor: shot.dpr,
+                  colorScheme: theme,
+                  reducedMotion: "no-preference",
+                });
+                // next-themes and the studio read the stored choice before the system one.
+                await ctx.addInitScript((t) => {
+                  try {
+                    localStorage.setItem("theme", t);
+                  } catch {}
+                }, theme);
+                const page = await ctx.newPage();
+                const errors = [];
+                page.on("console", (m) => {
+                  if (m.type() === "error" && !(ALLOW && ALLOW.test(m.text()))) errors.push(m.text());
+                });
+                page.on("pageerror", (e) => errors.push(`pageerror: ${e.message}`));
+                const res = await page.goto(URL_, { waitUntil: "load", timeout: 120000 });
+                await page.waitForLoadState("networkidle", { timeout: 20000 }).catch(() => {});
+                await page.evaluate(() => document.fonts && document.fonts.ready);
+                await page.waitForTimeout(1500);
+
+                // A still frame: settle the animations, then take frames until two in
+                // a row match, so a script-driven change (a rotating headline) is never
+                // caught half way.
+                let png = null;
+                for (let i = 0; i < 20 && !png; i++) {
+                  await page.evaluate(settle, FREEZE);
+                  const a = await page.screenshot({ caret: "hide" });
+                  await page.waitForTimeout(400);
+                  await page.evaluate(settle, FREEZE);
+                  const b = await page.screenshot({ caret: "hide" });
+                  if (a.equals(b)) png = b;
+                }
+
+                const dom = await page.evaluate(() => {
+                  const main = document.querySelector("main, [role=main]");
+                  const h1 = document.querySelector("h1");
+                  const r = h1 && h1.getBoundingClientRect();
+                  return {
+                    main: !!main && main.getBoundingClientRect().height > 0,
+                    hero: !!r && r.height > 0 && r.top < window.innerHeight && (h1.textContent || "").trim().length > 0,
+                    heroText: h1 ? (h1.textContent || "").trim().slice(0, 80) : "",
+                    textLength: (document.body.innerText || "").trim().length,
+                    dark: document.documentElement.classList.contains("dark"),
+                  };
+                });
+                let stdev = 0;
+                if (png) {
+                  const st = await sharp(png).stats();
+                  stdev = st.channels.slice(0, 3).reduce((s, c) => s + c.stdev, 0) / 3;
+                }
+                const check = { label, status: res ? res.status() : 0, errors, ...dom, stdev: Math.round(stdev * 10) / 10, still: !!png };
+                report.checks.push(check);
+                if (check.status !== 200) problems.push(`${label}: HTTP ${check.status}`);
+                if (errors.length) problems.push(`${label}: ${errors.length} console error(s): ${errors.slice(0, 3).join(" | ")}`);
+                if (!dom.main) problems.push(`${label}: no main landmark`);
+                if (!dom.hero) problems.push(`${label}: no hero heading in the first screen`);
+                if (!png) problems.push(`${label}: the first screen never held still`);
+                if (dom.textLength < 80 || stdev < 8) problems.push(`${label}: the page looks blank (text ${dom.textLength}, contrast ${check.stdev})`);
+
+                if (png) {
+                  fs.writeFileSync(path.join(OUT, `${label}.png`), png);
+                  if (shot.key === "desktop") {
+                    await sharp(png).resize(1200, 833, { fit: "fill" }).webp({ quality: 82 }).toFile(path.join(OUT, `desktop-${theme}.webp`));
+                    await sharp(png)
+                      .extract({ left: 0, top: 0, width: 1440, height: 900 })
+                      .resize(800, 500, { fit: "fill" })
+                      .webp({ quality: 82 })
+                      .toFile(path.join(OUT, `option-${theme}.webp`));
+                  } else {
+                    await sharp(png).resize(560, 1149, { fit: "fill" }).webp({ quality: 82 }).toFile(path.join(OUT, `phone-${theme}.webp`));
+                  }
+                }
+                await ctx.close();
+              }
+            }
+          } finally {
+            await browser.close();
+          }
+
+          report.problems = problems;
+          if (process.env.GITHUB_STEP_SUMMARY) {
+            const rows = report.checks.map(
+              (c) => `| ${c.label} | ${c.status} | ${c.errors.length} | ${c.main ? "yes" : "no"} | ${c.hero ? "yes" : "no"} | ${c.still ? "yes" : "no"} | ${c.stdev} |`,
+            );
+            fs.appendFileSync(
+              process.env.GITHUB_STEP_SUMMARY,
+              [`## Site shots health gate: ${problems.length ? "FAILED" : "passed"}`, "", `Page: ${URL_}`, "",
+                "| shot | HTTP | console errors | main | hero | still | contrast |", "|---|---|---|---|---|---|---|", ...rows, "",
+                ...problems.map((p) => `- ${p}`), ""].join("\n"),
+            );
+          }
+          fs.writeFileSync(path.join(OUT, "gate.json"), JSON.stringify(report, null, 2));
+          for (const c of report.checks) console.log(JSON.stringify(c));
+          if (problems.length) {
+            console.log("::error::Health gate failed - nothing is published and the last good set stays:");
+            for (const p of problems) console.log(`::error::${p}`);
+            process.exit(1);
+          }
+          // The manifest the sites validate (base_sdk components/custom/landing/site-shots.ts).
+          const commit = process.env.SHOTS_COMMIT || "";
+          const files = {};
+          for (const name of ["desktop-light", "desktop-dark", "option-light", "option-dark", "phone-light", "phone-dark"]) {
+            const file = `${name}.webp`;
+            const buf = fs.readFileSync(path.join(OUT, file));
+            const meta = await sharp(buf).metadata();
+            files[file] = { width: meta.width, height: meta.height, bytes: buf.length, sha256: createHash("sha256").update(buf).digest("hex") };
+          }
+          const manifest = {
+            schema: 1,
+            repo: process.env.SHOTS_REPO || "",
+            commit,
+            taken_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+            dir: `shots/${commit}`,
+            files,
+          };
+          fs.writeFileSync(path.join(OUT, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
+          console.log("Health gate passed.");
+          SHOTS_EOF
+
+      - name: Photograph the live site and run the health gate
+        run: |
+          set -euo pipefail
+          SHOTS_OUT="$RUNNER_TEMP/shots" \
+          SHOTS_TOOLS="$RUNNER_TEMP/shot-tools" \
+          SHOTS_REPO="$GITHUB_REPOSITORY" \
+            node "$RUNNER_TEMP/site-shots.mjs"
+
+      - name: Keep the pictures and the gate report as an artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-shots
+          path: ${{ runner.temp }}/shots
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Publish to the ${{ env.SHOTS_BRANCH }} branch
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/shots"
+          DIR="$RUNNER_TEMP/branch"
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          mkdir -p "$DIR" && cd "$DIR"
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY"
+          if git -c http.extraheader="$AUTH" fetch -q --depth 1 origin "refs/heads/$SHOTS_BRANCH"; then
+            git checkout -q -b "$SHOTS_BRANCH" FETCH_HEAD
+          else
+            git checkout -q --orphan "$SHOTS_BRANCH"
+          fi
+          mkdir -p "shots/$SHOTS_COMMIT"
+          cp "$OUT"/*.webp "shots/$SHOTS_COMMIT/"
+          cp "$OUT/manifest.json" manifest.json
+          # latest/ always holds the newest set at a path that never changes,
+          # for links that must not go stale when old shots/<commit>/ sets
+          # are pruned (the studio showcase cards, .rokct/showcase.json).
+          mkdir -p latest
+          cp "$OUT"/*.webp latest/
+          # The five newest sets stay in the tree; older ones live on in history.
+          {
+            echo "$SHOTS_COMMIT"
+            if [ -f history.txt ]; then grep -vx "$SHOTS_COMMIT" history.txt || true; fi
+          } | head -5 > history.next
+          mv history.next history.txt
+          for d in shots/*/; do
+            c="$(basename "$d")"
+            grep -qx "$c" history.txt || git rm -rq --ignore-unmatch "shots/$c" || rm -rf "shots/$c"
+          done
+          printf '%s\n' "# Site shots" "" \
+            "Pictures of this site's first screen (the live site), written by .github/workflows/site-shots.yml after its health gate passed." \
+            "manifest.json names the newest set; shots/<commit>/ holds each set; latest/ is a copy of the newest set. Do not edit by hand." > README.md
+          # Vercel reads vercel.json from the commit it deploys, so main's
+          # deploymentEnabled rule never reaches this orphan branch: without
+          # its own file every push here starts a Vercel build of a tree with
+          # no app, which fails (site-shots-preview 772689a). Opt it out.
+          printf '%s\n' '{' '  "git": {' '    "deploymentEnabled": false' '  }' '}' > vercel.json
+          git add -A
+          git commit -q -m "site shots: $SHOTS_COMMIT" -m "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          git -c http.extraheader="$AUTH" push -q origin "HEAD:refs/heads/$SHOTS_BRANCH"
+          echo "Published shots/$SHOTS_COMMIT to $SHOTS_BRANCH."
+          {
+            echo "## Published"
+            echo ""
+            echo "\`$SHOTS_BRANCH\` now names shell commit \`$SHOTS_COMMIT\`: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/$SHOTS_BRANCH"
+          } >> "$GITHUB_STEP_SUMMARY"
