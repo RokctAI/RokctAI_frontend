@@ -1,5 +1,39 @@
 # Changelog
 
+## 1.23.0
+
+New install: `templates/public/landing/agent` -> `public/landing/agent`.
+
+* rokct.ai's landing pictures are our own (Ray, 2026-11-01: "we can have
+  our own"). Every picture in `agent-landing-config.ts` was hot-linked from
+  Merlin AI's CDN (`cdn.getmerlin.in`), which answers
+  `cross-origin-resource-policy: same-origin`, so browsers refused all of
+  them and every card showed a broken image. They now come from the
+  shell's own `/landing/agent/`:
+  * the social cards and the "All that... and more" cards use eleven
+    pictures drawn in code for this page (mail, social, video, poster,
+    knowledge, diagram, code, reasoning, research, summary, transcript), in
+    rokct.ai's ink, yellow and indigo with Remixicon glyphs. No screenshot
+    of a site running on the platform is used: those sites are clients,
+    not showcase material (Ray, 2026-11-01: "dont show off platforms
+    running on rokct. they are shown as clients");
+  * the compare deck uses `platform.svg`, `others.svg` and
+    `others-pro.svg`; its rows no longer show other companies' logos (a
+    row without an icon draws the check disc);
+  * the testimonials draw each author's initial instead of an avatar
+    picture.
+* The chat section's four cards (`chat-section.client.tsx`) no longer
+  hot-link stock photos from images.unsplash.com: all four use the drawn
+  pictures.
+* The network strip draws juvo platforms as its wordmark. Its glyphs were
+  hot-linked from juvo.app, which browsers block cross-origin
+  (`ERR_BLOCKED_BY_ORB`), and no copy of Juvo's mark is held in our
+  repositories to serve locally.
+* The header menu no longer draws Affiliate or Teams: both routes answer
+  404 and no host or SDK installs them. The `features.affiliate` and
+  `features.teams` dictionary keys stay; put the links back in the release
+  that installs the pages.
+
 ## 1.22.1
 
 * Icons move to Remixicon (`.rokct/decision_log.md`, "Icon package

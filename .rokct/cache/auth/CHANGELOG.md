@@ -1,3 +1,7 @@
+## 1.10.2
+
+* **The portal login's footer carries the site credit.** It read "© 2025 <platform>. All rights reserved." (a fixed year). It now reads `© <year> <site name> · Built with ♥ by ROKCT` (Ray, 2026-10-31: "all site will be copyright sitename then built with love (as heart) by ROKCT"), drawn by base_sdk 1.54.0's `SiteCredit` with the current year, `PLATFORM_NAME` as the site name and the heart a `role="img"` named "love", in the footer's own `text-xs text-gray-500`. `components/custom/site-credit.tsx` joins `requires` (base_sdk >= 1.54.0).
+
 ## 1.10.1
 
 * **A login does not depend on the local database.** The tenant-link lookup (`resolveLink`) and the save after a login (`rememberLogin`) run in their own `try` blocks in `auth.ts`. With no `POSTGRES_URL`, or a database that is down, the login goes to the backend and succeeds with the right password, instead of showing "Invalid credentials". A failed save is logged and does not fail the login.

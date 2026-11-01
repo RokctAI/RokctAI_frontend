@@ -125,12 +125,17 @@ const AGENT_NETWORK_STRIP: AgentNetworkStrip = {
     // juvo platforms" (first said 2026-09-09 22:07Z). The name is the string
     // he typed, verbatim - never shortened to "juvo", never re-cased here;
     // the url and the glyphs are unchanged.
+    //
+    // 1.23.0 (Ray, 2026-11-01: "we can have our own"): drawn as its
+    // wordmark. The glyphs were hot-linked from juvo.app, which browsers
+    // block cross-origin (ERR_BLOCKED_BY_ORB), so the strip showed a
+    // broken image on every visit; no copy of Juvo's mark is held in our
+    // repositories to serve locally, so the name is the logo until one is.
     {
       key: "juvo",
       name: "juvo platforms",
       url: "https://juvo.app",
-      logo: "https://juvo.app/images/logo_dark.svg",
-      logoDark: "https://juvo.app/images/logo.svg",
+      wordmark: true,
     },
     // No domain yet (Ray, 2026-09-09): listed so the entry has a place, hidden
     // until the url is filled in.

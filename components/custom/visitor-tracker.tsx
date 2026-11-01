@@ -61,8 +61,10 @@ export function VisitorTracker() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ visitor_id: visitorUuid }),
-      }).catch((err) => {
-        console.error("Failed to report unique visit:", err);
+      }).catch(() => {
+        // Best-effort: a visit that cannot be reported (offline, blocked by
+        // an extension) is dropped without a console error on the page.
+        // /api/visitor logs upstream failures on the server.
       });
     }
   }, [session]);

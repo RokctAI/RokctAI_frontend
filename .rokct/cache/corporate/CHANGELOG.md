@@ -1,5 +1,108 @@
 # Changelog
 
+## 1.5.0
+
+* **The South River render Ray approved, drawn from data** (Ray,
+  2026-11-01: "south river site doesnt have what we discussed yet").
+  The renderer draws the fields base_sdk 1.59.0 adds; every one is
+  optional, so a site that sets none looks as before (apart from the
+  bottle, below). Floor: base_sdk >= 1.59.0.
+  * **The bottle** (`site-art.tsx`, every site): the water stops in the
+    neck under empty clear plastic; drops form on the cold bottle and run
+    down leaving a wet trail. A label's `mark` is a monogram in a ring
+    above the name. A bottle given `labels` rolls through them: the label
+    on show runs off round the left edge while the next wraps on from the
+    right (each holds 2.8 s and rolls in 1.1 s; the two faces always tile
+    the label). With reduced motion the first label stays on and the drops
+    stay caught part-way down.
+  * **Pricing** (`site-sections.tsx`): a tier's `fine` line (`strong` in
+    bold), its `art` drawn the card's full height beside the words, and its
+    `slider`: new `site-pricing-slider.client.tsx`, a range from `min` to
+    `max` with the count line and a running total ("10 cases · 240
+    bottles", "10 × R150 · R6.25 a bottle", "R1,500"). New `site-price.ts`
+    fills `{n}`, `{units}`, `{price}`, `{each}` and `{total}` and writes
+    money the way the price is written.
+  * **Header and footer**: `data/site.json` `header.wordmark: false`
+    passes `brand.wordmark: false`, so the header logo image stands alone;
+    `footer.logo` draws the site's own logo in place of the type wordmark,
+    masked so it takes `--cs-brand-text` in either theme.
+  * The `components/custom/site` directory install already carries the two
+    new files; the manifest's installs do not change.
+* test: `TestSouthRiverRender` in `tests/test_manifest.py`.
+
+## 1.4.2
+
+* **Site fonts are bundled; the build no longer fetches Google Fonts.**
+  `components/custom/site/site-fonts.ts` loads the seven faces a
+  local-data site may choose through `next/font/local` from
+  `components/custom/site/fonts/` instead of `next/font/google`.
+  southriver-web's Vercel production build of main 46cf377 failed on the
+  Google Fonts fetch, the failure supacharge-web and polaris-web hit
+  (polaris_sdk 1.8.1): Google can answer with
+  `fonts.gstatic.com/l/font?kit=...` URLs that Turbopack's
+  `next/font/google` loader cannot resolve, and a failed font fetch fails
+  the build.
+  * Montserrat (400 to 900), Fraunces (100 to 900), Figtree (400 to 700)
+    and Space Grotesk (300 to 700), upright and, where the site may ask for
+    it, italic, and Inter (100 to 900) and DM Sans (100 to 1000) are the
+    google/fonts sources (the versions Google serves) cut to the latin and
+    latin-ext characters, with the wght axis limited to the weights the
+    old calls asked for and the other axes pinned where Google pins them
+    (opsz 14; Fraunces SOFT 0). Cyrillic, greek and vietnamese text, which
+    Google's extra faces covered, now draws in the fallback.
+  * Playfair Display ships whole (the variable TTFs as woff2): "Playfair
+    Display" is a Reserved Font Name, so the files are not subset.
+  * `OFL.txt` (SIL Open Font License 1.1) sits beside the fonts. The
+    `components/custom/site` directory install already carries them; the
+    manifest's installs do not change.
+  * The `--cs-font-*` variables, `display: swap`, the metric-matched
+    fallbacks (Times New Roman for Fraunces and Playfair Display, Arial for
+    the rest) and `siteFontClasses()` are unchanged, so a site looks the
+    same. No base_sdk floor moves.
+
+## 1.4.1
+
+* A local-data site's footer ends with base_sdk 1.54.0's site credit,
+  `© <year> <site name> · Built with ♥ by ROKCT` (Ray, 2026-10-31: "all
+  site will be copyright sitename then built with love (as heart) by
+  ROKCT"), the name being `data/site.json` `name` - "© 2026 South River ·
+  Built with ♥ by ROKCT" - instead of "© Copyright <year> - <holder>" with
+  `footer.legal` or `LEGAL_COMPANY_NAME`. `site-footer-section.tsx` passes
+  `siteName` and no `copyrightHolder`, and no longer imports
+  `LEGAL_COMPANY_NAME`; `footer.legal` is no longer drawn. The company and
+  legal frames (`CompanyFrame`, `LegalFrame`) are unchanged: they pass
+  base's default config, whose row now names the host's `PLATFORM_NAME`.
+  Floor: base_sdk >= 1.54.0 (`FooterChromeConfig.siteName`).
+
+## 1.4.0
+
+* corporate_sdk is the home SDK of every local-data site (Ray, 2026-10-31:
+  "corporate can be home sdk"; one shared site renderer, every client from
+  data, no SDK per client). A new manifest `"home"` block (same keys as an
+  `app_type` block) applies only in a shell whose `composer.json` flags
+  `corporate_sdk` `"home_sdk": true` (The-Rokct-Protocol's Next.js installer);
+  everywhere else this SDK still installs the company pages only.
+* The block installs `app/page.tsx` (a redirect to base_sdk's `/landing`) and
+  `components/custom/site/`, and fills base_sdk's landing registries from the
+  shell's `data/` folder (base_sdk >= 1.53.0 kinds): hero copy and hero form
+  (the `data/sections.json` hero, handed to the client form as
+  `HeroConfig.formData`), header menu (`data/site.json` header and one anchor
+  per section with a nav label), site metadata, a null plans query, and page
+  sections - the theme (order -2, frame: `site.css`, the `data/theme.json`
+  palette, fonts and display voice, then the site's own `data/site.css`),
+  twelve numbered slots drawing the sections after the hero in order (intro,
+  steps, pricing, gallery, facts, WhatsApp order form, contact; each with
+  layout variants and a tone), and the footer (order 95, frame).
+* `home.site_data.requires` (`theme`, `site`, `sections`): a local build
+  without those files fails at generate time, naming the file.
+* Art: a drawn PET bottle wearing a data label (a name, or the site's own
+  label art file from `public/`), a type wordmark, a stamp, a wave, step
+  glyphs; a section may instead show the site's own image file.
+* `docs/local-sites.md`: how to add a client, the identity a site gets from
+  data (fonts, palette, layouts, art, its own CSS) and the backend seam for
+  many sites on one deployment. `docs/examples/demo-bakery/` is a second,
+  made-up record drawn by the same code.
+
 ## 1.3.0
 
 * `/team`'s title carries the number of cards on the page as a badge

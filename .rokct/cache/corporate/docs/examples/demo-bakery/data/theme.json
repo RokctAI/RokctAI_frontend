@@ -1,0 +1,49 @@
+{
+  "primary": "#2f5d46",
+  "palette": {
+    "paper": "#f6f1e7",
+    "card": "#fffdf8",
+    "alt": "#ece4d3",
+    "stroke": "#ddd2bd",
+    "sub": "#e6dcc8",
+    "ink": "#22201b",
+    "sec": "#5f5a4f",
+    "faint": "#958d7d",
+    "brand": "#2f5d46",
+    "brandHi": "#3c7457",
+    "brandDeep": "#24493a",
+    "brandDark": "#16302a",
+    "brandText": "#2f5d46",
+    "bandInk": "#22201b",
+    "highlight": "#e9a23b",
+    "highlightInk": "#2b1c05",
+    "ok": "#3c7457",
+    "onBrand": "#fffdf8",
+    "heroTop": "#f6f1e7",
+    "heroLow": "#ece4d3",
+    "shade": "#1a140a",
+    "shadow": "0 24px 60px -30px rgba(40, 30, 10, 0.35)"
+  },
+  "paletteDark": {
+    "paper": "#14130f",
+    "card": "#1d1b16",
+    "alt": "#1a1813",
+    "stroke": "#36322a",
+    "sub": "#2a2720",
+    "ink": "#f2ecdf",
+    "sec": "#c2b9a6",
+    "faint": "#8a8272",
+    "brandText": "#8cc4a3",
+    "bandInk": "#1d1b16",
+    "heroTop": "#14130f",
+    "heroLow": "#1a1813",
+    "shadow": "0 24px 60px -30px rgba(0, 0, 0, 0.7)"
+  },
+  "fonts": {
+    "display": "fraunces",
+    "text": "inter",
+    "displayWeight": 600,
+    "displayItalic": false,
+    "displayUppercase": false
+  }
+}

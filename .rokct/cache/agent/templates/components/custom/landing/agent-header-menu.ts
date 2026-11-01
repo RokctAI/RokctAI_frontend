@@ -40,8 +40,9 @@
 // `{ id: "pricing", label: "Pricing" }` in its meta.nav, so base resolves
 // the id against the page's live nav, lifts the label from that entry, and
 // drops it on a render where the section is not on the page - which a
-// hand-written "#pricing" href could not do. Affiliate and Teams are routes
-// the page has no section for, so they are fixed links.
+// hand-written "#pricing" href could not do. Affiliate and Teams were
+// fixed links to routes the page has no section for; since 1.23.0 they are
+// not drawn at all, because neither route exists yet (see `links`).
 //
 // Labels come from the shell's own dictionary through `t` (agent_sdk
 // requires app/lib/i18n/index.ts; rokctai_frontend's en.json carries every
@@ -128,10 +129,13 @@ const AGENT_HEADER_MENU: HeaderMenu = {
     collapse: { delayMs: 1500, code: brandingCode },
   },
   anchors: ["pricing"],
-  links: [
-    { id: "affiliate", label: word("features.affiliate", "Affiliate"), href: "/affiliate" },
-    { id: "teams", label: word("features.teams", "Teams"), href: "/teams" },
-  ],
+  // 1.23.0 (Ray, 2026-11-01): no top-level links while their pages do not
+  // exist. Affiliate (/affiliate) and Teams (/teams) were the two entries
+  // here and both answered 404 on rokct.ai: no host or SDK installs either
+  // route. Put them back - id, `features.*` label key and route as above -
+  // in the release that installs their pages; the dictionary keys stay in
+  // the shell's en.json for that.
+  links: [],
   groups: [
     {
       id: "product",

@@ -190,7 +190,19 @@ export interface AgentLandingConfig {
   testimonials: TestimonialsConfig | null;
 }
 
-const CDN = "https://cdn.getmerlin.in/cms";
+/**
+ * Where this SDK's landing pictures are served from: the shell's own
+ * public/landing/agent/, which the manifest installs from
+ * templates/public/landing/agent/ (1.23.0). Ray, 2026-11-01: "we can have
+ * our own" - every picture used to be hot-linked from Merlin AI's CDN,
+ * which answers `cross-origin-resource-policy: same-origin`, so browsers
+ * refused all of them on rokct.ai. Every picture is an SVG drawn in code
+ * for this page (Remixicon glyphs, rokct.ai's ink, yellow and indigo).
+ * No screenshot of a site running on the platform: those are clients, not
+ * showcase material (Ray, 2026-11-01: "dont show off platforms running on
+ * rokct. they are shown as clients").
+ */
+const PICTURES = "/landing/agent";
 
 /** "gpt-4o-mini" -> "Gpt 4o Mini": the label plan features use for `{model}`. */
 function modelLabel(id: string): string {
@@ -219,22 +231,22 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
       {
         title: "Write mails effortlessly",
         text: "Compose mails with AI and generate replies in the context of the previous mail.",
-        image: { src: `${CDN}/gmail_ecea349519.webp`, alt: "Write mails effortlessly" },
+        image: { src: `${PICTURES}/mail.svg`, alt: "Write mails effortlessly" },
       },
       {
         title: "Draft posts and replies on social media",
         text: "Generate with prompts and save them for repeated use. Engagement on top.",
-        image: { src: `${CDN}/social_media_a521fbf4cc.webp`, alt: "Draft posts and replies on social media" },
+        image: { src: `${PICTURES}/social.svg`, alt: "Draft posts and replies on social media" },
       },
       {
         title: "Create content from videos",
         text: "Blogs, X posts, articles - you name it, from any YouTube video.",
-        image: { src: `${CDN}/content_from_vid_336ec65ad8.webp`, alt: "Create content from videos" },
+        image: { src: `${PICTURES}/video.svg`, alt: "Create content from videos" },
       },
       {
         title: "Get the perfect poster image",
         text: "Generate images with 20+ image models and aspect ratios for web and social media.",
-        image: { src: `${CDN}/image_gen_21ee18a2ef.webp`, alt: "Get the perfect poster image" },
+        image: { src: `${PICTURES}/poster.svg`, alt: "Get the perfect poster image" },
       },
     ],
   },
@@ -243,16 +255,16 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
     heading: "All that... and more",
     blurb: `Here's everything ${PLATFORM_NAME} has to offer. P.S. This list grows on every week!`,
     items: [
-      { name: "Brand voice content with custom knowledge bases", image: `${CDN}/brand_voice_hover_image_1_9441c286c4.webp` },
-      { name: "Working app snippets, web code and components", image: `${CDN}/code_snippets_ad5dd9c340.png` },
-      { name: "Flowcharts, mindmaps and 20+ infographic types", image: `${CDN}/diagrams_405f737d5d.webp` },
-      { name: "Generate images with Flux 1.1 Pro", image: `${CDN}/Generate_AI_images_and_art_Bonkers_8edfa01b5b.webp` },
-      { name: "Convert YouTube videos into posts and blogs", image: `${CDN}/Youtube_Summariser_2161a48f6d.webp` },
-      { name: "Posts and comments on X and LinkedIn", image: `${CDN}/Twitter_commenter_9b7d00b268.webp` },
-      { name: "Solve STEM problems and puzzles with OpenAI o1", image: `${CDN}/o1_1_f3cabdfcec.webp` },
-      { name: "AI tools for academic, marketing and tech research", image: `${CDN}/Chat_with_20_top_AI_models_GPT_4_Claude_3_etc_3b2e6b7e57.webp` },
-      { name: "One-click blog summaries", image: `${CDN}/Blog_Summariser_91f8e612ef.webp` },
-      { name: "Summarize and transcribe YouTube videos", image: `${CDN}/Youtube_Transcription_tool_3d92b8ee68.webp` },
+      { name: "Brand voice content with custom knowledge bases", image: `${PICTURES}/knowledge.svg` },
+      { name: "Working app snippets, web code and components", image: `${PICTURES}/code.svg` },
+      { name: "Flowcharts, mindmaps and 20+ infographic types", image: `${PICTURES}/diagram.svg` },
+      { name: "Generate images with Flux 1.1 Pro", image: `${PICTURES}/poster.svg` },
+      { name: "Convert YouTube videos into posts and blogs", image: `${PICTURES}/video.svg` },
+      { name: "Posts and comments on X and LinkedIn", image: `${PICTURES}/social.svg` },
+      { name: "Solve STEM problems and puzzles with OpenAI o1", image: `${PICTURES}/reasoning.svg` },
+      { name: "AI tools for academic, marketing and tech research", image: `${PICTURES}/research.svg` },
+      { name: "One-click blog summaries", image: `${PICTURES}/summary.svg` },
+      { name: "Summarize and transcribe YouTube videos", image: `${PICTURES}/transcript.svg` },
     ],
   },
 
@@ -379,7 +391,7 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
     blurb: "Untrap yourself from thousands of tools with overlapping features.",
     tabs: { platform: "AI", others: "Others" },
     platform: {
-      icon: { src: `${CDN}/Group_2_b0e06c28f9.svg`, alt: `${PLATFORM_NAME} icon` },
+      icon: { src: `${PICTURES}/platform.svg`, alt: `${PLATFORM_NAME} icon` },
       price: "$19",
       period: ["per month", "billed annually"],
       // 1.19.0: the plans are the `pricing` section this block renders in
@@ -399,21 +411,24 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
     others: [
       {
         name: "Other",
-        avatar: { src: `${CDN}/Avatar_2_eee035b8d3.png`, alt: "icon" },
+        avatar: { src: `${PICTURES}/others.svg`, alt: "Separate tools" },
         price: "$130",
         period: ["per month", "for multiple tools"],
         listHeading: "Purchased individually",
+        // 1.23.0: no provider marks - they were other companies' logos
+        // hot-linked from Merlin's CDN; a row without an icon draws the
+        // section's own check disc, as "OpenAI" always did.
         items: [
-          { label: "Claude AI", price: "$30/m", icon: { src: `${CDN}/claude_7fd6ca1b3a.svg`, alt: "Claude AI" } },
+          { label: "Claude AI", price: "$30/m" },
           { label: "OpenAI", price: "$20/m" },
-          { label: "Gemini Advanced", price: "$20/m", icon: { src: `${CDN}/gemini_860192f244.svg`, alt: "Gemini Advanced" } },
-          { label: "Mistral AI", price: "$20/m", icon: { src: `${CDN}/mistral_997ea81364.svg`, alt: "Mistral AI" } },
-          { label: "Open source model hosting", price: "$40/m", icon: { src: `${CDN}/meta_0e8914c0f0.svg`, alt: "Open source model hosting" } },
+          { label: "Gemini Advanced", price: "$20/m" },
+          { label: "Mistral AI", price: "$20/m" },
+          { label: "Open source model hosting", price: "$40/m" },
         ],
       },
       {
         name: "Other Pro",
-        avatar: { src: `${CDN}/Avatar_4_36664caa88.svg`, alt: "icon" },
+        avatar: { src: `${PICTURES}/others-pro.svg`, alt: "Enterprise tools" },
         price: "$200",
         period: ["per month", "for enterprise tools"],
         listHeading: "Purchased individually",
@@ -473,69 +488,62 @@ export const AGENT_LANDING_CONFIG: AgentLandingConfig = {
   },
 
   testimonials: {
+    // 1.23.0: no avatar pictures (they were Merlin's CDN files); the
+    // section draws each author's initial in their place.
     items: [
       {
         title: "The Swiss Army Knife for research and writing",
         text: `${PLATFORM_NAME} is a welcome addition to anyone looking to simplify their research and writing process. I found the tool to be very user-friendly, fast, and reliable.`,
         author: "PetePlus",
         role: "AppSumo user",
-        avatar: `${CDN}/Avatar_9274fb1b87.svg`,
       },
       {
         title: "Highly recommended for educators, marketers, and small businesses",
         text: "This tool is there for you whenever and wherever you need it. Inside Gmail? Yep. Inside YouTube? Yep. It even timestamps the video summaries. On websites? Yep.",
         author: "Paige Battcher",
         role: `${PLATFORM_NAME} Pro user`,
-        avatar: `${CDN}/Avatar_1_6e26bd801c.svg`,
       },
       {
         title: "5 STAR Product.",
         text: `The team is VERY responsive. Any new ideas or bugs get talked about. They want to make ${PLATFORM_NAME} genuinely really good. You can just tell by how engaged they are, and how they make changes based on feedback.`,
         author: "gkc",
         role: "AppSumo user",
-        avatar: `${CDN}/Avatar_2_aa8dbc93fb.svg`,
       },
       {
         title: "There when and where you need it.",
         text: "This tool is there for you whenever and wherever you need it. Inside Gmail? Yep. Inside YouTube? Yep. It even timestamps the video summaries. On websites? Yep.",
         author: "Nathalia Do Nascimento Silva",
         role: "AppSumo user",
-        avatar: `${CDN}/Avatar_4_36664caa88.svg`,
       },
       {
         title: "An indispensable part of my academic toolkit.",
         text: `As a student, ${PLATFORM_NAME} AI has been invaluable for my academic work. The tool's automatic summarization and advanced text analysis features have significantly boosted my productivity and understanding.`,
         author: "Preston Bailey",
         role: "Extension user",
-        avatar: `${CDN}/Avatar_3_7588002be1.svg`,
       },
       {
         title: "Amazing support.",
         text: `The reason for gaining trust in ${PLATFORM_NAME} lies in their communication approach. They are more honest in their communication than expected, and while they can't accommodate everything, they provide satisfaction with quick responses to users' demands. I give it 10/10!!`,
         author: "107541488344860181963",
         role: "AppSumo user",
-        avatar: `${CDN}/Avatar_5_d4cf2b13d4.svg`,
       },
       {
         title: "Get straight A+s in uni.",
         text: `My Lil brother had an assignment for UNI, to use an AI to summarize a doc and display the key points using charts, Powerbi, etc.. Everyone used ChatGPT, Gemini, nothing fancy. Lil bro used ${PLATFORM_NAME} per my advise. He got an A+ and doesn't need to attend the finals from this project. I guess the professor thought he's an AI genius. Thanks ${PLATFORM_NAME} 😂🦾`,
         author: "Omar Alsharif",
         role: "Extension user",
-        avatar: `${CDN}/Avatar_7_e4d61dcb33.png`,
       },
       {
         title: "Eliminates the frustration of switching between apps.",
         text: `${PLATFORM_NAME}'s user-friendly interface makes research effortless. By centralizing all my sources, it eliminates the frustration of switching between apps and losing track of valuable information.`,
         author: "Ralphiesworld000",
         role: "Apple App user",
-        avatar: `${CDN}/Avatar_6_a69724eeab.svg`,
       },
       {
         title: "Keyboard friendliness.",
         text: `One of the best looking apps I've seen so far in the AI space. Integrates directly with my browser at the top toolbar. The coolest part is the Cmd + M keyboard friendliness. I've spoken to the developers and can assure that ${PLATFORM_NAME} will only get better with time.`,
         author: "Scorphx",
         role: "Extension user",
-        avatar: `${CDN}/Avatar_7_430a7c6f7b.svg`,
       },
     ],
   },

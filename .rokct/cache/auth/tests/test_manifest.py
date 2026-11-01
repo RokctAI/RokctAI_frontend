@@ -295,6 +295,23 @@ class TestTenantHostSwitch(unittest.TestCase):
         auth = read(os.path.join(AUTH_GROUP, "auth.ts"))
         self.assertIn("`https://${siteName}`", auth)
 
+    def test_portal_login_footer_is_the_site_credit(self):
+        """auth_sdk 1.10.2 (Ray, 2026-10-31: "all site will be copyright
+        sitename then built with love (as heart) by ROKCT"): the portal
+        login's footer draws base_sdk 1.54.0's SiteCredit for the site's
+        own name, never a fixed year or "All rights reserved"."""
+        paas = read(os.path.join(TEMPLATES, "components", "custom", "paas-login.tsx"))
+        self.assertIn('import { SiteCredit } from "@/components/custom/site-credit";', paas)
+        footer = paas.split("<footer", 1)[1].split("</footer>", 1)[0]
+        self.assertIn('<SiteCredit siteName={PLATFORM_NAME} className="text-xs text-gray-500" />', footer)
+        code = re.sub(r"\{/\*.*?\*/\}", "", footer, flags=re.S)
+        for gone in ("© 2025", "All rights reserved", "LEGAL_COMPANY_NAME"):
+            self.assertNotIn(gone, code, gone)
+        with open(os.path.join(SDK_ROOT, "manifest.json"), encoding="utf-8") as f:
+            manifest = json.load(f)
+        self.assertIn("components/custom/site-credit.tsx", manifest["requires"])
+        self.assertGreaterEqual(tuple(int(n) for n in manifest["version"].split(".")), (1, 10, 2))
+
     def test_login_heading_folds_a_dotted_platform_name(self):
         """auth_sdk 1.7.3: the heading prints the brand, not the address.
 

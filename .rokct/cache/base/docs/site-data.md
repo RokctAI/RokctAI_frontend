@@ -45,6 +45,49 @@ so base has one signal for switching off backend-only surface.
 | `about`     | `data/about.md`         | the markdown, verbatim, as a string                                                                                              |
 | `legal`     | `data/legal/<slug>.md`  | a map of slug to `{ title, markdown }`; the title from a `title:` front-matter line, else the first level-1 heading (removed from the body) |
 | `network`   | `data/network.json`     | `{ heading?, sites: [{ key, name, url, logo?, logoDark?, wordmark?, shown? }] }`; `url` an https origin with no path, query string or fragment, or `null` with `shown: false` |
+| `site`      | `data/site.json`        | (1.53.0) `{ name, wordmark?: { lead, mark?, rest? }, motto?, place?, since?, whatsapp?: { number, display }, email?: { orders?, domain?, orderVia?: "email"\|"whatsapp"\|"both" }, header?: { logo?, wordmark?, action? }, metadata: { title, tagline?, description, keywords?, themeColor?, locale?, icon? }, footer?: { links?, line?, legal?, logo? } }` |
+| `sections`  | `data/sections.json`    | (1.53.0) `{ sections: [{ type, id?, nav?, variant?, tone?, ...the type's fields }] }`; types `hero` (first, if any), `intro`, `steps`, `pricing`, `gallery`, `facts`, `order`, `contact` |
+| `pricing`   | `data/pricing.json`     | (1.53.0) `{ tiers: [{ name, price, unit?, detail?, best?, minQty?, previewNote?, fine?, art?, slider? }], perCase?, ctaLabel?, bestLabel? }`; since 1.59.0 `fine: { strong?, text }`, `art` (drawn in the card), `slider: { min, max, step?, label, count?, total?, breakdown? }` with `{n}`, `{units}`, `{price}`, `{each}`, `{total}` in its words, and `perCase` (units in one case) |
+| `order`     | `data/order.json`       | (1.53.0; goes by email since 1.57.0, to `site.email.orders` or orders@ the site's domain) `{ intro, fields: { business, quantity, phone, area, file? }, message: { business, quantity, quantityPrice?, area, phone, fileSent?, fileLater? }, submit, fine?, preview? }` |
+| `css`       | `data/site.css`         | (1.53.0) the site's own stylesheet, verbatim; plain CSS, no `<style>`/`<script>`, no `@import` |
+
+### A page that is data (1.53.0)
+
+A local-data site (`"data": "local"`, no backend) carries its whole page
+here, and **corporate_sdk, the home SDK of every local-data site**, renders
+it: `site`, `sections`, `pricing`, `order`, `css` above, and three more
+fields on `theme.json`:
+
+- `palette` / `paletteDark`: named tokens, hex colours (`paper`, `card`,
+  `alt`, `stroke`, `sub`, `ink`, `sec`, `faint`, `brand`, `brandHi`,
+  `brandDeep`, `brandDark`, `brandText`, `bandInk`, `highlight`,
+  `highlightInk`, `ok`, `onBrand`, `heroTop`, `heroLow`, `shade`,
+  `primary`) plus `shadow` (a CSS box-shadow);
+- `fonts`: `display` (`montserrat`, `fraunces`, `space-grotesk`,
+  `playfair-display`), `text` (`figtree`, `inter`, `dm-sans`) and the
+  display voice, `displayWeight` (400-900), `displayItalic`,
+  `displayUppercase`.
+
+Any shell with a data/ folder (local or hybrid) may also set `backToTop`
+on `theme.json` (since 1.56.0): the floating Back to top button's
+settings - `enabled`, `position`, `icon`, `shape`, `label`, the colours,
+`offset`, `showAfter` and the design language - laid over the home SDK's
+registered style. See "How to customise" in `docs/downloads-and-install.md`.
+
+base owns the schema only (`lib/site-data/validate-site.mjs`): every field
+is checked and named on failure ("data/sections.json: sections[2].steps[0].title
+is required"), a section type outside the library fails, and the kinds must
+agree - a page needs `site.json`, a pricing or order section needs its
+file, anything that opens WhatsApp (a link `href` of `"whatsapp"`, an
+order, pricing or contact section) needs `site.json`'s number. Art is either
+`{ kind: "bottle", size?, label: { bg, fg?, name?, sub?, footer?, art?, mark? }, labels?, cap? }`
+(the drawn bottle; `art` is a public path to the site's own label image;
+`labels`, since 1.59.0, are more labels the bottle rolls through, and
+`mark` a one- or two-character monogram) or
+`{ kind: "image", src, alt, width?, height? }` (the site's own file under
+`public/`). The home SDK's manifest declares the kinds such a page cannot
+do without under `home.site_data.requires`, and a local build without them
+fails here, naming the file.
 
 `photo` and `image` are public paths (`/team/jane.jpg`, served from the
 shell's `public/`) or absolute URLs. A slug is lowercase letters, digits

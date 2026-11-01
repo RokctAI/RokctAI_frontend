@@ -20,6 +20,23 @@ import { platformCall } from "@/app/services/base/platform-gateway";
 
 export const revalidate = 0;
 
+/**
+ * The answer when the visit could not be recorded upstream. A visit
+ * counter is best-effort: the visitor's page must not carry an error for
+ * it, and a 5xx here is exactly that - every browser logs "Failed to load
+ * resource: 502" in the console of every page that mounts
+ * <VisitorTracker />, which is every page. So an unrecorded visit is a 202
+ * (accepted, not recorded) with the reason in the body, and the cause is
+ * logged here, on the server, where the operator can act on it. A bad
+ * request (no visitor_id) is still a 400.
+ */
+function notRecorded(reason: string) {
+  return NextResponse.json(
+    { success: false, recorded: false, error: reason },
+    { status: 202 },
+  );
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -67,7 +84,8 @@ export async function POST(request: Request) {
     // cmd was posted to a tenant gateway, which registers no such method;
     // the call failed, `platformCall` answered `null`, and the branch below
     // turned every visit into a 502 — the same "could never succeed" shape
-    // as the per-method tenant leg it replaced.
+    // as the per-method tenant leg it replaced. (An unrecorded visit now
+    // answers 202 - see `notRecorded` - not a 502 in the visitor's console.)
     const host = process.env.ROKCT_BASE_URL;
     if (!host) {
       // No explicit origin would leave `platformCall` to resolve one from
@@ -76,10 +94,7 @@ export async function POST(request: Request) {
       console.error(
         "ROKCT_BASE_URL is not set; cannot record visit on the control plane",
       );
-      return NextResponse.json(
-        { success: false, error: "Control plane is not configured" },
-        { status: 502 },
-      );
+      return notRecorded("Control plane is not configured");
     }
     const data = await platformCall(
       "control:record_unique_visit",
@@ -93,18 +108,12 @@ export async function POST(request: Request) {
 
     if (data === null) {
       console.error("Failed to report visitor to control gateway");
-      return NextResponse.json(
-        { success: false, error: "Backend failed to record visit" },
-        { status: 502 },
-      );
+      return notRecorded("Backend failed to record visit");
     }
 
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json({ success: true, recorded: true, data });
   } catch (error: any) {
     console.error("Error in visitor api route:", error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 500 },
-    );
+    return notRecorded("Visit could not be recorded");
   }
 }

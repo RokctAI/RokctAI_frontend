@@ -1,0 +1,37 @@
+{
+  "name": "Example Bakehouse",
+  "wordmark": {
+    "lead": "Example",
+    "rest": "Bakehouse"
+  },
+  "motto": "Sourdough and pastry, baked before sunrise.",
+  "place": "Example Town",
+  "since": "2019",
+  "whatsapp": {
+    "number": "27000000000",
+    "display": "000 000 0000"
+  },
+  "header": {
+    "logo": "none",
+    "action": {
+      "label": "Pre-order",
+      "href": "whatsapp"
+    }
+  },
+  "metadata": {
+    "title": "Example Bakehouse: a demo local-data site",
+    "tagline": "Bread worth getting up for",
+    "description": "A demo record for the local-data site system: a made-up bakery with its own fonts, palette, layouts and art, drawn by the same code as every other site.",
+    "keywords": [
+      "demo",
+      "bakery",
+      "sourdough"
+    ],
+    "themeColor": "#2f5d46",
+    "locale": "en_ZA"
+  },
+  "footer": {
+    "line": "A demo site. Not a real business.",
+    "legal": "Example Bakehouse (a demo record)"
+  }
+}

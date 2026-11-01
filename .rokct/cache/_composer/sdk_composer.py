@@ -731,6 +731,18 @@ def _fetch_template_url(raw_base, name):
     return None
 
 
+def announce_own_composer_json():
+    """The log line for a shell whose app_type names no registry template -
+    the normal case for a client site (Ray, 2026-10-31: no per-client
+    compose templates): its own committed composer.json is the composition."""
+    name = resolve_app_type()
+    if name and os.path.exists(os.path.join(PROJECT_ROOT, "composer.json")):
+        print(
+            f"[i] no registry template '{name}.json': composing from the shell's own "
+            f"committed composer.json (its sdks[], home_sdk and data mode)."
+        )
+
+
 def resolve_composer_config():
     """Materialize composer.json from the registry template named by
     .rokct/config/app_type, when it names one. Delegates to the shared
@@ -744,11 +756,14 @@ def resolve_composer_config():
     "data" mode base_sdk reads, and its comment) survive the rewrite."""
     core = load_composer_core()
     if core is not None and hasattr(core, "NEXTJS_COMPOSER_TEMPLATES_REL"):
-        return core.resolve_composer_config(
+        written = core.resolve_composer_config(
             PROJECT_ROOT,
             registry_rel=COMPOSER_TEMPLATES_REL,
             fallback_rel=LEGACY_COMPOSER_TEMPLATES_REL,
         )
+        if not written:
+            announce_own_composer_json()
+        return written
     if core is not None:
         # An older protocol checkout whose core predates the split: its
         # registry is the combined frappe one, which still carries sdks[].
@@ -759,6 +774,7 @@ def resolve_composer_config():
         return False
     text = _fetch_template_standalone(name)
     if text is None:
+        announce_own_composer_json()
         return False
     try:
         json.loads(text)

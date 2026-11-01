@@ -1,0 +1,8 @@
+{
+  "tiers": [
+    { "name": "Country sourdough", "price": "R65", "unit": "per loaf", "detail": "Our everyday loaf, about 900 g.", "best": true },
+    { "name": "Butter croissant", "price": "R28", "unit": "each", "detail": "Plain, or filled with almond on weekends." }
+  ],
+  "ctaLabel": "Pre-order",
+  "bestLabel": "Most loved"
+}
