@@ -41,10 +41,17 @@ import {
   type SiteSection,
 } from "@/lib/site-data/kinds";
 
+import { fillSiteWordsDeep, sitePriceValues } from "./site-price";
+
 /** The kind's data, or undefined when the shell has none (or reads no data/). */
 export function siteKind<K extends SiteDataKind>(kind: K): SiteDataKinds[K] | undefined {
   if (!hasSiteDataIn(SITE_DATA, kind)) return undefined;
-  return resolveSiteData(SITE_DATA, kind);
+  const data = resolveSiteData(SITE_DATA, kind);
+  // 1.7.0: the price words ({perCase}, {bestPrice}, {bestMin}, {basePrice})
+  // come from data/pricing.json alone; every other kind's strings take them.
+  if (kind === "theme" || kind === "css") return data;
+  const pricing = hasSiteDataIn(SITE_DATA, "pricing") ? resolveSiteData(SITE_DATA, "pricing") : undefined;
+  return fillSiteWordsDeep(data, sitePriceValues(pricing));
 }
 
 /** Whether this shell's page is data: a data/sections.json and a data/site.json were bundled. */

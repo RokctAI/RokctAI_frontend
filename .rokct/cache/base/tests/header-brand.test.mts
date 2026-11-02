@@ -763,7 +763,8 @@ describe('showsHeaderAuth (1.38.0)', () => {
   it('is what the header reads, on the bar and in the burger panel, for a visitor with no session', () => {
     const header = readFileSync(new URL('./header.tsx', import.meta.url), 'utf8');
     assert.match(header, /dataMode\?: SiteDataMode;/);
-    assert.match(header, /const hasAuth = !!user \|\| showsHeaderAuth\(dataMode\);/);
+    // 1.60.0: and only when a pair is registered in the header auth slot.
+    assert.match(header, /const hasAuth = !!user \|\| \(hasHeaderAuth\(\) && showsHeaderAuth\(dataMode\)\);/);
     // Once for the desktop `auth` element, once for the stacked panel.
     assert.equal(header.split('!hasAuth ? null :').length - 1, 2);
     // The "use client" header never imports the server-only reader.

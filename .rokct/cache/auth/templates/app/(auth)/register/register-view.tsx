@@ -50,8 +50,7 @@ import {
   type RegisterStep,
   type RegisterStepProps,
 } from "@/components/custom/auth/register-registry";
-import { BrandLogo } from "@/components/custom/brand-logo";
-import { Header } from "@/components/custom/header";
+import { SiteShell, SiteShellLogo } from "@/components/custom/site-shell";
 import { SubmitButton } from "@/components/custom/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -292,11 +291,10 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled, next = null }: R
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header
+    <SiteShell
         openLoginPopup={() => handleNavigation(withReturnPath("/login", next))}
         openSignupPopup={() => handleNavigation("/register")}
-      />
+    >
 
       <div className="flex-1 flex flex-col items-center justify-center bg-background p-4">
         <div className="w-full max-w-md space-y-8">
@@ -308,7 +306,7 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled, next = null }: R
               branching here.
             */}
             <div className="mb-4">
-              <BrandLogo width={56} height={56} />
+              <SiteShellLogo size={56} />
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
               {copy.title}
@@ -373,7 +371,7 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled, next = null }: R
           )}
         </div>
       </div>
-    </div>
+    </SiteShell>
   );
 }
 

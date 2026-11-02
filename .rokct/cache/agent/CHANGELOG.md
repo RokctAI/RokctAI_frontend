@@ -1,5 +1,115 @@
 # Changelog
 
+## 1.25.0
+
+New `app_type.sticks` block, with `"common": false`.
+
+* agent_sdk is the home SDK of the Sticks website (RokctAI/sticks-web,
+  app_type `sticks`). Sticks is ROKCT's own product: people use it in the
+  Sticks app (RokctAI/sticks), and the website only explains it and links
+  the app's downloads (Ray, 2026-10-11: Next.js is the landing shell only;
+  no new sticks SDK, the AI lives in agent_sdk).
+* `"common": false` (The-Rokct-Protocol's Next.js installer, the persona
+  opt-out added for this block) keeps this manifest's top level - rokct.ai's
+  chat, register flow and opportunities, which need `db/`, auth_sdk and a
+  backend - out of that shell. Every other shell composes exactly as
+  before: the top level is untouched.
+* The block installs `templates/sticks/`:
+  * `app/page.tsx`: the landing the approved concept draws (artifact
+    PDm9514Z16ypx8dk3oQQtq), section for section, with Montserrat and
+    Nunito: the header (logo to `/`, light/dark switch, Get the app), the
+    crowd of Sticks with the orange ring round the only one looking up,
+    the house rule, Meet your Sticks with the Hire a Stick screen and the
+    New hire card in one row, the live feed, the ask you can try, Between
+    Sticks, the app gallery, how it works, the closing call to action and
+    the footer credit (base's SiteCredit: `© 2026 Sticks · Built with ♥ by
+    ROKCT`, the heart read as "love"). No wordmark closes the page; icons
+    are Remixicon only.
+  * The concept's colours (Ray, 2026-11-02: "i never said being black and
+    white means removing highligh colors or sticks colors and designs"):
+    black and white is the base - the concept's warm paper and ink, and
+    its ink-marked words - and its highlights stay on top: the orange ring
+    and the orange Start here and Try it tags, the gold, teal and purple
+    feed pills, green ticks and on-shift dots, gold waiting dots, the red
+    never line and footer heart, Tumi's green cap and the Sticks' coloured
+    shirts. The crowd is the concept's own picture,
+    `public/sticks/crowd-light.webp` and `crowd-dark.webp`, swapped with
+    the theme.
+  * Every phone screen is the app's guided-tour capture on GitHub, matched
+    by step id (`sticks-sources.ts`), never a copy committed here, with a
+    light and a dark capture swapped with the theme once the tour commits
+    `marketing/tour/screenshots-dark/` (a step with no dark capture shows
+    its light one). `SCREEN_RENDERS` in `sticks-sources.ts` is the one
+    place to switch a screen to an SVG render drawn from the app (Ray's
+    choice, 2026-11-01) once those renders work.
+  * The download buttons link the newest RokctAI/sticks release's
+    `app-vX.apk` (never the debug APK) and `sticks-windows-setup-vX.exe`
+    only when the release carries them; no release is a "Coming soon"
+    state, and an unreadable API opens the releases page. Both reads are
+    cached for an hour.
+  * The scrollbar is ink on paper in both themes; the Back to top
+    button (base_sdk >= 1.56.0's registry) is an ink pill; the site
+    metadata and favicon are the Sticks mark's. `prefers-reduced-motion`
+    stops the feed, the pulse and every transition.
+* Tests: `tests/test_sticks_landing.py` (the block, its files and its rules)
+  and `tests/sticks-landing.test.mts` (release assets, tour screens by step
+  id, the copy helpers) under node.
+
+## 1.24.0
+
+rokct.ai's landing is the redesign Ray approved on 2026-11-01: "Everything
+is a chat away." No base_sdk change: everything goes through base's
+page-sections, header-menu, hero-copy and network-strip registries, and one
+stylesheet scoped to the landing root.
+
+New installs: `rokct-hero`, `rokct-platform`, `rokct-funding` and
+`rokct-closing` (each an entry and its `.client.tsx`), `rokct-how`,
+`rokct-plans`, and under `components/custom/landing/`
+`rokct-landing-content.ts`, `rokct-landing-classes.ts`, `rokct-ui.tsx`,
+`rokct-landing.css`, `rokct-fonts.ts` and `fonts/rokct/`. Removed installs:
+`floating-nav`, `chat-section`, `logos`, `social-section`,
+`all-features-section`, `workflow-section`, `copied-pricing`,
+`faq-section`, `testimonials-section` (with their `.client.tsx`),
+`landing/agent-hero-form.tsx`, `landing/agent-logos.ts` and
+`landing/agent-card-row.ts`. New `requires`: `app/(auth)/register/page.tsx`.
+
+* The page, top to bottom: the hero (the rotating headline, two calls to
+  action and a sample conversation with ROK that plays five scenarios and
+  answers a tapped chip), "One platform. Every desk in the business." (six
+  tabs), "You ask. ROK does the work. You stay in charge." with its
+  diagram, "A day's work, on one screen." (eleven pictures and an "Ask for
+  what isn't shown." card), the funding band (the registry's counts and
+  the real opportunities finder, which moves here from the hero), the
+  plans ladder with the live plan cards under it when the backend has
+  plans (`pricing`, now order 45 with the `prices` anchor), "Your company,
+  at your own address.", "Wherever you work.", the FAQ and "Ask ROK
+  anything."
+* All Merlin-era material is gone: the `social` and `features` blocks of
+  `agent-landing-config.ts` (which now holds only the plan cards' words),
+  the "Use OpenAI o1" chat card, the Chrome Web Store badge and header
+  button, the client logos marquee, the testimonials and the feature grid.
+  No client showcase, no browser-extension card.
+* Header: the five in-page links (Ask ROK, Platform, How it works,
+  Funding, Plans) are anchors resolved against the sections' `meta.nav`;
+  one action, "Start with ROKCT", to `/register`. The brand keeps base's
+  collapse (1500ms), the chevron, the nav that fades after the collapse
+  and returns on hover or scroll, and the country code from
+  `getBrandingSync()` in the same superscript size as the live site; the
+  mark is the redesign's yellow R tile (`public/landing/agent/rk-mark.svg`).
+  On a first visit, with no branding cache yet, the code comes from the
+  visitor's time zone for the countries the platform serves.
+* `agent-hero-copy.ts` empties base's hero frame (no badges, no trust
+  line); the frame itself is hidden by `rokct-landing.css`.
+* The network strip is drawn nowhere on rokct.ai (`placement: { landing:
+  "none", footer: false }`); the sites stay declared.
+* The eleven 1.23.0 pictures and the compare deck's three are replaced by
+  the redesign's eleven `rk-*.svg` drawings.
+* Faces: Bricolage Grotesque, Instrument Sans and JetBrains Mono, bundled
+  through `next/font/local` (latin subsets, SIL OFL 1.1, `OFL.txt`
+  beside them); nothing is fetched from a font host.
+* Icons are Remixicon only. Motion respects `prefers-reduced-motion`, and
+  the page reads in full without scripts.
+
 ## 1.23.0
 
 New install: `templates/public/landing/agent` -> `public/landing/agent`.

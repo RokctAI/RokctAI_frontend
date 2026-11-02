@@ -61,3 +61,45 @@ export function fillPriceWords(template: string, { n, price, perCase }: PriceWor
   };
   return template.replace(/\{(n|units|price|each|total)\}/g, (whole, key: string) => values[key] ?? whole);
 }
+
+/**
+ * 1.7.0 (Ray: "would love if change is one place and it change that amount
+ * everywhere"): the site-wide price words, every one read from
+ * data/pricing.json, so a price, the case size or the minimum order is
+ * written once. `{perCase}` (bottles to a case), `{bestPrice}` and
+ * `{bestMin}` (the best tier's price and minQty: the tier marked `best`,
+ * else the last), `{basePrice}` (the first tier's price). site-source.ts
+ * fills them in every string of the site's data, so the hero tag, the
+ * pricing cards and slider, the order form and its WhatsApp message and the
+ * metadata all print the same numbers.
+ */
+export interface SitePriceSource {
+  perCase?: number;
+  tiers?: readonly { price: string; minQty?: number; best?: boolean }[];
+}
+
+export function sitePriceValues(pricing: SitePriceSource | undefined): Record<string, string | undefined> {
+  const tiers = pricing?.tiers ?? [];
+  const best = tiers.find((t) => t.best) ?? tiers[tiers.length - 1];
+  return {
+    perCase: pricing?.perCase === undefined ? undefined : String(pricing.perCase),
+    bestPrice: best?.price,
+    bestMin: best?.minQty === undefined ? undefined : String(best.minQty),
+    basePrice: tiers[0]?.price,
+  };
+}
+
+/** Fills the site-wide price words in `template`; a token it cannot fill stays as written. */
+export function fillSiteWords(template: string, values: Record<string, string | undefined>): string {
+  return template.replace(/\{(perCase|bestPrice|bestMin|basePrice)\}/g, (whole, key: string) => values[key] ?? whole);
+}
+
+/** `value` with the site-wide price words filled in every string, deep. */
+export function fillSiteWordsDeep<T>(value: T, values: Record<string, string | undefined>): T {
+  if (typeof value === "string") return fillSiteWords(value, values) as T;
+  if (Array.isArray(value)) return value.map((v) => fillSiteWordsDeep(v, values)) as T;
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, fillSiteWordsDeep(v, values)])) as T;
+  }
+  return value;
+}

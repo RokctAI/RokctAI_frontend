@@ -31,6 +31,13 @@
 // given more `labels` rolls through them, the label on show running off round
 // one edge while the next wraps on from the other. With reduced motion the
 // first label stays on and the drops stay caught part-way down.
+//
+// 1.6.0 (Ray: "bottles have water that is not alive"): the bottle is clear
+// PET - knurled cap, tamper and support rings, a ridged neck and shoulder,
+// grip ribs, a petaloid base, highlights and edge refraction - and the water
+// laps, stays level as the bottle tilts, shimmers with caustics and carries
+// slow rising bubbles. CSS keyframes only (site.css); reduced motion holds a
+// still frame.
 import React from "react";
 
 import type { SiteArt, SiteLabel, SiteStepIcon } from "@/lib/site-data/kinds";
@@ -39,7 +46,14 @@ export type SiteBottleSize = "500 ml" | "1.25 L";
 
 function bodyPath(extra: number) {
   const b = 496 + extra;
-  return `M86 48 H134 V82 C134 104 192 112 192 164 V${b} C192 ${b + 42} 180 ${b + 74} 150 ${b + 90} Q110 ${b + 104} 70 ${b + 90} C40 ${b + 74} 28 ${b + 42} 28 ${b} V164 C28 112 86 104 86 82 Z`;
+  // A PET bottle: the neck below the cap, the shoulder flaring to the body,
+  // and a petaloid base standing on three visible feet.
+  return (
+    `M88 48 H132 V84 C132 106 192 112 192 164 V${b} C192 ${b + 40} 188 ${b + 68} 178 ${b + 84} ` +
+    `Q170 ${b + 100} 152 ${b + 99} Q140 ${b + 98} 132 ${b + 93} Q110 ${b + 106} 88 ${b + 93} ` +
+    `Q80 ${b + 98} 68 ${b + 99} Q50 ${b + 100} 42 ${b + 84} C32 ${b + 68} 28 ${b + 40} 28 ${b} ` +
+    `V164 C28 112 88 106 88 84 Z`
+  );
 }
 
 const LABEL_SHAPE = "M20 250 Q110 262 200 250 V404 Q110 416 20 404 Z";
@@ -111,7 +125,49 @@ function LabelFace({ label, size }: { label: SiteLabel; size: SiteBottleSize }) 
 }
 
 /** Where the water stands: in the neck, under the empty clear plastic at the top. */
-const WATER_LEVEL = 70;
+const WATER_LEVEL = 76;
+
+/** One wavelength of the water's surface, in viewBox units: the wave slides one length and loops. */
+const WAVE_LENGTH = 22;
+
+/** The water's surface across the neck: `count` crests of `amp`, closed `depth` below. */
+function wavePath(y: number, amp: number, depth: number): string {
+  const count = 10;
+  let d = `M44 ${y} q${WAVE_LENGTH / 4} ${-amp} ${WAVE_LENGTH / 2} 0`;
+  for (let i = 1; i < count * 2; i++) d += ` t${WAVE_LENGTH / 2} 0`;
+  return `${d} V${y + depth} H44 Z`;
+}
+
+/** The same surface as an open line, for the meniscus glint. */
+function waveLine(y: number, amp: number): string {
+  return wavePath(y, amp, 0).replace(/ V.*$/, "");
+}
+
+/**
+ * The bubbles that rise through the still water: x, how far above the base
+ * they start, radius, seconds to rise, delay, and where along the rise a
+ * reduced-motion frame holds them (0 the base, 1 the surface).
+ */
+const BUBBLES: readonly (readonly [number, number, number, number, number, number])[] = [
+  [64, 40, 2.2, 15, 0, 0.18],
+  [150, 30, 1.6, 12, 3.4, 0.62],
+  [100, 52, 1.2, 17, 6.8, 0.4],
+  [168, 60, 2.6, 19, 1.8, 0.86],
+  [84, 26, 1.4, 13, 9.2, 0.74],
+  [132, 44, 1.9, 16, 11.6, 0.08],
+  [56, 70, 1.1, 14, 5.2, 0.52],
+];
+
+/** Light caught in the water and thrown as moving lines: y from the top, or from the base when negative; width; seconds; delay. */
+const CAUSTICS: readonly (readonly [number, number, number, number])[] = [
+  [204, 2, 6.5, 0],
+  [228, 1.4, 8, 2.2],
+  [-122, 2.2, 7, 1],
+  [-100, 1.5, 9, 3.6],
+  [-76, 2.6, 6, 0.4],
+  [-54, 1.8, 8.5, 4.8],
+  [-34, 2.4, 7.5, 2.8],
+];
 
 /** How far a drop runs down the bottle, in viewBox units. */
 const RUN_DISTANCE = 86;
@@ -139,7 +195,7 @@ function dropPath(r: number): string {
 /** The label roll: each label holds ROLL_HOLD seconds and rolls in ROLL_TURN. */
 const ROLL_HOLD = 2.8;
 const ROLL_TURN = 1.1;
-const ROLL_STEP = ROLL_HOLD + ROLL_TURN;
+export const ROLL_STEP = ROLL_HOLD + ROLL_TURN;
 
 /**
  * The keyframes of a bottle's label roll over `n` labels. Every face scales
@@ -164,6 +220,15 @@ function rollCss(id: string, n: number): string {
  * A PET bottle wearing `label`: a 500 ml bottle, or the taller 1.25 litre.
  * The label is drawn from its name and sub-line, or, when it names an
  * `art` image, that image laid over the label's ground.
+ *
+ * 1.6.0: the bottle is drawn as clear PET - a knurled cap on its tamper
+ * ring, the support ring and a ridged neck, a ridged shoulder, grip ribs
+ * and a petaloid base, with specular highlights, a rim light and the dark
+ * refraction at the edges - and the water is alive: its surface laps across
+ * the neck and stays level as the bottle tilts (the stage sets --cs-level),
+ * light caustics shimmer through it, the bottle's lens throws a bright line
+ * down the far side, and slow bubbles rise behind the label. Reduced motion
+ * holds one still frame: the surface calm, the bubbles caught part-way up.
  */
 export function Bottle({
   id,
@@ -188,12 +253,18 @@ export function Bottle({
   const extra = size === "1.25 L" ? 90 : 0;
   const vbH = 620 + extra;
   const body = bodyPath(extra);
+  const base = 496 + extra;
   const w = (height * 240) / vbH;
   const capFill = cap ?? "#ffffff";
   const name = label.name ?? "";
   const ribsLow = [448, 468, 488].map((y) => y + extra);
   const faces = [label, ...(labels ?? [])];
   const roll = faces.length > 1 ? rollCss(id, faces.length) : null;
+  const L = WATER_LEVEL;
+  const levelOrigin = { transformOrigin: `110px ${L}px` };
+  // The knurls on the cap, spaced as they turn round the cylinder.
+  const knurls = Array.from({ length: 17 }, (_, i) => 110 + 30 * Math.sin(((i - 8) * 10 * Math.PI) / 180));
+  const rib = (y: number) => `M20 ${y} Q110 ${y + 7} 200 ${y}`;
   return (
     <svg
       width={w}
@@ -205,29 +276,113 @@ export function Bottle({
       style={style}
     >
       <defs>
-        <linearGradient id={`${id}-water`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#f6fbfd" />
-          <stop offset="0.4" stopColor="#dcedf3" />
-          <stop offset="1" stopColor="#a9d2e2" />
+        <linearGradient id={`${id}-water`} x1="0" y1={L} x2="0" y2={base + 100} gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#f4fbfd" />
+          <stop offset="0.25" stopColor="#dbf0f7" />
+          <stop offset="0.7" stopColor="#aed9e9" />
+          <stop offset="1" stopColor="#7dbcd3" />
+        </linearGradient>
+        {/* The cylinder of water as a lens: dark refraction at both edges, a soft glow left of centre, the bright focus line on the far side. */}
+        <linearGradient id={`${id}-refract`} x1="28" y1="0" x2="192" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#0b3446" stopOpacity="0.42" />
+          <stop offset="0.06" stopColor="#0b3446" stopOpacity="0.14" />
+          <stop offset="0.14" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0.3" stopColor="#ffffff" stopOpacity="0.2" />
+          <stop offset="0.46" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0.7" stopColor="#0b3446" stopOpacity="0.04" />
+          <stop offset="0.9" stopColor="#0b3446" stopOpacity="0.16" />
+          <stop offset="1" stopColor="#0b3446" stopOpacity="0.46" />
+        </linearGradient>
+        <linearGradient id={`${id}-lens`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.85" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        {/* Seen from just below, the surface is a silver mirror band. */}
+        <linearGradient id={`${id}-surf`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.95" />
+          <stop offset="0.35" stopColor="#e3f3f8" stopOpacity="0.9" />
+          <stop offset="1" stopColor="#d9eef5" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id={`${id}-caustic`} x1="28" y1="0" x2="192" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0.2" stopColor="#ffffff" stopOpacity="1" />
+          <stop offset="0.65" stopColor="#ffffff" stopOpacity="0.85" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        <radialGradient id={`${id}-pool`} cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.85" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={`${id}-bubble`} cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.05" />
+          <stop offset="0.7" stopColor="#ffffff" stopOpacity="0.25" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0.95" />
+        </radialGradient>
+        {/* The plastic: a rib or ridge catches light across the front and fades round the sides. */}
+        <linearGradient id={`${id}-rib`} x1="28" y1="0" x2="192" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.1" />
+          <stop offset="0.25" stopColor="#ffffff" stopOpacity="0.9" />
+          <stop offset="0.6" stopColor="#ffffff" stopOpacity="0.35" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0.05" />
         </linearGradient>
         <linearGradient id={`${id}-sheen`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#ffffff" stopOpacity="0.6" />
-          <stop offset="0.18" stopColor="#ffffff" stopOpacity="0.1" />
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.5" />
+          <stop offset="0.16" stopColor="#ffffff" stopOpacity="0.08" />
           <stop offset="0.55" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="0.86" stopColor="#1b2a33" stopOpacity="0.12" />
-          <stop offset="1" stopColor="#1b2a33" stopOpacity="0.3" />
+          <stop offset="0.88" stopColor="#1b2a33" stopOpacity="0.1" />
+          <stop offset="1" stopColor="#1b2a33" stopOpacity="0.24" />
         </linearGradient>
+        <linearGradient id={`${id}-glowx`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.42" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        {/* The specular runs the bottle's height and dims over the label, which is printed film, not bare plastic. */}
+        <linearGradient id={`${id}-spec`} x1="0" y1="172" x2="0" y2={552 + extra} gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0.06" stopColor="#ffffff" stopOpacity="0.95" />
+          <stop offset={((244 - 172) / (380 + extra)).toFixed(3)} stopColor="#ffffff" stopOpacity="0.9" />
+          <stop offset={((262 - 172) / (380 + extra)).toFixed(3)} stopColor="#ffffff" stopOpacity="0.28" />
+          <stop offset={((404 - 172) / (380 + extra)).toFixed(3)} stopColor="#ffffff" stopOpacity="0.28" />
+          <stop offset={((422 - 172) / (380 + extra)).toFixed(3)} stopColor="#ffffff" stopOpacity="0.9" />
+          <stop offset="0.92" stopColor="#ffffff" stopOpacity="0.8" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id={`${id}-glow`} x1="0" y1="150" x2="0" y2={570 + extra} gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0.1" stopColor="#ffffff" stopOpacity="1" />
+          <stop offset={((246 - 150) / (420 + extra)).toFixed(3)} stopColor="#ffffff" stopOpacity="1" />
+          <stop offset={((262 - 150) / (420 + extra)).toFixed(3)} stopColor="#ffffff" stopOpacity="0.35" />
+          <stop offset={((404 - 150) / (420 + extra)).toFixed(3)} stopColor="#ffffff" stopOpacity="0.35" />
+          <stop offset={((420 - 150) / (420 + extra)).toFixed(3)} stopColor="#ffffff" stopOpacity="1" />
+          <stop offset="0.9" stopColor="#ffffff" stopOpacity="1" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        <mask id={`${id}-glowmask`} maskUnits="userSpaceOnUse" x="0" y="0" width="240" height={vbH}>
+          <rect x="0" y="150" width="240" height={420 + extra} fill={`url(#${id}-glow)`} />
+        </mask>
         <linearGradient id={`${id}-lab`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#000" stopOpacity="0.2" />
-          <stop offset="0.2" stopColor="#fff" stopOpacity="0.1" />
-          <stop offset="0.5" stopColor="#fff" stopOpacity="0" />
-          <stop offset="0.85" stopColor="#000" stopOpacity="0.1" />
-          <stop offset="1" stopColor="#000" stopOpacity="0.34" />
+          <stop offset="0" stopColor="#000" stopOpacity="0.3" />
+          <stop offset="0.12" stopColor="#000" stopOpacity="0.06" />
+          <stop offset="0.24" stopColor="#fff" stopOpacity="0.16" />
+          <stop offset="0.4" stopColor="#fff" stopOpacity="0" />
+          <stop offset="0.8" stopColor="#000" stopOpacity="0.08" />
+          <stop offset="1" stopColor="#000" stopOpacity="0.4" />
         </linearGradient>
-        <linearGradient id={`${id}-cap`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#ffffff" stopOpacity="0.35" />
-          <stop offset="0.5" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="1" stopColor="#000000" stopOpacity="0.3" />
+        <linearGradient id={`${id}-cap`} x1="78" y1="0" x2="142" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#000000" stopOpacity="0.28" />
+          <stop offset="0.1" stopColor="#ffffff" stopOpacity="0.1" />
+          <stop offset="0.26" stopColor="#ffffff" stopOpacity="0.5" />
+          <stop offset="0.42" stopColor="#ffffff" stopOpacity="0.06" />
+          <stop offset="0.78" stopColor="#000000" stopOpacity="0.14" />
+          <stop offset="1" stopColor="#000000" stopOpacity="0.42" />
+        </linearGradient>
+        <linearGradient id={`${id}-ring`} x1="76" y1="0" x2="144" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#7fa9ba" stopOpacity="0.7" />
+          <stop offset="0.25" stopColor="#ffffff" stopOpacity="0.95" />
+          <stop offset="0.6" stopColor="#e6f2f6" stopOpacity="0.7" />
+          <stop offset="1" stopColor="#5d8799" stopOpacity="0.8" />
         </linearGradient>
         <radialGradient id={`${id}-drop`} cx="0.35" cy="0.3" r="0.7">
           <stop offset="0" stopColor="#ffffff" stopOpacity="0.95" />
@@ -257,30 +412,77 @@ export function Bottle({
 
       <ellipse cx="112" cy={604 + extra} rx="78" ry="9" fill="#1a0508" opacity="0.35" filter={`url(#${id}-blur)`} />
 
-      <rect x="78" y="2" width="64" height="38" rx="7" fill={capFill} />
-      <rect x="78" y="2" width="64" height="38" rx="7" fill={`url(#${id}-cap)`} />
-      {Array.from({ length: 9 }).map((_, i) => (
-        <line key={i} x1={85 + i * 6.3} y1="8" x2={85 + i * 6.3} y2="34" stroke="#000" strokeOpacity="0.12" strokeWidth="1.4" />
-      ))}
-      <rect x="80" y="40" width="60" height="9" rx="3" fill={capFill} opacity="0.85" />
-
-      <path d={body} fill="#eef6f9" fillOpacity="0.2" />
+      {/* The plastic and the water, inside the bottle's outline. */}
+      <path d={body} fill="#eef6f9" fillOpacity="0.22" />
       <g clipPath={`url(#${id}-clip)`}>
-        <rect x="0" y={WATER_LEVEL} width="240" height={vbH} fill={`url(#${id}-water)`} />
-        <ellipse cx="110" cy={WATER_LEVEL} rx="26" ry="2.5" fill="#ffffff" opacity="0.75" />
-        <rect x="86" y="48" width="48" height={WATER_LEVEL - 48} fill="#ffffff" opacity="0.12" />
-        {[176, 194, 212].map((y) => (
-          <path key={y} d={`M20 ${y} Q110 ${y + 7} 200 ${y}`} fill="none" stroke="#fff" strokeOpacity="0.6" strokeWidth="2" />
+        <g className="cs-water-level" style={levelOrigin}>
+          <g className="cs-slosh" style={levelOrigin}>
+            <rect x="-120" y={L + 1.5} width="480" height={vbH + 120} fill={`url(#${id}-water)`} />
+            <g className="cs-wave cs-wave-back">
+              <path d={wavePath(L + 0.6, 1.1, 5)} fill="#cfe8f1" fillOpacity="0.9" />
+            </g>
+            <g className="cs-wave">
+              <path d={wavePath(L, 1.5, 7)} fill={`url(#${id}-surf)`} />
+              <path d={waveLine(L, 1.5)} fill="none" stroke="#ffffff" strokeWidth="1.1" strokeLinecap="round" />
+              <path d={waveLine(L + 4.5, 1.2)} fill="none" stroke="#3d7f97" strokeOpacity="0.32" strokeWidth="0.9" />
+            </g>
+          </g>
+        </g>
+        <rect x="0" y={L + 6} width="240" height={vbH} fill={`url(#${id}-refract)`} />
+        <rect className="cs-lens" x="152" y={L + 70} width="9" height={base - L - 40} rx="4.5" fill={`url(#${id}-lens)`} opacity="0.55" />
+        <ellipse className="cs-pool" cx="114" cy={base + 66} rx="58" ry="14" fill={`url(#${id}-pool)`} />
+        {CAUSTICS.map(([y0, sw, dur, delay], i) => {
+          const y = y0 < 0 ? base + 100 + y0 : y0;
+          const k = i % 2 ? -1 : 1;
+          return (
+            <path
+              key={`c${i}`}
+              className="cs-caustic"
+              d={`M30 ${y} C62 ${y - 7 * k} 84 ${y + 6 * k} 112 ${y} S160 ${y - 6 * k} 190 ${y + 2 * k}`}
+              fill="none"
+              stroke={`url(#${id}-caustic)`}
+              strokeWidth={sw}
+              strokeLinecap="round"
+              style={{ animationDuration: `${dur}s`, animationDelay: `${-delay}s` }}
+            />
+          );
+        })}
+        {BUBBLES.map(([x, up, r, dur, delay, at], i) => {
+          const y = base + 100 - up;
+          const rise = y - (L + 10);
+          return (
+            <g
+              key={`b${i}`}
+              className="cs-bubble"
+              aria-hidden="true"
+              style={{ "--cs-rise": `${-rise}px`, "--cs-at": at, animationDuration: `${dur}s`, animationDelay: `${-delay}s` } as React.CSSProperties}
+            >
+              <circle cx={x} cy={y} r={r} fill={`url(#${id}-bubble)`} stroke="#4f8195" strokeOpacity="0.35" strokeWidth="0.4" />
+              <circle cx={x - r * 0.35} cy={y - r * 0.35} r={r * 0.3} fill="#ffffff" opacity="0.95" />
+            </g>
+          );
+        })}
+
+        {/* Ridges on the neck and shoulder, grip ribs above the label and near the base. */}
+        {[66, 71].map((y) => (
+          <path key={`n${y}`} d={`M86 ${y} Q110 ${y + 2.5} 134 ${y}`} fill="none" stroke="#ffffff" strokeOpacity="0.75" strokeWidth="1.3" />
         ))}
-        {[180, 198, 216].map((y) => (
-          <path key={y} d={`M20 ${y} Q110 ${y + 7} 200 ${y}`} fill="none" stroke="#1b2a33" strokeOpacity="0.1" strokeWidth="1.5" />
+        {[118, 132, 146].map((y) => (
+          <g key={`s${y}`}>
+            <path d={rib(y)} fill="none" stroke={`url(#${id}-rib)`} strokeWidth="1.6" />
+            <path d={rib(y + 3)} fill="none" stroke="#1b2a33" strokeOpacity="0.1" strokeWidth="1.2" />
+          </g>
         ))}
-        {ribsLow.map((y) => (
-          <path key={y} d={`M20 ${y} Q110 ${y + 7} 200 ${y}`} fill="none" stroke="#fff" strokeOpacity="0.55" strokeWidth="2" />
+        {[176, 194, 212, ...ribsLow].map((y) => (
+          <g key={`r${y}`}>
+            <path d={rib(y)} fill="none" stroke={`url(#${id}-rib)`} strokeWidth="2.2" />
+            <path d={rib(y + 4)} fill="none" stroke="#1b2a33" strokeOpacity="0.12" strokeWidth="1.5" />
+          </g>
         ))}
-        {ribsLow.map((y) => (
-          <path key={`s${y}`} d={`M20 ${y + 4} Q110 ${y + 11} 200 ${y + 4}`} fill="none" stroke="#1b2a33" strokeOpacity="0.1" strokeWidth="1.5" />
-        ))}
+        {/* The petaloid base: the valleys between the feet. */}
+        <path d={`M132 ${base + 93} C134 ${base + 80} 140 ${base + 66} 146 ${base + 58}`} fill="none" stroke="#1b2a33" strokeOpacity="0.14" strokeWidth="1.4" />
+        <path d={`M88 ${base + 93} C86 ${base + 80} 80 ${base + 66} 74 ${base + 58}`} fill="none" stroke="#1b2a33" strokeOpacity="0.14" strokeWidth="1.4" />
+        <path d={`M98 ${base + 99} Q110 ${base + 103} 124 ${base + 99}`} fill="none" stroke="#ffffff" strokeOpacity="0.7" strokeWidth="1.2" />
 
         <g clipPath={`url(#${id}-labclip)`}>
           {faces.map((face, i) => (
@@ -299,11 +501,38 @@ export function Bottle({
           ))}
         </g>
         <path d={LABEL_SHAPE} fill={`url(#${id}-lab)`} />
+        {/* The label's edges: a lit top edge, a shadow under the bottom one. */}
+        <path d="M20 250 Q110 262 200 250" fill="none" stroke="#ffffff" strokeOpacity="0.55" strokeWidth="1" />
+        <path d="M20 405.5 Q110 417.5 200 405.5" fill="none" stroke="#0b2430" strokeOpacity="0.22" strokeWidth="2" />
 
+        {/* The clear PET over everything: the sheen, a broad soft highlight, the sharp specular, the shoulder's glint, the rim light. */}
         <path d={body} fill={`url(#${id}-sheen)`} />
-        <rect x="44" y="128" width="12" height={440 + extra} rx="6" fill="#fff" opacity="0.32" />
-        <rect x="176" y="150" width="4" height={400 + extra} rx="2" fill="#1b2a33" opacity="0.14" />
+        <rect x="38" y="150" width="26" height={420 + extra} rx="13" fill={`url(#${id}-glowx)`} mask={`url(#${id}-glowmask)`} />
+        <rect x="47" y="172" width="4.5" height={380 + extra} rx="2.25" fill={`url(#${id}-spec)`} />
+        <path d="M100 90 C92 110 58 118 49 160" fill="none" stroke="#ffffff" strokeOpacity="0.7" strokeWidth="4.5" strokeLinecap="round" />
+        <path d="M120 92 C126 104 150 112 160 124" fill="none" stroke="#ffffff" strokeOpacity="0.35" strokeWidth="2" strokeLinecap="round" />
+        <rect x="92.5" y="50" width="3" height="32" rx="1.5" fill="#ffffff" opacity="0.7" />
+        <rect x="181" y="176" width="2.6" height={380 + extra} rx="1.3" fill="#ffffff" opacity="0.5" />
       </g>
+      <path d={body} fill="none" stroke="#0b3446" strokeOpacity="0.2" strokeWidth="1.6" />
+      <path d={body} fill="none" stroke="#ffffff" strokeOpacity="0.6" strokeWidth="0.7" />
+
+      {/* The support ring, then the cap on its tamper ring. */}
+      <rect x="79" y="54" width="62" height="6" rx="3" fill={`url(#${id}-ring)`} />
+      <rect x="79" y="58.6" width="62" height="1.4" rx="0.7" fill="#0b3446" opacity="0.22" />
+      <rect x="80" y="40" width="60" height="9" rx="2.5" fill={capFill} />
+      <rect x="80" y="40" width="60" height="9" rx="2.5" fill={`url(#${id}-cap)`} />
+      <line x1="81" y1="43.4" x2="139" y2="43.4" stroke="#000" strokeOpacity="0.32" strokeWidth="0.9" strokeDasharray="5 2.2" />
+      <rect x="78" y="2" width="64" height="39" rx="6" fill={capFill} />
+      <rect x="78" y="2" width="64" height="39" rx="6" fill={`url(#${id}-cap)`} />
+      {knurls.map((x, i) => (
+        <g key={`k${i}`}>
+          <line x1={x} y1="9" x2={x} y2="37" stroke="#000" strokeOpacity="0.14" strokeWidth="1.1" />
+          <line x1={x + 0.9} y1="9" x2={x + 0.9} y2="37" stroke="#fff" strokeOpacity="0.16" strokeWidth="0.7" />
+        </g>
+      ))}
+      <rect x="80" y="2.6" width="60" height="4" rx="2" fill="#ffffff" opacity="0.32" />
+      <rect x="78" y="38.6" width="64" height="2.4" rx="1.2" fill="#000000" opacity="0.18" />
 
       {[
         [58, 150, 5],

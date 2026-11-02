@@ -8,7 +8,26 @@ write to, and the host seams it overwrites (`middleware.ts`,
 `components/custom/session-provider.tsx`). `manifest.json` lists what is
 installed and what the host must already have; `CHANGELOG.md` the history.
 
-Requires base_sdk >= 1.20.0.
+Requires base_sdk >= 1.60.0 (for the header pair below; the rest needs >= 1.20.0).
+
+## The header's Log in / Sign up (1.11.0)
+
+base_sdk >= 1.60.0's header draws no sign-in pair of its own; it renders an
+empty slot, `components/custom/header-auth-slot.tsx`, that this SDK fills.
+`components/custom/auth/header-auth-buttons.tsx` is registered at base's
+`components/custom/landing/header-auth.ts` with one integration line at
+`// @rokct-sdk-header-auth-start`, so a shell that composes auth_sdk shows
+Log in and Sign up and a shell that does not shows neither (Ray,
+2026-11-01: "we just moving login and signup buttons to injection").
+
+The component takes base's `HeaderAuthProps`: `variant` `"bar"` (a Log in
+link and a Sign up pill) or `"panel"` (two stacked buttons, a tap runs
+`onNavigate` first so the panel closes), `loginUrl` / `signupUrl`, the auth
+pages' `openLoginPopup` / `openSignupPopup`, `dataMode` (nothing on a
+`"local"` shell, base's `showsHeaderAuth`) and `classes` (`login`,
+`signup`). base's header passes the classes its pair always had; a header a
+home SDK owns passes its own; without any the pair draws base's look
+(`HEADER_AUTH_DEFAULT_CLASSES`).
 
 ## The tenant-host switch (1.7.0)
 

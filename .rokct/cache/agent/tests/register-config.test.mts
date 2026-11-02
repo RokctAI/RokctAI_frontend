@@ -13,11 +13,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-// agent_sdk 1.12.0: rokct.ai's register config and header menu. Run by
-// tests/test_manifest.py against staged copies of
-// components/custom/auth/agent-register-config.ts and
-// components/custom/landing/agent-header-menu.ts, with the host modules
-// they import replaced by tests/stubs, under node's own test runner.
+// agent_sdk 1.12.0: rokct.ai's register config. Run by
+// tests/test_manifest.py against a staged copy of
+// components/custom/auth/agent-register-config.ts, with the host modules
+// it imports replaced by tests/stubs, under node's own test runner. (The
+// header menu's suite moved to hero-copy.test.mts in 1.24.0.)
 
 import assert from 'node:assert/strict';
 import { beforeEach, describe, it } from 'node:test';
@@ -27,7 +27,6 @@ import config, {
   industryOptions,
   planOptions,
 } from './agent-register-config.ts';
-import menu from './agent-header-menu.ts';
 import { PLATFORM_NAME } from './stubs/app/config/platform.ts';
 import { catalogue } from './stubs/lib/actions/getSubscriptionPlans.ts';
 import { industries } from './stubs/app/(auth)/agent-register-actions.ts';
@@ -132,48 +131,5 @@ describe('the industry options', () => {
        'Education', 'Distribution', 'Services', 'Other'],
     );
     for (const o of options) assert.equal(o.label, o.value);
-  });
-});
-
-describe('the header menu', () => {
-  it('draws the local Chrome Web Store mark on the Add ROK Extension action and nothing else changes', () => {
-    const actions = menu.actions ?? [];
-    assert.deepEqual(actions.map((a) => a.id), ['chat-rokct', 'add-extension']);
-    const extension = actions.find((a) => a.id === 'add-extension');
-    assert.ok(extension);
-    // 1.15.0: the shell's own file, not lucide's glyph and not a hot-link.
-    assert.deepEqual(extension.icon, { src: '/brand/marks/chrome-web-store.svg', alt: 'Chrome Web Store' });
-    assert.equal(extension.variant, 'primary');
-    assert.equal(extension.external, true);
-    assert.equal(extension.label, 'Add ROK Extension');
-    const chat = actions.find((a) => a.id === 'chat-rokct');
-    assert.ok(chat);
-    assert.equal(chat.icon, undefined);
-    // 1.14.0: the filled muted button the old nav drew it as.
-    assert.equal(chat.variant, 'secondary');
-  });
-
-  it('declares the old header\'s brand: the BETA-badged mark that collapses (1.14.0)', () => {
-    const brand = menu.brand;
-    assert.ok(brand);
-    assert.equal(brand.badge, true);
-    assert.equal(brand.logo, undefined);
-    assert.equal(brand.wordmark, undefined);
-    assert.ok(typeof brand.collapse === 'object' && brand.collapse !== null);
-    const collapse = brand.collapse as { delayMs?: number; code?: () => unknown };
-    assert.equal(collapse.delayMs, 1500);
-    assert.equal(typeof collapse.code, 'function');
-    // The stub's branding cache is empty (as on a first visit): no code.
-    assert.equal(collapse.code?.(), null);
-  });
-
-  it('keeps its anchors, links and groups', () => {
-    assert.deepEqual(menu.anchors, ['pricing']);
-    // 1.23.0: Affiliate and Teams are not drawn while their pages 404.
-    assert.deepEqual((menu.links ?? []).map((l) => l.id), []);
-    assert.deepEqual(
-      (menu.groups ?? []).map((g) => g.id),
-      ['product', 'ai-chat', 'productivity', 'tools', 'summary'],
-    );
   });
 });
