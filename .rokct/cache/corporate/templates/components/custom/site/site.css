@@ -1,0 +1,1629 @@
+/*
+ * Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
+ * The local-data site's stylesheet (corporate_sdk 1.4.0): every rule is
+ * scoped to `.cs-site` and reads the site's identity from CSS variables -
+ * the palette (--cs-paper, --cs-brand, ...), the two faces
+ * (--cs-font-display / --cs-font-text) and the display voice
+ * (--cs-display-weight / -style / -case, --cs-heading-weight) - which
+ * site-theme-section.tsx writes from data/theme.json, after this file. A
+ * site's own data/site.css comes after both. Nothing here names a client.
+ */
+
+.cs-site {
+  --cs-font-sans-stack: var(--cs-font-text), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --cs-font-display-stack: var(--cs-font-display), "Arial Black", var(--cs-font-text), ui-sans-serif, system-ui,
+    sans-serif;
+  --cs-display-weight: 800;
+  --cs-display-style: normal;
+  --cs-display-case: none;
+  --cs-heading-weight: 700;
+}
+
+.cs-site body,
+.cs-site:not(html) {
+  background: var(--cs-paper) !important;
+  color: var(--cs-ink) !important;
+  font-family: var(--cs-font-sans-stack) !important;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+.cs-site ::selection {
+  background: var(--cs-brand);
+  color: #ffffff;
+}
+
+/* ------------------------------------------------------------ type ---- */
+.cs-display {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-display-weight);
+  font-style: var(--cs-display-style);
+  text-transform: var(--cs-display-case);
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  color: var(--cs-ink);
+  text-wrap: balance;
+}
+.cs-h2 {
+  font-size: clamp(2.1rem, 1.3rem + 3vw, 3.75rem);
+}
+.cs-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--cs-font-sans-stack);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cs-brand-text);
+}
+.cs-eyebrow::before {
+  content: "";
+  width: 2em;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+}
+.cs-band .cs-eyebrow {
+  color: var(--cs-highlight);
+}
+.cs-lede {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--cs-sec);
+}
+@media (min-width: 768px) {
+  .cs-lede {
+    font-size: 1.1875rem;
+  }
+}
+.cs-num {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-display-weight);
+  font-style: var(--cs-display-style);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+.cs-k {
+  font-size: 0.8125rem;
+  color: var(--cs-sec);
+}
+.cs-fine {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--cs-faint);
+}
+
+/* The label's wordmark as type. */
+.cs-wordmark {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: var(--cs-font-display-stack);
+  line-height: 0.84;
+  text-transform: var(--cs-display-case);
+}
+.cs-wordmark b {
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.02em;
+}
+.cs-wordmark b sup {
+  font-size: 0.32em;
+  font-style: normal;
+  font-weight: 700;
+  vertical-align: 1.6em;
+  margin-left: 0.08em;
+}
+.cs-wordmark > span {
+  font-weight: 400;
+  font-size: 1.08em;
+  letter-spacing: 0.01em;
+}
+
+/* --------------------------------------------------------- surfaces ---- */
+.cs-section {
+  padding-block: 4.5rem;
+}
+@media (min-width: 768px) {
+  .cs-section {
+    padding-block: 6.5rem;
+  }
+}
+.cs-card {
+  background: var(--cs-card);
+  border: 1px solid var(--cs-stroke);
+  border-radius: 28px;
+  color: var(--cs-ink);
+}
+.cs-alt {
+  background: var(--cs-alt);
+}
+.cs-band {
+  position: relative;
+  background: var(--cs-band-ink);
+  color: #ffffff;
+}
+.cs-band.brand {
+  background: linear-gradient(180deg, var(--cs-brand-deep), var(--cs-brand-dark));
+}
+.cs-band .cs-display {
+  color: #ffffff;
+}
+.cs-band .cs-lede {
+  color: rgba(255, 255, 255, 0.82);
+}
+.cs-band-wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 56px;
+  color: var(--cs-paper);
+  pointer-events: none;
+}
+.cs-band-wave.top {
+  top: -1px;
+  transform: scaleY(-1);
+}
+.cs-band-wave.bottom {
+  bottom: -1px;
+}
+.cs-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: var(--cs-alt);
+  color: var(--cs-brand-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.cs-chip.sun {
+  background: var(--cs-highlight);
+  color: var(--cs-highlight-ink);
+}
+
+/* ---------------------------------------------------------- buttons ---- */
+.cs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.4rem;
+  padding: 0.9rem 1.8rem;
+  border-radius: 999px;
+  font-family: var(--cs-font-sans-stack);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.cs-btn:hover {
+  transform: translateY(-1px);
+}
+.cs-btn:active {
+  transform: translateY(1px);
+}
+.cs-btn:focus-visible {
+  outline: 3px solid var(--cs-highlight);
+  outline-offset: 3px;
+}
+.cs-btn-brand {
+  background: var(--cs-brand);
+  color: #ffffff;
+  box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--cs-brand) 70%, transparent);
+}
+.cs-btn-brand:hover {
+  background: var(--cs-brand-hi);
+}
+.cs-btn-white {
+  background: #ffffff;
+  color: var(--cs-brand);
+  box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--cs-shade) 55%, transparent);
+}
+.cs-btn-ghost {
+  background: transparent;
+  color: var(--cs-ink);
+  box-shadow: inset 0 0 0 1.5px var(--cs-stroke);
+}
+.cs-btn-ghost:hover {
+  box-shadow: inset 0 0 0 1.5px var(--cs-brand);
+}
+.cs-btn-light {
+  background: transparent;
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.6);
+}
+.cs-btn-light:hover {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 0 1.5px #ffffff;
+}
+
+/* ------------------------------------------------------------- hero ---- */
+.cs-site #hero {
+  background: linear-gradient(170deg, var(--cs-hero-top) 0%, var(--cs-hero-low) 100%) !important;
+  color: #ffffff;
+  padding: 0 !important;
+}
+.cs-site #hero > div {
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+/* base's wordmark block and the empty headline box (a local-data site registers no rotating words) */
+.cs-site #hero > div > div:first-child,
+.cs-site #hero > div > div:nth-child(2) {
+  display: none !important;
+}
+.cs-hero {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  text-align: left;
+  color: #ffffff;
+}
+.cs-hero-glow {
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 70vw;
+  height: 70vw;
+  max-width: 980px;
+  max-height: 980px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 35%, rgba(255, 255, 255, 0) 65%);
+  pointer-events: none;
+}
+.cs-hero-stripes {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(-62deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 46px);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 55%);
+  pointer-events: none;
+}
+.cs-hero-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 2rem;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 3rem 1rem 3.5rem;
+}
+@media (min-width: 1024px) {
+  .cs-hero-grid {
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: center;
+    padding: 4.5rem 1.5rem 4rem;
+    min-height: min(88vh, 820px);
+  }
+}
+.cs-hero-eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cs-highlight);
+}
+.cs-hero-h1 {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-display-weight);
+  font-style: var(--cs-display-style);
+  text-transform: var(--cs-display-case);
+  font-size: clamp(3rem, 0.9rem + 5.6vw, 6.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin: 0;
+}
+.cs-hero-h1 .accent {
+  color: var(--cs-highlight);
+}
+.cs-hero-lede {
+  max-width: 34rem;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+@media (min-width: 768px) {
+  .cs-hero-lede {
+    font-size: 1.1875rem;
+  }
+}
+.cs-hero-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.4rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+}
+.cs-hero-facts li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cs-hero-facts li::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cs-highlight);
+}
+.cs-hero-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  min-height: 420px;
+  padding-left: 18%;
+}
+@media (min-width: 1024px) {
+  .cs-hero-stage {
+    min-height: 600px;
+  }
+}
+@media (max-width: 639px) {
+  .cs-hero-stage {
+    min-height: 360px;
+    padding-left: 22%;
+  }
+  .cs-hero-stage .main svg {
+    width: 136px;
+    height: auto;
+  }
+  .cs-hero-stage .back svg {
+    width: 128px;
+    height: auto;
+  }
+  .cs-hero-tag {
+    top: 0;
+    right: -0.25rem;
+    padding: 0.6rem 0.8rem;
+  }
+  .cs-hero-tag span {
+    max-width: 8rem;
+  }
+  .cs-hero-tag b {
+    font-size: 1.4rem;
+  }
+}
+.cs-hero-stage .main {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 40px 50px color-mix(in srgb, var(--cs-shade) 45%, transparent));
+}
+.cs-hero-stage .back {
+  position: absolute;
+  z-index: 1;
+  bottom: 3%;
+  left: 6%;
+  filter: drop-shadow(0 30px 40px color-mix(in srgb, var(--cs-shade) 45%, transparent));
+}
+.cs-hero-stage .halo {
+  position: absolute;
+  z-index: 0;
+  bottom: 4%;
+  left: 52%;
+  width: 92%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.08) 48%, transparent 70%);
+}
+.cs-hero-tag {
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  top: 8%;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 18px;
+  background: var(--cs-highlight);
+  color: var(--cs-highlight-ink);
+  box-shadow: 0 20px 40px -20px color-mix(in srgb, var(--cs-shade) 60%, transparent);
+  transform: rotate(4deg);
+}
+.cs-hero-tag b {
+  font-family: var(--cs-font-display-stack);
+  font-size: 1.75rem;
+  font-weight: var(--cs-display-weight);
+  font-style: var(--cs-display-style);
+  line-height: 1;
+}
+.cs-hero-tag span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  max-width: 11rem;
+}
+
+/* ----------------------------------------------------------- motion ---- */
+@keyframes cs-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(-5deg);
+  }
+}
+@keyframes cs-float-back {
+  0%,
+  100% {
+    transform: translateY(0) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-9px) rotate(5.5deg);
+  }
+}
+@keyframes cs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes cs-drop {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.cs-hero-stage .main {
+  animation: cs-float 7s ease-in-out infinite;
+}
+.cs-hero-stage .back {
+  animation: cs-float-back 9s ease-in-out infinite;
+}
+.cs-rise {
+  animation: cs-rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cs-rise.d1 {
+  animation-delay: 0.1s;
+}
+.cs-rise.d2 {
+  animation-delay: 0.22s;
+}
+.cs-rise.d3 {
+  animation-delay: 0.34s;
+}
+.cs-drop {
+  animation: cs-drop 4s ease-in-out infinite;
+}
+/* 1.5.0: drops form on the cold bottle, run down and leave a wet trail. */
+@keyframes cs-run {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.3);
+  }
+  14% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  42% {
+    transform: translateY(2px) scale(1);
+  }
+  86% {
+    opacity: 1;
+    transform: translateY(86px) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(92px) scale(0.6);
+  }
+}
+@keyframes cs-run-trail {
+  0%,
+  42% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  86% {
+    opacity: 0.9;
+    transform: scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(1);
+  }
+}
+.cs-run,
+.cs-run-trail {
+  transform-box: fill-box;
+  animation: cs-run 7s cubic-bezier(0.5, 0, 0.75, 0.4) infinite both;
+}
+.cs-run {
+  transform-origin: center;
+}
+.cs-run-trail {
+  transform-origin: top;
+  animation-name: cs-run-trail;
+}
+/* 1.6.0: the water is alive. The surface laps across the neck and stays
+   level as the bottle tilts (a stage sets --cs-level against its own
+   rotation), caustics shimmer, the lens line breathes and bubbles rise. */
+.cs-water-level,
+.cs-slosh {
+  transform-box: view-box;
+}
+.cs-water-level {
+  transform: rotate(var(--cs-level, 0deg));
+}
+.cs-slosh {
+  animation: cs-slosh 6.4s ease-in-out infinite;
+}
+@keyframes cs-slosh {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  30% {
+    transform: translateY(-0.8px) rotate(1.4deg);
+  }
+  65% {
+    transform: translateY(0.6px) rotate(-1.1deg);
+  }
+}
+.cs-wave {
+  animation: cs-wave 3.2s linear infinite;
+}
+.cs-wave-back {
+  animation-duration: 5.1s;
+  animation-direction: reverse;
+}
+@keyframes cs-wave {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-22px);
+  }
+}
+.cs-caustic {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cs-caustic 7s ease-in-out infinite;
+  opacity: 0.4;
+}
+@keyframes cs-caustic {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateX(-6px) scaleY(0.7);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translateX(6px) scaleY(1.3);
+  }
+}
+.cs-lens {
+  animation: cs-lens 5.5s ease-in-out infinite;
+}
+@keyframes cs-lens {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+.cs-pool {
+  animation: cs-pool 6s ease-in-out infinite;
+}
+@keyframes cs-pool {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+.cs-bubble {
+  animation: cs-bubble 15s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite both;
+}
+@keyframes cs-bubble {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  8% {
+    opacity: 0.9;
+  }
+  30% {
+    transform: translate(2.5px, calc(var(--cs-rise) * 0.3));
+  }
+  60% {
+    transform: translate(-2px, calc(var(--cs-rise) * 0.6));
+  }
+  92% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(1px, var(--cs-rise));
+  }
+}
+.cs-hero-stage .main {
+  --cs-level: 5.5deg;
+}
+.cs-hero-stage .back {
+  --cs-level: -5.25deg;
+}
+/* 1.5.0: a bottle's label roll (keyframes per bottle, in its own <style>). */
+.cs-roll-face {
+  transform-box: view-box;
+  transform-origin: 20px 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-hero-stage .main,
+  .cs-hero-stage .back,
+  .cs-rise,
+  .cs-drop,
+  .cs-run,
+  .cs-run-trail,
+  .cs-roll-face,
+  .cs-slosh,
+  .cs-wave,
+  .cs-caustic,
+  .cs-lens,
+  .cs-pool,
+  .cs-bubble {
+    animation: none !important;
+  }
+  .cs-roll-face {
+    transform: none;
+  }
+  /* The water holds one still frame: calm, with the bubbles caught part-way up. */
+  .cs-bubble {
+    opacity: 0.85;
+    transform: translateY(calc(var(--cs-rise) * var(--cs-at)));
+  }
+  .cs-caustic {
+    opacity: 0.45;
+  }
+  .cs-hero-stage .main {
+    --cs-level: 6deg;
+  }
+  .cs-hero-stage .back {
+    --cs-level: -5deg;
+  }
+  .cs-roll-next {
+    display: none;
+  }
+  /* The drops stay still, caught part-way down. */
+  .cs-run {
+    transform: translateY(34px);
+  }
+  .cs-run-trail {
+    opacity: 0.8;
+    transform: scaleY(0.4);
+  }
+  .cs-hero-stage .main {
+    transform: rotate(-6deg);
+  }
+  .cs-hero-stage .back {
+    transform: rotate(5deg);
+  }
+  .cs-btn {
+    transition: none !important;
+  }
+}
+
+/* ------------------------------------------------------- the stamp ---- */
+.cs-stamp {
+  color: var(--cs-brand);
+}
+
+/* ------------------------------------------------------------ steps ---- */
+.cs-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.75rem;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.cs-step .n {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-display-weight);
+  font-style: var(--cs-display-style);
+  font-size: 3.25rem;
+  line-height: 0.8;
+  color: var(--cs-brand-hi);
+}
+.cs-step h3 {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-heading-weight);
+  text-transform: var(--cs-display-case);
+  font-size: 1.25rem;
+  line-height: 1.05;
+  color: #fff;
+}
+.cs-step p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.78);
+}
+.cs-step svg {
+  color: var(--cs-highlight);
+}
+
+/* ---------------------------------------------------------- pricing ---- */
+.cs-tier {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 2rem;
+}
+.cs-tier.best {
+  background: var(--cs-brand);
+  border-color: transparent;
+  color: #ffffff;
+}
+.cs-tier .price {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-display-weight);
+  font-style: var(--cs-display-style);
+  font-size: clamp(3.6rem, 2.6rem + 4vw, 5.75rem);
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+}
+.cs-tier.best .price {
+  color: #ffffff;
+}
+.cs-tier .unit {
+  font-family: var(--cs-font-display-stack);
+  font-weight: 700;
+  text-transform: var(--cs-display-case);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+.cs-tier h3 {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-heading-weight);
+  text-transform: var(--cs-display-case);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+.cs-tier p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--cs-sec);
+}
+.cs-tier.best p {
+  color: rgba(255, 255, 255, 0.86);
+}
+.cs-tier.best .cs-btn-white {
+  box-shadow: none;
+}
+.cs-tier p.fine {
+  font-size: 0.9rem;
+}
+.cs-tier p.fine b {
+  color: var(--cs-ink);
+}
+.cs-tier.best p.fine b {
+  color: #ffffff;
+}
+/* 1.5.0: a tier with art draws it the card's full height beside the words. */
+.cs-tier.has-art {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  gap: 1rem;
+  overflow: hidden;
+  padding-right: 0;
+  padding-bottom: 0;
+}
+.cs-tier.has-art .words {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-bottom: 2rem;
+}
+.cs-tier.has-art .art {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-top: -1.25rem;
+}
+.cs-tier.has-art .art svg {
+  width: auto;
+  height: 100%;
+  max-height: 34rem;
+}
+/* 1.5.0: a tier's quantity slider and its running total. */
+.cs-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.25rem 1.25rem 1.1rem;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--cs-brand-deep) 70%, transparent);
+}
+.cs-slider .row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.cs-slider .k {
+  font-family: var(--cs-font-display-stack);
+  font-weight: 800;
+  text-transform: var(--cs-display-case);
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+}
+.cs-slider .count {
+  font-family: var(--cs-font-display-stack);
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-align: right;
+}
+.cs-slider input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  margin: 0.4rem 0 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--cs-highlight) 0 var(--fill, 0%),
+    rgba(255, 255, 255, 0.28) var(--fill, 0%) 100%
+  );
+  cursor: pointer;
+}
+.cs-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--cs-highlight);
+  border: 3px solid #ffffff;
+  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.5);
+}
+.cs-slider input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--cs-highlight);
+  border: 3px solid #ffffff;
+  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.5);
+}
+.cs-slider input[type="range"]:focus-visible {
+  outline: 2px solid var(--cs-highlight);
+  outline-offset: 6px;
+}
+.cs-slider .ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+.cs-slider .total {
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  padding-top: 0.9rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.cs-slider .total small {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+.cs-slider .total output {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-display-weight);
+  font-style: var(--cs-display-style);
+  font-size: clamp(2.4rem, 1.8rem + 2vw, 3.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+.cs-own {
+  padding: 2rem 1.75rem 0;
+  border-radius: 28px;
+  background: var(--cs-alt);
+  border: 1px solid var(--cs-stroke);
+}
+@media (min-width: 768px) {
+  .cs-own {
+    padding: 2.25rem 3rem 0 3rem;
+  }
+  .cs-own > div {
+    padding-bottom: 2.25rem;
+  }
+}
+.cs-own figure {
+  margin-bottom: -24px;
+}
+
+/* ---------------------------------------------------------- who for ---- */
+.cs-use {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 1.25rem 1.75rem;
+  text-align: center;
+  background: var(--cs-card);
+  border: 1px solid var(--cs-stroke);
+  border-radius: 28px;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.cs-use:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--cs-shadow);
+}
+.cs-use .shelf {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 1.25rem 0 0.5rem;
+  border-radius: 20px;
+  background: radial-gradient(80% 60% at 50% 100%, var(--cs-alt), transparent 70%);
+}
+.cs-use h3 {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-heading-weight);
+  text-transform: var(--cs-display-case);
+  font-size: 1.15rem;
+  line-height: 1.05;
+  color: var(--cs-ink);
+}
+.cs-use p {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--cs-sec);
+}
+@media (max-width: 639px) {
+  .cs-use {
+    padding: 1rem 0.75rem 1.25rem;
+    border-radius: 20px;
+  }
+  .cs-use svg {
+    width: 78px;
+    height: auto;
+  }
+  .cs-use h3 {
+    font-size: 1rem;
+  }
+  .cs-use p {
+    font-size: 0.8rem;
+  }
+}
+
+/* -------------------------------------------------------- the water ---- */
+.cs-big-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 8.5rem;
+}
+.cs-big-stat small {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cs-highlight);
+}
+.cs-big-stat b {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-display-weight);
+  font-style: var(--cs-display-style);
+  font-size: 2.75rem;
+  line-height: 0.9;
+  color: #ffffff;
+}
+.cs-comp {
+  border-radius: 24px;
+  background: #ffffff;
+  color: var(--cs-l-ink);
+  padding: 1.5rem 1.5rem 0.75rem;
+  box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--cs-shade) 60%, transparent);
+}
+.cs-comp figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 3px solid var(--cs-brand);
+}
+.cs-comp figcaption span {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-display-weight);
+  font-style: var(--cs-display-style);
+  text-transform: var(--cs-display-case);
+  font-size: 1.15rem;
+  color: var(--cs-brand);
+}
+.cs-comp figcaption small {
+  font-size: 0.78rem;
+  color: var(--cs-l-sec);
+}
+.cs-comp dl {
+  display: grid;
+  grid-template-columns: 1fr;
+  column-gap: 2rem;
+}
+@media (min-width: 560px) {
+  .cs-comp dl {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.cs-comp dl > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--cs-l-sub);
+}
+.cs-comp dt {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.cs-comp dt span {
+  font-weight: 500;
+  color: var(--cs-l-faint);
+  font-size: 0.8rem;
+}
+.cs-comp dd {
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-heading-weight);
+  font-variant-numeric: tabular-nums;
+  font-size: 1rem;
+}
+.cs-chain {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .cs-chain {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.cs-chain li {
+  position: relative;
+  padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+  border-left: 3px solid var(--cs-highlight);
+}
+.cs-chain li small {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cs-highlight);
+}
+.cs-chain li b {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-heading-weight);
+  text-transform: var(--cs-display-case);
+  font-size: 1.15rem;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+/* ------------------------------------------------------------- form ---- */
+.cs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.cs-field span {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--cs-ink);
+}
+.cs-input {
+  width: 100%;
+  min-height: 3.1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  border: 1.5px solid var(--cs-stroke);
+  background: var(--cs-paper);
+  color: var(--cs-ink);
+  font: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.cs-input:focus {
+  border-color: var(--cs-brand);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cs-brand) 18%, transparent);
+}
+.cs-input::placeholder {
+  color: var(--cs-faint);
+}
+.cs-file {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.1rem;
+  padding: 0.6rem 0.75rem 0.6rem 1rem;
+  border-radius: 14px;
+  border: 1.5px dashed var(--cs-stroke);
+  background: var(--cs-paper);
+  color: var(--cs-sec);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.cs-file input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.cs-file b {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: var(--cs-alt);
+  color: var(--cs-brand-text);
+  font-size: 0.8rem;
+}
+.cs-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 24px;
+  background: linear-gradient(170deg, var(--cs-hero-top), var(--cs-hero-low));
+  color: #fff;
+}
+.cs-preview small {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+/* ------------------------------------------------------- the header ---- */
+.cs-site header > div:first-child {
+  background: color-mix(in srgb, var(--cs-hero-top) 94%, transparent) !important;
+  border-color: transparent !important;
+  color: #ffffff;
+}
+.cs-site header > div:first-child a,
+.cs-site header > div:first-child button {
+  color: #ffffff;
+}
+.cs-site header .font-sans.font-bold.tracking-tight,
+.cs-site header [data-brand-wordmark] {
+  font-family: var(--cs-font-display-stack) !important;
+  font-weight: var(--cs-display-weight, 900) !important;
+  font-style: var(--cs-display-style);
+  text-transform: var(--cs-display-case);
+  font-size: 1.35rem !important;
+  letter-spacing: -0.02em !important;
+  color: #ffffff !important;
+}
+.cs-site header a.rounded-full,
+.cs-site header a[data-variant="primary"] {
+  background: #ffffff !important;
+  color: var(--cs-brand) !important;
+}
+
+/* A site whose hero is "split" draws its words on the paper ground, so the
+   header over it takes the ink, not the white of a poster. */
+.cs-site:has(.cs-hero.split) header > div:first-child {
+  background: color-mix(in srgb, var(--cs-paper) 94%, transparent) !important;
+  color: var(--cs-ink);
+}
+.cs-site:has(.cs-hero.split) header > div:first-child a,
+.cs-site:has(.cs-hero.split) header > div:first-child button,
+.cs-site:has(.cs-hero.split) header .font-sans.font-bold.tracking-tight,
+.cs-site:has(.cs-hero.split) header [data-brand-wordmark] {
+  color: var(--cs-ink) !important;
+}
+.cs-site:has(.cs-hero.split) header a.rounded-full,
+.cs-site:has(.cs-hero.split) header a[data-variant="primary"] {
+  background: var(--cs-brand) !important;
+  color: var(--cs-on-brand) !important;
+}
+
+/* The header's primary action (and the open mobile menu's) sits on the
+   brand colour: its words take the on-brand colour, never base's black. */
+.cs-site header a.bg-primary,
+.cs-site header a.bg-primary * {
+  color: var(--cs-on-brand) !important;
+}
+
+/* --------------------------------------------------------- variants ---- */
+/* hero "split": the poster's words on the paper ground, the art in a card. */
+.cs-site #hero:has(.cs-hero.split) {
+  background: var(--cs-paper) !important;
+  color: var(--cs-ink);
+}
+.cs-hero.split {
+  color: var(--cs-ink);
+}
+.cs-hero.split .cs-hero-h1 {
+  color: var(--cs-ink);
+}
+.cs-hero.split .cs-hero-h1 .accent {
+  color: var(--cs-brand-text);
+}
+.cs-hero.split .cs-hero-eyebrow {
+  color: var(--cs-brand-text);
+}
+.cs-hero.split .cs-hero-lede,
+.cs-hero.split .cs-hero-facts {
+  color: var(--cs-sec);
+}
+.cs-hero.split .cs-hero-facts li::before {
+  background: var(--cs-brand);
+}
+.cs-hero.split .cs-btn-white {
+  background: var(--cs-brand);
+  color: var(--cs-on-brand);
+}
+.cs-hero.split .cs-btn-light {
+  color: var(--cs-ink);
+  box-shadow: inset 0 0 0 1.5px var(--cs-stroke);
+}
+.cs-hero.split .cs-hero-stage {
+  padding-left: 0;
+  align-items: center;
+}
+.cs-hero.split .cs-hero-card {
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: 32px;
+  background: linear-gradient(170deg, var(--cs-hero-top), var(--cs-hero-low));
+  box-shadow: var(--cs-shadow);
+}
+.cs-hero.split .cs-hero-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* intro "plain": no stamp, one column. */
+.cs-intro.plain p {
+  max-width: 48rem;
+}
+
+/* steps "cards": the steps on the paper ground. */
+.cs-steps.cards .cs-step {
+  background: var(--cs-card);
+  border-color: var(--cs-stroke);
+}
+.cs-steps.cards .cs-step h3 {
+  color: var(--cs-ink);
+}
+.cs-steps.cards .cs-step p {
+  color: var(--cs-sec);
+}
+.cs-steps.cards .cs-step svg {
+  color: var(--cs-brand-text);
+}
+
+/* gallery "grid": the art full-bleed in each card. */
+.cs-use.grid {
+  align-items: stretch;
+  text-align: left;
+  padding: 0 0 1.5rem;
+  overflow: hidden;
+}
+.cs-use.grid .shelf {
+  padding: 0;
+  border-radius: 0;
+  background: var(--cs-alt);
+}
+.cs-use.grid .shelf img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.cs-use.grid h3,
+.cs-use.grid p {
+  padding-inline: 1.25rem;
+}
+
+/* facts / contact "plain": on the section's own tone, not a band. */
+.cs-facts.plain .cs-big-stat {
+  background: var(--cs-alt);
+  border-color: var(--cs-stroke);
+}
+.cs-facts.plain .cs-big-stat b,
+.cs-facts.plain .cs-chain li b {
+  color: var(--cs-ink);
+}
+.cs-facts.plain .cs-big-stat small,
+.cs-facts.plain .cs-chain li small {
+  color: var(--cs-brand-text);
+}
+.cs-facts.plain .cs-chain li {
+  border-left-color: var(--cs-brand);
+}
+
+/* tones */
+.cs-tone-alt {
+  background: var(--cs-alt);
+}
+.cs-tone-ink {
+  background: var(--cs-band-ink);
+  color: #ffffff;
+}
+.cs-tone-brand {
+  background: linear-gradient(180deg, var(--cs-brand-deep), var(--cs-brand-dark));
+  color: #ffffff;
+}
+.cs-tone-ink .cs-display,
+.cs-tone-brand .cs-display {
+  color: #ffffff;
+}
+.cs-tone-ink .cs-eyebrow,
+.cs-tone-brand .cs-eyebrow {
+  color: var(--cs-highlight);
+}
+.cs-tone-ink .cs-lede,
+.cs-tone-brand .cs-lede {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* The art image a site supplies for a bottle's label or a section. */
+.cs-art-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+/* 1.5.0: data/site.json footer.logo, masked so it takes the brand text colour. */
+.cs-footer-logo {
+  display: block;
+  width: 9.5rem;
+  aspect-ratio: 2.1;
+  background: var(--cs-brand-text);
+  -webkit-mask: var(--cs-footer-logo) left center / contain no-repeat;
+  mask: var(--cs-footer-logo) left center / contain no-repeat;
+}
+
+/* --------------------------------------------------- the hero's loop ---- */
+/* 1.7.0: the poster hero as the three-size loop. The stage is the approved
+   render's 560 x 805 px, scaled whole on narrow screens (--cs-loop-s); the
+   client moves its bottles, tags and copy panels inline. */
+.cs-hero-tag-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1.5px solid color-mix(in srgb, currentColor 18%, transparent);
+  font-style: normal;
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cs-brand-deep, #b30017);
+}
+.cs-hero-tag-line svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+.cs-hero.loop {
+  --cs-loop-s: 1;
+}
+.cs-hero-panels {
+  display: grid;
+}
+.cs-hero-panels > .cs-hero-panel {
+  grid-area: 1 / 1;
+  will-change: opacity, transform;
+}
+.cs-loop-frame {
+  position: relative;
+  width: calc(560px * var(--cs-loop-s));
+  height: calc(805px * var(--cs-loop-s));
+  margin-inline: auto;
+}
+.cs-loop-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 560px;
+  height: 805px;
+  transform: scale(var(--cs-loop-s));
+  transform-origin: 0 0;
+}
+@media (min-width: 1024px) {
+  .cs-hero.loop .cs-hero-grid {
+    min-height: 805px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .cs-hero.loop .cs-loop-frame {
+    align-self: stretch;
+    width: auto;
+    height: 805px;
+    margin: 0;
+  }
+}
+@media (max-width: 599px) {
+  .cs-hero.loop {
+    --cs-loop-s: 0.8;
+  }
+}
+@media (max-width: 479px) {
+  .cs-hero.loop {
+    --cs-loop-s: 0.639;
+  }
+}
+@media (max-width: 389px) {
+  .cs-hero.loop {
+    --cs-loop-s: 0.56;
+  }
+}
+@media (max-width: 1023px) {
+  .cs-hero.loop .cs-hero-grid {
+    padding-bottom: 0;
+  }
+}
+.cs-loop-bottle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform, opacity;
+}
+.cs-loop-bottle > svg {
+  display: block;
+  overflow: visible;
+}
+.cs-loop-bottle:not([data-b="pl"]) > svg {
+  width: 100%;
+  height: auto;
+}
+.cs-loop-floor {
+  position: absolute;
+  left: -40px;
+  right: -40px;
+  top: 660px;
+  height: 80px;
+  background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--cs-shade) 40%, transparent), transparent 70%);
+  will-change: opacity;
+}
+.cs-loop-tag {
+  position: absolute;
+  z-index: 3;
+  white-space: nowrap;
+  padding: 9px 16px 10px;
+  border-radius: 14px;
+  background: var(--cs-highlight);
+  color: var(--cs-highlight-ink);
+  box-shadow: 0 18px 30px -16px color-mix(in srgb, var(--cs-shade) 70%, transparent);
+  will-change: transform, opacity;
+}
+.cs-loop-tag.price {
+  white-space: normal;
+  max-width: 215px;
+}
+.cs-loop-tag b {
+  display: block;
+  font-family: var(--cs-font-display-stack);
+  font-weight: var(--cs-display-weight);
+  font-style: var(--cs-display-style);
+  font-size: 26px;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+.cs-loop-tag small,
+.cs-loop-tag span {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.cs-hero.loop.paused * {
+  animation-play-state: paused !important;
+}
+/* 1.7.0: the pricing section's own sizes, side by side at true scale. */
+.cs-own-sizes {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1.25rem;
+  margin: 0;
+}
+/* The row sits in .cs-own (overflow: hidden): it keeps its captions clear of
+ * the flush-art pull-up and lets the bottles shrink together when the
+ * column is narrower than their true-scale widths, so none is clipped. */
+.cs-own > * {
+  min-width: 0;
+}
+.cs-own figure.cs-own-sizes {
+  margin-bottom: 0;
+  padding: 1.25rem 0 2rem;
+}
+.cs-own-size {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.cs-own-bottle {
+  display: block;
+  max-width: 100%;
+}
+.cs-own-bottle > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.cs-own-size figcaption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.8125rem;
+  line-height: 1.3;
+}
+.cs-own-size figcaption b {
+  font-family: var(--cs-font-display-stack);
+  font-style: var(--cs-display-style);
+  font-weight: var(--cs-display-weight);
+  font-size: 1.25rem;
+}

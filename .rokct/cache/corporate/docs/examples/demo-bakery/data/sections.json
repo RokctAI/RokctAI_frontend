@@ -1,0 +1,90 @@
+{
+  "sections": [
+    {
+      "type": "hero",
+      "variant": "split",
+      "eyebrow": "Demo record · Example Town",
+      "lines": ["Bread worth", "getting up for."],
+      "accentLine": 1,
+      "lede": "Long-fermented sourdough, butter croissants and a short list of cakes, baked every morning and gone by noon. Pre-order on WhatsApp and we keep yours aside.",
+      "cta": { "label": "Pre-order on WhatsApp", "href": "whatsapp" },
+      "secondary": { "label": "See the menu", "href": "#menu" },
+      "facts": ["48-hour sourdough", "Out of the oven by 6 am", "Closed Mondays"],
+      "art": {
+        "front": { "kind": "image", "src": "/art/loaf.svg", "alt": "A round sourdough loaf on a board", "width": 560, "height": 480 }
+      }
+    },
+    {
+      "type": "intro",
+      "variant": "plain",
+      "id": "story",
+      "year": "Since 2019",
+      "text": "Two ovens, one long table and a starter older than the shop. Everything on the shelf is made here, from flour we buy by the sack."
+    },
+    {
+      "type": "gallery",
+      "id": "menu",
+      "nav": "Menu",
+      "variant": "grid",
+      "eyebrow": "On the shelf",
+      "heading": "What comes out of the oven.",
+      "blurb": "Three things we bake every day. The rest changes with the week.",
+      "items": [
+        { "title": "Country sourdough", "text": "A dark crust and an open crumb, from a 48-hour ferment.", "art": { "kind": "image", "src": "/art/loaf.svg", "alt": "A sourdough loaf" } },
+        { "title": "Butter croissant", "text": "Laminated over three days, baked at first light.", "art": { "kind": "image", "src": "/art/croissant.svg", "alt": "A croissant" } },
+        { "title": "Seed rye", "text": "Dense, sour and full of sunflower and flax.", "art": { "kind": "image", "src": "/art/rye.svg", "alt": "A tin loaf of rye" } }
+      ]
+    },
+    {
+      "type": "steps",
+      "id": "how",
+      "nav": "How to order",
+      "variant": "cards",
+      "tone": "alt",
+      "eyebrow": "Pre-orders",
+      "heading": "Order today, collect tomorrow.",
+      "steps": [
+        { "title": "Message us", "text": "Tell us what you want and when you will collect.", "icon": "chat" },
+        { "title": "We bake it", "text": "Your order goes into the first bake of the day.", "icon": "star" },
+        { "title": "Collect", "text": "It waits at the counter with your name on it.", "icon": "check" }
+      ]
+    },
+    {
+      "type": "pricing",
+      "id": "prices",
+      "nav": "Prices",
+      "eyebrow": "Prices",
+      "heading": "Simple prices.",
+      "note": "Prices per item. Larger orders for events by arrangement."
+    },
+    {
+      "type": "facts",
+      "id": "flour",
+      "nav": "Our flour",
+      "variant": "plain",
+      "eyebrow": "The flour",
+      "heading": "Stone-milled, unbleached, nothing added.",
+      "blurb": "Our bread is flour, water and salt. The time does the rest.",
+      "stats": [
+        { "label": "Hours of ferment", "value": "48" },
+        { "label": "Ingredients", "value": "3" }
+      ],
+      "chain": [
+        { "label": "Flour", "value": "Stone-milled wheat" },
+        { "label": "Ferment", "value": "Two days, cold" },
+        { "label": "Bake", "value": "Before sunrise" }
+      ]
+    },
+    {
+      "type": "contact",
+      "id": "contact",
+      "nav": "Visit",
+      "variant": "plain",
+      "eyebrow": "Visit",
+      "heading": "Come early.",
+      "blurb": "Tuesday to Sunday from 6 am until we sell out.",
+      "note": "This is a demo record: the number goes nowhere.",
+      "card": { "label": "WhatsApp", "action": "Message us" }
+    }
+  ]
+}

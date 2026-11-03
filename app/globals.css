@@ -162,29 +162,7 @@
   }
 }
 
-/* Custom Scrollbar (Ray, 2026-11-01: the thumb is the site's primary
-   colour unless it has no contrast on the track). The track is the page.
-   On the dark page rokct.ai's yellow reads at 13:1, so the thumb is the
-   yellow; on the white page the yellow is 1.5:1 - next to invisible - so
-   the light theme draws the yellow's deep amber shade instead (3.9:1). */
-:root {
-  --scrollbar-thumb: 45 93% 33%;
-  --scrollbar-thumb-hover: 45 93% 27%;
-}
-.dark {
-  --scrollbar-thumb: var(--primary);
-  --scrollbar-thumb-hover: 45 93% 47%;
-}
-
-/* Firefox only: in Chromium a scrollbar-color would switch the
-   ::-webkit-scrollbar rules below off. */
-@supports not selector(::-webkit-scrollbar) {
-  html {
-    scrollbar-color: hsl(var(--scrollbar-thumb)) transparent;
-    scrollbar-width: thin;
-  }
-}
-
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -194,10 +172,18 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--scrollbar-thumb));
+  background: hsl(var(--primary));
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--scrollbar-thumb-hover));
+  background: hsl(45 93% 47%);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: hsl(45 93% 47%);
 }
