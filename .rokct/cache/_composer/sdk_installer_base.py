@@ -72,6 +72,32 @@ def resolve_app_type():
     return None
 
 
+def common_manifest(manifest, app_type):
+    """The manifest's top level, as this host composes it. Normally the top
+    level is common and always installs; a persona block that sets
+    ``"common": false`` opts this host out of it, so only that block's
+    installs, dependencies, integrations and requires apply. It lets an SDK
+    whose top level is one shell's whole product (agent_sdk's rokct.ai) be
+    the home of a second, unrelated shell (sticks-web's landing) without
+    composing the first shell into it. Absent or true: unchanged."""
+    flavor = (manifest.get("app_type") or {}).get(app_type) if app_type else None
+    if isinstance(flavor, dict) and flavor.get("common") is False:
+        return {
+            k: v
+            for k, v in manifest.items()
+            if k
+            not in (
+                "installs",
+                "dependencies",
+                "devDependencies",
+                "integrations",
+                "requires",
+                "sdk_requires",
+            )
+        }
+    return manifest
+
+
 def load_state():
     migrate_legacy_state()
     if os.path.exists(STATE_FILE):
@@ -315,6 +341,7 @@ def _manifest_install_targets(manifest, sdk_path):
         else {}
     )
     home_block = manifest.get("home") or {}
+    manifest = common_manifest(manifest, current_app_type)
     targets = set()
     for entry in (
         list(manifest.get("installs") or [])
@@ -433,6 +460,12 @@ def install_sdk_files(sdk_name):
     home_block = (manifest.get("home") or {}) if is_home_sdk else {}
     if home_block:
         print(f'[i] {sdk_name} is the home SDK: its "home" block applies.')
+    common = common_manifest(manifest, current_app_type)
+    if common is not manifest:
+        print(
+            f'[i] {sdk_name}: app_type "{current_app_type}" sets "common": false; its top level is skipped.'
+        )
+        manifest = common
 
     version = manifest.get("version", "1.0.0")
     installs = (

@@ -51,6 +51,7 @@ REGISTRIES = {
     "plans-query.ts": "plans-query",
     "header-menu.ts": "header-menu",
     "site-metadata.ts": "site-metadata",
+    "header-auth.ts": "header-auth",
 }
 
 # base_sdk 1.15.0: the link-preview shell, installed as a set.
@@ -1024,7 +1025,8 @@ class TestManifest(unittest.TestCase):
         self.assertIn('import type { SiteDataMode } from "@/lib/site-data/kinds";', header)
         self.assertIn("  showsHeaderAuth,\n", header)
         self.assertIn("dataMode?: SiteDataMode;", header)
-        self.assertIn("const hasAuth = !!user || showsHeaderAuth(dataMode);", header)
+        # 1.60.0: and only when a pair is registered in the slot.
+        self.assertIn("const hasAuth = !!user || (hasHeaderAuth() && showsHeaderAuth(dataMode));", header)
         self.assertEqual(header.count("!hasAuth ? null :"), 2, "the desktop element and the stacked panel")
         content = read(LANDING_CONTENT)
         self.assertIn('import type { SiteDataMode } from "@/lib/site-data/kinds";', content)
@@ -1039,6 +1041,49 @@ class TestManifest(unittest.TestCase):
         doc = read(SITE_DATA_DOC)
         self.assertNotIn("Not yet switched", doc)
         self.assertIn("showsHeaderAuth", doc)
+
+    def test_header_auth_slot(self):
+        """1.60.0 (Ray, 2026-11-01: "we just moving login and signup buttons
+        to injection"). The header draws no Log in / Sign up of its own: it
+        renders HeaderAuthSlot on the bar and in the panel, with the classes
+        its pair had; the slot is a static null with nothing registered and
+        next/dynamic over the first entry otherwise; base names no SDK."""
+        registry = read(os.path.join(LANDING, "header-auth.ts"))
+        self.assertIn("export const HEADER_AUTH: HeaderAuthEntry[] = [", registry)
+        self.assertIn('variant: "bar" | "panel";', registry)
+        for field in ("loginUrl?: string;", "signupUrl?: string;", "openLoginPopup?: () => void;",
+                      "openSignupPopup?: () => void;", "onNavigate?: () => void;",
+                      "dataMode?: SiteDataMode;", "classes?: HeaderAuthClasses;"):
+            self.assertIn(field, registry)
+        self.assertIn("export async function loadHeaderAuth(): Promise<HeaderAuthComponent | null> {", registry)
+        slot_path = os.path.join(SDK_ROOT, "templates", "components", "custom", "header-auth-slot.tsx")
+        slot = read(slot_path)
+        self.assertTrue(slot.lstrip().startswith("/*"))
+        self.assertIn('"use client";', slot)
+        self.assertIn("HEADER_AUTH.length === 0\n    ? NoHeaderAuth\n    : dynamic<HeaderAuthProps>(", slot)
+        self.assertIn("loadHeaderAuth().then((Pair) => ({ default: Pair ?? NoHeaderAuth }))", slot)
+        installs = {e["to"]: e["from"] for e in load_manifest()["installs"]}
+        self.assertEqual(installs["components/custom/header-auth-slot.tsx"],
+                         "templates/components/custom/header-auth-slot.tsx")
+        self.assertEqual(installs["components/custom/landing/header-auth.ts"],
+                         "templates/components/custom/landing/header-auth.ts")
+        header = read(HEADER)
+        code = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", header))
+        self.assertNotIn('t("auth.login")', code)
+        self.assertNotIn('t("auth.signup")', code)
+        self.assertEqual(code.count("<HeaderAuthSlot"), 2)
+        self.assertIn('variant="bar"', code)
+        self.assertIn('variant="panel"', code)
+        self.assertIn("onNavigate={close}\n              dataMode={dataMode}\n              classes={PANEL_AUTH_CLASSES}", code)
+        self.assertIn("const BAR_AUTH_CLASSES = { login: AUTH_LINK, signup: AUTH_PILL };", code)
+        self.assertIn('login: cn(STACKED_BUTTON, "bg-foreground/5 text-foreground"),', code)
+        self.assertIn('signup: cn(STACKED_BUTTON, "bg-black text-white dark:bg-white dark:text-black"),', code)
+        # The Dashboard link a signed-in visitor gets stays the header's own.
+        self.assertEqual(code.count('t("common.dashboard")'), 2)
+        for path in (HEADER, slot_path, os.path.join(LANDING, "header-auth.ts")):
+            text = LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(path))).lower()
+            for word in ("auth_sdk", "users_sdk", "@/app/(auth)", "next-auth"):
+                self.assertNotIn(word, text, f"{path} names {word}")
 
     def test_sections_may_name_a_company_page(self):
         """1.38.0 (Ray, 2026-09-10: corporate_sdk owns /about and /team as

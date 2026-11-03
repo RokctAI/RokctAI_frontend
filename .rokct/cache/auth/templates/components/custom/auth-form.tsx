@@ -42,7 +42,9 @@ import type {
 } from "@/components/custom/auth/register-registry";
 
 const LABEL = "text-zinc-600 font-normal dark:text-zinc-400";
-const CONTROL = "bg-muted text-md md:text-sm border-none";
+// Bordered on the page background: readable on any shell, including a site
+// shell whose own landing CSS styles nothing inside the card.
+const CONTROL = "bg-background text-md md:text-sm border border-input";
 
 /** One extra field of a register config. */
 function ExtraField({

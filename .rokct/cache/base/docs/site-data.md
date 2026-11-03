@@ -302,6 +302,11 @@ owns:
   false. A page that mounts the header without the prop draws the pair as
   it did; the "use client" files import only the `SiteDataMode` type,
   never the server-only reader.
+  Since 1.60.0 the pair is no longer the header's own: the SDK that owns
+  sign-in registers it in `landing/header-auth.ts` and the header draws it
+  through `header-auth-slot.tsx`, handing it the same `dataMode`; the
+  registered pair applies `showsHeaderAuth(dataMode)` itself, and with
+  nothing registered there is no pair in any mode.
 
 ## Fixtures
 

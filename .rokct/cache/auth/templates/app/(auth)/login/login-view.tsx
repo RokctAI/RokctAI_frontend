@@ -25,9 +25,8 @@ import { toast } from "sonner";
 import { login, ActionState } from "@/app/(auth)/actions";
 import { withReturnPath } from "@/app/(auth)/return-to";
 import { AuthForm } from "@/components/custom/auth-form";
-import { BrandLogo } from "@/components/custom/brand-logo";
 import { SubmitButton } from "@/components/custom/submit-button";
-import { Header } from "@/components/custom/header";
+import { SiteShell, SiteShellLogo } from "@/components/custom/site-shell";
 import React from "react";
 
 /** `next`: the same-site path to land on once signed in (auth_sdk 1.9.0). */
@@ -58,23 +57,17 @@ export function LoginView({ next = null }: { next?: string | null } = {}) {
   }, [state, next, router]);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header
+    <SiteShell
         openLoginPopup={() => handleNavigation("/login")}
         openSignupPopup={() => handleNavigation(withReturnPath("/register", next))}
-      />
+    >
       <div className="flex-1 flex flex-col items-center justify-center bg-background p-4">
         <div className="w-full max-w-md space-y-8">
           {/* Header Section */}
           <div className="flex flex-col items-center text-center">
-            {/*
-              The host's own mark. `components/custom/brand-logo.tsx` is a
-              seam every shell already owns (it is in this SDK's manifest
-              `requires`), so each product shows its own logo here with no
-              per-shell branching in the SDK.
-            */}
+            {/* The site's mark: SiteShellLogo, the same one its header shows. */}
             <div className="mb-4">
-              <BrandLogo width={56} height={56} />
+              <SiteShellLogo size={56} />
             </div>
             {/*
               The brand, not the address: a dotted PLATFORM_NAME folds to its
@@ -124,6 +117,6 @@ export function LoginView({ next = null }: { next?: string | null } = {}) {
           </div>
         </div>
       </div>
-    </div>
+    </SiteShell>
   );
 }

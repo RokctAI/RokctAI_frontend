@@ -131,6 +131,17 @@
 // in the burger panel (showsHeaderAuth in landing/header-menu.ts). A
 // caller that passes no mode, every page that mounted the header before,
 // draws exactly what it drew.
+//
+// Since 1.60.0 the header draws no Log in / Sign up pair of its own (Ray,
+// 2026-11-01: "we just moving login and signup buttons to injection"). On
+// the bar and in the burger panel it renders <HeaderAuthSlot>
+// (./header-auth-slot.tsx), which the SDK that owns sign-in fills through
+// ./landing/header-auth.ts and which renders nothing when nothing is
+// registered - so a shell composed without sign-in shows no dead links.
+// The slot gets the same URLs, popup handlers and data mode the pair used,
+// and the classes the pair was drawn with, so a shell that registers it
+// renders exactly what it rendered. The signed-in Dashboard link is
+// unchanged. Base never asks which SDK registered the pair.
 
 import React, { useCallback, useEffect, useId, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
@@ -142,6 +153,7 @@ import { PLATFORM_NAME } from "@/app/config/platform";
 import t from "@/app/lib/i18n";
 import { BrandLogo } from "@/components/custom/brand-logo";
 import { Branding } from "@/components/custom/branding";
+import { HeaderAuthSlot } from "@/components/custom/header-auth-slot";
 import {
   HeaderMenuActions,
   HeaderMenuList,
@@ -168,6 +180,7 @@ import {
   type ResolvedHeaderBrand,
   type ResolvedHeaderMenu,
 } from "@/components/custom/landing/header-menu";
+import { hasHeaderAuth } from "@/components/custom/landing/header-auth";
 import type { LandingNavItem } from "@/components/custom/landing/landing-config";
 import { SITE_METADATA } from "@/components/custom/landing/site-metadata";
 import type { SiteDataMode } from "@/lib/site-data/kinds";
@@ -593,6 +606,14 @@ const AUTH_OUTLINE =
 const STACKED_BUTTON =
   "block w-full rounded-2xl py-4 text-center text-lg font-bold transition-colors";
 
+// 1.60.0: the classes the header's own pair was drawn with, handed to the
+// registered pair through the slot so it looks exactly as it did.
+const BAR_AUTH_CLASSES = { login: AUTH_LINK, signup: AUTH_PILL };
+const PANEL_AUTH_CLASSES = {
+  login: cn(STACKED_BUTTON, "bg-foreground/5 text-foreground"),
+  signup: cn(STACKED_BUTTON, "bg-black text-white dark:bg-white dark:text-black"),
+};
+
 export function Header({
   loginUrl = "/login",
   signupUrl = "/register",
@@ -644,12 +665,12 @@ export function Header({
     ?.user;
   const hasMenu =
     menuItems.length > 0 || groups.length > 0 || actions.length > 0;
-  // The auth links are there to reach (Dashboard, or Log in and Sign up)
-  // unless the shell is local (1.38.0: no backend, no pair for a visitor
-  // with no session), so the burger has something to open whenever there
-  // is anything. Spelled out so the rule is visible: a header with no menu
-  // AND no auth hides it.
-  const hasAuth = !!user || showsHeaderAuth(dataMode);
+  // The auth links are there to reach (Dashboard, or the registered Log in
+  // and Sign up) unless the shell is local (1.38.0: no backend, no pair for
+  // a visitor with no session) or nothing fills the slot (1.60.0), so the
+  // burger has something to open whenever there is anything. Spelled out so
+  // the rule is visible: a header with no menu AND no auth hides it.
+  const hasAuth = !!user || (hasHeaderAuth() && showsHeaderAuth(dataMode));
   const showBurger = hasMenu || hasAuth;
 
   const close = useCallback(() => setOpen(false), []);
@@ -675,19 +696,21 @@ export function Header({
   }, [open]);
 
   // 1.38.0: a local shell draws no pair for a visitor with no session.
+  // 1.60.0: the pair is the registered one, drawn through the slot.
   const auth = user ? (
     <Link href={dashboardUrl} className={AUTH_OUTLINE}>
       {t("common.dashboard")}
     </Link>
   ) : !hasAuth ? null : (
-    <>
-      <Link href={loginUrl} onClick={openLoginPopup} className={AUTH_LINK}>
-        {t("auth.login")}
-      </Link>
-      <Link href={signupUrl} onClick={openSignupPopup} className={AUTH_PILL}>
-        {t("auth.signup")}
-      </Link>
-    </>
+    <HeaderAuthSlot
+      variant="bar"
+      loginUrl={loginUrl}
+      signupUrl={signupUrl}
+      openLoginPopup={openLoginPopup}
+      openSignupPopup={openSignupPopup}
+      dataMode={dataMode}
+      classes={BAR_AUTH_CLASSES}
+    />
   );
 
   const brandLink = (
@@ -811,31 +834,16 @@ export function Header({
               {t("common.dashboard")}
             </Link>
           ) : !hasAuth ? null : (
-            <>
-              <Link
-                href={loginUrl}
-                onClick={() => {
-                  close();
-                  openLoginPopup?.();
-                }}
-                className={cn(STACKED_BUTTON, "bg-foreground/5 text-foreground")}
-              >
-                {t("auth.login")}
-              </Link>
-              <Link
-                href={signupUrl}
-                onClick={() => {
-                  close();
-                  openSignupPopup?.();
-                }}
-                className={cn(
-                  STACKED_BUTTON,
-                  "bg-black text-white dark:bg-white dark:text-black",
-                )}
-              >
-                {t("auth.signup")}
-              </Link>
-            </>
+            <HeaderAuthSlot
+              variant="panel"
+              loginUrl={loginUrl}
+              signupUrl={signupUrl}
+              openLoginPopup={openLoginPopup}
+              openSignupPopup={openSignupPopup}
+              onNavigate={close}
+              dataMode={dataMode}
+              classes={PANEL_AUTH_CLASSES}
+            />
           )}
         </div>
       </div>

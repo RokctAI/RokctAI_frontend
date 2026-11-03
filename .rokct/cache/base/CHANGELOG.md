@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.60.0
+
+* feat(header): the Log in / Sign up pair moves to injection (Ray,
+  2026-11-01: "we just moving login and signup buttons to injection").
+  The header used to draw the pair itself for every visitor with no
+  session, so a shell composed without sign-in showed two links to a
+  `/login` route it does not have.
+  * New `components/custom/landing/header-auth.ts`: the `HEADER_AUTH`
+    registry at `// @rokct-sdk-header-auth-start` / `-end`, filled by the
+    SDK that owns sign-in through its manifest `integrations` (one line,
+    `{ id: "<sdk>-header-auth", load: () => import("@/components/custom/...") },`).
+    `HeaderAuthProps`: `variant` (`"bar"` | `"panel"`), `loginUrl`,
+    `signupUrl`, `openLoginPopup`, `openSignupPopup`, `onNavigate`,
+    `dataMode` and `classes` (`login`, `signup`). The first entry answers.
+    The marker is not home-only: the protocol installer takes any SDK's
+    line there.
+  * New `components/custom/header-auth-slot.tsx`: `HeaderAuthSlot`
+    renders nothing when nothing is registered (no loader, no fetch) and
+    otherwise the registered pair through `next/dynamic`, so the buttons
+    are server-rendered in the first HTML, as the header brand is.
+  * `header.tsx` renders the slot on the bar and in the burger panel in
+    place of its own pair, with the same URLs, popup handlers and data
+    mode, and the classes the pair had (`BAR_AUTH_CLASSES`,
+    `PANEL_AUTH_CLASSES`), so a shell that registers the pair looks
+    exactly as before. The burger counts the pair only when something is
+    registered. The signed-in Dashboard link is unchanged. Base never
+    names the SDK that fills the slot.
+  * auth_sdk >= 1.11.0 registers the pair. A header a home SDK owns
+    renders the slot with its own classes (hosting_sdk >= 1.16.0,
+    telephony_sdk >= 1.3.0).
+* test: `tests/test_manifest.py` "header auth slot (1.60.0)".
+
 ## 1.59.0
 
 * feat(site-data): the schema behind the South River render Ray approved

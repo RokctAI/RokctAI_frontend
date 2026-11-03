@@ -730,6 +730,7 @@ migrate_working_dir/
 /components/custom/app-sidebar.tsx
 /components/custom/auth-form.tsx
 /components/custom/auth/agent-register-config.ts
+/components/custom/auth/header-auth-buttons.tsx
 /components/custom/auth/register-registry.ts
 /components/custom/back-to-top.tsx
 /components/custom/beta-toggle.tsx
@@ -744,6 +745,7 @@ migrate_working_dir/
 /components/custom/download-buttons.tsx
 /components/custom/flip-card.tsx
 /components/custom/footer-chrome.tsx
+/components/custom/header-auth-slot.tsx
 /components/custom/header-menu.tsx
 /components/custom/header.tsx
 /components/custom/hero-view.tsx
@@ -767,6 +769,7 @@ migrate_working_dir/
 /components/custom/landing/fonts/rokct/instrument-sans-latin-wght.woff2
 /components/custom/landing/fonts/rokct/jetbrains-mono-latin-wght.woff2
 /components/custom/landing/footer-chrome-config.ts
+/components/custom/landing/header-auth.ts
 /components/custom/landing/header-menu.ts
 /components/custom/landing/hero-config.ts
 /components/custom/landing/hero-copy.ts
@@ -825,6 +828,7 @@ migrate_working_dir/
 /components/custom/site-back-to-top.ts
 /components/custom/site-credit.tsx
 /components/custom/site-frame.tsx
+/components/custom/site-shell.tsx
 /components/custom/site-theme.tsx
 /components/custom/submit-button.tsx
 /components/custom/theme-provider.client.tsx
