@@ -142,9 +142,14 @@ const AGENT_NETWORK_STRIP: AgentNetworkStrip = {
     { key: "hosting", name: "Hosting", url: null, shown: false },
     { key: "telephony", name: "Telephony", url: null, shown: false },
   ],
+  // 1.24.0 (Ray approved the rokct.ai redesign on 2026-11-01: no client
+  // showcase): the strip is drawn nowhere on rokct.ai - not on the landing
+  // (the logos section that carried it is gone) and not in the footer.
+  // The sites stay declared, so turning the strip back on is this one
+  // block.
   placement: {
-    landing: "section",
-    footer: true,
+    landing: "none",
+    footer: false,
   },
 };
 

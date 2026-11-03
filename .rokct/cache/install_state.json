@@ -162,6 +162,240 @@
         "sonner": "^2.0.7"
       }
     },
+    "agent_sdk": {
+      "version": "1.24.0",
+      "files": {
+        "app/handson/all/agent/page.tsx": "213b28ae54449b1141da56e7601fb01939d1a11f7395246ae3932ec4e39feedb",
+        "app/actions/handson/all/agent/plan.ts": "6f0bc2c127e847e4a0990475d4bbb0036b71c6ce051b65d2aadec87886c44e83",
+        "app/actions/handson/all/agent/memory.ts": "6cc2cacd2425d9de73da0349fd56ce60f8eb9dfdddc250137570925e66dc7811",
+        "app/actions/handson/all/agent/tasks.ts": "93763446bbcedc675f26fe54b1356d5fbce2582751bcc1776970673809f74612",
+        "app/services/all/agent/plan.ts": "e4a0e9514b7a5d3927714607f28c2a7b2a5b6c2e33e18dd35b453e57237e8d4d",
+        "app/services/all/agent/memory.ts": "ef27b0a7fd0009d6254bab44a4e2f73ac6cdcfa322a912221fc51bfbfcaad223",
+        "app/services/all/agent/tasks.ts": "e34e7fe651fffd0069ea9e6a328b209eb8885dddead3efbbbc35baea3d122245",
+        "app/(chat)/page.tsx": "a1a5ebd16770a1f9a077cacfe8b43875b997c8508dd2350ff77024b6b609b6fe",
+        "app/(chat)/chat/page.tsx": "79baa8c004a77f430eb516ca86d627f22e2d9c924ee055f299e800d57abf00e0",
+        "app/(chat)/chat/[id]/page.tsx": "19502e86041439edfd4696c70f00e505575c3f6969f04938f55c947e52e09be2",
+        "app/(chat)/api/reservation/route.ts": "b260c5e479abd6de5b69332bc8a70605bc2a38591f6468f5207d817fd2dda06d",
+        "app/(chat)/api/chat/route.ts": "ea5a878b2c31d3bfeaebb475b3f8a1e05b9a3368d77dd3951aeda28a6e5c1d5a",
+        "app/(chat)/api/files/upload/route.ts": "c8dae443da244b2b80b3085abc5ef3f7dedf6be9f5652bb7e146861af2e0dbca",
+        "app/(chat)/api/error/route.ts": "5f1a260d859cf81a0a10f0772f81189c32705b576530ba3e372364bfaf895538",
+        "app/(chat)/api/history/route.ts": "2d4524233a6e7343389bb1e9fbb903cd64f1cb961785b1e056649b9187693b33",
+        "app/(chat)/api/history/clear/route.ts": "9d36434023d3dc0d0c90ad80f7b0667cee6c55223b1b2a8a10a204b9c6da9996",
+        "app/(chat)/api/reminders/pending/route.ts": "2df010ce8359d1c6cff56c92b9472b56db9ac00b5a11f6fb8b15db11d4fad5c2",
+        "app/(chat)/api/summarize/route.ts": "b9d2762d9230c581b4bc24b49bf2d0586b800b31662f6cda27af5c0877d6cd2d",
+        "app/actions/ai/competitor.ts": "9ead15fd6c6c49675972614681906588363b606347601fbb9ea40514c4796043",
+        "app/actions/ai/supply_chain.ts": "184554286f9f9dd1233451bc941268d6954c86857da773ae3ba6faed56c107d0",
+        "app/actions/ai/notifications.ts": "96620c992437b9ece8e73137a991ecb88b655bdd7a20d972a0ca0c39e2d31f62",
+        "app/actions/ai/tenant.ts": "37f31e31508bf7e77b26da248c283184d215d1e4e5c4dee610f657250ade39b9",
+        "app/actions/ai/crm.ts": "df7001bbf48c3aa16c4c106ad7da7b3c520691fdb34d96794cfb9847166940c2",
+        "app/actions/ai/financials.ts": "523be5e4dfc11a1901a41643024d81c6aaccd476a5b1d2946894a6525ee74288",
+        "app/actions/ai/opportunities.ts": "0be13f5322c9792a2c2e9c42176cfeef3f48e1611de58ea12e57c2181acf8de9",
+        "app/actions/ai/onboarding.ts": "6cf7170d4d3f4dbd3138dbf13301f0c607623b2f65465e118247071f0a4f93f4",
+        "app/actions/ai/holiday.ts": "8ca1234a86aecc9d8323ef0f78f5e7c4290807e27af59f1a83c1af336f67182b",
+        "app/actions/ai/create.ts": "39b89d3e7291b47c0e17aa49f19247673ed7663ed1061e5e50a56f17b0c68d6f",
+        "app/actions/ai/hr.ts": "8caa2d94f9b02ee6ad6e34c804a7ca8518c069c88001ef3262e85d96a4f4fda3",
+        "app/actions/ai/control.ts": "9c2d613621f5945770f45b18b1855a78daedc30d2b495d66521d47ba965405ea",
+        "app/actions/ai/admin.ts": "b208c6aa1d3e45edeb98e942b21414191065033ff246f6b8de9c035322ef320d",
+        "app/actions/ai/recruitment.ts": "4f36b8ed915cc348d1521e57a451d10f61eb97584672d4aa07c2aa82b05bfc61",
+        "ai/local/notes/actions.ts": "bb6e000539ebb3b85151de183ba2b73f9a1f772534342a2a0ae35f3d20f25788",
+        "ai/local/tasks/actions.ts": "be72dcf82bf72605da5fef3b66342cd5aee3097159b8c291139967cd699069bb",
+        "ai/local/hr/actions.ts": "5c2efdab08fd5707906959f9b7d9fd670d7f92c601f162ba700c1062c81c1741",
+        "ai/local/crm/actions.ts": "2de6a43175aafe781cd5f3234db2167accc33924042fff4c4075dc5b10df5e85",
+        "ai/local/projects/actions.ts": "cc0745fdb124ea67eedf48157b4fade3da291f1184fefc79d8c48730714cc4d3",
+        "app/api/ai/classify-intent/route.ts": "d3ad9b19767473222984af5b8c215efa33a409e0d9626d2dbc3fa6cc401f112c",
+        "app/api/tasks/route.ts": "b57832d667a69624c58278c56ecc752a55322211f5b2a7e1ccbdbc3a40e4a300",
+        "app/api/notes/route.ts": "803cbad4cbe74acaa793e936a867ead46cd93dec745454a589a24d5a28c9d665",
+        "app/api/projects/route.ts": "a82fbb1ba6a8e49ed6fdb81ca2f10ec8250a19fb61189f975def0f0bdc4cff70",
+        "app/services/server/intent-classifier.ts": "74abe33370a84382db8841a02b11bdfc382b28b885b4bc6c71e0b29dd0937334",
+        "app/services/public/opportunities.ts": "c5ba6cd816b509aa1390bda851802f8c8eb70f80bc51942f8c2c22687b1d3480",
+        "lib/agent-opportunity-cards.ts": "8a05760118710adceb46420225ec5f47cc6b27544e169584064c146238aeb805",
+        "app/opportunities/opportunity-list.tsx": "55c3601fe79256c58301067ade6242e48b5c8e472f5c8b4f494cd08f1bc76892",
+        "app/opportunities/page.tsx": "bc34ebd525532f66c326f55cd96fbf905b2c4deb3d02f0e0e8389fe6c6ae5574",
+        "app/opportunities/[type]/[slug]/page.tsx": "bbdaf4d6c7ace388cbfd28d57e05af78484d5e3ce4485e16adec17ce14c3489e",
+        "app/lib/intent-engine.ts": "e7b241beaf63de5ad5aefb2ad1261af8a12342b3bcdb2683adcf9556a9085d7d",
+        "components/custom/landing/agent-opportunities.tsx": "a1e57bcff5aeb3dfede65fb6e9a2eb85c02e1dcceee78988b377e5937bb2261f",
+        "components/custom/landing/agent-landing-config.ts": "f41928ebe2484f3d20cfe03d41da671f79211a32edbb7f65c1eb47afd5d0ba57",
+        "components/custom/landing/agent-header-menu.ts": "4f90c46de05279e693e43662a396935dac66c91c96e81c9e561bdd5e8452c0c7",
+        "components/custom/landing/agent-hero-copy.ts": "8c156aa55cf97d894291eb06d9bef6aa3a29302f78b69f93de763f37f386f837",
+        "components/custom/landing/agent-site-metadata.ts": "8a74597006f5bc64785249a00c5b19ec13b49297f1a17049269a8dc2133b6626",
+        "components/custom/landing/agent-network-strip.ts": "fbb237739b4ed178e9bf55129fba1cc69302b5938dce9ff0c924832461d91c09",
+        "components/custom/landing/agent-plans-query.ts": "abe4c0dedc9b8629259a5b51e8bc34d2c7010f4394c538bbefccfff1d744b98e",
+        "components/custom/auth/agent-register-config.ts": "03674abdc1e8371b7406d418b57c3a95313897ab1e222cc4863329c0e712bd5d",
+        "app/(auth)/agent-register-provision.ts": "da268dcd4aa701a22959e41b0c824798d9a4ce6381503fce9ef4f519a91ddf6a",
+        "app/(auth)/agent-register-helpers.ts": "f9d59a26ef23c60883b8941e68a072c3db8828218992540ceef71277ea160e9d",
+        "app/(auth)/agent-register-actions.ts": "76cd0ab009ebff10278ed33ec874ae69b775bfd11dd8bae63d4ffc78355c013b",
+        "components/custom/pricing.tsx": "ad712ab9695fbdeb6170d3c224e1e16fe57551a4d70541d747a5453998129e32",
+        "components/custom/pricing.client.tsx": "1c76e4e13eb82063ba74ff0d9a08b6b18141e9c4054ac0d7de84c7ea21731100",
+        "components/custom/rokct-hero.tsx": "31574bdf234a5f1a6d97e06b5b9a9c5816edd57a21879b15ec0e2fedd1e1096e",
+        "components/custom/rokct-hero.client.tsx": "569660141d3b9a9be9ffbcaabe953502c74d5fcacc391a654debe4f030377a4c",
+        "components/custom/rokct-platform.tsx": "260224208479bc0a0be9ad8085b0d1887bd8c6566c47c2d99d02336b2b8ad21b",
+        "components/custom/rokct-platform.client.tsx": "9dfebf014566791eedbfb54ce6c29eaf999238ad0601f97ba0fb80f754320619",
+        "components/custom/rokct-how.tsx": "d40d917ba1a85ebceeddbae2eb785300bf5160e05fa7636741b2c04861b93def",
+        "components/custom/rokct-funding.tsx": "0d22085801729b22c5c617cc4e6d47d42bc5d9d48912eac68a6117f620868c54",
+        "components/custom/rokct-funding.client.tsx": "cc3a432372905d8f59bac54cb841e192ebcc98b35f6aec2c9d73ff74a9dfebe3",
+        "components/custom/rokct-plans.tsx": "6e5d8caed2937ab35ccf22c007d6636f536e3ff56100fba952c13d9c0eaed141",
+        "components/custom/rokct-closing.tsx": "8c7e762528ab0ba20dda7d3cf046c7bd094263fe7cadb8b5e3f6cf53d13297fd",
+        "components/custom/rokct-closing.client.tsx": "9c4febe0d30d75d712a3686ded29ab356f48dd432167f8c52ed9ccbf58df02e0",
+        "components/custom/landing/rokct-landing-content.ts": "202957bcf32e36b701f4d9b2ca829b9b28c8f163a988f3d00294206dcc642dbf",
+        "components/custom/landing/rokct-ui.tsx": "37e46fca0642c10ea6e9651abdff391d01738aa5cf402b3e4b63aa21c977fe89",
+        "components/custom/landing/rokct-landing-classes.ts": "6b063cecd19f7aca903abead9a3b7d71f4ae5f2e0fa6ee328f73b5eacd2052ee",
+        "components/custom/landing/rokct-fonts.ts": "3263d1d2c0623a64c9d8f38119be3ca89d72edcd5ce9b957dd8d867da4f0c6a9",
+        "components/custom/landing/rokct-landing.css": "a727deb48cf8d0192b36e22f8b15b2761ce86df60b1e7b105ab69111380f7618",
+        "components/custom/landing/fonts/rokct/bricolage-grotesque-latin-opsz-wdth-wght.woff2": "a756882d8a7802ebd4663b4544a62ebedafc7227c1c159ab95eea61393af3f8e",
+        "components/custom/landing/fonts/rokct/OFL.txt": "90921510049843f952d16768fdbd5c5505ac90b0f79923cdf3972c1ec1e67c8f",
+        "components/custom/landing/fonts/rokct/instrument-sans-latin-wght.woff2": "2ee17598a98d8a59e4df8152d015bec9ab8e4d5672cc0ab42bef806b568e3971",
+        "components/custom/landing/fonts/rokct/jetbrains-mono-latin-wght.woff2": "18be452724bfdc236c074ca94a249a7f41a86752c7d04ab258ce9ed5651f6a7e",
+        "components/tasks/competitor-form.tsx": "8e34dfbeef00bc95cc20273430d224f2bd5caa124304124d414f829b8f52cfe9",
+        "components/tasks/approval-dashboard.tsx": "5a264d1fbdbf403714385d8f3327ea37127f3ad63cadc7dc5b953fd4702a5da2",
+        "components/tasks/personal-task.tsx": "984ab4a5e4a371147494b1b8026b06abb7ea235d4dbd7961519f845e09a9c744",
+        "components/tasks/holiday-work-form.tsx": "3dc1395feb2627294ebf75a5a353c0a7a00f4712f3d139bce447c2a05a690a12",
+        "components/tasks/deal-task.tsx": "d6ab57c0a8a3c42cfde39ef4d302227d6a0508329f2a810eb7d2d29005105f9d",
+        "components/tasks/profile-form-card.tsx": "e20efec4d51850ce6151d5141e52a52c73b0a107d19b3c7c1d34dbddb6146291",
+        "components/tasks/task-stack.tsx": "b87c79e7d77be3f092ee7999aeed108ae54beb1117fa8e7ab2442892f0790b3e",
+        "components/tasks/project-task.tsx": "423eed88416fd951077c95774edd00dc044be42740302e4e70d1bf15241ee4ba",
+        "components/tasks/resignation-confirmation.tsx": "5f11636f8eec040d7955e92686cf7723916664234a4cdbde961e6876c5ae0027",
+        "components/tasks/attendance-card.tsx": "414eeef781b945b1af4bdd32e2b8dd70ffc100c05c92ee5a45accf2e1bb624d7",
+        "components/tasks/leave-application.tsx": "f1ef248552165ebcfbf1248e32b0520900f6be9e7181c11bfde5147be2fff7ad",
+        "components/tasks/set-reminder.tsx": "7e338a01be392bddef745632eab40a235ce91e189a09b5144870b2336ffa9532",
+        "components/tasks/disambiguate-task.tsx": "f81999a022c4dd95944425c77c853e8f19325dd981e2b9ec6b6607597f767af5",
+        "components/tasks/announcement-card.tsx": "06f4088a3568247eaaaeab22fb0d87854004abd44b212d25afbb8cae33611d54",
+        "components/tasks/analytics-card.tsx": "cb490490363bcd4f6e622352591ca1ddd5def4e233113dde8e6c7c2c52641af9",
+        "components/tasks/lead-form-card.tsx": "b35f78c38e74dc50cfa130fadf04c8db4592b196c550341df9efe074a0c3b5e5",
+        "components/flights/boarding-pass.tsx": "55bd6ab35fed65d3a380cdb7a7b427caca493fb25f7c15822900e74b26d6631f",
+        "components/flights/list-flights.tsx": "c87607040e3c3a134f15869420ef79cac3f3043c2366017dfab6ca6316272360",
+        "components/flights/flight-status.tsx": "334bd97f928c4e9bedfe7bb251ae5bbfe51ad01d31533aa02d0802712892faf6",
+        "components/flights/authorize-payment.tsx": "924a26b23a8a66414e4141ef1ce8b3eec119552c36114ce1162c57b4e7b7c0b5",
+        "components/flights/verify-payment.tsx": "5127b52b08cc95e0b1edd51e3543c25b8420a03987b9ff042f824d2ac84ecc8b",
+        "components/flights/select-seats.tsx": "3e72e2413a992488b26f7528997c0feef454bdb1f9a8b1d4b717965713584ab4",
+        "components/flights/create-reservation.tsx": "12188bfdf93b083da2d774e0c9ea6da96fbc38ea51dfd914d31a057ef4c7d68e",
+        "components/notes/note-card.tsx": "d430ca5e563e3c25c24ead9fada1fadfe5838f691ac50da73ba696bc9d30b41e",
+        "components/projects/project-card.tsx": "5651a51e5fd4fe0980c93c3b03354f6a32a4a3e6a7f902acf77b139bdbf64ba1",
+        "components/overviews/project-overview.tsx": "bad698ddfdb90ef9da101efcb5a249c83915aba4e4844023fa719d324b85c90b",
+        "components/custom/chat.tsx": "7d38ab84588335df944865923b99c1a99824667fb0ef44e28236838199cb7142",
+        "components/custom/message.tsx": "e2010326b8ca9585f2762a6a1bfd4ad25ec6937cda3b84b471493271b4e6fb68",
+        "components/custom/multimodal-input.tsx": "91658d2e52ff296c11671a0f90d282e1502b7432aa088dcb6a32575f7553dd3f",
+        "components/custom/overview.tsx": "2b41985e143942327893f43ca083420abd8012a11893495471470bcbed36f1ff",
+        "components/custom/model-selector.tsx": "e5e9eb04c7b235e669f5445b4251820678243765f5e864b467e1204212de86d8",
+        "components/custom/left-sidebar.tsx": "f108c66e9e92404dacf3d369ea1df6892f9e36b6e4faaecfb35838befb52b322",
+        "components/custom/right-plane.tsx": "b4b2bac04ecb25f38aaab08a32e42753f24d5676b5bfd090c71cecf8d198e503",
+        "components/custom/use-scroll-to-bottom.ts": "07b889de8f6c887f69241a35a7a54928294431903256757026e07f50f5a7c326",
+        "components/custom/use-window-size.tsx": "6694c7ee58d3473d482f1de5e885885c54e4c7504a318a5743fcd7917eace84a",
+        "components/custom/preview-attachment.tsx": "9338059aa73c0da05beb103077af93b4729200102b5db9012f88112ae435bab6",
+        "components/custom/weather.tsx": "c5e9994311b0f7f662a182ba0485b3245a20b3112903699b21eefe77a248f767",
+        "lib/dummy-flight-data.ts": "95aa47002fcbc2786e446dcc5a74310c0c794d2df946e4767b23f3e8d11fd25a",
+        "lib/mock-conversations.ts": "c7431e6faacb821b7ba3620aa7e49ab980c2e062369b40e3e6d96ecc0c519de1",
+        "lib/agent-chat-messages.ts": "5dd63be638e43c34ed68412723a49f916c3b1a4da8a0a200d658153f7e45d3dc",
+        "public/landing/agent/rk-address.svg": "7a3037d98a11e5aa4bcf64e684a8f88848d108341b0f98adfb4956338f726406",
+        "public/landing/agent/rk-phone.svg": "f3d219536c75b9bbd20a05028c2019bc82c4128d8bd8f2a8ea62ea4d5f7422ca",
+        "public/landing/agent/rk-grants.svg": "06e2809a3335930fb55f52331714ee0f1d7031dc89a5fba7d1eb7b1a05312b52",
+        "public/landing/agent/rk-invoices.svg": "fd66de230ce631e510308305204b7dde229c65dc8312075883e8ce0ad24eb8bb",
+        "public/landing/agent/rk-mark.svg": "f5d0abf40ebe2a7fe92738aaee5063f4602308b3002a14a6069cb08b29794999",
+        "public/landing/agent/rk-till.svg": "7e7f80600f2d3a6b64ae71f55dd74e93c732f40b70ff04782efa7fb86606d5f2",
+        "public/landing/agent/rk-stock.svg": "d3c8922902e698b18ce70c1cf9104f1cb2ec621e3d44f74f98db49dbd089b0c2",
+        "public/landing/agent/rk-leave.svg": "81683d1eded55cfd6a163c788c22cc7684b11ea0e92fa2d2eff8313bc7fd0e5f",
+        "public/landing/agent/rk-pipeline.svg": "9d2f9dc4d1da813700c1bbfaf091ddf187e7dabc26b170539cd6fc65ba6bdd9f",
+        "public/landing/agent/rk-payslips.svg": "f4839f76c078c4c564fae69227d647f756cbbb92b7ebecf17d3a7dfecf86a28e",
+        "public/landing/agent/rk-policy.svg": "857a8041899880174db76320e2479e2b4e6d81b60570c8122e48cf4cd2095168",
+        "public/landing/agent/rk-approvals.svg": "139602ffae0897fd04c2ddc97f6fb67aec163feae117d76aab7cd91677aacdc3"
+      },
+      "dependencies": {
+        "ai": "6.0.44",
+        "@ai-sdk/react": "^3.0.71",
+        "streamdown": "^1.6.7",
+        "chrono-node": "^2.7.5",
+        "framer-motion": "^12.29.0",
+        "date-fns": "^4.1.0",
+        "sonner": "^2.0.7",
+        "@remixicon/react": "^4.6.0",
+        "swr": "^2.3.8",
+        "classnames": "^2.5.1",
+        "recharts": "^2.15.4",
+        "zod": "^4.1.13",
+        "@vercel/blob": "^2.0.0"
+      },
+      "integrations": [
+        {
+          "target": "app/handson/sidebar-client.tsx",
+          "placeholder": "// @rokct-sdk-nav-start",
+          "replacement": "  { href: \"/handson/all/agent\", label: \"Memory\" },"
+        },
+        {
+          "target": "app/config/compose.ts",
+          "placeholder": "// @rokct-sdk-flags-start",
+          "replacement": "  agent: true,"
+        },
+        {
+          "target": "components/custom/landing/hero-copy.ts",
+          "placeholder": "// @rokct-sdk-hero-copy-start",
+          "replacement": "  { id: \"agent-hero\", load: () => import(\"@/components/custom/landing/agent-hero-copy\") },"
+        },
+        {
+          "target": "components/custom/landing/page-sections.ts",
+          "placeholder": "// @rokct-sdk-page-sections-start",
+          "replacement": "  { id: \"rokct-hero\", load: () => import(\"@/components/custom/rokct-hero\") },"
+        },
+        {
+          "target": "components/custom/landing/page-sections.ts",
+          "placeholder": "// @rokct-sdk-page-sections-start",
+          "replacement": "  { id: \"rokct-platform\", load: () => import(\"@/components/custom/rokct-platform\") },"
+        },
+        {
+          "target": "components/custom/landing/page-sections.ts",
+          "placeholder": "// @rokct-sdk-page-sections-start",
+          "replacement": "  { id: \"rokct-how\", load: () => import(\"@/components/custom/rokct-how\") },"
+        },
+        {
+          "target": "components/custom/landing/page-sections.ts",
+          "placeholder": "// @rokct-sdk-page-sections-start",
+          "replacement": "  { id: \"rokct-funding\", load: () => import(\"@/components/custom/rokct-funding\") },"
+        },
+        {
+          "target": "components/custom/landing/page-sections.ts",
+          "placeholder": "// @rokct-sdk-page-sections-start",
+          "replacement": "  { id: \"rokct-plans\", load: () => import(\"@/components/custom/rokct-plans\") },"
+        },
+        {
+          "target": "components/custom/landing/page-sections.ts",
+          "placeholder": "// @rokct-sdk-page-sections-start",
+          "replacement": "  { id: \"pricing\", load: () => import(\"@/components/custom/pricing\") },"
+        },
+        {
+          "target": "components/custom/landing/page-sections.ts",
+          "placeholder": "// @rokct-sdk-page-sections-start",
+          "replacement": "  { id: \"rokct-closing\", load: () => import(\"@/components/custom/rokct-closing\") },"
+        },
+        {
+          "target": "components/custom/landing/header-menu.ts",
+          "placeholder": "// @rokct-sdk-header-menu-start",
+          "replacement": "  { id: \"agent-header-menu\", load: () => import(\"@/components/custom/landing/agent-header-menu\") },"
+        },
+        {
+          "target": "components/custom/landing/site-metadata.ts",
+          "placeholder": "// @rokct-sdk-site-metadata-start",
+          "replacement": "  { id: \"agent-site-metadata\", load: () => import(\"@/components/custom/landing/agent-site-metadata\") },"
+        },
+        {
+          "target": "components/custom/landing/network-strip.ts",
+          "placeholder": "// @rokct-sdk-network-strip-start",
+          "replacement": "  { id: \"agent-network-strip\", load: () => import(\"@/components/custom/landing/agent-network-strip\") },"
+        },
+        {
+          "target": "components/custom/landing/plans-query.ts",
+          "placeholder": "// @rokct-sdk-plans-query-start",
+          "replacement": "  { id: \"agent-plans\", load: () => import(\"@/components/custom/landing/agent-plans-query\") },"
+        },
+        {
+          "target": "components/custom/auth/register-registry.ts",
+          "placeholder": "// @rokct-sdk-register-start",
+          "replacement": "  { id: \"agent-register-config\", load: () => import(\"@/components/custom/auth/agent-register-config\") },"
+        },
+        {
+          "target": "app/(auth)/register-provision.ts",
+          "placeholder": "// @rokct-sdk-register-provision-start",
+          "replacement": "  { id: \"agent-register-provision\", load: () => import(\"@/app/(auth)/agent-register-provision\") },"
+        }
+      ]
+    },
     "auth_sdk": {
       "version": "1.10.2",
       "files": {
@@ -1074,267 +1308,7 @@
         "date-fns": "^4.1.0",
         "sonner": "^2.0.7"
       }
-    },
-    "agent_sdk": {
-      "version": "1.23.0",
-      "files": {
-        "app/handson/all/agent/page.tsx": "213b28ae54449b1141da56e7601fb01939d1a11f7395246ae3932ec4e39feedb",
-        "app/actions/handson/all/agent/memory.ts": "6cc2cacd2425d9de73da0349fd56ce60f8eb9dfdddc250137570925e66dc7811",
-        "app/actions/handson/all/agent/plan.ts": "6f0bc2c127e847e4a0990475d4bbb0036b71c6ce051b65d2aadec87886c44e83",
-        "app/actions/handson/all/agent/tasks.ts": "93763446bbcedc675f26fe54b1356d5fbce2582751bcc1776970673809f74612",
-        "app/services/all/agent/memory.ts": "ef27b0a7fd0009d6254bab44a4e2f73ac6cdcfa322a912221fc51bfbfcaad223",
-        "app/services/all/agent/plan.ts": "e4a0e9514b7a5d3927714607f28c2a7b2a5b6c2e33e18dd35b453e57237e8d4d",
-        "app/services/all/agent/tasks.ts": "e34e7fe651fffd0069ea9e6a328b209eb8885dddead3efbbbc35baea3d122245",
-        "app/(chat)/page.tsx": "a1a5ebd16770a1f9a077cacfe8b43875b997c8508dd2350ff77024b6b609b6fe",
-        "app/(chat)/api/chat/route.ts": "ea5a878b2c31d3bfeaebb475b3f8a1e05b9a3368d77dd3951aeda28a6e5c1d5a",
-        "app/(chat)/api/error/route.ts": "5f1a260d859cf81a0a10f0772f81189c32705b576530ba3e372364bfaf895538",
-        "app/(chat)/api/files/upload/route.ts": "c8dae443da244b2b80b3085abc5ef3f7dedf6be9f5652bb7e146861af2e0dbca",
-        "app/(chat)/api/history/route.ts": "2d4524233a6e7343389bb1e9fbb903cd64f1cb961785b1e056649b9187693b33",
-        "app/(chat)/api/history/clear/route.ts": "9d36434023d3dc0d0c90ad80f7b0667cee6c55223b1b2a8a10a204b9c6da9996",
-        "app/(chat)/api/reminders/pending/route.ts": "2df010ce8359d1c6cff56c92b9472b56db9ac00b5a11f6fb8b15db11d4fad5c2",
-        "app/(chat)/api/reservation/route.ts": "b260c5e479abd6de5b69332bc8a70605bc2a38591f6468f5207d817fd2dda06d",
-        "app/(chat)/api/summarize/route.ts": "b9d2762d9230c581b4bc24b49bf2d0586b800b31662f6cda27af5c0877d6cd2d",
-        "app/(chat)/chat/page.tsx": "79baa8c004a77f430eb516ca86d627f22e2d9c924ee055f299e800d57abf00e0",
-        "app/(chat)/chat/[id]/page.tsx": "19502e86041439edfd4696c70f00e505575c3f6969f04938f55c947e52e09be2",
-        "app/actions/ai/admin.ts": "b208c6aa1d3e45edeb98e942b21414191065033ff246f6b8de9c035322ef320d",
-        "app/actions/ai/competitor.ts": "9ead15fd6c6c49675972614681906588363b606347601fbb9ea40514c4796043",
-        "app/actions/ai/control.ts": "9c2d613621f5945770f45b18b1855a78daedc30d2b495d66521d47ba965405ea",
-        "app/actions/ai/create.ts": "39b89d3e7291b47c0e17aa49f19247673ed7663ed1061e5e50a56f17b0c68d6f",
-        "app/actions/ai/crm.ts": "df7001bbf48c3aa16c4c106ad7da7b3c520691fdb34d96794cfb9847166940c2",
-        "app/actions/ai/financials.ts": "523be5e4dfc11a1901a41643024d81c6aaccd476a5b1d2946894a6525ee74288",
-        "app/actions/ai/holiday.ts": "8ca1234a86aecc9d8323ef0f78f5e7c4290807e27af59f1a83c1af336f67182b",
-        "app/actions/ai/hr.ts": "8caa2d94f9b02ee6ad6e34c804a7ca8518c069c88001ef3262e85d96a4f4fda3",
-        "app/actions/ai/notifications.ts": "96620c992437b9ece8e73137a991ecb88b655bdd7a20d972a0ca0c39e2d31f62",
-        "app/actions/ai/onboarding.ts": "6cf7170d4d3f4dbd3138dbf13301f0c607623b2f65465e118247071f0a4f93f4",
-        "app/actions/ai/opportunities.ts": "0be13f5322c9792a2c2e9c42176cfeef3f48e1611de58ea12e57c2181acf8de9",
-        "app/actions/ai/recruitment.ts": "4f36b8ed915cc348d1521e57a451d10f61eb97584672d4aa07c2aa82b05bfc61",
-        "app/actions/ai/supply_chain.ts": "184554286f9f9dd1233451bc941268d6954c86857da773ae3ba6faed56c107d0",
-        "app/actions/ai/tenant.ts": "37f31e31508bf7e77b26da248c283184d215d1e4e5c4dee610f657250ade39b9",
-        "ai/local/crm/actions.ts": "2de6a43175aafe781cd5f3234db2167accc33924042fff4c4075dc5b10df5e85",
-        "ai/local/hr/actions.ts": "5c2efdab08fd5707906959f9b7d9fd670d7f92c601f162ba700c1062c81c1741",
-        "ai/local/notes/actions.ts": "bb6e000539ebb3b85151de183ba2b73f9a1f772534342a2a0ae35f3d20f25788",
-        "ai/local/projects/actions.ts": "cc0745fdb124ea67eedf48157b4fade3da291f1184fefc79d8c48730714cc4d3",
-        "ai/local/tasks/actions.ts": "be72dcf82bf72605da5fef3b66342cd5aee3097159b8c291139967cd699069bb",
-        "app/api/ai/classify-intent/route.ts": "d3ad9b19767473222984af5b8c215efa33a409e0d9626d2dbc3fa6cc401f112c",
-        "app/api/tasks/route.ts": "b57832d667a69624c58278c56ecc752a55322211f5b2a7e1ccbdbc3a40e4a300",
-        "app/api/notes/route.ts": "803cbad4cbe74acaa793e936a867ead46cd93dec745454a589a24d5a28c9d665",
-        "app/api/projects/route.ts": "a82fbb1ba6a8e49ed6fdb81ca2f10ec8250a19fb61189f975def0f0bdc4cff70",
-        "app/services/server/intent-classifier.ts": "74abe33370a84382db8841a02b11bdfc382b28b885b4bc6c71e0b29dd0937334",
-        "app/services/public/opportunities.ts": "c5ba6cd816b509aa1390bda851802f8c8eb70f80bc51942f8c2c22687b1d3480",
-        "lib/agent-opportunity-cards.ts": "8a05760118710adceb46420225ec5f47cc6b27544e169584064c146238aeb805",
-        "app/opportunities/opportunity-list.tsx": "55c3601fe79256c58301067ade6242e48b5c8e472f5c8b4f494cd08f1bc76892",
-        "app/opportunities/page.tsx": "bc34ebd525532f66c326f55cd96fbf905b2c4deb3d02f0e0e8389fe6c6ae5574",
-        "app/opportunities/[type]/[slug]/page.tsx": "bbdaf4d6c7ace388cbfd28d57e05af78484d5e3ce4485e16adec17ce14c3489e",
-        "app/lib/intent-engine.ts": "e7b241beaf63de5ad5aefb2ad1261af8a12342b3bcdb2683adcf9556a9085d7d",
-        "components/custom/landing/agent-opportunities.tsx": "a1e57bcff5aeb3dfede65fb6e9a2eb85c02e1dcceee78988b377e5937bb2261f",
-        "components/custom/landing/agent-hero-form.tsx": "5fd02af10f5f91081e6e6813dd0f850f885a532be1ecb7a55d769e83db260812",
-        "components/custom/chat-section.tsx": "b07158a5f0e8a0dab07d969a599cc795cf21c2610c0be8208f68be632dd4e659",
-        "components/custom/chat-section.client.tsx": "9a3cadfbee8f891c70f35405fa351192eca4a358605a17ec3639a510417438c3",
-        "components/custom/landing/agent-landing-config.ts": "58e9ca521e75ad73b063d0bf0503818b6e574d2b4e90dfa691621de426c3d703",
-        "components/custom/landing/agent-header-menu.ts": "e8df92b11e6731d04aec62c42319d65a5a0bb243b35d5829ba8e19efe12f98ee",
-        "components/custom/landing/agent-hero-copy.ts": "916be87ab5ae3b9b1e9b680769bf2b4662cfd071610bb0ee33930579ee9aa11f",
-        "components/custom/landing/agent-site-metadata.ts": "8a74597006f5bc64785249a00c5b19ec13b49297f1a17049269a8dc2133b6626",
-        "components/custom/landing/agent-network-strip.ts": "91c660284c5fdd28a16455d146f5e5dfe91fae00ee0e6bea45a5cb5712c2f566",
-        "components/custom/landing/agent-logos.ts": "1a913e22d8eb38ddbd90035a7552db3bdbac7bd5b859158d30d2a197e151e4d3",
-        "components/custom/landing/agent-plans-query.ts": "abe4c0dedc9b8629259a5b51e8bc34d2c7010f4394c538bbefccfff1d744b98e",
-        "components/custom/landing/agent-card-row.ts": "aa9ec9a996494306751a8fa989f05682e687f0c0c9f7b28e68a8a097d56b8690",
-        "components/custom/auth/agent-register-config.ts": "03674abdc1e8371b7406d418b57c3a95313897ab1e222cc4863329c0e712bd5d",
-        "app/(auth)/agent-register-provision.ts": "da268dcd4aa701a22959e41b0c824798d9a4ce6381503fce9ef4f519a91ddf6a",
-        "app/(auth)/agent-register-helpers.ts": "f9d59a26ef23c60883b8941e68a072c3db8828218992540ceef71277ea160e9d",
-        "app/(auth)/agent-register-actions.ts": "76cd0ab009ebff10278ed33ec874ae69b775bfd11dd8bae63d4ffc78355c013b",
-        "components/custom/floating-nav.tsx": "8400a448aee19eaafda648909f51d1a480a61bdf563a6517829b51cb0f5fd141",
-        "components/custom/floating-nav.client.tsx": "01b1a357c3dc5000b142a96d56ca0efd796bd774bb984c196aa27b46ed7519ea",
-        "components/custom/logos.tsx": "ee0dade469ce0c28d751cd7eca840779e384441bd3ad482df7d88b913bf95a26",
-        "components/custom/logos.client.tsx": "3a60c5a4cdae3030c73348a4e7ca1dfdf42fbca87df1a350e2f7246741408171",
-        "components/custom/social-section.tsx": "9f9450dc68147cd866b1f5f818a04375a3fa780bc855612c9dcbbdcb02b86762",
-        "components/custom/social-section.client.tsx": "33812a38dc59dd678bf2f947a659212d12956f45abaee5d55726f5d9a2b167ae",
-        "components/custom/all-features-section.tsx": "7d0ac9691bbac5ca23d69e80e55fd7cddf89a3c4035500ba9bce2e646570a02c",
-        "components/custom/workflow-section.tsx": "dab0133beb8abd2f05cc97c4fd75e6a8f0e0ed1facf00cf8e6b79d5bd053ffe7",
-        "components/custom/workflow-section.client.tsx": "545ffb7fb2a286660faac244cda0d6539bc44174d496d64592e350e5b4a9f754",
-        "components/custom/pricing.tsx": "64c254ba459d8878236407a6bf02d685d99eba6997279c9553483e64d75af829",
-        "components/custom/pricing.client.tsx": "1c76e4e13eb82063ba74ff0d9a08b6b18141e9c4054ac0d7de84c7ea21731100",
-        "components/custom/copied-pricing.tsx": "a0c046db07b94fa89da9bb3b79c81756c21a9f9353ff0e6fc1ec1a61da90ad7d",
-        "components/custom/copied-pricing.client.tsx": "e1c79eb341d9acb37d46b6a77dd4180af68cde6315b137e6dcfad86fb5ad799d",
-        "components/custom/faq-section.tsx": "8c1e48d1d0be5e262ace88dbf146723a7c257cffc42a82b833865b5240b4893c",
-        "components/custom/faq-section.client.tsx": "1f895f80a05b24fa9606d3342a12c36cc03e66fb1f03b880e30586e2f52c8916",
-        "components/custom/testimonials-section.tsx": "58dc05b085eef18fc96d05b11adbe670839a1b714cd433454f0063dfd85ee936",
-        "components/tasks/analytics-card.tsx": "cb490490363bcd4f6e622352591ca1ddd5def4e233113dde8e6c7c2c52641af9",
-        "components/tasks/announcement-card.tsx": "06f4088a3568247eaaaeab22fb0d87854004abd44b212d25afbb8cae33611d54",
-        "components/tasks/approval-dashboard.tsx": "5a264d1fbdbf403714385d8f3327ea37127f3ad63cadc7dc5b953fd4702a5da2",
-        "components/tasks/attendance-card.tsx": "414eeef781b945b1af4bdd32e2b8dd70ffc100c05c92ee5a45accf2e1bb624d7",
-        "components/tasks/competitor-form.tsx": "8e34dfbeef00bc95cc20273430d224f2bd5caa124304124d414f829b8f52cfe9",
-        "components/tasks/deal-task.tsx": "d6ab57c0a8a3c42cfde39ef4d302227d6a0508329f2a810eb7d2d29005105f9d",
-        "components/tasks/disambiguate-task.tsx": "f81999a022c4dd95944425c77c853e8f19325dd981e2b9ec6b6607597f767af5",
-        "components/tasks/holiday-work-form.tsx": "3dc1395feb2627294ebf75a5a353c0a7a00f4712f3d139bce447c2a05a690a12",
-        "components/tasks/lead-form-card.tsx": "b35f78c38e74dc50cfa130fadf04c8db4592b196c550341df9efe074a0c3b5e5",
-        "components/tasks/leave-application.tsx": "f1ef248552165ebcfbf1248e32b0520900f6be9e7181c11bfde5147be2fff7ad",
-        "components/tasks/personal-task.tsx": "984ab4a5e4a371147494b1b8026b06abb7ea235d4dbd7961519f845e09a9c744",
-        "components/tasks/profile-form-card.tsx": "e20efec4d51850ce6151d5141e52a52c73b0a107d19b3c7c1d34dbddb6146291",
-        "components/tasks/project-task.tsx": "423eed88416fd951077c95774edd00dc044be42740302e4e70d1bf15241ee4ba",
-        "components/tasks/resignation-confirmation.tsx": "5f11636f8eec040d7955e92686cf7723916664234a4cdbde961e6876c5ae0027",
-        "components/tasks/set-reminder.tsx": "7e338a01be392bddef745632eab40a235ce91e189a09b5144870b2336ffa9532",
-        "components/tasks/task-stack.tsx": "b87c79e7d77be3f092ee7999aeed108ae54beb1117fa8e7ab2442892f0790b3e",
-        "components/flights/authorize-payment.tsx": "924a26b23a8a66414e4141ef1ce8b3eec119552c36114ce1162c57b4e7b7c0b5",
-        "components/flights/boarding-pass.tsx": "55bd6ab35fed65d3a380cdb7a7b427caca493fb25f7c15822900e74b26d6631f",
-        "components/flights/create-reservation.tsx": "12188bfdf93b083da2d774e0c9ea6da96fbc38ea51dfd914d31a057ef4c7d68e",
-        "components/flights/flight-status.tsx": "334bd97f928c4e9bedfe7bb251ae5bbfe51ad01d31533aa02d0802712892faf6",
-        "components/flights/list-flights.tsx": "c87607040e3c3a134f15869420ef79cac3f3043c2366017dfab6ca6316272360",
-        "components/flights/select-seats.tsx": "3e72e2413a992488b26f7528997c0feef454bdb1f9a8b1d4b717965713584ab4",
-        "components/flights/verify-payment.tsx": "5127b52b08cc95e0b1edd51e3543c25b8420a03987b9ff042f824d2ac84ecc8b",
-        "components/notes/note-card.tsx": "d430ca5e563e3c25c24ead9fada1fadfe5838f691ac50da73ba696bc9d30b41e",
-        "components/projects/project-card.tsx": "5651a51e5fd4fe0980c93c3b03354f6a32a4a3e6a7f902acf77b139bdbf64ba1",
-        "components/overviews/project-overview.tsx": "bad698ddfdb90ef9da101efcb5a249c83915aba4e4844023fa719d324b85c90b",
-        "components/custom/chat.tsx": "7d38ab84588335df944865923b99c1a99824667fb0ef44e28236838199cb7142",
-        "components/custom/message.tsx": "e2010326b8ca9585f2762a6a1bfd4ad25ec6937cda3b84b471493271b4e6fb68",
-        "components/custom/multimodal-input.tsx": "91658d2e52ff296c11671a0f90d282e1502b7432aa088dcb6a32575f7553dd3f",
-        "components/custom/overview.tsx": "2b41985e143942327893f43ca083420abd8012a11893495471470bcbed36f1ff",
-        "components/custom/model-selector.tsx": "e5e9eb04c7b235e669f5445b4251820678243765f5e864b467e1204212de86d8",
-        "components/custom/left-sidebar.tsx": "f108c66e9e92404dacf3d369ea1df6892f9e36b6e4faaecfb35838befb52b322",
-        "components/custom/right-plane.tsx": "b4b2bac04ecb25f38aaab08a32e42753f24d5676b5bfd090c71cecf8d198e503",
-        "components/custom/use-scroll-to-bottom.ts": "07b889de8f6c887f69241a35a7a54928294431903256757026e07f50f5a7c326",
-        "components/custom/use-window-size.tsx": "6694c7ee58d3473d482f1de5e885885c54e4c7504a318a5743fcd7917eace84a",
-        "components/custom/preview-attachment.tsx": "9338059aa73c0da05beb103077af93b4729200102b5db9012f88112ae435bab6",
-        "components/custom/weather.tsx": "c5e9994311b0f7f662a182ba0485b3245a20b3112903699b21eefe77a248f767",
-        "lib/dummy-flight-data.ts": "95aa47002fcbc2786e446dcc5a74310c0c794d2df946e4767b23f3e8d11fd25a",
-        "lib/mock-conversations.ts": "c7431e6faacb821b7ba3620aa7e49ab980c2e062369b40e3e6d96ecc0c519de1",
-        "lib/agent-chat-messages.ts": "5dd63be638e43c34ed68412723a49f916c3b1a4da8a0a200d658153f7e45d3dc",
-        "public/landing/agent/code.svg": "3f6ee67f3c862aed5ad7c51cdf898025cf7bd29fa4dd70aa1d92a4f289315d65",
-        "public/landing/agent/diagram.svg": "880b4a6b37160d2703bdd03051d51e59c8fba4e52e82db9c39e09ccd3d9627b2",
-        "public/landing/agent/knowledge.svg": "3ef05bb062a68a7a20358879ec9763c6bbc5f4be09275e7855cf88c950bf9013",
-        "public/landing/agent/mail.svg": "04831eff180b7d2edbd06edbf192435f44e9a1f746d69869fa2c6c9dac2996b6",
-        "public/landing/agent/others-pro.svg": "5f7cdde921f870b7cc5e0e4f94a0f52bcaf134d8707331808dfbaaf795dd4c4e",
-        "public/landing/agent/others.svg": "ecef37b040176b3d24e73c1ec60cf6c4db144e3182dceafc1725eb3ba993c896",
-        "public/landing/agent/platform.svg": "cf4652c82d1aca432484463445e52ac41cfcd50e74357426eff74c926c1b6e3f",
-        "public/landing/agent/poster.svg": "8c91caf0dd8533e32e2d8839c37a41fbff6986c1a7e47b63db079fa4da172452",
-        "public/landing/agent/reasoning.svg": "6b4c9f47d8df5cc66deb8a570b892a6fe8d85366ad2a848f0f13973517286809",
-        "public/landing/agent/research.svg": "b17e68e5c9a24eae95b49b0322186f6e7010e364aced00026a1752726e805273",
-        "public/landing/agent/social.svg": "3988e9782ebb6fcc0218ae1160caedb3fc2b1b7d59f0a5ef8f26653b3054676f",
-        "public/landing/agent/summary.svg": "d21713388c88efbaeedf68b4e743eecb447ff0aa5f68c29476b621c733a9ff79",
-        "public/landing/agent/transcript.svg": "9161cfbbf2f4a1476f6fa89723308e175d5292c3bf6bdcbfc5c16073ad5ccf08",
-        "public/landing/agent/video.svg": "9a59cc1b2970f9281718cbea0bc3f4eb88cbccceacd22add0ef8a09b90da013e"
-      },
-      "dependencies": {
-        "ai": "6.0.44",
-        "@ai-sdk/react": "^3.0.71",
-        "streamdown": "^1.6.7",
-        "chrono-node": "^2.7.5",
-        "framer-motion": "^12.29.0",
-        "date-fns": "^4.1.0",
-        "sonner": "^2.0.7",
-        "@remixicon/react": "^4.6.0",
-        "swr": "^2.3.8",
-        "classnames": "^2.5.1",
-        "recharts": "^2.15.4",
-        "zod": "^4.1.13",
-        "@vercel/blob": "^2.0.0"
-      },
-      "integrations": [
-        {
-          "target": "app/handson/sidebar-client.tsx",
-          "placeholder": "// @rokct-sdk-nav-start",
-          "replacement": "  { href: \"/handson/all/agent\", label: \"Memory\" },"
-        },
-        {
-          "target": "app/config/compose.ts",
-          "placeholder": "// @rokct-sdk-flags-start",
-          "replacement": "  agent: true,"
-        },
-        {
-          "target": "components/custom/landing/hero-sections.ts",
-          "placeholder": "// @rokct-sdk-hero-sections-start",
-          "replacement": "  { id: \"agent-opportunities\", load: () => import(\"@/components/custom/landing/agent-opportunities\") },"
-        },
-        {
-          "target": "components/custom/landing/hero-form.ts",
-          "placeholder": "// @rokct-sdk-hero-form-start",
-          "replacement": "  { id: \"agent-chat\", load: () => import(\"@/components/custom/landing/agent-hero-form\") },"
-        },
-        {
-          "target": "components/custom/landing/hero-copy.ts",
-          "placeholder": "// @rokct-sdk-hero-copy-start",
-          "replacement": "  { id: \"agent-hero\", load: () => import(\"@/components/custom/landing/agent-hero-copy\") },"
-        },
-        {
-          "target": "components/custom/landing/page-sections.ts",
-          "placeholder": "// @rokct-sdk-page-sections-start",
-          "replacement": "  { id: \"floating-nav\", load: () => import(\"@/components/custom/floating-nav\") },"
-        },
-        {
-          "target": "components/custom/landing/page-sections.ts",
-          "placeholder": "// @rokct-sdk-page-sections-start",
-          "replacement": "  { id: \"chat-section\", load: () => import(\"@/components/custom/chat-section\") },"
-        },
-        {
-          "target": "components/custom/landing/page-sections.ts",
-          "placeholder": "// @rokct-sdk-page-sections-start",
-          "replacement": "  { id: \"logos\", load: () => import(\"@/components/custom/logos\") },"
-        },
-        {
-          "target": "components/custom/landing/page-sections.ts",
-          "placeholder": "// @rokct-sdk-page-sections-start",
-          "replacement": "  { id: \"social-section\", load: () => import(\"@/components/custom/social-section\") },"
-        },
-        {
-          "target": "components/custom/landing/page-sections.ts",
-          "placeholder": "// @rokct-sdk-page-sections-start",
-          "replacement": "  { id: \"all-features-section\", load: () => import(\"@/components/custom/all-features-section\") },"
-        },
-        {
-          "target": "components/custom/landing/page-sections.ts",
-          "placeholder": "// @rokct-sdk-page-sections-start",
-          "replacement": "  { id: \"workflow-section\", load: () => import(\"@/components/custom/workflow-section\") },"
-        },
-        {
-          "target": "components/custom/landing/page-sections.ts",
-          "placeholder": "// @rokct-sdk-page-sections-start",
-          "replacement": "  { id: \"pricing\", load: () => import(\"@/components/custom/pricing\") },"
-        },
-        {
-          "target": "components/custom/landing/page-sections.ts",
-          "placeholder": "// @rokct-sdk-page-sections-start",
-          "replacement": "  { id: \"copied-pricing\", load: () => import(\"@/components/custom/copied-pricing\") },"
-        },
-        {
-          "target": "components/custom/landing/page-sections.ts",
-          "placeholder": "// @rokct-sdk-page-sections-start",
-          "replacement": "  { id: \"faq-section\", load: () => import(\"@/components/custom/faq-section\") },"
-        },
-        {
-          "target": "components/custom/landing/page-sections.ts",
-          "placeholder": "// @rokct-sdk-page-sections-start",
-          "replacement": "  { id: \"testimonials-section\", load: () => import(\"@/components/custom/testimonials-section\") },"
-        },
-        {
-          "target": "components/custom/landing/header-menu.ts",
-          "placeholder": "// @rokct-sdk-header-menu-start",
-          "replacement": "  { id: \"agent-header-menu\", load: () => import(\"@/components/custom/landing/agent-header-menu\") },"
-        },
-        {
-          "target": "components/custom/landing/site-metadata.ts",
-          "placeholder": "// @rokct-sdk-site-metadata-start",
-          "replacement": "  { id: \"agent-site-metadata\", load: () => import(\"@/components/custom/landing/agent-site-metadata\") },"
-        },
-        {
-          "target": "components/custom/landing/network-strip.ts",
-          "placeholder": "// @rokct-sdk-network-strip-start",
-          "replacement": "  { id: \"agent-network-strip\", load: () => import(\"@/components/custom/landing/agent-network-strip\") },"
-        },
-        {
-          "target": "components/custom/landing/plans-query.ts",
-          "placeholder": "// @rokct-sdk-plans-query-start",
-          "replacement": "  { id: \"agent-plans\", load: () => import(\"@/components/custom/landing/agent-plans-query\") },"
-        },
-        {
-          "target": "components/custom/auth/register-registry.ts",
-          "placeholder": "// @rokct-sdk-register-start",
-          "replacement": "  { id: \"agent-register-config\", load: () => import(\"@/components/custom/auth/agent-register-config\") },"
-        },
-        {
-          "target": "app/(auth)/register-provision.ts",
-          "placeholder": "// @rokct-sdk-register-provision-start",
-          "replacement": "  { id: \"agent-register-provision\", load: () => import(\"@/app/(auth)/agent-register-provision\") },"
-        }
-      ]
     }
-  }
+  },
+  "home_sdk": "agent_sdk"
 }
