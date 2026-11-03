@@ -15,17 +15,14 @@
  */
 
 import t from "@/app/lib/i18n";
-import { SiteShell } from "@/components/custom/site-shell";
 
 export default function ForgotPasswordPage() {
   return (
-    <SiteShell>
-      <div className="flex-1 flex flex-col items-center justify-center bg-background text-foreground p-4">
-        <h1 className="text-4xl font-bold mb-4">{t("auth.forgot_password")}</h1>
-        <p className="text-lg">
-          This is a placeholder page for the forgot password functionality.
-        </p>
-      </div>
-    </SiteShell>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground">
+      <h1 className="text-4xl font-bold mb-4">{t("auth.forgot_password")}</h1>
+      <p className="text-lg">
+        This is a placeholder page for the forgot password functionality.
+      </p>
+    </div>
   );
 }

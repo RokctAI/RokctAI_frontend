@@ -53,16 +53,11 @@ CHAT_ROUTE = os.path.join(CHAT_GROUP, "chat", "page.tsx")
 CHAT_ID_PAGE = os.path.join(CHAT_GROUP, "chat", "[id]", "page.tsx")
 # 1.13.0: rokct.ai's say over base_sdk 1.23.0's network strip.
 NETWORK_STRIP = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-network-strip.ts")
-# 1.17.0 to 1.23.0 the logos marquee carried the strip on /landing; 1.24.0
-# drew the strip nowhere and removed the section.
+# 1.17.0: the logos marquee carries the strip on /landing; its pure track rule.
+LOGOS = os.path.join(TEMPLATES, "components", "custom", "logos.tsx")
+LOGOS_CLIENT = os.path.join(TEMPLATES, "components", "custom", "logos.client.tsx")
 CUSTOM = os.path.join(TEMPLATES, "components", "custom")
-LANDING = os.path.join(CUSTOM, "landing")
-# 1.24.0: the redesign's shared copy, glyphs and stylesheet.
-RK_CONTENT = os.path.join(LANDING, "rokct-landing-content.ts")
-RK_UI = os.path.join(LANDING, "rokct-ui.tsx")
-RK_CSS = os.path.join(LANDING, "rokct-landing.css")
-RK_FONTS = os.path.join(LANDING, "rokct-fonts.ts")
-RK_FONT_DIR = os.path.join(LANDING, "fonts", "rokct")
+LOGOS_TRACK = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-logos.ts")
 # 1.20.0: the chat's message shapes on AI SDK 6.
 CHAT_MESSAGES = os.path.join(TEMPLATES, "lib", "agent-chat-messages.ts")
 LANDING_CONFIG = os.path.join(TEMPLATES, "components", "custom", "landing", "agent-landing-config.ts")
@@ -85,6 +80,7 @@ STAGED = {
     "agent-header-menu.ts": HEADER_MENU,
     "agent-network-strip.ts": NETWORK_STRIP,
     "agent-hero-copy.ts": HERO_COPY,
+    "agent-logos.ts": LOGOS_TRACK,
     "agent-chat-messages.ts": CHAT_MESSAGES,
     "agent-opportunity-cards.ts": os.path.join(TEMPLATES, "lib", "agent-opportunity-cards.ts"),
 }
@@ -93,6 +89,7 @@ NODE_SUITES = [
     "register-provision.test.mts",
     "network-strip.test.mts",
     "hero-copy.test.mts",
+    "logos-track.test.mts",
     "chat-messages.test.mts",
     "opportunity-cards.test.mts",
 ]
@@ -109,7 +106,7 @@ PROVISION_LINE = re.compile(
 
 # Words no copy or comment of this SDK's new files may carry.
 FORBIDDEN_WORDS = re.compile(r"\b(lorem|sample|demo|example)\b", re.I)
-NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS, NETWORK_STRIP, HERO_COPY, CHAT_ROUTE]
+NEW_FILES = [CONFIG, PROVISION, HELPERS, ACTIONS, NETWORK_STRIP, HERO_COPY, LOGOS_TRACK, CHAT_ROUTE]
 
 # 1.13.0: the network-strip registry line, in base's one-line contract.
 NETWORK_STRIP_LINE = re.compile(
@@ -129,14 +126,13 @@ PAGE_SECTION_LINE = re.compile(
     r'^  \{ id: "([a-z-]+)", load: \(\) => import\("@/components/custom/\1"\) \},$'
 )
 USE_CLIENT_RE = re.compile(r'^\s*["\']use client["\'];?\s*$', re.M)
-# The sections whose browser half is a .client.tsx sibling, and the ones
-# with nothing client-only in them, which stay whole. 1.24.0: the
-# redesign's six sections and the live plan cards (pricing); the Merlin-era
-# sections are gone.
+# The sections whose browser half moved to a .client.tsx sibling, and the
+# two with nothing client-only in them, which stay whole.
 SPLIT_SECTIONS = (
-    "rokct-hero", "rokct-platform", "rokct-funding", "pricing", "rokct-closing",
+    "floating-nav", "chat-section", "logos", "social-section",
+    "workflow-section", "pricing", "copied-pricing", "faq-section",
 )
-WHOLE_SECTIONS = ("rokct-how", "rokct-plans")
+WHOLE_SECTIONS = ("all-features-section", "testimonials-section")
 
 
 def load_manifest():
@@ -364,46 +360,42 @@ class TestRegisterInjection(unittest.TestCase):
                 envs = set(re.findall(r"process\.env\.([A-Z_]+)", src))
                 self.assertLessEqual(envs, {"ROKCT_BASE_URL"})
 
-    def test_header_draws_the_redesign_mark_and_one_action(self):
-        # 1.24.0 (Ray approved the rokct.ai redesign on 2026-11-01): the
-        # header draws the yellow R tile this SDK ships, and its one action
-        # is "Start with ROKCT" to sign-up. The Chrome Web Store button
-        # (the Merlin extension's, 1.12.0 to 1.23.0) and its mark are gone.
+    def test_header_action_carries_the_local_chrome_mark(self):
+        # 1.15.0 (Ray, 2026-09-09, on the mark the old header hot-linked
+        # from a third party's CDN: "use it but bring it local"): the
+        # extension action draws the SVG this SDK installs, through base_sdk
+        # 1.25.0's image icon; lucide's "chrome" glyph (1.12.0) is gone.
         src = read(HEADER_MENU)
-        self.assertIn('export const RK_MARK = "/landing/agent/rk-mark.svg";', src)
-        self.assertIn("    logo: RK_MARK,", src)
-        code = re.sub(r"^\s*//.*$", "", src, flags=re.M)
-        for gone in ("CHROME_WEB_STORE_MARK", "add-extension", "chromewebstore", "/brand/marks/", "Chrome"):
-            self.assertNotIn(gone, code)
-        start = src.index('id: "start",')
+        self.assertIn(f'src: "{CHROME_MARK_PATH}",', src)
+        self.assertIn('alt: "Chrome Web Store",', src)
+        self.assertNotIn('icon: "chrome"', src)
+        start = src.index('id: "add-extension"')
         end = src.index("}", start)
-        self.assertIn('label: word("header.start_with_rokct", "Start with ROKCT"),', src[start:end])
-        self.assertIn('href: "/register",', src[start:end])
-        self.assertIn('variant: "primary",', src[start:end])
-        self.assertEqual(code.count('id: "'), 1, "one action, and no link or group")
-        self.assertTrue(os.path.isfile(os.path.join(PUBLIC, "landing", "agent", "rk-mark.svg")))
+        self.assertIn("icon: CHROME_WEB_STORE_MARK,", src[start:end])
+        # Only the action carries the mark; the group cards keep their glyphs.
+        self.assertEqual(src.count("icon: CHROME_WEB_STORE_MARK"), 1)
+        self.assertEqual(src.count('icon: "box"'), 1)
+        self.assertEqual(src.count('icon: "globe"'), 1)
+        self.assertEqual(src.count('icon: "smartphone"'), 1)
+        # The header and the hero name the same file.
+        self.assertEqual(read(HERO_COPY).count(f'src: "{CHROME_MARK_PATH}",'), 1)
 
     def test_marks_are_base_sdks_not_this_sdks(self):
         # 1.16.0: base_sdk 1.26.0 installs the platform marks under
         # public/brand/marks/ on every host, so this SDK ships none of them
         # - no templates/public at all - and installs nothing under public/.
         # The 1.15.0 copies (chrome-web-store.svg, google-play.svg) and the
-        # public/brand mapping that carried them are gone. 1.23.0: the one
-        # thing this SDK puts under public/ is its own landing pictures,
-        # public/landing/agent/ (TestLandingPictures) - still no mark.
+        # public/brand mapping that carried them are gone.
         self.assertFalse(os.path.exists(MARKS_DIR), MARKS_DIR)
-        self.assertEqual(sorted(os.listdir(PUBLIC)), ["landing"])
-        self.assertEqual(sorted(os.listdir(os.path.join(PUBLIC, "landing"))), ["agent"])
+        self.assertFalse(os.path.exists(PUBLIC), PUBLIC)
         manifest = load_manifest()
-        public = [e for e in manifest["installs"] if e["from"].startswith("templates/public") or e["to"].startswith("public")]
-        self.assertEqual(public, [{"from": "templates/public/landing/agent", "to": "public/landing/agent"}])
+        for entry in manifest["installs"]:
+            self.assertFalse(entry["from"].startswith("templates/public"), entry["from"])
+            self.assertFalse(entry["to"].startswith("public"), entry["to"])
 
     def test_hero_copy_is_registered_where_base_looks(self):
-        # 1.15.0: registered through base's HeroCopy override. 1.24.0: base's
-        # hero frame is not drawn on rokct.ai (rokct-hero.tsx is the hero),
-        # so the copy empties what the frame would add - no store badge
-        # (the Chrome Web Store badge was the Merlin extension's) and no
-        # trust line - and restates no word of base's.
+        # 1.15.0: the same mark on the hero's Chrome Web Store badge, as
+        # data through base's HeroCopy override, one field over the defaults.
         manifest = load_manifest()
         targets = {i["to"] for i in manifest["installs"]}
         self.assertIn("components/custom/landing/agent-hero-copy.ts", targets)
@@ -415,26 +407,47 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertEqual(lines[0]["placeholder"], "// @rokct-sdk-hero-copy-start")
         self.assertRegex(lines[0]["replacement"], HERO_COPY_LINE)
         self.assertIn("components/custom/landing/hero-copy.ts", manifest["requires"])
+        self.assertIn("components/custom/landing/hero-config.ts", manifest["requires"])
         src = read(HERO_COPY)
         self.assertIn('import type { HeroCopy } from "@/components/custom/landing/hero-copy";', src)
+        self.assertIn("HERO_CONFIG,", src)
+        self.assertIn("badges: withLocalMarks(HERO_CONFIG.badges),", src)
+        # Only the badges' icons change; the words are not restated.
         body = src[src.index("const AGENT_HERO_COPY"):src.index("export default")]
-        self.assertIn("  badges: [],", body)
-        self.assertIn("  trustLine: [],", body)
-        for field in ("headlineWords", "headlineSuffix", "placeholders", "backgroundImage", "src:"):
+        for field in ("headlineWords", "headlineSuffix", "placeholders", "trustLine", "backgroundImage"):
             self.assertNotIn(field, body)
-        # The frame is kept off the page by the one stylesheet this SDK
-        # ships, scoped to the landing root.
-        css = [i for i in manifest["installs"] if i["from"].endswith(".css")]
-        self.assertEqual(css, [{"from": "templates/components/custom/landing/rokct-landing.css",
-                                "to": "components/custom/landing/rokct-landing.css"}])
-        self.assertIn(".rk-landing #hero {\n  display: none;", read(RK_CSS))
+        marks = src[src.index("export const LOCAL_MARKS"):src.index("};", src.index("export const LOCAL_MARKS"))]
+        self.assertIn("chrome: CHROME_WEB_STORE_MARK,", marks)
+        self.assertIn('"google-play": GOOGLE_PLAY_MARK,', marks)
+        # 1.16.0: the App Store badge draws base's official file too, in
+        # place of base's built-in Apple glyph.
+        self.assertIn('"app-store": APP_STORE_MARK,', marks)
+        self.assertIn(f'src: "{GOOGLE_PLAY_MARK_PATH}",', src)
+        self.assertIn('alt: "Google Play",', src)
+        self.assertIn(f'src: "{APP_STORE_MARK_PATH}",', src)
+        self.assertIn('alt: "App Store",', src)
+        self.assertIn("return mark ? { ...badge, icon: mark } : badge;", src)
+        # Every mark the hero and the header name is one of base_sdk
+        # 1.26.0's files under /brand/marks/, never a file of this SDK's
+        # and never a host.
+        for path in (HERO_COPY, HEADER_MENU):
+            for value in re.findall(r'src: "([^"]+)"', read(path)):
+                self.assertRegex(value, r"^/brand/marks/[a-z-]+\.svg$", path)
+        self.assertEqual(
+            sorted(set(re.findall(r'src: "([^"]+)"', src))),
+            [APP_STORE_MARK_PATH, CHROME_MARK_PATH, GOOGLE_PLAY_MARK_PATH],
+        )
+        # Multi-colour marks: no dark-mode inversion, and this SDK ships no CSS.
+        self.assertNotIn("invert", src)
+        self.assertFalse([i for i in manifest["installs"] if i["from"].endswith(".css")])
 
     def test_header_and_hero_surfaces_name_no_third_party_host(self):
         # The header menu and the hero copy name no host but the store the
         # button opens; cdn.getmerlin.in, which the old header hot-linked
         # the mark from, appears nowhere in them.
-        # (Since 1.23.0 agent-landing-config.ts names no picture host at
-        # all: TestLandingPictures holds that.)
+        # (agent-landing-config.ts still hot-links its section images from
+        # that CDN - known placeholders under Ray's 15:02Z ruling, out of
+        # this release's scope and not asserted here.)
         # The store the button opens, the SVG namespace, the licence header.
         allowed = {"chromewebstore.google.com", "www.w3.org", "www.gnu.org"}
         for path in (HEADER_MENU, HERO_COPY):
@@ -445,39 +458,28 @@ class TestRegisterInjection(unittest.TestCase):
                 for host in re.findall(r"https?://([A-Za-z0-9.-]+)", src):
                     self.assertIn(host, allowed, host)
 
-    def test_header_menu_keeps_the_collapsing_brand(self):
+    def test_header_menu_declares_the_old_brand(self):
         # 1.14.0 (Ray, 2026-09-09: "header lost functions the old rokct
-        # header had"): the collapsing brand with the country code, through
-        # base_sdk 1.24.0's HeaderMenu.brand. 1.24.0 keeps every mechanic
-        # (Ray, 2026-11-01: "if country code is not fixed i cant approve")
-        # and swaps the BETA tile for the redesign's R tile.
+        # header had"): the BETA-badged, collapsing brand and the filled
+        # "Chat with ROK" the old header had, declared through base_sdk
+        # 1.24.0's HeaderMenu.brand and the secondary variant.
         src = read(HEADER_MENU)
-        brand = src[src.index("  brand: {"):src.index("  anchors: [...RK_HEADER_ANCHORS],")]
+        brand = src[src.index("  brand: {"):src.index('  anchors: ["pricing"],')]
+        self.assertIn("badge: true,", brand)
         self.assertIn("collapse: { delayMs: 1500, code: brandingCode },", brand)
-        self.assertNotIn("badge: true", brand)
-        self.assertIn('export const RK_HEADER_ANCHORS = ["ask", "platform", "how", "funding", "plans"] as const;', src)
         # The code comes from the shell's branding cache, as the old header
-        # read it, then the visitor's time zone; never a network call.
-        self.assertIn("getBrandingSync,", src)
-        resolver = src[src.index("export function brandingCode("):src.index("const AGENT_HEADER_MENU")]
+        # read it, and never from a network call of this module's own.
+        self.assertIn('import { getBrandingSync } from "@/app/config/platform";', src)
+        resolver = src[src.index("function brandingCode("):src.index("const AGENT_HEADER_MENU")]
         self.assertIn("getBrandingSync()", resolver)
         self.assertIn("branding?.code?.trim()", resolver)
-        self.assertIn("if (text) return { text, style: branding?.style };", resolver)
-        self.assertIn("codeForTimeZone(visitorTimeZone())", resolver)
-        self.assertIn("style: BRANDING_CODE_STYLE", resolver)
+        self.assertIn("return { text, style: branding?.style };", resolver)
         self.assertNotIn("fetch(", src)
         self.assertNotIn("localStorage", src)
-        # The superscript style is the shell's own constants, not restated.
-        self.assertIn("fontSize: BRANDING_COUNTRY_SCALE,", src)
-        self.assertIn("top: BRANDING_COUNTRY_Y_OFFSET,", src)
-        # Each anchor is a section this SDK registers, with the header label.
-        anchors = {}
-        for name in ("rokct-hero", "rokct-platform", "rokct-how", "rokct-funding", "rokct-plans"):
-            anchors[name] = read(os.path.join(CUSTOM, f"{name}.tsx"))
-        content = read(RK_CONTENT)
-        for key in ("ask", "platform", "how", "funding", "plans"):
-            self.assertRegex(content, rf'\b{key}: "{key}"', key)
-        self.assertIn('nav: [{ id: RK_ANCHORS.ask, label: "Ask ROK" }],', anchors["rokct-hero"])
+        start = src.index('id: "chat-rokct",\n      label: word("features.chat_rokct", "Chat with ROK"),\n      href: "/chat",')
+        end = src.index("}", start)
+        self.assertIn('variant: "secondary"', src[start:end])
+        self.assertNotIn('variant: "ghost"', src)
 
     def test_product_plan_categories_leave_rokct(self):
         # 1.13.0: Telephony joins Hosting and paas in the one server-side
@@ -492,39 +494,125 @@ class TestRegisterInjection(unittest.TestCase):
         # The unused tab style is flagged, never removed.
         self.assertIn("      telephony: `", config)
 
-    def test_the_merlin_sections_are_gone(self):
-        """1.24.0 (Ray approved the rokct.ai redesign on 2026-11-01): the
-        landing's Merlin-era sections - the floating nav, the "Use OpenAI
-        o1" chat card, the client logos, the social proof, the feature
-        grid, the workflow, the copied pricing, the FAQ and the testimonials
-        - and the hero's search form are replaced by the redesign's
-        sections, so none is installed or registered, and no file of this
-        SDK names the Merlin extension's words any more."""
+    def test_logos_section_draws_the_network_sites(self):
+        """1.17.0 (Ray, 2026-09-09: "we now have two trusted by instead of
+        using the logos section rokct had"; "logos should not lose function
+        and its look"): logos.tsx keeps its marquee and draws base's
+        resolved network sites, each a link, under base's heading."""
+        # 1.18.0: the marquee (the fallback) is the client half; the entry
+        # holds `meta` where base_sdk 1.32.0's server reads it.
+        logos = read(LOGOS_CLIENT)
+        entry = read(LOGOS)
+        self.assertIn('"use client";', logos)
+        self.assertIsNone(USE_CLIENT_RE.search(entry))
+        self.assertIn('import { Logos } from "@/components/custom/logos.client";', entry)
+        # 1.18.1: the items and the heading are base's, resolved by the
+        # ENTRY on the server (the pure registry, the shell's own host) and
+        # handed to the marquee as data, so the row is in the served HTML;
+        # the client half reads no effect-loaded strip any more.
+        for needle in (
+            'import { networkSiteHost } from "@/components/custom/landing/network-sites";',
+            "loadNetworkStrip,",
+            "networkStripRendersAt,",
+            "resolveNetworkStrip,",
+            'import { loadSiteMetadata } from "@/components/custom/landing/site-metadata";',
+            "networkSiteHost(process.env.NEXT_PUBLIC_SITE_URL)",
+            "networkSiteHost((await loadSiteMetadata()).url)",
+            "export async function loadLogosStrip(): Promise<ResolvedNetworkStrip | null> {",
+            "const strip = resolveNetworkStrip(config, selfHost);",
+            'return networkStripRendersAt(strip, "section") ? strip : null;',
+            "export default async function LogosEntry({ id }: PageSectionProps) {",
+            "const strip = await loadLogosStrip();",
+            "<Logos id={id} strip={strip} />",
+        ):
+            self.assertIn(needle, entry, needle)
+        self.assertNotIn("useEffect(() => {\n    let live", logos)
+        self.assertIn("strip: ResolvedNetworkStrip;", logos)
+        self.assertIn("const track = logosTrack(strip.sites);", logos)
+        entry_body = re.sub(r"/\*.*?\*/", "", entry, flags=re.S)
+        entry_body = re.sub(r"^\s*//.*$", "", entry_body, flags=re.M)
+        self.assertNotIn("http", entry_body, "the entry names no URL of its own")
+        # Neither half calls base's client-only resolver any more.
+        for half in (entry_body, re.sub(r"^\s*//.*$", "", re.sub(r"/\*.*?\*/", "", logos, flags=re.S), flags=re.M)):
+            self.assertNotIn("loadResolvedNetworkStrip", half)
+        self.assertIn("{strip.heading}", logos)
+        self.assertIn('data-network-strip="section"', logos)
+        # Each box is a link to the site's origin and nothing more.
+        self.assertIn("href={site.url}", logos)
+        self.assertIn('target="_blank"', logos)
+        self.assertIn('rel="noopener"', logos)
+        self.assertIn("data-network-site={site.key}", logos)
+        body = re.sub(r"/\*.*?\*/", "", logos, flags=re.S)
+        body = re.sub(r"^\s*//.*$", "", body, flags=re.M)
+        body = re.sub(r"\{/\*.*?\*/\}", "", body, flags=re.S)
+        self.assertNotIn("http", body, "no URL of its own: the links are base's list")
+        for tracker in ("utm_", "?ref", "&ref", "onClick", "sendBeacon", "gtag", "dataLayer", "fbq", "analytics"):
+            self.assertNotIn(tracker, body, f"the section must not carry {tracker}")
+        for brand in ("Walmart", "Cisco", "Netflix", "Pinterest", "Zoom", "Sony", "Ebay", "Uber", "getmerlin", "cdn."):
+            self.assertNotIn(brand, body)
+        # The look and the function: the same section, eyebrow, track and box.
+        for needle in (
+            "py-12 border-y border-zinc-100 dark:border-zinc-900 overflow-hidden",
+            "text-sm font-semibold uppercase tracking-widest text-zinc-500",
+            "mask-image-linear-gradient group",
+            "opacity-70 grayscale hover:grayscale-0 transition-all duration-500 whitespace-nowrap animate-marquee group-hover:[animation-play-state:paused]",
+            'style={{ animationDuration: "20s" }}',
+            "h-8 w-24 md:h-12 md:w-40 flex items-center justify-center",
+            "object-contain",
+        ):
+            self.assertIn(needle, logos, needle)
+        # 1.18.1 (Ray, 2026-09-10: "lost sizings and feel old one had"): a
+        # mark keeps the old picture box exactly; a wordmark is drawn AS a
+        # mark - the box's height as its type size, the old box's width as
+        # its minimum, as wide as the name is - and the name verbatim.
+        self.assertIn('const ITEM =\n  "relative flex-shrink-0 h-8 w-24 md:h-12 md:w-40 flex items-center justify-center";', logos)
+        self.assertIn('const MARK = "absolute inset-0 h-full w-full object-contain";', logos)
+        self.assertIn('const WORDMARK_ITEM =\n  "relative flex-shrink-0 h-8 min-w-[6rem] md:h-12 md:min-w-[10rem] px-2 flex items-center justify-center";', logos)
+        # 1.19.1 (Ray, 2026-09-11 07:45Z: "use caps in logos"): the wordmark
+        # span carries `uppercase` - a display transform; the string, the
+        # aria-label and the alt stay as declared, and no picture is touched.
+        self.assertIn('const WORDMARK =\n  "uppercase text-2xl md:text-4xl font-bold tracking-tight leading-none text-zinc-700 dark:text-zinc-300";', logos)
+        self.assertIn("className={drawLogo ? ITEM : WORDMARK_ITEM}", logos)
+        self.assertIn("<span className={WORDMARK}>{site.name}</span>", logos)
+        self.assertIn("aria-label={site.name}", logos)
+        self.assertIn("alt={site.name}", logos)
+        wordmark_line = re.search(r'const WORDMARK =\n  "([^"]+)";', logos).group(1)
+        self.assertIn("uppercase", wordmark_line.split())
+        for transform in ("lowercase", "capitalize", "normal-case", "truncate", "text-lg", "text-sm"):
+            self.assertNotIn(transform, wordmark_line, transform)
+        # The transform is the span's alone: not the item box, not the mark.
+        for line in (
+            re.search(r'const ITEM =\n  "([^"]+)";', logos).group(1),
+            re.search(r'const MARK = "([^"]+)";', logos).group(1),
+            re.search(r'const WORDMARK_ITEM =\n  "([^"]+)";', logos).group(1),
+        ):
+            self.assertNotIn("uppercase", line)
+        self.assertNotIn("filter", logos.split("const MARK")[1].split("function LogoLink")[0])
+        for rewrite in ("toLowerCase(", "toUpperCase(", "site.name.replace(", "site.name.slice(", "site.name.split("):
+            self.assertNotIn(rewrite, logos, rewrite)
+        self.assertIn("export const meta: PageSectionMeta = { order: 20, nav: [] };", entry)
+        self.assertNotIn("export const meta", logos)
+        # A logo draws with its dark twin, a wordmark or a broken image draws the name.
+        self.assertIn("const drawLogo = Boolean(site.logo) && !site.wordmark && !broken;", logos)
+        self.assertIn("{site.name}", logos)
+        # The config holds no logo list any more; the third-party wall is gone.
+        config = read(LANDING_CONFIG)
+        self.assertNotIn("LogosConfig", config)
+        self.assertNotIn("logos:", config.split("const AGENT_LANDING_CONFIG")[-1].replace("// No `logos` block", ""))
+        code = re.sub(r"^\s*//.*$", "", config, flags=re.M)
+        for brand in ("Walmart", "Cisco", "Netflix", "Pinterest", "Zoom", "Sony", "Ebay", "Uber"):
+            self.assertNotIn(brand, code)
+        # Installed: the section, its pure track rule, and base's files required.
         manifest = load_manifest()
         targets = {i["to"] for i in manifest["installs"]}
-        replacements = " ".join(i["replacement"] for i in manifest["integrations"])
-        for gone in ("floating-nav", "chat-section", "logos", "social-section", "all-features-section",
-                     "workflow-section", "copied-pricing", "faq-section", "testimonials-section"):
-            with self.subTest(section=gone):
-                self.assertFalse(os.path.exists(os.path.join(CUSTOM, f"{gone}.tsx")))
-                self.assertFalse(os.path.exists(os.path.join(CUSTOM, f"{gone}.client.tsx")))
-                self.assertNotIn(f"components/custom/{gone}.tsx", targets)
-                self.assertNotIn(f'"@/components/custom/{gone}"', replacements)
-        for gone in ("agent-hero-form.tsx", "agent-logos.ts", "agent-card-row.ts"):
-            self.assertFalse(os.path.exists(os.path.join(LANDING, gone)), gone)
-            self.assertNotIn(f"components/custom/landing/{gone}", targets)
-        self.assertNotIn("agent-hero-form", replacements)
-        config = read(LANDING_CONFIG)
-        code = re.sub(r"/\*.*?\*/", "", config, flags=re.S)
-        code = re.sub(r"^\s*//.*$", "", code, flags=re.M)
-        for word in (r"\bsocial\b", r"\bfeatures\b", r"Chrome Web Store", r"\bo1\b", r"\blogos:"):
-            self.assertNotRegex(code, word)
-        for dirpath, _, files in os.walk(CUSTOM):
-            for fname in files:
-                if fname.startswith("rokct-"):
-                    text = read(os.path.join(dirpath, fname)) if not fname.endswith(".woff2") else ""
-                    for word in ("getmerlin", "Merlin", "OpenAI", "Chrome Web Store", "extension"):
-                        self.assertNotIn(word, text, f"{fname} names {word}")
+        self.assertIn("components/custom/logos.tsx", targets)
+        self.assertIn("components/custom/logos.client.tsx", targets)
+        self.assertIn("components/custom/landing/agent-logos.ts", targets)
+        for req in ("components/custom/network-strip.tsx", "components/custom/landing/network-sites.ts",
+                    "components/custom/landing/network-strip.ts"):
+            self.assertIn(req, manifest["requires"])
+        # The track rule imports nothing, so node executes it as it is.
+        self.assertNotIn("import ", re.sub(r"^\s*//.*$", "", read(LOGOS_TRACK), flags=re.M))
 
     def test_the_plan_scroller_hides_its_scrollbar(self):
         """1.18.2: the plan row asked for a hidden scrollbar with a
@@ -597,9 +685,10 @@ class TestRegisterInjection(unittest.TestCase):
                 else:
                     self.assertFalse(os.path.exists(sibling_path), f"{name} has nothing client-only; no sibling")
                     self.assertNotIn(f"components/custom/{name}.client.tsx", targets)
-        # The opportunities section is drawn by the funding band's client
-        # finder (1.24.0), never read by the server: it keeps the directive.
-        self.assertIsNotNone(USE_CLIENT_RE.search(read(os.path.join(LANDING, "agent-opportunities.tsx"))))
+        # The hero form and the opportunities section are loaded by base's
+        # client hero-view.tsx, never read by the server: they keep the directive.
+        for client_only in ("landing/agent-hero-form.tsx", "landing/agent-opportunities.tsx"):
+            self.assertIsNotNone(USE_CLIENT_RE.search(read(os.path.join(CUSTOM, client_only))), client_only)
         # The two registry modules the server does read never carried it.
         for server_read in (HEADER_MENU, HERO_COPY):
             self.assertIsNone(USE_CLIENT_RE.search(read(server_read)), server_read)
@@ -621,12 +710,11 @@ class TestRegisterInjection(unittest.TestCase):
 
     def test_network_strip_says_where_and_which(self):
         src = read(NETWORK_STRIP)
-        # 1.17.0 to 1.23.0 the logos section carried the strip on /landing
-        # and the footer row everywhere else. 1.24.0 (the redesign has no
-        # client showcase): drawn nowhere, the sites still declared. Never
-        # afterHero: that was the two "Trusted by" rows.
-        self.assertIn('landing: "none"', src)
-        self.assertIn("footer: false", src)
+        # 1.17.0: the logos section carries the strip on /landing; the
+        # footer row everywhere else. Never afterHero beside footer: that
+        # was the two "Trusted by" rows.
+        self.assertIn('landing: "section"', src)
+        self.assertIn("footer: true", src)
         self.assertNotIn('landing: "afterHero"', src)
         self.assertIn('landing?: "afterHero" | "beforeFooter" | "section" | "none";', src)
         body = re.sub(r"/\*.*?\*/", "", src, flags=re.S)
@@ -666,9 +754,7 @@ class TestRegisterInjection(unittest.TestCase):
             self.assertRegex(src, re.compile(rf'key: "{key}",\s*name: "{re.escape(name)}",\s*url: "{re.escape(url)}",', re.S), key)
         for wrong in ('name: "juvo",', 'name: "Juvo",', 'name: "Juvo Platforms",', 'name: "JUVO PLATFORMS",'):
             self.assertNotIn(wrong, src, wrong)
-        # 1.23.0: juvo.app's glyphs are blocked cross-origin; the name is drawn.
-        self.assertIn('name: "juvo platforms",\n      url: "https://juvo.app",\n      wordmark: true,', src)
-        self.assertNotIn("juvo.app/images", src)
+        self.assertIn('      logo: "https://juvo.app/images/logo_dark.svg",\n      logoDark: "https://juvo.app/images/logo.svg",', src)
         self.assertIn('name: "supacharge.school",\n      url: "https://supacharge.school",\n      wordmark: true,', src)
         for pending, name in (("hosting", "Hosting"), ("telephony", "Telephony")):
             self.assertIn(f'{{ key: "{pending}", name: "{name}", url: null, shown: false }},', src)
@@ -696,7 +782,7 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn("## 1.19.1", latest)
         for word in ('"juvo platforms"', "use caps in logos", "`uppercase`"):
             self.assertIn(word, latest)
-        self.assertEqual(load_manifest()["version"], "1.25.0")
+        self.assertEqual(load_manifest()["version"], "1.22.0")
 
     def test_behaviour_under_node(self):
         node = shutil.which("node")
@@ -875,140 +961,6 @@ class TestGatewayCalls(unittest.TestCase):
                 self.assertRegex(read(module), rf"@frappe\.whitelist\([^)]*\)\ndef {re.escape(parts[-1])}\(")
 
 
-class TestLandingPictures(unittest.TestCase):
-    """1.23.0 (Ray, 2026-11-01: "we can have our own"): every picture the
-    landing sections draw is a file this SDK installs under
-    public/landing/agent/, never a third party's URL - Merlin's CDN and
-    juvo.app refuse cross-origin loads, so a hot-link is a broken image."""
-
-    PUBLIC_FROM = "templates/public/landing/agent"
-    # 1.24.0: the redesign's pictures are named in its copy (RK_MAKES) and
-    # its mark in the header menu; the 1.23.0 pictures went with the
-    # Merlin-era sections that drew them.
-    SURFACES = (LANDING_CONFIG, NETWORK_STRIP, HEADER_MENU, HERO_COPY, RK_CONTENT)
-
-    def setUp(self):
-        self.manifest = load_manifest()
-        self.public_dir = os.path.join(SDK_ROOT, self.PUBLIC_FROM)
-
-    def test_the_pictures_are_installed_into_public(self):
-        self.assertIn({"from": self.PUBLIC_FROM, "to": "public/landing/agent"}, self.manifest["installs"])
-        self.assertTrue(os.path.isdir(self.public_dir))
-
-    def test_no_template_names_a_borrowed_picture_host(self):
-        for dirpath, _, files in os.walk(TEMPLATES):
-            for fname in files:
-                if not fname.endswith((".ts", ".tsx")):
-                    continue
-                path = os.path.join(dirpath, fname)
-                src = read(path)
-                for host in ("getmerlin", "images.unsplash.com", "juvo.app/images"):
-                    self.assertFalse(host in src, f"{os.path.relpath(path, SDK_ROOT)} names {host}")
-
-    def test_every_landing_picture_path_is_a_file_this_sdk_ships(self):
-        shipped = set(os.listdir(self.public_dir))
-        named = set()
-        for path in self.SURFACES:
-            src = read(path)
-            named.update(re.findall(r'"/landing/agent/([^"]+)"', src))
-            if 'export const RK_PICTURES = "/landing/agent";' in src:
-                named.update(re.findall(r'\bfile: "([^"]+)"', src))
-        self.assertEqual(len(named), 12)
-        self.assertEqual(named - shipped, set(), "named but not shipped")
-        self.assertEqual(shipped - named, set(), "shipped but never drawn")
-
-    def test_the_pictures_are_small_self_contained_files(self):
-        for fname in os.listdir(self.public_dir):
-            path = os.path.join(self.public_dir, fname)
-            self.assertRegex(fname, r"^[a-z0-9-]+\.(svg|webp)$")
-            self.assertLess(os.path.getsize(path), 64 * 1024, fname)
-            if fname.endswith(".svg"):
-                svg = read(path)
-                self.assertTrue(svg.startswith("<svg "), fname)
-                # Nothing fetched from inside a picture: no external href,
-                # no script, no foreign font.
-                self.assertNotRegex(svg, r"(?:href|src)=\"(?:https?:)?//", fname)
-                self.assertNotIn("<script", svg)
-                self.assertNotIn("@import", svg)
-                self.assertIn('role="img"', svg)
-
-    def test_header_draws_no_link_to_a_missing_page(self):
-        src = read(HEADER_MENU)
-        self.assertIn("  links: [],", src)
-        for route in ('"/affiliate"', '"/teams"'):
-            self.assertNotIn(route, src)
-
-
-class TestRedesign(unittest.TestCase):
-    """1.24.0 (Ray approved the rokct.ai redesign on 2026-11-01): the six
-    sections, their order on the page, the one stylesheet and the three
-    bundled faces."""
-
-    ORDER = (("rokct-hero", -1), ("rokct-platform", 10), ("rokct-how", 20), ("rokct-funding", 30),
-             ("rokct-plans", 40), ("pricing", 45), ("rokct-closing", 50))
-
-    def test_sections_are_registered_in_page_order(self):
-        manifest = load_manifest()
-        registered = [PAGE_SECTION_LINE.match(i["replacement"]).group(1)
-                      for i in manifest["integrations"]
-                      if i["target"] == "components/custom/landing/page-sections.ts"]
-        self.assertEqual(registered, [name for name, _ in self.ORDER])
-        for name, order in self.ORDER:
-            with self.subTest(section=name):
-                self.assertIn(f"  order: {order},", read(os.path.join(CUSTOM, f"{name}.tsx")))
-        # The live plan cards stay, under the ladder, only when there are plans.
-        pricing = read(os.path.join(CUSTOM, "pricing.tsx"))
-        self.assertIn('  anchor: "prices",', pricing)
-        self.assertIn("  renders: (ctx) => ctx.plans.length > 0,", pricing)
-
-    def test_the_stylesheet_is_scoped_and_self_contained(self):
-        css = read(RK_CSS)
-        self.assertNotIn("@import", css)
-        self.assertNotRegex(css, r"url\(\s*['\"]?(?:https?:)?//")
-        # Every rule is the landing root's: nothing styles another page.
-        flat = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
-        for selector in re.findall(r"(?:^|})\s*([^{}@][^{}]*?)\s*\{", flat):
-            for part in selector.split(","):
-                part = part.strip()
-                if not part or part.startswith("@") or re.fullmatch(r"(from|to|\d+%)", part):
-                    continue
-                with self.subTest(selector=part):
-                    self.assertRegex(part, r"^(:where\()?(\.dark )?(div)?\.rk-|^section\.rk-", part)
-        # The client hero imports it once; nothing else does.
-        importers = [f for f in os.listdir(CUSTOM) if f.endswith(".tsx")
-                     and 'import "@/components/custom/landing/rokct-landing.css";' in read(os.path.join(CUSTOM, f))]
-        self.assertEqual(importers, ["rokct-hero.client.tsx"])
-
-    def test_the_faces_are_bundled_with_their_licence(self):
-        files = sorted(os.listdir(RK_FONT_DIR))
-        self.assertEqual(files, ["OFL.txt", "bricolage-grotesque-latin-opsz-wdth-wght.woff2",
-                                 "instrument-sans-latin-wght.woff2", "jetbrains-mono-latin-wght.woff2"])
-        licence = read(os.path.join(RK_FONT_DIR, "OFL.txt"))
-        self.assertIn("SIL OPEN FONT LICENSE Version 1.1", licence)
-        for name in ("Bricolage Grotesque", "Instrument Sans", "JetBrains Mono"):
-            self.assertIn(name, licence)
-        fonts = read(RK_FONTS)
-        self.assertIn('import localFont from "next/font/local";', fonts)
-        self.assertNotIn("next/font/google", fonts)
-        for fname in files[1:]:
-            self.assertIn(f'"./fonts/rokct/{fname}"', fonts)
-            with open(os.path.join(RK_FONT_DIR, fname), "rb") as f:
-                self.assertEqual(f.read(4), b"wOF2", fname)
-        self.assertIn({"from": "templates/components/custom/landing/fonts/rokct",
-                       "to": "components/custom/landing/fonts/rokct"}, load_manifest()["installs"])
-
-    def test_the_glyphs_are_remixicon_and_nothing_is_hot_linked(self):
-        paths = [os.path.join(CUSTOM, f) for f in os.listdir(CUSTOM) if f.startswith("rokct-")]
-        paths += [os.path.join(LANDING, f) for f in os.listdir(LANDING) if f.startswith("rokct-")]
-        for path in paths:
-            with self.subTest(file=os.path.basename(path)):
-                src = read(path)
-                self.assertNotIn("lucide", src)
-                self.assertNotIn("framer-motion", src)
-                for host in re.findall(r"https?://([A-Za-z0-9.-]+)", src):
-                    self.assertIn(host, {"www.gnu.org", "www.w3.org"}, host)
-
-
 if __name__ == "__main__":
     unittest.main()
 
@@ -1025,9 +977,7 @@ if __name__ == "__main__":
 # balance, quotes), not the chat web app, so the href is left rather than
 # pointed at the wrong page. This set may only shrink: a fixed link comes
 # out of it, and a new dead one fails the test.
-# 1.23.0: /affiliate and /teams came out - the header no longer draws them.
-# 1.24.0: /dashboard came out with the Product panel; the set is empty.
-KNOWN_DEAD_HREFS = frozenset()
+KNOWN_DEAD_HREFS = frozenset({"/affiliate", "/teams", "/dashboard"})
 # The identifier form must not be a type annotation (`href: string;`).
 HREF_RE = re.compile(r'\bhref:\s*(?:"([^"]*)"|([A-Za-z_][A-Za-z0-9_]*)\b(?!\s*;))')
 CONST_RE = re.compile(r'^const ([A-Z_][A-Z0-9_]*)\s*=\s*"([^"]*)";', re.M)
@@ -1070,13 +1020,6 @@ def installed_routes(manifest):
             parts = target.split("/")
             if parts[0] != "app" or parts[-1] not in ROUTE_FILES:
                 continue
-            segments = [p for p in parts[1:-1] if not ROUTE_GROUP_RE.match(p)]
-            routes.add("/" + "/".join(segments))
-    # 1.24.0: a page another SDK installs that this one declares it needs
-    # (`requires`) is a route on every host this SDK composes into.
-    for required in manifest.get("requires", []):
-        parts = required.split("/")
-        if parts[0] == "app" and parts[-1] in ROUTE_FILES:
             segments = [p for p in parts[1:-1] if not ROUTE_GROUP_RE.match(p)]
             routes.add("/" + "/".join(segments))
     return routes
@@ -1130,11 +1073,9 @@ class TestNavLinks(unittest.TestCase):
         self.assertEqual(len(re.findall(r"^export\b", root, re.M)), 1, "the root page exports more than its default; forward it")
 
     def test_every_header_href_is_an_anchor_an_https_url_or_an_installed_route(self):
-        # 1.24.0: the one href is the call to action, sign-up; the five
-        # in-page links are `anchors`, resolved by base against the page.
         hrefs = authored_hrefs(HEADER_MENU)
-        self.assertEqual(hrefs, ["/register"])
-        self.assertIn("/register", self.routes)
+        self.assertIn("/chat", hrefs)
+        self.assertGreaterEqual(len(hrefs), 17)
         dead = self.dead_hrefs(hrefs)
         self.assertEqual(
             dead, set(KNOWN_DEAD_HREFS),
@@ -1142,25 +1083,22 @@ class TestNavLinks(unittest.TestCase):
             f"fixed, take out of KNOWN_DEAD_HREFS: {sorted(KNOWN_DEAD_HREFS - dead)}",
         )
 
-    def test_every_landing_href_is_an_anchor_or_sign_up(self):
-        # 1.24.0: the landing config authors no href any more (it holds
-        # the plan cards' words alone), and the redesign's sections link
-        # to an anchor of the page or to base's sign-up URL - never to a
-        # route this SDK cannot vouch for (the old compare block's /pricing).
-        self.assertEqual(authored_hrefs(LANDING_CONFIG), [])
-        anchors = set(re.findall(r'^\s+(\w+): "([a-z]+)",$', read(RK_CONTENT), re.M))
-        names = {k for k, _ in anchors}
-        for name in ("rokct-hero", "rokct-how", "rokct-plans", "rokct-closing"):
-            src = read(os.path.join(CUSTOM, f"{name}.tsx"))
-            for href in re.findall(r"href=\{(`[^`]*`|\w+)\}", src):
-                with self.subTest(section=name, href=href):
-                    ok = href in ("signupUrl", "pricesHref", "target") or re.fullmatch(r"`#\$\{RK_ANCHORS\.(\w+)\}`", href)
-                    self.assertTrue(ok, href)
-                    m = re.fullmatch(r"`#\$\{RK_ANCHORS\.(\w+)\}`", href)
-                    if m:
-                        self.assertIn(m.group(1), names)
-            self.assertNotIn('href="/', src)
-        self.assertIn('pricesHref = plans.length > 0 ? `#${RK_ANCHORS.prices}` : signupUrl', read(os.path.join(CUSTOM, "rokct-plans.tsx")).replace("\n", " ").replace("  ", " "))
+    def test_every_landing_config_href_is_an_anchor_an_https_url_or_a_route(self):
+        # The compare block's "Buy now" / "Explore plans" pointed at
+        # /pricing, a route nothing installs: the plans are the `pricing`
+        # section the block renders in, the id the header's `anchors`
+        # names, so they are that anchor. The same known-dead set covers
+        # this file; a new dead href here fails, as in the header.
+        hrefs = authored_hrefs(LANDING_CONFIG)
+        self.assertIn("/chat", hrefs)
+        self.assertEqual(hrefs.count("#pricing"), 2)
+        self.assertNotIn("/pricing", hrefs)
+        self.assertIn('anchors: ["pricing"]', read(HEADER_MENU))
+        dead = self.dead_hrefs(hrefs)
+        self.assertEqual(
+            dead - KNOWN_DEAD_HREFS, set(),
+            f"new landing-config links to nothing: {sorted(dead - KNOWN_DEAD_HREFS)}",
+        )
 
 
 class TestChatIdPage(unittest.TestCase):

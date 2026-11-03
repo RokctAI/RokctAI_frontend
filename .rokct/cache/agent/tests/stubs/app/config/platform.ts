@@ -17,10 +17,6 @@
 
 export const PLATFORM_NAME = "rokct.ai";
 
-/** rokctai_frontend's app/config/constants.ts values (re-exported by platform.ts). */
-export const BRANDING_COUNTRY_SCALE = "0.28em";
-export const BRANDING_COUNTRY_Y_OFFSET = "-0.2em";
-
 /**
  * The shell's client-side branding cache, as agent-header-menu.ts reads it
  * (1.14.0): nothing on the server, and nothing here.

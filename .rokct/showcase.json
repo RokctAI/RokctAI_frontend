@@ -1,0 +1,14 @@
+{
+  "name": "Rokct",
+  "kind": "AI business platform",
+  "tagline": "Everything is a chat away.",
+  "url": "https://rokct.ai",
+  "repo": "RokctAI/RokctAI_frontend",
+  "rank": 9,
+  "shots": {
+    "branch": "site-shots",
+    "desktop": "latest/desktop-light.webp",
+    "phone": "latest/phone-light.webp"
+  },
+  "logo_back": "rokct"
+}

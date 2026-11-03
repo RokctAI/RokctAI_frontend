@@ -15,46 +15,38 @@
  */
 
 import Link from "next/link";
-import { PLATFORM_NAME, LEGAL_COMPANY_NAME } from "@/app/config/platform";
-import { PLATFORM_FEATURES } from "@/app/config/features";
+import { LEGAL_COMPANY_NAME } from "@/app/config/platform";
 import { listPublicTerms } from "@/app/actions/base/legal";
 import { JobsService } from "@/app/services/control/jobs";
-import { BrandLogo } from "./brand-logo";
-import { Branding } from "./branding";
 import { RoadmapPublicService } from "@/app/services/public/roadmap";
-import {
-  RiTwitterXLine,
-  RiYoutubeLine,
-  RiLinkedinLine,
-  RiInstagramLine,
-  RiArrowDownSLine,
-} from "@remixicon/react";
 import t from "@/app/lib/i18n";
-import { Button } from "@/components/ui/button";
 import { NetworkStrip } from "@/components/custom/network-strip";
 import { FooterChromeRow } from "@/components/custom/footer-chrome";
 import type { FooterChromeConfig } from "@/components/custom/landing/footer-chrome-config";
 import { legalFooterLinks } from "@/components/custom/landing/legal-links";
 import versionData from "@/version.json";
 
+// rokct.ai's footer, in the redesign Ray approved on 2026-11-01: the yellow
+// R tile and the ROKCT wordmark with the platform's one line, then three
+// columns - Platform (the landing's own sections), Help and Company - and
+// base's footer chrome row under them. Every link goes somewhere that
+// exists: the Platform links are the landing's anchors (from any page they
+// lead back to /landing), Roadmap and Careers show only when there is a
+// public roadmap or an open job, and the legal documents are the chrome
+// row's Legal group. The extension-era columns (AI tools, summarisers,
+// social icons and a Contact us button with nowhere to go) are gone.
+//
 // The copyright / platform-status / version row is base_sdk's footer chrome
 // (components/custom/footer-chrome.tsx, composed). It probes the platform
 // through the gateway AFTER hydration via the getPlatformStatus() server
-// action, so the footer no longer waits on a status call during SSR. The
-// facts the row shows are still this shell's: the legal entity, the frontend
-// version from version.json, and the words from this shell's translations.
-// Maintenance and checking have no host key, so those two fall back to
-// base's own labels. The dot colours are base's defaults, which are the
-// same green-500 / red-500 the hand-rolled pill used.
-//
-// The row's Legal link group is base's too (components/custom/landing/
-// legal-links.ts): every enabled "Terms and Conditions" document the shell
-// publishes, read as a guest through the platform gateway by base's
-// listPublicTerms() action, one link each to corporate_sdk's /legal/<name>
-// page. Footer() adds it per request (`links`), so the footer never hard
-// codes a document title and never links to "#" while none exists: the
-// group draws nothing until a document is published.
+// action. Its site credit reads `© <year> ROKCT · Built with ♥ by ROKCT`
+// (`siteName`; the heart is labelled "love" for a screen reader by base's
+// site-credit.tsx). The row's Legal link group is base's too
+// (components/custom/landing/legal-links.ts): every enabled "Terms and
+// Conditions" document the shell publishes, one link each to
+// corporate_sdk's /legal/<name> page, added per request (`links`).
 const FOOTER_CHROME: FooterChromeConfig = {
+  siteName: "ROKCT",
   copyrightHolder: LEGAL_COMPANY_NAME,
   version: versionData.frontend,
   labels: {
@@ -65,18 +57,25 @@ const FOOTER_CHROME: FooterChromeConfig = {
   },
 };
 
+/** The R of rokct.ai's mark (public/images/logo.svg without the registered sign). */
+const R_PATH =
+  "M818 10c17,0 34,1 50,1l779 317c45,57 80,120 105,188l-62 706c-2,4 -4,7 -7,11 -73,111 -175,198 -306,260l257 375 -27 306 -418 0 -393 -575 -244 0 139 -1589 127 0zm-532 2164l-277 0 0 -2164 467 0 -190 2164z";
+
+const LINK = "text-[14.5px] text-zinc-600 dark:text-zinc-400 transition-colors hover:text-zinc-950 dark:hover:text-white";
+const HEADING =
+  "mb-3.5 font-mono text-[11.5px] font-medium uppercase tracking-[0.08em] text-zinc-500";
+
 async function PublicRoadmapLink() {
   try {
     const roadmap = await RoadmapPublicService.getPublicRoadmap();
     const data = roadmap?.message || roadmap;
     if (data && data.title) {
       return (
-        <Link
-          href="/public/roadmap"
-          className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-        >
-          {t("footer.roadmap")}
-        </Link>
+        <li>
+          <Link href="/public/roadmap" className={LINK}>
+            {t("footer.roadmap")}
+          </Link>
+        </li>
       );
     }
   } catch (e) {}
@@ -95,232 +94,86 @@ export async function Footer() {
     if (jobs && jobs.length > 0) hasCareers = true;
   } catch (e) {}
 
-  // Helper to render premium badges dynamically
-  const renderBadge = (id: number) => {
-    const label = PLATFORM_FEATURES[id]?.label;
-    if (!label || label === "none") return null;
-
-    if (label === "soon") {
-      return (
-        <span className="text-[10px] bg-primary text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
-          {t("common.soon")}
-        </span>
-      );
-    }
-
-    if (label === "new") {
-      return (
-        <span className="text-[10px] bg-primary text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter leading-none ml-2">
-          {t("common.new")}
-        </span>
-      );
-    }
-
-    return null;
-  };
-
-  // Helper to render dynamic footer links
-  const renderFooterLink = (id: number) => {
-    const feature = PLATFORM_FEATURES[id];
-    if (!feature || !feature.active) return null;
-
-    if (feature.label === "soon") {
-      return (
-        <span className="text-base text-gray-400 dark:text-zinc-600 cursor-not-allowed flex items-center gap-2">
-          {t(feature.name)} {renderBadge(id)}
-        </span>
-      );
-    }
-
-    return (
-      <Link
-        href={feature.href}
-        className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors flex items-center gap-2"
-      >
-        {t(feature.name)} {renderBadge(id)}
-      </Link>
-    );
-  };
-
   return (
-    <footer className="bg-white dark:bg-black text-black dark:text-white pt-24 pb-12 border-t border-gray-200 dark:border-white/5">
-      <div className="container mx-auto px-6 max-w-screen-2xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-24">
-          {/* Column 1: Brand */}
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center h-[64px]">
-              <BrandLogo width={64} height={64} showBadge={false} />
-              <div className="pl-3 flex items-center pt-1">
-                <Branding
-                  showBadge={false}
-                  className="text-[88px] tracking-tighter leading-none"
-                />
-              </div>
-            </div>
-            <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-[240px]">
-              {t("footer.tagline")}
-            </p>
-            <Button className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-6 rounded-lg text-lg">
-              {t("footer.contact_us")}
-            </Button>
-            <div className="flex gap-6 mt-2">
-              <Link
-                href="#"
-                className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-              >
-                <RiTwitterXLine className="w-6 h-6" />
-              </Link>
-              <Link
-                href="#"
-                className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-              >
-                <RiYoutubeLine className="w-6 h-6" />
-              </Link>
-              <Link
-                href="#"
-                className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-              >
-                <RiLinkedinLine className="w-6 h-6" />
-              </Link>
-              <Link
-                href="#"
-                className="text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-              >
-                <RiInstagramLine className="w-6 h-6" />
-              </Link>
-            </div>
+    <footer className="border-t border-zinc-200 bg-white pb-10 pt-14 text-zinc-600 dark:border-zinc-800 dark:bg-[hsl(240_10%_3.9%)] dark:text-zinc-400">
+      <div className="mx-auto max-w-[1280px] px-[clamp(16px,4vw,56px)]">
+        <div className="grid grid-cols-2 gap-8 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+          <div className="col-span-2 lg:col-span-1">
+            <Link href="/" className="inline-flex items-center gap-2.5 text-[22px] font-extrabold tracking-[0.06em] text-zinc-950 dark:text-white">
+              <span className="grid h-8 w-8 place-items-center rounded-[9px] bg-primary">
+                <svg viewBox="0 0 1760 2184" aria-hidden="true" className="h-[19px] w-[15px] fill-black">
+                  <path d={R_PATH} />
+                </svg>
+              </span>
+              ROKCT
+            </Link>
+            <p className="mt-3.5 max-w-[34ch] text-[14.5px] text-zinc-500">{t("footer.tagline")}</p>
           </div>
-
-          {/* Column 2: Productivity & Summary */}
-          {(PLATFORM_FEATURES[5]?.active ||
-            PLATFORM_FEATURES[6]?.active ||
-            PLATFORM_FEATURES[7]?.active ||
-            PLATFORM_FEATURES[12]?.active ||
-            PLATFORM_FEATURES[13]?.active) && (
-            <div className="flex flex-col gap-12">
-              {(PLATFORM_FEATURES[5]?.active ||
-                PLATFORM_FEATURES[6]?.active ||
-                PLATFORM_FEATURES[7]?.active) && (
-                <div className="flex flex-col gap-6">
-                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">
-                    {t("header.productivity")}
-                  </h4>
-                  <div className="flex flex-col gap-4">
-                    {renderFooterLink(5)}
-                    {renderFooterLink(6)}
-                    {renderFooterLink(7)}
-                  </div>
-                </div>
-              )}
-              {(PLATFORM_FEATURES[12]?.active ||
-                PLATFORM_FEATURES[13]?.active) && (
-                <div className="flex flex-col gap-6">
-                  <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">
-                    {t("header.summary")}
-                  </h4>
-                  <div className="flex flex-col gap-4">
-                    {renderFooterLink(12)}
-                    {renderFooterLink(13)}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Column 3: AI Chat & Company */}
-          <div className="flex flex-col gap-12">
-            {PLATFORM_FEATURES[4]?.active && (
-              <div className="flex flex-col gap-6">
-                <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">
-                  {t("header.ai_chat")}
-                </h4>
-                <div className="flex flex-col gap-4">{renderFooterLink(4)}</div>
-              </div>
-            )}
-            <div className="flex flex-col gap-6">
-              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">
-                {t("footer.company")}
-              </h4>
-              <div className="flex flex-col gap-4">
-                <Link
-                  href="/team"
-                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                >
+          <div>
+            <h4 className={HEADING}>{t("footer.platform")}</h4>
+            <ul className="grid gap-2.5">
+              <li>
+                <Link href="/landing#platform" className={LINK}>
+                  {t("footer.modules")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/landing#plans" className={LINK}>
+                  {t("footer.plans")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/landing#funding" className={LINK}>
+                  {t("footer.funding")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/landing#site" className={LINK}>
+                  {t("footer.own_site")}
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className={HEADING}>{t("footer.help")}</h4>
+            <ul className="grid gap-2.5">
+              <PublicRoadmapLink />
+              <li>
+                <Link href="/status" className={LINK}>
+                  {t("footer.status")}
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className={HEADING}>{t("footer.company")}</h4>
+            <ul className="grid gap-2.5">
+              <li>
+                <Link href="/team" className={LINK}>
                   {t("footer.team")}
                 </Link>
-                {hasCareers && (
-                  <Link
-                    href="/careers"
-                    className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                  >
+              </li>
+              {hasCareers && (
+                <li>
+                  <Link href="/careers" className={LINK}>
                     {t("footer.careers")}
                   </Link>
-                )}
-                {/* The legal documents are listed by the footer chrome row
-                    below (base's Legal group, from the published documents)
-                    rather than as fixed titles here. */}
-              </div>
-            </div>
-          </div>
-
-          {/* Column 4: AI Tools & Resources */}
-          <div className="flex flex-col gap-12">
-            {(PLATFORM_FEATURES[8]?.active ||
-              PLATFORM_FEATURES[9]?.active ||
-              PLATFORM_FEATURES[10]?.active ||
-              PLATFORM_FEATURES[11]?.active) && (
-              <div className="flex flex-col gap-6">
-                <h4 className="font-bold text-gray-500 uppercase tracking-widest text-xs">
-                  {t("header.tools")}
-                </h4>
-                <div className="flex flex-col gap-4">
-                  {renderFooterLink(8)}
-                  {renderFooterLink(9)}
-                  {renderFooterLink(10)}
-                  {renderFooterLink(11)}
-                </div>
-              </div>
-            )}
-            <div className="flex flex-col gap-6">
-              <h4 className="font-bold text-gray-500 uppercase tracking-widest text-sm">
-                {t("footer.resources")}
-              </h4>
-              <div className="flex flex-col gap-4">
-                <Link
-                  href="#"
-                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                >
-                  {t("footer.product_wiki")}
-                </Link>
-                <Link
-                  href="#"
-                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                >
-                  {t("footer.how_it_works")}
-                </Link>
-                <PublicRoadmapLink />
-                <Link
-                  href="#"
-                  className="text-base text-gray-600 dark:text-gray-400 hover:text-black dark:text-white transition-colors"
-                >
-                  {t("footer.feature_request")}
-                </Link>
-              </div>
-            </div>
+                </li>
+              )}
+            </ul>
           </div>
         </div>
 
-        {/* The Rokct network - the other shells, minus this one
-            (base_sdk network strip, footer placement). */}
+        {/* The Rokct network (base_sdk network strip, footer placement):
+            agent_sdk 1.24.0 turns it off on rokct.ai, so it draws nothing. */}
         <NetworkStrip surface="footer" />
 
-        {/* Footer Bottom: copyright, platform status, version - base's
-            footer chrome row. The network strip is placed above by this
-            footer itself, so the row does not draw its own. */}
+        {/* Footer Bottom: the site credit, platform status, version and the
+            Legal group - base's footer chrome row. */}
         <FooterChromeRow
           config={footerChrome}
           networkStrip={false}
-          className="pt-12 border-t border-gray-200 dark:border-white/5"
+          className="mt-12 border-t border-zinc-200 pt-6 text-[13px] dark:border-zinc-800 [&_[data-site-credit-maker]_[role=img]]:text-red-500"
         />
       </div>
     </footer>

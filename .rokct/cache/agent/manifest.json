@@ -1,9 +1,6 @@
 {
   "name": "agent_sdk",
-  "version": "1.25.0",
-  "_comment_version_1_25_0": "1.24.0 -> 1.25.0: agent_sdk is the home of the Sticks website through a new app_type.sticks block with \"common\": false: on a shell whose .rokct/config/app_type is sticks, only that block composes (the Sticks landing at app/page.tsx, its CSS, fonts, drawings and copy under components/custom/landing/sticks-*, the favicon, the site-metadata and back-to-top-style lines, and the concept's crowd picture under public/sticks/); every other shell composes exactly as before, since the top level is untouched. Needs The-Rokct-Protocol's Next.js installer with the persona opt-out; an older installer would compose the top level too.",
-  "_comment_version_1_24_0": "1.23.0 -> 1.24.0: rokct.ai's landing is the redesign Ray approved on 2026-11-01 (\"Everything is a chat away.\"). New sections, registered in page-sections.ts: rokct-hero (order -1, nav ask, carries the root class), rokct-platform (10, platform), rokct-how (20, how; with the picture grid), rokct-funding (30, funding), rokct-plans (40, plans) and rokct-closing (50; own address, where, FAQ, the closing box), each a server-safe entry with a .client.tsx half where it moves; their words in components/custom/landing/rokct-landing-content.ts, their shared pieces in rokct-ui.tsx, their styles in rokct-landing.css (scoped to .rk-landing; it also keeps base's hero frame off the page and gives base's header the concept's measure, a 32px mark and the display-face wordmark without touching its mechanics), and their faces Bricolage Grotesque, Instrument Sans and JetBrains Mono bundled under components/custom/landing/fonts/rokct/ (OFL) and loaded through next/font/local (rokct-fonts.ts). Removed with no replacement needed beyond the redesign, and unregistered: floating-nav, chat-section, logos, social-section, all-features-section, workflow-section, copied-pricing, faq-section and testimonials-section (with their .client halves, agent-logos.ts and agent-card-row.ts) - the Merlin Chrome-extension landing (\"Use OpenAI o1\", the Chrome Web Store call to action, the extension FAQ and testimonials) and the client-site logo strip; agent-landing-config.ts keeps only the plan cards' copy. The hero's opportunities search moves into the funding band: agent-opportunities.tsx is rendered by rokct-funding.client.tsx and is no longer registered in hero-sections.ts, and agent-hero-form.tsx (the hero-form.ts entry that hosted it) is removed. agent-hero-copy.ts now empties base's hidden hero badges and trust line (no Chrome Web Store badge in the HTML). pricing.tsx moves under the ladder (order 45, anchor prices) and is on the page only when the platform answered plans. The header menu is the five anchors ask, platform, how, funding, plans and one action, Start with ROKCT (/register); the Product panel and the extension button are gone; the brand keeps base's collapse (1500ms), chevron and fading nav, names /landing/agent/rk-mark.svg as its mark, and its country code falls back to the visitor's time zone (same superscript style) when the branding cache is still empty. The network strip is drawn nowhere (placement landing none, footer false). public/landing/agent/ now holds the redesign's eleven drawn pictures (rk-invoices, rk-leave, rk-payslips, rk-pipeline, rk-stock, rk-till, rk-approvals, rk-grants, rk-policy, rk-phone, rk-address) and rk-mark.svg; the 1.23.0 pictures (mail, social, video, poster, knowledge, code, diagram, reasoning, research, summary, transcript) and the compare badges (platform, others, others-pro) are deleted, nothing references them. The installer does not prune, so an older working tree keeps those files until a fresh compose. No base_sdk floor moves.",
-  "_comment_version_1_23_0": "1.22.1 -> 1.23.0: rokct.ai's landing pictures are the shell's own. New install templates/public/landing/agent -> public/landing/agent: eleven pictures drawn in code (mail, social, video, poster, knowledge, diagram, code, reasoning, research, summary, transcript) and three badges (platform, others, others-pro); no screenshot of a client site (Ray, 2026-11-01). agent-landing-config.ts and chat-section.client.tsx point at /landing/agent/ instead of cdn.getmerlin.in (refused by browsers: cross-origin-resource-policy same-origin) and images.unsplash.com; the compare rows lose the provider marks and the testimonials their avatars (initials are drawn). The network strip draws juvo platforms as a wordmark (juvo.app's glyphs are blocked cross-origin). The header menu draws no Affiliate or Teams link while neither route exists (both 404).",
+  "version": "1.22.1",
   "_comment_version_1_22_0": "1.21.1 -> 1.22.0: an open tender's page (app/opportunities/[type]/[slug]/page.tsx) gains a 'TenderAssist, your tender officer on demand.' panel with Bid with TenderAssist, linking to /register?next=<this tender page> (lib/agent-opportunity-cards.ts bidHref). auth_sdk >= 1.9.0 brings the visitor back to the tender once signed up or, already signed in, straight back; an older auth_sdk lands them on the home page. Grants, equity and closed tenders are unchanged.",
   "_comment_version_1_21_1": "1.21.0 -> 1.21.1: the /opportunities pages load rows through app/services/public/opportunities.ts (new rows() and bySlug(): backend control:get_public_opportunities first, GitHub published/api as fallback); lib/agent-opportunity-cards.ts is pure (cardForSlug, summariesFromRows) and its raw-GitHub loader and markdown card reader (parseCard, cardPath) are removed.",
   "_comment_version_1_21_0": "1.20.1 -> 1.21.0: opportunity detail pages. New installs app/opportunities (the /opportunities listing and /opportunities/[type]/[slug]) and lib/agent-opportunity-cards.ts. The pages read the public RokctAI/opportunities repo (published/api/<type>.json and the markdown cards) from raw.githubusercontent.com on the server with revalidate 3600, so the landing search links resolve instead of 404ing. A known slug renders its card with the apply button; a past deadline shows 'This closed on <date>' with open ones under it; an unknown slug redirects to /opportunities.",
@@ -74,6 +71,18 @@
       "to": "components/custom/landing/agent-opportunities.tsx"
     },
     {
+      "from": "templates/components/custom/landing/agent-hero-form.tsx",
+      "to": "components/custom/landing/agent-hero-form.tsx"
+    },
+    {
+      "from": "templates/components/custom/chat-section.tsx",
+      "to": "components/custom/chat-section.tsx"
+    },
+    {
+      "from": "templates/components/custom/chat-section.client.tsx",
+      "to": "components/custom/chat-section.client.tsx"
+    },
+    {
       "from": "templates/components/custom/landing/agent-landing-config.ts",
       "to": "components/custom/landing/agent-landing-config.ts"
     },
@@ -94,8 +103,16 @@
       "to": "components/custom/landing/agent-network-strip.ts"
     },
     {
+      "from": "templates/components/custom/landing/agent-logos.ts",
+      "to": "components/custom/landing/agent-logos.ts"
+    },
+    {
       "from": "templates/components/custom/landing/agent-plans-query.ts",
       "to": "components/custom/landing/agent-plans-query.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/agent-card-row.ts",
+      "to": "components/custom/landing/agent-card-row.ts"
     },
     {
       "from": "templates/components/custom/auth/agent-register-config.ts",
@@ -114,6 +131,42 @@
       "to": "app/(auth)/agent-register-actions.ts"
     },
     {
+      "from": "templates/components/custom/floating-nav.tsx",
+      "to": "components/custom/floating-nav.tsx"
+    },
+    {
+      "from": "templates/components/custom/floating-nav.client.tsx",
+      "to": "components/custom/floating-nav.client.tsx"
+    },
+    {
+      "from": "templates/components/custom/logos.tsx",
+      "to": "components/custom/logos.tsx"
+    },
+    {
+      "from": "templates/components/custom/logos.client.tsx",
+      "to": "components/custom/logos.client.tsx"
+    },
+    {
+      "from": "templates/components/custom/social-section.tsx",
+      "to": "components/custom/social-section.tsx"
+    },
+    {
+      "from": "templates/components/custom/social-section.client.tsx",
+      "to": "components/custom/social-section.client.tsx"
+    },
+    {
+      "from": "templates/components/custom/all-features-section.tsx",
+      "to": "components/custom/all-features-section.tsx"
+    },
+    {
+      "from": "templates/components/custom/workflow-section.tsx",
+      "to": "components/custom/workflow-section.tsx"
+    },
+    {
+      "from": "templates/components/custom/workflow-section.client.tsx",
+      "to": "components/custom/workflow-section.client.tsx"
+    },
+    {
       "from": "templates/components/custom/pricing.tsx",
       "to": "components/custom/pricing.tsx"
     },
@@ -122,68 +175,24 @@
       "to": "components/custom/pricing.client.tsx"
     },
     {
-      "from": "templates/components/custom/rokct-hero.tsx",
-      "to": "components/custom/rokct-hero.tsx"
+      "from": "templates/components/custom/copied-pricing.tsx",
+      "to": "components/custom/copied-pricing.tsx"
     },
     {
-      "from": "templates/components/custom/rokct-hero.client.tsx",
-      "to": "components/custom/rokct-hero.client.tsx"
+      "from": "templates/components/custom/copied-pricing.client.tsx",
+      "to": "components/custom/copied-pricing.client.tsx"
     },
     {
-      "from": "templates/components/custom/rokct-platform.tsx",
-      "to": "components/custom/rokct-platform.tsx"
+      "from": "templates/components/custom/faq-section.tsx",
+      "to": "components/custom/faq-section.tsx"
     },
     {
-      "from": "templates/components/custom/rokct-platform.client.tsx",
-      "to": "components/custom/rokct-platform.client.tsx"
+      "from": "templates/components/custom/faq-section.client.tsx",
+      "to": "components/custom/faq-section.client.tsx"
     },
     {
-      "from": "templates/components/custom/rokct-how.tsx",
-      "to": "components/custom/rokct-how.tsx"
-    },
-    {
-      "from": "templates/components/custom/rokct-funding.tsx",
-      "to": "components/custom/rokct-funding.tsx"
-    },
-    {
-      "from": "templates/components/custom/rokct-funding.client.tsx",
-      "to": "components/custom/rokct-funding.client.tsx"
-    },
-    {
-      "from": "templates/components/custom/rokct-plans.tsx",
-      "to": "components/custom/rokct-plans.tsx"
-    },
-    {
-      "from": "templates/components/custom/rokct-closing.tsx",
-      "to": "components/custom/rokct-closing.tsx"
-    },
-    {
-      "from": "templates/components/custom/rokct-closing.client.tsx",
-      "to": "components/custom/rokct-closing.client.tsx"
-    },
-    {
-      "from": "templates/components/custom/landing/rokct-landing-content.ts",
-      "to": "components/custom/landing/rokct-landing-content.ts"
-    },
-    {
-      "from": "templates/components/custom/landing/rokct-ui.tsx",
-      "to": "components/custom/landing/rokct-ui.tsx"
-    },
-    {
-      "from": "templates/components/custom/landing/rokct-landing-classes.ts",
-      "to": "components/custom/landing/rokct-landing-classes.ts"
-    },
-    {
-      "from": "templates/components/custom/landing/rokct-fonts.ts",
-      "to": "components/custom/landing/rokct-fonts.ts"
-    },
-    {
-      "from": "templates/components/custom/landing/rokct-landing.css",
-      "to": "components/custom/landing/rokct-landing.css"
-    },
-    {
-      "from": "templates/components/custom/landing/fonts/rokct",
-      "to": "components/custom/landing/fonts/rokct"
+      "from": "templates/components/custom/testimonials-section.tsx",
+      "to": "components/custom/testimonials-section.tsx"
     },
     {
       "from": "templates/components/tasks",
@@ -260,10 +269,6 @@
     {
       "from": "templates/lib/agent-chat-messages.ts",
       "to": "lib/agent-chat-messages.ts"
-    },
-    {
-      "from": "templates/public/landing/agent",
-      "to": "public/landing/agent"
     }
   ],
   "dependencies": {
@@ -294,6 +299,16 @@
       "replacement": "  agent: true,"
     },
     {
+      "target": "components/custom/landing/hero-sections.ts",
+      "placeholder": "// @rokct-sdk-hero-sections-start",
+      "replacement": "  { id: \"agent-opportunities\", load: () => import(\"@/components/custom/landing/agent-opportunities\") },"
+    },
+    {
+      "target": "components/custom/landing/hero-form.ts",
+      "placeholder": "// @rokct-sdk-hero-form-start",
+      "replacement": "  { id: \"agent-chat\", load: () => import(\"@/components/custom/landing/agent-hero-form\") },"
+    },
+    {
       "target": "components/custom/landing/hero-copy.ts",
       "placeholder": "// @rokct-sdk-hero-copy-start",
       "replacement": "  { id: \"agent-hero\", load: () => import(\"@/components/custom/landing/agent-hero-copy\") },"
@@ -301,27 +316,32 @@
     {
       "target": "components/custom/landing/page-sections.ts",
       "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-hero\", load: () => import(\"@/components/custom/rokct-hero\") },"
+      "replacement": "  { id: \"floating-nav\", load: () => import(\"@/components/custom/floating-nav\") },"
     },
     {
       "target": "components/custom/landing/page-sections.ts",
       "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-platform\", load: () => import(\"@/components/custom/rokct-platform\") },"
+      "replacement": "  { id: \"chat-section\", load: () => import(\"@/components/custom/chat-section\") },"
     },
     {
       "target": "components/custom/landing/page-sections.ts",
       "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-how\", load: () => import(\"@/components/custom/rokct-how\") },"
+      "replacement": "  { id: \"logos\", load: () => import(\"@/components/custom/logos\") },"
     },
     {
       "target": "components/custom/landing/page-sections.ts",
       "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-funding\", load: () => import(\"@/components/custom/rokct-funding\") },"
+      "replacement": "  { id: \"social-section\", load: () => import(\"@/components/custom/social-section\") },"
     },
     {
       "target": "components/custom/landing/page-sections.ts",
       "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-plans\", load: () => import(\"@/components/custom/rokct-plans\") },"
+      "replacement": "  { id: \"all-features-section\", load: () => import(\"@/components/custom/all-features-section\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"workflow-section\", load: () => import(\"@/components/custom/workflow-section\") },"
     },
     {
       "target": "components/custom/landing/page-sections.ts",
@@ -331,7 +351,17 @@
     {
       "target": "components/custom/landing/page-sections.ts",
       "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-closing\", load: () => import(\"@/components/custom/rokct-closing\") },"
+      "replacement": "  { id: \"copied-pricing\", load: () => import(\"@/components/custom/copied-pricing\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"faq-section\", load: () => import(\"@/components/custom/faq-section\") },"
+    },
+    {
+      "target": "components/custom/landing/page-sections.ts",
+      "placeholder": "// @rokct-sdk-page-sections-start",
+      "replacement": "  { id: \"testimonials-section\", load: () => import(\"@/components/custom/testimonials-section\") },"
     },
     {
       "target": "components/custom/landing/header-menu.ts",
@@ -369,7 +399,6 @@
     "app/(auth)/actions.ts",
     "app/(auth)/tenant-link.ts",
     "app/(auth)/register-provision.ts",
-    "app/(auth)/register/page.tsx",
     "app/config/compose.ts",
     "app/lib/client.ts",
     "app/lib/roles.ts",
@@ -450,7 +479,6 @@
     "components/custom/landing/plans-query.ts": "installed by base_sdk >= 1.9.0 (the plans-query registry the agent-plans integration targets). agent-plans-query.ts derives its query from landing-config.ts's LANDING_CONFIG.plansQuery (a requires file since 1.4.0, LandingPlansQuery since base_sdk 1.9.0) and lays the plan_category not in [Hosting, paas] filter over it, so it never restates base's field list",
     "components/custom/auth/register-registry.ts": "installed by auth_sdk >= 1.7.0 (RegisterConfig and RegisterFieldOption, the shape agent-register-config.ts fills, and the register registry the agent-register-config integration targets at // @rokct-sdk-register-start). Against auth_sdk <= 1.6.0 the file is absent, the installer prints 'Integration target not found' and skips the line, and the shell keeps auth 1.6.0's inline register page",
     "app/(auth)/register-provision.ts": "installed by auth_sdk >= 1.7.0 (RegisterProvisioner, RegisterSubmission, RegisterOutcome and RegisterSignIn, the contract agent-register-provision.ts answers, and the provisioning registry the agent-register-provision integration targets at // @rokct-sdk-register-provision-start)",
-    "app/(auth)/register/page.tsx": "1.24.0: auth_sdk's sign-up page, /register - the header's one action, \"Start with ROKCT\", goes there. Declared so the header's link is to a page the host is known to have (tests/test_manifest.py TestNavLinks reads it as a route).",
     "app/(auth)/tenant-link.ts": "installed by auth_sdk >= 1.6.0 (loadTenantLink().adminCredentials(), the platform administrator the provisioner and getIndustries() call the control site as; TenantLinkAdmin, the type agent-register-helpers.ts types those keys by)",
     "lib/actions/getSubscriptionPlans.ts": "installed by auth_sdk (the plan catalogue the register config's plan select lists and the provisioner's service-or-tenant and auto-login rules read; still installed by auth_sdk 1.7.0 though nothing in auth reads it)",
     "components/custom/landing/network-strip.ts": "installed by base_sdk >= 1.27.0 since 1.17.0 and base_sdk >= 1.40.0 since 1.19.0 (the network-strip registry the agent-network-strip integration targets; 1.23.0 added the registry, 1.27.0 the \"section\" landing placement this SDK registers and the once-per-page rule that keeps the footer strip off /landing, 1.40.0 the `sites` field this SDK fills - base carries no site of the network from 1.40.0, and an older NetworkStripConfig rejects the extra property, which is the floor). Against base_sdk < 1.23.0 the file is absent, sdk_installer_base.py update_integrations() prints 'Integration target not found' and skips the line",
@@ -458,99 +486,5 @@
     "components/custom/landing/hero-copy.ts": "installed by base_sdk >= 1.23.0 (the hero-copy registry the agent-hero integration targets, and HeroCopy, the shape agent-hero-copy.ts fills; the registry exists from base_sdk 1.7.0 and is multi-contributor, so this line sits beside any other SDK's; base_sdk >= 1.26.0 since 1.16.0, the base that ships the mark files the registered copy names)",
     "components/custom/network-strip.tsx": "installed by base_sdk >= 1.23.0; loadResolvedNetworkStrip - the registered config and the shell's own host resolved into the sites to draw and the heading - which logos.tsx reads since 1.17.0 to fill its marquee. The \"section\" surface it then asks networkStripRendersAt for is base_sdk 1.27.0's. Since base_sdk 1.40.0 loadResolvedNetworkStrip draws the registered `sites` (this SDK's, since 1.19.0) and, with none registered, a shell's own data/network.json after mount",
     "components/custom/landing/network-sites.ts": "installed by base_sdk >= 1.23.0 (NetworkSite and LinkableNetworkSite, the type of each item logos.tsx draws since 1.17.0: key, name, url - the site's origin - and the optional logo, logoDark and wordmark; the list rules). Since base_sdk 1.40.0 its NETWORK_SITES is EMPTY - base carries no site of the network - and the list is this SDK's agent-network-strip.ts `sites` (since 1.19.0)"
-  },
-  "app_type": {
-    "sticks": {
-      "_comment": "The Sticks website (RokctAI/sticks-web, app_type sticks; Ray, 2026-10-11: Sticks is its own product, used in its Dart app, with Next.js as the landing shell only, and no new sticks SDK - the AI lives in agent_sdk). \"common\": false (The-Rokct-Protocol's Next.js installer, the persona opt-out added with this block) keeps everything at this manifest's top level - rokct.ai's chat, register flow and opportunities, which need db/, auth_sdk and a backend - out of that shell: it composes only the files below. The block owns app/page.tsx (the landing the concept artifact PDm9514Z16ypx8dk3oQQtq draws, in its colours: a black and white base with the concept's highlight colours and the Sticks' coloured crowd picture, public/sticks/crowd-light.webp and crowd-dark.webp), the favicon, and two registry lines: the site metadata and the Back to top style. No header auth: the site has nothing to sign in to and composes no auth_sdk. Downloads and phone screens are read from RokctAI/sticks on GitHub (newest release; the guided tour's light and dark captures, matched by step id) with an hour's revalidate. Floors: base_sdk >= 1.56.0 (back-to-top-style registry, SiteCredit since 1.54.0).",
-      "common": false,
-      "installs": [
-        {
-          "from": "templates/sticks/app/page.tsx",
-          "to": "app/page.tsx"
-        },
-        {
-          "from": "templates/sticks/app/icon.svg",
-          "to": "app/icon.svg"
-        },
-        {
-          "from": "templates/sticks/public/sticks-icon.svg",
-          "to": "public/sticks-icon.svg"
-        },
-        {
-          "from": "templates/sticks/public/sticks/crowd-light.webp",
-          "to": "public/sticks/crowd-light.webp"
-        },
-        {
-          "from": "templates/sticks/public/sticks/crowd-dark.webp",
-          "to": "public/sticks/crowd-dark.webp"
-        },
-        {
-          "from": "templates/sticks/components/custom/landing/sticks-landing.tsx",
-          "to": "components/custom/landing/sticks-landing.tsx"
-        },
-        {
-          "from": "templates/sticks/components/custom/landing/sticks-landing.client.tsx",
-          "to": "components/custom/landing/sticks-landing.client.tsx"
-        },
-        {
-          "from": "templates/sticks/components/custom/landing/sticks-landing.css",
-          "to": "components/custom/landing/sticks-landing.css"
-        },
-        {
-          "from": "templates/sticks/components/custom/landing/sticks-landing-config.ts",
-          "to": "components/custom/landing/sticks-landing-config.ts"
-        },
-        {
-          "from": "templates/sticks/components/custom/landing/sticks-sources.ts",
-          "to": "components/custom/landing/sticks-sources.ts"
-        },
-        {
-          "from": "templates/sticks/components/custom/landing/sticks-sources.server.ts",
-          "to": "components/custom/landing/sticks-sources.server.ts"
-        },
-        {
-          "from": "templates/sticks/components/custom/landing/sticks-art.tsx",
-          "to": "components/custom/landing/sticks-art.tsx"
-        },
-        {
-          "from": "templates/sticks/components/custom/landing/sticks-fonts.ts",
-          "to": "components/custom/landing/sticks-fonts.ts"
-        },
-        {
-          "from": "templates/sticks/components/custom/landing/sticks-site-metadata.ts",
-          "to": "components/custom/landing/sticks-site-metadata.ts"
-        },
-        {
-          "from": "templates/sticks/components/custom/landing/sticks-back-to-top.ts",
-          "to": "components/custom/landing/sticks-back-to-top.ts"
-        }
-      ],
-      "dependencies": {
-        "@remixicon/react": "^4.6.0",
-        "next-themes": "^0.4.6",
-        "server-only": "^0.0.1"
-      },
-      "integrations": [
-        {
-          "target": "components/custom/landing/site-metadata.ts",
-          "placeholder": "// @rokct-sdk-site-metadata-start",
-          "replacement": "  { id: \"sticks-site-metadata\", load: () => import(\"@/components/custom/landing/sticks-site-metadata\") },"
-        },
-        {
-          "target": "components/custom/landing/back-to-top-style.ts",
-          "placeholder": "// @rokct-sdk-back-to-top-style-start",
-          "replacement": "  { id: \"sticks-back-to-top\", load: () => import(\"@/components/custom/landing/sticks-back-to-top\") },"
-        }
-      ],
-      "requires": [
-        "components/custom/site-credit.tsx",
-        "components/custom/landing/site-credit.ts",
-        "components/custom/landing/site-metadata.ts",
-        "components/custom/landing/back-to-top-style.ts",
-        "components/custom/landing/back-to-top.ts",
-        "components/custom/theme-provider.tsx",
-        "app/config/platform.ts"
-      ]
-    }
   }
 }

@@ -240,6 +240,7 @@
     }
   },
   "header": {
+    "start_with_rokct": "Start with ROKCT",
     "product": "Product",
     "ai_chat": "AI Chat",
     "productivity": "Productivity",
@@ -252,7 +253,14 @@
     "mobile_support": "iOS and Android"
   },
   "footer": {
-    "tagline": "All-in-One AI extension to Write, Summarize, Code & Play",
+    "tagline": "The AI business platform. Everything is a chat away.",
+    "platform": "Platform",
+    "modules": "Modules",
+    "plans": "Plans",
+    "funding": "Funding",
+    "own_site": "Your own site",
+    "help": "Help",
+    "status": "Status",
     "contact_us": "Contact us",
     "company": "Company",
     "team": "Team",

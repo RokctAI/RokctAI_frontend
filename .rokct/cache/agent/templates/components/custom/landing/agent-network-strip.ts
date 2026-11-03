@@ -125,31 +125,21 @@ const AGENT_NETWORK_STRIP: AgentNetworkStrip = {
     // juvo platforms" (first said 2026-09-09 22:07Z). The name is the string
     // he typed, verbatim - never shortened to "juvo", never re-cased here;
     // the url and the glyphs are unchanged.
-    //
-    // 1.23.0 (Ray, 2026-11-01: "we can have our own"): drawn as its
-    // wordmark. The glyphs were hot-linked from juvo.app, which browsers
-    // block cross-origin (ERR_BLOCKED_BY_ORB), so the strip showed a
-    // broken image on every visit; no copy of Juvo's mark is held in our
-    // repositories to serve locally, so the name is the logo until one is.
     {
       key: "juvo",
       name: "juvo platforms",
       url: "https://juvo.app",
-      wordmark: true,
+      logo: "https://juvo.app/images/logo_dark.svg",
+      logoDark: "https://juvo.app/images/logo.svg",
     },
     // No domain yet (Ray, 2026-09-09): listed so the entry has a place, hidden
     // until the url is filled in.
     { key: "hosting", name: "Hosting", url: null, shown: false },
     { key: "telephony", name: "Telephony", url: null, shown: false },
   ],
-  // 1.24.0 (Ray approved the rokct.ai redesign on 2026-11-01: no client
-  // showcase): the strip is drawn nowhere on rokct.ai - not on the landing
-  // (the logos section that carried it is gone) and not in the footer.
-  // The sites stay declared, so turning the strip back on is this one
-  // block.
   placement: {
-    landing: "none",
-    footer: false,
+    landing: "section",
+    footer: true,
   },
 };
 

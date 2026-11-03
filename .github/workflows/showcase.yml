@@ -1,0 +1,22 @@
+name: Showcase announce
+
+# This site's card for the ROKCT studio page is .rokct/showcase.json. When it
+# changes on main, the shared workflow validates it and opens (or updates) one
+# pull request in RokctAI/hosting that puts it in the showcase/ registry. The
+# studio shows the card once that pull request is merged.
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.rokct/showcase.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  announce:
+    uses: RokctAI/shared-workflows/.github/workflows/showcase-announce.yml@main
+    secrets:
+      MONOREPO_PAT: ${{ secrets.MONOREPO_PAT }}

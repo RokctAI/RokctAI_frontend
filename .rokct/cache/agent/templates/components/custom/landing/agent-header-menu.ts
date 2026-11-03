@@ -40,9 +40,8 @@
 // `{ id: "pricing", label: "Pricing" }` in its meta.nav, so base resolves
 // the id against the page's live nav, lifts the label from that entry, and
 // drops it on a render where the section is not on the page - which a
-// hand-written "#pricing" href could not do. Affiliate and Teams were
-// fixed links to routes the page has no section for; since 1.23.0 they are
-// not drawn at all, because neither route exists yet (see `links`).
+// hand-written "#pricing" href could not do. Affiliate and Teams are routes
+// the page has no section for, so they are fixed links.
 //
 // Labels come from the shell's own dictionary through `t` (agent_sdk
 // requires app/lib/i18n/index.ts; rokctai_frontend's en.json carries every
@@ -78,53 +77,24 @@
 // base installs public/brand/marks/chrome-web-store.svg on every host and
 // this SDK only names the path, which is how a home SDK opts in. The
 // hero's Chrome Web Store badge (./agent-hero-copy.ts) names the same path.
-//
-// Since 1.24.0 (Ray approved the rokct.ai redesign on 2026-11-01) the menu
-// is the redesign's: five in-page links - Ask ROK, Platform, How it works,
-// Funding, Plans - each an ANCHOR naming one of the redesign's sections
-// (rokct-hero, rokct-platform, rokct-how, rokct-funding, rokct-plans), so
-// the label comes from that section's meta.nav and a link is dropped on a
-// render where its section is not on the page. The Product panel and its
-// four columns are gone: they were the Merlin extension's menu (the
-// Browser Extension card, YouTube and article summarisers) and most of
-// their entries led to "#". The one call to action is "Start with ROKCT",
-// to sign-up; the Chrome extension button is gone.
-//
-// The brand keeps every mechanic Ray asked to keep ("if country code is
-// not fixed i cant approve"; "bring menus to header they just fade like in
-// current site"): base's collapsing brand, 1500ms after load, with the
-// country code from getBrandingSync() in the superscript style the
-// branding cache carries, the chevron, and the nav that fades once the
-// brand collapses and comes back on hover or scroll - all base_sdk 1.24.0's,
-// unchanged. What changes is the MARK: the declaration names
-// /landing/agent/rk-mark.svg, the redesign's yellow R tile, which base
-// draws in the image slot in place of the host's dark BETA tile
-// (brand-logo.tsx is untouched and still draws everywhere else). The
-// tile's 32px size and the ROKCT wordmark's face are rokct-landing.css's,
-// scoped to the landing root, so no base_sdk change was needed.
-//
-// One addition to the code: a first visit has no branding cache yet (the
-// cache is written by the host's Branding after its server action
-// answers, later than this resolver runs), so 1.14.0 to 1.23.0 collapsed
-// to the mark with no code until the second visit. When the cache is
-// empty the code now comes from the visitor's time zone, for the zones
-// the platform serves, in the same superscript style the cache would give
-// it (app/config/platform.ts's BRANDING_COUNTRY_* constants); any other
-// zone still draws no code rather than a guess.
 
 import type { HeaderMenu } from "@/components/custom/landing/header-menu";
-import {
-  BRANDING_COUNTRY_SCALE,
-  BRANDING_COUNTRY_Y_OFFSET,
-  getBrandingSync,
-} from "@/app/config/platform";
+import { getBrandingSync } from "@/app/config/platform";
 import t from "@/app/lib/i18n";
 
-/** The redesign's yellow R tile, installed under public/landing/agent/. */
-export const RK_MARK = "/landing/agent/rk-mark.svg";
+const CHROME_WEB_STORE = "https://chromewebstore.google.com/";
 
-/** The in-page links, in the header's order: section ids from the redesign's meta.nav. */
-export const RK_HEADER_ANCHORS = ["ask", "platform", "how", "funding", "plans"] as const;
+/**
+ * The Chrome Web Store mark on the extension button (1.15.0): the SVG
+ * base_sdk 1.26.0 installs under public/brand/marks/ (this SDK's own file
+ * until 1.16.0), the drawing the old header hot-linked, served by the
+ * shell itself. ./agent-hero-copy.ts names the same file for the hero's
+ * badge; keep the two literals identical.
+ */
+const CHROME_WEB_STORE_MARK = {
+  src: "/brand/marks/chrome-web-store.svg",
+  alt: "Chrome Web Store",
+};
 
 /** `t(key)`, or `fallback` when the dictionary has no such key. */
 function word(key: string, fallback: string): string {
@@ -132,81 +102,134 @@ function word(key: string, fallback: string): string {
   return value && value !== key ? value : fallback;
 }
 
-/** The superscript style getGuestBranding() writes into the cache, for a code that did not come from it. */
-export const BRANDING_CODE_STYLE: Record<string, string | number> = {
-  display: "inline-block",
-  fontSize: BRANDING_COUNTRY_SCALE,
-  verticalAlign: "baseline",
-  position: "relative",
-  top: BRANDING_COUNTRY_Y_OFFSET,
-  marginLeft: "0.05em",
-  fontWeight: 300,
-};
-
-/** Time zones of the countries the platform serves, and their codes. */
-export const TIME_ZONE_CODES: Readonly<Record<string, string>> = {
-  "Africa/Johannesburg": "ZA",
-  "Africa/Gaborone": "BW",
-  "Africa/Harare": "ZW",
-  "Africa/Maputo": "MZ",
-  "Africa/Windhoek": "NA",
-  "Africa/Maseru": "LS",
-  "Africa/Mbabane": "SZ",
-  "Africa/Lusaka": "ZM",
-  "Africa/Blantyre": "MW",
-  "Africa/Lagos": "NG",
-  "Africa/Nairobi": "KE",
-  "Africa/Accra": "GH",
-  "Europe/London": "GB",
-};
-
-/** The code for a time zone, or null for one the platform does not serve. */
-export function codeForTimeZone(zone: string | null | undefined): string | null {
-  return (zone && TIME_ZONE_CODES[zone]) || null;
-}
-
-function visitorTimeZone(): string | null {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone ?? null;
-  } catch {
-    return null;
-  }
-}
-
 /**
- * The country code beside the collapsed mark: the branding cache the shell
- * keeps on the client, read once after mount, with the inline style the
- * cache carries; with no cache yet (a first visit), the visitor's time
- * zone's code in that same style; else nothing, and the mark collapses
- * alone.
+ * The country code beside the collapsed mark, as the old header found it:
+ * the branding cache the shell keeps on the client, read once after
+ * mount. An empty cache (a first visit) answers nothing and
+ * the mark collapses alone, exactly as before; the cache carries the
+ * inline style (scale, baseline offset) the shell wants on the code.
  */
-export function brandingCode(): { text: string; style?: Record<string, string | number> } | null {
+function brandingCode(): { text: string; style?: Record<string, string | number> } | null {
   const branding = getBrandingSync() as
     | { code?: string | null; style?: Record<string, string | number> }
     | null
     | undefined;
   const text = branding?.code?.trim();
-  if (text) return { text, style: branding?.style };
-  const zoned = codeForTimeZone(visitorTimeZone());
-  return zoned ? { text: zoned, style: BRANDING_CODE_STYLE } : null;
+  if (!text) return null;
+  return { text, style: branding?.style };
 }
 
 const AGENT_HEADER_MENU: HeaderMenu = {
   brand: {
-    // The redesign's yellow tile in the image slot, the host's Branding
-    // beside it, and the old header's brand motion as it had it (1500ms).
-    logo: RK_MARK,
+    // The host's own mark (rokctai_frontend's brand-logo.tsx) with its
+    // BETA strip, and the old header's brand motion, defaults as it had
+    // them (1500ms).
+    badge: true,
     collapse: { delayMs: 1500, code: brandingCode },
   },
-  anchors: [...RK_HEADER_ANCHORS],
-  links: [],
-  groups: [],
+  anchors: ["pricing"],
+  links: [
+    { id: "affiliate", label: word("features.affiliate", "Affiliate"), href: "/affiliate" },
+    { id: "teams", label: word("features.teams", "Teams"), href: "/teams" },
+  ],
+  groups: [
+    {
+      id: "product",
+      label: word("header.product", "Product"),
+      items: [
+        {
+          id: "browser-extension",
+          label: word("features.browser_extension", "Browser Extension"),
+          href: CHROME_WEB_STORE,
+          external: true,
+          icon: "box",
+          description: word("header.chrome_support", "Supports Chrome"),
+        },
+        {
+          id: "web-app",
+          label: word("features.web_app", "Web App"),
+          href: "/dashboard",
+          icon: "globe",
+          description: word("header.browser_support", "Open in browser"),
+        },
+        {
+          id: "mobile-apps",
+          label: word("features.mobile_apps", "Mobile Apps"),
+          href: "#",
+          badge: "soon",
+          icon: "smartphone",
+          description: word("header.mobile_support", "iOS and Android"),
+        },
+      ],
+    },
+    {
+      id: "ai-chat",
+      label: word("header.ai_chat", "AI Chat"),
+      items: [
+        { id: "chat-rokct", label: word("features.chat_rokct", "Chat with ROK"), href: "/chat" },
+      ],
+    },
+    {
+      id: "productivity",
+      label: word("header.productivity", "Productivity"),
+      items: [
+        { id: "ai-erp", label: word("features.ai_erp", "AI ERP"), href: "#", badge: "soon" },
+        {
+          id: "tender-assist",
+          label: word("features.tender_assist", "Tender Assist"),
+          href: "#",
+          badge: "new",
+        },
+        { id: "telephony", label: word("features.telephony", "Telephony"), href: "#" },
+      ],
+    },
+    {
+      id: "tools",
+      label: word("header.tools", "Tools"),
+      items: [
+        { id: "fraud-detector", label: word("features.fraud_detector", "Fraud Detector"), href: "#" },
+        { id: "loan-management", label: word("features.loan_man", "Loan Management"), href: "#" },
+        { id: "tenders", label: word("features.tenders", "Tenders"), href: "#", badge: "new" },
+        { id: "funding", label: word("features.funding", "Funding"), href: "#", badge: "new" },
+      ],
+    },
+    {
+      id: "summary",
+      label: word("header.summary", "Summary"),
+      items: [
+        {
+          id: "yt-summarizer",
+          label: word("features.yt_summarizer", "YouTube Summarizer"),
+          href: "#",
+        },
+        {
+          id: "article-summarizer",
+          label: word("features.article_summarizer", "Article Summarizer"),
+          href: "#",
+        },
+      ],
+    },
+  ],
   actions: [
     {
-      id: "start",
-      label: word("header.start_with_rokct", "Start with ROKCT"),
-      href: "/register",
+      id: "chat-rokct",
+      label: word("features.chat_rokct", "Chat with ROK"),
+      href: "/chat",
+      // The filled muted button the old nav drew it as (1.14.0; the
+      // variant is base_sdk 1.24.0's).
+      variant: "secondary",
+    },
+    {
+      id: "add-extension",
+      label: word("header.add_extension", "Add ROK Extension"),
+      href: CHROME_WEB_STORE,
       variant: "primary",
+      external: true,
+      // The Chrome Web Store mark the hand-written header drew on this
+      // button, as a local file (1.15.0; an image icon on an action is
+      // base_sdk 1.25.0's). 1.12.0 to 1.14.0 drew lucide's "chrome" glyph
+      // here because the old header's file was a third-party hot-link.
+      icon: CHROME_WEB_STORE_MARK,
     },
   ],
 };

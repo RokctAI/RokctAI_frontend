@@ -40,19 +40,13 @@ export { Pricing, PricingSection } from "@/components/custom/pricing.client";
 /**
  * What this section adds to base_sdk's landing host when registered in
  * components/custom/landing/page-sections.ts: its place in the page order
- * and its DOM id. Since 1.24.0 it sits straight under rokct.ai's plans
- * ladder (rokct-plans.tsx, order 40), whose "See plans and prices" button
- * scrolls to its `prices` anchor, and it is on the page only when the
- * platform answered plans to price (`renders`): with none the cards draw
- * nothing, so neither does the anchor, and the button goes to sign-up
- * instead. It is not a header stop - the header's "Plans" link scrolls to
- * the ladder.
+ * (before the comparison deck) and its DOM id. It is not a floating-nav
+ * stop - the "Pricing" entry scrolls to copied-pricing, as in the shell.
  */
 export const meta: PageSectionMeta = {
-  order: 45,
+  order: 60,
   nav: [],
-  anchor: "prices",
-  renders: (ctx) => ctx.plans.length > 0,
+  anchor: "pricing-original",
 };
 
 /** The registered form: the plans the page prefetched go to the client half, which keeps the category tab state. */

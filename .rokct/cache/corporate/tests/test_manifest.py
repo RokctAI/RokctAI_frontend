@@ -118,15 +118,8 @@ def code_of(path):
     return LINE_COMMENT_RE.sub("", BLOCK_COMMENT_RE.sub("", read(path)))
 
 
-# 1.4.2: the bundled site fonts (woff2 files and their OFL.txt) are assets,
-# not source - the code checks below skip them; the font test checks them.
-SITE_FONTS = os.path.join(TEMPLATES, "components", "custom", "site", "fonts")
-
-
 def template_files():
     for root, _, names in os.walk(TEMPLATES):
-        if root == SITE_FONTS or root.startswith(SITE_FONTS + os.sep):
-            continue
         for name in names:
             yield os.path.join(root, name)
 
@@ -140,12 +133,11 @@ class TestCorporateNextjs(unittest.TestCase):
     def test_identity_and_version(self):
         self.assertEqual(self.manifest["name"], "corporate_sdk")
         self.assertRegex(self.manifest["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual(self.manifest["version"], "1.7.1")
+        self.assertEqual(self.manifest["version"], "1.3.0")
         self.assertIn("sdk_name = 'corporate_sdk'", read(INSTALL_PY))
         self.assertTrue(read(INSTALL_PY).startswith("# " + LICENSE_HEAD))
         # Same shape as the sibling halves: one flat installs list, no
-        # app_type persona blocks, no home_sdk claim of its own (1.4.0: the
-        # "home" block applies only where a shell flags corporate_sdk home).
+        # app_type persona blocks, and never the home SDK.
         for key in ("installs", "dependencies", "devDependencies", "integrations", "requires", "_comment"):
             self.assertIn(key, self.manifest)
         self.assertNotIn("app_type", self.manifest)
@@ -231,15 +223,14 @@ class TestCorporateNextjs(unittest.TestCase):
         self.assertIn("base_sdk >= 1.47.0", comment["about"])
         self.assertIn("base_sdk >= 1.45.0", comment["about"])
         # Every other prerequisite names who installs it too.
-        for req in requires | set(self.manifest.get("home", {}).get("requires", [])):
+        for req in requires:
             self.assertIn(req, comment, f"{req} has no owner comment")
             self.assertRegex(comment[req], r"^(installed by \w+ >= \d+\.\d+\.\d+|host shell)")
 
     def test_every_import_of_a_base_or_host_file_is_a_declared_prerequisite(self):
-        home = self.manifest.get("home", {})
-        installed = {e["to"] for e in self.manifest["installs"] + home.get("installs", [])}
+        installed = {e["to"] for e in self.manifest["installs"]}
         installed_dirs = {t for t in installed if not t.endswith((".ts", ".tsx"))}
-        declared = set(self.manifest["requires"]) | set(home.get("requires", []))
+        declared = set(self.manifest["requires"])
         for path in template_files():
             for target in re.findall(r'from "@/([^"]+)"', read(path)):
                 candidates = {target, target + ".ts", target + ".tsx"}
@@ -339,10 +330,7 @@ class TestCorporateNextjs(unittest.TestCase):
         for path in template_files():
             body = code_of(path).lower()
             rel = os.path.relpath(path, SDK_ROOT)
-            # 1.4.0: the one origin a local-data site links to is WhatsApp's
-            # chat link, built from the number in data/site.json.
-            body = body.replace('`https://wa.me/${digits}`', "")
-            for word in ("demo", "sample", "example", "lorem", "https://", "http://", "rokct.ai", "supacharge", "south river", "southriver", "musina"):
+            for word in ("demo", "sample", "example", "lorem", "https://", "http://", "rokct.ai", "supacharge"):
                 self.assertNotIn(word, body, f"{rel} carries {word}")
             self.assertIn(LICENSE_HEAD, read(path), f"{rel} has no licence header")
 
@@ -635,363 +623,6 @@ class TestCorporateNextjs(unittest.TestCase):
         for line in changelog.splitlines():
             if line.startswith("#") and line != "# Changelog":
                 self.assertRegex(line, r"^## \d+\.\d+\.\d+$", line)
-
-
-
-
-class TestLocalSiteHome(unittest.TestCase):
-    """1.4.0 (Ray, 2026-10-31: "corporate can be home sdk"; corporate_sdk is
-    the home of every "data": "local" site): the "home" block renders the
-    whole page from the shell's data/ folder and names no client."""
-
-    SITE = os.path.join(TEMPLATES, "components", "custom", "site")
-
-    def setUp(self):
-        self.manifest = load_manifest()
-        self.home = self.manifest["home"]
-
-    def test_home_block_owns_the_root_and_the_site_parts(self):
-        pairs = {(e["from"], e["to"]) for e in self.home["installs"]}
-        self.assertIn(("templates/app/site-home/page.tsx", "app/page.tsx"), pairs)
-        self.assertIn(("templates/components/custom/site", "components/custom/site"), pairs)
-        for entry in self.home["installs"]:
-            self.assertTrue(os.path.exists(os.path.join(SDK_ROOT, entry["from"])), entry["from"])
-        top = {e["to"] for e in self.manifest["installs"]}
-        self.assertNotIn("app/page.tsx", top, "the root page is only ever the home block's")
-        self.assertEqual(self.home["site_data"]["requires"], ["theme", "site", "sections"])
-
-    def test_home_block_fills_every_landing_registry(self):
-        lines = [(i["target"], i["replacement"]) for i in self.home["integrations"]]
-        targets = [t for t, _ in lines]
-        for reg in ("hero-copy", "hero-form", "header-menu", "site-metadata", "plans-query"):
-            self.assertEqual(targets.count(f"components/custom/landing/{reg}.ts"), 1, reg)
-        sections = [r for t, r in lines if t.endswith("page-sections.ts")]
-        self.assertIn("site-theme-section", sections[0])
-        self.assertIn("site-footer-section", sections[-1])
-        slots = [r for r in sections if "site-slots" in r]
-        self.assertEqual(len(slots), 12)
-        for i, line in enumerate(slots):
-            self.assertIn(f"m.slot({i})", line)
-            self.assertIn(f'site-section-{i + 1:02d}', line)
-        with open(os.path.join(self.SITE, "site-slots.tsx"), encoding="utf-8") as f:
-            self.assertIn("export const SITE_SLOTS = 12;", f.read())
-
-    def test_section_library_covers_the_data_types(self):
-        src = read(os.path.join(self.SITE, "site-sections.tsx"))
-        for t in ("intro", "steps", "pricing", "gallery", "facts", "order", "contact"):
-            self.assertIn(f'case "{t}":', src)
-        self.assertIn("SiteHeroForm", read(os.path.join(self.SITE, "site-hero-form.tsx")))
-
-    def test_entry_modules_are_server_safe(self):
-        directive = re.compile(r"""^\s*["']use client["'];?\s*$""", re.M)
-        for name in ("site-theme-section.tsx", "site-slots.tsx", "site-sections.tsx", "site-footer-section.tsx",
-                     "site-hero-copy.ts", "site-header-menu.ts", "site-metadata.ts", "site-plans-query.ts",
-                     "site-source.ts", "site-theme.ts", "site-art.tsx"):
-            self.assertIsNone(directive.search(code_of(os.path.join(self.SITE, name))), name)
-        for name in ("site-hero-form.tsx", "site-order-form.client.tsx", "site-theme.client.tsx"):
-            self.assertRegex(read(os.path.join(self.SITE, name)), directive, name)
-
-    def test_the_client_form_never_imports_the_data_reader(self):
-        for name in ("site-hero-form.tsx", "site-order-form.client.tsx", "site-theme.client.tsx"):
-            src = read(os.path.join(self.SITE, name))
-            self.assertNotIn("site-source", src, name)
-            self.assertNotIn("read-site-data", src, name)
-            self.assertNotIn("site-data/generated", src, name)
-
-
-    def test_site_fonts_are_bundled_not_fetched_from_google(self):
-        """1.4.2: next/font/local over bundled woff2 files; the build makes no
-        request to Google Fonts. Same variables, and the weights and styles
-        the next/font/google calls they replace asked for."""
-        for root, _, files in os.walk(TEMPLATES):
-            for name in files:
-                if name.endswith((".ts", ".tsx", ".css")):
-                    path = os.path.join(root, name)
-                    self.assertNotRegex(read(path), r"""from\s+["']next/font/google["']""", path)
-        fonts = read(os.path.join(self.SITE, "site-fonts.ts"))
-        self.assertIn('import localFont from "next/font/local";', fonts)
-        for name in ("montserrat", "fraunces", "space-grotesk", "playfair-display", "figtree", "inter", "dm-sans"):
-            self.assertIn(f'variable: "--cs-font-{name}"', fonts)
-        self.assertEqual(fonts.count('display: "swap"'), 7)
-        self.assertEqual(fonts.count('adjustFontFallback: "Times New Roman"'), 2)
-        paths = re.findall(r'path: "\./(fonts/[^"]+\.woff2)", weight: "([^"]+)", style: "([^"]+)"', fonts)
-        self.assertEqual(
-            sorted((os.path.basename(p), w, s) for p, w, s in paths),
-            [
-                ("dm-sans-wght-100-1000.woff2", "100 1000", "normal"),
-                ("figtree-wght-400-700.woff2", "400 700", "normal"),
-                ("fraunces-wght-100-900-italic.woff2", "100 900", "italic"),
-                ("fraunces-wght-100-900.woff2", "100 900", "normal"),
-                ("inter-wght-100-900.woff2", "100 900", "normal"),
-                ("montserrat-wght-400-900-italic.woff2", "400 900", "italic"),
-                ("montserrat-wght-400-900.woff2", "400 900", "normal"),
-                ("playfair-display-wght-400-900-italic.woff2", "400 900", "italic"),
-                ("playfair-display-wght-400-900.woff2", "400 900", "normal"),
-                ("space-grotesk-wght-300-700.woff2", "300 700", "normal"),
-            ],
-        )
-        for rel, _, _ in paths:
-            with open(os.path.join(self.SITE, rel), "rb") as f:
-                self.assertEqual(f.read(4), b"wOF2", rel)
-        licence = read(os.path.join(self.SITE, "fonts", "OFL.txt"))
-        self.assertIn("SIL OPEN FONT LICENSE Version 1.1", licence)
-        self.assertIn('Reserved Font Name "Playfair Display"', licence)
-        for project in ("Montserrat", "Fraunces", "Space Grotesk", "Playfair Display", "Figtree", "Inter", "DM Sans"):
-            self.assertRegex(licence, rf"Copyright \d{{4}} The {re.escape(project)}(\.Git)? Project Authors")
-
-
-class TestSiteCredit(unittest.TestCase):
-    """1.4.1: a local-data site's footer ends with base_sdk 1.54.0's site
-    credit, `© <year> <site name> · Built with ♥ by ROKCT` (Ray,
-    2026-10-31), the name from data/site.json - never the legal entity."""
-
-    FOOTER = os.path.join(TEMPLATES, "components", "custom", "site", "site-footer-section.tsx")
-    EXAMPLE_SITE = os.path.join(SDK_ROOT, "docs", "examples", "demo-bakery", "data", "site.json")
-
-    def test_footer_names_the_site_not_the_company(self):
-        code = code_of(self.FOOTER)
-        self.assertIn("config={{ ...FOOTER_CHROME, siteName: site?.name, links: legalFooterLinks(terms) }}", code)
-        self.assertNotIn("copyrightHolder", code)
-        self.assertNotIn("LEGAL_COMPANY_NAME", code)
-        self.assertNotIn("footer?.legal", code)
-        self.assertNotIn("©", code)
-        notes = load_manifest()["_comment"]["about"]
-        self.assertIn("floor base_sdk >= 1.54.0 (siteName)", notes)
-        head = read(os.path.join(SDK_ROOT, "CHANGELOG.md")).split("## 1.4.0")[0]
-        self.assertIn("## 1.4.1", head)
-        self.assertIn("Built with", head)
-
-    def test_company_and_legal_frames_name_no_holder(self):
-        for name in (("company", "company-frame.tsx"), ("legal", "legal-frame.tsx")):
-            code = code_of(os.path.join(TEMPLATES, "components", "custom", *name))
-            with self.subTest(name=name[1]):
-                self.assertIn("<FooterChromeRow config={config} />", code)
-                self.assertNotIn("copyrightHolder", code)
-                self.assertNotIn("LEGAL_COMPANY_NAME", code)
-
-    def test_credit_line_for_the_example_site(self):
-        """Executes base_sdk's site-credit rules for the demo record's name
-        (skips when no base_sdk >= 1.54.0 checkout is reachable; set
-        ROKCT_BASE_SDK to its nextjs root)."""
-        base = os.environ.get("ROKCT_BASE_SDK") or os.path.abspath(
-            os.path.join(SDK_ROOT, os.pardir, os.pardir, os.pardir, "core", "base", "nextjs"))
-        rules = os.path.join(base, "templates", "components", "custom", "landing", "site-credit.ts")
-        node = shutil.which("node")
-        if not os.path.isfile(rules) or not node:
-            raise unittest.SkipTest("base_sdk >= 1.54.0 site-credit.ts or node not reachable")
-        with open(self.EXAMPLE_SITE, encoding="utf-8") as f:
-            name = json.load(f)["name"]
-        with tempfile.TemporaryDirectory() as tmp:
-            shutil.copy(rules, os.path.join(tmp, "site-credit.ts"))
-            probe = os.path.join(tmp, "probe.mts")
-            with open(probe, "w", encoding="utf-8") as f:
-                f.write("import { siteCreditLine } from './site-credit.ts';\n"
-                        f"console.log(siteCreditLine({json.dumps(name)}, {{ year: 2026 }}));\n")
-            run = subprocess.run([node, "--experimental-strip-types", "--no-warnings", probe],
-                                 capture_output=True, text=True, timeout=60, cwd=tmp)
-        self.assertEqual(run.returncode, 0, run.stderr)
-        self.assertEqual(run.stdout.strip(), "\u00a9 2026 Example Bakehouse \u00b7 Built with \u2665 by ROKCT")
-
-
-class TestSouthRiverRender(unittest.TestCase):
-    """1.5.0: the renderer draws the fields base_sdk 1.59.0 adds for the
-    South River render Ray approved - a bottle's label roll and monogram,
-    the water in the neck and the running drops, a tier's fine line, art
-    and slider, the header's image-only brand and the footer logo."""
-
-    SITE = os.path.join(TEMPLATES, "components", "custom", "site")
-
-    def test_floor(self):
-        self.assertIn("floor base_sdk >= 1.59.0", load_manifest()["_comment"]["about"])
-        head = read(CHANGELOG).split("## 1.4.2")[0]
-        self.assertIn("## 1.5.0", head)
-
-    def test_slider_is_the_only_new_client_module(self):
-        code = read(os.path.join(self.SITE, "site-pricing-slider.client.tsx"))
-        self.assertIn('"use client";', code)
-        self.assertNotIn("use client", read(os.path.join(self.SITE, "site-price.ts")))
-        sections = code_of(os.path.join(self.SITE, "site-sections.tsx"))
-        for needle in ("tier.slider", "tier.fine", "tier.art", "SitePricingSlider"):
-            self.assertIn(needle, sections)
-
-    def test_bottle_rolls_and_runs(self):
-        art = code_of(os.path.join(self.SITE, "site-art.tsx"))
-        for needle in ("labels={art.labels}", "rollCss(", "cs-roll-next", "cs-run-trail", "WATER_LEVEL", "label.mark"):
-            self.assertIn(needle, art)
-        css = read(os.path.join(self.SITE, "site.css"))
-        reduced = css.split("@media (prefers-reduced-motion: reduce)")[1].split("/* ---")[0]
-        for needle in (".cs-roll-face", ".cs-roll-next", ".cs-run", ".cs-run-trail"):
-            self.assertIn(needle, reduced)
-
-    def test_header_and_footer_logo(self):
-        self.assertIn("wordmark === false", code_of(os.path.join(self.SITE, "site-header-menu.ts")))
-        footer = code_of(os.path.join(self.SITE, "site-footer-section.tsx"))
-        self.assertIn("site?.footer?.logo", footer)
-        self.assertIn("cs-footer-logo", read(os.path.join(self.SITE, "site.css")))
-
-    def test_price_words(self):
-        """Executes site-price.ts under node with type stripping."""
-        node = shutil.which("node")
-        if not node:
-            raise unittest.SkipTest("node not reachable")
-        with tempfile.TemporaryDirectory() as tmp:
-            shutil.copy(os.path.join(self.SITE, "site-price.ts"), os.path.join(tmp, "site-price.ts"))
-            probe = os.path.join(tmp, "probe.mts")
-            with open(probe, "w", encoding="utf-8") as f:
-                f.write("import { fillPriceWords, formatMoney } from './site-price.ts';\n"
-                        "const w = { n: 10, price: 'R150', perCase: 24 };\n"
-                        "console.log(fillPriceWords('{n} cases · {units} bottles|{n} × {price} · {each} a bottle|{total}', w));\n"
-                        "console.log(fillPriceWords('{each}', { price: 'R180', perCase: 24 }), formatMoney(9000, 'R'), fillPriceWords('{each}', { price: 'Ask' }));\n")
-            run = subprocess.run([node, "--experimental-strip-types", "--no-warnings", probe],
-                                 capture_output=True, text=True, timeout=60, cwd=tmp)
-        self.assertEqual(run.returncode, 0, run.stderr)
-        self.assertEqual(run.stdout.splitlines(), [
-            "10 cases · 240 bottles|10 × R150 · R6.25 a bottle|R1,500",
-            "R7.50 R9,000 {each}",
-        ])
-
-
-class TestLiveWater(unittest.TestCase):
-    """1.6.0: the bottle is drawn as clear PET and its water is alive - the
-    surface laps and stays level, caustics shimmer, bubbles rise - with a
-    still frame under reduced motion and nothing fetched."""
-
-    SITE = os.path.join(TEMPLATES, "components", "custom", "site")
-
-    def test_version(self):
-        head = read(CHANGELOG).split("## 1.5.0")[0]
-        self.assertIn("## 1.6.0", head)
-        self.assertIn("Since 1.6.0", load_manifest()["_comment"]["about"])
-
-    def test_bottle_parts(self):
-        art = code_of(os.path.join(self.SITE, "site-art.tsx"))
-        for needle in ("wavePath(", "BUBBLES", "CAUSTICS", "cs-water-level", "cs-slosh", "cs-wave",
-                       "cs-caustic", "cs-bubble", "cs-lens", "--cs-rise", "--cs-at", "knurls", "-refract", "-spec"):
-            self.assertIn(needle, art)
-        # Still server safe: no hooks, no browser APIs, no client directive.
-        for banned in ("use client", "useEffect", "useState", "requestAnimationFrame", "<canvas", "<video"):
-            self.assertNotIn(banned, art)
-
-    def test_motion_and_reduced_motion(self):
-        css = read(os.path.join(self.SITE, "site.css"))
-        for frames in ("@keyframes cs-slosh", "@keyframes cs-wave", "@keyframes cs-caustic", "@keyframes cs-bubble"):
-            self.assertIn(frames, css)
-        self.assertIn("--cs-level: 5.5deg", css)
-        reduced = css.split("@media (prefers-reduced-motion: reduce)")[1].split("/* ---")[0]
-        for needle in (".cs-slosh", ".cs-wave", ".cs-caustic", ".cs-lens", ".cs-pool", ".cs-bubble", "var(--cs-at)"):
-            self.assertIn(needle, reduced)
-
-
-class TestSizesHero(unittest.TestCase):
-    """1.7.0: the poster hero loops between the private-label scene and the
-    three sizes (the render Ray approved), server-rendered first, paused off
-    screen and when hidden, still under reduced motion; per-size bottles; and
-    every price word comes from data/pricing.json."""
-
-    SITE = os.path.join(TEMPLATES, "components", "custom", "site")
-
-    def test_version(self):
-        head = read(CHANGELOG).split("## 1.6.0")[0]
-        self.assertIn("## 1.7.0", head)
-        self.assertIn("Since 1.7.0", load_manifest()["_comment"]["about"])
-
-    def test_pure_modules_are_server_safe(self):
-        for name in ("site-sizes-art.ts", "site-hero-loop.ts", "site-sizes.ts", "site-price.ts"):
-            code = code_of(os.path.join(self.SITE, name))
-            for banned in ("use client", "useEffect", "useState", "requestAnimationFrame", "window.", "document."):
-                self.assertNotIn(banned, code, f"{name}: {banned}")
-
-    def test_loop_client(self):
-        form = code_of(os.path.join(self.SITE, "site-hero-form.tsx"))
-        for needle in ("prefers-reduced-motion: reduce", "IntersectionObserver", "visibilitychange",
-                       "cancelAnimationFrame", "loopFrame(SCENE_PRIVATE_LABEL", "ROLL_STEP", "inert"):
-            self.assertIn(needle, form)
-        self.assertIn(".cs-hero.loop.paused *", read(os.path.join(self.SITE, "site.css")))
-
-    def test_sizes_art(self):
-        art = code_of(os.path.join(self.SITE, "site-sizes-art.ts"))
-        for needle in ("5000:", "1500:", "500:", "jug: true", "handle", "esc(opts.sizeText)", "cs-bubble", "cs-water-level"):
-            self.assertIn(needle, art)
-        self.assertNotIn("1.25 L", art)
-        self.assertNotIn("litre", art)
-
-    def _node(self, src, names):
-        node = shutil.which("node")
-        if not node:
-            raise unittest.SkipTest("node not reachable")
-        with tempfile.TemporaryDirectory() as tmp:
-            for name in names:
-                shutil.copy(os.path.join(self.SITE, name), os.path.join(tmp, name))
-            probe = os.path.join(tmp, "probe.mts")
-            with open(probe, "w", encoding="utf-8") as f:
-                f.write(src)
-            run = subprocess.run([node, "--experimental-strip-types", "--no-warnings", probe],
-                                 capture_output=True, text=True, timeout=60, cwd=tmp)
-        self.assertEqual(run.returncode, 0, run.stderr)
-        return run.stdout.splitlines()
-
-    def test_choreography(self):
-        """The loop: label scene, move, sizes, move back; the sizes keep their gaps."""
-        out = self._node(
-            "import { loopFrame, loopSceneAt } from './site-hero-loop.ts';\n"
-            "import { sizeBottleSvg, sizeMlOf } from './site-sizes-art.ts';\n"
-            "const U = 0.6, geo: any = { pl: { w: 132, fh: 360 } };\n"
-            "const half: any = {};\n"
-            "for (const [k, ml, hw] of [['5l', 5000, 206], ['15', 1500, 112], ['05', 500, 82]] as const) {\n"
-            "  const b = sizeBottleSvg('t' + k, { ml, sizeText: '<x>' });\n"
-            "  geo[k] = { w: b.W * U, fh: (b.footY - b.top) * U }; half[k] = hw * U;\n"
-            "  if (b.svg.includes('<x>')) throw new Error('unescaped');\n"
-            "}\n"
-            "const a = loopFrame(0, geo).bottles, edge = (k: string) => a[k].left + geo[k].w / 2;\n"
-            "console.log(Math.round(edge('15') - half['15'] - (edge('5l') + half['5l'])), Math.round(edge('05') - half['05'] - (edge('15') + half['15'])));\n"
-            "console.log(edge('5l') - half['5l'] >= 0, edge('05') + half['05'] <= 560);\n"
-            "console.log([0, 5, 10, 13, 15, 18, 22].map((u) => loopSceneAt(u, 8).toFixed(1)).join(' '));\n"
-            "const b = loopFrame(8, geo);\n"
-            "console.log(b.bottles.pl.opacity, b.bottles['5l'].opacity, b.panelB.opacity, b.panelA.opacity, b.tags.tpl.opacity);\n"
-            "console.log(['500 ml', '1.5 L', '5 L', '1,5 litres'].map(sizeMlOf).join(' '));\n",
-            ["site-hero-loop.ts", "site-sizes-art.ts"])
-        self.assertEqual(out[0], "18 16")
-        self.assertEqual(out[1], "true true")
-        self.assertEqual(out[2], "8.0 8.0 3.2 0.0 2.2 8.0 8.0")
-        self.assertEqual(out[3], "1 0 1 0 1")
-        self.assertEqual(out[4], "500 1500 5000 1500")
-
-    def test_site_words(self):
-        out = self._node(
-            "import { fillSiteWordsDeep, sitePriceValues } from './site-price.ts';\n"
-            "const v = sitePriceValues({ perCase: 24, tiers: [{ price: 'R180', minQty: 1 }, { price: 'R150', minQty: 10, best: true }] });\n"
-            "console.log(JSON.stringify(fillSiteWordsDeep({ a: ['{bestPrice} a case of {perCase}, from {bestMin}', '{basePrice}'], n: 3, k: '{each}' }, v)));\n",
-            ["site-price.ts"])
-        self.assertEqual(out[0], '{"a":["R150 a case of 24, from 10","R180"],"n":3,"k":"{each}"}')
-        source = code_of(os.path.join(self.SITE, "site-source.ts"))
-        self.assertIn("fillSiteWordsDeep(data, sitePriceValues(pricing))", source)
-
-    def test_no_hard_coded_price(self):
-        """Prices, case sizes and minimum orders live in a site's data/pricing.json, never in a template."""
-        money = re.compile(r"\bR\s?\d{2,}|\b\d+\s*cases\b|case of \d+|\bper case\b", re.I)
-        for path in template_files():
-            if not path.endswith((".ts", ".tsx", ".css")):
-                continue
-            for n, line in enumerate(code_of(path).splitlines(), 1):
-                self.assertIsNone(money.search(line), f"{path}:{n}: {line.strip()}")
-
-
-class TestOwnSizesFit(unittest.TestCase):
-    """1.7.1: the own block's sizes row is never clipped by its card."""
-
-    def test_version(self):
-        self.assertEqual(load_manifest()["version"], "1.7.1")
-        self.assertIn("## 1.7.1", read(CHANGELOG).split("## 1.7.0")[0])
-        self.assertIn("Since 1.7.1", load_manifest()["_comment"]["about"])
-
-    def test_row_fits_its_card(self):
-        css = read(os.path.join(TEMPLATES, "components", "custom", "site", "site.css"))
-        own = css.split(".cs-own figure.cs-own-sizes {")[1].split("}")[0]
-        self.assertIn("margin-bottom: 0;", own)
-        self.assertIn("min-width: 0;", css.split(".cs-own > * {")[1].split("}")[0])
-        size = css.split(".cs-own-size {")[1].split("}")[0]
-        self.assertIn("flex: 0 1 auto;", size)
-        self.assertIn("max-width: 100%;", css.split(".cs-own-bottle {")[1].split("}")[0])
 
 
 if __name__ == "__main__":
