@@ -140,7 +140,7 @@ class TestCorporateNextjs(unittest.TestCase):
     def test_identity_and_version(self):
         self.assertEqual(self.manifest["name"], "corporate_sdk")
         self.assertRegex(self.manifest["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual(self.manifest["version"], "1.5.0")
+        self.assertEqual(self.manifest["version"], "1.7.1")
         self.assertIn("sdk_name = 'corporate_sdk'", read(INSTALL_PY))
         self.assertTrue(read(INSTALL_PY).startswith("# " + LICENSE_HEAD))
         # Same shape as the sibling halves: one flat installs list, no
@@ -801,8 +801,7 @@ class TestSouthRiverRender(unittest.TestCase):
 
     SITE = os.path.join(TEMPLATES, "components", "custom", "site")
 
-    def test_version_and_floor(self):
-        self.assertEqual(load_manifest()["version"], "1.5.0")
+    def test_floor(self):
         self.assertIn("floor base_sdk >= 1.59.0", load_manifest()["_comment"]["about"])
         head = read(CHANGELOG).split("## 1.4.2")[0]
         self.assertIn("## 1.5.0", head)
@@ -850,6 +849,149 @@ class TestSouthRiverRender(unittest.TestCase):
             "10 cases · 240 bottles|10 × R150 · R6.25 a bottle|R1,500",
             "R7.50 R9,000 {each}",
         ])
+
+
+class TestLiveWater(unittest.TestCase):
+    """1.6.0: the bottle is drawn as clear PET and its water is alive - the
+    surface laps and stays level, caustics shimmer, bubbles rise - with a
+    still frame under reduced motion and nothing fetched."""
+
+    SITE = os.path.join(TEMPLATES, "components", "custom", "site")
+
+    def test_version(self):
+        head = read(CHANGELOG).split("## 1.5.0")[0]
+        self.assertIn("## 1.6.0", head)
+        self.assertIn("Since 1.6.0", load_manifest()["_comment"]["about"])
+
+    def test_bottle_parts(self):
+        art = code_of(os.path.join(self.SITE, "site-art.tsx"))
+        for needle in ("wavePath(", "BUBBLES", "CAUSTICS", "cs-water-level", "cs-slosh", "cs-wave",
+                       "cs-caustic", "cs-bubble", "cs-lens", "--cs-rise", "--cs-at", "knurls", "-refract", "-spec"):
+            self.assertIn(needle, art)
+        # Still server safe: no hooks, no browser APIs, no client directive.
+        for banned in ("use client", "useEffect", "useState", "requestAnimationFrame", "<canvas", "<video"):
+            self.assertNotIn(banned, art)
+
+    def test_motion_and_reduced_motion(self):
+        css = read(os.path.join(self.SITE, "site.css"))
+        for frames in ("@keyframes cs-slosh", "@keyframes cs-wave", "@keyframes cs-caustic", "@keyframes cs-bubble"):
+            self.assertIn(frames, css)
+        self.assertIn("--cs-level: 5.5deg", css)
+        reduced = css.split("@media (prefers-reduced-motion: reduce)")[1].split("/* ---")[0]
+        for needle in (".cs-slosh", ".cs-wave", ".cs-caustic", ".cs-lens", ".cs-pool", ".cs-bubble", "var(--cs-at)"):
+            self.assertIn(needle, reduced)
+
+
+class TestSizesHero(unittest.TestCase):
+    """1.7.0: the poster hero loops between the private-label scene and the
+    three sizes (the render Ray approved), server-rendered first, paused off
+    screen and when hidden, still under reduced motion; per-size bottles; and
+    every price word comes from data/pricing.json."""
+
+    SITE = os.path.join(TEMPLATES, "components", "custom", "site")
+
+    def test_version(self):
+        head = read(CHANGELOG).split("## 1.6.0")[0]
+        self.assertIn("## 1.7.0", head)
+        self.assertIn("Since 1.7.0", load_manifest()["_comment"]["about"])
+
+    def test_pure_modules_are_server_safe(self):
+        for name in ("site-sizes-art.ts", "site-hero-loop.ts", "site-sizes.ts", "site-price.ts"):
+            code = code_of(os.path.join(self.SITE, name))
+            for banned in ("use client", "useEffect", "useState", "requestAnimationFrame", "window.", "document."):
+                self.assertNotIn(banned, code, f"{name}: {banned}")
+
+    def test_loop_client(self):
+        form = code_of(os.path.join(self.SITE, "site-hero-form.tsx"))
+        for needle in ("prefers-reduced-motion: reduce", "IntersectionObserver", "visibilitychange",
+                       "cancelAnimationFrame", "loopFrame(SCENE_PRIVATE_LABEL", "ROLL_STEP", "inert"):
+            self.assertIn(needle, form)
+        self.assertIn(".cs-hero.loop.paused *", read(os.path.join(self.SITE, "site.css")))
+
+    def test_sizes_art(self):
+        art = code_of(os.path.join(self.SITE, "site-sizes-art.ts"))
+        for needle in ("5000:", "1500:", "500:", "jug: true", "handle", "esc(opts.sizeText)", "cs-bubble", "cs-water-level"):
+            self.assertIn(needle, art)
+        self.assertNotIn("1.25 L", art)
+        self.assertNotIn("litre", art)
+
+    def _node(self, src, names):
+        node = shutil.which("node")
+        if not node:
+            raise unittest.SkipTest("node not reachable")
+        with tempfile.TemporaryDirectory() as tmp:
+            for name in names:
+                shutil.copy(os.path.join(self.SITE, name), os.path.join(tmp, name))
+            probe = os.path.join(tmp, "probe.mts")
+            with open(probe, "w", encoding="utf-8") as f:
+                f.write(src)
+            run = subprocess.run([node, "--experimental-strip-types", "--no-warnings", probe],
+                                 capture_output=True, text=True, timeout=60, cwd=tmp)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        return run.stdout.splitlines()
+
+    def test_choreography(self):
+        """The loop: label scene, move, sizes, move back; the sizes keep their gaps."""
+        out = self._node(
+            "import { loopFrame, loopSceneAt } from './site-hero-loop.ts';\n"
+            "import { sizeBottleSvg, sizeMlOf } from './site-sizes-art.ts';\n"
+            "const U = 0.6, geo: any = { pl: { w: 132, fh: 360 } };\n"
+            "const half: any = {};\n"
+            "for (const [k, ml, hw] of [['5l', 5000, 206], ['15', 1500, 112], ['05', 500, 82]] as const) {\n"
+            "  const b = sizeBottleSvg('t' + k, { ml, sizeText: '<x>' });\n"
+            "  geo[k] = { w: b.W * U, fh: (b.footY - b.top) * U }; half[k] = hw * U;\n"
+            "  if (b.svg.includes('<x>')) throw new Error('unescaped');\n"
+            "}\n"
+            "const a = loopFrame(0, geo).bottles, edge = (k: string) => a[k].left + geo[k].w / 2;\n"
+            "console.log(Math.round(edge('15') - half['15'] - (edge('5l') + half['5l'])), Math.round(edge('05') - half['05'] - (edge('15') + half['15'])));\n"
+            "console.log(edge('5l') - half['5l'] >= 0, edge('05') + half['05'] <= 560);\n"
+            "console.log([0, 5, 10, 13, 15, 18, 22].map((u) => loopSceneAt(u, 8).toFixed(1)).join(' '));\n"
+            "const b = loopFrame(8, geo);\n"
+            "console.log(b.bottles.pl.opacity, b.bottles['5l'].opacity, b.panelB.opacity, b.panelA.opacity, b.tags.tpl.opacity);\n"
+            "console.log(['500 ml', '1.5 L', '5 L', '1,5 litres'].map(sizeMlOf).join(' '));\n",
+            ["site-hero-loop.ts", "site-sizes-art.ts"])
+        self.assertEqual(out[0], "18 16")
+        self.assertEqual(out[1], "true true")
+        self.assertEqual(out[2], "8.0 8.0 3.2 0.0 2.2 8.0 8.0")
+        self.assertEqual(out[3], "1 0 1 0 1")
+        self.assertEqual(out[4], "500 1500 5000 1500")
+
+    def test_site_words(self):
+        out = self._node(
+            "import { fillSiteWordsDeep, sitePriceValues } from './site-price.ts';\n"
+            "const v = sitePriceValues({ perCase: 24, tiers: [{ price: 'R180', minQty: 1 }, { price: 'R150', minQty: 10, best: true }] });\n"
+            "console.log(JSON.stringify(fillSiteWordsDeep({ a: ['{bestPrice} a case of {perCase}, from {bestMin}', '{basePrice}'], n: 3, k: '{each}' }, v)));\n",
+            ["site-price.ts"])
+        self.assertEqual(out[0], '{"a":["R150 a case of 24, from 10","R180"],"n":3,"k":"{each}"}')
+        source = code_of(os.path.join(self.SITE, "site-source.ts"))
+        self.assertIn("fillSiteWordsDeep(data, sitePriceValues(pricing))", source)
+
+    def test_no_hard_coded_price(self):
+        """Prices, case sizes and minimum orders live in a site's data/pricing.json, never in a template."""
+        money = re.compile(r"\bR\s?\d{2,}|\b\d+\s*cases\b|case of \d+|\bper case\b", re.I)
+        for path in template_files():
+            if not path.endswith((".ts", ".tsx", ".css")):
+                continue
+            for n, line in enumerate(code_of(path).splitlines(), 1):
+                self.assertIsNone(money.search(line), f"{path}:{n}: {line.strip()}")
+
+
+class TestOwnSizesFit(unittest.TestCase):
+    """1.7.1: the own block's sizes row is never clipped by its card."""
+
+    def test_version(self):
+        self.assertEqual(load_manifest()["version"], "1.7.1")
+        self.assertIn("## 1.7.1", read(CHANGELOG).split("## 1.7.0")[0])
+        self.assertIn("Since 1.7.1", load_manifest()["_comment"]["about"])
+
+    def test_row_fits_its_card(self):
+        css = read(os.path.join(TEMPLATES, "components", "custom", "site", "site.css"))
+        own = css.split(".cs-own figure.cs-own-sizes {")[1].split("}")[0]
+        self.assertIn("margin-bottom: 0;", own)
+        self.assertIn("min-width: 0;", css.split(".cs-own > * {")[1].split("}")[0])
+        size = css.split(".cs-own-size {")[1].split("}")[0]
+        self.assertIn("flex: 0 1 auto;", size)
+        self.assertIn("max-width: 100%;", css.split(".cs-own-bottle {")[1].split("}")[0])
 
 
 if __name__ == "__main__":

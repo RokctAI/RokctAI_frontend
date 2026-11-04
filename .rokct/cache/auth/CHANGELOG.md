@@ -1,3 +1,36 @@
+## 1.12.1
+
+- Inputs on the login and register cards are bordered (`border-input` on `bg-background`) instead of borderless `bg-muted`, so they read in any site shell.
+- The mark above the card comes from `SiteShellLogo` in `components/custom/site-shell.tsx` (default: the `BrandLogo` seam), so a home SDK shows the same logo its header does.
+
+## 1.12.0
+
+* **The auth pages wear the site's own header and footer.** Login, register
+  and forgot-password render inside `SiteShell`
+  (`components/custom/site-shell.tsx`) instead of importing base's generic
+  `Header`. auth_sdk installs the default, that same `Header` above the page,
+  so a site without a home SDK shell looks as before. A home SDK ships its own
+  `site-shell.tsx` with the same `SiteShell` export; the installer keeps the
+  home SDK's copy whatever the compose order.
+
+## 1.11.0
+
+* **The header's Log in / Sign up come from this SDK** (Ray, 2026-11-01:
+  "we just moving login and signup buttons to injection"). base_sdk 1.60.0's
+  header renders an empty slot instead of its own pair; auth_sdk installs
+  `components/custom/auth/header-auth-buttons.tsx` and registers it at
+  `components/custom/landing/header-auth.ts`
+  (`// @rokct-sdk-header-auth-start`). It draws exactly what the header drew:
+  on the bar a "Log in" link and a "Sign up" pill, in the burger panel two
+  stacked buttons that close the panel on a tap, with the auth pages' popup
+  handlers and base's classes (or the header's own `classes`). A
+  `dataMode="local"` shell gets no pair (`showsHeaderAuth`, moved here from
+  the header). A shell without auth_sdk now shows no pair at all.
+* Requires base_sdk >= 1.60.0; `components/custom/landing/header-auth.ts`
+  and `components/custom/landing/header-menu.ts` join `requires`. On an
+  older base the integration target is missing and the installer logs it
+  and goes on.
+
 ## 1.10.2
 
 * **The portal login's footer carries the site credit.** It read "© 2025 <platform>. All rights reserved." (a fixed year). It now reads `© <year> <site name> · Built with ♥ by ROKCT` (Ray, 2026-10-31: "all site will be copyright sitename then built with love (as heart) by ROKCT"), drawn by base_sdk 1.54.0's `SiteCredit` with the current year, `PLATFORM_NAME` as the site name and the heart a `role="img"` named "love", in the footer's own `text-xs text-gray-500`. `components/custom/site-credit.tsx` joins `requires` (base_sdk >= 1.54.0).

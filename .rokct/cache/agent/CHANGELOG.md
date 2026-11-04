@@ -1,5 +1,60 @@
 # Changelog
 
+## 1.25.0
+
+New `app_type.sticks` block, with `"common": false`.
+
+* agent_sdk is the home SDK of the Sticks website (RokctAI/sticks-web,
+  app_type `sticks`). Sticks is ROKCT's own product: people use it in the
+  Sticks app (RokctAI/sticks), and the website only explains it and links
+  the app's downloads (Ray, 2026-10-11: Next.js is the landing shell only;
+  no new sticks SDK, the AI lives in agent_sdk).
+* `"common": false` (The-Rokct-Protocol's Next.js installer, the persona
+  opt-out added for this block) keeps this manifest's top level - rokct.ai's
+  chat, register flow and opportunities, which need `db/`, auth_sdk and a
+  backend - out of that shell. Every other shell composes exactly as
+  before: the top level is untouched.
+* The block installs `templates/sticks/`:
+  * `app/page.tsx`: the landing the approved concept draws (artifact
+    PDm9514Z16ypx8dk3oQQtq), section for section, with Montserrat and
+    Nunito: the header (logo to `/`, light/dark switch, Get the app), the
+    crowd of Sticks with the orange ring round the only one looking up,
+    the house rule, Meet your Sticks with the Hire a Stick screen and the
+    New hire card in one row, the live feed, the ask you can try, Between
+    Sticks, the app gallery, how it works, the closing call to action and
+    the footer credit (base's SiteCredit: `© 2026 Sticks · Built with ♥ by
+    ROKCT`, the heart read as "love"). No wordmark closes the page; icons
+    are Remixicon only.
+  * The concept's colours (Ray, 2026-11-02: "i never said being black and
+    white means removing highligh colors or sticks colors and designs"):
+    black and white is the base - the concept's warm paper and ink, and
+    its ink-marked words - and its highlights stay on top: the orange ring
+    and the orange Start here and Try it tags, the gold, teal and purple
+    feed pills, green ticks and on-shift dots, gold waiting dots, the red
+    never line and footer heart, Tumi's green cap and the Sticks' coloured
+    shirts. The crowd is the concept's own picture,
+    `public/sticks/crowd-light.webp` and `crowd-dark.webp`, swapped with
+    the theme.
+  * Every phone screen is the app's guided-tour capture on GitHub, matched
+    by step id (`sticks-sources.ts`), never a copy committed here, with a
+    light and a dark capture swapped with the theme once the tour commits
+    `marketing/tour/screenshots-dark/` (a step with no dark capture shows
+    its light one). `SCREEN_RENDERS` in `sticks-sources.ts` is the one
+    place to switch a screen to an SVG render drawn from the app (Ray's
+    choice, 2026-11-01) once those renders work.
+  * The download buttons link the newest RokctAI/sticks release's
+    `app-vX.apk` (never the debug APK) and `sticks-windows-setup-vX.exe`
+    only when the release carries them; no release is a "Coming soon"
+    state, and an unreadable API opens the releases page. Both reads are
+    cached for an hour.
+  * The scrollbar is ink on paper in both themes; the Back to top
+    button (base_sdk >= 1.56.0's registry) is an ink pill; the site
+    metadata and favicon are the Sticks mark's. `prefers-reduced-motion`
+    stops the feed, the pulse and every transition.
+* Tests: `tests/test_sticks_landing.py` (the block, its files and its rules)
+  and `tests/sticks-landing.test.mts` (release assets, tour screens by step
+  id, the copy helpers) under node.
+
 ## 1.24.0
 
 rokct.ai's landing is the redesign Ray approved on 2026-11-01: "Everything

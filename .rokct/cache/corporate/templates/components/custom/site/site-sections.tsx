@@ -41,6 +41,8 @@ import { SiteOrderForm } from "./site-order-form.client";
 import { fillPriceWords } from "./site-price";
 import { SitePricingSlider } from "./site-pricing-slider.client";
 import { siteKind, whatsappHref } from "./site-source";
+import { siteSizes, sliderFrom, srLabelOf } from "./site-sizes";
+import { SiteOwnSizes } from "./site-own-sizes.client";
 
 function toneClass(tone: SiteSectionTone | undefined, fallback: SiteSectionTone = "paper"): string {
   const t = tone ?? fallback;
@@ -105,6 +107,7 @@ export function SitePricing({ id, s, site }: { id?: string; s: SitePricingSectio
   const pricing = siteKind("pricing");
   const tiers = pricing?.tiers ?? [];
   const chat = whatsappHref(site);
+  const ownSizes = [...siteSizes()].reverse();
   return (
     <section id={id} className={`cs-section w-full ${toneClass(s.tone)}`}>
       <div className="container mx-auto flex max-w-6xl flex-col gap-12 px-4 xl:px-0">
@@ -135,7 +138,7 @@ export function SitePricing({ id, s, site }: { id?: string; s: SitePricingSectio
                     {fillPriceWords(tier.fine.text, { price: tier.price, perCase: pricing?.perCase })}
                   </p>
                 )}
-                {tier.slider && <SitePricingSlider slider={tier.slider} price={tier.price} perCase={pricing?.perCase} />}
+                {tier.slider && <SitePricingSlider slider={sliderFrom(tier.slider, tier.minQty)} price={tier.price} perCase={pricing?.perCase} />}
                 {pricing?.ctaLabel && (
                   <a
                     href={chat}
@@ -172,10 +175,15 @@ export function SitePricing({ id, s, site }: { id?: string; s: SitePricingSectio
               <h3 className="cs-display text-4xl md:text-5xl">{s.own.heading}</h3>
               {s.own.text && <p className="cs-lede max-w-xl">{s.own.text}</p>}
             </div>
-            {s.own.art && (
-              <figure className="flex justify-center md:pr-6">
-                <SiteArtView art={s.own.art} id="own-art" height={300} />
-              </figure>
+            {s.own.art && ownSizes.length > 0 ? (
+              // 1.7.0: the site's own sizes (data/products.json), each its own bottle at true relative scale.
+              <SiteOwnSizes sizes={ownSizes} label={srLabelOf(s.own.art)} />
+            ) : (
+              s.own.art && (
+                <figure className="flex justify-center md:pr-6">
+                  <SiteArtView art={s.own.art} id="own-art" height={300} />
+                </figure>
+              )
             )}
           </div>
         )}

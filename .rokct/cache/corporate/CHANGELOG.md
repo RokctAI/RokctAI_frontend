@@ -1,5 +1,90 @@
 # Changelog
 
+## 1.7.1
+
+* **The pricing section's own sizes are whole again** (Ray: the South River
+  "Our water. Three sizes." block was cut off). `.cs-own` clips with
+  `overflow: hidden`, and the sizes row inherited the flush-art
+  `margin-bottom: -24px`, so the captions under the bottles were cut at
+  every width; on a phone the row's true-scale widths were wider than the
+  column, which pushed the 500 ml past the card's edge and widened the
+  text column so the lede ran out of the card. `site.css` now gives the row
+  its own bottom padding instead of the pull-up, lets the grid columns
+  shrink (`min-width: 0`) and lets the bottles shrink together
+  (`flex: 0 1 auto`, `max-width: 100%`), keeping their relative scale. No
+  floor moves.
+
+## 1.7.0
+
+* **The South River hero loops through the three sizes** (Ray approved the
+  three-size hero render, 2026-11-02). `site-hero-form.tsx`, for a poster
+  hero whose site has a 500 ml, a 1.5 L and a 5 L in `data/products.json`,
+  a bottle art behind the hero and a pricing section with an `own` block:
+  * The server draws the **private-label scene** (the hero as it was, its
+    bottle a 500 ml, the bottle behind it the site's own 1.5 L). It holds
+    while the bottle rolls through its labels (one roll per label, so data
+    decides how long), then the private-label bottle leaves, the 1.5 L
+    straightens and shrinks into place and the 500 ml and the 5 L come in:
+    the **sizes scene**, its words from the `own` block (the heading's last
+    sentence one word a line: "Our water." / "Three" / "sizes."). It holds
+    and moves back, for ever. The timeline is `site-hero-loop.ts`, a pure
+    function of time; the client only moves the server's elements (small
+    client JS, no dependency). The loop stops while the tab is hidden or
+    the hero is off screen; with reduced motion it never starts, so the
+    private-label scene stands still with its first label.
+  * Ray: "5l and 1.5l need a bit of space in between": an 18 px gap
+    between the jug and the 1.5 L (16 px between the 1.5 L and the 500 ml),
+    at every width.
+  * **Per-size bottles** (`site-sizes-art.ts`): 500 ml, 1.5 litres and the
+    5 litre jug with its handle and curved wrap, the same PET and live water
+    as `Bottle`, each wearing the data label's art with its size words from
+    `products.json` (`sizes[0]`) set over it as text.
+  * **The tag**: each line of `tag.text` after the first is a delivery line
+    under a rule, with a truck ("Nationwide delivery"), in both heroes.
+  * **The pricing section's `own` block** draws the site's sizes side by
+    side at true scale, captioned with their names and lines
+    (`site-own-sizes.client.tsx`, a client module only so the markup is
+    drawn from a few props instead of travelling twice; server-rendered).
+* **Every price word written once** (Ray: "would love if change is one
+  place and it change that amount everywhere"). Any string in a site's
+  data may say `{perCase}`, `{bestPrice}`, `{bestMin}` or `{basePrice}`;
+  `site-source.ts` fills them from `data/pricing.json` alone
+  (`site-price.ts` `fillSiteWordsDeep`), so the hero tag, the pricing
+  cards, the order form, its WhatsApp message and the metadata print the
+  same numbers. A tier's slider starts at the tier's `minQty`.
+* test: `TestSizesHero` in `tests/test_manifest.py`, including a guard that
+  no template hard-codes a price.
+
+## 1.6.0
+
+* **The bottle looks real and its water is alive** (Ray, 2026-11-02, of
+  the South River hero: "bottles have water that is not alive. and can we
+  make the bottles more realistic?"). `site-art.tsx`'s `Bottle`, so every
+  local-data site's drawn bottle, still SVG and CSS keyframes only, server
+  safe, nothing fetched:
+  * **The plastic**: a knurled cap (the knurls spaced as they turn round
+    the cylinder) on its tamper ring and its bridges, the clear support
+    ring, two ridges on the neck, three on the shoulder, the grip ribs as
+    light that fades round the sides, and a petaloid base on three feet.
+    A broad soft highlight, a sharp specular (dimmed over the label, which
+    is printed film), the shoulder's glint, a rim light down the far edge,
+    dark refraction at both edges and a fine outline that holds the bottle
+    on white cards as well as on the red hero. The label has a lit top edge
+    and a shadow under its bottom edge.
+  * **The water**: deeper towards the base; its surface laps across the
+    neck (two wave layers sliding opposite ways, a silver mirror band
+    under a white meniscus glint) and slops gently, and it stays level as
+    the hero tilts the bottle: the stage sets `--cs-level` against the
+    float's own rotation (+5.5deg front, -5.25deg back; 0 elsewhere).
+    Light caustics shimmer across the shoulder and the base, the bottle's
+    lens throws a breathing bright line down the far side, a pool of
+    light pulses on the base, and seven slow bubbles (12 to 19 s) rise
+    behind the label.
+  * **Reduced motion** holds one still frame: the surface calm, the
+    caustics at rest and the bubbles caught part-way up (`--cs-at`).
+  * The water now stands at y 76 (was 70), below the support ring.
+* test: `TestLiveWater` in `tests/test_manifest.py`.
+
 ## 1.5.0
 
 * **The South River render Ray approved, drawn from data** (Ray,

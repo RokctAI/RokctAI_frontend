@@ -296,7 +296,7 @@ export function HeroView({
   return (
     <section
       id={id}
-      className="relative w-full overflow-hidden bg-white dark:bg-[#0a0a0a] pt-16 pb-10"
+      className="relative w-full overflow-hidden bg-white dark:bg-[#0a0a0a] pt-10 md:pt-14 pb-10"
     >
       {/* Background Vector */}
       {hero.backgroundImage && (
@@ -316,7 +316,7 @@ export function HeroView({
           initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative mb-[6.7rem] mt-16 md:mt-24 flex flex-col items-center justify-center"
+          className="relative mb-6 md:mb-8 mt-0 flex flex-col items-center justify-center"
         >
           <div className="flex flex-row items-center justify-center h-[72px]">
             <div className="relative flex items-center h-[56px]">

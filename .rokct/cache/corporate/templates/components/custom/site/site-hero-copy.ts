@@ -23,8 +23,41 @@
 // so the client form never imports the data reader.
 import type { HeroCopy } from "@/components/custom/landing/hero-copy";
 
-import type { SiteHeroFormData } from "./site-hero-form";
-import { isExternalHref, resolveHref, siteHero, siteKind } from "./site-source";
+import type { SiteHeroSection, SitePricingSection } from "@/lib/site-data/kinds";
+
+import type { SiteHeroFormData, SiteHeroLoopData } from "./site-hero-form";
+import { isExternalHref, resolveHref, siteHero, siteKind, siteSections } from "./site-source";
+import { siteSizes } from "./site-sizes";
+
+/**
+ * 1.7.0: the hero's sizes scene, when the site has all three sizes in
+ * data/products.json, a South River bottle behind the poster hero and a
+ * pricing section's `own` block, which gives the scene its words: the
+ * eyebrow, the heading (its last sentence one word a line, the last line
+ * accented: "Our water." / "Three" / "sizes."), the first line of its text
+ * as the lede, and the facts (each size's fact, then the hero's first).
+ */
+function heroLoopData(hero: SiteHeroSection): SiteHeroLoopData | undefined {
+  if ((hero.variant ?? "poster") !== "poster") return undefined;
+  const back = hero.art?.back;
+  const front = hero.art?.front;
+  if (back?.kind !== "bottle" || front?.kind !== "bottle") return undefined;
+  const sizes = siteSizes();
+  if (![500, 1500, 5000].every((ml) => sizes.some((s) => s.ml === ml))) return undefined;
+  const own = siteSections().find((s): s is SitePricingSection => s.type === "pricing" && !!s.own)?.own;
+  if (!own) return undefined;
+  const sentences = own.heading.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const last = sentences.pop() ?? "";
+  const lines = [...sentences, ...last.split(/\s+/).filter(Boolean)];
+  return {
+    eyebrow: own.eyebrow,
+    lines,
+    accentLine: lines.length - 1,
+    lede: own.text?.split("\n")[0],
+    facts: [...sizes.map((s) => s.fact), ...(hero.facts ?? []).slice(0, 1)],
+    sizes,
+  };
+}
 
 function heroFormData(): SiteHeroFormData | undefined {
   const hero = siteHero();
@@ -32,7 +65,7 @@ function heroFormData(): SiteHeroFormData | undefined {
   const site = siteKind("site");
   const link = (l?: { label: string; href: string }) =>
     l ? { label: l.label, href: resolveHref(l.href, site), external: isExternalHref(l.href), chat: l.href === "whatsapp" } : undefined;
-  return { hero, cta: link(hero.cta), secondary: link(hero.secondary) };
+  return { hero, cta: link(hero.cta), secondary: link(hero.secondary), loop: heroLoopData(hero) };
 }
 
 const SITE_HERO_COPY: HeroCopy = {

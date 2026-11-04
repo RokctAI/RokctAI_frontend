@@ -172,6 +172,33 @@ def resolve_app_type():
     return None
 
 
+def common_manifest(manifest, app_type):
+    """Mirrors sdk_installer_base.py's common_manifest() (kept as a local
+    copy, like resolve_app_type()). The manifest's top level, as this host composes it. Normally the top
+    level is common and always installs; a persona block that sets
+    ``"common": false`` opts this host out of it, so only that block's
+    installs, dependencies, integrations and requires apply. It lets an SDK
+    whose top level is one shell's whole product (agent_sdk's rokct.ai) be
+    the home of a second, unrelated shell (sticks-web's landing) without
+    composing the first shell into it. Absent or true: unchanged."""
+    flavor = (manifest.get("app_type") or {}).get(app_type) if app_type else None
+    if isinstance(flavor, dict) and flavor.get("common") is False:
+        return {
+            k: v
+            for k, v in manifest.items()
+            if k
+            not in (
+                "installs",
+                "dependencies",
+                "devDependencies",
+                "integrations",
+                "requires",
+                "sdk_requires",
+            )
+        }
+    return manifest
+
+
 def strip_unused_role_folders(target_dir, sdk_name):
     """After vendoring an SDK's source into .rokct/cache/, remove persona
     folders under templates/ that don't apply to this host app - keep the
@@ -445,6 +472,7 @@ def collect_post_install_checklist(sdks_to_install):
             if current_app_type
             else {}
         )
+        manifest = common_manifest(manifest, current_app_type)
 
         for req in list(manifest.get("requires", [])) + list(
             flavor_block.get("requires", [])
@@ -948,7 +976,9 @@ def find_missing_sdk_requires(sdks_to_check, all_enabled_sdks):
                 manifest = json.load(f)
         except Exception:
             continue
-        declared = list(manifest.get("sdk_requires") or [])
+        declared = list(
+            common_manifest(manifest, current_app_type).get("sdk_requires") or []
+        )
         flavor = (
             (manifest.get("app_type") or {}).get(current_app_type)
             if current_app_type
