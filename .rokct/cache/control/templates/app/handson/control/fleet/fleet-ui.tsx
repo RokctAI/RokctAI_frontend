@@ -142,6 +142,9 @@ const STATE_STYLE: Record<string, string> = {
   Archived: "text-muted-foreground",
   Removed: "text-muted-foreground line-through",
   Draining: "text-violet-700 dark:text-violet-400",
+  Stopping: "text-amber-700 dark:text-amber-400",
+  Starting: "text-sky-700 dark:text-sky-400",
+  Restoring: "text-sky-700 dark:text-sky-400",
 };
 
 export function StatePill({ state }: { state: string }) {
@@ -217,4 +220,106 @@ export function DemoBanner({ notice }: { notice?: string }) {
         "These dockers are fixtures for the guided tour, not the live registry."}
     </div>
   );
+}
+
+/** Small tag on a docker row whose registry and reported sites disagree. */
+export function DriftTag({ count }: { count: number }) {
+  return (
+    <span
+      title="Sites the docker reports that are not in the registry"
+      className="rounded-full bg-violet-500/10 px-2 py-0.5 text-[11px] font-medium text-violet-700 ring-1 ring-inset ring-violet-500/20 dark:text-violet-400"
+    >
+      drift{count > 1 ? ` ${count}` : ""}
+    </span>
+  );
+}
+
+/** One line on the outside HTTP probe the hub runs once per red incident. */
+export function probeText(d: {
+  last_probe_at?: string | null;
+  last_probe_status?: string | null;
+  last_probe_ok?: boolean;
+}): string | null {
+  if (!d.last_probe_at) return null;
+  return `outside probe ${d.last_probe_ok ? "ok" : "failed"}${
+    d.last_probe_status ? ` (${d.last_probe_status})` : ""
+  }`;
+}
+
+/**
+ * Red alert and drift, display only (spec 7.5): nothing automatic acts on
+ * either. Same dashed banner as the demo notice, in the alert colour.
+ */
+export function AlertNotice({
+  tone,
+  title,
+  children,
+}: {
+  tone: "red" | "violet";
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      data-tour="fleet-alert"
+      className={cn(
+        "rounded-lg border border-dashed px-4 py-2.5 text-sm",
+        tone === "red"
+          ? "border-red-500/40 bg-red-500/5 text-red-800 dark:text-red-300"
+          : "border-violet-500/40 bg-violet-500/5 text-violet-800 dark:text-violet-300",
+      )}
+    >
+      <span className="font-medium">{title}</span> {children}
+    </div>
+  );
+}
+
+const PILL_STYLE: Record<string, string> = {
+  green:
+    "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-emerald-500/20",
+  sky: "bg-sky-500/10 text-sky-700 dark:text-sky-400 ring-sky-500/20",
+  amber: "bg-amber-500/10 text-amber-700 dark:text-amber-400 ring-amber-500/20",
+  red: "bg-red-500/10 text-red-700 dark:text-red-400 ring-red-500/20",
+  muted: "bg-muted text-muted-foreground ring-border",
+};
+
+const LINK_TONE: Record<string, string> = {
+  active: "green",
+  consented: "sky",
+  requested: "amber",
+  refused: "red",
+  revoked: "muted",
+};
+
+const MOVE_TONE: Record<string, string> = {
+  planned: "amber",
+  freezing: "sky",
+  copying: "sky",
+  verifying: "sky",
+  switched: "green",
+  done: "green",
+  aborted: "muted",
+  rolling_back: "amber",
+  rolled_back: "red",
+};
+
+function Pill({ tone, label }: { tone: string; label: string }) {
+  return (
+    <span
+      className={cn(
+        "rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset",
+        PILL_STYLE[tone] || PILL_STYLE.muted,
+      )}
+    >
+      {label}
+    </span>
+  );
+}
+
+export function LinkStatePill({ state }: { state: string }) {
+  return <Pill tone={LINK_TONE[state] || "muted"} label={state} />;
+}
+
+export function MoveStatePill({ state }: { state: string }) {
+  return <Pill tone={MOVE_TONE[state] || "muted"} label={state} />;
 }

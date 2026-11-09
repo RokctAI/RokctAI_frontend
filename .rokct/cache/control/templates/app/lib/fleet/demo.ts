@@ -15,25 +15,46 @@
  */
 
 import type {
+  CompanyLinkRow,
   DockerDetail,
   DockerRow,
+  FleetBoard,
+  MoveJobRow,
   PlacementRow,
+  ServerAgentRow,
+  ServerSummary,
   SettingsRevisionRow,
   UsageSample,
 } from "./types";
+import { deriveHealth } from "./types";
 
 /**
  * Demo fixtures for the fleet board. Used by the guided tour build and by
  * any environment that sets ROKCT_DEMO_DATA=1, and as the fallback preview
  * when the hub has no Docker Instance doctype yet. Times are relative to
  * "now" so the health colours stay meaningful whenever the tour runs: one
- * green shared ERP docker, one amber, one red, one stopped, one applying.
+ * green shared ERP docker (with drift and an Archived tenant), one amber, one
+ * red (with its alert and a failed outside probe), one stopped, one archived,
+ * one applying. Server agents, company links and move jobs are fixtures too.
  */
 
 const iso = (minsAgo: number, now: number) =>
   new Date(now - minsAgo * 60_000).toISOString();
 
+const NO_ALERT = {
+  drift: false,
+  drift_sites: [] as string[],
+  red_alert_at: null,
+  last_probe_at: null,
+  last_probe_status: null,
+  last_probe_ok: false,
+};
+
 export function demoDockers(now: number = Date.now()): DockerRow[] {
+  return baseDockers(now).map((d) => ({ ...NO_ALERT, ...d }));
+}
+
+function baseDockers(now: number): DockerRow[] {
   return [
     {
       name: "hub-k3x9",
@@ -70,6 +91,8 @@ export function demoDockers(now: number = Date.now()): DockerRow[] {
       last_heartbeat_at: iso(1.2, now),
       site_count: 6,
       tenant_count: 6,
+      drift: true,
+      drift_sites: ["old-pilot.rokct.ai"],
     },
     {
       name: "polaris-7m2d",
@@ -106,6 +129,10 @@ export function demoDockers(now: number = Date.now()): DockerRow[] {
       last_heartbeat_at: iso(27, now),
       site_count: 1,
       tenant_count: 1,
+      red_alert_at: iso(16, now),
+      last_probe_at: iso(15, now),
+      last_probe_status: "http_502",
+      last_probe_ok: false,
     },
     {
       name: "deliveryplatform-2hr5",
@@ -142,6 +169,166 @@ export function demoDockers(now: number = Date.now()): DockerRow[] {
       last_heartbeat_at: iso(60 * 24 * 12, now),
       site_count: 1,
       tenant_count: 1,
+    },
+    {
+      name: "tenant-r3p8",
+      docker_id: "tenant-r3p8",
+      docker_type: "tenant",
+      server: "jnb-edge-02",
+      ownership: "Own",
+      hosting_tier: "Dedicated",
+      state: "Archived",
+      state_since: iso(60 * 24 * 40, now),
+      app_version: "rcore 4.9.4",
+      lock_sha: "1d7a9c3",
+      template: "tenant_erp.json",
+      settings_revision_desired: 4,
+      settings_revision_applied: 4,
+      last_heartbeat_at: iso(60 * 24 * 52, now),
+      site_count: 1,
+      tenant_count: 1,
+    },
+  ];
+}
+
+/** Board totals per server, as control:fleet_board returns them. */
+export function demoServers(
+  dockers: DockerRow[],
+  now: number = Date.now(),
+): ServerSummary[] {
+  const out = new Map<string, ServerSummary>();
+  dockers.forEach((d) => {
+    const s = out.get(d.server) || {
+      name: d.server,
+      dockers_count: 0,
+      sites_count: 0,
+      red: 0,
+      drift: 0,
+    };
+    s.dockers_count += 1;
+    s.sites_count += d.site_count || 0;
+    if (deriveHealth(d, now) === "red") s.red += 1;
+    if (d.drift) s.drift += 1;
+    out.set(d.server, s);
+  });
+  return [...out.values()];
+}
+
+export function demoBoard(now: number = Date.now()): FleetBoard {
+  const dockers = demoDockers(now);
+  return { dockers, servers: demoServers(dockers, now) };
+}
+
+export function demoServerAgents(now: number = Date.now()): ServerAgentRow[] {
+  return [
+    {
+      name: "cpt-edge-01",
+      server: "cpt-edge-01",
+      agent_status: "green",
+      last_beat_at: iso(0.6, now),
+      agent_version: "0.4.0",
+      enrolled_at: iso(60 * 24 * 30, now),
+      key_rotated_at: iso(60 * 24 * 3, now),
+    },
+    {
+      name: "jnb-core-01",
+      server: "jnb-core-01",
+      agent_status: "green",
+      last_beat_at: iso(0.3, now),
+      agent_version: "0.4.0",
+      enrolled_at: iso(60 * 24 * 44, now),
+      key_rotated_at: null,
+    },
+    {
+      name: "jnb-edge-02",
+      server: "jnb-edge-02",
+      agent_status: "amber",
+      last_beat_at: iso(7, now),
+      agent_version: "0.3.1",
+      enrolled_at: iso(60 * 24 * 21, now),
+      key_rotated_at: null,
+    },
+  ];
+}
+
+function demoLinks(): CompanyLinkRow[] {
+  return [
+    {
+      name: "LINK-DEMO-1",
+      from_docker: "deliveryplatform-2hr5",
+      from_company: "Deliveryplatform Demo Co",
+      to_docker: "tenant-a71q",
+      to_company: "Mzansi Fresh Foods",
+      state: "active",
+      ownership_kind: "customer",
+      revision: 3,
+      from_acked_revision: 3,
+      to_acked_revision: 3,
+    },
+    {
+      name: "LINK-DEMO-2",
+      from_docker: "tenant-a71q",
+      from_company: "Karoo Tech Works",
+      to_docker: "polaris-7m2d",
+      to_company: "Polaris Demo Co",
+      state: "active",
+      ownership_kind: "subsidiary",
+      revision: 2,
+      from_acked_revision: 2,
+      to_acked_revision: 1,
+      to_ack_error: "link_update r2: docker busy, will retry",
+    },
+    {
+      name: "LINK-DEMO-3",
+      from_docker: "supacharge-q8vn",
+      from_company: "Supacharge Demo Co",
+      to_docker: "tenant-a71q",
+      to_company: "Umoya Solar",
+      state: "requested",
+      ownership_kind: "division",
+      revision: 1,
+      from_acked_revision: 1,
+      to_acked_revision: 0,
+    },
+  ];
+}
+
+function demoMoves(now: number): MoveJobRow[] {
+  return [
+    {
+      name: "MOVE-DEMO-1",
+      subscription: "SUB-tenant-a71q-2",
+      from_docker: "tenant-a71q",
+      to_docker: "tenant-n2w6",
+      state: "planned",
+      quiet_hour_window: "01:00-03:00",
+      not_before: new Date(now + 20 * 3_600_000).toISOString(),
+      postponed: false,
+      modified: iso(60 * 4, now),
+    },
+    {
+      name: "MOVE-DEMO-3",
+      subscription: "SUB-tenant-a71q-3",
+      from_docker: "tenant-x04c",
+      to_docker: "tenant-a71q",
+      state: "switched",
+      quiet_hour_window: "01:00-03:00",
+      not_before: iso(60 * 26, now),
+      postponed: false,
+      switched_at: iso(60 * 22, now),
+      red_kept_until: new Date(now + 6 * 86_400_000).toISOString(),
+      modified: iso(60 * 22, now),
+    },
+    {
+      name: "MOVE-DEMO-2",
+      subscription: "SUB-tenant-a71q-4",
+      from_docker: "tenant-x04c",
+      to_docker: "tenant-a71q",
+      state: "done",
+      quiet_hour_window: "02:00-04:00",
+      not_before: iso(60 * 24 * 9, now),
+      postponed: true,
+      modified: iso(60 * 24 * 9 - 50, now),
     },
   ];
 }
@@ -208,7 +395,7 @@ const LIFECYCLE = [
   "Lapsed",
   "Active",
   "ReadOnly",
-  "Active",
+  "Archived",
 ];
 
 function demoPlacements(d: DockerRow, now: number): PlacementRow[] {
@@ -220,17 +407,24 @@ function demoPlacements(d: DockerRow, now: number): PlacementRow[] {
         ? `${d.docker_type[0].toUpperCase()}${d.docker_type.slice(1)} Demo Co`
         : COMPANIES[i % COMPANIES.length];
     const lifecycle =
-      d.state === "Stopped"
-        ? "Stopped"
+      d.state === "Stopped" || d.state === "Archived"
+        ? d.state
         : n === 1
           ? "Active"
           : LIFECYCLE[i % LIFECYCLE.length];
+    const sub = `SUB-${d.docker_id}-${i + 1}`;
     return {
-      name: `SUB-${d.docker_id}-${i + 1}`,
+      name: sub,
+      subscription: sub,
       company,
       site_name: `${company.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.rokct.ai`,
       plan: d.hosting_tier === "Shared" ? "ERP Starter" : "ERP Dedicated",
-      status: lifecycle === "Active" ? "Active" : "Past Due",
+      status:
+        lifecycle === "Active"
+          ? "Active"
+          : lifecycle === "Archived"
+            ? "Cancelled"
+            : "Past Due",
       lifecycle_state: lifecycle,
       state_entered_at: iso(60 * 24 * (i + 2), now),
       next_transition_at:
@@ -252,17 +446,27 @@ export function demoDockerDetail(
     usage: demoUsage(docker, now),
     revisions: demoRevisions(docker, now),
     placements: demoPlacements(docker, now),
+    links: demoLinks().filter(
+      (l) => l.from_docker === name || l.to_docker === name,
+    ),
+    moves: demoMoves(now).filter(
+      (m) => m.from_docker === name || m.to_docker === name,
+    ),
   };
 }
 
 /**
- * True when `id` is a fixture docker name or fixture subscription id. Used by
- * runFleetAction to refuse fixture ids outside ROKCT_DEMO_DATA mode, so a page
- * showing fallback fixtures can never send real hub cmds for them.
+ * True when `id` is a fixture docker, server, subscription, move job or link
+ * id. Used by runFleetAction to refuse fixture ids outside ROKCT_DEMO_DATA
+ * mode, so a page showing fallback fixtures can never send real hub cmds for
+ * them.
  */
 export function isFixtureId(id: unknown): boolean {
   if (typeof id !== "string" || !id) return false;
-  const names = demoDockers(0).map((d) => d.docker_id);
+  const dockers = demoDockers(0);
+  const names = dockers.map((d) => d.docker_id);
   if (names.includes(id)) return true;
+  if (dockers.some((d) => d.server === id)) return true;
+  if (/^(MOVE|LINK)-DEMO-\d+$/.test(id)) return true;
   return names.some((n) => new RegExp(`^SUB-${n}-\\d+$`).test(id));
 }

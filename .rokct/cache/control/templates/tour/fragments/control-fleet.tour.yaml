@@ -4,7 +4,8 @@
 # adding app.tour.yaml would switch on the guided-tour workflow before its
 # runner exists. The manifest includes this file once it lands. Run the build
 # with ROKCT_DEMO_DATA=1 so the board shows the fixtures in
-# app/lib/fleet/demo.ts (one docker of each health colour).
+# app/lib/fleet/demo.ts (one docker of each health colour, server agents,
+# company links and move jobs).
 fragment: control-fleet
 persona: control
 requires_role: System Manager
@@ -18,7 +19,11 @@ steps:
   - id: fleet_list
     route: /handson/control/fleet
     target: '[data-tour="fleet-list"]'
-    caption: Dockers grouped by server, with last beat, settings applied versus desired, and site count.
+    caption: Dockers grouped by server, with last beat, settings applied versus desired, and site count. A red docker shows when its alert opened and what the outside probe saw; drift marks sites the registry does not know.
+  - id: fleet_servers
+    route: /handson/control/fleet
+    target: '[data-tour="fleet-servers"]'
+    caption: The server agent on each machine. Issue a one-time token to enrol an agent or a new docker, or rotate an agent's key.
   - id: fleet_detail
     route: /handson/control/fleet/tenant-a71q
     target: '[data-tour="fleet-placements"]'
@@ -30,4 +35,8 @@ steps:
   - id: fleet_actions
     route: /handson/control/fleet/tenant-a71q
     target: '[data-tour="fleet-actions"]'
-    caption: Stop or start the docker, extend a tenant's lifecycle, request an export, or drive a rollout. Each asks to confirm; in demo mode nothing is sent.
+    caption: Stop, start or restore the docker, rotate its key, extend, move, export, restore or remove a tenant, or drive a rollout. Each asks to confirm; in demo mode nothing is sent.
+  - id: fleet_moves
+    route: /handson/control/fleet/tenant-a71q
+    target: '[data-tour="fleet-moves"]'
+    caption: Moves from or to this docker, with postpone, abort and rollback (a switched move, while the old site is kept), and the company links that join its companies to other dockers.

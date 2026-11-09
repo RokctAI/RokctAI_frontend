@@ -580,6 +580,7 @@ migrate_working_dir/
 /app/handson/all/workspace/page.tsx
 /app/handson/control/fleet/\[docker\]/page.tsx
 /app/handson/control/fleet/fleet-actions-ui.tsx
+/app/handson/control/fleet/fleet-records-ui.tsx
 /app/handson/control/fleet/fleet-ui.tsx
 /app/handson/control/fleet/page.tsx
 /app/landing/page.tsx
@@ -727,6 +728,8 @@ migrate_working_dir/
 /app/twitter-image.tsx
 /components/admin/GenericReport.tsx
 /components/custom/CompetitorMap.tsx
+/components/custom/agent-auth/rokct-auth-copy.ts
+/components/custom/agent-auth/rokct-auth.css
 /components/custom/app-sidebar.tsx
 /components/custom/auth-form.tsx
 /components/custom/auth/agent-register-config.ts

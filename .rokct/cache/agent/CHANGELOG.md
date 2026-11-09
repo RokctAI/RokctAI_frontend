@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.26.0
+
+* **Register subtitle.** The register card's subtitle reads "Create your
+  <PLATFORM_NAME> account" (Ray, 2026-11-09) in place of "Join thousands of
+  companies using <PLATFORM_NAME>": `copy.subtitle` in
+  `components/custom/auth/agent-register-config.ts`.
+* **rokct.ai login and register.** Ray: every app shell gets its own design
+  for register and login (the pattern hosting_sdk 1.21.0 set for Cortex).
+  agent_sdk, RokctAI_frontend's home SDK, installs its own
+  `components/custom/site-shell.tsx` over auth_sdk's default (auth_sdk >=
+  1.12.0's SiteShell seam): login, register and forgot-password carry the
+  landing's root class (`RK_ROOT_CLASS`: `rokct-landing.css` and the
+  Bricolage Grotesque, Instrument Sans and JetBrains Mono variables), draw
+  base's header as the landing does, and set a brand panel beside the card.
+  The footer stays the shell's own, drawn by its root layout. The mark above
+  the card is the landing header's yellow tile (`RK_MARK`).
+* `components/custom/agent-auth/` holds the panel copy, read from the
+  landing's `RK_HERO` (the headline, the lede and the three promises under
+  the hero), and its scoped CSS, which gives the card the landing's panel,
+  fields and yellow pill button, light and dark. Presentation only:
+  auth_sdk's views, actions and fields are untouched. The Sticks block
+  (`"common": false`) does not get it.
+* Tests: `tests/test_rokct_auth.py`.
+
 ## 1.25.0
 
 New `app_type.sticks` block, with `"common": false`.

@@ -51,14 +51,17 @@ import {
 } from "@/app/lib/fleet/types";
 
 import {
+  AlertNotice,
   DemoBanner,
   HealthLabel,
   LifecyclePill,
+  probeText,
   RevisionPill,
   StatePill,
   TypeTag,
 } from "../fleet-ui";
 import { FleetActions } from "../fleet-actions-ui";
+import { LinksCard, MovesCard } from "../fleet-records-ui";
 
 const when = (v?: string | null, fmt = "d MMM, HH:mm") => {
   const d = parseFrappeDate(v);
@@ -129,8 +132,10 @@ export default function DockerDetailPage() {
     );
   }
 
-  const { docker: d, usage, revisions, placements } = detail;
+  const { docker: d, usage, revisions, placements, links, moves } = detail;
   const health = deriveHealth(d);
+  const probe = probeText(d);
+  const actionable = canAct && source !== "fallback";
   const peakRequests = Math.max(1, ...usage.map((u) => u.requests || 0));
 
   return (
@@ -159,6 +164,28 @@ export default function DockerDetailPage() {
 
       {demo && <DemoBanner notice={notice} />}
 
+      {d.red_alert_at && (
+        <AlertNotice tone="red" title="Red alert.">
+          Opened {ago(d.red_alert_at)} ({when(d.red_alert_at)}); staff were
+          alerted once.{" "}
+          {probe
+            ? `The ${probe} ${ago(d.last_probe_at)}.`
+            : "The outside probe has not run yet."}
+        </AlertNotice>
+      )}
+
+      {d.drift && (
+        <AlertNotice tone="violet" title="Drift.">
+          The docker reports {d.drift_sites?.length || 0} site
+          {(d.drift_sites?.length || 0) === 1 ? "" : "s"} the registry does not
+          have:{" "}
+          <span className="font-mono">
+            {(d.drift_sites || []).join(", ") || "unreadable list"}
+          </span>
+          . Display only; nothing acts on it.
+        </AlertNotice>
+      )}
+
       <dl
         data-tour="fleet-detail-facts"
         className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border md:grid-cols-4"
@@ -176,6 +203,18 @@ export default function DockerDetailPage() {
           <span className="text-xs text-muted-foreground">
             {when(d.last_heartbeat_at)}
           </span>
+          {probe && (
+            <span
+              className={cn(
+                "text-xs",
+                d.last_probe_ok
+                  ? "text-muted-foreground"
+                  : "text-red-700 dark:text-red-400",
+              )}
+            >
+              {probe} · {when(d.last_probe_at)}
+            </span>
+          )}
         </Fact>
         <Fact label="Settings applied / desired">
           <RevisionPill
@@ -192,17 +231,15 @@ export default function DockerDetailPage() {
         </Fact>
       </dl>
 
-      {canAct && source !== "fallback" && (
-        <FleetActions detail={detail} onDone={load} />
-      )}
+      {actionable && <FleetActions detail={detail} onDone={load} />}
 
       <Card data-tour="fleet-placements">
         <CardHeader>
           <CardTitle>Sites and lifecycle</CardTitle>
           <CardDescription>
             Tenants placed on this docker and where each stands in its
-            lifecycle. System Managers can extend a site or request its export
-            from the Staff actions card.
+            lifecycle. System Managers can extend, move, export, restore or
+            remove a site from the Staff actions card.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -264,6 +301,16 @@ export default function DockerDetailPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <div className="grid gap-6 xl:grid-cols-5">
+        <MovesCard
+          docker={d.name}
+          moves={moves}
+          actionable={actionable}
+          onDone={load}
+        />
+        <LinksCard docker={d.name} links={links} />
+      </div>
 
       <div className="grid gap-6 xl:grid-cols-5">
         <Card data-tour="fleet-usage" className="xl:col-span-3">

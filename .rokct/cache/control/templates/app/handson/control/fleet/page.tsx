@@ -31,23 +31,33 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-import { getFleet } from "@/app/actions/handson/control/fleet/fleet";
+import {
+  getFleet,
+  getServerAgents,
+} from "@/app/actions/handson/control/fleet/fleet";
+import { canRunFleetActions } from "@/app/actions/handson/control/fleet/fleet-actions";
 import {
   deriveHealth,
   parseFrappeDate,
   revisionSync,
   type DockerRow,
+  type FleetSource,
   type Health,
+  type ServerAgentRow,
+  type ServerSummary,
 } from "@/app/lib/fleet/types";
 
 import {
   DemoBanner,
+  DriftTag,
   HealthDot,
   healthLabel,
+  probeText,
   RevisionPill,
   StatePill,
   TypeTag,
 } from "./fleet-ui";
+import { ServerAgentsCard } from "./fleet-records-ui";
 
 type Filter = "all" | Health;
 
@@ -55,6 +65,10 @@ const REFRESH_MS = 30_000;
 
 export default function FleetBoardPage() {
   const [dockers, setDockers] = useState<DockerRow[]>([]);
+  const [servers, setServers] = useState<ServerSummary[]>([]);
+  const [agents, setAgents] = useState<ServerAgentRow[] | null>([]);
+  const [source, setSource] = useState<FleetSource>("live");
+  const [canAct, setCanAct] = useState(false);
   const [demo, setDemo] = useState(false);
   const [notice, setNotice] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
@@ -65,9 +79,15 @@ export default function FleetBoardPage() {
   const fetchData = useCallback(async (quiet = false) => {
     quiet ? setRefreshing(true) : setLoading(true);
     try {
-      const res = await getFleet();
-      setDockers(res.data);
+      const [res, agentRes] = await Promise.all([
+        getFleet(),
+        getServerAgents(),
+      ]);
+      setDockers(res.data.dockers);
+      setServers(res.data.servers);
+      setAgents(agentRes.data);
       setDemo(res.demo);
+      setSource(res.source);
       setNotice(res.notice);
       setNow(Date.now());
     } catch (error) {
@@ -86,6 +106,17 @@ export default function FleetBoardPage() {
     const id = setInterval(() => fetchData(true), REFRESH_MS);
     return () => clearInterval(id);
   }, [fetchData]);
+
+  useEffect(() => {
+    canRunFleetActions()
+      .then(setCanAct)
+      .catch(() => setCanAct(false));
+  }, []);
+
+  const serverDrift = useMemo(
+    () => new Map(servers.map((s) => [s.name || "Unassigned", s.drift])),
+    [servers],
+  );
 
   const enriched = useMemo(
     () =>
@@ -212,9 +243,12 @@ export default function FleetBoardPage() {
                     {server}
                   </span>
                 </div>
-                <span className="text-xs text-muted-foreground">
+                <span className="flex items-center gap-2 text-xs text-muted-foreground">
                   {rows.length} docker{rows.length > 1 ? "s" : ""} ·{" "}
                   {rows.reduce((n, d) => n + (d.site_count || 0), 0)} sites
+                  {(serverDrift.get(server) ?? 0) > 0 && (
+                    <DriftTag count={serverDrift.get(server) ?? 0} />
+                  )}
                 </span>
               </header>
               <div className="hidden grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,1.4fr)_minmax(0,0.6fr)_1.5rem] gap-4 px-5 py-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground md:grid">
@@ -228,6 +262,8 @@ export default function FleetBoardPage() {
               <ul className="divide-y">
                 {rows.map((d) => {
                   const beat = parseFrappeDate(d.last_heartbeat_at);
+                  const alert = parseFrappeDate(d.red_alert_at);
+                  const probe = probeText(d);
                   return (
                     <li key={d.name}>
                       <Link
@@ -240,6 +276,9 @@ export default function FleetBoardPage() {
                             {d.docker_id || d.name}
                           </span>
                           <TypeTag type={d.docker_type} />
+                          {d.drift && (
+                            <DriftTag count={d.drift_sites?.length || 1} />
+                          )}
                         </span>
                         <span className="flex flex-col">
                           <StatePill state={d.state} />
@@ -248,12 +287,21 @@ export default function FleetBoardPage() {
                           </span>
                         </span>
                         <span
-                          className="text-sm text-muted-foreground"
+                          className="flex flex-col text-sm text-muted-foreground"
                           title={beat?.toLocaleString()}
                         >
                           {beat
                             ? `${formatDistanceToNowStrict(beat, { addSuffix: true })}`
                             : "never"}
+                          {alert && (
+                            <span className="text-xs text-red-700 dark:text-red-400">
+                              red since{" "}
+                              {formatDistanceToNowStrict(alert, {
+                                addSuffix: true,
+                              })}
+                              {probe ? ` · ${probe}` : ""}
+                            </span>
+                          )}
                         </span>
                         <RevisionPill
                           desired={d.settings_revision_desired}
@@ -274,10 +322,19 @@ export default function FleetBoardPage() {
         </div>
       )}
 
+      <ServerAgentsCard
+        agents={agents}
+        servers={servers}
+        actionable={canAct && source !== "fallback"}
+        onDone={() => fetchData(true)}
+      />
+
       <p className="text-xs text-muted-foreground">
         Health follows the last heartbeat: green within 3 beats, amber after 3
         to 10 missed, red beyond 10. Stopped and archived dockers do not beat.
-        Read-only view; refreshes every 30 seconds.
+        Drift marks a docker reporting sites the registry does not have; a red
+        docker gets one staff alert and one outside probe. Both are display
+        only. Refreshes every 30 seconds.
       </p>
     </div>
   );

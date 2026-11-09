@@ -19,18 +19,26 @@
 import { auth } from "@/app/(auth)/auth";
 import { SYSTEM_ROLES } from "@/app/lib/role_constants";
 import { FleetService } from "@/app/services/control/fleet";
-import { demoDockerDetail, demoDockers } from "@/app/lib/fleet/demo";
+import {
+  demoBoard,
+  demoDockerDetail,
+  demoServerAgents,
+} from "@/app/lib/fleet/demo";
 import type {
+  CompanyLinkRow,
   DockerDetail,
   DockerRow,
+  FleetBoard,
   FleetResult,
+  MoveJobRow,
   PlacementRow,
+  ServerAgentRow,
+  ServerSummary,
 } from "@/app/lib/fleet/types";
 
 /**
- * Fleet board reads (WP1b). Staff only, read-only: no lifecycle or docker
- * state actions live here until WP4/WP5 (spec 6.4 `control:docker_set_state`,
- * `control:lifecycle_extend`).
+ * Fleet board reads. Staff only, read-only; the staff write actions are in
+ * fleet-actions.ts.
  */
 
 const DEMO = process.env.ROKCT_DEMO_DATA === "1";
@@ -55,23 +63,63 @@ function toDockerRow(d: any): DockerRow {
     docker_id: d.docker_id || d.name,
     heartbeat_status: d.heartbeat_status || d.health,
     site_count: d.site_count ?? d.sites_count,
+    drift: !!d.drift,
+    drift_sites: Array.isArray(d.drift_sites) ? d.drift_sites : [],
+    last_probe_ok: !!d.last_probe_ok,
   };
 }
 
-export async function getFleet(): Promise<FleetResult<DockerRow[]>> {
+/** Server totals; drift is counted from the dockers on a hub that predates it. */
+function toServers(servers: any[], dockers: DockerRow[]): ServerSummary[] {
+  return (servers || []).map((s) => ({
+    name: s.name,
+    dockers_count: s.dockers_count ?? 0,
+    sites_count: s.sites_count ?? 0,
+    red: s.red ?? 0,
+    drift:
+      s.drift ??
+      dockers.filter((d) => (d.server || "") === (s.name || "") && d.drift)
+        .length,
+  }));
+}
+
+const toLink = (l: any): CompanyLinkRow => ({
+  ...l,
+  revision: l.revision ?? 0,
+  from_acked_revision: l.from_acked_revision ?? 0,
+  to_acked_revision: l.to_acked_revision ?? 0,
+});
+
+const toMove = (m: any): MoveJobRow => ({ ...m, postponed: !!m.postponed });
+
+async function optionalList<T>(
+  what: string,
+  read: () => Promise<any[]>,
+  shape: (r: any) => T,
+): Promise<T[] | null> {
+  try {
+    return (await read()).map(shape);
+  } catch (error) {
+    console.error(`[fleet] ${what} read failed`, error);
+    return null;
+  }
+}
+
+export async function getFleet(): Promise<FleetResult<FleetBoard>> {
   await assertStaff();
-  if (DEMO) return { data: demoDockers(), demo: true, source: "env-demo" };
+  if (DEMO) return { data: demoBoard(), demo: true, source: "env-demo" };
   try {
     const board = await FleetService.board();
+    const dockers = board.dockers.map(toDockerRow);
     return {
-      data: board.dockers.map(toDockerRow),
+      data: { dockers, servers: toServers(board.servers, dockers) },
       demo: false,
       source: "live",
     };
   } catch (error) {
     console.error("[fleet] control:fleet_board failed", error);
     return {
-      data: demoDockers(),
+      data: demoBoard(),
       demo: true,
       source: "fallback",
       notice: cmdFailed("control:fleet_board", error),
@@ -95,7 +143,8 @@ export async function getDockerDetail(
       created_at: r.created_at || r.creation,
     }));
     const placements: PlacementRow[] = (res.sites || []).map((p, i) => ({
-      name: p.site_name || `${p.company}-${i}`,
+      name: p.subscription || p.site_name || `${p.company}-${i}`,
+      subscription: p.subscription,
       company: p.company,
       site_name: p.site_name,
       plan: p.plan,
@@ -104,8 +153,19 @@ export async function getDockerDetail(
       state_entered_at: p.state_entered_at ?? null,
       next_transition_at: p.next_transition_at ?? null,
     }));
+    const [links, moves] = await Promise.all([
+      optionalList("Company Link", () => FleetService.links(name), toLink),
+      optionalList("Move Job", () => FleetService.moves(name), toMove),
+    ]);
     return {
-      data: { docker: toDockerRow(res.docker), usage, revisions, placements },
+      data: {
+        docker: toDockerRow(res.docker),
+        usage,
+        revisions,
+        placements,
+        links,
+        moves,
+      },
       demo: false,
       source: "live",
     };
@@ -117,4 +177,21 @@ export async function getDockerDetail(
       ? { data: fallback, demo: true, source: "fallback", notice }
       : { data: null, demo: false, source: "fallback", notice };
   }
+}
+
+/**
+ * Server agents for the board. `data` is null when the hub could not be read
+ * for them; the card says so rather than showing fixtures beside live dockers.
+ */
+export async function getServerAgents(): Promise<
+  FleetResult<ServerAgentRow[] | null>
+> {
+  await assertStaff();
+  if (DEMO) return { data: demoServerAgents(), demo: true, source: "env-demo" };
+  const data = await optionalList(
+    "Server Agent",
+    () => FleetService.serverAgents(),
+    (r: any): ServerAgentRow => ({ ...r, server: r.server || r.name }),
+  );
+  return { data, demo: false, source: "live" };
 }

@@ -1,0 +1,54 @@
+/*
+ * Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/* agent_sdk 1.26.0: the rokct.ai auth pages (../site-shell.tsx). Tokens and
+   faces are rokct-landing.css's (.rk-landing: the yellow brand on white or
+   zinc-black, Bricolage Grotesque for display, Instrument Sans for text).
+   This file lays the brand panel beside auth_sdk's card and gives the card
+   the landing's panel, fields and yellow pill button, light and dark (the
+   tokens switch on next-themes' .dark). Scoped to .ra-root. */
+
+.ra-root .ra{flex:1;padding:clamp(36px,6vw,96px) 0 clamp(48px,7vw,112px);background:var(--rk-bg);color:var(--rk-ink);font-family:var(--rk-sans)}
+.ra-root .ra-g{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(32px,6vw,96px);align-items:center}
+.ra-root .ra-h{font-family:var(--rk-display);font-weight:800;font-size:clamp(48px,6.4vw,96px);line-height:.92;letter-spacing:-.05em;color:var(--rk-ink);margin:0}
+.ra-root .ra-h>span{display:block}
+.ra-root .ra-lede{margin:26px 0 0;max-width:42ch;font-size:clamp(17px,1.4vw,19px);line-height:1.55;color:var(--rk-ink-2)}
+.ra-root .ra-pts{list-style:none;margin:30px 0 0;padding:0;border-top:1px solid var(--rk-line);max-width:32em}
+.ra-root .ra-pts li{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--rk-line);font-size:15px;font-weight:500;color:var(--rk-ink-2)}
+.ra-root .ra-pts li::before{content:"";flex:none;width:8px;height:8px;border-radius:2px;background:var(--rk-brand)}
+.ra-root .ra-mark{border-radius:22%}
+@media (max-width:900px){
+.ra-root .ra-g{grid-template-columns:minmax(0,1fr);gap:36px}
+.ra-root .ra-card{order:-1}
+.ra-root .ra-pts{display:none}
+.ra-root .ra-h{font-size:clamp(40px,12vw,64px)}
+}
+
+/* auth_sdk's page body: drop its own full-height centring and background */
+.ra-root .ra-card>div{min-height:0;background:transparent;padding:0}
+.ra-root .ra-card>div>div{max-width:none}
+.ra-root .ra-card{color:var(--rk-ink);font-family:var(--rk-sans)}
+.ra-root .ra-card h1{font-family:var(--rk-display);font-weight:700;letter-spacing:-.035em;line-height:1;font-size:clamp(30px,2.8vw,40px);color:var(--rk-ink);text-wrap:balance}
+.ra-root .ra-card h1+p{font-size:15px;line-height:1.5;color:var(--rk-ink-2)}
+.ra-root .ra-card .bg-card{background:var(--rk-panel);border:1px solid var(--rk-line);border-radius:22px;box-shadow:var(--rk-shadow);backdrop-filter:none}
+.ra-root .ra-card label{font-weight:600;font-size:13px;color:var(--rk-ink-2)}
+.ra-root .ra-card input:not([type="checkbox"]):not([type="hidden"]),.ra-root .ra-card [role="combobox"]{height:48px;border-radius:12px;border:1px solid var(--rk-line-2);background:var(--rk-bg);color:var(--rk-ink);font-size:16px}
+.ra-root .ra-card input:focus-visible{outline:2px solid var(--rk-accent);outline-offset:1px;box-shadow:none}
+/* the submit: the landing's yellow pill (.rk-btn-brand) */
+.ra-root .ra-card button[type="submit"]{display:inline-flex;justify-content:center;align-items:center;width:100%;height:50px;border-radius:999px;border:0;background:var(--rk-brand);color:var(--rk-on-brand);font-family:var(--rk-sans);font-weight:600;font-size:15.5px;box-shadow:0 10px 30px -14px hsl(48 96% 45% / .9);transition:transform .2s}
+.ra-root .ra-card button[type="submit"]:hover{transform:translateY(-2px)}
+.ra-root .ra-card .text-primary{color:var(--rk-accent)}
+.ra-root .ra-card .text-primary:hover{color:var(--rk-accent-ink)}

@@ -140,7 +140,7 @@ class TestCorporateNextjs(unittest.TestCase):
     def test_identity_and_version(self):
         self.assertEqual(self.manifest["name"], "corporate_sdk")
         self.assertRegex(self.manifest["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual(self.manifest["version"], "1.7.1")
+        self.assertEqual(self.manifest["version"], "1.7.2")
         self.assertIn("sdk_name = 'corporate_sdk'", read(INSTALL_PY))
         self.assertTrue(read(INSTALL_PY).startswith("# " + LICENSE_HEAD))
         # Same shape as the sibling halves: one flat installs list, no
@@ -980,7 +980,6 @@ class TestOwnSizesFit(unittest.TestCase):
     """1.7.1: the own block's sizes row is never clipped by its card."""
 
     def test_version(self):
-        self.assertEqual(load_manifest()["version"], "1.7.1")
         self.assertIn("## 1.7.1", read(CHANGELOG).split("## 1.7.0")[0])
         self.assertIn("Since 1.7.1", load_manifest()["_comment"]["about"])
 
@@ -992,6 +991,32 @@ class TestOwnSizesFit(unittest.TestCase):
         size = css.split(".cs-own-size {")[1].split("}")[0]
         self.assertIn("flex: 0 1 auto;", size)
         self.assertIn("max-width: 100%;", css.split(".cs-own-bottle {")[1].split("}")[0])
+
+
+
+class TestHeroBottleAsks(unittest.TestCase):
+    """1.7.2: see-through hero bottles on a site's say-so, and no stray line
+    across the top of the 5 L jug's handle."""
+
+    SITE = os.path.join(TEMPLATES, "components", "custom", "site")
+
+    def test_version(self):
+        self.assertEqual(load_manifest()["version"], "1.7.2")
+        self.assertIn("## 1.7.2", read(CHANGELOG).split("## 1.7.1")[0])
+        self.assertIn("Since 1.7.2", load_manifest()["_comment"]["about"])
+
+    def test_bottle_opacity_is_a_site_variable(self):
+        css = read(os.path.join(self.SITE, "site.css"))
+        rule = css.split(".cs-loop-bottle > * {")[1].split("}")[0]
+        self.assertIn("opacity: var(--cs-hero-bottle-opacity, 1);", rule)
+        for sel in (".cs-hero-stage .back > *,", ".cs-hero-stage .main > *,"):
+            self.assertIn(sel, css)
+
+    def test_handle_has_no_top_highlight(self):
+        art = code_of(os.path.join(self.SITE, "site-sizes-art.ts"))
+        handle = art.split("const handle=")[1].split("const runs=")[0]
+        self.assertNotIn("${ht-3}", handle)
+        self.assertNotIn("${ht-6}", handle)
 
 
 if __name__ == "__main__":
