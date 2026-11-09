@@ -1627,3 +1627,14 @@
   font-weight: var(--cs-display-weight);
   font-size: 1.25rem;
 }
+
+/* 1.7.2: the hero's bottles can be see-through (Ray, 2026-11-02 21:09Z:
+   "hero, bottles can be a bit transparent"). A site sets
+   --cs-hero-bottle-opacity in its data/site.css; unset, they stay solid. It
+   sits on the bottle's own art, inside the loop's moving wrappers, so the
+   loop's fades still multiply with it. */
+.cs-hero-stage .back > *,
+.cs-hero-stage .main > *,
+.cs-loop-bottle > * {
+  opacity: var(--cs-hero-bottle-opacity, 1);
+}

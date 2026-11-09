@@ -696,7 +696,7 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn("## 1.19.1", latest)
         for word in ('"juvo platforms"', "use caps in logos", "`uppercase`"):
             self.assertIn(word, latest)
-        self.assertEqual(load_manifest()["version"], "1.25.0")
+        self.assertEqual(load_manifest()["version"], "1.26.0")
 
     def test_behaviour_under_node(self):
         node = shutil.which("node")
@@ -977,7 +977,8 @@ class TestRedesign(unittest.TestCase):
         # The client hero imports it once; nothing else does.
         importers = [f for f in os.listdir(CUSTOM) if f.endswith(".tsx")
                      and 'import "@/components/custom/landing/rokct-landing.css";' in read(os.path.join(CUSTOM, f))]
-        self.assertEqual(importers, ["rokct-hero.client.tsx"])
+        # 1.26.0: the auth frame (site-shell.tsx) wears the landing too.
+        self.assertEqual(sorted(importers), ["rokct-hero.client.tsx", "site-shell.tsx"])
 
     def test_the_faces_are_bundled_with_their_licence(self):
         files = sorted(os.listdir(RK_FONT_DIR))

@@ -95,7 +95,7 @@ const AGENT_REGISTER_CONFIG: RegisterConfig = {
   enabled: true,
   copy: {
     title: "Create Account",
-    subtitle: `Join thousands of companies using ${PLATFORM_NAME}`,
+    subtitle: `Create your ${PLATFORM_NAME} account`,
     cta: "Get Started",
     signInPrompt: "Already have an account?",
     signInLabel: "Sign in",

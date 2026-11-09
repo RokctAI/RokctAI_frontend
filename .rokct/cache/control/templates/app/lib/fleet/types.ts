@@ -39,6 +39,91 @@ export interface DockerRow {
   heartbeat_status?: string;
   site_count?: number;
   tenant_count?: number;
+  /** Sites the docker reports that are not in the registry (spec 7.5). */
+  drift?: boolean;
+  drift_sites?: string[];
+  /** When the current red incident opened; cleared on the next green. */
+  red_alert_at?: string | null;
+  /** The outside HTTP probe the hub runs once per red incident. */
+  last_probe_at?: string | null;
+  last_probe_status?: string | null;
+  last_probe_ok?: boolean;
+}
+
+/** Per-server totals from control:fleet_board. */
+export interface ServerSummary {
+  name: string;
+  dockers_count: number;
+  sites_count: number;
+  red: number;
+  /** Dockers on this server with drift. */
+  drift: number;
+}
+
+export interface FleetBoard {
+  dockers: DockerRow[];
+  servers: ServerSummary[];
+}
+
+/** A Server Agent row (WP5): one per server, keyed by the server name. */
+export interface ServerAgentRow {
+  name: string;
+  server: string;
+  agent_status?: string | null;
+  last_beat_at?: string | null;
+  agent_version?: string | null;
+  enrolled_at?: string | null;
+  key_rotated_at?: string | null;
+}
+
+/** A Company Link (WP8): a company in one docker joined to one in another. */
+export interface CompanyLinkRow {
+  name: string;
+  from_docker: string;
+  from_company?: string;
+  to_docker: string;
+  to_company?: string;
+  state: string;
+  ownership_kind?: string | null;
+  revision?: number;
+  from_acked_revision?: number;
+  to_acked_revision?: number;
+  from_ack_error?: string | null;
+  to_ack_error?: string | null;
+}
+
+/** A Move Job (WP6): one tenant moving from a red docker to a green one. */
+export interface MoveJobRow {
+  name: string;
+  subscription: string;
+  from_docker?: string | null;
+  to_docker?: string | null;
+  state: string;
+  quiet_hour_window?: string | null;
+  not_before?: string | null;
+  postponed?: boolean;
+  abort_reason?: string | null;
+  /** Post-switch rollback (spec 7.3): the window ends at red_kept_until. */
+  switched_at?: string | null;
+  red_kept_until?: string | null;
+  rollback_reason?: string | null;
+  rollback_error?: string | null;
+  rolled_back_at?: string | null;
+  modified?: string | null;
+}
+
+/** Move Job states that can still be aborted (before the switch). */
+export const MOVE_ABORTABLE = ["planned", "freezing", "copying", "verifying"];
+
+/**
+ * A switched move can be rolled back to red while red is still kept
+ * (before red_kept_until). The hub checks the same rule.
+ */
+export function canRollbackMove(m: MoveJobRow, now = Date.now()): boolean {
+  if (m.state !== "switched") return false;
+  if (!m.red_kept_until) return true;
+  const until = Date.parse(m.red_kept_until.replace(" ", "T"));
+  return Number.isNaN(until) || now < until;
 }
 
 export interface UsageSample {
@@ -65,6 +150,8 @@ export interface SettingsRevisionRow {
 
 export interface PlacementRow {
   name: string;
+  /** Company Subscription name: what the per-site staff actions send. */
+  subscription?: string;
   company: string;
   site_name?: string;
   plan?: string;
@@ -79,6 +166,12 @@ export interface DockerDetail {
   usage: UsageSample[];
   revisions: SettingsRevisionRow[];
   placements: PlacementRow[];
+  /**
+   * Company links and move jobs touching this docker. `null` when the hub
+   * could not be read for them; the card says so instead of showing none.
+   */
+  links: CompanyLinkRow[] | null;
+  moves: MoveJobRow[] | null;
 }
 
 export type FleetSource = "live" | "env-demo" | "fallback";

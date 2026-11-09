@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.7.2
+
+* **Hero bottles can be see-through** (Ray, 2026-11-02: "hero, bottles can
+  be a bit transparent"). `site.css` gives the hero's bottle art (the
+  poster's back and main bottles and each bottle of the three-size loop)
+  `opacity: var(--cs-hero-bottle-opacity, 1)`. A site sets the variable in
+  its `data/site.css`; a site that sets nothing keeps solid bottles. The
+  opacity sits on the art inside the loop's moving wrappers, so the loop's
+  fades still multiply with it.
+* **No line across the top of the 5 L handle** (Ray: "5l in hero its handle
+  have a line at the top not sure if its suppose to be there").
+  `site-sizes-art.ts` drew a white highlight stroke wider than the handle
+  across its top. It is gone. The handle's own shading is unchanged.
+
 ## 1.7.1
 
 * **The pricing section's own sizes are whole again** (Ray: the South River
