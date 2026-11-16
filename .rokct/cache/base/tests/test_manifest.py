@@ -1514,7 +1514,7 @@ class TestRegistryMarkers(unittest.TestCase):
         # overflow from the suffix's own width, with the wordmark slot's own
         # duration and easing, while the stem span before it never moves.
         self.assertIn('gridTemplateColumns: collapsed ? "0fr" : "1fr"', wordmark)
-        self.assertIn('className="grid transition-all duration-500 ease-in-out"', wordmark)
+        self.assertIn('className="grid transition-[grid-template-columns,opacity] duration-500 ease-in-out motion-reduce:transition-none"', wordmark)
         self.assertNotIn("maxWidth", wordmark)
         self.assertNotIn("setTimeout", wordmark)
         self.assertNotIn("useEffect", wordmark)
@@ -1560,7 +1560,7 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertLess(collapsing.index("<BrandStemWordmark "), collapsing.index("<BrandLetterTile "))
         self.assertIn("{brand.wordmark && stem === null && (", collapsing)
         self.assertIn('<Branding className="text-[60px] tracking-tighter leading-none" />', collapsing)
-        self.assertIn('className="flex items-center overflow-hidden transition-all duration-500 ease-in-out"', collapsing)
+        self.assertIn('className="flex items-center overflow-hidden transition-[width,opacity] duration-500 ease-in-out motion-reduce:transition-none"', collapsing)
         self.assertEqual(header.count("<BrandStemWordmark "), 1)
         # The still brand and the 1.28.0 tile are untouched.
         still = header[header.index("function BrandBlock("):header.index("function toBrandCode(")]
@@ -2347,7 +2347,7 @@ class TestRegistryMarkers(unittest.TestCase):
         self.assertNotIn("pt-[", slot)
         # The slot still clips: the collapse closes it over hidden overflow.
         row = view[view.index('<div className="flex flex-row items-center justify-center h-[72px]">'):view.index("<HeroWordmarkSlot wordmark={wordmark} />")]
-        self.assertIn('className="overflow-hidden transition-all duration-500 ease-in-out flex items-center"', row)
+        self.assertIn('className="overflow-hidden transition-[width,opacity] duration-500 ease-in-out motion-reduce:transition-none flex items-center"', row)
         self.assertIn('width: isExpanded ? "0px" : "250px",', row)
 
     def test_folded_stem_is_capitalised(self):

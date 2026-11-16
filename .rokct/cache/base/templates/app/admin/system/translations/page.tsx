@@ -16,7 +16,7 @@
 
 "use client";
 
-import { RiArrowLeftSLine, RiArrowRightSLine, RiLoader4Line, RiAddLine, RiSearchLine } from "@remixicon/react";
+import { RiArrowLeftSLine, RiArrowRightSLine, RiAddLine, RiSearchLine } from "@remixicon/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -252,7 +252,7 @@ export default function TranslationsPage() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <RiLoader4Line className="size-8 animate-spin" />
+              <span className="text-sm text-muted-foreground">Loading…</span>
             </div>
           ) : (
             <Table>
@@ -410,7 +410,6 @@ export default function TranslationsPage() {
                 default language.
               </p>
               <Button onClick={handleSave} disabled={saving} className="w-full">
-                {saving && <RiLoader4Line className="mr-2 size-4 animate-spin" />}
                 {editor.mode === "create" ? "Create" : "Save"}
               </Button>
             </div>

@@ -17,7 +17,6 @@
 "use client";
 
 import { format } from "date-fns";
-import { RiLoader4Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getPages } from "@/app/actions/base/admin/settings";
@@ -67,7 +66,7 @@ export default function PageSetupPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
+                  <span className="text-sm text-muted-foreground">Loading…</span>
                 </TableCell>
               </TableRow>
             ) : pages.length === 0 ? (

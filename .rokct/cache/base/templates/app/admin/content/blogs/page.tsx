@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { RiLoader4Line, RiCalendarLine } from "@remixicon/react";
+import { RiCalendarLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getBlogs } from "@/app/actions/base/admin/content";
@@ -44,7 +44,7 @@ export default function AdminBlogsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
+        <span className="text-sm text-muted-foreground">Loading…</span>
       </div>
     );
   }

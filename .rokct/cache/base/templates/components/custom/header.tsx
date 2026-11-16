@@ -278,7 +278,7 @@ function BrandLetterTile({ name, collapsed }: { name: string; collapsed: boolean
   return (
     <span
       aria-hidden={!collapsed}
-      className="flex h-11 shrink-0 items-center overflow-hidden transition-all duration-500 ease-in-out"
+      className="flex h-11 shrink-0 items-center overflow-hidden transition-[max-width,opacity] duration-500 ease-in-out motion-reduce:transition-none"
       style={{ maxWidth: collapsed ? `${BRAND_TILE_SIZE}px` : "0px", opacity: collapsed ? 1 : 0 }}
     >
       <span
@@ -384,7 +384,7 @@ function BrandStemWordmark({
       <span>{label}</span>
       <span
         aria-hidden={collapsed}
-        className="grid transition-all duration-500 ease-in-out"
+        className="grid transition-[grid-template-columns,opacity] duration-500 ease-in-out motion-reduce:transition-none"
         style={{ gridTemplateColumns: collapsed ? "0fr" : "1fr", opacity: collapsed ? 0 : 1 }}
       >
         <span data-brand-wordmark="tld" className="min-w-0 overflow-hidden pr-[0.12em] -mr-[0.12em] text-primary">
@@ -485,7 +485,7 @@ function CollapsingBrand({
         )}
         <span
           aria-hidden={!showCode}
-          className="flex h-11 items-start overflow-hidden whitespace-nowrap transition-all duration-500"
+          className="flex h-11 items-start overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-500 ease-in-out motion-reduce:transition-none"
           style={{ maxWidth: showCode ? "120px" : "0px", opacity: showCode ? 1 : 0 }}
         >
           {code && (
@@ -501,7 +501,7 @@ function CollapsingBrand({
       {brand.wordmark && stem === null && (
         <span
           aria-hidden={collapsed}
-          className="flex items-center overflow-hidden transition-all duration-500 ease-in-out"
+          className="flex items-center overflow-hidden transition-[width,opacity] duration-500 ease-in-out motion-reduce:transition-none"
           style={{ width: collapsed ? "0px" : "250px", opacity: collapsed ? 0 : 1 }}
         >
           <span className="flex items-center pl-2 pt-0.5">

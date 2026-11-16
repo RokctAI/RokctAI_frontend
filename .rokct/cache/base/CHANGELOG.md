@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.60.1
+
+* style: motion and taste pass on the site chrome (Ray, 2026-11-14). The
+  hero and header folds animate named properties and honour reduced motion,
+  store badges press at 0.97, the skeleton no longer pulses, and the admin
+  and manager pages show plain "Loading…" text instead of spinners. Style
+  only, nothing to install.
+
 ## 1.60.0
 
 * feat(header): the Log in / Sign up pair moves to injection (Ray,

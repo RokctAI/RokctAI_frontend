@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.26.2
+
+rokct.ai auth links (Ray, 2026-11-11: "this blue link create an account").
+
+* "Create an account", "Sign in" and "Forgot password?" on login and register
+  no longer use the indigo `--rk-accent`: in light they are ink text on a
+  brand-yellow underline bar (the landing's `.rk-hl`), in dark brand-yellow
+  text. Hover and keyboard focus fill the yellow behind the text, focus adds
+  an ink outline. Scoped to `.ra-root .ra-card` in rokct-auth.css.
+
+## 1.26.1
+
+rokct.ai login on phone (Ray, 2026-11-11: "rectify", 390px).
+
+* Below 768px the brand panel is hidden: it stacked under the card, after
+  the Sign In button, and repeated the card's greeting. The card's heading
+  is the only greeting on phone; 768px and up keep the panel beside the card.
+* The login card heading reads "Welcome to ROKCT" (the site's wordmark), not
+  auth_sdk's "Welcome to Rokct": the shell draws its own heading
+  (`ROKCT_AUTH_COPY.loginCard`) and hides auth_sdk's on the login page only.
+* Tighter card: auth_sdk's form `pt-8` is dropped inside the card (it doubled
+  the card's padding above "Email"), and on phone the card and page padding
+  shrink.
+
 ## 1.26.0
 
 * **Register subtitle.** The register card's subtitle reads "Create your

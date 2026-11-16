@@ -30,12 +30,24 @@
 .ra-root .ra-pts li{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--rk-line);font-size:15px;font-weight:500;color:var(--rk-ink-2)}
 .ra-root .ra-pts li::before{content:"";flex:none;width:8px;height:8px;border-radius:2px;background:var(--rk-brand)}
 .ra-root .ra-mark{border-radius:22%}
-@media (max-width:900px){
-.ra-root .ra-g{grid-template-columns:minmax(0,1fr);gap:36px}
-.ra-root .ra-card{order:-1}
-.ra-root .ra-pts{display:none}
-.ra-root .ra-h{font-size:clamp(40px,12vw,64px)}
+/* 1.26.1: below 768px the brand panel is hidden (it stacked under the card
+   and repeated its greeting); the card's own heading is the only one. */
+@media (max-width:767px){
+.ra-root .ra{padding:20px 0 40px}
+.ra-root .ra-g{grid-template-columns:minmax(0,1fr);gap:0}
+.ra-root .ra-side{display:none}
+.ra-root .ra-card .bg-card{padding:22px 18px}
+.ra-root .ra-card>div>div>*+*{margin-top:20px}
+.ra-root .ra-head{margin-bottom:20px}
 }
+
+/* 1.26.1: the login heading is the shell's (.ra-head, "Welcome to ROKCT");
+   auth_sdk's own (logo, h1 and subtitle) is hidden */
+.ra-root .ra-own-head>div>div>div:has(>h1){display:none}
+.ra-root .ra-own-head>div>div>.bg-card{margin-top:0}
+.ra-root .ra-head{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:32px}
+.ra-root .ra-head h1{margin:16px 0 0}
+.ra-root .ra-head h1+p{margin:8px 0 0}
 
 /* auth_sdk's page body: drop its own full-height centring and background */
 .ra-root .ra-card>div{min-height:0;background:transparent;padding:0}
@@ -44,11 +56,21 @@
 .ra-root .ra-card h1{font-family:var(--rk-display);font-weight:700;letter-spacing:-.035em;line-height:1;font-size:clamp(30px,2.8vw,40px);color:var(--rk-ink);text-wrap:balance}
 .ra-root .ra-card h1+p{font-size:15px;line-height:1.5;color:var(--rk-ink-2)}
 .ra-root .ra-card .bg-card{background:var(--rk-panel);border:1px solid var(--rk-line);border-radius:22px;box-shadow:var(--rk-shadow);backdrop-filter:none}
+/* 1.26.1: auth_sdk's form adds pt-8 on top of the card's own padding */
+.ra-root .ra-card form{padding-top:0}
 .ra-root .ra-card label{font-weight:600;font-size:13px;color:var(--rk-ink-2)}
 .ra-root .ra-card input:not([type="checkbox"]):not([type="hidden"]),.ra-root .ra-card [role="combobox"]{height:48px;border-radius:12px;border:1px solid var(--rk-line-2);background:var(--rk-bg);color:var(--rk-ink);font-size:16px}
 .ra-root .ra-card input:focus-visible{outline:2px solid var(--rk-accent);outline-offset:1px;box-shadow:none}
 /* the submit: the landing's yellow pill (.rk-btn-brand) */
 .ra-root .ra-card button[type="submit"]{display:inline-flex;justify-content:center;align-items:center;width:100%;height:50px;border-radius:999px;border:0;background:var(--rk-brand);color:var(--rk-on-brand);font-family:var(--rk-sans);font-weight:600;font-size:15.5px;box-shadow:0 10px 30px -14px hsl(48 96% 45% / .9);transition:transform .2s}
 .ra-root .ra-card button[type="submit"]:hover{transform:translateY(-2px)}
-.ra-root .ra-card .text-primary{color:var(--rk-accent)}
-.ra-root .ra-card .text-primary:hover{color:var(--rk-accent-ink)}
+/* 1.26.2: auth links ("Create an account", "Sign in", "Forgot password?")
+   take the brand yellow, not the indigo accent (Ray: "this blue link").
+   Light: ink text on a yellow underline bar (the landing's .rk-hl); dark:
+   yellow text. Hover/focus fills the yellow behind the text. */
+.ra-root .ra-card a{text-decoration:none;border-radius:4px;transition:background-color .15s,color .15s}
+.ra-root .ra-card a.text-primary,.ra-root .ra-card .text-primary{color:var(--rk-ink);background:linear-gradient(transparent 62%,var(--rk-brand) 62%,var(--rk-brand) 92%,transparent 92%);padding:0 .12em}
+.ra-root .ra-card a:hover,.ra-root .ra-card a:focus-visible{color:var(--rk-on-brand);background:var(--rk-brand);text-decoration:none}
+.ra-root .ra-card a:focus-visible{outline:2px solid var(--rk-ink);outline-offset:2px}
+.dark .ra-root .ra-card a.text-primary,.dark .ra-root .ra-card .text-primary{color:var(--rk-brand);background:none}
+.dark .ra-root .ra-card a:hover,.dark .ra-root .ra-card a:focus-visible{color:var(--rk-on-brand);background:var(--rk-brand)}
