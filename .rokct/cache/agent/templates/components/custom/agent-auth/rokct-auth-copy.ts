@@ -44,7 +44,23 @@ export const ROKCT_AUTH_COPY = {
     lede: `Get back into your ${NAME} account.`,
   },
   points: RK_HERO.meta.map((m) => m.text),
+  /*
+   * agent_sdk 1.26.1: the login card's own heading. auth_sdk prints
+   * "Welcome to <PLATFORM_NAME>" ("Rokct"); the site's wordmark is ROKCT
+   * (Ray, 2026-11-11: "rectify"), so the shell draws this heading over the
+   * card and hides auth_sdk's (rokct-auth.css, .ra-own-head).
+   */
+  loginCard: {
+    title: `Welcome to ${NAME}`,
+    sub: "Sign in to your account to continue",
+  },
 };
+
+/** True on the login page (also the default when the path is unknown). */
+export function isRokctLogin(pathname: string | null): boolean {
+  const p = pathname ?? "";
+  return !p.startsWith("/register") && !p.startsWith("/forgot");
+}
 
 /** The panel for the auth page at `pathname` (login when unknown). */
 export function rokctAuthPanel(pathname: string | null): RokctAuthPanel {

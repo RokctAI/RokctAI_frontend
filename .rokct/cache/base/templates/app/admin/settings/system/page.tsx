@@ -16,7 +16,7 @@
 
 "use client";
 
-import { RiLoader4Line, RiServerLine, RiCheckboxCircleLine } from "@remixicon/react";
+import { RiServerLine, RiCheckboxCircleLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getSystemInfo } from "@/app/actions/base/admin/settings";
@@ -43,7 +43,7 @@ export default function AdminSystemInfoPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
+        <span className="text-sm text-muted-foreground">Loading…</span>
       </div>
     );
   }

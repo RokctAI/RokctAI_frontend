@@ -148,7 +148,7 @@ export interface NetworkStripProps {
 const HEADING =
   "text-xs font-semibold uppercase tracking-widest opacity-60";
 const LINK =
-  "flex h-8 items-center opacity-70 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 focus-visible:opacity-100 focus-visible:grayscale-0";
+  "flex h-8 items-center opacity-70 grayscale transition-[opacity,filter] duration-200 ease-out motion-reduce:transition-none hover:opacity-100 hover:grayscale-0 focus-visible:opacity-100 focus-visible:grayscale-0";
 const WORDMARK = "text-lg font-bold tracking-tight";
 
 function NetworkSiteLink({ site }: { site: LinkableNetworkSite }) {

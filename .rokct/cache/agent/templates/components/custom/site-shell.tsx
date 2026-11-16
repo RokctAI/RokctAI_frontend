@@ -39,7 +39,7 @@ import "@/components/custom/agent-auth/rokct-auth.css";
 import { Header } from "@/components/custom/header";
 import { RK_ROOT_CLASS } from "@/components/custom/landing/rokct-landing-classes";
 import { RK_MARK } from "@/components/custom/landing/agent-header-menu";
-import { ROKCT_AUTH_COPY, rokctAuthPanel } from "@/components/custom/agent-auth/rokct-auth-copy";
+import { ROKCT_AUTH_COPY, isRokctLogin, rokctAuthPanel } from "@/components/custom/agent-auth/rokct-auth-copy";
 
 export interface SiteShellProps {
   children: ReactNode;
@@ -50,7 +50,9 @@ export interface SiteShellProps {
 }
 
 export function SiteShell({ children, openLoginPopup, openSignupPopup }: SiteShellProps) {
-  const panel = rokctAuthPanel(usePathname());
+  const pathname = usePathname();
+  const panel = rokctAuthPanel(pathname);
+  const ownHead = isRokctLogin(pathname);
   return (
     <div className={`${RK_ROOT_CLASS} ra-root flex flex-col`}>
       <Header openLoginPopup={openLoginPopup} openSignupPopup={openSignupPopup} />
@@ -69,7 +71,16 @@ export function SiteShell({ children, openLoginPopup, openSignupPopup }: SiteShe
               ))}
             </ul>
           </aside>
-          <div className="ra-card">{children}</div>
+          <div className={ownHead ? "ra-card ra-own-head" : "ra-card"}>
+            {ownHead && (
+              <div className="ra-head">
+                <SiteShellLogo size={56} />
+                <h1>{ROKCT_AUTH_COPY.loginCard.title}</h1>
+                <p>{ROKCT_AUTH_COPY.loginCard.sub}</p>
+              </div>
+            )}
+            {children}
+          </div>
         </div>
       </main>
     </div>

@@ -16,7 +16,7 @@
 
 "use client";
 
-import { RiLoader4Line, RiDeleteBinLine, RiRefreshLine } from "@remixicon/react";
+import { RiDeleteBinLine, RiRefreshLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -58,7 +58,7 @@ export default function SystemInfoPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
+        <span className="text-sm text-muted-foreground">Loading…</span>
       </div>
     );
   }
@@ -77,11 +77,7 @@ export default function SystemInfoPage() {
             onClick={handleClearCache}
             disabled={clearing}
           >
-            {clearing ? (
-              <RiLoader4Line className="mr-2 size-4 animate-spin" />
-            ) : (
-              <RiDeleteBinLine className="mr-2 size-4" />
-            )}
+            {!clearing && <RiDeleteBinLine className="mr-2 size-4" />}
             Clear Cache
           </Button>
         </div>

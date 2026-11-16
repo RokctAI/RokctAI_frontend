@@ -16,7 +16,7 @@
 
 "use client";
 
-import { RiLoader4Line, RiSaveLine } from "@remixicon/react";
+import { RiSaveLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -81,7 +81,7 @@ export default function GeneralSettingsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
+        <span className="text-sm text-muted-foreground">Loading…</span>
       </div>
     );
   }
@@ -91,11 +91,7 @@ export default function GeneralSettingsPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">General Settings</h1>
         <Button onClick={handleSave} disabled={saving}>
-          {saving ? (
-            <RiLoader4Line className="mr-2 size-4 animate-spin" />
-          ) : (
-            <RiSaveLine className="mr-2 size-4" />
-          )}
+          {!saving && <RiSaveLine className="mr-2 size-4" />}
           Save Changes
         </Button>
       </div>

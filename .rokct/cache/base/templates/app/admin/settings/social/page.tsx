@@ -16,7 +16,7 @@
 
 "use client";
 
-import { RiLoader4Line, RiSaveLine } from "@remixicon/react";
+import { RiSaveLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getSocialSettings } from "@/app/actions/base/admin/settings";
@@ -46,7 +46,7 @@ export default function SocialSettingsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
+        <span className="text-sm text-muted-foreground">Loading…</span>
       </div>
     );
   }

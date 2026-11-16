@@ -17,7 +17,6 @@
 "use client";
 
 import {
-  RiLoader4Line,
   RiShoppingBagLine,
   RiGroupLine,
   RiMoneyDollarCircleLine,
@@ -77,7 +76,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
+        <span className="text-sm text-muted-foreground">Loading…</span>
       </div>
     );
   }

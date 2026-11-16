@@ -17,7 +17,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { RiLoader4Line, RiDatabase2Line, RiDownloadLine } from "@remixicon/react";
+import { RiDatabase2Line, RiDownloadLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -70,11 +70,7 @@ export default function BackupsPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Database Backups</h1>
         <Button onClick={handleCreateBackup} disabled={creating}>
-          {creating ? (
-            <RiLoader4Line className="mr-2 size-4 animate-spin" />
-          ) : (
-            <RiDatabase2Line className="mr-2 size-4" />
-          )}
+          {!creating && <RiDatabase2Line className="mr-2 size-4" />}
           Create Backup
         </Button>
       </div>
@@ -93,7 +89,7 @@ export default function BackupsPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
+                  <span className="text-sm text-muted-foreground">Loading…</span>
                 </TableCell>
               </TableRow>
             ) : backups.length === 0 ? (

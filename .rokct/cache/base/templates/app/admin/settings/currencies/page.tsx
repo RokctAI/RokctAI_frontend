@@ -16,7 +16,6 @@
 
 "use client";
 
-import { RiLoader4Line } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 import { getCurrencies } from "@/app/actions/base/admin/settings";
@@ -67,7 +66,7 @@ export default function CurrenciesPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
-                  <RiLoader4Line className="size-6 animate-spin mx-auto" />
+                  <span className="text-sm text-muted-foreground">Loading…</span>
                 </TableCell>
               </TableRow>
             ) : currencies.length === 0 ? (

@@ -323,7 +323,7 @@ export function HeroView({
               {hero.logo !== "none" && <BrandLogo width={56} height={56} showBadge={true} />}
               {/* Country code appears next to logo only when text is collapsed */}
               <div
-                className="transition-all duration-500 overflow-hidden flex items-start"
+                className="transition-[width,opacity] duration-500 ease-in-out motion-reduce:transition-none overflow-hidden flex items-start"
                 style={{
                   opacity: isExpanded && branding?.code ? 1 : 0,
                   width: isExpanded && branding?.code ? "28px" : "0px",
@@ -346,7 +346,7 @@ export function HeroView({
               </div>
             </div>
             <div
-              className="overflow-hidden transition-all duration-500 ease-in-out flex items-center"
+              className="overflow-hidden transition-[width,opacity] duration-500 ease-in-out motion-reduce:transition-none flex items-center"
               style={{
                 width: isExpanded ? "0px" : "250px",
                 opacity: isExpanded ? 0 : 1,
@@ -458,7 +458,7 @@ export function HeroView({
                 <Link
                   key={badge.id}
                   href={badge.href}
-                  className="flex items-center gap-0 md:gap-3 bg-white dark:bg-zinc-900 text-black dark:text-white px-3 py-3 md:px-6 rounded-xl hover:scale-105 transition-all shadow-md border border-zinc-100 dark:border-zinc-800 active:scale-95"
+                  className="flex items-center gap-0 md:gap-3 bg-white dark:bg-zinc-900 text-black dark:text-white px-3 py-3 md:px-6 rounded-xl [@media(hover:hover)]:hover:-translate-y-0.5 transition-transform duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none shadow-md border border-zinc-100 dark:border-zinc-800 active:scale-[0.97]"
                 >
                   <BadgeIcon icon={badge.icon} />
                   <div className="hidden md:flex flex-col items-start leading-none">

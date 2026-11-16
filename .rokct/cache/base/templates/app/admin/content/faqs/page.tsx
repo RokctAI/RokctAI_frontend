@@ -16,7 +16,7 @@
 
 "use client";
 
-import { RiLoader4Line, RiAddLine, RiDeleteBinLine } from "@remixicon/react";
+import { RiAddLine, RiDeleteBinLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -92,7 +92,7 @@ export default function AdminFAQsPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <RiLoader4Line className="size-8 animate-spin text-gray-500" />
+        <span className="text-sm text-muted-foreground">Loading…</span>
       </div>
     );
   }

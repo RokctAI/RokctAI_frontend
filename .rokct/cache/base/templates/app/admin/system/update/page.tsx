@@ -16,7 +16,7 @@
 
 "use client";
 
-import { RiLoader4Line, RiRefreshLine } from "@remixicon/react";
+import { RiRefreshLine } from "@remixicon/react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -86,7 +86,6 @@ export default function SystemUpdatePage() {
           </Alert>
 
           <Button onClick={handleUpdate} disabled={loading}>
-            {loading && <RiLoader4Line className="mr-2 size-4 animate-spin" />}
             Trigger Update
           </Button>
         </CardContent>
