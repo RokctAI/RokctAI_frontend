@@ -10,12 +10,6 @@ updates:
       prefix: "chore"
     # SAFETY: Creates PRs only. Does NOT auto-merge.
 
-  # Maintain NPM (Node/JS)
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 10
-    commit-message:
-      prefix: "chore"
-    # SAFETY: Creates PRs only. Does NOT auto-merge.
+  # NPM: no Dependabot here. npm versions are shared fleet-wide in
+  # core base/nextjs manifest.json "versions" (like Dart's base SDK) and
+  # reach this shell through the SDK refresh.
