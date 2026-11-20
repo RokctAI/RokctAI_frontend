@@ -18,4 +18,23 @@ import sdk14 from "./sdk/studio.json";
 import sdk15 from "./sdk/telemetry.json";
 import sdk16 from "./sdk/users.json";
 import sdk17 from "./sdk/wallet.json";
-export const sdkTranslations: Array<Record<string, any>> = [sdk0, sdk1, sdk2, sdk3, sdk4, sdk5, sdk6, sdk7, sdk8, sdk9, sdk10, sdk11, sdk12, sdk13, sdk14, sdk15, sdk16, sdk17];
+export const sdkTranslations: Array<Record<string, any>> = [
+  sdk0,
+  sdk1,
+  sdk2,
+  sdk3,
+  sdk4,
+  sdk5,
+  sdk6,
+  sdk7,
+  sdk8,
+  sdk9,
+  sdk10,
+  sdk11,
+  sdk12,
+  sdk13,
+  sdk14,
+  sdk15,
+  sdk16,
+  sdk17,
+];
