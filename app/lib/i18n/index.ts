@@ -67,8 +67,7 @@ export function currentLocale(): Locale {
     return normalizeLocale(document.documentElement.lang);
   }
   const resolve = (globalThis as Record<string, unknown>)[RESOLVER_KEY] as
-    | Resolver
-    | undefined;
+    Resolver | undefined;
   try {
     return resolve ? resolve() : "en";
   } catch {
