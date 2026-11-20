@@ -47,7 +47,10 @@ export function humanizeKey(key: string): string {
   return words ? words.charAt(0).toUpperCase() + words.slice(1) : key;
 }
 
-export function t(key: string, params?: Record<string, string | number>): string {
+export function t(
+  key: string,
+  params?: Record<string, string | number>,
+): string {
   const keys = key.split(".");
   let value: any = translations.en;
 
