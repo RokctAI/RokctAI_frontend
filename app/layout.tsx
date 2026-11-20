@@ -15,6 +15,7 @@
  */
 
 import React from "react";
+import { getRequestLocale } from "@/app/lib/i18n/server";
 import { Toaster } from "sonner";
 import localFont from "next/font/local";
 
@@ -61,8 +62,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+  const lang = await getRequestLocale();
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang={lang} className={`${geistSans.variable} ${geistMono.variable}`}>
       <head></head>
       <body className="font-sans antialiased">
         <SessionProvider>

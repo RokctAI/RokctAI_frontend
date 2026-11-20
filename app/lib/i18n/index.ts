@@ -32,12 +32,58 @@ function deepMerge(target: Record<string, any>, source: Record<string, any>) {
   return target;
 }
 
+export type Locale = "en" | "af";
+export const LOCALES: Locale[] = ["en", "af"];
+// The visitor's language lives in this cookie (set by base_sdk's
+// LanguageToggle in the header, kept for a year).
+export const LANG_COOKIE = "rk-lang";
+
+export function normalizeLocale(value: unknown): Locale {
+  return value === "af" ? "af" : "en";
+}
+
 const merged: Record<string, any> = JSON.parse(JSON.stringify(en));
 for (const bundle of sdkTranslations) deepMerge(merged, bundle.en || {});
 
-const translations: Record<string, any> = {
+// Afrikaans: every SDK ships an "af" side next to its "en" side. Keys
+// without Afrikaans copy fall back to English, then to humanizeKey.
+const mergedAf: Record<string, any> = {};
+for (const bundle of sdkTranslations) deepMerge(mergedAf, bundle.af || {});
+
+const translations: Record<Locale, Record<string, any>> = {
   en: merged,
+  af: mergedAf,
 };
+
+// Which language this render is in. In the browser it is <html lang>, which
+// the root layout writes from the cookie, so server HTML and hydration
+// agree. On the server, app/lib/i18n/server.ts (imported by the root
+// layout, server only) installs a resolver that reads the request's cookie.
+type Resolver = () => Locale;
+const RESOLVER_KEY = "__rokctLocaleResolver";
+
+export function currentLocale(): Locale {
+  if (typeof window !== "undefined") {
+    return normalizeLocale(document.documentElement.lang);
+  }
+  const resolve = (globalThis as Record<string, unknown>)[RESOLVER_KEY] as
+    | Resolver
+    | undefined;
+  try {
+    return resolve ? resolve() : "en";
+  } catch {
+    return "en";
+  }
+}
+
+function lookup(tree: Record<string, any>, keys: string[]): unknown {
+  let value: any = tree;
+  for (const k of keys) {
+    if (value && typeof value === "object" && k in value) value = value[k];
+    else return undefined;
+  }
+  return value;
+}
 
 // A key nobody translated shows as words, not as "app.x.some_key":
 // "app.agent.memory_title" -> "Memory title".
@@ -47,26 +93,25 @@ export function humanizeKey(key: string): string {
   return words ? words.charAt(0).toUpperCase() + words.slice(1) : key;
 }
 
-export function t(key: string, params?: Record<string, string | number>): string {
+export function t(
+  key: string,
+  params?: Record<string, string | number>,
+  locale?: Locale,
+): string {
   const keys = key.split(".");
-  let value: any = translations.en;
+  const lang = locale ?? currentLocale();
+  let value: unknown =
+    lang === "en" ? undefined : lookup(translations[lang], keys);
+  if (typeof value !== "string") value = lookup(translations.en, keys);
+  if (typeof value !== "string") value = humanizeKey(key);
 
-  for (const k of keys) {
-    if (value && value[k]) {
-      value = value[k];
-    } else {
-      value = humanizeKey(key);
-      break;
-    }
-  }
-
-  if (typeof value === "string" && params) {
+  let out = value as string;
+  if (params) {
     Object.entries(params).forEach(([k, v]) => {
-      value = value.replace(`{{${k}}}`, String(v));
+      out = out.replace(`{{${k}}}`, String(v));
     });
   }
-
-  return value || key;
+  return out || key;
 }
 
 export default t;
