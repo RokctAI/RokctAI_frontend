@@ -15,12 +15,39 @@
  */
 
 import en from "./en.json";
+import { sdkTranslations } from "./sdk-registry";
+
+// SDK copy: each SDK ships app/lib/i18n/sdk/<sdk>.json ({"en": {...},
+// "af": {...}}) and scripts/compose.sh lists them in sdk-registry.ts. The
+// shell's own en.json wins where both define a key.
+function deepMerge(target: Record<string, any>, source: Record<string, any>) {
+  for (const [k, v] of Object.entries(source || {})) {
+    if (v && typeof v === "object" && !Array.isArray(v)) {
+      if (!target[k] || typeof target[k] !== "object") target[k] = {};
+      deepMerge(target[k], v);
+    } else if (target[k] === undefined) {
+      target[k] = v;
+    }
+  }
+  return target;
+}
+
+const merged: Record<string, any> = JSON.parse(JSON.stringify(en));
+for (const bundle of sdkTranslations) deepMerge(merged, bundle.en || {});
 
 const translations: Record<string, any> = {
-  en,
+  en: merged,
 };
 
-export function t(key: string, params?: Record<string, string>): string {
+// A key nobody translated shows as words, not as "app.x.some_key":
+// "app.agent.memory_title" -> "Memory title".
+export function humanizeKey(key: string): string {
+  const last = key.split(".").pop() || key;
+  const words = last.replace(/_/g, " ").trim();
+  return words ? words.charAt(0).toUpperCase() + words.slice(1) : key;
+}
+
+export function t(key: string, params?: Record<string, string | number>): string {
   const keys = key.split(".");
   let value: any = translations.en;
 
@@ -28,13 +55,14 @@ export function t(key: string, params?: Record<string, string>): string {
     if (value && value[k]) {
       value = value[k];
     } else {
-      return key; // Fallback to key
+      value = humanizeKey(key);
+      break;
     }
   }
 
   if (typeof value === "string" && params) {
     Object.entries(params).forEach(([k, v]) => {
-      value = value.replace(`{{${k}}}`, v);
+      value = value.replace(`{{${k}}}`, String(v));
     });
   }
 
