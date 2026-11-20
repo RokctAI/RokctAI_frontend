@@ -1,6 +1,7 @@
 {
   "name": "agent_sdk",
-  "version": "1.27.0",
+  "version": "1.27.1",
+  "_comment_version_1_27_1": "1.27.1: landing sections rise and fade in as they scroll into view (CSS scroll-driven, no JS, off under reduced motion; Ray 2026-11-20 motion pass). Nothing to install.",
   "_comment_version_1_26_3": "1.26.3: style only (motion pass, Ray 2026-11-14). landing opportunities and funding search drop spinners and pulse, pricing buttons press at 0.97, named transition properties. Nothing to install.",
   "_comment_version_1_26_2": "1.26.1 -> 1.26.2: rokct.ai auth links (Create an account, Sign in, Forgot password?) take the brand yellow instead of the indigo accent, light and dark, with a yellow hover/focus fill.",
   "_comment_version_1_26_1": "1.26.0 -> 1.26.1: rokct.ai login on phone (Ray: rectify). Below 768px the brand panel is hidden (it stacked under the card and repeated its greeting); the login card heading reads Welcome to ROKCT (the shell draws it and hides auth_sdk's Welcome to Rokct); auth_sdk's form pt-8 is dropped inside the card and the card is tighter on phone.",

@@ -336,3 +336,20 @@ html:has(.stx)::-webkit-scrollbar-thumb{background:var(--stx-ink);border-radius:
   html:has(.stx){scroll-behavior:auto}
   .stx *,.stx *::before,.stx *::after{animation:none!important;transition:none!important}
 }
+
+/* Section entrance (motion pass, Ray 2026-11-20). CSS scroll-driven, so no
+ * JS and nothing hidden where unsupported or under reduced motion: each
+ * block in a section rises 12px and fades in as it enters the view. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .stx section > * > * {
+      animation: rk-section-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+  }
+}
+@keyframes rk-section-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}

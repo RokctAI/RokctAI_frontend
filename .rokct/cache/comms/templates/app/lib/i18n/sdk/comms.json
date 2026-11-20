@@ -33,6 +33,30 @@
       "user": "User",
       "username": "Username",
       "when_disabled_the_bot_will_not_reply_to_any_mess": "When disabled, the bot will not reply to any messages."
+    },
+    "app": {
+      "paas": {
+        "admin": {
+          "settings": {
+            "whatsapp": {
+              "desc": "Connect your WhatsApp Business number so customers can chat with you.",
+              "hint_access_token": "Use a permanent system-user token so it does not expire.",
+              "hint_app_secret": "Used to check that messages really come from Meta.",
+              "hint_phone_id": "The ID of the WhatsApp number, not the phone number itself.",
+              "label_access_token": "Access token",
+              "label_app_secret": "App secret",
+              "label_callback_url": "Callback URL",
+              "label_phone_id": "Phone number ID",
+              "label_verify_token": "Verify token",
+              "meta_dashboard": "Open Meta dashboard",
+              "note_meta_dashboard": "Copy these values from your app in the Meta developer dashboard, under WhatsApp > API setup.",
+              "title": "WhatsApp",
+              "webhook_desc": "Paste these into the webhook settings in Meta so messages reach you.",
+              "webhook_title": "Webhook"
+            }
+          }
+        }
+      }
     }
   },
   "af": {
@@ -69,6 +93,30 @@
       "user": "Gebruiker",
       "username": "Gebruikersnaam",
       "when_disabled_the_bot_will_not_reply_to_any_mess": "Wanneer dit afgeskakel is, sal die bot op geen boodskappe antwoord nie."
+    },
+    "app": {
+      "paas": {
+        "admin": {
+          "settings": {
+            "whatsapp": {
+              "desc": "Koppel jou WhatsApp Business-nommer sodat kliënte met jou kan gesels.",
+              "hint_access_token": "Gebruik 'n permanente stelselgebruiker-teken sodat dit nie verval nie.",
+              "hint_app_secret": "Word gebruik om na te gaan dat boodskappe regtig van Meta kom.",
+              "hint_phone_id": "Die ID van die WhatsApp-nommer, nie die foonnommer self nie.",
+              "label_access_token": "Toegangsteken",
+              "label_app_secret": "App-geheim",
+              "label_callback_url": "Terugbel-URL",
+              "label_phone_id": "Foonnommer-ID",
+              "label_verify_token": "Verifieer-teken",
+              "meta_dashboard": "Maak Meta-paneelbord oop",
+              "note_meta_dashboard": "Kopieer hierdie waardes van jou app in die Meta-ontwikkelaarspaneelbord, onder WhatsApp > API setup.",
+              "title": "WhatsApp",
+              "webhook_desc": "Plak hierdie in die webhook-instellings in Meta sodat boodskappe jou bereik.",
+              "webhook_title": "Webhook"
+            }
+          }
+        }
+      }
     }
   }
 }

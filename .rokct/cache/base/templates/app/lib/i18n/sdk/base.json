@@ -171,6 +171,34 @@
       "version": "Version",
       "web": "Web",
       "web_url": "Web URL"
+    },
+    "app": {
+      "paas": {
+        "admin": {
+          "settings": {
+            "faqs": {
+              "add_desc": "Write a question and a short, clear answer.",
+              "add_title": "New FAQ",
+              "btn_add": "Add FAQ",
+              "btn_cancel": "Cancel",
+              "btn_save": "Save",
+              "desc": "Questions and answers your customers see in the app and on the web.",
+              "edit_desc": "Change the question or its answer.",
+              "edit_title": "Edit FAQ",
+              "label_active": "Show to customers",
+              "label_answer": "Answer",
+              "label_question": "Question",
+              "label_type": "Shows on",
+              "no_faqs": "No FAQs yet. Add the first question your customers ask.",
+              "ph_answer": "Write the answer in plain words",
+              "ph_question": "For example: How long does delivery take?",
+              "status_active": "Active",
+              "status_inactive": "Hidden",
+              "title": "FAQs"
+            }
+          }
+        }
+      }
     }
   },
   "af": {
@@ -345,6 +373,34 @@
       "version": "Weergawe",
       "web": "Web",
       "web_url": "Web-URL"
+    },
+    "app": {
+      "paas": {
+        "admin": {
+          "settings": {
+            "faqs": {
+              "add_desc": "Skryf 'n vraag en 'n kort, duidelike antwoord.",
+              "add_title": "Nuwe vraag",
+              "btn_add": "Voeg vraag by",
+              "btn_cancel": "Kanselleer",
+              "btn_save": "Stoor",
+              "desc": "Vrae en antwoorde wat jou kliënte in die app en op die web sien.",
+              "edit_desc": "Verander die vraag of die antwoord.",
+              "edit_title": "Wysig vraag",
+              "label_active": "Wys aan kliënte",
+              "label_answer": "Antwoord",
+              "label_question": "Vraag",
+              "label_type": "Wys op",
+              "no_faqs": "Nog geen vrae nie. Voeg die eerste vraag by wat jou kliënte vra.",
+              "ph_answer": "Skryf die antwoord in eenvoudige woorde",
+              "ph_question": "Byvoorbeeld: Hoe lank neem aflewering?",
+              "status_active": "Aktief",
+              "status_inactive": "Versteek",
+              "title": "Gereelde vrae"
+            }
+          }
+        }
+      }
     }
   }
 }
