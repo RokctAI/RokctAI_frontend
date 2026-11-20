@@ -52,6 +52,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import tr from "@/app/lib/i18n";
 const BENEFIT_TYPES: CustomerSubscriptionBenefitType[] = [
   "Free Delivery",
   "Delivery Discount",
@@ -134,7 +135,7 @@ function SubscribersTab() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
-        <Label htmlFor="status_filter">Status</Label>
+        <Label htmlFor="status_filter">{tr("loyalty.status")}</Label>
         <select
           id="status_filter"
           className={`${selectClass} max-w-48`}
@@ -143,7 +144,7 @@ function SubscribersTab() {
             setStatus(e.target.value as CustomerSubscriptionStatus | "")
           }
         >
-          <option value="">All</option>
+          <option value="">{tr("loyalty.all")}</option>
           {STATUSES.map((s) => (
             <option key={s}>{s}</option>
           ))}
@@ -154,12 +155,12 @@ function SubscribersTab() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Customer</TableHead>
-              <TableHead>Plan</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Period</TableHead>
-              <TableHead>Pays by</TableHead>
-              <TableHead>Renews</TableHead>
+              <TableHead>{tr("loyalty.customer")}</TableHead>
+              <TableHead>{tr("loyalty.plan")}</TableHead>
+              <TableHead>{tr("loyalty.status")}</TableHead>
+              <TableHead>{tr("loyalty.period")}</TableHead>
+              <TableHead>{tr("loyalty.pays_by")}</TableHead>
+              <TableHead>{tr("loyalty.renews")}</TableHead>
               <TableHead className="w-40" />
             </TableRow>
           </TableHeader>
@@ -176,7 +177,7 @@ function SubscribersTab() {
                   colSpan={7}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No subscribers yet.
+                  {tr("loyalty.no_subscribers_yet")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -211,7 +212,7 @@ function SubscribersTab() {
                           run(row.name, activateCustomerSubscription)
                         }
                       >
-                        Activate
+                        {tr("loyalty.activate")}
                       </Button>
                     )}
                     {["Pending", "Active", "Past Due"].includes(row.status) && (
@@ -228,7 +229,7 @@ function SubscribersTab() {
                             run(row.name, cancelCustomerSubscriptionAdmin);
                         }}
                       >
-                        Cancel
+                        {tr("loyalty.cancel")}
                       </Button>
                     )}
                   </TableCell>
@@ -306,14 +307,14 @@ export default function CustomerSubscriptionsPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Customer Subscriptions</h1>
+        <h1 className="text-3xl font-bold">{tr("loyalty.customer_subscriptions")}</h1>
         {tab === "plans" && (
         <Button
           onClick={() =>
             setEditing({ ...EMPTY_PLAN, benefits: [...EMPTY_PLAN.benefits] })
           }
         >
-          <RiAddLine className="size-4 mr-2" /> New plan
+          <RiAddLine className="size-4 mr-2" /> {tr("loyalty.new_plan")}
         </Button>
         )}
       </div>
@@ -325,7 +326,7 @@ export default function CustomerSubscriptionsPage() {
           variant={tab === "plans" ? "default" : "outline"}
           onClick={() => setTab("plans")}
         >
-          Plans
+          {tr("loyalty.plans")}
         </Button>
         <Button
           role="tab"
@@ -333,7 +334,7 @@ export default function CustomerSubscriptionsPage() {
           variant={tab === "subscribers" ? "default" : "outline"}
           onClick={() => setTab("subscribers")}
         >
-          Subscribers
+          {tr("loyalty.subscribers")}
         </Button>
       </div>
 
@@ -344,11 +345,11 @@ export default function CustomerSubscriptionsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Plan</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Period</TableHead>
-              <TableHead>Benefits</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{tr("loyalty.plan")}</TableHead>
+              <TableHead>{tr("loyalty.price")}</TableHead>
+              <TableHead>{tr("loyalty.period")}</TableHead>
+              <TableHead>{tr("loyalty.benefits")}</TableHead>
+              <TableHead>{tr("loyalty.status")}</TableHead>
               <TableHead className="w-24" />
             </TableRow>
           </TableHeader>
@@ -365,7 +366,7 @@ export default function CustomerSubscriptionsPage() {
                   colSpan={6}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No customer subscription plans yet.
+                  {tr("loyalty.no_customer_subscription_plans_yet")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -394,7 +395,7 @@ export default function CustomerSubscriptionsPage() {
                     <Button
                       size="icon"
                       variant="ghost"
-                      aria-label="Edit"
+                      aria-label={tr("loyalty.edit")}
                       onClick={() =>
                         setEditing({ ...plan, benefits: [...plan.benefits] })
                       }
@@ -404,7 +405,7 @@ export default function CustomerSubscriptionsPage() {
                     <Button
                       size="icon"
                       variant="ghost"
-                      aria-label="Delete"
+                      aria-label={tr("loyalty.delete")}
                       onClick={() => onDelete(plan)}
                     >
                       <RiDeleteBinLine className="size-4" />
@@ -432,7 +433,7 @@ export default function CustomerSubscriptionsPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label htmlFor="plan_name">Name</Label>
+                  <Label htmlFor="plan_name">{tr("loyalty.name")}</Label>
                   <Input
                     id="plan_name"
                     value={editing.plan_name}
@@ -441,7 +442,7 @@ export default function CustomerSubscriptionsPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="period">Billing period</Label>
+                  <Label htmlFor="period">{tr("loyalty.billing_period")}</Label>
                   <select
                     id="period"
                     className={selectClass}
@@ -459,7 +460,7 @@ export default function CustomerSubscriptionsPage() {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="price">Price</Label>
+                  <Label htmlFor="price">{tr("loyalty.price")}</Label>
                   <Input
                     id="price"
                     type="number"
@@ -470,7 +471,7 @@ export default function CustomerSubscriptionsPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="currency">Currency</Label>
+                  <Label htmlFor="currency">{tr("loyalty.currency")}</Label>
                   <Input
                     id="currency"
                     placeholder="e.g. ZAR"
@@ -480,7 +481,7 @@ export default function CustomerSubscriptionsPage() {
                 </div>
               </div>
               <div className="space-y-1">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{tr("loyalty.description")}</Label>
                 <Input
                   id="description"
                   value={editing.description ?? ""}
@@ -493,12 +494,12 @@ export default function CustomerSubscriptionsPage() {
                   checked={!!editing.active}
                   onChange={(e) => update({ active: e.target.checked ? 1 : 0 })}
                 />
-                Active (customers can subscribe)
+                {tr("loyalty.active_customers_can_subscribe")}
               </label>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label>Benefits</Label>
+                  <Label>{tr("loyalty.benefits")}</Label>
                   <Button
                     size="sm"
                     variant="outline"
@@ -515,7 +516,7 @@ export default function CustomerSubscriptionsPage() {
                       })
                     }
                   >
-                    <RiAddLine className="size-4 mr-1" /> Add benefit
+                    <RiAddLine className="size-4 mr-1" /> {tr("loyalty.add_benefit")}
                   </Button>
                 </div>
                 {editing.benefits.map((b, i) => (
@@ -524,7 +525,7 @@ export default function CustomerSubscriptionsPage() {
                     className="grid grid-cols-[1fr_7rem_1.5fr_auto] gap-2"
                   >
                     <select
-                      aria-label="Benefit type"
+                      aria-label={tr("loyalty.benefit_type")}
                       className={selectClass}
                       value={b.benefit_type}
                       onChange={(e) =>
@@ -539,7 +540,7 @@ export default function CustomerSubscriptionsPage() {
                       ))}
                     </select>
                     <Input
-                      aria-label="Value"
+                      aria-label={tr("loyalty.value")}
                       type="number"
                       placeholder={
                         b.benefit_type === "Delivery Discount" ? "%" : "Value"
@@ -555,8 +556,8 @@ export default function CustomerSubscriptionsPage() {
                       }
                     />
                     <Input
-                      aria-label="Description"
-                      placeholder="Shown to customers"
+                      aria-label={tr("loyalty.description")}
+                      placeholder={tr("loyalty.shown_to_customers")}
                       value={b.description ?? ""}
                       onChange={(e) =>
                         updateBenefit(i, { description: e.target.value })
@@ -565,7 +566,7 @@ export default function CustomerSubscriptionsPage() {
                     <Button
                       size="icon"
                       variant="ghost"
-                      aria-label="Remove benefit"
+                      aria-label={tr("loyalty.remove_benefit")}
                       onClick={() =>
                         update({
                           benefits: editing.benefits.filter((_, j) => j !== i),
@@ -582,7 +583,7 @@ export default function CustomerSubscriptionsPage() {
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditing(null)}>
-              Cancel
+              {tr("loyalty.cancel")}
             </Button>
             <Button onClick={onSave} disabled={saving || !editing?.plan_name}>
               {saving && <RiLoader4Line className="size-4 mr-2 animate-spin" />}

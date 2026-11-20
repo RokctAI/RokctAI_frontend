@@ -70,8 +70,8 @@ export function BOMList({ boms }: BOMListProps) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Bill of Materials</h1>
-          <p className="text-muted-foreground">Manage production recipes.</p>
+          <h1 className="text-2xl font-bold">{t("erp.bill_of_materials")}</h1>
+          <p className="text-muted-foreground">{t("erp.manage_production_recipes")}</p>
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
@@ -85,7 +85,7 @@ export function BOMList({ boms }: BOMListProps) {
           </div>
           <Link href="/handson/all/supply_chain/manufacturing/bom/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New BOM
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_bom")}
             </Button>
           </Link>
         </div>
@@ -95,11 +95,11 @@ export function BOMList({ boms }: BOMListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>BOM Name</TableHead>
-              <TableHead>Item</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("erp.bom_name")}</TableHead>
+              <TableHead>{t("erp.item")}</TableHead>
+              <TableHead>{t("erp.quantity")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
+              <TableHead className="w-[100px]">{t("erp.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -109,7 +109,7 @@ export function BOMList({ boms }: BOMListProps) {
                   colSpan={5}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No BOMs found.
+                  {t("erp.no_boms_found")}
                 </TableCell>
               </TableRow>
             ) : (

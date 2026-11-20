@@ -50,6 +50,7 @@ import {
 import * as actions from "@/app/actions/platform/orders/orders";
 import * as validators from "@/lib/platform/validators/orders/orders";
 
+import t from "@/app/lib/i18n";
 export interface ListFormProps {
   onSuccess?: (data: any) => void;
   onError?: (error: any) => void;
@@ -86,8 +87,8 @@ export function ListForm({ onSuccess, onError, defaultValues }: ListFormProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>List</CardTitle>
-        <CardDescription>Fetch list of client orders</CardDescription>
+        <CardTitle>{t("orders.list")}</CardTitle>
+        <CardDescription>{t("orders.fetch_list_of_client_orders")}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -97,9 +98,9 @@ export function ListForm({ onSuccess, onError, defaultValues }: ListFormProps) {
               name="status"
               render={({ field }) => (
                 <FormItem className="">
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>{t("orders.status")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter status..." {...field} />
+                    <Input placeholder={t("orders.enter_status")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -112,7 +113,7 @@ export function ListForm({ onSuccess, onError, defaultValues }: ListFormProps) {
               name="limit"
               render={({ field }) => (
                 <FormItem className="">
-                  <FormLabel>Limit</FormLabel>
+                  <FormLabel>{t("orders.limit")}</FormLabel>
                   <FormControl>
                     <Input type="number" placeholder="0" {...field} />
                   </FormControl>
@@ -126,7 +127,7 @@ export function ListForm({ onSuccess, onError, defaultValues }: ListFormProps) {
               {submitting ? (
                 <>
                   <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
-                  Executing...
+                  {t("orders.executing")}
                 </>
               ) : (
                 "Execute Action"

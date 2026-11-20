@@ -1,3 +1,11 @@
+## 1.2.0
+
+* feat(i18n): 80 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 23 files now go through
+  `t("studio.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/studio.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.1.1
 
 * fix(icons): `lucide-react` icons replaced with `@remixicon/react`, per the

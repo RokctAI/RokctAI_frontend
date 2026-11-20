@@ -41,6 +41,7 @@ import { deleteLead } from "@/app/actions/handson/all/crm/leads";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 interface LeadListProps {
   leads: any[];
 }
@@ -73,16 +74,16 @@ export function LeadList({ leads }: LeadListProps) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Leads</h1>
+          <h1 className="text-2xl font-bold">{t("crm.leads")}</h1>
           <p className="text-muted-foreground">
-            Manage potential customers and inquiries.
+            {t("crm.manage_potential_customers_and_inquiries")}
           </p>
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search Leads..."
+              placeholder={t("crm.search_leads")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
@@ -90,7 +91,7 @@ export function LeadList({ leads }: LeadListProps) {
           </div>
           <Link href="/handson/all/commercial/crm/leads/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Lead
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("crm.new_lead")}
             </Button>
           </Link>
         </div>
@@ -100,11 +101,11 @@ export function LeadList({ leads }: LeadListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Lead Name</TableHead>
-              <TableHead>Company</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("crm.lead_name")}</TableHead>
+              <TableHead>{t("crm.company")}</TableHead>
+              <TableHead>{t("crm.contact")}</TableHead>
+              <TableHead>{t("crm.status")}</TableHead>
+              <TableHead className="w-[100px]">{t("crm.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -114,7 +115,7 @@ export function LeadList({ leads }: LeadListProps) {
                   colSpan={5}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No leads found.
+                  {t("crm.no_leads_found")}
                 </TableCell>
               </TableRow>
             ) : (

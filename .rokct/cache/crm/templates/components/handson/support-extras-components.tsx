@@ -50,6 +50,7 @@ import {
 import { getCustomers } from "@/app/actions/handson/all/accounting/selling/sales_order";
 import { getItems } from "@/app/actions/handson/all/accounting/inventory/item";
 
+import t from "@/app/lib/i18n";
 // --- SLA ---
 
 export function ServiceLevelAgreementList() {
@@ -64,16 +65,16 @@ export function ServiceLevelAgreementList() {
     });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{t("crm.loading")}</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Service Level Agreements</h2>
+        <h2 className="text-2xl font-bold">{t("crm.service_level_agreements")}</h2>
         <Button
           onClick={() => router.push("/handson/all/commercial/support/sla/new")}
         >
-          <RiAddLine className="h-4 w-4 mr-2" /> New SLA
+          <RiAddLine className="h-4 w-4 mr-2" /> {t("crm.new_sla")}
         </Button>
       </div>
       <Card>
@@ -81,9 +82,9 @@ export function ServiceLevelAgreementList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Service Level</TableHead>
-                <TableHead>Priority</TableHead>
+                <TableHead>{t("crm.name")}</TableHead>
+                <TableHead>{t("crm.service_level")}</TableHead>
+                <TableHead>{t("crm.priority")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -128,11 +129,11 @@ export function ServiceLevelAgreementForm() {
       </Button>
       <Card>
         <CardHeader>
-          <CardTitle>New SLA</CardTitle>
+          <CardTitle>{t("crm.new_sla")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Service Level Name</Label>
+            <Label>{t("crm.service_level_name")}</Label>
             <Input
               value={formData.service_level}
               onChange={(e) =>
@@ -141,7 +142,7 @@ export function ServiceLevelAgreementForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Default Priority</Label>
+            <Label>{t("crm.default_priority")}</Label>
             <Select
               value={formData.default_priority}
               onValueChange={(v) =>
@@ -152,14 +153,14 @@ export function ServiceLevelAgreementForm() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Low">Low</SelectItem>
-                <SelectItem value="Medium">Medium</SelectItem>
-                <SelectItem value="High">High</SelectItem>
+                <SelectItem value="Low">{t("crm.low")}</SelectItem>
+                <SelectItem value="Medium">{t("crm.medium")}</SelectItem>
+                <SelectItem value="High">{t("crm.high")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
-            Submit
+            {t("crm.submit")}
           </Button>
         </CardContent>
       </Card>
@@ -181,18 +182,18 @@ export function WarrantyClaimList() {
     });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{t("crm.loading")}</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Warranty Claims</h2>
+        <h2 className="text-2xl font-bold">{t("crm.warranty_claims")}</h2>
         <Button
           onClick={() =>
             router.push("/handson/all/commercial/support/warranty/new")
           }
         >
-          <RiAddLine className="h-4 w-4 mr-2" /> New Claim
+          <RiAddLine className="h-4 w-4 mr-2" /> {t("crm.new_claim")}
         </Button>
       </div>
       <Card>
@@ -200,10 +201,10 @@ export function WarrantyClaimList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Item</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("crm.name")}</TableHead>
+                <TableHead>{t("crm.customer")}</TableHead>
+                <TableHead>{t("crm.item")}</TableHead>
+                <TableHead>{t("crm.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -257,17 +258,17 @@ export function WarrantyClaimForm() {
       </Button>
       <Card>
         <CardHeader>
-          <CardTitle>New Warranty Claim</CardTitle>
+          <CardTitle>{t("crm.new_warranty_claim")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Customer</Label>
+            <Label>{t("crm.customer")}</Label>
             <Select
               value={formData.customer}
               onValueChange={(v) => setFormData({ ...formData, customer: v })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Customer" />
+                <SelectValue placeholder={t("crm.select_customer")} />
               </SelectTrigger>
               <SelectContent>
                 {customers.map((c) => (
@@ -279,13 +280,13 @@ export function WarrantyClaimForm() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Item</Label>
+            <Label>{t("crm.item")}</Label>
             <Select
               value={formData.item_code}
               onValueChange={(v) => setFormData({ ...formData, item_code: v })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Item" />
+                <SelectValue placeholder={t("crm.select_item")} />
               </SelectTrigger>
               <SelectContent>
                 {items.map((i) => (
@@ -297,7 +298,7 @@ export function WarrantyClaimForm() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Issue Date</Label>
+            <Label>{t("crm.issue_date")}</Label>
             <Input
               type="date"
               value={formData.issue_date}
@@ -307,7 +308,7 @@ export function WarrantyClaimForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Description</Label>
+            <Label>{t("crm.description")}</Label>
             <Input
               value={formData.description}
               onChange={(e) =>
@@ -316,7 +317,7 @@ export function WarrantyClaimForm() {
             />
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
-            Submit
+            {t("crm.submit")}
           </Button>
         </CardContent>
       </Card>

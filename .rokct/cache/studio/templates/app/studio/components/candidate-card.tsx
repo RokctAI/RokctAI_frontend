@@ -31,6 +31,7 @@ import { ConstructionPanel } from "./construction-panel";
 import { ProofPanel } from "./proof-panel";
 import { SvgPreview } from "./svg-preview";
 
+import t from "@/app/lib/i18n";
 function parseFindings(reportJson: string | null): Finding[] {
   try {
     return JSON.parse(reportJson || "{}").findings ?? [];
@@ -98,7 +99,7 @@ export function CandidateCard({
         </CardTitle>
         <div className="flex gap-2">
           {score != null && <Badge variant={candidate.passed ? "default" : "destructive"}>{score.toFixed(1)}/100</Badge>}
-          {candidate.selected ? <Badge>Selected</Badge> : null}
+          {candidate.selected ? <Badge>{t("studio.selected")}</Badge> : null}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -107,14 +108,14 @@ export function CandidateCard({
             <SvgPreview svg={svg} />
           </ConstructionPanel>
         ) : (
-          <p className="text-sm text-muted-foreground">No vector yet.</p>
+          <p className="text-sm text-muted-foreground">{t("studio.no_vector_yet")}</p>
         )}
         {editing ? (
           <div className="space-y-2">
             <textarea className="h-48 w-full rounded-md border p-2 font-mono text-xs" value={draft} onChange={(e) => setDraft(e.target.value)} />
             <div className="flex gap-2">
-              <Button onClick={save}>Save and re-check</Button>
-              <Button variant="outline" onClick={() => setEditing(false)}>Cancel</Button>
+              <Button onClick={save}>{t("studio.save_and_re_check")}</Button>
+              <Button variant="outline" onClick={() => setEditing(false)}>{t("studio.cancel")}</Button>
             </div>
           </div>
         ) : (
@@ -128,17 +129,17 @@ export function CandidateCard({
                       .catch((e) => toast.error(e instanceof Error ? e.message : "Select failed"))
                   }
                 >
-                  Select
+                  {t("studio.select")}
                 </Button>
               )}
               <Button variant="outline" onClick={() => { setDraft(svg); setEditing(true); }}>
-                Edit SVG
+                {t("studio.edit_svg")}
               </Button>
               <Button variant="outline" onClick={() => run("PNG", async () => (await renderPreview(candidate.name)).png_url)}>
                 PNG
               </Button>
               <Button variant="outline" onClick={() => run("Press PDF", async () => (await renderDeliverable(candidate.name)).pdf_url)}>
-                Press PDF
+                {t("studio.press_pdf")}
               </Button>
             </div>
           )
@@ -154,7 +155,7 @@ export function CandidateCard({
         )}
         {findings.length > 0 && (
           <details className="text-sm">
-            <summary className="cursor-pointer">What we fixed</summary>
+            <summary className="cursor-pointer">{t("studio.what_we_fixed")}</summary>
             <ul className="mt-2 space-y-1">
               {findings.map((f, i) => (
                 <li key={i} className={f.fixed ? "" : "text-muted-foreground"}>

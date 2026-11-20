@@ -19,6 +19,7 @@ import { ContractsClientView } from "@/components/handson/contracts/contracts-cl
 import { getContracts } from "@/app/actions/handson/all/crm/contracts";
 import { getDocTypeMeta } from "@/app/actions/handson/all/crm/meta";
 
+import t from "@/app/lib/i18n";
 export default async function ContractsPage() {
   const [contractsRes, metaRes] = await Promise.all([
     getContracts(),
@@ -32,9 +33,9 @@ export default async function ContractsPage() {
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Contracts</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.contracts")}</h1>
           <p className="text-muted-foreground">
-            Manage customer and supplier contracts.
+            {t("crm.manage_customer_and_supplier_contracts")}
           </p>
         </div>
         {meta && <CreateContractDialog meta={meta} />}

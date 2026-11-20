@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { getAds } from "@/app/actions/promotions/admin/marketing";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function AdminAdsPage() {
   const [ads, setAds] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,12 +52,12 @@ export default function AdminAdsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Ads Management</h1>
+      <h1 className="text-3xl font-bold">{t("promotions.ads_management")}</h1>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {ads.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
-            No ads found.
+            {t("promotions.no_ads_found")}
           </div>
         ) : (
           ads.map((ad) => (

@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { RiSaveLine } from "@remixicon/react";
 import { toast } from "sonner";
 
+import t from "@/app/lib/i18n";
 export default function CrmSettingsPage() {
   // Placeholder save
   const handleSave = () => {
@@ -39,14 +40,14 @@ export default function CrmSettingsPage() {
     <div className="flex flex-col gap-6 p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">CRM Settings</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.crm_settings")}</h1>
           <p className="text-muted-foreground">
-            Manage your CRM preferences and default configurations.
+            {t("crm.manage_your_crm_preferences_and_default_configur")}
           </p>
         </div>
         <Button onClick={handleSave}>
           <RiSaveLine className="mr-2 h-4 w-4" />
-          Save Changes
+          {t("crm.save_changes")}
         </Button>
       </div>
 
@@ -54,26 +55,26 @@ export default function CrmSettingsPage() {
         {/* General Settings */}
         <Card>
           <CardHeader>
-            <CardTitle>General</CardTitle>
+            <CardTitle>{t("crm.general")}</CardTitle>
             <CardDescription>
-              Basic configuration for your CRM workspace.
+              {t("crm.basic_configuration_for_your_crm_workspace")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Enable Desktop Notifications</Label>
+                <Label>{t("crm.enable_desktop_notifications")}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Receive browser notifications for new leads and tasks.
+                  {t("crm.receive_browser_notifications_for_new_leads_and_")}
                 </p>
               </div>
               <Switch />
             </div>
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Dark Mode Default</Label>
+                <Label>{t("crm.dark_mode_default")}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Force dark mode for all CRM pages.
+                  {t("crm.force_dark_mode_for_all_crm_pages")}
                 </p>
               </div>
               <Switch />
@@ -84,15 +85,15 @@ export default function CrmSettingsPage() {
         {/* Pipeline Settings */}
         <Card>
           <CardHeader>
-            <CardTitle>Pipeline Defaults</CardTitle>
+            <CardTitle>{t("crm.pipeline_defaults")}</CardTitle>
             <CardDescription>
-              Set default stages and probabilities for new opportunities.
+              {t("crm.set_default_stages_and_probabilities_for_new_opp")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Auto-create Task on New Deal</Label>
+                <Label>{t("crm.auto_create_task_on_new_deal")}</Label>
                 <p className="text-sm text-muted-foreground">
                   Automatically create a follow-up task when a new deal is
                   added.

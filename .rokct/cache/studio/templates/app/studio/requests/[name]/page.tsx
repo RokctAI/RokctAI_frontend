@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 
 import { CandidateCard } from "../../components/candidate-card";
 
+import tr from "@/app/lib/i18n";
 const WORKING = ["Queued", "Processing"];
 
 export default function RequestPage({ params }: { params: Promise<{ name: string }> }) {
@@ -57,7 +58,7 @@ export default function RequestPage({ params }: { params: Promise<{ name: string
       </div>
       {status.error_message && <p className="text-sm text-destructive">{status.error_message}</p>}
       {status.status === "Draft" && (
-        <Button onClick={() => queueDesignRequest(name).then(load)}>Start processing</Button>
+        <Button onClick={() => queueDesignRequest(name).then(load)}>{tr("studio.start_processing")}</Button>
       )}
       <div className="grid gap-6 lg:grid-cols-2">
         {status.candidates.map((c) => (

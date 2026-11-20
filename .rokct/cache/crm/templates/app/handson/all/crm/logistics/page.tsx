@@ -80,6 +80,7 @@ import {
   deleteCompetitorZone,
 } from "@/app/actions/handson/all/crm/competitor";
 
+import t from "@/app/lib/i18n";
 // --- Schemas ---
 
 const routeSchema = z.object({
@@ -199,9 +200,9 @@ export default function LogisticsPage() {
     <div className="space-y-8 p-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Competitor Logistics</h1>
+          <h1 className="text-3xl font-bold">{t("crm.competitor_logistics")}</h1>
           <p className="text-muted-foreground">
-            Manage service routes and operational zones.
+            {t("crm.manage_service_routes_and_operational_zones")}
           </p>
         </div>
       </div>
@@ -212,30 +213,30 @@ export default function LogisticsPage() {
         onValueChange={setActiveTab}
       >
         <TabsList>
-          <TabsTrigger value="routes">Routes</TabsTrigger>
-          <TabsTrigger value="zones">Zones</TabsTrigger>
+          <TabsTrigger value="routes">{t("crm.routes")}</TabsTrigger>
+          <TabsTrigger value="zones">{t("crm.zones")}</TabsTrigger>
         </TabsList>
 
         {/* --- Routes Tab --- */}
         <TabsContent value="routes" className="space-y-4 mt-4">
           <div className="flex justify-end">
             <Button onClick={() => setIsRouteDialogOpen(true)}>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Route
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("crm.new_route")}
             </Button>
           </div>
           <Card>
             <CardHeader>
-              <CardTitle>Competitor Routes</CardTitle>
-              <CardDescription>Tracked logistics paths.</CardDescription>
+              <CardTitle>{t("crm.competitor_routes")}</CardTitle>
+              <CardDescription>{t("crm.tracked_logistics_paths")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Route Name</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Path Details</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t("crm.route_name")}</TableHead>
+                    <TableHead>{t("crm.type")}</TableHead>
+                    <TableHead>{t("crm.path_details")}</TableHead>
+                    <TableHead className="text-right">{t("crm.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -245,7 +246,7 @@ export default function LogisticsPage() {
                         colSpan={4}
                         className="text-center h-24 text-muted-foreground"
                       >
-                        No routes found.
+                        {t("crm.no_routes_found")}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -282,23 +283,23 @@ export default function LogisticsPage() {
         <TabsContent value="zones" className="space-y-4 mt-4">
           <div className="flex justify-end">
             <Button onClick={() => setIsZoneDialogOpen(true)}>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Zone
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("crm.new_zone")}
             </Button>
           </div>
           <Card>
             <CardHeader>
-              <CardTitle>Competitor Zones</CardTitle>
+              <CardTitle>{t("crm.competitor_zones")}</CardTitle>
               <CardDescription>
-                Defined operational territories.
+                {t("crm.defined_operational_territories")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Zone Name</TableHead>
-                    <TableHead>Area Details</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t("crm.zone_name")}</TableHead>
+                    <TableHead>{t("crm.area_details")}</TableHead>
+                    <TableHead className="text-right">{t("crm.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -308,7 +309,7 @@ export default function LogisticsPage() {
                         colSpan={3}
                         className="text-center h-24 text-muted-foreground"
                       >
-                        No zones found.
+                        {t("crm.no_zones_found")}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -345,7 +346,7 @@ export default function LogisticsPage() {
       <Dialog open={isRouteDialogOpen} onOpenChange={setIsRouteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create Route</DialogTitle>
+            <DialogTitle>{t("crm.create_route")}</DialogTitle>
           </DialogHeader>
           <Form {...routeForm}>
             <form
@@ -357,7 +358,7 @@ export default function LogisticsPage() {
                 name="route_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t("crm.name")}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -370,7 +371,7 @@ export default function LogisticsPage() {
                 name="route_type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
+                    <FormLabel>{t("crm.type")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -381,8 +382,8 @@ export default function LogisticsPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Primary">Primary</SelectItem>
-                        <SelectItem value="Secondary">Secondary</SelectItem>
+                        <SelectItem value="Primary">{t("crm.primary")}</SelectItem>
+                        <SelectItem value="Secondary">{t("crm.secondary")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormItem>
@@ -393,7 +394,7 @@ export default function LogisticsPage() {
                 name="route_path"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Path / Description</FormLabel>
+                    <FormLabel>{t("crm.path_description")}</FormLabel>
                     <FormControl>
                       <Textarea {...field} />
                     </FormControl>
@@ -401,7 +402,7 @@ export default function LogisticsPage() {
                 )}
               />
               <DialogFooter>
-                <Button type="submit">Create</Button>
+                <Button type="submit">{t("crm.create")}</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -412,7 +413,7 @@ export default function LogisticsPage() {
       <Dialog open={isZoneDialogOpen} onOpenChange={setIsZoneDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create Zone</DialogTitle>
+            <DialogTitle>{t("crm.create_zone")}</DialogTitle>
           </DialogHeader>
           <Form {...zoneForm}>
             <form
@@ -424,7 +425,7 @@ export default function LogisticsPage() {
                 name="zone_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t("crm.name")}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -437,7 +438,7 @@ export default function LogisticsPage() {
                 name="zone_path"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Boundaries / Description</FormLabel>
+                    <FormLabel>{t("crm.boundaries_description")}</FormLabel>
                     <FormControl>
                       <Textarea {...field} />
                     </FormControl>
@@ -445,7 +446,7 @@ export default function LogisticsPage() {
                 )}
               />
               <DialogFooter>
-                <Button type="submit">Create</Button>
+                <Button type="submit">{t("crm.create")}</Button>
               </DialogFooter>
             </form>
           </Form>

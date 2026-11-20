@@ -38,6 +38,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ParcelOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<any[]>([]);
@@ -68,28 +69,28 @@ export default function ParcelOrdersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Parcel Orders</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("orders.parcel_orders")}</h2>
         <p className="text-muted-foreground">
-          View and manage parcel delivery orders.
+          {t("orders.view_and_manage_parcel_delivery_orders")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Parcel Orders</CardTitle>
+          <CardTitle>{t("orders.all_parcel_orders")}</CardTitle>
           <CardDescription>
-            List of all parcel orders in the system.
+            {t("orders.list_of_all_parcel_orders_in_the_system")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Delivery Date</TableHead>
-                <TableHead>Total Price</TableHead>
+                <TableHead>{t("orders.id")}</TableHead>
+                <TableHead>{t("orders.user")}</TableHead>
+                <TableHead>{t("orders.status")}</TableHead>
+                <TableHead>{t("orders.delivery_date")}</TableHead>
+                <TableHead>{t("orders.total_price")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -110,7 +111,7 @@ export default function ParcelOrdersPage() {
                     colSpan={5}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No parcel orders found.
+                    {t("orders.no_parcel_orders_found")}
                   </TableCell>
                 </TableRow>
               )}

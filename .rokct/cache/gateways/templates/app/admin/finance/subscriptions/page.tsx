@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ShopSubscriptionsPage() {
   const [subs, setSubs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,17 +52,17 @@ export default function ShopSubscriptionsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Shop Subscriptions</h1>
+      <h1 className="text-3xl font-bold">{t("gateways.shop_subscriptions")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Shop</TableHead>
-              <TableHead>Plan</TableHead>
-              <TableHead>Start Date</TableHead>
-              <TableHead>End Date</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("gateways.shop")}</TableHead>
+              <TableHead>{t("gateways.plan")}</TableHead>
+              <TableHead>{t("gateways.start_date")}</TableHead>
+              <TableHead>{t("gateways.end_date")}</TableHead>
+              <TableHead>{t("gateways.status")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -77,7 +78,7 @@ export default function ShopSubscriptionsPage() {
                   colSpan={5}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No subscriptions found.
+                  {t("gateways.no_subscriptions_found")}
                 </TableCell>
               </TableRow>
             ) : (

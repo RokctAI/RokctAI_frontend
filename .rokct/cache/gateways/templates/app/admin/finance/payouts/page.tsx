@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function AdminPayoutsPage() {
   const [payouts, setPayouts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,23 +60,23 @@ export default function AdminPayoutsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Seller Payouts</h1>
+      <h1 className="text-3xl font-bold">{t("gateways.seller_payouts")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Shop</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("gateways.date")}</TableHead>
+              <TableHead>{t("gateways.shop")}</TableHead>
+              <TableHead>{t("gateways.amount")}</TableHead>
+              <TableHead>{t("gateways.status")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {payouts.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="text-center h-24">
-                  No payouts found.
+                  {t("gateways.no_payouts_found")}
                 </TableCell>
               </TableRow>
             ) : (

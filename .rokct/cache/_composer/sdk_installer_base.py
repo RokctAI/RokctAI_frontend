@@ -616,6 +616,15 @@ def install_sdk_files(sdk_name):
     if dev_deps_config:
         package_state["devDependencies"] = dev_deps_config
 
+    # Shared versions: one fleet-wide version per npm package, like Dart's
+    # base SDK pubspec. Unlike "dependencies" these overwrite the host's pin
+    # for any package the host already uses; they never add a package.
+    versions_config = dict(manifest.get("versions") or {})
+    if versions_config:
+        package_state["versions"] = versions_config
+    else:
+        package_state.pop("versions", None)
+
     integrations_config = (
         list(manifest.get("integrations") or [])
         + list(flavor_block.get("integrations") or [])
@@ -670,13 +679,23 @@ def update_package_json_dependencies():
                 pkg["devDependencies"][dep_name] = dep_version
                 added.append(f"{dep_name}@{dep_version} (dev)")
 
+    # Shared versions (base_sdk "versions"): set the fleet version on any
+    # package the host already lists, so every shell runs the same release.
+    for pkg_name, pkg_data in state.get("packages", {}).items():
+        for dep_name, dep_version in pkg_data.get("versions", {}).items():
+            for section in ("dependencies", "devDependencies"):
+                current = pkg[section].get(dep_name)
+                if current is not None and current != dep_version:
+                    pkg[section][dep_name] = dep_version
+                    added.append(f"{dep_name} {current} -> {dep_version}")
+
     if not added:
         return
 
     with open(PACKAGE_JSON_FILE, "w", encoding="utf-8") as f:
         json.dump(pkg, f, indent=2)
         f.write("\n")
-    print(f"[*] Added to package.json: {', '.join(added)} (run npm install to fetch)")
+    print(f"[*] Updated package.json: {', '.join(added)} (run npm install to fetch)")
 
 
 def update_integrations():

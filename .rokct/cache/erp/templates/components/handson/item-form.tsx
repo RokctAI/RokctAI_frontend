@@ -38,6 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import t from "@/app/lib/i18n";
 interface ItemFormProps {
   initialData?: any;
   isEdit?: boolean;
@@ -114,11 +115,11 @@ export function ItemForm({ initialData, isEdit = false }: ItemFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Item Details</CardTitle>
+          <CardTitle>{t("erp.item_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="itemCode">Item Code</Label>
+            <Label htmlFor="itemCode">{t("erp.item_code")}</Label>
             <Input
               id="itemCode"
               placeholder="e.g. ITEM-001"
@@ -129,7 +130,7 @@ export function ItemForm({ initialData, isEdit = false }: ItemFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="itemName">Item Name</Label>
+            <Label htmlFor="itemName">{t("erp.item_name")}</Label>
             <Input
               id="itemName"
               placeholder="e.g. Premium Widget"
@@ -140,39 +141,39 @@ export function ItemForm({ initialData, isEdit = false }: ItemFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Item Group</Label>
+              <Label>{t("erp.item_group")}</Label>
               <Select value={itemGroup} onValueChange={setItemGroup}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Group" />
+                  <SelectValue placeholder={t("erp.select_group")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Products">Products</SelectItem>
-                  <SelectItem value="Services">Services</SelectItem>
-                  <SelectItem value="Consumables">Consumables</SelectItem>
-                  <SelectItem value="Raw Material">Raw Material</SelectItem>
+                  <SelectItem value="Products">{t("erp.products")}</SelectItem>
+                  <SelectItem value="Services">{t("erp.services")}</SelectItem>
+                  <SelectItem value="Consumables">{t("erp.consumables")}</SelectItem>
+                  <SelectItem value="Raw Material">{t("erp.raw_material")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Unit of Measure (UOM)</Label>
+              <Label>{t("erp.unit_of_measure_uom")}</Label>
               <Select value={stockUom} onValueChange={setStockUom}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select UOM" />
+                  <SelectValue placeholder={t("erp.select_uom")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Nos">Nos</SelectItem>
-                  <SelectItem value="Kg">Kg</SelectItem>
-                  <SelectItem value="Ltr">Ltr</SelectItem>
-                  <SelectItem value="Box">Box</SelectItem>
-                  <SelectItem value="Hour">Hour</SelectItem>
+                  <SelectItem value="Nos">{t("erp.nos")}</SelectItem>
+                  <SelectItem value="Kg">{t("erp.kg")}</SelectItem>
+                  <SelectItem value="Ltr">{t("erp.ltr")}</SelectItem>
+                  <SelectItem value="Box">{t("erp.box")}</SelectItem>
+                  <SelectItem value="Hour">{t("erp.hour")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="standardRate">Standard Selling Rate</Label>
+            <Label htmlFor="standardRate">{t("erp.standard_selling_rate")}</Label>
             <Input
               id="standardRate"
               type="number"

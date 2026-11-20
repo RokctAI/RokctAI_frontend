@@ -37,6 +37,7 @@ import {
   createRouting,
 } from "@/app/actions/handson/all/accounting/manufacturing/routing";
 
+import t from "@/app/lib/i18n";
 export function RoutingList() {
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,20 +54,20 @@ export function RoutingList() {
     return (
       <div className="text-center p-4">
         <RiLoader4Line className="animate-spin inline mr-2" />
-        Loading...
+        {t("erp.loading")}
       </div>
     );
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Routings</h2>
+        <h2 className="text-2xl font-bold">{t("erp.routings")}</h2>
         <Button
           onClick={() =>
             router.push("/handson/all/supply_chain/manufacturing/routing/new")
           }
         >
-          <RiAddLine className="mr-2 h-4 w-4" /> New Routing
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_routing")}
         </Button>
       </div>
       <Card>
@@ -74,8 +75,8 @@ export function RoutingList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -119,12 +120,12 @@ export function RoutingForm() {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <RiArrowLeftLine className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold">New Routing</h1>
+        <h1 className="text-2xl font-bold">{t("erp.new_routing")}</h1>
       </div>
       <Card>
         <CardContent className="space-y-4 pt-6">
           <div className="space-y-2">
-            <Label>Routing Name</Label>
+            <Label>{t("erp.routing_name")}</Label>
             <Input
               value={formData.routing_name}
               onChange={(e) =>
@@ -135,7 +136,7 @@ export function RoutingForm() {
           <div className="space-y-2">
             <Label>Operation Step 1</Label>
             <Input
-              placeholder="Operation (e.g. Cutting)"
+              placeholder={t("erp.operation_e_g_cutting")}
               value={formData.operations[0].operation}
               onChange={(e) =>
                 setFormData({
@@ -148,9 +149,9 @@ export function RoutingForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Workstation</Label>
+            <Label>{t("erp.workstation")}</Label>
             <Input
-              placeholder="Workstation"
+              placeholder={t("erp.workstation")}
               value={formData.operations[0].workstation}
               onChange={(e) =>
                 setFormData({
@@ -163,7 +164,7 @@ export function RoutingForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Time (Mins)</Label>
+            <Label>{t("erp.time_mins")}</Label>
             <Input
               type="number"
               value={formData.operations[0].time_in_mins}
@@ -181,7 +182,7 @@ export function RoutingForm() {
             />
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
-            Create Routing
+            {t("erp.create_routing")}
           </Button>
         </CardContent>
       </Card>

@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
+import t from "@/app/lib/i18n";
 export default function NotificationSettingsPage() {
   const [settings, setSettings] = useState<any>({});
   const [loading, setLoading] = useState(true);
@@ -52,24 +53,24 @@ export default function NotificationSettingsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Notification Settings</h1>
+      <h1 className="text-3xl font-bold">{t("comms.notification_settings")}</h1>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Email Notifications</CardTitle>
+            <CardTitle>{t("comms.email_notifications")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Order Confirmation</Label>
+              <Label>{t("comms.order_confirmation")}</Label>
               <Switch checked={settings.email_order_confirmation} />
             </div>
             <div className="flex items-center justify-between">
-              <Label>Order Status Updates</Label>
+              <Label>{t("comms.order_status_updates")}</Label>
               <Switch checked={settings.email_order_status} />
             </div>
             <div className="flex items-center justify-between">
-              <Label>New User Welcome</Label>
+              <Label>{t("comms.new_user_welcome")}</Label>
               <Switch checked={settings.email_welcome} />
             </div>
           </CardContent>
@@ -77,15 +78,15 @@ export default function NotificationSettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Push Notifications</CardTitle>
+            <CardTitle>{t("comms.push_notifications")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Order Updates</Label>
+              <Label>{t("comms.order_updates")}</Label>
               <Switch checked={settings.push_order_updates} />
             </div>
             <div className="flex items-center justify-between">
-              <Label>Promotional Messages</Label>
+              <Label>{t("comms.promotional_messages")}</Label>
               <Switch checked={settings.push_promotions} />
             </div>
           </CardContent>

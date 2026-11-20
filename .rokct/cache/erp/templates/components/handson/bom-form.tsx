@@ -167,11 +167,11 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
+          <CardTitle>{t("erp.details")}</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="item">Item to Manufacture</Label>
+            <Label htmlFor="item">{t("erp.item_to_manufacture")}</Label>
              <Input
                id="item"
                placeholder={t('common.ph_finished_product')}
@@ -181,7 +181,7 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="quantity">Quantity</Label>
+            <Label htmlFor="quantity">{t("erp.quantity")}</Label>
             <Input
               id="quantity"
               type="number"
@@ -191,7 +191,7 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
             />
           </div>
           <div className="space-y-2 col-span-2">
-            <Label>Company</Label>
+            <Label>{t("erp.company")}</Label>
             <Select
               value={company}
               onValueChange={setCompany}
@@ -214,10 +214,10 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Raw Materials</CardTitle>
+          <CardTitle>{t("erp.raw_materials")}</CardTitle>
           {!isEdit && (
             <Button type="button" variant="outline" size="sm" onClick={addItem}>
-              <RiAddLine className="h-4 w-4 mr-2" /> Add Item
+              <RiAddLine className="h-4 w-4 mr-2" /> {t("erp.add_item")}
             </Button>
           )}
         </CardHeader>
@@ -225,8 +225,8 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[60%]">Item Code</TableHead>
-                <TableHead>Qty</TableHead>
+                <TableHead className="w-[60%]">{t("erp.item_code")}</TableHead>
+                <TableHead>{t("erp.qty")}</TableHead>
                 <TableHead className="w-[50px]"></TableHead>
               </TableRow>
             </TableHeader>
@@ -239,7 +239,7 @@ export function BOMForm({ initialData, isEdit = false }: BOMFormProps) {
                       onChange={(e) =>
                         updateItem(index, "item_code", e.target.value)
                       }
-                      placeholder="Raw Material Item..."
+                      placeholder={t("erp.raw_material_item")}
                       readOnly={isEdit}
                     />
                   </TableCell>

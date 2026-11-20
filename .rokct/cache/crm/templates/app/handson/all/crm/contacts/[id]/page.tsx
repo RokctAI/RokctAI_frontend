@@ -34,6 +34,7 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import t from "@/app/lib/i18n";
 export default async function ContactDetails({
   params,
 }: {
@@ -91,7 +92,7 @@ export default async function ContactDetails({
         {/* Main Info Card */}
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Details</CardTitle>
+            <CardTitle>{t("crm.details")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Contact Methods */}
@@ -126,7 +127,7 @@ export default async function ContactDetails({
                 <RiBuilding2Line className="w-5 h-5 text-muted-foreground" />
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Organization
+                    {t("crm.organization")}
                   </div>
                   <div className="font-medium text-lg">
                     {contact.company_name}
@@ -201,15 +202,15 @@ export default async function ContactDetails({
           {/* System Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">System Info</CardTitle>
+              <CardTitle className="text-base">{t("crm.system_info")}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground">Created On</span>
+                <span className="text-muted-foreground">{t("crm.created_on")}</span>
                 <span>{new Date(contact.creation).toLocaleString()}</span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground">Last Modified</span>
+                <span className="text-muted-foreground">{t("crm.last_modified")}</span>
                 <span>{new Date(contact.modified).toLocaleString()}</span>
               </div>
             </CardContent>

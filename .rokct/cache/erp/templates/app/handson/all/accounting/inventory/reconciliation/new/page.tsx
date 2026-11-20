@@ -15,10 +15,11 @@
  */
 
 import { StockReconciliationForm } from "@/components/handson/stock-advanced-components";
+import t from "@/app/lib/i18n";
 export default function Page() {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Stock Reconciliation</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("erp.stock_reconciliation")}</h1>
       <StockReconciliationForm />
     </div>
   );

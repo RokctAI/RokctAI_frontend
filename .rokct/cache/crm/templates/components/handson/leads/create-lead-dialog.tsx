@@ -30,6 +30,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import t from "@/app/lib/i18n";
 // We pass meta from the server component to keep the data usage efficient
 export function CreateLeadDialog({ meta }: { meta: DocTypeMeta }) {
   const [open, setOpen] = useState(false);
@@ -38,14 +39,14 @@ export function CreateLeadDialog({ meta }: { meta: DocTypeMeta }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <RiAddLine className="mr-2 h-4 w-4" /> Create Lead
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("crm.create_lead")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Lead</DialogTitle>
+          <DialogTitle>{t("crm.create_new_lead")}</DialogTitle>
           <DialogDescription>
-            Enter the details for the new lead.
+            {t("crm.enter_the_details_for_the_new_lead")}
           </DialogDescription>
         </DialogHeader>
         <GenericForm

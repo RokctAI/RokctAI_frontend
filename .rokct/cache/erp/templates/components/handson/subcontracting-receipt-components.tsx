@@ -35,17 +35,18 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export function SubcontractingReceiptList({ receipts }: { receipts: any[] }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Subcontracting Receipts</h1>
-          <p className="text-muted-foreground">Receive processed items.</p>
+          <h1 className="text-2xl font-bold">{t("erp.subcontracting_receipts")}</h1>
+          <p className="text-muted-foreground">{t("erp.receive_processed_items")}</p>
         </div>
         <Link href="/handson/all/supply_chain/subcontracting/receipt/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Receipt
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_receipt")}
           </Button>
         </Link>
       </div>
@@ -53,11 +54,11 @@ export function SubcontractingReceiptList({ receipts }: { receipts: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Supplier</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.supplier")}</TableHead>
+              <TableHead>{t("erp.date")}</TableHead>
+              <TableHead>{t("erp.total")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -99,11 +100,11 @@ export function SubcontractingReceiptForm() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Subcontracting Receipt</h1>
+      <h1 className="text-2xl font-bold">{t("erp.new_subcontracting_receipt")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Supplier (Job Worker)</Label>
+            <Label>{t("erp.supplier_job_worker")}</Label>
             <Input
               value={supplier}
               onChange={(e) => setSupplier(e.target.value)}
@@ -111,11 +112,11 @@ export function SubcontractingReceiptForm() {
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <Label>Item Code</Label>
+              <Label>{t("erp.item_code")}</Label>
               <Input value={item} onChange={(e) => setItem(e.target.value)} />
             </div>
             <div className="w-24">
-              <Label>Qty</Label>
+              <Label>{t("erp.qty")}</Label>
               <Input
                 type="number"
                 value={qty}
@@ -123,7 +124,7 @@ export function SubcontractingReceiptForm() {
               />
             </div>
             <div className="w-32">
-              <Label>Rate</Label>
+              <Label>{t("erp.rate")}</Label>
               <Input
                 type="number"
                 value={rate}
@@ -131,7 +132,7 @@ export function SubcontractingReceiptForm() {
               />
             </div>
           </div>
-          <Button onClick={handleSubmit}>Create Receipt</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_receipt")}</Button>
         </CardContent>
       </Card>
     </div>

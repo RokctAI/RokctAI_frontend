@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { getOrderReviews } from "@/app/actions/orders/admin/orders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function OrderReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,12 +52,12 @@ export default function OrderReviewsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Order Reviews</h1>
+      <h1 className="text-3xl font-bold">{t("orders.order_reviews")}</h1>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {reviews.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
-            No reviews found.
+            {t("orders.no_reviews_found")}
           </div>
         ) : (
           reviews.map((review) => (

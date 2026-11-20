@@ -45,6 +45,7 @@ import {
 } from "@/app/actions/handson/all/hrms/leave";
 import { getCompanies } from "@/app/actions/handson/all/hrms/companies";
 
+import t from "@/app/lib/i18n";
 export default function ApplyLeavePage() {
   const router = useRouter();
   const [employees, setEmployees] = useState<any[]>([]);
@@ -108,30 +109,30 @@ export default function ApplyLeavePage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Apply for Leave</h1>
+        <h1 className="text-3xl font-bold">{t("erp.apply_for_leave")}</h1>
         <p className="text-muted-foreground">
-          Submit a new leave request for approval.
+          {t("erp.submit_a_new_leave_request_for_approval")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Leave Details</CardTitle>
+          <CardTitle>{t("erp.leave_details")}</CardTitle>
           <CardDescription>
-            Fill in the dates and type of leave required.
+            {t("erp.fill_in_the_dates_and_type_of_leave_required")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label>Employee</Label>
+              <Label>{t("erp.employee")}</Label>
               <Select
                 value={selectedEmployee}
                 onValueChange={setSelectedEmployee}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Employee" />
+                  <SelectValue placeholder={t("erp.select_employee")} />
                 </SelectTrigger>
                 <SelectContent>
                   {employees.map((emp) => (
@@ -144,14 +145,14 @@ export default function ApplyLeavePage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Leave Type</Label>
+              <Label>{t("erp.leave_type")}</Label>
               <Select
                 value={selectedType}
                 onValueChange={setSelectedType}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Leave Type" />
+                  <SelectValue placeholder={t("erp.select_leave_type")} />
                 </SelectTrigger>
                 <SelectContent>
                   {leaveTypes.map((type) => (
@@ -165,7 +166,7 @@ export default function ApplyLeavePage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>From Date</Label>
+                <Label>{t("erp.from_date")}</Label>
                 <Input
                   type="date"
                   required
@@ -174,7 +175,7 @@ export default function ApplyLeavePage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>To Date</Label>
+                <Label>{t("erp.to_date")}</Label>
                 <Input
                   type="date"
                   required
@@ -190,11 +191,11 @@ export default function ApplyLeavePage() {
                 checked={halfDay}
                 onCheckedChange={(checked) => setHalfDay(checked as boolean)}
               />
-              <Label htmlFor="half_day">Half Day</Label>
+              <Label htmlFor="half_day">{t("erp.half_day")}</Label>
             </div>
 
             <div className="space-y-2">
-              <Label>Reason</Label>
+              <Label>{t("erp.reason")}</Label>
               <Textarea
                 name="reason"
                 placeholder="e.g. Sick leave, Personal commitments..."
@@ -208,7 +209,7 @@ export default function ApplyLeavePage() {
                 variant="outline"
                 onClick={() => router.back()}
               >
-                Cancel
+                {t("erp.cancel")}
               </Button>
               <Button type="submit" disabled={loading}>
                 {loading ? "Submitting..." : "Submit Application"}

@@ -18,6 +18,7 @@
 
 import React from "react";
 
+import t from "@/app/lib/i18n";
 // Based on the DealTask model from backend/slingbolt.com/app/Models/DealTask.php
 export interface DealTaskProps {
   id: number;
@@ -48,7 +49,7 @@ export function DealTask({ task }: { task: DealTaskProps }) {
         </span>
       </div>
       <p className="text-sm text-zinc-300 mb-4">
-        A CRM-related task for a deal.
+        {t("agent.a_crm_related_task_for_a_deal")}
       </p>
       <div className="flex items-center justify-end">
         <div className="flex gap-2">
@@ -57,7 +58,7 @@ export function DealTask({ task }: { task: DealTaskProps }) {
               onClick={() => task.onAccept?.(task.id)}
               className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm"
             >
-              Accept
+              {t("agent.accept")}
             </button>
           )}
           {task.onDone && (
@@ -65,11 +66,11 @@ export function DealTask({ task }: { task: DealTaskProps }) {
               onClick={() => task.onDone?.(task.id)}
               className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm"
             >
-              Done
+              {t("agent.done")}
             </button>
           )}
           <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-1 rounded-md text-sm">
-            View Deal
+            {t("agent.view_deal")}
           </button>
         </div>
       </div>

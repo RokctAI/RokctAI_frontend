@@ -38,6 +38,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+import t from "@/app/lib/i18n";
 export default function AdminFAQsPage() {
   const [faqs, setFaqs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,21 +101,21 @@ export default function AdminFAQsPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">FAQs</h1>
+        <h1 className="text-3xl font-bold">{t("base.faqs")}</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <RiAddLine className="mr-2 size-4" />
-              Add FAQ
+              {t("base.add_faq")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add FAQ</DialogTitle>
+              <DialogTitle>{t("base.add_faq")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label>Question</Label>
+                <Label>{t("base.question")}</Label>
                 <Input
                   value={formData.question}
                   onChange={(e) =>
@@ -123,7 +124,7 @@ export default function AdminFAQsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Answer</Label>
+                <Label>{t("base.answer")}</Label>
                 <Textarea
                   value={formData.answer}
                   onChange={(e) =>
@@ -132,7 +133,7 @@ export default function AdminFAQsPage() {
                 />
               </div>
               <Button onClick={handleCreate} className="w-full">
-                Create
+                {t("base.create")}
               </Button>
             </div>
           </DialogContent>
@@ -142,7 +143,7 @@ export default function AdminFAQsPage() {
       <div className="space-y-4">
         {faqs.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            No FAQs found.
+            {t("base.no_faqs_found")}
           </div>
         ) : (
           faqs.map((faq) => (

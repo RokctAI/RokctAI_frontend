@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { createApprovalLink, createProof, sendProof } from "@/app/actions/studio/proofs/actions";
 import { Button } from "@/components/ui/button";
 
+import t from "@/app/lib/i18n";
 /** Proof + client sign-off for one candidate: download or email the proof. */
 export function ProofPanel({ candidate }: { candidate: string }) {
   const [approval, setApproval] = useState<string | null>(null);
@@ -59,20 +60,20 @@ export function ProofPanel({ candidate }: { candidate: string }) {
           value={recipients}
           onChange={(e) => setRecipients(e.target.value)}
         />
-        <Button onClick={email} disabled={!recipients.trim()}>Email proof</Button>
-        <Button variant="outline" onClick={download}>Download proof</Button>
+        <Button onClick={email} disabled={!recipients.trim()}>{t("studio.email_proof")}</Button>
+        <Button variant="outline" onClick={download}>{t("studio.download_proof")}</Button>
       </div>
       <textarea
         className="w-full rounded-md border p-3"
         rows={2}
-        placeholder="Message to the client (optional)"
+        placeholder={t("studio.message_to_the_client_optional")}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
       {links && (
         <div className="flex gap-4">
-          <a className="underline" href={links.proof_url}>Proof PDF</a>
-          <a className="underline" href={links.review_url}>Review page</a>
+          <a className="underline" href={links.proof_url}>{t("studio.proof_pdf")}</a>
+          <a className="underline" href={links.review_url}>{t("studio.review_page")}</a>
         </div>
       )}
     </div>

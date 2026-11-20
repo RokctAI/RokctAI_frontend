@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
+import t from "@/app/lib/i18n";
 export default function ParcelOrderDetailsPage({
   params,
 }: {
@@ -106,7 +107,7 @@ export default function ParcelOrderDetailsPage({
             <RiArrowLeftLine className="size-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Order Details</h1>
+        <h1 className="text-3xl font-bold">{t("orders.order_details")}</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -145,7 +146,7 @@ export default function ParcelOrderDetailsPage({
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Pickup From
+                    {t("orders.pickup_from")}
                   </p>
                   <p className="font-medium">{order.username_from}</p>
                   <p className="text-sm">{order.phone_from}</p>
@@ -163,7 +164,7 @@ export default function ParcelOrderDetailsPage({
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Deliver To
+                    {t("orders.deliver_to")}
                   </p>
                   <p className="font-medium">{order.username_to}</p>
                   <p className="text-sm">{order.phone_to}</p>
@@ -184,7 +185,7 @@ export default function ParcelOrderDetailsPage({
               <div className="flex items-center gap-3">
                 <RiBox3Line className="size-5 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">Type</p>
+                  <p className="text-sm font-medium">{t("orders.type")}</p>
                   <p className="text-muted-foreground">
                     {order.parcel_type || "Standard"}
                   </p>
@@ -193,7 +194,7 @@ export default function ParcelOrderDetailsPage({
               <div className="flex items-center gap-3">
                 <RiTimeLine className="size-5 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">Delivery Time</p>
+                  <p className="text-sm font-medium">{t("orders.delivery_time")}</p>
                   <p className="text-muted-foreground">
                     {order.delivery_date
                       ? format(new Date(order.delivery_date), "MMM d")
@@ -206,7 +207,7 @@ export default function ParcelOrderDetailsPage({
 
             {order.note && (
               <div className="bg-yellow-50 p-3 rounded-md border border-yellow-100 text-yellow-800 text-sm">
-                <span className="font-semibold">Note:</span> {order.note}
+                <span className="font-semibold">{t("orders.note")}</span> {order.note}
               </div>
             )}
           </CardContent>
@@ -219,7 +220,7 @@ export default function ParcelOrderDetailsPage({
                 disabled={updating}
               >
                 <RiCloseCircleLine className="mr-2 size-4" />
-                Cancel Order
+                {t("orders.cancel_order")}
               </Button>
             )}
 
@@ -240,24 +241,24 @@ export default function ParcelOrderDetailsPage({
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Payment</CardTitle>
+              <CardTitle className="text-lg">{t("orders.payment")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Delivery Fee</span>
+                <span className="text-muted-foreground">{t("orders.delivery_fee")}</span>
                 <span>
                   {order.currency} {order.delivery_fee}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Tax</span>
+                <span className="text-muted-foreground">{t("orders.tax")}</span>
                 <span>
                   {order.currency} {order.tax}
                 </span>
               </div>
               <Separator />
               <div className="flex justify-between font-bold text-lg">
-                <span>Total</span>
+                <span>{t("orders.total")}</span>
                 <span>
                   {order.currency} {order.total_price}
                 </span>
@@ -268,7 +269,7 @@ export default function ParcelOrderDetailsPage({
           {order.delivery_man && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Delivery Agent</CardTitle>
+                <CardTitle className="text-lg">{t("orders.delivery_agent")}</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center gap-3">
                 <div className="size-10 rounded-full bg-gray-100 flex items-center justify-center">

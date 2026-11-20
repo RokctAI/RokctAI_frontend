@@ -29,6 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function WalletsPage() {
   const [wallets, setWallets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,15 +50,15 @@ export default function WalletsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Wallets</h1>
+      <h1 className="text-3xl font-bold">{t("wallet.wallets")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead className="text-right">Balance</TableHead>
+              <TableHead>{t("wallet.user")}</TableHead>
+              <TableHead>{t("wallet.type")}</TableHead>
+              <TableHead className="text-right">{t("wallet.balance")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -73,7 +74,7 @@ export default function WalletsPage() {
                   colSpan={3}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No wallets found.
+                  {t("wallet.no_wallets_found")}
                 </TableCell>
               </TableRow>
             ) : (

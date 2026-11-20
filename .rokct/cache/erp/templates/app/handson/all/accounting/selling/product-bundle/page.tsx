@@ -17,13 +17,14 @@
 import { getProductBundles } from "@/app/actions/handson/all/accounting/selling/extras";
 import { SimpleList } from "@/components/handson/commercial-extras-components";
 import { TableRow, TableCell } from "@/components/ui/table";
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 export default async function Page() {
   const data = await getProductBundles();
   return (
     <div className="p-6">
       <SimpleList
-        title="Product Bundles"
+        title={t("erp.product_bundles")}
         items={data}
         newItemUrl="/handson/all/commercial/selling/product-bundle/new"
         headers={["Bundle Item", "Description"]}

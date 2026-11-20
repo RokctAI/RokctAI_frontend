@@ -55,6 +55,7 @@ import {
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 import { Badge } from "@/components/ui/badge";
 
+import tr from "@/app/lib/i18n";
 export default function GrievancePage() {
   const [grievances, setGrievances] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
@@ -103,27 +104,27 @@ export default function GrievancePage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Employee Grievances</h1>
+          <h1 className="text-3xl font-bold">{tr("erp.employee_grievances")}</h1>
           <p className="text-muted-foreground">
-            Internal complaints and resolution tracking.
+            {tr("erp.internal_complaints_and_resolution_tracking")}
           </p>
         </div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Complaint
+              <RiAddLine className="mr-2 h-4 w-4" /> {tr("erp.new_complaint")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Submit Grievance</DialogTitle>
+              <DialogTitle>{tr("erp.submit_grievance")}</DialogTitle>
             </DialogHeader>
             <form onSubmit={onSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label>Complainant (Employee)</Label>
+                <Label>{tr("erp.complainant_employee")}</Label>
                 <Select name="employee" required>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select Employee" />
+                    <SelectValue placeholder={tr("erp.select_employee")} />
                   </SelectTrigger>
                   <SelectContent>
                     {employees.map((emp) => (
@@ -135,7 +136,7 @@ export default function GrievancePage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Date</Label>
+                <Label>{tr("erp.date")}</Label>
                 <Input
                   name="grievance_date"
                   type="date"
@@ -144,10 +145,10 @@ export default function GrievancePage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Grievance Type</Label>
+                <Label>{tr("erp.grievance_type")}</Label>
                 <Select name="grievance_type" required>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select Type" />
+                    <SelectValue placeholder={tr("erp.select_type")} />
                   </SelectTrigger>
                   <SelectContent>
                     {types.map((t) => (
@@ -159,10 +160,10 @@ export default function GrievancePage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Grievance Against (Employee)</Label>
+                <Label>{tr("erp.grievance_against_employee")}</Label>
                 <Select name="grievance_against" required>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select Accused Employee" />
+                    <SelectValue placeholder={tr("erp.select_accused_employee")} />
                   </SelectTrigger>
                   <SelectContent>
                     {employees.map((emp) => (
@@ -174,7 +175,7 @@ export default function GrievancePage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Subject</Label>
+                <Label>{tr("erp.subject")}</Label>
                 <Input
                   name="subject"
                   required
@@ -182,14 +183,14 @@ export default function GrievancePage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Details</Label>
+                <Label>{tr("erp.details")}</Label>
                 <Textarea
                   name="description"
-                  placeholder="Describe the issue..."
+                  placeholder={tr("erp.describe_the_issue")}
                 />
               </div>
               <Button type="submit" className="w-full">
-                Submit
+                {tr("erp.submit")}
               </Button>
             </form>
           </DialogContent>
@@ -198,16 +199,16 @@ export default function GrievancePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Case History</CardTitle>
+          <CardTitle>{tr("erp.case_history")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
-                <TableHead>Subject</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{tr("erp.employee")}</TableHead>
+                <TableHead>{tr("erp.subject")}</TableHead>
+                <TableHead>{tr("erp.date")}</TableHead>
+                <TableHead>{tr("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -242,7 +243,7 @@ export default function GrievancePage() {
                     colSpan={4}
                     className="text-center text-muted-foreground h-24"
                   >
-                    No grievances found.
+                    {tr("erp.no_grievances_found")}
                   </TableCell>
                 </TableRow>
               )}

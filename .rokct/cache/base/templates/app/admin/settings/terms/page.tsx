@@ -134,15 +134,15 @@ export default function TermsPage() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">
-            Terms and Conditions
+            {t("base.terms_and_conditions")}
           </h2>
           <p className="text-muted-foreground">
-            Manage Terms and Conditions for your platform.
+            {t("base.manage_terms_and_conditions_for_your_platform")}
           </p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
           <RiAddLine className="mr-2 size-4" />
-          Add Term
+          {t("base.add_term")}
         </Button>
       </div>
 
@@ -192,7 +192,7 @@ export default function TermsPage() {
         ))}
         {terms.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
-            No Terms found. Create one to get started.
+            {t("base.no_terms_found_create_one_to_get_started")}
           </div>
         )}
       </div>
@@ -213,7 +213,7 @@ export default function TermsPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Title</Label>
+              <Label>{t("base.title")}</Label>
               <Input
                 value={formData.title}
                 onChange={(e) =>
@@ -223,7 +223,7 @@ export default function TermsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Terms Content</Label>
+              <Label>{t("base.terms_content")}</Label>
               <Textarea
                 value={formData.terms}
                 onChange={(e) =>
@@ -241,15 +241,15 @@ export default function TermsPage() {
                     setFormData({ ...formData, disabled: checked ? 0 : 1 })
                   }
                 />
-                <Label>Active</Label>
+                <Label>{t("base.active")}</Label>
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
+              {t("base.cancel")}
             </Button>
-            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleSave}>{t("base.save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

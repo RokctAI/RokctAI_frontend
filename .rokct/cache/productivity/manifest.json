@@ -1,6 +1,6 @@
 {
   "name": "productivity_sdk",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "installs": [
     {
       "from": "templates/app/handson/all/projects",
@@ -69,6 +69,10 @@
     {
       "from": "templates/components/handson/work-item-card.tsx",
       "to": "components/handson/work-item-card.tsx"
+    },
+    {
+      "from": "templates/app/lib/i18n/sdk/productivity.json",
+      "to": "app/lib/i18n/sdk/productivity.json"
     }
   ],
   "dependencies": {

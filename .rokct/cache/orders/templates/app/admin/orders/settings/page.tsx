@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function OrderStatusSettingsPage() {
   const [statuses, setStatuses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,18 +52,18 @@ export default function OrderStatusSettingsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Order Status Settings</h1>
+      <h1 className="text-3xl font-bold">{t("orders.order_status_settings")}</h1>
       <p className="text-muted-foreground">
-        Manage the available statuses for orders.
+        {t("orders.manage_the_available_statuses_for_orders")}
       </p>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Status Name</TableHead>
-              <TableHead>Color</TableHead>
-              <TableHead>Active</TableHead>
+              <TableHead>{t("orders.status_name")}</TableHead>
+              <TableHead>{t("orders.color")}</TableHead>
+              <TableHead>{t("orders.active")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -78,7 +79,7 @@ export default function OrderStatusSettingsPage() {
                   colSpan={3}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No order statuses found.
+                  {t("orders.no_order_statuses_found")}
                 </TableCell>
               </TableRow>
             ) : (

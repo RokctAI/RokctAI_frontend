@@ -51,6 +51,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export function StockEntryForm({
   initialData,
   isEdit = false,
@@ -157,7 +158,7 @@ export function StockEntryForm({
     }
   };
 
-  if (!isClient) return <div>Loading...</div>;
+  if (!isClient) return <div>{t("erp.loading")}</div>;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto">
@@ -174,44 +175,44 @@ export function StockEntryForm({
         </div>
         {!isEdit && (
           <Button type="submit" disabled={loading}>
-            <RiSaveLine className="mr-2 h-4 w-4" /> Save
+            <RiSaveLine className="mr-2 h-4 w-4" /> {t("erp.save")}
           </Button>
         )}
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
+          <CardTitle>{t("erp.details")}</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Entry Type</Label>
+            <Label>{t("erp.entry_type")}</Label>
             <Select value={type} onValueChange={setType} disabled={isEdit}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Material Issue">
-                  Material Issue (Out)
+                  {t("erp.material_issue_out")}
                 </SelectItem>
                 <SelectItem value="Material Receipt">
-                  Material Receipt (In)
+                  {t("erp.material_receipt_in")}
                 </SelectItem>
                 <SelectItem value="Material Transfer">
-                  Material Transfer
+                  {t("erp.material_transfer")}
                 </SelectItem>
-                <SelectItem value="Manufacture">Manufacture</SelectItem>
+                <SelectItem value="Manufacture">{t("erp.manufacture")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Company</Label>
+            <Label>{t("erp.company")}</Label>
             <Select
               value={company}
               onValueChange={setCompany}
               disabled={isEdit}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Company" />
+                <SelectValue placeholder={t("erp.select_company")} />
               </SelectTrigger>
               <SelectContent>
                 {companies.map((c) => (
@@ -226,10 +227,10 @@ export function StockEntryForm({
       </Card>
       <Card>
         <CardHeader className="flex flex-row justify-between">
-          <CardTitle>Items</CardTitle>
+          <CardTitle>{t("erp.items")}</CardTitle>
           {!isEdit && (
             <Button type="button" size="sm" onClick={addItem}>
-              <RiAddLine className="h-4 w-4" /> Add
+              <RiAddLine className="h-4 w-4" /> {t("erp.add")}
             </Button>
           )}
         </CardHeader>
@@ -237,13 +238,13 @@ export function StockEntryForm({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Item</TableHead>
-                <TableHead>Qty</TableHead>
+                <TableHead>{t("erp.item")}</TableHead>
+                <TableHead>{t("erp.qty")}</TableHead>
                 {type !== "Material Receipt" && (
-                  <TableHead>Source Warehouse</TableHead>
+                  <TableHead>{t("erp.source_warehouse")}</TableHead>
                 )}
                 {type !== "Material Issue" && (
-                  <TableHead>Target Warehouse</TableHead>
+                  <TableHead>{t("erp.target_warehouse")}</TableHead>
                 )}
                 <TableHead></TableHead>
               </TableRow>
@@ -258,7 +259,7 @@ export function StockEntryForm({
                         updateItem(i, "item_code", e.target.value)
                       }
                       readOnly={isEdit}
-                      placeholder="Item Code"
+                      placeholder={t("erp.item_code")}
                     />
                   </TableCell>
                   <TableCell>
@@ -279,7 +280,7 @@ export function StockEntryForm({
                         disabled={isEdit}
                       >
                         <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Source" />
+                          <SelectValue placeholder={t("erp.source")} />
                         </SelectTrigger>
                         <SelectContent>
                           {warehouses.map((w) => (
@@ -300,7 +301,7 @@ export function StockEntryForm({
                         disabled={isEdit}
                       >
                         <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Target" />
+                          <SelectValue placeholder={t("erp.target")} />
                         </SelectTrigger>
                         <SelectContent>
                           {warehouses.map((w) => (

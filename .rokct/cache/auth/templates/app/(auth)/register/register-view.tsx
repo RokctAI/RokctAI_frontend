@@ -55,6 +55,7 @@ import { SubmitButton } from "@/components/custom/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export interface RegisterViewProps {
   copy: Required<RegisterCopy>;
   /** The config's fields without their option loaders (a server component cannot pass functions). */
@@ -139,7 +140,7 @@ function StepRunner({
             onClick={advance}
             className="font-semibold text-primary hover:text-primary/80"
           >
-            Skip
+            {t("auth.skip")}
           </button>
         )}
       </div>
@@ -206,7 +207,7 @@ function VerifyEmailStep({
         below to finish creating your account.
       </p>
       <div className="grid gap-2">
-        <Label htmlFor="verification_code">Verification code</Label>
+        <Label htmlFor="verification_code">{t("auth.verification_code")}</Label>
         <Input
           id="verification_code"
           name="verification_code"
@@ -223,7 +224,7 @@ function VerifyEmailStep({
         disabled={busy || !code.trim()}
         className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 rounded-lg shadow-md disabled:opacity-60"
       >
-        Verify email
+        {t("auth.verify_email")}
       </button>
       {error && <p className="text-red-500 text-sm text-center">{error}</p>}
       {notice && <p className="text-muted-foreground text-sm text-center">{notice}</p>}
@@ -234,7 +235,7 @@ function VerifyEmailStep({
           disabled={busy}
           className="font-semibold text-primary hover:text-primary/80 disabled:opacity-60"
         >
-          Resend code
+          {t("auth.resend_code")}
         </button>
       </div>
     </form>
@@ -352,7 +353,7 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled, next = null }: R
                   )}
                   {state?.status === "user_exists" && (
                     <p className="text-red-500 text-sm text-center">
-                      User already exists.
+                      {t("auth.user_already_exists")}
                     </p>
                   )}
                 </div>

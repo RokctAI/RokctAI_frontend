@@ -38,6 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import t from "@/app/lib/i18n";
 interface ProspectFormProps {
   initialData?: any;
   isEdit?: boolean;
@@ -136,7 +137,7 @@ export function ProspectForm({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Basic Details</CardTitle>
+            <CardTitle>{t("crm.basic_details")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -150,7 +151,7 @@ export function ProspectForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="website">Website</Label>
+              <Label htmlFor="website">{t("crm.website")}</Label>
               <Input
                 id="website"
                 placeholder="https://..."
@@ -160,7 +161,7 @@ export function ProspectForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="customerGroup">Customer Group</Label>
+              <Label htmlFor="customerGroup">{t("crm.customer_group")}</Label>
               <Input
                 id="customerGroup"
                 value={customerGroup}
@@ -170,7 +171,7 @@ export function ProspectForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="territory">Territory</Label>
+              <Label htmlFor="territory">{t("crm.territory")}</Label>
               <Input
                 id="territory"
                 value={territory}
@@ -183,11 +184,11 @@ export function ProspectForm({
 
         <Card>
           <CardHeader>
-            <CardTitle>Market Data</CardTitle>
+            <CardTitle>{t("crm.market_data")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="industry">Industry</Label>
+              <Label htmlFor="industry">{t("crm.industry")}</Label>
               <Input
                 id="industry"
                 value={industry}
@@ -197,7 +198,7 @@ export function ProspectForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="marketSegment">Market Segment</Label>
+              <Label htmlFor="marketSegment">{t("crm.market_segment")}</Label>
               <Input
                 id="marketSegment"
                 value={marketSegment}
@@ -207,10 +208,10 @@ export function ProspectForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="employees">No. of Employees</Label>
+              <Label htmlFor="employees">{t("crm.no_of_employees")}</Label>
               <Select value={employees} onValueChange={setEmployees}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Range" />
+                  <SelectValue placeholder={t("crm.select_range")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1-10">1-10</SelectItem>
@@ -224,7 +225,7 @@ export function ProspectForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="revenue">Annual Revenue</Label>
+              <Label htmlFor="revenue">{t("crm.annual_revenue")}</Label>
               <Input
                 id="revenue"
                 type="number"

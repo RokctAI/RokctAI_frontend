@@ -15,10 +15,11 @@
  */
 
 import { SupplierQuotationForm } from "@/components/handson/buying-advanced-components";
+import t from "@/app/lib/i18n";
 export default function Page() {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">New Supplier Quotation</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("erp.new_supplier_quotation")}</h1>
       <SupplierQuotationForm />
     </div>
   );

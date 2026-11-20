@@ -37,6 +37,7 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 // --- GENERIC LIST ---
 export function SimpleList({
   title,
@@ -54,7 +55,7 @@ export function SimpleList({
         {newItemUrl && (
           <Link href={newItemUrl}>
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new")}
             </Button>
           </Link>
         )}
@@ -96,11 +97,11 @@ export function StockReconciliationForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Item</Label>
+            <Label>{t("erp.item")}</Label>
             <Input value={item} onChange={(e) => setItem(e.target.value)} />
           </div>
           <div>
-            <Label>Actual Qty</Label>
+            <Label>{t("erp.actual_qty")}</Label>
             <Input
               type="number"
               value={qty}
@@ -108,14 +109,14 @@ export function StockReconciliationForm() {
             />
           </div>
           <div>
-            <Label>Rate</Label>
+            <Label>{t("erp.rate")}</Label>
             <Input
               type="number"
               value={rate}
               onChange={(e) => setRate(Number(e.target.value))}
             />
           </div>
-          <Button onClick={handleSubmit}>Reconcile</Button>
+          <Button onClick={handleSubmit}>{t("erp.reconcile")}</Button>
         </CardContent>
       </Card>
     </div>
@@ -142,10 +143,10 @@ export function LandedCostForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Purchase Receipt</Label>
+            <Label>{t("erp.purchase_receipt")}</Label>
             <Input value={ref} onChange={(e) => setRef(e.target.value)} />
           </div>
-          <Button onClick={handleSubmit}>Create Voucher</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_voucher")}</Button>
         </CardContent>
       </Card>
     </div>

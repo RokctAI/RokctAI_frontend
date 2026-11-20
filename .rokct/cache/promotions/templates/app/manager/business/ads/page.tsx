@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import t from "@/app/lib/i18n";
 export default function AdsPage() {
   const [packages, setPackages] = useState<any[]>([]);
   const [purchasedAds, setPurchasedAds] = useState<any[]>([]);
@@ -92,16 +93,16 @@ export default function AdsPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Ad Packages</h1>
+        <h1 className="text-3xl font-bold">{t("promotions.ad_packages")}</h1>
         <p className="text-muted-foreground">
-          Boost your shop's visibility with our ad packages.
+          {t("promotions.boost_your_shop_s_visibility_with_our_ad_package")}
         </p>
       </div>
 
       <Tabs defaultValue="available" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="available">Available Packages</TabsTrigger>
-          <TabsTrigger value="purchased">My Ads</TabsTrigger>
+          <TabsTrigger value="available">{t("promotions.available_packages")}</TabsTrigger>
+          <TabsTrigger value="purchased">{t("promotions.my_ads")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="available" className="space-y-4">
@@ -128,7 +129,7 @@ export default function AdsPage() {
                     ) : (
                       <>
                         <RiAddLine className="mr-2 size-4" />
-                        Purchase
+                        {t("promotions.purchase")}
                       </>
                     )}
                   </Button>
@@ -142,7 +143,7 @@ export default function AdsPage() {
           <div className="grid gap-4">
             {purchasedAds.length === 0 ? (
               <div className="text-center text-muted-foreground py-8">
-                No active ads found.
+                {t("promotions.no_active_ads_found")}
               </div>
             ) : (
               purchasedAds.map((ad) => (
@@ -164,7 +165,7 @@ export default function AdsPage() {
                         </span>
                       </div>
                     </div>
-                    <Badge variant="secondary">Active</Badge>
+                    <Badge variant="secondary">{t("promotions.active")}</Badge>
                   </CardContent>
                 </Card>
               ))

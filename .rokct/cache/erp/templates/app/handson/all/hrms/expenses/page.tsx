@@ -39,6 +39,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { getExpenseClaims } from "@/app/actions/handson/all/hrms/expenses";
 
+import t from "@/app/lib/i18n";
 export default function ExpensesPage() {
   const [claims, setClaims] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,40 +79,40 @@ export default function ExpensesPage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center">
             <RiReceiptLine className="mr-3 h-8 w-8" />
-            Expense Claims
+            {t("erp.expense_claims")}
           </h1>
           <p className="text-muted-foreground">
-            Manage employee expense reimbursements.
+            {t("erp.manage_employee_expense_reimbursements")}
           </p>
         </div>
         <Link href="/handson/all/hr/expenses/new">
           <Button>
             <RiAddLine className="mr-2 h-4 w-4" />
-            New Claim
+            {t("erp.new_claim")}
           </Button>
         </Link>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Claims History</CardTitle>
-          <CardDescription>Recent expense claims submitted.</CardDescription>
+          <CardTitle>{t("erp.claims_history")}</CardTitle>
+          <CardDescription>{t("erp.recent_expense_claims_submitted")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Total Amount</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.date")}</TableHead>
+                <TableHead className="text-right">{t("erp.total_amount")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-4">
-                    Loading...
+                    {t("erp.loading")}
                   </TableCell>
                 </TableRow>
               ) : claims.length > 0 ? (
@@ -151,7 +152,7 @@ export default function ExpensesPage() {
                     colSpan={4}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No expense claims found.
+                    {t("erp.no_expense_claims_found")}
                   </TableCell>
                 </TableRow>
               )}

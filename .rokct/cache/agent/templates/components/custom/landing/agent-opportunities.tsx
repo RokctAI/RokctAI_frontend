@@ -31,7 +31,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { RiArrowDownSLine, RiExternalLinkLine, RiLoader4Line, RiCloseLine } from "@remixicon/react";
+import { RiArrowDownSLine, RiExternalLinkLine, RiCloseLine } from "@remixicon/react";
 
 import { searchPublicOpportunities } from "@/app/actions/ai/opportunities";
 import t from "@/app/lib/i18n";
@@ -235,7 +235,7 @@ export default function AgentOpportunitiesSection({
             <div className="absolute top-4 right-4 flex items-center gap-2 z-20">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-[20px] hover:text-zinc-900 dark:hover:text-white transition-all text-sm font-medium border border-zinc-200 dark:border-zinc-700">
+                  <button className="flex items-center gap-1 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-[20px] hover:text-zinc-900 dark:hover:text-white transition-colors text-sm font-medium border border-zinc-200 dark:border-zinc-700">
                     {activeFilter} <RiArrowDownSLine size={14} />
                   </button>
                 </DropdownMenuTrigger>
@@ -269,8 +269,7 @@ export default function AgentOpportunitiesSection({
           <div className="max-h-[400px] overflow-y-auto p-4 space-y-6">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-10 space-y-4">
-                <RiLoader4Line className="w-8 h-8 animate-spin text-purple-500" />
-                <p className="text-zinc-500 dark:text-zinc-400 animate-pulse">
+                <p className="text-zinc-500 dark:text-zinc-400">
                   {LOADING_MESSAGES[loadingStep]}
                 </p>
               </div>
@@ -325,7 +324,7 @@ export default function AgentOpportunitiesSection({
               <div className="py-10 text-center pr-8">
                 {unrelatedMode ? (
                   <p className="text-zinc-500 dark:text-zinc-400 font-medium">
-                    ROK is available when you are logged in
+                    {t("agent.rok_is_available_when_you_are_logged_in")}
                   </p>
                 ) : (
                   <>

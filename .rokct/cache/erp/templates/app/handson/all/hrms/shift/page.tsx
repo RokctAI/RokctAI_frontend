@@ -43,6 +43,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { getShiftAssignments } from "@/app/actions/handson/all/hrms/shifts";
 
+import t from "@/app/lib/i18n";
 export default function ShiftPage() {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,41 +64,41 @@ export default function ShiftPage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center">
             <RiCalendarScheduleLine className="mr-3 h-8 w-8" />
-            Shift Management
+            {t("erp.shift_management")}
           </h1>
           <p className="text-muted-foreground">
-            Manage employee rosters and shift schedules.
+            {t("erp.manage_employee_rosters_and_shift_schedules")}
           </p>
         </div>
         <Link href="/handson/all/hr/shift/new">
           <Button>
             <RiAddLine className="mr-2 h-4 w-4" />
-            Assign Shift
+            {t("erp.assign_shift")}
           </Button>
         </Link>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Roster Overview</CardTitle>
-          <CardDescription>Upcoming shift assignments.</CardDescription>
+          <CardTitle>{t("erp.roster_overview")}</CardTitle>
+          <CardDescription>{t("erp.upcoming_shift_assignments")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
-                <TableHead>Shift Type</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>End Date</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.shift_type")}</TableHead>
+                <TableHead>{t("erp.start_date")}</TableHead>
+                <TableHead>{t("erp.end_date")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-4">
-                    Loading...
+                    {t("erp.loading")}
                   </TableCell>
                 </TableRow>
               ) : assignments.length > 0 ? (
@@ -122,7 +123,7 @@ export default function ShiftPage() {
                         format(new Date(assign.end_date), "MMM d, yyyy")
                       ) : (
                         <span className="text-muted-foreground italic">
-                          Ongoing
+                          {t("erp.ongoing")}
                         </span>
                       )}
                     </TableCell>
@@ -143,7 +144,7 @@ export default function ShiftPage() {
                     colSpan={5}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No active shift assignments.
+                    {t("erp.no_active_shift_assignments")}
                   </TableCell>
                 </TableRow>
               )}

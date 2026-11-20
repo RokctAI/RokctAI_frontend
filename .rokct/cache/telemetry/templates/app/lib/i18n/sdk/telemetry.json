@@ -1,0 +1,50 @@
+{
+  "en": {
+    "telemetry": {
+      "active_products": "Active Products",
+      "active_orders": "Active orders",
+      "analytics_reports": "Analytics & Reports",
+      "best_performing_items": "Best performing items",
+      "commission": "Commission",
+      "delivered_orders": "Delivered Orders",
+      "delivery_fees": "Delivery Fees",
+      "earnings_by_category": "Earnings by category",
+      "from_delivered_orders": "From delivered orders",
+      "in_progress": "In Progress",
+      "no_data_available": "No data available.",
+      "no_sales_data_available": "No sales data available",
+      "overview_report": "Overview Report",
+      "revenue_breakdown": "Revenue Breakdown",
+      "select_a_report_to_view_detailed_analytics": "Select a report to view detailed analytics.",
+      "successfully_completed": "Successfully completed",
+      "tax_collected": "Tax Collected",
+      "top_selling_products": "Top Selling Products",
+      "total_earned": "Total Earned",
+      "view_your_shop_s_performance_metrics_and_sales_d": "View your shop's performance metrics and sales data."
+    }
+  },
+  "af": {
+    "telemetry": {
+      "active_products": "Aktiewe produkte",
+      "active_orders": "Aktiewe bestellings",
+      "analytics_reports": "Ontleding en verslae",
+      "best_performing_items": "Beste presterende items",
+      "commission": "Kommissie",
+      "delivered_orders": "Afgelewerde bestellings",
+      "delivery_fees": "Afleweringsfooie",
+      "earnings_by_category": "Verdienste per kategorie",
+      "from_delivered_orders": "Uit afgelewerde bestellings",
+      "in_progress": "Aan die gang",
+      "no_data_available": "Geen data beskikbaar nie.",
+      "no_sales_data_available": "Geen verkoopsdata beskikbaar nie",
+      "overview_report": "Oorsigverslag",
+      "revenue_breakdown": "Inkomste-uiteensetting",
+      "select_a_report_to_view_detailed_analytics": "Kies 'n verslag om gedetailleerde ontleding te sien.",
+      "successfully_completed": "Suksesvol voltooi",
+      "tax_collected": "Belasting ingevorder",
+      "top_selling_products": "Topverkoper-produkte",
+      "total_earned": "Totaal verdien",
+      "view_your_shop_s_performance_metrics_and_sales_d": "Sien jou winkel se prestasiemaatstawwe en verkoopsdata."
+    }
+  }
+}

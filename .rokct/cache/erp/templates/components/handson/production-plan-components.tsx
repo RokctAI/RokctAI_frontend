@@ -35,17 +35,18 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export function ProductionPlanList({ plans }: { plans: any[] }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Production Plans</h1>
-          <p className="text-muted-foreground">Plan manufacturing batches.</p>
+          <h1 className="text-2xl font-bold">{t("erp.production_plans")}</h1>
+          <p className="text-muted-foreground">{t("erp.plan_manufacturing_batches")}</p>
         </div>
         <Link href="/handson/all/supply_chain/manufacturing/production-plan/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Plan
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_plan")}
           </Button>
         </Link>
       </div>
@@ -53,10 +54,10 @@ export function ProductionPlanList({ plans }: { plans: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Company</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.company")}</TableHead>
+              <TableHead>{t("erp.date")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -96,16 +97,16 @@ export function ProductionPlanForm() {
 
   return (
     <div className="max-w-xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Production Plan</h1>
+      <h1 className="text-2xl font-bold">{t("erp.new_production_plan")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div className="flex gap-4">
             <div className="flex-1">
-              <Label>Item Code</Label>
+              <Label>{t("erp.item_code")}</Label>
               <Input value={item} onChange={(e) => setItem(e.target.value)} />
             </div>
             <div className="w-32">
-              <Label>Planned Qty</Label>
+              <Label>{t("erp.planned_qty")}</Label>
               <Input
                 type="number"
                 value={qty}
@@ -113,7 +114,7 @@ export function ProductionPlanForm() {
               />
             </div>
           </div>
-          <Button onClick={handleSubmit}>Create Plan</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_plan")}</Button>
         </CardContent>
       </Card>
     </div>

@@ -15,10 +15,11 @@
  */
 
 import { QualityInspectionForm } from "@/components/handson/buying-advanced-components";
+import t from "@/app/lib/i18n";
 export default function Page() {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">New Inspection</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("erp.new_inspection")}</h1>
       <QualityInspectionForm />
     </div>
   );

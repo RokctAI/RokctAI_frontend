@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/card";
 import { RiLoader4Line, RiUserAddLine, RiCheckboxCircleLine, RiErrorWarningLine } from "@remixicon/react";
 
+import t from "@/app/lib/i18n";
 interface LeadFormCardProps {
   initialData?: {
     lead_name: string;
@@ -75,7 +76,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
       <Card className="w-full max-w-md bg-green-50/50 border-green-200 backdrop-blur-sm">
         <CardContent className="pt-6 flex flex-col items-center text-center">
           <RiCheckboxCircleLine className="h-12 w-12 text-green-500 mb-2" />
-          <h3 className="font-semibold text-green-800 text-sm">Lead Created</h3>
+          <h3 className="font-semibold text-green-800 text-sm">{t("agent.lead_created")}</h3>
           <p className="text-xs text-green-700">
             {formData.lead_name} has been added to the CRM.
           </p>
@@ -89,7 +90,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
           <RiUserAddLine className="h-4 w-4 text-cyan-500" />
-          New CRM Lead
+          {t("agent.new_crm_lead")}
         </CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -99,7 +100,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
               htmlFor="lead_name"
               className="text-[10px] uppercase tracking-wider text-muted-foreground"
             >
-              Full Name
+              {t("agent.full_name")}
             </Label>
             <Input
               id="lead_name"
@@ -119,7 +120,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
                 htmlFor="email_id"
                 className="text-[10px] uppercase tracking-wider text-muted-foreground"
               >
-                Email
+                {t("agent.email")}
               </Label>
               <Input
                 id="email_id"
@@ -137,7 +138,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
                 htmlFor="id_number"
                 className="text-[10px] uppercase tracking-wider text-muted-foreground"
               >
-                SA ID Number
+                {t("agent.sa_id_number")}
               </Label>
               <Input
                 id="id_number"
@@ -156,7 +157,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
               htmlFor="organization"
               className="text-[10px] uppercase tracking-wider text-muted-foreground"
             >
-              Organization
+              {t("agent.organization")}
             </Label>
             <Input
               id="organization"
@@ -164,7 +165,7 @@ export function LeadFormCard({ initialData, onCallback }: LeadFormCardProps) {
               onChange={(e) =>
                 setFormData({ ...formData, organization: e.target.value })
               }
-              placeholder="Company Name"
+              placeholder={t("agent.company_name")}
               className="h-8 text-sm"
             />
           </div>

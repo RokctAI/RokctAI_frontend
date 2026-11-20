@@ -55,6 +55,7 @@ import {
   createShiftAssignment,
 } from "@/app/actions/handson/all/hrms/shifts";
 
+import t from "@/app/lib/i18n";
 const formSchema = z.object({
   employee: z.string().min(1, "Employee is required"),
   shift_type: z.string().min(1, "Shift Type is required"),
@@ -106,20 +107,20 @@ export default function NewShiftPage() {
     }
   }
 
-  if (loading) return <div className="p-8">Loading form data...</div>;
+  if (loading) return <div className="p-8">{t("erp.loading_form_data")}</div>;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 mb-10">
       <div>
-        <h1 className="text-3xl font-bold">Assign Shift</h1>
+        <h1 className="text-3xl font-bold">{t("erp.assign_shift")}</h1>
         <p className="text-muted-foreground">
-          Allocate shift schedules to employees.
+          {t("erp.allocate_shift_schedules_to_employees")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Assignment Details</CardTitle>
+          <CardTitle>{t("erp.assignment_details")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -129,14 +130,14 @@ export default function NewShiftPage() {
                 name="employee"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Employee</FormLabel>
+                    <FormLabel>{t("erp.employee")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select Employee" />
+                          <SelectValue placeholder={t("erp.select_employee")} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -157,14 +158,14 @@ export default function NewShiftPage() {
                 name="shift_type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Shift Type</FormLabel>
+                    <FormLabel>{t("erp.shift_type")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select Shift" />
+                          <SelectValue placeholder={t("erp.select_shift")} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -187,7 +188,7 @@ export default function NewShiftPage() {
                   name="start_date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Start Date</FormLabel>
+                      <FormLabel>{t("erp.start_date")}</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -201,7 +202,7 @@ export default function NewShiftPage() {
                               {field.value ? (
                                 format(field.value, "PPP")
                               ) : (
-                                <span>Pick a date</span>
+                                <span>{t("erp.pick_a_date")}</span>
                               )}
                               <RiCalendarLine className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -227,7 +228,7 @@ export default function NewShiftPage() {
                   name="end_date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>End Date (Optional)</FormLabel>
+                      <FormLabel>{t("erp.end_date_optional")}</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -241,7 +242,7 @@ export default function NewShiftPage() {
                               {field.value ? (
                                 format(field.value, "PPP")
                               ) : (
-                                <span>Pick a date</span>
+                                <span>{t("erp.pick_a_date")}</span>
                               )}
                               <RiCalendarLine className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -258,7 +259,7 @@ export default function NewShiftPage() {
                         </PopoverContent>
                       </Popover>
                       <FormDescription className="text-xs">
-                        Leave empty for ongoing shift.
+                        {t("erp.leave_empty_for_ongoing_shift")}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

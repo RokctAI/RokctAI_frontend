@@ -1,3 +1,11 @@
+## 1.3.0
+
+* feat(i18n): 20 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 4 files now go through
+  `t("telemetry.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/telemetry.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 # Changelog
 
 ## 1.2.2

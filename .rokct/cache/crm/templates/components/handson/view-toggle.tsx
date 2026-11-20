@@ -19,6 +19,7 @@
 import { Button } from "@/components/ui/button";
 import { RiLayoutGridLine, RiTableLine } from "@remixicon/react";
 
+import t from "@/app/lib/i18n";
 export function ViewToggle({
   view,
   onViewChange,
@@ -34,7 +35,7 @@ export function ViewToggle({
         className="h-7 px-2"
         onClick={() => onViewChange("list")}
       >
-        <RiTableLine className="h-4 w-4 mr-1.5" /> List
+        <RiTableLine className="h-4 w-4 mr-1.5" /> {t("crm.list")}
       </Button>
       <Button
         variant={view === "kanban" ? "secondary" : "ghost"}
@@ -42,7 +43,7 @@ export function ViewToggle({
         className="h-7 px-2"
         onClick={() => onViewChange("kanban")}
       >
-        <RiLayoutGridLine className="h-4 w-4 mr-1.5" /> Kanban
+        <RiLayoutGridLine className="h-4 w-4 mr-1.5" /> {t("crm.kanban")}
       </Button>
     </div>
   );

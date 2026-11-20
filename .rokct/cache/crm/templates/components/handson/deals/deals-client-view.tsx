@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { ViewToggle } from "@/components/handson/view-toggle";
 import { KanbanBoard } from "@/components/handson/kanban-board";
 
+import t from "@/app/lib/i18n";
 const DEAL_STATUSES = [
   "Open",
   "Won",
@@ -77,12 +78,12 @@ export function DealsClientView({ deals }: { deals: any[] }) {
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>All Deals</CardTitle>
+            <CardTitle>{t("crm.all_deals")}</CardTitle>
           </CardHeader>
           <CardContent>
             {deals.length === 0 ? (
               <div className="flex h-40 items-center justify-center text-muted-foreground">
-                No deals found.
+                {t("crm.no_deals_found")}
               </div>
             ) : (
               <div className="relative w-full overflow-auto">
@@ -90,19 +91,19 @@ export function DealsClientView({ deals }: { deals: any[] }) {
                   <thead className="[&_tr]:border-b">
                     <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                       <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                        Deal Name
+                        {t("crm.deal_name")}
                       </th>
                       <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                        Organization
+                        {t("crm.organization")}
                       </th>
                       <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                        Value
+                        {t("crm.value")}
                       </th>
                       <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                        Probability
+                        {t("crm.probability")}
                       </th>
                       <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                        Status
+                        {t("crm.status")}
                       </th>
                     </tr>
                   </thead>

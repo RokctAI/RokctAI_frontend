@@ -1,3 +1,11 @@
+## 1.1.0
+
+* feat(i18n): 25 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 4 files now go through
+  `t("wallet.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/wallet.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.0.2
 
 * fix(icons): lucide-react icons replaced with `@remixicon/react`

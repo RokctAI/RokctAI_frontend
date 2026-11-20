@@ -1,6 +1,6 @@
 {
   "name": "erp_sdk",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "installs": [
     {
       "from": "templates/app/handson/all/accounting",
@@ -405,6 +405,10 @@
     {
       "from": "templates/components/handson/work-order-list.tsx",
       "to": "components/handson/work-order-list.tsx"
+    },
+    {
+      "from": "templates/app/lib/i18n/sdk/erp.json",
+      "to": "app/lib/i18n/sdk/erp.json"
     }
   ],
   "dependencies": {

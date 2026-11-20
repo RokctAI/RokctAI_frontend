@@ -73,12 +73,12 @@ export function PurchaseOrderList({ orders, canEdit }: PurchaseOrderListProps) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Purchase Orders</h1>
+        <h1 className="text-2xl font-bold">{t("erp.purchase_orders")}</h1>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search..."
+              placeholder={t("erp.search")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
@@ -87,7 +87,7 @@ export function PurchaseOrderList({ orders, canEdit }: PurchaseOrderListProps) {
           {canEdit && (
             <Link href="/handson/all/supply_chain/buying/new">
               <Button>
-                <RiAddLine className="mr-2 h-4 w-4" /> New Order
+                <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_order")}
               </Button>
             </Link>
           )}
@@ -98,12 +98,12 @@ export function PurchaseOrderList({ orders, canEdit }: PurchaseOrderListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Supplier</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Total</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.supplier")}</TableHead>
+              <TableHead>{t("erp.date")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
+              <TableHead className="text-right">{t("erp.total")}</TableHead>
+              <TableHead className="w-[100px]">{t("erp.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -113,7 +113,7 @@ export function PurchaseOrderList({ orders, canEdit }: PurchaseOrderListProps) {
                   colSpan={6}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No orders found.
+                  {t("erp.no_orders_found")}
                 </TableCell>
               </TableRow>
             ) : (

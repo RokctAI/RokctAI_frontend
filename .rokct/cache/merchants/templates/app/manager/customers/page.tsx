@@ -38,6 +38,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function CustomersPage() {
   const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,28 +70,28 @@ export default function CustomersPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Customers</h1>
+        <h1 className="text-3xl font-bold">{t("merchants.customers")}</h1>
         <p className="text-muted-foreground">
-          View and manage your customer base.
+          {t("merchants.view_and_manage_your_customer_base")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Customer List</CardTitle>
+          <CardTitle>{t("merchants.customer_list")}</CardTitle>
           <CardDescription>
-            All customers who have ordered from your shop.
+            {t("merchants.all_customers_who_have_ordered_from_your_shop")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Customer</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Total Orders</TableHead>
-                <TableHead>Total Spent</TableHead>
+                <TableHead>{t("merchants.customer")}</TableHead>
+                <TableHead>{t("merchants.email")}</TableHead>
+                <TableHead>{t("merchants.phone")}</TableHead>
+                <TableHead>{t("merchants.total_orders")}</TableHead>
+                <TableHead>{t("merchants.total_spent")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -100,7 +101,7 @@ export default function CustomersPage() {
                     colSpan={5}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No customers found.
+                    {t("merchants.no_customers_found")}
                   </TableCell>
                 </TableRow>
               ) : (

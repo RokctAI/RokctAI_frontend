@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ProductExtrasPage() {
   const [extras, setExtras] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,15 +51,15 @@ export default function ProductExtrasPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Product Extras & Addons</h1>
+      <h1 className="text-3xl font-bold">{t("products.product_extras_addons")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Active</TableHead>
+              <TableHead>{t("products.name")}</TableHead>
+              <TableHead>{t("products.type")}</TableHead>
+              <TableHead>{t("products.active")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -74,7 +75,7 @@ export default function ProductExtrasPage() {
                   colSpan={3}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No extras found.
+                  {t("products.no_extras_found")}
                 </TableCell>
               </TableRow>
             ) : (

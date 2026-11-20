@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/card";
 import { RiLoader4Line, RiMapPinLine, RiCheckboxCircleLine, RiErrorWarningLine } from "@remixicon/react";
 
+import t from "@/app/lib/i18n";
 interface CompetitorFormProps {
   name?: string;
   onCallback?: (result: any) => void;
@@ -102,7 +103,7 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
       <Card className="w-full max-w-md bg-green-50 border-green-200">
         <CardContent className="pt-6 flex flex-col items-center text-center">
           <RiCheckboxCircleLine className="h-12 w-12 text-green-500 mb-2" />
-          <h3 className="font-semibold text-green-800">Competitor Added</h3>
+          <h3 className="font-semibold text-green-800">{t("agent.competitor_added")}</h3>
           <p className="text-sm text-green-700">{message}</p>
         </CardContent>
       </Card>
@@ -114,7 +115,7 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <RiMapPinLine className="h-5 w-5 text-blue-500" />
-          Add Competitor
+          {t("agent.add_competitor")}
         </CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -123,7 +124,7 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
           <div className="flex items-center gap-2 text-sm p-2 rounded bg-slate-100">
             {locStatus === "loading" && (
               <>
-                <RiLoader4Line className="h-3 w-3 animate-spin" /> Locating you...
+                <RiLoader4Line className="h-3 w-3 animate-spin" /> {t("agent.locating_you")}
               </>
             )}
             {locStatus === "success" && (
@@ -141,7 +142,7 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="comp-name">Competitor Name</Label>
+            <Label htmlFor="comp-name">{t("agent.competitor_name")}</Label>
             <Input
               id="comp-name"
               value={formData.name}
@@ -155,18 +156,18 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="industry">Industry</Label>
+              <Label htmlFor="industry">{t("agent.industry")}</Label>
               <Input
                 id="industry"
                 value={formData.industry}
                 onChange={(e) =>
                   setFormData({ ...formData, industry: e.target.value })
                 }
-                placeholder="Retail"
+                placeholder={t("agent.retail")}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="threat">Threat Level</Label>
+              <Label htmlFor="threat">{t("agent.threat_level")}</Label>
               <select
                 id="threat"
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -175,15 +176,15 @@ export function CompetitorForm({ name, onCallback }: CompetitorFormProps) {
                   setFormData({ ...formData, threat_level: e.target.value })
                 }
               >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
+                <option value="Low">{t("agent.low")}</option>
+                <option value="Medium">{t("agent.medium")}</option>
+                <option value="High">{t("agent.high")}</option>
               </select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="website">Website</Label>
+            <Label htmlFor="website">{t("agent.website")}</Label>
             <Input
               id="website"
               value={formData.website}

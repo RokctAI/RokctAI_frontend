@@ -28,6 +28,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { ProofPanel } from "../../components/proof-panel";
 
+import tr from "@/app/lib/i18n";
 type Status = Awaited<ReturnType<typeof getCampaignStatus>>;
 
 export default function CampaignPage({ params }: { params: Promise<{ name: string }> }) {
@@ -60,15 +61,15 @@ export default function CampaignPage({ params }: { params: Promise<{ name: strin
       <div className="flex items-center gap-3">
         <h1 className="text-2xl font-semibold">{name}</h1>
         <Badge variant="outline">{status.status}</Badge>
-        {status.status === "Draft" && status.master_request && <Button onClick={start}>Start</Button>}
+        {status.status === "Draft" && status.master_request && <Button onClick={start}>{tr("studio.start")}</Button>}
       </div>
       {status.error_message && <p className="text-sm text-destructive">{status.error_message}</p>}
       {status.master_request ? (
         <Link className="text-sm underline" href={`/studio/requests/${encodeURIComponent(status.master_request)}`}>
-          Master design
+          {tr("studio.master_design")}
         </Link>
       ) : (
-        <p className="text-sm text-muted-foreground">No master design linked yet.</p>
+        <p className="text-sm text-muted-foreground">{tr("studio.no_master_design_linked_yet")}</p>
       )}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {status.formats.map((f) => (
@@ -87,7 +88,7 @@ export default function CampaignPage({ params }: { params: Promise<{ name: strin
                   <ProofPanel candidate={f.candidate.name} />
                 </>
               ) : (
-                <div className="text-muted-foreground">Not laid out yet.</div>
+                <div className="text-muted-foreground">{tr("studio.not_laid_out_yet")}</div>
               )}
             </CardContent>
           </Card>

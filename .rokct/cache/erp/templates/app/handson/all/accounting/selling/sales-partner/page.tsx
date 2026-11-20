@@ -17,13 +17,14 @@
 import { getSalesPartners } from "@/app/actions/handson/all/accounting/selling/extras";
 import { SimpleList } from "@/components/handson/commercial-extras-components";
 import { TableRow, TableCell } from "@/components/ui/table";
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 export default async function Page() {
   const data = await getSalesPartners();
   return (
     <div className="p-6">
       <SimpleList
-        title="Sales Partners"
+        title={t("erp.sales_partners")}
         items={data}
         newItemUrl="/handson/all/commercial/selling/sales-partner/new"
         headers={["Name", "Commission %", "Type"]}

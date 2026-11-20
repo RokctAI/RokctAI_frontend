@@ -35,6 +35,7 @@ import {
 } from "@remixicon/react";
 import { notFound } from "next/navigation";
 
+import t from "@/app/lib/i18n";
 export default async function LeadMetrics({
   params,
 }: {
@@ -51,10 +52,10 @@ export default async function LeadMetrics({
   if (!lead) {
     return (
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-red-500">Lead Not Found</h1>
+        <h1 className="text-2xl font-bold text-red-500">{t("crm.lead_not_found")}</h1>
         <Button asChild variant="link" className="pl-0 mt-4">
           <Link href="/handson/all/crm/leads">
-            <RiArrowLeftLine className="w-4 h-4 mr-2" /> Back to Leads
+            <RiArrowLeftLine className="w-4 h-4 mr-2" /> {t("crm.back_to_leads")}
           </Link>
         </Button>
       </div>
@@ -103,7 +104,7 @@ export default async function LeadMetrics({
         {/* Main Info Card */}
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
+            <CardTitle>{t("crm.overview")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Contact Details */}
@@ -147,7 +148,7 @@ export default async function LeadMetrics({
             {/* Notes / Description */}
             {lead.notes && (
               <div className="bg-muted/30 p-4 rounded-md">
-                <h3 className="font-semibold mb-2">Notes</h3>
+                <h3 className="font-semibold mb-2">{t("crm.notes")}</h3>
                 <p className="whitespace-pre-wrap text-sm">{lead.notes}</p>
               </div>
             )}
@@ -159,7 +160,7 @@ export default async function LeadMetrics({
           {/* Owner Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Lead Owner</CardTitle>
+              <CardTitle className="text-base">{t("crm.lead_owner")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
@@ -180,19 +181,19 @@ export default async function LeadMetrics({
           {/* System Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">System Info</CardTitle>
+              <CardTitle className="text-base">{t("crm.system_info")}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground">Created On</span>
+                <span className="text-muted-foreground">{t("crm.created_on")}</span>
                 <span>{new Date(lead.creation).toLocaleString()}</span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground">Last Modified</span>
+                <span className="text-muted-foreground">{t("crm.last_modified")}</span>
                 <span>{new Date(lead.modified).toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Source</span>
+                <span className="text-muted-foreground">{t("crm.source")}</span>
                 <span>{lead.source || "Unknown"}</span>
               </div>
             </CardContent>

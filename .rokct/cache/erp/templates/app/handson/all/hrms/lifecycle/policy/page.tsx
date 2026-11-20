@@ -55,6 +55,7 @@ import {
   createPolicy,
 } from "@/app/actions/handson/all/crm/lifecycle";
 
+import t from "@/app/lib/i18n";
 export default function PolicyPage() {
   const [policies, setPolicies] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -92,24 +93,24 @@ export default function PolicyPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Company Policies</h1>
+          <h1 className="text-3xl font-bold">{t("erp.company_policies")}</h1>
           <p className="text-muted-foreground">
-            Manage internal HR and security policies.
+            {t("erp.manage_internal_hr_and_security_policies")}
           </p>
         </div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Policy
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_policy")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>New Policy</DialogTitle>
+              <DialogTitle>{t("erp.new_policy")}</DialogTitle>
             </DialogHeader>
             <form onSubmit={onSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label>Title</Label>
+                <Label>{t("erp.title")}</Label>
                 <Input
                   name="title"
                   required
@@ -117,22 +118,22 @@ export default function PolicyPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Type</Label>
+                <Label>{t("erp.type")}</Label>
                 <Select name="policy_type" defaultValue="General">
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="HR">HR</SelectItem>
-                    <SelectItem value="Security">Security</SelectItem>
-                    <SelectItem value="Leave">Leave</SelectItem>
-                    <SelectItem value="Expense">Expense</SelectItem>
-                    <SelectItem value="General">General</SelectItem>
+                    <SelectItem value="HR">{t("erp.hr")}</SelectItem>
+                    <SelectItem value="Security">{t("erp.security")}</SelectItem>
+                    <SelectItem value="Leave">{t("erp.leave")}</SelectItem>
+                    <SelectItem value="Expense">{t("erp.expense")}</SelectItem>
+                    <SelectItem value="General">{t("erp.general")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Effective Date</Label>
+                <Label>{t("erp.effective_date")}</Label>
                 <Input
                   name="date"
                   type="date"
@@ -141,11 +142,11 @@ export default function PolicyPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Details</Label>
-                <Textarea name="details" placeholder="Policy content..." />
+                <Label>{t("erp.details")}</Label>
+                <Textarea name="details" placeholder={t("erp.policy_content")} />
               </div>
               <Button type="submit" className="w-full">
-                Create Policy
+                {t("erp.create_policy")}
               </Button>
             </form>
           </DialogContent>
@@ -154,16 +155,16 @@ export default function PolicyPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Policies</CardTitle>
+          <CardTitle>{t("erp.all_policies")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead>{t("erp.title")}</TableHead>
+                <TableHead>{t("erp.type")}</TableHead>
+                <TableHead>{t("erp.date")}</TableHead>
+                <TableHead>{t("erp.action")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -181,7 +182,7 @@ export default function PolicyPage() {
                   </TableCell>
                   <TableCell>
                     <Button variant="ghost" size="sm">
-                      View
+                      {t("erp.view")}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -192,7 +193,7 @@ export default function PolicyPage() {
                     colSpan={4}
                     className="text-center text-muted-foreground h-24"
                   >
-                    No policies found.
+                    {t("erp.no_policies_found")}
                   </TableCell>
                 </TableRow>
               )}

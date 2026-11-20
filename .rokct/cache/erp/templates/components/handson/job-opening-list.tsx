@@ -39,6 +39,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getJobOpenings } from "@/app/actions/handson/all/hrms/recruitment";
 
+import t from "@/app/lib/i18n";
 export function JobOpeningList() {
   const router = useRouter();
   const [jobs, setJobs] = useState<any[]>([]);
@@ -68,7 +69,7 @@ export function JobOpeningList() {
         <div className="relative w-72">
           <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search jobs..."
+            placeholder={t("erp.search_jobs")}
             className="pl-8"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -77,7 +78,7 @@ export function JobOpeningList() {
         <Button
           onClick={() => router.push("/handson/all/hr/recruitment/jobs/new")}
         >
-          <RiAddLine className="mr-2 h-4 w-4" /> Post Job
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.post_job")}
         </Button>
       </div>
 
@@ -85,18 +86,18 @@ export function JobOpeningList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Job Title</TableHead>
-              <TableHead>Department</TableHead>
-              <TableHead>Vacancies</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Posted On</TableHead>
+              <TableHead>{t("erp.job_title")}</TableHead>
+              <TableHead>{t("erp.department")}</TableHead>
+              <TableHead>{t("erp.vacancies")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
+              <TableHead className="text-right">{t("erp.posted_on")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8">
-                  Loading...
+                  {t("erp.loading")}
                 </TableCell>
               </TableRow>
             ) : filteredJobs.length === 0 ? (
@@ -105,7 +106,7 @@ export function JobOpeningList() {
                   colSpan={5}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No job openings found.
+                  {t("erp.no_job_openings_found")}
                 </TableCell>
               </TableRow>
             ) : (

@@ -51,6 +51,7 @@ import { deleteProject } from "@/app/actions/handson/all/projects/projects";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 
+import t from "@/app/lib/i18n";
 interface ProjectListProps {
   projects: any[];
 }
@@ -107,12 +108,12 @@ export function ProjectList({ projects }: ProjectListProps) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Projects</h1>
+        <h1 className="text-2xl font-bold">{t("productivity.projects")}</h1>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search..."
+              placeholder={t("productivity.search")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
@@ -120,7 +121,7 @@ export function ProjectList({ projects }: ProjectListProps) {
           </div>
           <Link href="/handson/all/work_management/projects/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Project
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("productivity.new_project")}
             </Button>
           </Link>
         </div>
@@ -130,12 +131,12 @@ export function ProjectList({ projects }: ProjectListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Project Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Priority</TableHead>
+              <TableHead>{t("productivity.project_name")}</TableHead>
+              <TableHead>{t("productivity.status")}</TableHead>
+              <TableHead>{t("productivity.priority")}</TableHead>
               <TableHead>% Complete</TableHead>
-              <TableHead>End Date</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("productivity.end_date")}</TableHead>
+              <TableHead className="w-[100px]">{t("productivity.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -145,7 +146,7 @@ export function ProjectList({ projects }: ProjectListProps) {
                   colSpan={6}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No projects found.
+                  {t("productivity.no_projects_found")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -194,7 +195,7 @@ export function ProjectList({ projects }: ProjectListProps) {
                         variant="ghost"
                         size="icon"
                         onClick={() => openClone(p)}
-                        title="Duplicate Project"
+                        title={t("productivity.duplicate_project")}
                       >
                         <RiFileCopyLine className="h-4 w-4" />
                       </Button>
@@ -218,15 +219,15 @@ export function ProjectList({ projects }: ProjectListProps) {
       <Dialog open={isCloneOpen} onOpenChange={setIsCloneOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Duplicate Project</DialogTitle>
+            <DialogTitle>{t("productivity.duplicate_project")}</DialogTitle>
             <DialogDescription>
-              Create a copy of <strong>{projectToClone?.project_name}</strong>.
+              {t("productivity.create_a_copy_of")} <strong>{projectToClone?.project_name}</strong>.
               Tasks will also be copied.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="name">New Project Name</Label>
+              <Label htmlFor="name">{t("productivity.new_project_name")}</Label>
               <Input
                 id="name"
                 value={newProjectName}
@@ -236,9 +237,9 @@ export function ProjectList({ projects }: ProjectListProps) {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCloneOpen(false)}>
-              Cancel
+              {t("productivity.cancel")}
             </Button>
-            <Button onClick={handleClone}>Duplicate</Button>
+            <Button onClick={handleClone}>{t("productivity.duplicate")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -35,6 +35,7 @@ import Link from "next/link";
 import { createLoan, LoanData } from "@/app/actions/handson/all/hrms/loans";
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 
+import t from "@/app/lib/i18n";
 export default function NewLoanPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -105,22 +106,22 @@ export default function NewLoanPage() {
             <RiArrowLeftLine className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">New Loan Application</h1>
+        <h1 className="text-2xl font-bold">{t("erp.new_loan_application")}</h1>
         <Button type="submit" disabled={loading}>
-          <RiSaveLine className="mr-2 h-4 w-4" /> Apply
+          <RiSaveLine className="mr-2 h-4 w-4" /> {t("erp.apply")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Loan Details</CardTitle>
+          <CardTitle>{t("erp.loan_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Employee</Label>
+            <Label>{t("erp.employee")}</Label>
             <Select value={employee} onValueChange={setEmployee}>
               <SelectTrigger>
-                <SelectValue placeholder="Select Employee" />
+                <SelectValue placeholder={t("erp.select_employee")} />
               </SelectTrigger>
               <SelectContent>
                 {employees.map((e) => (
@@ -133,7 +134,7 @@ export default function NewLoanPage() {
           </div>
 
           <div>
-            <Label>Loan Type</Label>
+            <Label>{t("erp.loan_type")}</Label>
             <Select
               value={loanType}
               onValueChange={(v: any) => {
@@ -146,10 +147,10 @@ export default function NewLoanPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Salary Advance">
-                  Salary Advance (0% Interest)
+                  {t("erp.salary_advance_0_interest")}
                 </SelectItem>
                 <SelectItem value="Term Loan">
-                  Term Loan (Interest Bearing)
+                  {t("erp.term_loan_interest_bearing")}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -162,7 +163,7 @@ export default function NewLoanPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Loan Amount</Label>
+              <Label>{t("erp.loan_amount")}</Label>
               <Input
                 type="number"
                 value={amount}
@@ -172,7 +173,7 @@ export default function NewLoanPage() {
               />
             </div>
             <div>
-              <Label>Interest Rate (%)</Label>
+              <Label>{t("erp.interest_rate")}</Label>
               <Input
                 type="number"
                 value={interest}
@@ -185,7 +186,7 @@ export default function NewLoanPage() {
           </div>
 
           <div>
-            <Label>Repayment Start Date</Label>
+            <Label>{t("erp.repayment_start_date")}</Label>
             <Input
               type="date"
               value={repayDate}
@@ -194,7 +195,7 @@ export default function NewLoanPage() {
           </div>
 
           <div>
-            <Label>Repayment Method</Label>
+            <Label>{t("erp.repayment_method")}</Label>
             <Select
               value={repayMethod}
               onValueChange={(val: any) => setRepayMethod(val)}
@@ -204,10 +205,10 @@ export default function NewLoanPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Repay Over Number of Periods">
-                  Repay Over Number of Periods
+                  {t("erp.repay_over_number_of_periods")}
                 </SelectItem>
                 <SelectItem value="Repay Fixed Amount per Period">
-                  Repay Fixed Amount per Period
+                  {t("erp.repay_fixed_amount_per_period")}
                 </SelectItem>
               </SelectContent>
             </Select>

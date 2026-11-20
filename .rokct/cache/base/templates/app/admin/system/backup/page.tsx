@@ -32,6 +32,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function BackupsPage() {
   const [backups, setBackups] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +69,7 @@ export default function BackupsPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Database Backups</h1>
+        <h1 className="text-3xl font-bold">{t("base.database_backups")}</h1>
         <Button onClick={handleCreateBackup} disabled={creating}>
           {!creating && <RiDatabase2Line className="mr-2 size-4" />}
           Create Backup
@@ -79,10 +80,10 @@ export default function BackupsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Size</TableHead>
-              <TableHead>File</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>{t("base.date")}</TableHead>
+              <TableHead>{t("base.size")}</TableHead>
+              <TableHead>{t("base.file")}</TableHead>
+              <TableHead className="text-right">{t("base.action")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -98,7 +99,7 @@ export default function BackupsPage() {
                   colSpan={4}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No backups found.
+                  {t("base.no_backups_found")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -114,7 +115,7 @@ export default function BackupsPage() {
                   <TableCell className="text-right">
                     <Button size="sm" variant="outline">
                       <RiDownloadLine className="size-4 mr-2" />
-                      Download
+                      {t("base.download")}
                     </Button>
                   </TableCell>
                 </TableRow>

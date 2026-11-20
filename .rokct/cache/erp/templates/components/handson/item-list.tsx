@@ -38,6 +38,7 @@ import {
 import { deleteItem } from "@/app/actions/handson/all/accounting/inventory/item";
 import { toast } from "sonner";
 
+import t from "@/app/lib/i18n";
 interface ItemListProps {
   items: any[];
 }
@@ -69,12 +70,12 @@ export function ItemList({ items }: ItemListProps) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Stock Items</h1>
+        <h1 className="text-2xl font-bold">{t("erp.stock_items")}</h1>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search Items..."
+              placeholder={t("erp.search_items")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
@@ -82,7 +83,7 @@ export function ItemList({ items }: ItemListProps) {
           </div>
           <Link href="/handson/all/supply_chain/stock/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Item
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_item")}
             </Button>
           </Link>
         </div>
@@ -92,12 +93,12 @@ export function ItemList({ items }: ItemListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Item Code</TableHead>
-              <TableHead>Item Name</TableHead>
-              <TableHead>Group</TableHead>
-              <TableHead>UOM</TableHead>
-              <TableHead className="text-right">Rate</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("erp.item_code")}</TableHead>
+              <TableHead>{t("erp.item_name")}</TableHead>
+              <TableHead>{t("erp.group")}</TableHead>
+              <TableHead>{t("erp.uom")}</TableHead>
+              <TableHead className="text-right">{t("erp.rate")}</TableHead>
+              <TableHead className="w-[100px]">{t("erp.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -107,7 +108,7 @@ export function ItemList({ items }: ItemListProps) {
                   colSpan={6}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No items found.
+                  {t("erp.no_items_found")}
                 </TableCell>
               </TableRow>
             ) : (

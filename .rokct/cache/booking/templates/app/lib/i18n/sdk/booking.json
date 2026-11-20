@@ -1,0 +1,54 @@
+{
+  "en": {
+    "booking": {
+      "actions": "Actions",
+      "all_bookings": "All Bookings",
+      "approve": "Approve",
+      "booking_details": "Booking Details",
+      "bookings": "Bookings",
+      "cancel_booking": "Cancel Booking",
+      "capacity": "Capacity",
+      "customer": "Customer",
+      "customer_notes": "Customer Notes",
+      "date": "Date",
+      "date_time": "Date & Time",
+      "guests": "Guests",
+      "manage_your_table_bookings": "Manage your table bookings.",
+      "no_bookings_found": "No bookings found.",
+      "no_reservations_found": "No reservations found.",
+      "reject": "Reject",
+      "reservations": "Reservations",
+      "status": "Status",
+      "table": "Table",
+      "table_number": "Table Number",
+      "time": "Time",
+      "view_and_manage_all_reservation_requests": "View and manage all reservation requests."
+    }
+  },
+  "af": {
+    "booking": {
+      "actions": "Aksies",
+      "all_bookings": "Alle besprekings",
+      "approve": "Keur goed",
+      "booking_details": "Besprekingsbesonderhede",
+      "bookings": "Besprekings",
+      "cancel_booking": "Kanselleer bespreking",
+      "capacity": "Kapasiteit",
+      "customer": "Kliënt",
+      "customer_notes": "Kliëntnotas",
+      "date": "Datum",
+      "date_time": "Datum en tyd",
+      "guests": "Gaste",
+      "manage_your_table_bookings": "Bestuur jou tafelbesprekings.",
+      "no_bookings_found": "Geen besprekings gevind nie.",
+      "no_reservations_found": "Geen besprekings gevind nie.",
+      "reject": "Weier",
+      "reservations": "Besprekings",
+      "status": "Status",
+      "table": "Tafel",
+      "table_number": "Tafelnommer",
+      "time": "Tyd",
+      "view_and_manage_all_reservation_requests": "Sien en bestuur alle besprekingsversoeke."
+    }
+  }
+}

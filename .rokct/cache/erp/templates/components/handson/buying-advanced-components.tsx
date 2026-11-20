@@ -36,17 +36,18 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 // --- RFQ ---
 export function RFQList({ items }: { items: any[] }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Request for Quotation</h1>
+          <h1 className="text-2xl font-bold">{t("erp.request_for_quotation")}</h1>
         </div>
         <Link href="/handson/all/supply_chain/buying/rfq/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New RFQ
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_rfq")}
           </Button>
         </Link>
       </div>
@@ -54,9 +55,9 @@ export function RFQList({ items }: { items: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.date")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -94,17 +95,17 @@ export function RFQForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Supplier</Label>
+            <Label>{t("erp.supplier")}</Label>
             <Input
               value={supplier}
               onChange={(e) => setSupplier(e.target.value)}
             />
           </div>
           <div>
-            <Label>Item</Label>
+            <Label>{t("erp.item")}</Label>
             <Input value={item} onChange={(e) => setItem(e.target.value)} />
           </div>
-          <Button onClick={handleSubmit}>Create RFQ</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_rfq")}</Button>
         </CardContent>
       </Card>
     </div>
@@ -117,11 +118,11 @@ export function SupplierQuotationList({ items }: { items: any[] }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Supplier Quotation</h1>
+          <h1 className="text-2xl font-bold">{t("erp.supplier_quotation")}</h1>
         </div>
         <Link href="/handson/all/supply_chain/buying/supplier-quotation/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Quote
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_quote")}
           </Button>
         </Link>
       </div>
@@ -129,9 +130,9 @@ export function SupplierQuotationList({ items }: { items: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Supplier</TableHead>
-              <TableHead>Total</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.supplier")}</TableHead>
+              <TableHead>{t("erp.total")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -169,25 +170,25 @@ export function SupplierQuotationForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Supplier</Label>
+            <Label>{t("erp.supplier")}</Label>
             <Input
               value={supplier}
               onChange={(e) => setSupplier(e.target.value)}
             />
           </div>
           <div>
-            <Label>Item</Label>
+            <Label>{t("erp.item")}</Label>
             <Input value={item} onChange={(e) => setItem(e.target.value)} />
           </div>
           <div>
-            <Label>Rate</Label>
+            <Label>{t("erp.rate")}</Label>
             <Input
               type="number"
               value={rate}
               onChange={(e) => setRate(Number(e.target.value))}
             />
           </div>
-          <Button onClick={handleSubmit}>Create Quote</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_quote")}</Button>
         </CardContent>
       </Card>
     </div>
@@ -200,11 +201,11 @@ export function QualityInspectionList({ items }: { items: any[] }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Quality Inspection</h1>
+          <h1 className="text-2xl font-bold">{t("erp.quality_inspection")}</h1>
         </div>
         <Link href="/handson/all/supply_chain/buying/quality/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Inspection
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_inspection")}
           </Button>
         </Link>
       </div>
@@ -212,9 +213,9 @@ export function QualityInspectionList({ items }: { items: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Ref Type</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.ref_type")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -252,14 +253,14 @@ export function QualityInspectionForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Ref Type</Label>
+            <Label>{t("erp.ref_type")}</Label>
             <Input value={type} onChange={(e) => setType(e.target.value)} />
           </div>
           <div>
-            <Label>Ref Name</Label>
+            <Label>{t("erp.ref_name")}</Label>
             <Input value={ref} onChange={(e) => setRef(e.target.value)} />
           </div>
-          <Button onClick={handleSubmit}>Create Inspection</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_inspection")}</Button>
         </CardContent>
       </Card>
     </div>

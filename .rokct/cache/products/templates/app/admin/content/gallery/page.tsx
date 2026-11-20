@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { getGallery } from "@/app/actions/base/admin/content";
 import { Card, CardContent } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function AdminGalleryPage() {
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,12 +52,12 @@ export default function AdminGalleryPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Shop Gallery</h1>
+      <h1 className="text-3xl font-bold">{t("products.shop_gallery")}</h1>
 
       <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4">
         {images.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
-            No images found.
+            {t("products.no_images_found")}
           </div>
         ) : (
           images.map((img) => (

@@ -168,11 +168,11 @@ export function InvoiceForm({ initialData, isEdit = false }: InvoiceFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
+          <CardTitle>{t("erp.details")}</CardTitle>
         </CardHeader>
         <CardContent className="grid md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="customer">Customer</Label>
+            <Label htmlFor="customer">{t("erp.customer")}</Label>
              <Input
                id="customer"
                placeholder={t('common.ph_test_customer')}
@@ -180,11 +180,11 @@ export function InvoiceForm({ initialData, isEdit = false }: InvoiceFormProps) {
               onChange={(e) => setCustomer(e.target.value)}
             />
             <p className="text-xs text-muted-foreground">
-              Type exact Customer Name
+              {t("erp.type_exact_customer_name")}
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="postingDate">Posting Date</Label>
+            <Label htmlFor="postingDate">{t("erp.posting_date")}</Label>
             <Input
               id="postingDate"
               type="date"
@@ -193,7 +193,7 @@ export function InvoiceForm({ initialData, isEdit = false }: InvoiceFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="dueDate">Due Date</Label>
+            <Label htmlFor="dueDate">{t("erp.due_date")}</Label>
             <Input
               id="dueDate"
               type="date"
@@ -206,19 +206,19 @@ export function InvoiceForm({ initialData, isEdit = false }: InvoiceFormProps) {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Items</CardTitle>
+          <CardTitle>{t("erp.items")}</CardTitle>
           <Button type="button" variant="outline" size="sm" onClick={addItem}>
-            <RiAddLine className="mr-2 h-4 w-4" /> Add Item
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.add_item")}
           </Button>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[40%]">Item Code</TableHead>
-                <TableHead className="w-[20%]">Quantity</TableHead>
-                <TableHead className="w-[20%]">Rate</TableHead>
-                <TableHead className="w-[10%] text-right">Amount</TableHead>
+                <TableHead className="w-[40%]">{t("erp.item_code")}</TableHead>
+                <TableHead className="w-[20%]">{t("erp.quantity")}</TableHead>
+                <TableHead className="w-[20%]">{t("erp.rate")}</TableHead>
+                <TableHead className="w-[10%] text-right">{t("erp.amount")}</TableHead>
                 <TableHead className="w-[10%]"></TableHead>
               </TableRow>
             </TableHeader>
@@ -229,7 +229,7 @@ export function InvoiceForm({ initialData, isEdit = false }: InvoiceFormProps) {
                     colSpan={5}
                     className="text-center text-muted-foreground"
                   >
-                    No items added.
+                    {t("erp.no_items_added")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -237,7 +237,7 @@ export function InvoiceForm({ initialData, isEdit = false }: InvoiceFormProps) {
                   <TableRow key={index}>
                     <TableCell>
                       <Input
-                        placeholder="Item Code"
+                        placeholder={t("erp.item_code")}
                         value={item.item_code}
                         onChange={(e) =>
                           updateItem(index, "item_code", e.target.value)
@@ -286,7 +286,7 @@ export function InvoiceForm({ initialData, isEdit = false }: InvoiceFormProps) {
           </Table>
           <div className="flex justify-end mt-4">
             <div className="flex gap-8 text-lg font-bold">
-              <span>Total:</span>
+              <span>{t("erp.total")}</span>
               <span>{calculateTotal().toLocaleString()}</span>
             </div>
           </div>

@@ -16,6 +16,7 @@
 
 import { getEmailCampaigns } from "@/app/actions/handson/all/crm/campaigns";
 
+import t from "@/app/lib/i18n";
 export default async function CampaignsPage() {
   const { data: campaigns } = await getEmailCampaigns();
 
@@ -23,9 +24,9 @@ export default async function CampaignsPage() {
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Email Campaigns</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.email_campaigns")}</h1>
           <p className="text-muted-foreground">
-            Manage automated email sequences.
+            {t("crm.manage_automated_email_sequences")}
           </p>
         </div>
       </div>

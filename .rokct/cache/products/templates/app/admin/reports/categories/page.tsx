@@ -18,10 +18,11 @@
 
 import GenericReport from "@/components/admin/GenericReport";
 
+import t from "@/app/lib/i18n";
 export default function CategoriesReportPage() {
   return (
     <GenericReport
-      title="Categories Report"
+      title={t("products.categories_report")}
       reportType="Category"
       columns={[
         { key: "name", label: "Category" },

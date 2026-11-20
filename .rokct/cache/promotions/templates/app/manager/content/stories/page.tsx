@@ -123,14 +123,14 @@ export default function StoriesPage() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Stories</h1>
+          <h1 className="text-3xl font-bold">{t("promotions.stories")}</h1>
           <p className="text-muted-foreground">
-            Instagram-style stories for your shop.
+            {t("promotions.instagram_style_stories_for_your_shop")}
           </p>
         </div>
         <Button onClick={handleOpenDialog}>
           <RiAddLine className="mr-2 size-4" />
-          Add Story
+          {t("promotions.add_story")}
         </Button>
       </div>
 
@@ -138,7 +138,7 @@ export default function StoriesPage() {
         {stories.length === 0 ? (
           <Card className="col-span-full">
             <CardContent className="py-12 text-center text-muted-foreground">
-              No stories found. Add your first story to get started.
+              {t("promotions.no_stories_found_add_your_first_story_to_get_sta")}
             </CardContent>
           </Card>
         ) : (
@@ -176,9 +176,9 @@ export default function StoriesPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Add Story</DialogTitle>
+            <DialogTitle>{t("promotions.add_story")}</DialogTitle>
             <DialogDescription>
-              Create a new story for your shop.
+              {t("promotions.create_a_new_story_for_your_shop")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -194,7 +194,7 @@ export default function StoriesPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="link">Link (Optional)</Label>
+              <Label htmlFor="link">{t("promotions.link_optional")}</Label>
               <Input
                 id="link"
                 value={formData.link}

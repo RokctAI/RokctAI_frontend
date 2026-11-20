@@ -57,9 +57,9 @@ export function IssueList({ issues }: { issues: any[] }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Support Issues</h1>
+          <h1 className="text-2xl font-bold">{t("crm.support_issues")}</h1>
           <p className="text-muted-foreground">
-            Track tickets and helpdesk requests.
+            {t("crm.track_tickets_and_helpdesk_requests")}
           </p>
         </div>
         <div className="flex gap-4">
@@ -74,7 +74,7 @@ export function IssueList({ issues }: { issues: any[] }) {
           </div>
           <Link href="/handson/all/commercial/support/issue/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Ticket
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("crm.new_ticket")}
             </Button>
           </Link>
         </div>
@@ -83,10 +83,10 @@ export function IssueList({ issues }: { issues: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Subject</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Raised By</TableHead>
+              <TableHead>{t("crm.subject")}</TableHead>
+              <TableHead>{t("crm.status")}</TableHead>
+              <TableHead>{t("crm.priority")}</TableHead>
+              <TableHead>{t("crm.raised_by")}</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
@@ -97,7 +97,7 @@ export function IssueList({ issues }: { issues: any[] }) {
                   colSpan={5}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No issues found.
+                  {t("crm.no_issues_found")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -121,7 +121,7 @@ export function IssueList({ issues }: { issues: any[] }) {
                       href={`/handson/all/commercial/support/issue/${i.name}`}
                     >
                       <Button variant="ghost" size="sm">
-                        View
+                        {t("crm.view")}
                       </Button>
                     </Link>
                   </TableCell>

@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export function SalesOrderList({ orders }: { orders: any[] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const filtered = orders.filter((o) =>
@@ -44,15 +45,15 @@ export function SalesOrderList({ orders }: { orders: any[] }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Sales Orders</h1>
+          <h1 className="text-2xl font-bold">{t("erp.sales_orders")}</h1>
           <p className="text-muted-foreground">
-            Confirmed orders from Customers.
+            {t("erp.confirmed_orders_from_customers")}
           </p>
         </div>
         <div className="flex gap-4">
           <Link href="/handson/all/commercial/selling/sales-order/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Order
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_order")}
             </Button>
           </Link>
         </div>
@@ -61,10 +62,10 @@ export function SalesOrderList({ orders }: { orders: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Total</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.customer")}</TableHead>
+              <TableHead>{t("erp.date")}</TableHead>
+              <TableHead>{t("erp.total")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -105,33 +106,33 @@ export function SalesOrderForm() {
   return (
     <div className="max-w-2xl mx-auto space-y-4">
       <div className="flex justify-between">
-        <h1 className="text-2xl font-bold">New Sales Order</h1>
-        <Button onClick={handleSubmit}>Save</Button>
+        <h1 className="text-2xl font-bold">{t("erp.new_sales_order")}</h1>
+        <Button onClick={handleSubmit}>{t("erp.save")}</Button>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
+          <CardTitle>{t("erp.details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Customer</Label>
+            <Label>{t("erp.customer")}</Label>
             <Input
               value={customer}
               onChange={(e) => setCustomer(e.target.value)}
-              placeholder="Customer Name"
+              placeholder={t("erp.customer_name")}
             />
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <Label>Item</Label>
+              <Label>{t("erp.item")}</Label>
               <Input
                 value={item}
                 onChange={(e) => setItem(e.target.value)}
-                placeholder="Item Code"
+                placeholder={t("erp.item_code")}
               />
             </div>
             <div className="w-32">
-              <Label>Qty</Label>
+              <Label>{t("erp.qty")}</Label>
               <Input
                 type="number"
                 value={qty}

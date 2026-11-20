@@ -57,6 +57,7 @@ import {
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 import { verifyHrRole } from "@/app/lib/roles";
 
+import t from "@/app/lib/i18n";
 export default function PerformancePage() {
   const [goals, setGoals] = useState<any[]>([]);
   const [appraisals, setAppraisals] = useState<any[]>([]);
@@ -112,24 +113,24 @@ export default function PerformancePage() {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold flex items-center gap-2">
-          <RiFocus3Line className="h-8 w-8" /> Performance & Goals
+          <RiFocus3Line className="h-8 w-8" /> {t("erp.performance_goals")}
         </h1>
         <p className="text-muted-foreground">
-          Track employee targets and appraisals.
+          {t("erp.track_employee_targets_and_appraisals")}
         </p>
       </div>
 
       <Tabs defaultValue="goals" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="goals">My Goals</TabsTrigger>
-          <TabsTrigger value="appraisals">Appraisals</TabsTrigger>
+          <TabsTrigger value="goals">{t("erp.my_goals")}</TabsTrigger>
+          <TabsTrigger value="appraisals">{t("erp.appraisals")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="goals" className="space-y-4">
           <div className="flex justify-end">
             {canEdit && (
               <Button onClick={() => setIsGoalOpen(true)}>
-                <RiAddLine className="mr-2 h-4 w-4" /> New Goal
+                <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_goal")}
               </Button>
             )}
           </div>
@@ -137,7 +138,7 @@ export default function PerformancePage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {goals.length === 0 && !loading && (
               <div className="col-span-full text-center p-8 text-muted-foreground border rounded-lg border-dashed">
-                No active goals found. Set a target to get started.
+                {t("erp.no_active_goals_found_set_a_target_to_get_starte")}
               </div>
             )}
             {goals.map((goal) => (
@@ -161,7 +162,7 @@ export default function PerformancePage() {
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>Progress</span>
+                      <span>{t("erp.progress")}</span>
                       <span>{goal.progress || 0}%</span>
                     </div>
                     <Progress value={goal.progress || 0} />
@@ -176,7 +177,7 @@ export default function PerformancePage() {
           <div className="grid gap-4 md:grid-cols-2">
             {appraisals.length === 0 && !loading && (
               <div className="col-span-full text-center p-8 text-muted-foreground border rounded-lg border-dashed">
-                No appraisals recorded yet.
+                {t("erp.no_appraisals_recorded_yet")}
               </div>
             )}
             {appraisals.map((app) => (
@@ -213,11 +214,11 @@ export default function PerformancePage() {
       <Dialog open={isGoalOpen} onOpenChange={setIsGoalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Set New Goal</DialogTitle>
+            <DialogTitle>{t("erp.set_new_goal")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Goal Description</Label>
+              <Label>{t("erp.goal_description")}</Label>
               <Input
                 value={newGoal.goal}
                 onChange={(e) =>
@@ -227,7 +228,7 @@ export default function PerformancePage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Initial Progress (%)</Label>
+              <Label>{t("erp.initial_progress")}</Label>
               <Input
                 type="number"
                 min="0"
@@ -240,7 +241,7 @@ export default function PerformancePage() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleSaveGoal}>Save Goal</Button>
+            <Button onClick={handleSaveGoal}>{t("erp.save_goal")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

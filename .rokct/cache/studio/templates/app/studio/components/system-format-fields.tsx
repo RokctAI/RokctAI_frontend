@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { listDesignSystems, listFormats } from "@/app/actions/studio/systems/actions";
 import type { Format } from "@/app/actions/studio/systems/types";
 
+import t from "@/app/lib/i18n";
 /** Design system + format pickers shared by the studio forms. */
 export function SystemFormatFields({
   system,
@@ -46,9 +47,9 @@ export function SystemFormatFields({
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       <label className="space-y-1 text-sm">
-        <span>Design system</span>
+        <span>{t("studio.design_system")}</span>
         <select className="w-full rounded-md border p-2" value={system} onChange={(e) => onSystem(e.target.value)}>
-          <option value="">Default</option>
+          <option value="">{t("studio.default")}</option>
           {systems.map((s) => (
             <option key={s.name} value={s.name}>
               {s.system_name || s.name}
@@ -58,9 +59,9 @@ export function SystemFormatFields({
       </label>
       {onFormat && (
         <label className="space-y-1 text-sm">
-          <span>Format</span>
+          <span>{t("studio.format")}</span>
           <select className="w-full rounded-md border p-2" value={format} onChange={(e) => onFormat(e.target.value)}>
-            {allowNoFormat && <option value="">Keep as is</option>}
+            {allowNoFormat && <option value="">{t("studio.keep_as_is")}</option>}
             {formats.map((f) => (
               <option key={f.name} value={f.name}>
                 {f.name} ({f.width}×{f.height})

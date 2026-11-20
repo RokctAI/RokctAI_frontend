@@ -35,6 +35,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+import t from "@/app/lib/i18n";
 export function NoteList({ notes }: { notes: any[] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const filtered = notes.filter((n) =>
@@ -45,15 +46,15 @@ export function NoteList({ notes }: { notes: any[] }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">CRM Notes</h1>
+          <h1 className="text-2xl font-bold">{t("crm.crm_notes")}</h1>
           <p className="text-muted-foreground">
-            Log interactions and internal notes.
+            {t("crm.log_interactions_and_internal_notes")}
           </p>
         </div>
         <div className="flex gap-4">
           <Link href="/handson/all/commercial/crm/note/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Note
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("crm.new_note")}
             </Button>
           </Link>
         </div>
@@ -62,9 +63,9 @@ export function NoteList({ notes }: { notes: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Public</TableHead>
-              <TableHead>Last Modified</TableHead>
+              <TableHead>{t("crm.title")}</TableHead>
+              <TableHead>{t("crm.public")}</TableHead>
+              <TableHead>{t("crm.last_modified")}</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
@@ -103,26 +104,26 @@ export function NoteForm() {
   return (
     <div className="max-w-2xl mx-auto space-y-4">
       <div className="flex justify-between">
-        <h1 className="text-2xl font-bold">New Note</h1>
-        <Button onClick={handleSubmit}>Save Note</Button>
+        <h1 className="text-2xl font-bold">{t("crm.new_note")}</h1>
+        <Button onClick={handleSubmit}>{t("crm.save_note")}</Button>
       </div>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Title</Label>
+            <Label>{t("crm.title")}</Label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Subject"
+              placeholder={t("crm.subject")}
             />
           </div>
           <div>
-            <Label>Content</Label>
+            <Label>{t("crm.content")}</Label>
             <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={6}
-              placeholder="Details..."
+              placeholder={t("crm.details")}
             />
           </div>
         </CardContent>

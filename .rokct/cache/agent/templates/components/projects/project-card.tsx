@@ -19,6 +19,7 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
 
+import t from "@/app/lib/i18n";
 export interface ProjectCardProps {
   id: number;
   name: string;
@@ -61,7 +62,7 @@ export function ProjectCard({ project }: { project: ProjectCardProps }) {
     return (
       <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 text-center">
         <p className="text-green-500 font-medium">
-          Project Created Successfully
+          {t("agent.project_created_successfully")}
         </p>
       </div>
     );
@@ -77,7 +78,7 @@ export function ProjectCard({ project }: { project: ProjectCardProps }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="bg-transparent text-lg font-bold outline-none text-white w-full placeholder-zinc-500"
-          placeholder="Project Name"
+          placeholder={t("agent.project_name")}
         />
       </div>
 
@@ -85,7 +86,7 @@ export function ProjectCard({ project }: { project: ProjectCardProps }) {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         className="bg-zinc-950/50 rounded-md p-2 text-sm text-zinc-300 resize-none outline-none border border-zinc-800 focus:border-zinc-700 min-h-[80px]"
-        placeholder="Add a description for this project..."
+        placeholder={t("agent.add_a_description_for_this_project")}
       />
 
       <div className="flex justify-end gap-2 pt-2">

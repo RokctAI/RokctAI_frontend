@@ -40,6 +40,7 @@ import {
 import { deleteProspect } from "@/app/actions/handson/all/crm/prospects";
 import { toast } from "sonner";
 
+import t from "@/app/lib/i18n";
 interface ProspectListProps {
   prospects: any[];
 }
@@ -72,16 +73,16 @@ export function ProspectList({ prospects }: ProspectListProps) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Prospects</h1>
+          <h1 className="text-2xl font-bold">{t("crm.prospects")}</h1>
           <p className="text-muted-foreground">
-            Manage potential customer companies.
+            {t("crm.manage_potential_customer_companies")}
           </p>
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search Prospects..."
+              placeholder={t("crm.search_prospects")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
@@ -89,7 +90,7 @@ export function ProspectList({ prospects }: ProspectListProps) {
           </div>
           <Link href="/handson/all/commercial/crm/prospects/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Prospect
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("crm.new_prospect")}
             </Button>
           </Link>
         </div>
@@ -99,11 +100,11 @@ export function ProspectList({ prospects }: ProspectListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Company Name</TableHead>
-              <TableHead>Industry</TableHead>
-              <TableHead>Group</TableHead>
-              <TableHead>Territory</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("crm.company_name")}</TableHead>
+              <TableHead>{t("crm.industry")}</TableHead>
+              <TableHead>{t("crm.group")}</TableHead>
+              <TableHead>{t("crm.territory")}</TableHead>
+              <TableHead className="w-[100px]">{t("crm.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -113,7 +114,7 @@ export function ProspectList({ prospects }: ProspectListProps) {
                   colSpan={5}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No prospects found.
+                  {t("crm.no_prospects_found")}
                 </TableCell>
               </TableRow>
             ) : (

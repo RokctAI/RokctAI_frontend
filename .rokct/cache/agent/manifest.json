@@ -1,6 +1,7 @@
 {
   "name": "agent_sdk",
-  "version": "1.26.2",
+  "version": "1.27.0",
+  "_comment_version_1_26_3": "1.26.3: style only (motion pass, Ray 2026-11-14). landing opportunities and funding search drop spinners and pulse, pricing buttons press at 0.97, named transition properties. Nothing to install.",
   "_comment_version_1_26_2": "1.26.1 -> 1.26.2: rokct.ai auth links (Create an account, Sign in, Forgot password?) take the brand yellow instead of the indigo accent, light and dark, with a yellow hover/focus fill.",
   "_comment_version_1_26_1": "1.26.0 -> 1.26.1: rokct.ai login on phone (Ray: rectify). Below 768px the brand panel is hidden (it stacked under the card and repeated its greeting); the login card heading reads Welcome to ROKCT (the shell draws it and hides auth_sdk's Welcome to Rokct); auth_sdk's form pt-8 is dropped inside the card and the card is tighter on phone.",
   "_comment_version_1_26_0": "1.25.0 -> 1.26.0: rokct.ai login and register (Ray: every app shell gets its own design for register and login; the pattern hosting_sdk 1.21.0 set for Cortex). Installs its own components/custom/site-shell.tsx over auth_sdk's default (auth_sdk >= 1.12.0's SiteShell seam; before 1.12.0 the auth pages ignore it) and components/custom/agent-auth/ (panel copy and scoped CSS): the landing's root class and fonts, base's Header as the landing draws it, a brand panel beside the card, the card in the landing palette, light and dark. The shell's own root layout keeps drawing the footer. Top level only, so the Sticks block (common: false) is untouched. Presentation only; auth_sdk's views, actions and fields are untouched.",
@@ -275,6 +276,10 @@
     {
       "from": "templates/components/custom/agent-auth",
       "to": "components/custom/agent-auth"
+    },
+    {
+      "from": "templates/app/lib/i18n/sdk/agent.json",
+      "to": "app/lib/i18n/sdk/agent.json"
     }
   ],
   "dependencies": {

@@ -18,10 +18,11 @@
 
 import GenericReport from "@/components/admin/GenericReport";
 
+import t from "@/app/lib/i18n";
 export default function OverviewReportPage() {
   return (
     <GenericReport
-      title="Overview Report"
+      title={t("telemetry.overview_report")}
       reportType="Overview"
       columns={[
         { key: "metric", label: "Metric" },

@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ProductReceiptsPage() {
   const [receipts, setReceipts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,15 +51,15 @@ export default function ProductReceiptsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Product Recipes</h1>
+      <h1 className="text-3xl font-bold">{t("products.product_recipes")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Product</TableHead>
-              <TableHead>Created At</TableHead>
+              <TableHead>{t("products.name")}</TableHead>
+              <TableHead>{t("products.product")}</TableHead>
+              <TableHead>{t("products.created_at")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -74,7 +75,7 @@ export default function ProductReceiptsPage() {
                   colSpan={3}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No recipes found.
+                  {t("products.no_recipes_found")}
                 </TableCell>
               </TableRow>
             ) : (

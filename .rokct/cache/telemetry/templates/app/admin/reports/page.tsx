@@ -29,6 +29,7 @@ import Link from "next/link";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 const reports = [
   {
     title: "Products Report",
@@ -84,9 +85,9 @@ const reports = [
 export default function ReportsOverviewPage() {
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Analytics & Reports</h1>
+      <h1 className="text-3xl font-bold">{t("telemetry.analytics_reports")}</h1>
       <p className="text-muted-foreground">
-        Select a report to view detailed analytics.
+        {t("telemetry.select_a_report_to_view_detailed_analytics")}
       </p>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

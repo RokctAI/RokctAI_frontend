@@ -37,6 +37,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { getHolidays } from "@/app/actions/handson/all/hrms/leave";
 
+import t from "@/app/lib/i18n";
 export default function HolidayListPage() {
   const [holidays, setHolidays] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,32 +57,32 @@ export default function HolidayListPage() {
       <div>
         <h1 className="text-3xl font-bold flex items-center">
           <RiCalendarLine className="mr-3 h-8 w-8" />
-          Holiday List
+          {t("erp.holiday_list")}
         </h1>
         <p className="text-muted-foreground">
-          Company holidays for the current year.
+          {t("erp.company_holidays_for_the_current_year")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Upcoming Holidays</CardTitle>
+          <CardTitle>{t("erp.upcoming_holidays")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Day</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Type</TableHead>
+                <TableHead>{t("erp.date")}</TableHead>
+                <TableHead>{t("erp.day")}</TableHead>
+                <TableHead>{t("erp.description")}</TableHead>
+                <TableHead>{t("erp.type")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-4">
-                    Loading...
+                    {t("erp.loading")}
                   </TableCell>
                 </TableRow>
               ) : holidays.length > 0 ? (
@@ -96,9 +97,9 @@ export default function HolidayListPage() {
                     <TableCell>{h.description}</TableCell>
                     <TableCell>
                       {h.weekly_off ? (
-                        <Badge variant="secondary">Weekly Off</Badge>
+                        <Badge variant="secondary">{t("erp.weekly_off")}</Badge>
                       ) : (
-                        <Badge>Holiday</Badge>
+                        <Badge>{t("erp.holiday")}</Badge>
                       )}
                     </TableCell>
                   </TableRow>
@@ -109,7 +110,7 @@ export default function HolidayListPage() {
                     colSpan={4}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No holidays found.
+                    {t("erp.no_holidays_found")}
                   </TableCell>
                 </TableRow>
               )}

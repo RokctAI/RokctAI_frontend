@@ -61,6 +61,7 @@ import {
   createExpenseClaim,
 } from "@/app/actions/handson/all/hrms/expenses";
 
+import tr from "@/app/lib/i18n";
 const formSchema = z.object({
   employee: z.string().min(1, "Employee is required"),
   posting_date: z.date({ required_error: "Posting Date is required" }),
@@ -133,14 +134,14 @@ export default function NewExpensePage() {
     }
   }
 
-  if (loading) return <div className="p-8">Loading form data...</div>;
+  if (loading) return <div className="p-8">{tr("erp.loading_form_data")}</div>;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 mb-10">
       <div>
-        <h1 className="text-3xl font-bold">New Expense Claim</h1>
+        <h1 className="text-3xl font-bold">{tr("erp.new_expense_claim")}</h1>
         <p className="text-muted-foreground">
-          Submit a claim for reimbursement.
+          {tr("erp.submit_a_claim_for_reimbursement")}
         </p>
       </div>
 
@@ -148,7 +149,7 @@ export default function NewExpensePage() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Card>
             <CardHeader>
-              <CardTitle>Claim Details</CardTitle>
+              <CardTitle>{tr("erp.claim_details")}</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-6 md:grid-cols-2">
               <FormField
@@ -156,14 +157,14 @@ export default function NewExpensePage() {
                 name="employee"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Employee</FormLabel>
+                    <FormLabel>{tr("erp.employee")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select Employee" />
+                          <SelectValue placeholder={tr("erp.select_employee")} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -184,7 +185,7 @@ export default function NewExpensePage() {
                 name="posting_date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Claim Date</FormLabel>
+                    <FormLabel>{tr("erp.claim_date")}</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -198,7 +199,7 @@ export default function NewExpensePage() {
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span>Pick a date</span>
+                              <span>{tr("erp.pick_a_date")}</span>
                             )}
                             <RiCalendarLine className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -225,14 +226,14 @@ export default function NewExpensePage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle>Expenses</CardTitle>
+              <CardTitle>{tr("erp.expenses")}</CardTitle>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => append({ amount: 0, description: "" } as any)}
               >
-                <RiAddLine className="mr-2 h-4 w-4" /> Add Item
+                <RiAddLine className="mr-2 h-4 w-4" /> {tr("erp.add_item")}
               </Button>
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
@@ -247,14 +248,14 @@ export default function NewExpensePage() {
                       name={`expenses.${index}.expense_type`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-xs">Type</FormLabel>
+                          <FormLabel className="text-xs">{tr("erp.type")}</FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <FormControl>
                               <SelectTrigger className="h-9">
-                                <SelectValue placeholder="Select Type" />
+                                <SelectValue placeholder={tr("erp.select_type")} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -276,7 +277,7 @@ export default function NewExpensePage() {
                       name={`expenses.${index}.expense_date`}
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
-                          <FormLabel className="text-xs">Date</FormLabel>
+                          <FormLabel className="text-xs">{tr("erp.date")}</FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
                               <FormControl>
@@ -290,7 +291,7 @@ export default function NewExpensePage() {
                                   {field.value ? (
                                     format(field.value, "MM/dd/yy")
                                   ) : (
-                                    <span>Pick date</span>
+                                    <span>{tr("erp.pick_date")}</span>
                                   )}
                                 </Button>
                               </FormControl>
@@ -322,7 +323,7 @@ export default function NewExpensePage() {
                       name={`expenses.${index}.amount`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-xs">Amount</FormLabel>
+                          <FormLabel className="text-xs">{tr("erp.amount")}</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -342,11 +343,11 @@ export default function NewExpensePage() {
                       name={`expenses.${index}.description`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-xs">Description</FormLabel>
+                          <FormLabel className="text-xs">{tr("erp.description")}</FormLabel>
                           <FormControl>
                             <Input
                               className="h-9"
-                              placeholder="Notes..."
+                              placeholder={tr("erp.notes")}
                               {...field}
                             />
                           </FormControl>
@@ -370,7 +371,7 @@ export default function NewExpensePage() {
               ))}
               {fields.length === 0 && (
                 <div className="text-sm text-center text-muted-foreground py-4">
-                  No items added.
+                  {tr("erp.no_items_added")}
                 </div>
               )}
             </CardContent>

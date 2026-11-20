@@ -60,6 +60,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/utils";
 
+import t from "@/app/lib/i18n";
 // Wallet History.transaction_type values that add money to the wallet.
 const CREDIT_TYPES = new Set([
   "Topup",
@@ -145,29 +146,29 @@ export default function WalletPage() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">My Wallet</h1>
+          <h1 className="text-3xl font-bold">{t("wallet.my_wallet")}</h1>
           <p className="text-muted-foreground">
-            Manage your wallet balance and view transaction history.
+            {t("wallet.manage_your_wallet_balance_and_view_transaction_")}
           </p>
         </div>
         <Dialog open={isTopUpOpen} onOpenChange={setIsTopUpOpen}>
           <DialogTrigger asChild>
             <Button>
               <RiArrowUpCircleLine className="mr-2 size-4" />
-              Top Up Wallet
+              {t("wallet.top_up_wallet")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Top Up Wallet</DialogTitle>
+              <DialogTitle>{t("wallet.top_up_wallet")}</DialogTitle>
               <DialogDescription>
-                Enter the amount you want to add to your wallet.
+                {t("wallet.enter_the_amount_you_want_to_add_to_your_wallet")}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="amount" className="text-right">
-                  Amount
+                  {t("wallet.amount")}
                 </Label>
                 <Input
                   id="amount"
@@ -180,11 +181,11 @@ export default function WalletPage() {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="saved-card" className="text-right">
-                  Card
+                  {t("wallet.card")}
                 </Label>
                 {cards.length === 0 ? (
                   <p className="col-span-3 text-sm text-muted-foreground">
-                    No saved cards. Save a card first to top up.
+                    {t("wallet.no_saved_cards_save_a_card_first_to_top_up")}
                   </p>
                 ) : (
                   <select
@@ -219,7 +220,7 @@ export default function WalletPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Current Balance
+              {t("wallet.current_balance")}
             </CardTitle>
             <RiWalletLine className="size-4 text-muted-foreground" />
           </CardHeader>
@@ -233,19 +234,19 @@ export default function WalletPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Wallet History</CardTitle>
+          <CardTitle>{t("wallet.wallet_history")}</CardTitle>
           <CardDescription>
-            Recent transactions affecting your wallet balance.
+            {t("wallet.recent_transactions_affecting_your_wallet_balanc")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>{t("wallet.date")}</TableHead>
+                <TableHead>{t("wallet.type")}</TableHead>
+                <TableHead>{t("wallet.status")}</TableHead>
+                <TableHead className="text-right">{t("wallet.amount")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -255,7 +256,7 @@ export default function WalletPage() {
                     colSpan={4}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No history found.
+                    {t("wallet.no_history_found")}
                   </TableCell>
                 </TableRow>
               ) : (

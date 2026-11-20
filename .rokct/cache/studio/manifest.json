@@ -1,6 +1,6 @@
 {
   "name": "studio_sdk",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "installs": [
     {
       "from": "templates/app/services/all/studio",
@@ -13,6 +13,10 @@
     {
       "from": "templates/app/studio",
       "to": "app/studio"
+    },
+    {
+      "from": "templates/app/lib/i18n/sdk/studio.json",
+      "to": "app/lib/i18n/sdk/studio.json"
     }
   ],
   "dependencies": {
@@ -22,6 +26,7 @@
   "devDependencies": {},
   "integrations": [],
   "requires": [
+    "app/lib/i18n/index.ts",
     "app/services/base/platform-gateway.ts",
     "components/ui/badge.tsx",
     "components/ui/button.tsx",

@@ -122,7 +122,7 @@ export default function FlutterSettingsPage() {
           {t("app.paas.admin.settings.flutter.title")}
         </h2>
         <p className="text-muted-foreground">
-          Manage your Flutter application configuration and build settings.
+          {t("base.manage_your_flutter_application_configuration_an")}
         </p>
       </div>
 
@@ -132,22 +132,22 @@ export default function FlutterSettingsPage() {
         className="space-y-4"
       >
         <TabsList>
-          <TabsTrigger value="app-config">App Configuration</TabsTrigger>
-          <TabsTrigger value="build-settings">Build Settings</TabsTrigger>
+          <TabsTrigger value="app-config">{t("base.app_configuration")}</TabsTrigger>
+          <TabsTrigger value="build-settings">{t("base.build_settings")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="app-config">
           <Card>
             <CardHeader>
-              <CardTitle>App Configuration</CardTitle>
+              <CardTitle>{t("base.app_configuration")}</CardTitle>
               <CardDescription>
-                Configure your mobile application details.
+                {t("base.configure_your_mobile_application_details")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>App Display Name</Label>
+                  <Label>{t("base.app_display_name")}</Label>
                   <Input
                     value={appConfig?.app_display_name || ""}
                     onChange={(e) =>
@@ -159,7 +159,7 @@ export default function FlutterSettingsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Package Name (Android)</Label>
+                  <Label>{t("base.package_name_android")}</Label>
                   <Input
                     value={appConfig?.package_name || ""}
                     onChange={(e) =>
@@ -171,7 +171,7 @@ export default function FlutterSettingsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Package Name (iOS)</Label>
+                  <Label>{t("base.package_name_ios")}</Label>
                   <Input
                     value={appConfig?.ios_package_name || ""}
                     onChange={(e) =>
@@ -183,7 +183,7 @@ export default function FlutterSettingsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Source Project</Label>
+                  <Label>{t("base.source_project")}</Label>
                   <Select
                     value={appConfig?.source_project || ""}
                     onValueChange={(val) =>
@@ -217,7 +217,7 @@ export default function FlutterSettingsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Admin Page URL</Label>
+                  <Label>{t("base.admin_page_url")}</Label>
                   <Input
                     value={appConfig?.admin_page_url || ""}
                     onChange={(e) =>
@@ -229,7 +229,7 @@ export default function FlutterSettingsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Web URL</Label>
+                  <Label>{t("base.web_url")}</Label>
                   <Input
                     value={appConfig?.web_url || ""}
                     onChange={(e) =>
@@ -242,7 +242,7 @@ export default function FlutterSettingsPage() {
               <div className="flex justify-end pt-4">
                 <Button onClick={handleSaveAppConfig}>
                   <RiSaveLine className="mr-2 size-4" />
-                  Save Configuration
+                  {t("base.save_configuration")}
                 </Button>
               </div>
             </CardContent>
@@ -252,14 +252,14 @@ export default function FlutterSettingsPage() {
         <TabsContent value="build-settings">
           <Card>
             <CardHeader>
-              <CardTitle>Build Settings</CardTitle>
+              <CardTitle>{t("base.build_settings")}</CardTitle>
               <CardDescription>
-                Configure the build environment for your Flutter apps.
+                {t("base.configure_the_build_environment_for_your_flutter")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Flutter SDK Path</Label>
+                <Label>{t("base.flutter_sdk_path")}</Label>
                 <Input
                   value={buildSettings?.flutter_sdk_path || ""}
                   onChange={(e) =>
@@ -271,14 +271,14 @@ export default function FlutterSettingsPage() {
                   placeholder="/opt/flutter"
                 />
                 <p className="text-xs text-muted-foreground">
-                  The absolute path to the root of the Flutter SDK directory.
+                  {t("base.the_absolute_path_to_the_root_of_the_flutter_sdk")}
                 </p>
               </div>
 
               <div className="flex justify-end pt-4">
                 <Button onClick={handleSaveBuildSettings}>
                   <RiSaveLine className="mr-2 size-4" />
-                  Save Build Settings
+                  {t("base.save_build_settings")}
                 </Button>
               </div>
             </CardContent>

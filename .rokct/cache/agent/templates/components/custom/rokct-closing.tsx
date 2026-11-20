@@ -38,6 +38,7 @@ import type {
   PageSectionProps,
 } from "@/components/custom/landing/page-sections";
 
+import t from "@/app/lib/i18n";
 export const meta: PageSectionMeta = {
   order: 50,
   nav: [],
@@ -66,7 +67,7 @@ export default function RokctClosingSection({ id, session, signupUrl }: PageSect
               ))}
             </ul>
           </div>
-          <div className="rk-browser rk-reveal" aria-label="Sample: connecting your own domain">
+          <div className="rk-browser rk-reveal" aria-label={t("agent.sample_connecting_your_own_domain")}>
             <div className="rk-b-bar">
               <span className="rk-b-dots" aria-hidden="true">
                 <i />

@@ -31,6 +31,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function SystemUpdatePage() {
   const [loading, setLoading] = useState(false);
 
@@ -60,15 +61,15 @@ export default function SystemUpdatePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">System Update</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("base.system_update")}</h2>
         <p className="text-muted-foreground">
-          Manage system updates and migrations.
+          {t("base.manage_system_updates_and_migrations")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Update System</CardTitle>
+          <CardTitle>{t("base.update_system")}</CardTitle>
           <CardDescription>
             Trigger a system update to apply the latest database changes and
             migrations.
@@ -77,7 +78,7 @@ export default function SystemUpdatePage() {
         <CardContent className="space-y-4">
           <Alert>
             <RiRefreshLine className="size-4" />
-            <AlertTitle>Note</AlertTitle>
+            <AlertTitle>{t("base.note")}</AlertTitle>
             <AlertDescription>
               For tenant sites, this action will only run database migrations
               (`frappe.migrate.migrate`). It will not update the codebase
@@ -86,7 +87,7 @@ export default function SystemUpdatePage() {
           </Alert>
 
           <Button onClick={handleUpdate} disabled={loading}>
-            Trigger Update
+            {t("base.trigger_update")}
           </Button>
         </CardContent>
       </Card>

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0
+
+* feat(i18n): 39 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 8 files now go through
+  `t("promotions.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/promotions.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.1.2
 
 * fix(icons): icons come from `@remixicon/react` (the fleet's one icon set)

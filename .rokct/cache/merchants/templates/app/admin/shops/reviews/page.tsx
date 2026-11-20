@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ShopReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,17 +51,17 @@ export default function ShopReviewsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Shop Reviews</h1>
+      <h1 className="text-3xl font-bold">{t("merchants.shop_reviews")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Shop</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Rating</TableHead>
-              <TableHead>Comment</TableHead>
+              <TableHead>{t("merchants.date")}</TableHead>
+              <TableHead>{t("merchants.shop")}</TableHead>
+              <TableHead>{t("merchants.user")}</TableHead>
+              <TableHead>{t("merchants.rating")}</TableHead>
+              <TableHead>{t("merchants.comment")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -76,7 +77,7 @@ export default function ShopReviewsPage() {
                   colSpan={5}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No reviews found.
+                  {t("merchants.no_reviews_found")}
                 </TableCell>
               </TableRow>
             ) : (

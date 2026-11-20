@@ -145,11 +145,11 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Asset Details</CardTitle>
+          <CardTitle>{t("erp.asset_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="assetName">Asset Name</Label>
+            <Label htmlFor="assetName">{t("erp.asset_name")}</Label>
              <Input
                id="assetName"
                placeholder={t('common.ph_macbook')}
@@ -159,7 +159,7 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="itemCode">Item Code</Label>
+            <Label htmlFor="itemCode">{t("erp.item_code")}</Label>
             <Input
               id="itemCode"
               placeholder="e.g. ITEM-001 (Must link to an Item)"
@@ -169,7 +169,7 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label>Company</Label>
+            <Label>{t("erp.company")}</Label>
             <Select
               value={company}
               onValueChange={setCompany}
@@ -190,7 +190,7 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Purchase Date</Label>
+              <Label>{t("erp.purchase_date")}</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -204,7 +204,7 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
                     {purchaseDate ? (
                       format(purchaseDate, "PPP")
                     ) : (
-                      <span>Pick a date</span>
+                      <span>{t("erp.pick_a_date")}</span>
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -220,7 +220,7 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="purchaseAmount">Gross Purchase Amount</Label>
+              <Label htmlFor="purchaseAmount">{t("erp.gross_purchase_amount")}</Label>
               <Input
                 id="purchaseAmount"
                 type="number"
@@ -233,7 +233,7 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Location</Label>
+              <Label>{t("erp.location")}</Label>
               <Input
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
@@ -242,16 +242,16 @@ export function AssetForm({ initialData, isEdit = false }: AssetFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{t("erp.status")}</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Status" />
+                  <SelectValue placeholder={t("erp.select_status")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Draft">Draft</SelectItem>
-                  <SelectItem value="Submitted">Submitted</SelectItem>
-                  <SelectItem value="Sold">Sold</SelectItem>
-                  <SelectItem value="Scrapped">Scrapped</SelectItem>
+                  <SelectItem value="Draft">{t("erp.draft")}</SelectItem>
+                  <SelectItem value="Submitted">{t("erp.submitted")}</SelectItem>
+                  <SelectItem value="Sold">{t("erp.sold")}</SelectItem>
+                  <SelectItem value="Scrapped">{t("erp.scrapped")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

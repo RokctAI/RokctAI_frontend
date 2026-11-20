@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 interface GenericReportProps {
   title: string;
   reportType: string;
@@ -87,7 +88,7 @@ export default function GenericReport({
                   colSpan={columns.length}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No data available.
+                  {t("telemetry.no_data_available")}
                 </TableCell>
               </TableRow>
             ) : (

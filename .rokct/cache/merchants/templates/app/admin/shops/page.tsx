@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function AdminShopsPage() {
   const [shops, setShops] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,11 +75,11 @@ export default function AdminShopsPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Shop Management</h1>
+        <h1 className="text-3xl font-bold">{t("merchants.shop_management")}</h1>
         <Button asChild>
           <Link href="/admin/shops/new">
             <RiAddLine className="mr-2 size-4" />
-            Add Shop
+            {t("merchants.add_shop")}
           </Link>
         </Button>
       </div>
@@ -87,18 +88,18 @@ export default function AdminShopsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Shop Name</TableHead>
-              <TableHead>Owner</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Ecommerce</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t("merchants.shop_name")}</TableHead>
+              <TableHead>{t("merchants.owner")}</TableHead>
+              <TableHead>{t("merchants.type")}</TableHead>
+              <TableHead>{t("merchants.ecommerce")}</TableHead>
+              <TableHead className="text-right">{t("merchants.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {shops.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={3} className="text-center h-24">
-                  No shops found.
+                  {t("merchants.no_shops_found")}
                 </TableCell>
               </TableRow>
             ) : (

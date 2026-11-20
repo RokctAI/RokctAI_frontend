@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/card";
 import { RiLoader4Line, RiShieldCheckLine, RiCheckboxCircleLine, RiErrorWarningLine } from "@remixicon/react";
 
+import t from "@/app/lib/i18n";
 interface ProfileFormCardProps {
   initialData?: {
     id_number?: string;
@@ -79,10 +80,10 @@ export function ProfileFormCard({
         <CardContent className="pt-6 flex flex-col items-center text-center">
           <RiCheckboxCircleLine className="h-12 w-12 text-purple-500 mb-2" />
           <h3 className="font-semibold text-purple-800 text-sm">
-            Profile Updated
+            {t("agent.profile_updated")}
           </h3>
           <p className="text-xs text-purple-700">
-            Your verification details have been saved.
+            {t("agent.your_verification_details_have_been_saved")}
           </p>
         </CardContent>
       </Card>
@@ -94,7 +95,7 @@ export function ProfileFormCard({
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
           <RiShieldCheckLine className="h-4 w-4 text-purple-500" />
-          Bank-Level Verification
+          {t("agent.bank_level_verification")}
         </CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -104,7 +105,7 @@ export function ProfileFormCard({
               htmlFor="id_number"
               className="text-[10px] uppercase tracking-wider text-muted-foreground"
             >
-              SA ID Number
+              {t("agent.sa_id_number")}
             </Label>
             <Input
               id="id_number"
@@ -123,7 +124,7 @@ export function ProfileFormCard({
                 htmlFor="bank_name"
                 className="text-[10px] uppercase tracking-wider text-muted-foreground"
               >
-                Bank Name
+                {t("agent.bank_name")}
               </Label>
               <Input
                 id="bank_name"
@@ -140,7 +141,7 @@ export function ProfileFormCard({
                 htmlFor="tax_id"
                 className="text-[10px] uppercase tracking-wider text-muted-foreground"
               >
-                Tax ID (SARS)
+                {t("agent.tax_id_sars")}
               </Label>
               <Input
                 id="tax_id"
@@ -148,7 +149,7 @@ export function ProfileFormCard({
                 onChange={(e) =>
                   setFormData({ ...formData, tax_id: e.target.value })
                 }
-                placeholder="SARS Ref"
+                placeholder={t("agent.sars_ref")}
                 className="h-8 text-sm"
               />
             </div>
@@ -160,7 +161,7 @@ export function ProfileFormCard({
                 htmlFor="bank_account_no"
                 className="text-[10px] uppercase tracking-wider text-muted-foreground"
               >
-                Account Number
+                {t("agent.account_number")}
               </Label>
               <Input
                 id="bank_account_no"
@@ -168,7 +169,7 @@ export function ProfileFormCard({
                 onChange={(e) =>
                   setFormData({ ...formData, bank_account_no: e.target.value })
                 }
-                placeholder="Digits only"
+                placeholder={t("agent.digits_only")}
                 className="h-8 text-sm"
               />
             </div>
@@ -177,7 +178,7 @@ export function ProfileFormCard({
                 htmlFor="bank_branch_code"
                 className="text-[10px] uppercase tracking-wider text-muted-foreground"
               >
-                Branch Code
+                {t("agent.branch_code")}
               </Label>
               <Input
                 id="bank_branch_code"

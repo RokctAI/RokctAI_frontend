@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { getBrands } from "@/app/actions/base/admin/content";
 import { Card, CardContent } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function AdminBrandsPage() {
   const [brands, setBrands] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,12 +52,12 @@ export default function AdminBrandsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Brands</h1>
+      <h1 className="text-3xl font-bold">{t("products.brands")}</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
         {brands.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
-            No brands found.
+            {t("products.no_brands_found")}
           </div>
         ) : (
           brands.map((brand) => (
@@ -75,7 +76,7 @@ export default function AdminBrandsPage() {
                     />
                   ) : (
                     <div className="size-full bg-muted rounded-full flex items-center justify-center text-xs text-muted-foreground">
-                      No Logo
+                      {t("products.no_logo")}
                     </div>
                   )}
                 </div>

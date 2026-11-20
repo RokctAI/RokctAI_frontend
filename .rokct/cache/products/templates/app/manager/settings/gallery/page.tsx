@@ -124,7 +124,7 @@ export default function GalleryPage() {
               <div className="aspect-square relative bg-muted">
                 <img
                   src={img.image}
-                  alt="Gallery"
+                  alt={t("products.gallery")}
                   className="size-full object-cover"
                 />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

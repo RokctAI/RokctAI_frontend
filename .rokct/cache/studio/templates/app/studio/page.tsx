@@ -21,6 +21,7 @@ import { listRequests } from "@/app/actions/studio/requests/actions";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 
 const SECTIONS = [
@@ -46,9 +47,9 @@ export default async function StudioHomePage() {
           </Link>
         ))}
       </nav>
-      <h2 className="text-lg font-medium">Design requests</h2>
+      <h2 className="text-lg font-medium">{t("studio.design_requests")}</h2>
       {requests.length === 0 ? (
-        <p className="text-muted-foreground">No design requests yet.</p>
+        <p className="text-muted-foreground">{t("studio.no_design_requests_yet")}</p>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {requests.map((r) => (

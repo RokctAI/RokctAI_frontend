@@ -90,23 +90,23 @@ export default function LandingPageSettings() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
-          Landing Page Settings
+          {t("base.landing_page_settings")}
         </h2>
         <p className="text-muted-foreground">
-          Manage the content and visibility of your landing page.
+          {t("base.manage_the_content_and_visibility_of_your_landin")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>General Information</CardTitle>
+          <CardTitle>{t("base.general_information")}</CardTitle>
           <CardDescription>
-            Configure the main title and content of the landing page.
+            {t("base.configure_the_main_title_and_content_of_the_land")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Page Title</Label>
+            <Label>{t("base.page_title")}</Label>
             <Input
               value={formData.title}
               onChange={(e) =>
@@ -116,7 +116,7 @@ export default function LandingPageSettings() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Main Content (JSON/HTML)</Label>
+            <Label>{t("base.main_content_json_html")}</Label>
             <Textarea
               value={formData.main_section}
               onChange={(e) =>
@@ -137,7 +137,7 @@ export default function LandingPageSettings() {
                 setFormData({ ...formData, published: checked ? 1 : 0 })
               }
             />
-            <Label>Published</Label>
+            <Label>{t("base.published")}</Label>
           </div>
         </CardContent>
       </Card>
@@ -145,7 +145,7 @@ export default function LandingPageSettings() {
       <div className="flex justify-end">
         <Button onClick={handleSave}>
           <RiSaveLine className="mr-2 size-4" />
-          Save Changes
+          {t("base.save_changes")}
         </Button>
       </div>
     </div>

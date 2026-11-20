@@ -213,24 +213,24 @@ export default function TranslationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Translations</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t("base.translations")}</h2>
           <p className="text-muted-foreground">
-            Manage system translations and localization.
+            {t("base.manage_system_translations_and_localization")}
           </p>
         </div>
         <Button onClick={openCreate}>
           <RiAddLine className="mr-2 size-4" />
-          New key
+          {t("base.new_key")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <CardTitle>All Translations</CardTitle>
+            <CardTitle>{t("base.all_translations")}</CardTitle>
             <div className="flex items-center gap-2">
               <Input
-                placeholder="Filter by group..."
+                placeholder={t("base.filter_by_group")}
                 value={groupFilter}
                 onChange={(e) => setGroupFilter(e.target.value)}
                 className="w-40"
@@ -258,10 +258,10 @@ export default function TranslationsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Key</TableHead>
-                  <TableHead>Group</TableHead>
-                  <TableHead>Languages</TableHead>
-                  <TableHead className="w-[100px]">Actions</TableHead>
+                  <TableHead>{t("base.key")}</TableHead>
+                  <TableHead>{t("base.group")}</TableHead>
+                  <TableHead>{t("base.languages")}</TableHead>
+                  <TableHead className="w-[100px]">{t("base.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -271,7 +271,7 @@ export default function TranslationsPage() {
                       colSpan={4}
                       className="h-24 text-center text-muted-foreground"
                     >
-                      No translations found.
+                      {t("base.no_translations_found")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -300,7 +300,7 @@ export default function TranslationsPage() {
                             variant="ghost"
                             onClick={() => openEditor(key, rows)}
                           >
-                            Edit
+                            {t("base.edit")}
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -323,7 +323,7 @@ export default function TranslationsPage() {
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
                 <RiArrowLeftSLine className="size-4" />
-                Previous
+                {t("base.previous")}
               </Button>
               <Button
                 size="sm"
@@ -331,7 +331,7 @@ export default function TranslationsPage() {
                 disabled={page >= totalPages || loading}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Next
+                {t("base.next")}
                 <RiArrowRightSLine className="size-4" />
               </Button>
             </div>
@@ -357,7 +357,7 @@ export default function TranslationsPage() {
             <div className="space-y-4 py-4">
               {editor.mode === "create" && (
                 <div className="space-y-2">
-                  <Label>Key</Label>
+                  <Label>{t("base.key")}</Label>
                   <Input
                     value={editor.key}
                     onChange={(e) =>
@@ -368,7 +368,7 @@ export default function TranslationsPage() {
                 </div>
               )}
               <div className="space-y-2">
-                <Label>Group</Label>
+                <Label>{t("base.group")}</Label>
                 <Input
                   value={editor.group}
                   onChange={(e) =>
@@ -379,7 +379,7 @@ export default function TranslationsPage() {
               </div>
               {editor.locales.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  No enabled languages found. Enable a language first.
+                  {t("base.no_enabled_languages_found_enable_a_language_fir")}
                 </p>
               ) : (
                 editor.locales.map((lang) => (

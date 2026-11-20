@@ -33,6 +33,7 @@ import { OpportunityPublicService } from "@/app/services/public/opportunities";
 
 import { OpportunityList } from "./opportunity-list";
 
+import t from "@/app/lib/i18n";
 // As app/careers: the host's layout reads headers, so render per request;
 // the repo reads are fetch-cached for an hour.
 export const dynamic = "force-dynamic";
@@ -53,9 +54,9 @@ export default async function OpportunitiesPage() {
   );
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-12">
-      <h1 className="text-3xl font-semibold">Opportunities</h1>
+      <h1 className="text-3xl font-semibold">{t("agent.opportunities")}</h1>
       <p className="mt-2 text-muted-foreground">
-        Open grants, tenders and equity funders. Pick one to see the details and apply.
+        {t("agent.open_grants_tenders_and_equity_funders_pick_one_")}
       </p>
       <nav className="mt-6 flex gap-3 text-sm">
         {lists.map(({ kind, items }) => (
@@ -69,7 +70,7 @@ export default async function OpportunitiesPage() {
           <h2 className="text-xl font-semibold">{kind === "equity" ? "Equity" : `${KIND_LABEL[kind]}s`}</h2>
           <OpportunityList items={items.slice(0, PER_KIND)} />
           {items.length === 0 && (
-            <p className="mt-3 text-sm text-muted-foreground">Nothing open right now.</p>
+            <p className="mt-3 text-sm text-muted-foreground">{t("agent.nothing_open_right_now")}</p>
           )}
         </section>
       ))}

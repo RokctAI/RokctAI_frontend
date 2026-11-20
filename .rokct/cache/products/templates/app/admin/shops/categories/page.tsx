@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ShopCategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,14 +51,14 @@ export default function ShopCategoriesPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Shop Categories</h1>
+      <h1 className="text-3xl font-bold">{t("products.shop_categories")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Active</TableHead>
+              <TableHead>{t("products.name")}</TableHead>
+              <TableHead>{t("products.active")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -73,7 +74,7 @@ export default function ShopCategoriesPage() {
                   colSpan={2}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No categories found.
+                  {t("products.no_categories_found")}
                 </TableCell>
               </TableRow>
             ) : (

@@ -18,10 +18,11 @@
 
 import GenericReport from "@/components/admin/GenericReport";
 
+import t from "@/app/lib/i18n";
 export default function OrdersReportPage() {
   return (
     <GenericReport
-      title="Orders Report"
+      title={t("orders.orders_report")}
       reportType="Order"
       columns={[
         { key: "name", label: "Order ID" },

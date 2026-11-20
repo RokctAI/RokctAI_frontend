@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
+import t from "@/app/lib/i18n";
 export default function BookingDetailsPage({
   params,
 }: {
@@ -102,7 +103,7 @@ export default function BookingDetailsPage({
             <RiArrowLeftLine className="size-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Booking Details</h1>
+        <h1 className="text-3xl font-bold">{t("booking.booking_details")}</h1>
       </div>
 
       <Card>
@@ -136,7 +137,7 @@ export default function BookingDetailsPage({
             <div className="flex items-center gap-3">
               <RiCalendarLine className="size-5 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">Date</p>
+                <p className="text-sm font-medium">{t("booking.date")}</p>
                 <p className="text-muted-foreground">
                   {format(
                     new Date(reservation.booking_date),
@@ -148,7 +149,7 @@ export default function BookingDetailsPage({
             <div className="flex items-center gap-3">
               <RiTimeLine className="size-5 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">Time</p>
+                <p className="text-sm font-medium">{t("booking.time")}</p>
                 <p className="text-muted-foreground">
                   {reservation.booking_time}
                 </p>
@@ -157,7 +158,7 @@ export default function BookingDetailsPage({
             <div className="flex items-center gap-3">
               <RiGroupLine className="size-5 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">Guests</p>
+                <p className="text-sm font-medium">{t("booking.guests")}</p>
                 <p className="text-muted-foreground">
                   {reservation.number_of_guests} People
                 </p>
@@ -166,7 +167,7 @@ export default function BookingDetailsPage({
             <div className="flex items-center gap-3">
               <RiRestaurantLine className="size-5 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">Table</p>
+                <p className="text-sm font-medium">{t("booking.table")}</p>
                 <p className="text-muted-foreground">
                   {reservation.table || "Not Assigned"}
                 </p>
@@ -177,7 +178,7 @@ export default function BookingDetailsPage({
           <Separator />
 
           <div>
-            <h3 className="font-semibold mb-2">Customer Notes</h3>
+            <h3 className="font-semibold mb-2">{t("booking.customer_notes")}</h3>
             <p className="text-muted-foreground">
               {reservation.notes || "No notes provided."}
             </p>
@@ -193,7 +194,7 @@ export default function BookingDetailsPage({
                 disabled={updating}
               >
                 <RiCloseCircleLine className="mr-2 size-4" />
-                Reject
+                {t("booking.reject")}
               </Button>
               <Button
                 className="bg-green-600 hover:bg-green-700"
@@ -201,7 +202,7 @@ export default function BookingDetailsPage({
                 disabled={updating}
               >
                 <RiCheckboxCircleLine className="mr-2 size-4" />
-                Approve
+                {t("booking.approve")}
               </Button>
             </>
           )}
@@ -213,7 +214,7 @@ export default function BookingDetailsPage({
               disabled={updating}
             >
               <RiForbidLine className="mr-2 size-4" />
-              Cancel Booking
+              {t("booking.cancel_booking")}
             </Button>
           )}
         </CardFooter>

@@ -49,6 +49,7 @@ import {
 import { createSupplier } from "@/app/actions/handson/all/accounting/buying/supplier";
 import { RiLoader4Line } from "@remixicon/react";
 
+import t from "@/app/lib/i18n";
 // Note: createSupplier action needs to be created or we use a generic create if it doesn't exist.
 // Checking supply_chain.ts... getSuppliers exists. createSupplier does NOT exist yet?
 // I need to check supply_chain.ts content again later. If it doesn't exist, this will fail.
@@ -100,9 +101,9 @@ export default function NewSupplierPage() {
     <div className="max-w-2xl mx-auto p-6">
       <Card>
         <CardHeader>
-          <CardTitle>New Supplier</CardTitle>
+          <CardTitle>{t("erp.new_supplier")}</CardTitle>
           <CardDescription>
-            Add a new vendor or service provider.
+            {t("erp.add_a_new_vendor_or_service_provider")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -113,7 +114,7 @@ export default function NewSupplierPage() {
                 name="supplier_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Supplier Name</FormLabel>
+                    <FormLabel>{t("erp.supplier_name")}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -128,7 +129,7 @@ export default function NewSupplierPage() {
                   name="supplier_type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Type</FormLabel>
+                      <FormLabel>{t("erp.type")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -139,8 +140,8 @@ export default function NewSupplierPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Company">Company</SelectItem>
-                          <SelectItem value="Individual">Individual</SelectItem>
+                          <SelectItem value="Company">{t("erp.company")}</SelectItem>
+                          <SelectItem value="Individual">{t("erp.individual")}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -152,7 +153,7 @@ export default function NewSupplierPage() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Country</FormLabel>
+                      <FormLabel>{t("erp.country")}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -167,7 +168,7 @@ export default function NewSupplierPage() {
                 name="email_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("erp.email")}</FormLabel>
                     <FormControl>
                       <Input type="email" {...field} />
                     </FormControl>
@@ -182,7 +183,7 @@ export default function NewSupplierPage() {
                   variant="outline"
                   onClick={() => router.back()}
                 >
-                  Cancel
+                  {t("erp.cancel")}
                 </Button>
                 <Button type="submit" disabled={loading}>
                   {loading && <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />}

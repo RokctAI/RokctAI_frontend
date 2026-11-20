@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
+import t from "@/app/lib/i18n";
 interface OpportunityFormProps {
   initialData?: any;
   isEdit?: boolean;
@@ -115,11 +116,11 @@ export function OpportunityForm({
 
       <Card>
         <CardHeader>
-          <CardTitle>Opportunity Details</CardTitle>
+          <CardTitle>{t("crm.opportunity_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <Label>Opportunity From</Label>
+            <Label>{t("crm.opportunity_from")}</Label>
             <RadioGroup
               value={opportunityFrom}
               onValueChange={(v: "Lead" | "Customer") => setOpportunityFrom(v)}
@@ -127,11 +128,11 @@ export function OpportunityForm({
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Lead" id="r1" />
-                <Label htmlFor="r1">Lead</Label>
+                <Label htmlFor="r1">{t("crm.lead")}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Customer" id="r2" />
-                <Label htmlFor="r2">Customer</Label>
+                <Label htmlFor="r2">{t("crm.customer")}</Label>
               </div>
             </RadioGroup>
           </div>
@@ -147,16 +148,16 @@ export function OpportunityForm({
           </div>
 
           <div className="space-y-2">
-            <Label>Status</Label>
+            <Label>{t("crm.status")}</Label>
             <Select value={status} onValueChange={setStatus}>
               <SelectTrigger>
-                <SelectValue placeholder="Select Status" />
+                <SelectValue placeholder={t("crm.select_status")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Open">Open</SelectItem>
-                <SelectItem value="Quotation">Quotation</SelectItem>
-                <SelectItem value="Converted">Converted</SelectItem>
-                <SelectItem value="Lost">Lost</SelectItem>
+                <SelectItem value="Open">{t("crm.open")}</SelectItem>
+                <SelectItem value="Quotation">{t("crm.quotation")}</SelectItem>
+                <SelectItem value="Converted">{t("crm.converted")}</SelectItem>
+                <SelectItem value="Lost">{t("crm.lost")}</SelectItem>
               </SelectContent>
             </Select>
           </div>

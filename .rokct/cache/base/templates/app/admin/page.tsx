@@ -46,6 +46,7 @@ import {
 import { getAdminStatistics } from "@/app/actions/telemetry/admin/dashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 const COLORS = [
   "#0088FE",
   "#00C49F",
@@ -86,50 +87,50 @@ export default function AdminDashboard() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Platform Overview</h1>
+      <h1 className="text-3xl font-bold">{t("base.platform_overview")}</h1>
 
       {/* Key Metrics Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("base.total_revenue")}</CardTitle>
             <RiMoneyDollarCircleLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               ${cards.total_sales?.toFixed(2) || "0.00"}
             </div>
-            <p className="text-xs text-muted-foreground">Lifetime sales</p>
+            <p className="text-xs text-muted-foreground">{t("base.lifetime_sales")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("base.total_orders")}</CardTitle>
             <RiShoppingBagLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{cards.total_orders || 0}</div>
-            <p className="text-xs text-muted-foreground">All time orders</p>
+            <p className="text-xs text-muted-foreground">{t("base.all_time_orders")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("base.total_users")}</CardTitle>
             <RiGroupLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{cards.total_users || 0}</div>
-            <p className="text-xs text-muted-foreground">Registered accounts</p>
+            <p className="text-xs text-muted-foreground">{t("base.registered_accounts")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Shops</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("base.total_shops")}</CardTitle>
             <RiStore2Line className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{cards.total_shops || 0}</div>
-            <p className="text-xs text-muted-foreground">Active businesses</p>
+            <p className="text-xs text-muted-foreground">{t("base.active_businesses")}</p>
           </CardContent>
         </Card>
       </div>
@@ -138,60 +139,60 @@ export default function AdminDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("base.in_progress")}</CardTitle>
             <RiArchiveLine className="size-4 text-blue-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {cards.in_progress_orders || 0}
             </div>
-            <p className="text-xs text-muted-foreground">Active orders</p>
+            <p className="text-xs text-muted-foreground">{t("base.active_orders")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Delivered</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("base.delivered")}</CardTitle>
             <RiCheckboxCircleLine className="size-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {cards.delivered_orders || 0}
             </div>
-            <p className="text-xs text-muted-foreground">Completed orders</p>
+            <p className="text-xs text-muted-foreground">{t("base.completed_orders")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Cancelled</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("base.cancelled")}</CardTitle>
             <RiCloseCircleLine className="size-4 text-red-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {cards.cancelled_orders || 0}
             </div>
-            <p className="text-xs text-muted-foreground">Cancelled orders</p>
+            <p className="text-xs text-muted-foreground">{t("base.cancelled_orders")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Products</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("base.products")}</CardTitle>
             <RiBox3Line className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {cards.total_products || 0}
             </div>
-            <p className="text-xs text-muted-foreground">Total items</p>
+            <p className="text-xs text-muted-foreground">{t("base.total_items")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Reviews</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("base.reviews")}</CardTitle>
             <RiStarLine className="size-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{cards.total_reviews || 0}</div>
-            <p className="text-xs text-muted-foreground">Customer feedback</p>
+            <p className="text-xs text-muted-foreground">{t("base.customer_feedback")}</p>
           </CardContent>
         </Card>
       </div>
@@ -200,7 +201,7 @@ export default function AdminDashboard() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Orders per Day (Last 30 Days)</CardTitle>
+            <CardTitle>{t("base.orders_per_day_last_30_days")}</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -227,7 +228,7 @@ export default function AdminDashboard() {
 
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Order Status Distribution</CardTitle>
+            <CardTitle>{t("base.order_status_distribution")}</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -260,7 +261,7 @@ export default function AdminDashboard() {
 
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>New Users (Last 30 Days)</CardTitle>
+            <CardTitle>{t("base.new_users_last_30_days")}</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -282,7 +283,7 @@ export default function AdminDashboard() {
 
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>New Shops (Last 30 Days)</CardTitle>
+            <CardTitle>{t("base.new_shops_last_30_days")}</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">

@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,23 +59,23 @@ export default function AdminProductsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Product Management</h1>
+      <h1 className="text-3xl font-bold">{t("products.product_management")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Shop</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Active</TableHead>
+              <TableHead>{t("products.name")}</TableHead>
+              <TableHead>{t("products.shop")}</TableHead>
+              <TableHead>{t("products.price")}</TableHead>
+              <TableHead>{t("products.active")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {products.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="text-center h-24">
-                  No products found.
+                  {t("products.no_products_found")}
                 </TableCell>
               </TableRow>
             ) : (

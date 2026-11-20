@@ -21,6 +21,7 @@ import React from "react";
 
 import { Button } from "../ui/button";
 
+import t from "@/app/lib/i18n";
 interface DisambiguateTaskProps {
   taskTitle: string;
   append?: AppendMessage;
@@ -46,16 +47,16 @@ export function DisambiguateTask({ taskTitle, append }: DisambiguateTaskProps) {
           variant="secondary"
           onClick={() => handleSelectTaskType("Project")}
         >
-          Project Task
+          {t("agent.project_task")}
         </Button>
         <Button variant="secondary" onClick={() => handleSelectTaskType("CRM")}>
-          CRM Task
+          {t("agent.crm_task")}
         </Button>
         <Button
           variant="secondary"
           onClick={() => handleSelectTaskType("Personal")}
         >
-          Personal Task
+          {t("agent.personal_task")}
         </Button>
       </div>
     </div>

@@ -18,6 +18,7 @@
 
 import React from "react";
 
+import t from "@/app/lib/i18n";
 export interface PersonalTaskProps {
   id: string;
   title: string;
@@ -47,7 +48,7 @@ export function PersonalTask({ task }: { task: PersonalTaskProps }) {
             onClick={() => task.onAccept?.(task.id)}
             className="bg-wealth-green-600 hover:bg-wealth-green-700 text-white px-3 py-1 rounded-md text-sm"
           >
-            Accept
+            {t("agent.accept")}
           </button>
         )}
         {task.onDone && (
@@ -55,7 +56,7 @@ export function PersonalTask({ task }: { task: PersonalTaskProps }) {
             onClick={() => task.onDone?.(task.id)}
             className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm"
           >
-            Done
+            {t("agent.done")}
           </button>
         )}
       </div>

@@ -47,6 +47,7 @@ import {
 } from "@/app/actions/handson/all/accounting/inventory/logistics";
 import { getItems } from "@/app/actions/handson/all/accounting/inventory/item";
 
+import t from "@/app/lib/i18n";
 // --- PICK LIST ---
 
 export function PickListList() {
@@ -65,20 +66,20 @@ export function PickListList() {
     return (
       <div className="text-center p-4">
         <RiLoader4Line className="animate-spin inline mr-2" />
-        Loading...
+        {t("erp.loading")}
       </div>
     );
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Pick Lists</h2>
+        <h2 className="text-2xl font-bold">{t("erp.pick_lists")}</h2>
         <Button
           onClick={() =>
             router.push("/handson/all/supply_chain/stock/pick-list/new")
           }
         >
-          <RiAddLine className="mr-2 h-4 w-4" /> New Pick List
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_pick_list")}
         </Button>
       </div>
       <Card>
@@ -86,9 +87,9 @@ export function PickListList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Purpose</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.purpose")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -136,12 +137,12 @@ export function PickListForm() {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <RiArrowLeftLine className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold">New Pick List</h1>
+        <h1 className="text-2xl font-bold">{t("erp.new_pick_list")}</h1>
       </div>
       <Card>
         <CardContent className="space-y-4 pt-6">
           <div className="space-y-2">
-            <Label>Purpose</Label>
+            <Label>{t("erp.purpose")}</Label>
             <Select
               value={formData.purpose}
               onValueChange={(v) => setFormData({ ...formData, purpose: v })}
@@ -151,15 +152,15 @@ export function PickListForm() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Material Transfer for Manufacture">
-                  Material Transfer for Manufacture
+                  {t("erp.material_transfer_for_manufacture")}
                 </SelectItem>
-                <SelectItem value="Delivery">Delivery</SelectItem>
+                <SelectItem value="Delivery">{t("erp.delivery")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {/* Simplified Item Input for demo */}
           <div className="space-y-2">
-            <Label>Item to Pick</Label>
+            <Label>{t("erp.item_to_pick")}</Label>
             <Select
               value={formData.locations[0].item_code}
               onValueChange={(v) =>
@@ -170,7 +171,7 @@ export function PickListForm() {
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Item" />
+                <SelectValue placeholder={t("erp.select_item")} />
               </SelectTrigger>
               <SelectContent>
                 {items.map((i) => (
@@ -182,7 +183,7 @@ export function PickListForm() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Qty</Label>
+            <Label>{t("erp.qty")}</Label>
             <Input
               type="number"
               value={formData.locations[0].qty}
@@ -230,20 +231,20 @@ export function ShipmentList() {
     return (
       <div className="text-center p-4">
         <RiLoader4Line className="animate-spin inline mr-2" />
-        Loading...
+        {t("erp.loading")}
       </div>
     );
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Shipments</h2>
+        <h2 className="text-2xl font-bold">{t("erp.shipments")}</h2>
         <Button
           onClick={() =>
             router.push("/handson/all/supply_chain/stock/shipment/new")
           }
         >
-          <RiAddLine className="mr-2 h-4 w-4" /> New Shipment
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_shipment")}
         </Button>
       </div>
       <Card>
@@ -251,9 +252,9 @@ export function ShipmentList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Carrier</TableHead>
-                <TableHead>Tracking</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.carrier")}</TableHead>
+                <TableHead>{t("erp.tracking")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -298,12 +299,12 @@ export function ShipmentForm() {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <RiArrowLeftLine className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold">New Shipment</h1>
+        <h1 className="text-2xl font-bold">{t("erp.new_shipment")}</h1>
       </div>
       <Card>
         <CardContent className="space-y-4 pt-6">
           <div className="space-y-2">
-            <Label>Carrier</Label>
+            <Label>{t("erp.carrier")}</Label>
             <Input
               value={formData.carrier}
               onChange={(e) =>
@@ -312,7 +313,7 @@ export function ShipmentForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Tracking Number</Label>
+            <Label>{t("erp.tracking_number")}</Label>
             <Input
               value={formData.tracking_number}
               onChange={(e) =>
@@ -321,7 +322,7 @@ export function ShipmentForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Delivery Note ID</Label>
+            <Label>{t("erp.delivery_note_id")}</Label>
             <Input
               value={formData.delivery_from}
               onChange={(e) =>
@@ -331,7 +332,7 @@ export function ShipmentForm() {
             />
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
-            Create Shipment
+            {t("erp.create_shipment")}
           </Button>
         </CardContent>
       </Card>

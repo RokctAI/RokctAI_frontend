@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 interface WorkOrderListProps {
   orders: any[];
 }
@@ -50,14 +51,14 @@ export function WorkOrderList({ orders }: WorkOrderListProps) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Work Orders</h1>
-          <p className="text-muted-foreground">Manage production orders.</p>
+          <h1 className="text-2xl font-bold">{t("erp.work_orders")}</h1>
+          <p className="text-muted-foreground">{t("erp.manage_production_orders")}</p>
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search Work Orders..."
+              placeholder={t("erp.search_work_orders")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
@@ -65,7 +66,7 @@ export function WorkOrderList({ orders }: WorkOrderListProps) {
           </div>
           <Link href="/handson/all/supply_chain/manufacturing/work-order/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Work Order
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_work_order")}
             </Button>
           </Link>
         </div>
@@ -75,11 +76,11 @@ export function WorkOrderList({ orders }: WorkOrderListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>W.O.</TableHead>
-              <TableHead>Item</TableHead>
-              <TableHead>Qty</TableHead>
-              <TableHead>Start Date</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("erp.w_o")}</TableHead>
+              <TableHead>{t("erp.item")}</TableHead>
+              <TableHead>{t("erp.qty")}</TableHead>
+              <TableHead>{t("erp.start_date")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
               <TableHead className="w-[50px]"></TableHead>
             </TableRow>
           </TableHeader>
@@ -90,7 +91,7 @@ export function WorkOrderList({ orders }: WorkOrderListProps) {
                   colSpan={6}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No work orders found.
+                  {t("erp.no_work_orders_found")}
                 </TableCell>
               </TableRow>
             ) : (

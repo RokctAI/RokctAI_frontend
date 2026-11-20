@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function AdminRefundsPage() {
   const [refunds, setRefunds] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,12 +65,12 @@ export default function AdminRefundsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Refund Requests</h1>
+      <h1 className="text-3xl font-bold">{t("orders.refund_requests")}</h1>
 
       <div className="grid gap-4">
         {refunds.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            No refund requests found.
+            {t("orders.no_refund_requests_found")}
           </div>
         ) : (
           refunds.map((refund) => (
@@ -93,12 +94,12 @@ export default function AdminRefundsPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="text-sm">
-                    <span className="font-semibold">Reason:</span>{" "}
+                    <span className="font-semibold">{t("orders.reason")}</span>{" "}
                     {refund.cause}
                   </div>
                   {refund.answer && (
                     <div className="text-sm text-muted-foreground">
-                      <span className="font-semibold">Response:</span>{" "}
+                      <span className="font-semibold">{t("orders.response")}</span>{" "}
                       {refund.answer}
                     </div>
                   )}
@@ -111,14 +112,14 @@ export default function AdminRefundsPage() {
                         onClick={() => handleUpdate(refund.name, "Canceled")}
                       >
                         <RiCloseLine className="mr-2 size-4" />
-                        Reject
+                        {t("orders.reject")}
                       </Button>
                       <Button
                         size="sm"
                         onClick={() => handleUpdate(refund.name, "Accepted")}
                       >
                         <RiCheckLine className="mr-2 size-4" />
-                        Approve
+                        {t("orders.approve")}
                       </Button>
                     </div>
                   )}

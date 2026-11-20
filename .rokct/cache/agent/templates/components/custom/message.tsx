@@ -56,6 +56,7 @@ import { HolidayWorkForm } from "../tasks/holiday-work-form";
 import { LeadFormCard } from "../tasks/lead-form-card";
 import { ProfileFormCard } from "../tasks/profile-form-card";
 
+import t from "@/app/lib/i18n";
 export const PreviewMessage = ({
   chatId,
   role,
@@ -156,7 +157,7 @@ export const PreviewMessage = ({
                     ) : toolName === "get_leave_analytics" ? (
                       <AnalyticsCard
                         data={(result as any).data}
-                        title="Leave Trends by Department"
+                        title={t("agent.leave_trends_by_department")}
                       />
                     ) : toolName === "draft_competitor" ? (
                       <CompetitorForm name={(result as any).name} />

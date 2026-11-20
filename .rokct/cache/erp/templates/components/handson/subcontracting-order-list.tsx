@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 export function SubcontractingOrderList({ orders }: { orders: any[] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const filtered = orders.filter((o) =>
@@ -42,14 +43,14 @@ export function SubcontractingOrderList({ orders }: { orders: any[] }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Subcontracting Orders</h1>
-          <p className="text-muted-foreground">Manage outsourcing jobs.</p>
+          <h1 className="text-2xl font-bold">{t("erp.subcontracting_orders")}</h1>
+          <p className="text-muted-foreground">{t("erp.manage_outsourcing_jobs")}</p>
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search..."
+              placeholder={t("erp.search")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
@@ -57,7 +58,7 @@ export function SubcontractingOrderList({ orders }: { orders: any[] }) {
           </div>
           <Link href="/handson/all/supply_chain/subcontracting/order/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Order
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_order")}
             </Button>
           </Link>
         </div>
@@ -66,10 +67,10 @@ export function SubcontractingOrderList({ orders }: { orders: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Supplier</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.supplier")}</TableHead>
+              <TableHead>{t("erp.date")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
@@ -87,7 +88,7 @@ export function SubcontractingOrderList({ orders }: { orders: any[] }) {
                     href={`/handson/all/supply_chain/subcontracting/order/${o.name}`}
                   >
                     <Button variant="ghost" size="sm">
-                      View
+                      {t("erp.view")}
                     </Button>
                   </Link>
                 </TableCell>

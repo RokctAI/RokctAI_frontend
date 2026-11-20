@@ -37,6 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function PlatformWalletPage() {
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState<any[]>([]);
@@ -67,26 +68,26 @@ export default function PlatformWalletPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Platform Wallet</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("wallet.platform_wallet")}</h2>
         <p className="text-muted-foreground">
-          View platform wallet transactions and history.
+          {t("wallet.view_platform_wallet_transactions_and_history")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Transaction History</CardTitle>
-          <CardDescription>List of all wallet transactions.</CardDescription>
+          <CardTitle>{t("wallet.transaction_history")}</CardTitle>
+          <CardDescription>{t("wallet.list_of_all_wallet_transactions")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>{t("wallet.id")}</TableHead>
+                <TableHead>{t("wallet.user")}</TableHead>
+                <TableHead>{t("wallet.type")}</TableHead>
+                <TableHead>{t("wallet.amount")}</TableHead>
+                <TableHead>{t("wallet.date")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -113,7 +114,7 @@ export default function PlatformWalletPage() {
                     colSpan={5}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No wallet history found.
+                    {t("wallet.no_wallet_history_found")}
                   </TableCell>
                 </TableRow>
               )}

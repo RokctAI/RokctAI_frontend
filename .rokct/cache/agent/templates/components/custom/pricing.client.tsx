@@ -203,7 +203,7 @@ export function Pricing({
               key={cat.id}
               onClick={() => onCategoryChange?.(cat.id)}
               data-state={category === cat.id ? "active" : "inactive"}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border bg-background text-muted-foreground border-border ${cat.style}`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-[color,background-color,border-color] duration-150 ease-out border bg-background text-muted-foreground border-border ${cat.style}`}
             >
               {cat.label}
             </button>
@@ -388,7 +388,7 @@ export function Pricing({
 
                   <Link
                     href={LANDING_CONFIG.planSignupUrl(plan.plan_name)}
-                    className={`block w-full text-center px-4 py-3 rounded-md font-semibold transition-all ${
+                    className={`block w-full text-center px-4 py-3 rounded-md font-semibold transition-[color,background-color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none ${
                       isFree
                         ? "bg-primary/10 hover:bg-primary/20 text-primary"
                         : "text-primary-foreground bg-primary hover:bg-primary/90"

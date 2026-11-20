@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function AdminNotificationsPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,23 +59,23 @@ export default function AdminNotificationsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">System Notifications</h1>
+      <h1 className="text-3xl font-bold">{t("comms.system_notifications")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Subject</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Document</TableHead>
+              <TableHead>{t("comms.date")}</TableHead>
+              <TableHead>{t("comms.subject")}</TableHead>
+              <TableHead>{t("comms.user")}</TableHead>
+              <TableHead>{t("comms.document")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {notifications.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="text-center h-24">
-                  No notifications found.
+                  {t("comms.no_notifications_found")}
                 </TableCell>
               </TableRow>
             ) : (

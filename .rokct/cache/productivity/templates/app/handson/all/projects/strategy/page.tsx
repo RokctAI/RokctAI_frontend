@@ -110,6 +110,7 @@ import {
 } from "@/app/actions/handson/all/projects/strategy/mastery";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 // --- Schemas ---
 
 const commonSchema = z.object({
@@ -288,9 +289,9 @@ export default function StrategyPage() {
     <div className="space-y-8 p-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Strategy & Execution</h1>
+          <h1 className="text-3xl font-bold">{t("productivity.strategy_execution")}</h1>
           <p className="text-muted-foreground">
-            Manage Vision, Pillars, Objectives, and KPIs.
+            {t("productivity.manage_vision_pillars_objectives_and_kpis")}
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -306,7 +307,7 @@ export default function StrategyPage() {
               ))}
             </SelectContent>
           </Select>
-          <Button onClick={() => openDialog("Vision")}>Create Vision</Button>
+          <Button onClick={() => openDialog("Vision")}>{t("productivity.create_vision")}</Button>
         </div>
       </div>
 
@@ -316,9 +317,9 @@ export default function StrategyPage() {
         onValueChange={setActiveTab}
       >
         <TabsList>
-          <TabsTrigger value="dashboard">Plan on a Page</TabsTrigger>
-          <TabsTrigger value="manage">Manage Entities</TabsTrigger>
-          <TabsTrigger value="goals">Personal Mastery</TabsTrigger>
+          <TabsTrigger value="dashboard">{t("productivity.plan_on_a_page")}</TabsTrigger>
+          <TabsTrigger value="manage">{t("productivity.manage_entities")}</TabsTrigger>
+          <TabsTrigger value="goals">{t("productivity.personal_mastery")}</TabsTrigger>
         </TabsList>
 
         {/* --- Dashboard Tab --- */}
@@ -328,7 +329,7 @@ export default function StrategyPage() {
               {/* Vision Header */}
               <div className="text-center space-y-4 p-8 bg-primary/5 rounded-lg border border-primary/20">
                 <Badge variant="outline" className="mb-2">
-                  Active Vision
+                  {t("productivity.active_vision")}
                 </Badge>
                 <h2 className="text-4xl font-extrabold tracking-tight text-primary">
                   {activeVision.title}
@@ -350,7 +351,7 @@ export default function StrategyPage() {
                       <div className="flex items-center gap-2 text-blue-600 mb-1">
                         <RiDashboardLine className="h-4 w-4" />
                         <span className="text-xs font-semibold uppercase tracking-wider">
-                          Strategic Pillar
+                          {t("productivity.strategic_pillar")}
                         </span>
                       </div>
                       <CardTitle className="text-xl">{pillar.title}</CardTitle>
@@ -378,7 +379,7 @@ export default function StrategyPage() {
                                   ))}
                                   {getKpisForObj(obj.name).length === 0 && (
                                     <span className="text-xs text-muted-foreground italic pl-1">
-                                      No KPIs defined
+                                      {t("productivity.no_kpis_defined")}
                                     </span>
                                   )}
                                 </div>
@@ -388,7 +389,7 @@ export default function StrategyPage() {
                         ))
                       ) : (
                         <div className="text-sm text-muted-foreground italic text-center py-4">
-                          No Strategic Objectives
+                          {t("productivity.no_strategic_objectives")}
                         </div>
                       )}
                     </CardContent>
@@ -404,12 +405,12 @@ export default function StrategyPage() {
             </div>
           ) : (
             <div className="text-center py-20 bg-muted/10 rounded-lg border border-dashed">
-              <h3 className="text-lg font-medium">No Active Vision Selected</h3>
+              <h3 className="text-lg font-medium">{t("productivity.no_active_vision_selected")}</h3>
               <p className="text-muted-foreground mb-4">
-                Select a vision from the dropdown or create a new one.
+                {t("productivity.select_a_vision_from_the_dropdown_or_create_a_ne")}
               </p>
               <Button onClick={() => openDialog("Vision")}>
-                Create Vision
+                {t("productivity.create_vision")}
               </Button>
             </div>
           )}
@@ -419,13 +420,13 @@ export default function StrategyPage() {
         <TabsContent value="goals" className="space-y-6 mt-6">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-xl font-semibold">Personal Mastery Goals</h3>
+              <h3 className="text-xl font-semibold">{t("productivity.personal_mastery_goals")}</h3>
               <p className="text-muted-foreground">
-                Define and track individual growth objectives.
+                {t("productivity.define_and_track_individual_growth_objectives")}
               </p>
             </div>
             <Button onClick={() => openDialog("Goal")}>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Goal
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("productivity.new_goal")}
             </Button>
           </div>
 
@@ -444,7 +445,7 @@ export default function StrategyPage() {
                     variant="ghost"
                     onClick={() => openDialog("Goal", goal)}
                   >
-                    <RiPencilLine className="h-4 w-4 mr-2" /> Edit
+                    <RiPencilLine className="h-4 w-4 mr-2" /> {t("productivity.edit")}
                   </Button>
                   <Button
                     size="sm"
@@ -459,7 +460,7 @@ export default function StrategyPage() {
             ))}
             {goals.length === 0 && (
               <div className="col-span-full text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
-                No Personal Mastery Goals defined yet.
+                {t("productivity.no_personal_mastery_goals_defined_yet")}
               </div>
             )}
           </div>
@@ -477,7 +478,7 @@ export default function StrategyPage() {
                       <span className="font-semibold text-lg">
                         {vision.title}
                       </span>
-                      {activeVisionId === vision.name && <Badge>Active</Badge>}
+                      {activeVisionId === vision.name && <Badge>{t("productivity.active")}</Badge>}
                     </div>
                   </div>
                 </AccordionTrigger>
@@ -488,14 +489,14 @@ export default function StrategyPage() {
                       variant="outline"
                       onClick={() => openDialog("Vision", vision)}
                     >
-                      <RiPencilLine className="h-3 w-3 mr-1" /> Edit Vision
+                      <RiPencilLine className="h-3 w-3 mr-1" /> {t("productivity.edit_vision")}
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => openDialog("Pillar", null, vision.name)}
                     >
-                      <RiAddLine className="h-3 w-3 mr-1" /> Add Pillar
+                      <RiAddLine className="h-3 w-3 mr-1" /> {t("productivity.add_pillar")}
                     </Button>
                     <Button
                       size="sm"
@@ -660,7 +661,7 @@ export default function StrategyPage() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel>{t("productivity.title")}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -673,7 +674,7 @@ export default function StrategyPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t("productivity.description")}</FormLabel>
                     <FormControl>
                       <Textarea {...field} />
                     </FormControl>
@@ -733,7 +734,7 @@ export default function StrategyPage() {
               )}
 
               <DialogFooter>
-                <Button type="submit">Save</Button>
+                <Button type="submit">{t("productivity.save")}</Button>
               </DialogFooter>
             </form>
           </Form>

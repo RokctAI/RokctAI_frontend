@@ -24,6 +24,7 @@ import { getSystemInfo, clearCache } from "@/app/actions/base/admin/system";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function SystemInfoPage() {
   const [info, setInfo] = useState<any>({});
   const [loading, setLoading] = useState(true);
@@ -66,11 +67,11 @@ export default function SystemInfoPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">System Information</h1>
+        <h1 className="text-3xl font-bold">{t("base.system_information")}</h1>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => window.location.reload()}>
             <RiRefreshLine className="mr-2 size-4" />
-            Refresh
+            {t("base.refresh")}
           </Button>
           <Button
             variant="destructive"
@@ -86,19 +87,19 @@ export default function SystemInfoPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Application Details</CardTitle>
+            <CardTitle>{t("base.application_details")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">App Name</span>
+              <span className="text-muted-foreground">{t("base.app_name")}</span>
               <span className="font-medium">{info.app_name}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Version</span>
+              <span className="text-muted-foreground">{t("base.version")}</span>
               <span className="font-medium">{info.version}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Framework</span>
+              <span className="text-muted-foreground">{t("base.framework")}</span>
               <span className="font-medium">{info.framework_version}</span>
             </div>
           </CardContent>
@@ -106,19 +107,19 @@ export default function SystemInfoPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Server Status</CardTitle>
+            <CardTitle>{t("base.server_status")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Python Version</span>
+              <span className="text-muted-foreground">{t("base.python_version")}</span>
               <span className="font-medium">{info.python_version}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Database</span>
+              <span className="text-muted-foreground">{t("base.database")}</span>
               <span className="font-medium">{info.database}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">OS</span>
+              <span className="text-muted-foreground">{t("base.os")}</span>
               <span className="font-medium">{info.os}</span>
             </div>
           </CardContent>

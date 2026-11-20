@@ -33,6 +33,7 @@ import { DocTypeMeta } from "@/app/actions/handson/all/crm/meta";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+import t from "@/app/lib/i18n";
 export function CreateContractDialog({ meta }: { meta: DocTypeMeta }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -53,14 +54,14 @@ export function CreateContractDialog({ meta }: { meta: DocTypeMeta }) {
       <DialogTrigger asChild>
         <Button>
           <RiAddLine className="mr-2 h-4 w-4" />
-          Create Contract
+          {t("crm.create_contract")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create Contract</DialogTitle>
+          <DialogTitle>{t("crm.create_contract")}</DialogTitle>
           <DialogDescription>
-            Create a new contract for a customer or supplier.
+            {t("crm.create_a_new_contract_for_a_customer_or_supplier")}
           </DialogDescription>
         </DialogHeader>
         <GenericForm

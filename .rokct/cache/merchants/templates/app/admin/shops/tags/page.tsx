@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ShopTagsPage() {
   const [tags, setTags] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,14 +51,14 @@ export default function ShopTagsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Shop Tags</h1>
+      <h1 className="text-3xl font-bold">{t("merchants.shop_tags")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Active</TableHead>
+              <TableHead>{t("merchants.name")}</TableHead>
+              <TableHead>{t("merchants.active")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -73,7 +74,7 @@ export default function ShopTagsPage() {
                   colSpan={2}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No tags found.
+                  {t("merchants.no_tags_found")}
                 </TableCell>
               </TableRow>
             ) : (

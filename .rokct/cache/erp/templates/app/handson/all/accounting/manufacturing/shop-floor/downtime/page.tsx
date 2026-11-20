@@ -18,13 +18,14 @@ import { getShopFloorItems } from "@/app/actions/handson/all/accounting/manufact
 import { ShopFloorList } from "@/components/handson/shop-floor-components";
 import { TableRow, TableCell } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 export default async function Page() {
   const data = await getShopFloorItems("Downtime Entry");
   return (
     <div className="p-6">
       <ShopFloorList
-        title="Downtime Entries"
+        title={t("erp.downtime_entries")}
         items={data}
         newItemUrl="/handson/all/supply_chain/manufacturing/shop-floor/downtime/new"
         headers={["Station", "Reason", "From", "To"]}

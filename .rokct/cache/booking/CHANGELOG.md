@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0
+
+* feat(i18n): 22 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 5 files now go through
+  `t("booking.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/booking.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.1.1
 
 * fix(icons): icons come from `@remixicon/react` (the fleet's one icon set)

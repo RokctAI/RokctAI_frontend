@@ -53,6 +53,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import t from "@/app/lib/i18n";
 interface SupplierListProps {
   suppliers: any[];
 }
@@ -73,31 +74,31 @@ export function SupplierList({ suppliers }: SupplierListProps) {
         <div className="relative w-72">
           <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search suppliers..."
+            placeholder={t("erp.search_suppliers")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-8"
           />
         </div>
         <Button>
-          <RiAddLine className="mr-2 h-4 w-4" /> New Supplier
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_supplier")}
         </Button>
       </div>
 
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
-            All Suppliers
+            {t("erp.all_suppliers")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Country</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.type")}</TableHead>
+                <TableHead>{t("erp.country")}</TableHead>
+                <TableHead className="text-right">{t("erp.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -107,7 +108,7 @@ export function SupplierList({ suppliers }: SupplierListProps) {
                     colSpan={4}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No suppliers found
+                    {t("erp.no_suppliers_found")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -136,7 +137,7 @@ export function SupplierList({ suppliers }: SupplierListProps) {
                               )
                             }
                           >
-                            View Details
+                            {t("erp.view_details")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

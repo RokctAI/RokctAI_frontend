@@ -24,6 +24,7 @@ import { getBookings } from "@/app/actions/orders/admin/orders";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function AdminBookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,12 +53,12 @@ export default function AdminBookingsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Bookings</h1>
+      <h1 className="text-3xl font-bold">{t("booking.bookings")}</h1>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {bookings.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
-            No bookings found.
+            {t("booking.no_bookings_found")}
           </div>
         ) : (
           bookings.map((booking) => (

@@ -19,6 +19,7 @@ import Link from "next/link";
 
 import { LogoGoogle, MessageIcon, VercelIcon } from "./icons";
 
+import t from "@/app/lib/i18n";
 export const Overview = () => {
   return (
     <motion.div
@@ -55,7 +56,7 @@ export const Overview = () => {
             href="https://sdk.vercel.ai/docs"
             target="_blank"
           >
-            Docs
+            {t("agent.docs")}
           </Link>
           .
         </p>

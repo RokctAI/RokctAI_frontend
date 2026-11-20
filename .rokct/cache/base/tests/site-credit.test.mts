@@ -15,7 +15,7 @@
  */
 
 // base_sdk 1.54.0: the site credit's rules (Ray, 2026-10-31: "all site
-// will be copyright sitename then built with love (as heart) by ROKCT").
+// will be copyright sitename then built with love (as heart) by Cortex Media").
 // Run by tests/test_manifest.py against a staged copy of
 // components/custom/landing/site-credit.ts under node's own test runner
 // with type stripping: the words, the year, the line.
@@ -37,11 +37,11 @@ import {
 const OCT_2026 = new Date(Date.UTC(2026, 9, 31, 12));
 
 describe('the words', () => {
-  it('credits ROKCT with a heart whose name is love', () => {
-    assert.equal(SITE_CREDIT_MAKER, 'ROKCT');
+  it('credits Cortex Media with a heart whose name is love', () => {
+    assert.equal(SITE_CREDIT_MAKER, 'Cortex Media');
     assert.equal(SITE_CREDIT_HEART, '♥');
     assert.equal(SITE_CREDIT_LABELS.love, 'love');
-    assert.equal(siteCreditText(), 'Built with ♥ by ROKCT');
+    assert.equal(siteCreditText(), 'Built with ♥ by Cortex Media');
   });
 
   it('separates with a middle dot by default', () => {
@@ -49,7 +49,7 @@ describe('the words', () => {
   });
 
   it('takes a shell\'s own words but keeps the heart and the maker', () => {
-    assert.equal(siteCreditText({ builtWith: 'Gebou met', by: 'deur' }), 'Gebou met ♥ deur ROKCT');
+    assert.equal(siteCreditText({ builtWith: 'Gebou met', by: 'deur' }), 'Gebou met ♥ deur Cortex Media');
   });
 });
 
@@ -86,19 +86,19 @@ describe('siteCopyright', () => {
 });
 
 describe('siteCreditLine: the ruling, as text', () => {
-  it('reads "© 2026 Polaris · Built with ♥ by ROKCT"', () => {
-    assert.equal(siteCreditLine('Polaris', { now: OCT_2026 }), '© 2026 Polaris · Built with ♥ by ROKCT');
+  it('reads "© 2026 Polaris · Built with ♥ by Cortex Media"', () => {
+    assert.equal(siteCreditLine('Polaris', { now: OCT_2026 }), '© 2026 Polaris · Built with ♥ by Cortex Media');
   });
 
   it('keeps the footer\'s own separator', () => {
     assert.equal(
       siteCreditLine('South River', { year: 2026, separator: ' | ' }),
-      '© 2026 South River | Built with ♥ by ROKCT',
+      '© 2026 South River | Built with ♥ by Cortex Media',
     );
   });
 
   it('is the credit alone when the site has no name', () => {
-    assert.equal(siteCreditLine('', { year: 2026 }), 'Built with ♥ by ROKCT');
+    assert.equal(siteCreditLine('', { year: 2026 }), 'Built with ♥ by Cortex Media');
   });
 
   it('never names the legal entity on its own', () => {

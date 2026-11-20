@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { getStories } from "@/app/actions/base/admin/content";
 import { Card, CardContent } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function AdminStoriesPage() {
   const [stories, setStories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,12 +52,12 @@ export default function AdminStoriesPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Stories</h1>
+      <h1 className="text-3xl font-bold">{t("promotions.stories")}</h1>
 
       <div className="grid gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
         {stories.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
-            No stories found.
+            {t("promotions.no_stories_found")}
           </div>
         ) : (
           stories.map((story) => (
@@ -67,13 +68,13 @@ export default function AdminStoriesPage() {
               {story.file_url ? (
                 <Image
                   src={story.file_url}
-                  alt="Story"
+                  alt={t("promotions.story")}
                   fill
                   className="object-cover transition-transform group-hover:scale-105"
                 />
               ) : (
                 <div className="size-full bg-muted flex items-center justify-center">
-                  No Media
+                  {t("promotions.no_media")}
                 </div>
               )}
               <div className="absolute bottom-0 inset-x-0 bg-black/60 p-2 text-white text-xs truncate">

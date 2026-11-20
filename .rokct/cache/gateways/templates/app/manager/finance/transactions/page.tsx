@@ -44,6 +44,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrency } from "@/lib/utils";
 
+import tr from "@/app/lib/i18n";
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [shopPayments, setShopPayments] = useState<any[]>([]);
@@ -83,36 +84,36 @@ export default function TransactionsPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Transactions</h1>
+        <h1 className="text-3xl font-bold">{tr("gateways.transactions")}</h1>
         <p className="text-muted-foreground">
-          View your transaction history and payments.
+          {tr("gateways.view_your_transaction_history_and_payments")}
         </p>
       </div>
 
       <Tabs defaultValue="all" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="all">All Transactions</TabsTrigger>
-          <TabsTrigger value="shop">Shop Payments</TabsTrigger>
-          <TabsTrigger value="partner">Partner Payments</TabsTrigger>
+          <TabsTrigger value="all">{tr("gateways.all_transactions")}</TabsTrigger>
+          <TabsTrigger value="shop">{tr("gateways.shop_payments")}</TabsTrigger>
+          <TabsTrigger value="partner">{tr("gateways.partner_payments")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all">
           <Card>
             <CardHeader>
-              <CardTitle>All Transactions</CardTitle>
+              <CardTitle>{tr("gateways.all_transactions")}</CardTitle>
               <CardDescription>
-                A comprehensive list of all transactions.
+                {tr("gateways.a_comprehensive_list_of_all_transactions")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Reference</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead className="text-right">Debit</TableHead>
-                    <TableHead className="text-right">Credit</TableHead>
+                    <TableHead>{tr("gateways.date")}</TableHead>
+                    <TableHead>{tr("gateways.reference")}</TableHead>
+                    <TableHead>{tr("gateways.type")}</TableHead>
+                    <TableHead className="text-right">{tr("gateways.debit")}</TableHead>
+                    <TableHead className="text-right">{tr("gateways.credit")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -122,7 +123,7 @@ export default function TransactionsPage() {
                         colSpan={5}
                         className="text-center h-24 text-muted-foreground"
                       >
-                        No transactions found.
+                        {tr("gateways.no_transactions_found")}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -158,18 +159,18 @@ export default function TransactionsPage() {
         <TabsContent value="shop">
           <Card>
             <CardHeader>
-              <CardTitle>Shop Payments</CardTitle>
+              <CardTitle>{tr("gateways.shop_payments")}</CardTitle>
               <CardDescription>
-                Payments received for your shop orders.
+                {tr("gateways.payments_received_for_your_shop_orders")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Order ID</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>{tr("gateways.date")}</TableHead>
+                    <TableHead>{tr("gateways.order_id")}</TableHead>
+                    <TableHead className="text-right">{tr("gateways.amount")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -179,7 +180,7 @@ export default function TransactionsPage() {
                         colSpan={3}
                         className="text-center h-24 text-muted-foreground"
                       >
-                        No shop payments found.
+                        {tr("gateways.no_shop_payments_found")}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -204,19 +205,19 @@ export default function TransactionsPage() {
         <TabsContent value="partner">
           <Card>
             <CardHeader>
-              <CardTitle>Partner Payments</CardTitle>
+              <CardTitle>{tr("gateways.partner_payments")}</CardTitle>
               <CardDescription>
-                Payments made to delivery partners.
+                {tr("gateways.payments_made_to_delivery_partners")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Delivery Man</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>{tr("gateways.date")}</TableHead>
+                    <TableHead>{tr("gateways.delivery_man")}</TableHead>
+                    <TableHead>{tr("gateways.status")}</TableHead>
+                    <TableHead className="text-right">{tr("gateways.amount")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -226,7 +227,7 @@ export default function TransactionsPage() {
                         colSpan={4}
                         className="text-center h-24 text-muted-foreground"
                       >
-                        No partner payments found.
+                        {tr("gateways.no_partner_payments_found")}
                       </TableCell>
                     </TableRow>
                   ) : (

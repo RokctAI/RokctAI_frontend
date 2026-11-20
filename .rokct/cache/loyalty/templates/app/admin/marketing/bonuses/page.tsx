@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function AdminBonusesPage() {
   const [bonuses, setBonuses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,23 +59,23 @@ export default function AdminBonusesPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Shop Bonuses</h1>
+      <h1 className="text-3xl font-bold">{t("loyalty.shop_bonuses")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Shop</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Reason</TableHead>
+              <TableHead>{t("loyalty.date")}</TableHead>
+              <TableHead>{t("loyalty.shop")}</TableHead>
+              <TableHead>{t("loyalty.amount")}</TableHead>
+              <TableHead>{t("loyalty.reason")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {bonuses.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="text-center h-24">
-                  No bonuses found.
+                  {t("loyalty.no_bonuses_found")}
                 </TableCell>
               </TableRow>
             ) : (

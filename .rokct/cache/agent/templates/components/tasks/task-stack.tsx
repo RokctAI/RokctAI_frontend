@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { DealTask, DealTaskProps } from "./deal-task";
 import { ProjectTask, ProjectTaskProps } from "./project-task";
 
+import tr from "@/app/lib/i18n";
 type Task =
   | { type: "project"; data: ProjectTaskProps }
   | { type: "deal"; data: DealTaskProps };
@@ -67,7 +68,7 @@ export function TaskStack({ initialTasks }: TaskStackProps) {
   };
 
   if (tasks.length === 0) {
-    return <div className="text-center text-zinc-500 p-4">No more tasks.</div>;
+    return <div className="text-center text-zinc-500 p-4">{tr("agent.no_more_tasks")}</div>;
   }
 
   return (

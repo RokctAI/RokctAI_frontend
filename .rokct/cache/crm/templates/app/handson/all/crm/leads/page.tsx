@@ -20,6 +20,7 @@ import { getDocTypeMeta } from "@/app/actions/handson/all/crm/meta";
 import { getLeads } from "@/app/actions/handson/all/crm/leads";
 import { LeadsClientView } from "@/components/handson/leads/leads-client-view";
 
+import t from "@/app/lib/i18n";
 export default async function LeadsPage() {
   const [leadsRes, metaRes] = await Promise.all([
     getLeads(1, 50),
@@ -33,9 +34,9 @@ export default async function LeadsPage() {
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Leads</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.leads")}</h1>
           <p className="text-muted-foreground">
-            Track and manage potential opportunities.
+            {t("crm.track_and_manage_potential_opportunities")}
           </p>
         </div>
         <CreateLeadDialog meta={meta.data!} />

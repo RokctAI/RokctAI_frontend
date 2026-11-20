@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InvoiceList } from "./invoice-list";
 import { PurchaseInvoiceList } from "./purchase-invoice-list";
 
+import t from "@/app/lib/i18n";
 interface AccountsDashboardProps {
   salesInvoices: any[];
   purchaseInvoices: any[];
@@ -32,8 +33,8 @@ export function AccountsDashboard({
   return (
     <Tabs defaultValue="sales" className="w-full space-y-4">
       <TabsList>
-        <TabsTrigger value="sales">Sales Invoices</TabsTrigger>
-        <TabsTrigger value="purchase">Purchase Invoices (Bills)</TabsTrigger>
+        <TabsTrigger value="sales">{t("erp.sales_invoices")}</TabsTrigger>
+        <TabsTrigger value="purchase">{t("erp.purchase_invoices_bills")}</TabsTrigger>
       </TabsList>
       <TabsContent value="sales">
         <InvoiceList invoices={salesInvoices} />

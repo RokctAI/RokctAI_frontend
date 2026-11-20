@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
+import t from "@/app/lib/i18n";
 interface OrderItem {
   item_code: string;
   item_name: string;
@@ -175,7 +176,7 @@ export default function OrderDetailsPage({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">Status:</span>
+          <span className="text-sm font-medium">{t("orders.status")}</span>
           <select
             value={status}
             onChange={(e) => handleStatusChange(e.target.value)}
@@ -195,16 +196,16 @@ export default function OrderDetailsPage({
         <div className="md:col-span-2 space-y-8">
           <Card>
             <CardHeader>
-              <CardTitle>Order Items</CardTitle>
+              <CardTitle>{t("orders.order_items")}</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Item</TableHead>
-                    <TableHead className="text-right">Qty</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead>{t("orders.item")}</TableHead>
+                    <TableHead className="text-right">{t("orders.qty")}</TableHead>
+                    <TableHead className="text-right">{t("orders.price")}</TableHead>
+                    <TableHead className="text-right">{t("orders.total")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -236,23 +237,23 @@ export default function OrderDetailsPage({
         <div className="space-y-8">
           <Card>
             <CardHeader>
-              <CardTitle>Customer Details</CardTitle>
+              <CardTitle>{t("orders.customer_details")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <div className="font-medium">User</div>
+                <div className="font-medium">{t("orders.user")}</div>
                 <div className="text-sm text-muted-foreground">
                   {order.user}
                 </div>
               </div>
               <div>
-                <div className="font-medium">Delivery Address</div>
+                <div className="font-medium">{t("orders.delivery_address")}</div>
                 <div className="text-sm text-muted-foreground whitespace-pre-wrap">
                   {order.delivery_address || "No address provided"}
                 </div>
               </div>
               <div>
-                <div className="font-medium">Contact</div>
+                <div className="font-medium">{t("orders.contact")}</div>
                 <div className="text-sm text-muted-foreground">
                   {order.phone || "No phone provided"}
                 </div>
@@ -262,11 +263,11 @@ export default function OrderDetailsPage({
 
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle>{t("orders.order_summary")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-muted-foreground">{t("orders.subtotal")}</span>
                 <span>
                   $
                   {(
@@ -277,15 +278,15 @@ export default function OrderDetailsPage({
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Delivery Fee</span>
+                <span className="text-muted-foreground">{t("orders.delivery_fee")}</span>
                 <span>${order.delivery_fee?.toFixed(2) || "0.00"}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Tax</span>
+                <span className="text-muted-foreground">{t("orders.tax")}</span>
                 <span>${order.tax?.toFixed(2) || "0.00"}</span>
               </div>
               <div className="border-t pt-2 mt-2 flex justify-between font-bold">
-                <span>Total</span>
+                <span>{t("orders.total")}</span>
                 <span>${order.grand_total?.toFixed(2)}</span>
               </div>
             </CardContent>

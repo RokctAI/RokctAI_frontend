@@ -162,7 +162,7 @@ export default function WhatsAppSettingsPage() {
           }`}
         >
           <RiSmartphoneLine className="size-4" />
-          ROKCT Web Link (Baileys)
+          {t("comms.rokct_web_link_baileys")}
         </button>
         <button
           onClick={() => setMode("cloud")}
@@ -173,7 +173,7 @@ export default function WhatsAppSettingsPage() {
           }`}
         >
           <RiMessage2Line className="size-4" />
-          Meta Cloud API
+          {t("comms.meta_cloud_api")}
         </button>
       </div>
 
@@ -189,17 +189,17 @@ export default function WhatsAppSettingsPage() {
         >
           <Card className="border border-muted/40 bg-background/50 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-lg">Status</CardTitle>
+              <CardTitle className="text-lg">{t("comms.status")}</CardTitle>
               <CardDescription className="text-xs">
-                Enable or disable the WhatsApp bot globally for this tenant.
+                {t("comms.enable_or_disable_the_whatsapp_bot_globally_for_")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between rounded-xl border border-muted/20 p-4 bg-muted/5">
                 <div className="space-y-0.5">
-                  <Label className="text-sm font-medium">Active Status</Label>
+                  <Label className="text-sm font-medium">{t("comms.active_status")}</Label>
                   <p className="text-xs text-muted-foreground">
-                    When disabled, the bot will not reply to any messages.
+                    {t("comms.when_disabled_the_bot_will_not_reply_to_any_mess")}
                   </p>
                 </div>
                 <Switch
@@ -214,14 +214,14 @@ export default function WhatsAppSettingsPage() {
 
           <Card className="border border-muted/40 bg-background/50 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-lg">API Credentials</CardTitle>
+              <CardTitle className="text-lg">{t("comms.api_credentials")}</CardTitle>
               <CardDescription className="text-xs">
                 Get these from your{" "}
                 <a
                   href="https://developers.facebook.com"
                   className="underline text-primary hover:text-primary/95 transition-colors"
                 >
-                  Meta App Dashboard
+                  {t("comms.meta_app_dashboard")}
                 </a>{" "}
                 under WhatsApp &gt; API Setup.
               </CardDescription>
@@ -350,12 +350,12 @@ export default function WhatsAppSettingsPage() {
               {saving ? (
                 <>
                   <RiLoader4Line className="mr-2 size-4 animate-spin" />
-                  Saving...
+                  {t("comms.saving")}
                 </>
               ) : (
                 <>
                   <RiSaveLine className="mr-2 size-4" />
-                  Save Configuration
+                  {t("comms.save_configuration")}
                 </>
               )}
             </Button>

@@ -41,6 +41,7 @@ import { Badge } from "@/components/ui/badge";
 import { getPayment } from "@/app/actions/handson/all/accounting/payments/getPayment";
 import { cancelPayment } from "@/app/actions/handson/all/accounting/payments/cancelPayment";
 
+import t from "@/app/lib/i18n";
 export default function PaymentDetailPage({
   params,
 }: {
@@ -114,7 +115,7 @@ export default function PaymentDetailPage({
   if (loading) {
     return (
       <div className="p-8 text-center text-muted-foreground">
-        Loading payment details...
+        {t("erp.loading_payment_details")}
       </div>
     );
   }
@@ -130,7 +131,7 @@ export default function PaymentDetailPage({
           </Button>
           <div>
             <h1 className="text-2xl font-bold">{payment.name}</h1>
-            <p className="text-muted-foreground">Payment Entry</p>
+            <p className="text-muted-foreground">{t("erp.payment_entry")}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -151,7 +152,7 @@ export default function PaymentDetailPage({
           {payment.docstatus === 2 && ( // 2 = Cancelled
             <Button variant="default" onClick={handleAmend}>
               <RiFileCopyLine className="mr-2 h-4 w-4" />
-              Amend
+              {t("erp.amend")}
             </Button>
           )}
         </div>
@@ -160,11 +161,11 @@ export default function PaymentDetailPage({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
+            <CardTitle>{t("erp.overview")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Status</span>
+              <span className="text-muted-foreground">{t("erp.status")}</span>
               <Badge
                 variant={
                   payment.docstatus === 1
@@ -182,19 +183,19 @@ export default function PaymentDetailPage({
               </Badge>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Payment Type</span>
+              <span className="text-muted-foreground">{t("erp.payment_type")}</span>
               <span>{payment.payment_type}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Party Type</span>
+              <span className="text-muted-foreground">{t("erp.party_type")}</span>
               <span>{payment.party_type}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Party</span>
+              <span className="text-muted-foreground">{t("erp.party")}</span>
               <span className="font-medium">{payment.party}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Posting Date</span>
+              <span className="text-muted-foreground">{t("erp.posting_date")}</span>
               <span>{payment.posting_date}</span>
             </div>
           </CardContent>
@@ -202,13 +203,13 @@ export default function PaymentDetailPage({
 
         <Card>
           <CardHeader>
-            <CardTitle>Amounts & Accounts</CardTitle>
+            <CardTitle>{t("erp.amounts_accounts")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-1">
                 <div className="text-sm font-medium text-muted-foreground">
-                  Paid Amount
+                  {t("erp.paid_amount")}
                 </div>
                 {new Intl.NumberFormat("en-US", {
                   style: "currency",
@@ -218,7 +219,7 @@ export default function PaymentDetailPage({
               {payment.payment_type === "Receive" && (
                 <div className="grid gap-1">
                   <div className="text-sm font-medium text-muted-foreground">
-                    Received Amount
+                    {t("erp.received_amount")}
                   </div>
                   {new Intl.NumberFormat("en-US", {
                     style: "currency",
@@ -228,17 +229,17 @@ export default function PaymentDetailPage({
               )}
             </div>
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Paid From (Account)</span>
+              <span className="text-muted-foreground">{t("erp.paid_from_account")}</span>
               <span className="text-sm">{payment.paid_from}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Paid To (Account)</span>
+              <span className="text-muted-foreground">{t("erp.paid_to_account")}</span>
               <span className="text-sm">{payment.paid_to}</span>
             </div>
             {payment.remarks && (
               <div className="pt-2">
                 <span className="text-muted-foreground block text-xs mb-1">
-                  Remarks
+                  {t("erp.remarks")}
                 </span>
                 <div className="bg-muted p-2 rounded text-sm text-balance">
                   {payment.remarks}
@@ -252,8 +253,8 @@ export default function PaymentDetailPage({
       {payment.references && payment.references.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>References</CardTitle>
-            <CardDescription>Invoices linked to this payment</CardDescription>
+            <CardTitle>{t("erp.references")}</CardTitle>
+            <CardDescription>{t("erp.invoices_linked_to_this_payment")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -272,7 +273,7 @@ export default function PaymentDetailPage({
                   </div>
                   <div className="grid gap-1">
                     <div className="text-sm font-medium text-muted-foreground">
-                      Allocated Amount
+                      {t("erp.allocated_amount")}
                     </div>
                     <div>
                       {new Intl.NumberFormat("en-US", {

@@ -34,6 +34,7 @@ import Link from "next/link";
 import { getLoans } from "@/app/actions/handson/all/hrms/loans";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 export default function EmployeeLoanPage() {
   const [loans, setLoans] = useState<any[]>([]);
 
@@ -50,14 +51,14 @@ export default function EmployeeLoanPage() {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Employee Loans</h1>
+          <h1 className="text-3xl font-bold">{t("erp.employee_loans")}</h1>
           <p className="text-muted-foreground">
-            Manage salary advances and repayment schedules.
+            {t("erp.manage_salary_advances_and_repayment_schedules")}
           </p>
         </div>
         <Link href="/handson/all/hr/loan/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> Apply for Loan
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.apply_for_loan")}
           </Button>
         </Link>
       </div>
@@ -66,7 +67,7 @@ export default function EmployeeLoanPage() {
         {loans.length === 0 ? (
           <div className="col-span-full text-center py-12 text-muted-foreground border rounded-lg bg-slate-50 flex flex-col items-center gap-2">
             <RiWalletLine className="h-10 w-10 opacity-20" />
-            No active loans found.
+            {t("erp.no_active_loans_found")}
           </div>
         ) : (
           loans.map((loan) => (
@@ -92,7 +93,7 @@ export default function EmployeeLoanPage() {
               </CardHeader>
               <CardContent className="pt-4">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-muted-foreground">Amount</span>
+                  <span className="text-sm text-muted-foreground">{t("erp.amount")}</span>
                   <span className="text-lg font-bold text-slate-900 flex items-center">
                     <RiMoneyDollarCircleLine className="h-4 w-4 text-green-600" />
                     {loan.loan_amount}

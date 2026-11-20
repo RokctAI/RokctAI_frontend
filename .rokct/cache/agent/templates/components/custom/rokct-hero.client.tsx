@@ -40,6 +40,7 @@ import { RiLoader4Line, RiSendPlane2Fill } from "@remixicon/react";
 import { RK_HERO, RK_SCENARIOS, type RkScenario } from "@/components/custom/landing/rokct-landing-content";
 import { RkCardView, RkMark, rkBold } from "@/components/custom/landing/rokct-ui";
 
+import t from "@/app/lib/i18n";
 import "@/components/custom/landing/rokct-landing.css";
 
 function prefersReducedMotion(): boolean {
@@ -165,7 +166,7 @@ export function RokctHeroConsole() {
   const scenario = RK_SCENARIOS.find((s) => s.key === shown.key) ?? first;
 
   return (
-    <div className="rk-console" aria-label="Sample conversation with ROK">
+    <div className="rk-console" aria-label={t("agent.sample_conversation_with_rok")}>
       <div className="rk-c-head">
         <div className="rk-c-av">
           <RkMark className="rk-mark" />

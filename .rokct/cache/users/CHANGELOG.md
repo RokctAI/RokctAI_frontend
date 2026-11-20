@@ -1,3 +1,11 @@
+## 1.2.0
+
+* feat(i18n): 43 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 3 files now go through
+  `t("users.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/users.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.1.1
 
 * fix(icons): the admin users, roles and permissions pages import their

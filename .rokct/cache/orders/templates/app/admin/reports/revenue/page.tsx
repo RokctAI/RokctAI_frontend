@@ -34,6 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function RevenueReportPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -75,12 +76,12 @@ export default function RevenueReportPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Revenue Report</h1>
+        <h1 className="text-3xl font-bold">{t("orders.revenue_report")}</h1>
         <div className="flex gap-4">
           <DatePickerWithRange date={date} setDate={setDate} />
           <Button variant="outline">
             <RiDownloadLine className="mr-2 size-4" />
-            Export
+            {t("orders.export")}
           </Button>
         </div>
       </div>
@@ -88,7 +89,7 @@ export default function RevenueReportPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Total Sales</CardTitle>
+            <CardTitle>{t("orders.total_sales")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">${totalRevenue.toFixed(2)}</div>
@@ -96,7 +97,7 @@ export default function RevenueReportPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Total Commission</CardTitle>
+            <CardTitle>{t("orders.total_commission")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-600">
@@ -110,12 +111,12 @@ export default function RevenueReportPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Shop</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-              <TableHead className="text-right">Commission</TableHead>
+              <TableHead>{t("orders.date")}</TableHead>
+              <TableHead>{t("orders.order_id")}</TableHead>
+              <TableHead>{t("orders.shop")}</TableHead>
+              <TableHead>{t("orders.status")}</TableHead>
+              <TableHead className="text-right">{t("orders.amount")}</TableHead>
+              <TableHead className="text-right">{t("orders.commission")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -131,7 +132,7 @@ export default function RevenueReportPage() {
                   colSpan={6}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No data for selected period.
+                  {t("orders.no_data_for_selected_period")}
                 </TableCell>
               </TableRow>
             ) : (

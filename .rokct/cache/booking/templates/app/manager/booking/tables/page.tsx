@@ -347,9 +347,9 @@ export default function TablesPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Table Number</TableHead>
-                    <TableHead>Capacity</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t("booking.table_number")}</TableHead>
+                    <TableHead>{t("booking.capacity")}</TableHead>
+                    <TableHead className="text-right">{t("booking.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

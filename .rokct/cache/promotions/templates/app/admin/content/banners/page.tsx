@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { getBanners } from "@/app/actions/base/admin/content";
 import { Card, CardContent } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function AdminBannersPage() {
   const [banners, setBanners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,12 +52,12 @@ export default function AdminBannersPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Banners</h1>
+      <h1 className="text-3xl font-bold">{t("promotions.banners")}</h1>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {banners.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
-            No banners found.
+            {t("promotions.no_banners_found")}
           </div>
         ) : (
           banners.map((banner) => (
@@ -71,7 +72,7 @@ export default function AdminBannersPage() {
                   />
                 ) : (
                   <div className="size-full bg-muted flex items-center justify-center text-muted-foreground">
-                    No Image
+                    {t("promotions.no_image")}
                   </div>
                 )}
               </div>

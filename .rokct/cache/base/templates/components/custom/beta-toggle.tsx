@@ -22,6 +22,7 @@ import { toggleBetaMode } from "@/app/actions/handson/control/system/global-sett
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export function BetaToggle({ initialState }: { initialState: boolean }) {
   const [isBeta, setIsBeta] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +54,7 @@ export function BetaToggle({ initialState }: { initialState: boolean }) {
         onCheckedChange={handleToggle}
         disabled={isLoading}
       />
-      <Label htmlFor="beta-mode">Beta Mode</Label>
+      <Label htmlFor="beta-mode">{t("base.beta_mode")}</Label>
     </div>
   );
 }

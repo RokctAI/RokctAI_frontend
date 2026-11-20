@@ -18,10 +18,11 @@
 
 import GenericReport from "@/components/admin/GenericReport";
 
+import t from "@/app/lib/i18n";
 export default function VariationReportPage() {
   return (
     <GenericReport
-      title="Variation Report"
+      title={t("products.variation_report")}
       reportType="Variation"
       columns={[
         { key: "product", label: "Product" },

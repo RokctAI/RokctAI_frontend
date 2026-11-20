@@ -1,6 +1,6 @@
 {
   "name": "telemetry_sdk",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "installs": [
     {
       "from": "templates/components/admin/GenericReport.tsx",
@@ -33,6 +33,10 @@
     {
       "from": "templates/app/manager/reports/page.tsx",
       "to": "app/manager/reports/page.tsx"
+    },
+    {
+      "from": "templates/app/lib/i18n/sdk/telemetry.json",
+      "to": "app/lib/i18n/sdk/telemetry.json"
     }
   ],
   "dependencies": {

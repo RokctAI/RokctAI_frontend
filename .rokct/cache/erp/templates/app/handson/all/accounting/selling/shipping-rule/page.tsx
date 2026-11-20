@@ -17,13 +17,14 @@
 import { getShippingRules } from "@/app/actions/handson/all/accounting/selling/extras";
 import { SimpleList } from "@/components/handson/commercial-extras-components";
 import { TableRow, TableCell } from "@/components/ui/table";
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 export default async function Page() {
   const data = await getShippingRules();
   return (
     <div className="p-6">
       <SimpleList
-        title="Shipping Rules"
+        title={t("erp.shipping_rules")}
         items={data}
         newItemUrl="/handson/all/commercial/selling/shipping-rule/new"
         headers={["Label", "Method", "Amount"]}

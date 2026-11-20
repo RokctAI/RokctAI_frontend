@@ -33,6 +33,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export default function ShopFormPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const isNew = params.id === "new";
@@ -133,12 +134,12 @@ export default function ShopFormPage({ params }: { params: { id: string } }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Shop Details</CardTitle>
+          <CardTitle>{t("merchants.shop_details")}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="shop_name">Shop Name</Label>
+              <Label htmlFor="shop_name">{t("merchants.shop_name")}</Label>
               <Input
                 id="shop_name"
                 value={formData.shop_name}
@@ -149,7 +150,7 @@ export default function ShopFormPage({ params }: { params: { id: string } }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="user">Owner User (Email)</Label>
+              <Label htmlFor="user">{t("merchants.owner_user_email")}</Label>
               <Input
                 id="user"
                 value={formData.user}
@@ -160,7 +161,7 @@ export default function ShopFormPage({ params }: { params: { id: string } }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="shop_type">Shop Type</Label>
+              <Label htmlFor="shop_type">{t("merchants.shop_type")}</Label>
               <select
                 id="shop_type"
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -169,7 +170,7 @@ export default function ShopFormPage({ params }: { params: { id: string } }) {
                   setFormData({ ...formData, shop_type: e.target.value })
                 }
               >
-                <option value="">Select a type...</option>
+                <option value="">{t("merchants.select_a_type")}</option>
                 {shopTypes.map((type) => (
                   <option key={type.name} value={type.name}>
                     {type.title}
@@ -188,19 +189,19 @@ export default function ShopFormPage({ params }: { params: { id: string } }) {
                 className="size-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <Label htmlFor="is_ecommerce">
-                Is Ecommerce (Nationwide via Courier)
+                {t("merchants.is_ecommerce_nationwide_via_courier")}
               </Label>
             </div>
             <Button type="submit" className="w-full" disabled={saving}>
               {saving ? (
                 <>
                   <RiLoader4Line className="mr-2 size-4 animate-spin" />
-                  Saving...
+                  {t("merchants.saving")}
                 </>
               ) : (
                 <>
                   <RiSaveLine className="mr-2 size-4" />
-                  Save Shop
+                  {t("merchants.save_shop")}
                 </>
               )}
             </Button>

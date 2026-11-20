@@ -47,6 +47,7 @@ import {
 } from "@/app/actions/handson/all/crm/subscriptions";
 import { getCustomers } from "@/app/actions/handson/all/accounting/selling/sales_order";
 
+import t from "@/app/lib/i18n";
 // --- SUBSCRIPTION PLAN ---
 
 export function SubscriptionPlanList() {
@@ -61,18 +62,18 @@ export function SubscriptionPlanList() {
     });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{t("erp.loading")}</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Subscription Plans</h2>
+        <h2 className="text-2xl font-bold">{t("erp.subscription_plans")}</h2>
         <Button
           onClick={() =>
             router.push("/handson/all/commercial/subscriptions/plan/new")
           }
         >
-          <RiAddLine className="h-4 w-4 mr-2" /> New Plan
+          <RiAddLine className="h-4 w-4 mr-2" /> {t("erp.new_plan")}
         </Button>
       </div>
       <Card>
@@ -80,9 +81,9 @@ export function SubscriptionPlanList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Currency</TableHead>
-                <TableHead>Cost</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.currency")}</TableHead>
+                <TableHead>{t("erp.cost")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -128,11 +129,11 @@ export function SubscriptionPlanForm() {
       </Button>
       <Card>
         <CardHeader>
-          <CardTitle>New Subscription Plan</CardTitle>
+          <CardTitle>{t("erp.new_subscription_plan")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Plan Name</Label>
+            <Label>{t("erp.plan_name")}</Label>
             <Input
               value={formData.plan_name}
               onChange={(e) =>
@@ -141,7 +142,7 @@ export function SubscriptionPlanForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Currency</Label>
+            <Label>{t("erp.currency")}</Label>
             <Input
               value={formData.currency}
               onChange={(e) =>
@@ -150,7 +151,7 @@ export function SubscriptionPlanForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Cost</Label>
+            <Label>{t("erp.cost")}</Label>
             <Input
               type="number"
               value={formData.cost}
@@ -160,7 +161,7 @@ export function SubscriptionPlanForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Interval</Label>
+            <Label>{t("erp.interval")}</Label>
             <Select
               value={formData.billing_interval}
               onValueChange={(v) =>
@@ -171,13 +172,13 @@ export function SubscriptionPlanForm() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Month">Month</SelectItem>
-                <SelectItem value="Year">Year</SelectItem>
+                <SelectItem value="Month">{t("erp.month")}</SelectItem>
+                <SelectItem value="Year">{t("erp.year")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
-            Submit
+            {t("erp.submit")}
           </Button>
         </CardContent>
       </Card>
@@ -199,12 +200,12 @@ export function SubscriptionList() {
     });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{t("erp.loading")}</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Subscriptions</h2>
+        <h2 className="text-2xl font-bold">{t("erp.subscriptions")}</h2>
         <Button
           onClick={() =>
             router.push(
@@ -212,7 +213,7 @@ export function SubscriptionList() {
             )
           }
         >
-          <RiAddLine className="h-4 w-4 mr-2" /> New Subscription
+          <RiAddLine className="h-4 w-4 mr-2" /> {t("erp.new_subscription")}
         </Button>
       </div>
       <Card>
@@ -220,10 +221,10 @@ export function SubscriptionList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Party</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Start Date</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.party")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
+                <TableHead>{t("erp.start_date")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -276,17 +277,17 @@ export function SubscriptionForm() {
       </Button>
       <Card>
         <CardHeader>
-          <CardTitle>New Subscription</CardTitle>
+          <CardTitle>{t("erp.new_subscription")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Customer</Label>
+            <Label>{t("erp.customer")}</Label>
             <Select
               value={formData.party}
               onValueChange={(v) => setFormData({ ...formData, party: v })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Customer" />
+                <SelectValue placeholder={t("erp.select_customer")} />
               </SelectTrigger>
               <SelectContent>
                 {customers.map((c) => (
@@ -298,7 +299,7 @@ export function SubscriptionForm() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Plan</Label>
+            <Label>{t("erp.plan")}</Label>
             <Select
               value={formData.plans[0].plan}
               onValueChange={(v) =>
@@ -309,7 +310,7 @@ export function SubscriptionForm() {
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Plan" />
+                <SelectValue placeholder={t("erp.select_plan")} />
               </SelectTrigger>
               <SelectContent>
                 {plans.map((p) => (
@@ -321,7 +322,7 @@ export function SubscriptionForm() {
             </Select>
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
-            Submit
+            {t("erp.submit")}
           </Button>
         </CardContent>
       </Card>

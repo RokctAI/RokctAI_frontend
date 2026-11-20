@@ -30,6 +30,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import t from "@/app/lib/i18n";
 export function CreateContactDialog({ meta }: { meta: DocTypeMeta }) {
   const [open, setOpen] = useState(false);
 
@@ -37,14 +38,14 @@ export function CreateContactDialog({ meta }: { meta: DocTypeMeta }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <RiAddLine className="mr-2 h-4 w-4" /> Create Contact
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("crm.create_contact")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Contact</DialogTitle>
+          <DialogTitle>{t("crm.create_new_contact")}</DialogTitle>
           <DialogDescription>
-            Enter the details for the new contact.
+            {t("crm.enter_the_details_for_the_new_contact")}
           </DialogDescription>
         </DialogHeader>
         <GenericForm

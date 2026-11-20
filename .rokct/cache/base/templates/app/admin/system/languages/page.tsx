@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function LanguagesPage() {
   const [languages, setLanguages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,9 +74,9 @@ export default function LanguagesPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Languages</h1>
+        <h1 className="text-3xl font-bold">{t("base.languages")}</h1>
         <p className="text-muted-foreground">
-          Enable the languages available for translation across the platform.
+          {t("base.enable_the_languages_available_for_translation_a")}
         </p>
       </div>
 
@@ -83,10 +84,10 @@ export default function LanguagesPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Language</TableHead>
-              <TableHead>Code</TableHead>
-              <TableHead>Active</TableHead>
-              <TableHead className="w-[100px]">Enabled</TableHead>
+              <TableHead>{t("base.language")}</TableHead>
+              <TableHead>{t("base.code")}</TableHead>
+              <TableHead>{t("base.active")}</TableHead>
+              <TableHead className="w-[100px]">{t("base.enabled")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -102,7 +103,7 @@ export default function LanguagesPage() {
                   colSpan={4}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No languages found.
+                  {t("base.no_languages_found")}
                 </TableCell>
               </TableRow>
             ) : (

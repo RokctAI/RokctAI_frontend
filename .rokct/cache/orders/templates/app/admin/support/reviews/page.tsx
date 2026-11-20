@@ -25,6 +25,7 @@ import { getReviews, deleteReview } from "@/app/actions/support/admin/support";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,12 +66,12 @@ export default function AdminReviewsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Reviews</h1>
+      <h1 className="text-3xl font-bold">{t("orders.reviews")}</h1>
 
       <div className="grid gap-4 md:grid-cols-2">
         {reviews.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
-            No reviews found.
+            {t("orders.no_reviews_found")}
           </div>
         ) : (
           reviews.map((review) => (

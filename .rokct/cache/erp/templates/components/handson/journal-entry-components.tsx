@@ -35,17 +35,18 @@ import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import tr from "@/app/lib/i18n";
 export function JournalEntryList({ items }: { items: any[] }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Journal Entries</h1>
-          <p className="text-muted-foreground">General Ledger Adjustments.</p>
+          <h1 className="text-2xl font-bold">{tr("erp.journal_entries")}</h1>
+          <p className="text-muted-foreground">{tr("erp.general_ledger_adjustments")}</p>
         </div>
         <Link href="/handson/all/financials/accounts/journal-entry/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Entry
+            <RiAddLine className="mr-2 h-4 w-4" /> {tr("erp.new_entry")}
           </Button>
         </Link>
       </div>
@@ -53,10 +54,10 @@ export function JournalEntryList({ items }: { items: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Voucher No</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Total Debit</TableHead>
+              <TableHead>{tr("erp.voucher_no")}</TableHead>
+              <TableHead>{tr("erp.type")}</TableHead>
+              <TableHead>{tr("erp.date")}</TableHead>
+              <TableHead>{tr("erp.total_debit")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -113,14 +114,14 @@ export function JournalEntryForm() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Journal Entry</h1>
+      <h1 className="text-2xl font-bold">{tr("erp.new_journal_entry")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div className="p-4 border rounded bg-muted/20">
-            <Label className="font-bold mb-2 block">Debit Entry</Label>
+            <Label className="font-bold mb-2 block">{tr("erp.debit_entry")}</Label>
             <div className="flex gap-4">
               <div className="flex-1">
-                <Label>Account</Label>
+                <Label>{tr("erp.account")}</Label>
                 <Input
                   value={account1}
                   onChange={(e) => setAccount1(e.target.value)}
@@ -128,7 +129,7 @@ export function JournalEntryForm() {
                 />
               </div>
               <div className="w-32">
-                <Label>Debit Amount</Label>
+                <Label>{tr("erp.debit_amount")}</Label>
                 <Input
                   type="number"
                   value={debit}
@@ -139,10 +140,10 @@ export function JournalEntryForm() {
           </div>
 
           <div className="p-4 border rounded bg-muted/20">
-            <Label className="font-bold mb-2 block">Credit Entry</Label>
+            <Label className="font-bold mb-2 block">{tr("erp.credit_entry")}</Label>
             <div className="flex gap-4">
               <div className="flex-1">
-                <Label>Account</Label>
+                <Label>{tr("erp.account")}</Label>
                 <Input
                   value={account2}
                   onChange={(e) => setAccount2(e.target.value)}
@@ -150,7 +151,7 @@ export function JournalEntryForm() {
                 />
               </div>
               <div className="w-32">
-                <Label>Credit Amount</Label>
+                <Label>{tr("erp.credit_amount")}</Label>
                 <Input
                   type="number"
                   value={credit}
@@ -161,7 +162,7 @@ export function JournalEntryForm() {
           </div>
 
           <Button onClick={handleSubmit} className="w-full">
-            Post Entry
+            {tr("erp.post_entry")}
           </Button>
         </CardContent>
       </Card>

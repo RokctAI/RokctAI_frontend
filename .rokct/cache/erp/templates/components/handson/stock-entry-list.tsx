@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export function StockEntryList({ entries }: { entries: any[] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const filtered = entries.filter((e) =>
@@ -40,13 +41,13 @@ export function StockEntryList({ entries }: { entries: any[] }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Stock Entries</h1>
-          <p className="text-muted-foreground">Transfers, Issues, Receipts.</p>
+          <h1 className="text-2xl font-bold">{t("erp.stock_entries")}</h1>
+          <p className="text-muted-foreground">{t("erp.transfers_issues_receipts")}</p>
         </div>
         <div className="flex gap-4">
           <Link href="/handson/all/supply_chain/stock/entry/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Entry
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_entry")}
             </Button>
           </Link>
         </div>
@@ -55,9 +56,9 @@ export function StockEntryList({ entries }: { entries: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.type")}</TableHead>
+              <TableHead>{t("erp.date")}</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
@@ -72,7 +73,7 @@ export function StockEntryList({ entries }: { entries: any[] }) {
                     href={`/handson/all/supply_chain/stock/entry/${e.name}`}
                   >
                     <Button variant="ghost" size="sm">
-                      View
+                      {t("erp.view")}
                     </Button>
                   </Link>
                 </TableCell>
