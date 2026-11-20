@@ -181,7 +181,7 @@ export default function BranchesPage() {
                 <TableHead>
                   {t("app.paas.dashboard.restaurant.branches.col_coords")}
                 </TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">{t("merchants.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -191,7 +191,7 @@ export default function BranchesPage() {
                     colSpan={4}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No branches found. Add your first branch to get started.
+                    {t("merchants.no_branches_found_add_your_first_branch_to_get_s")}
                   </TableCell>
                 </TableRow>
               ) : (

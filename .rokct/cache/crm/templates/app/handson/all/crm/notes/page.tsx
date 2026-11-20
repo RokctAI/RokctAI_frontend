@@ -28,6 +28,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
 import { RiAddLine, RiCalendarLine, RiStickyNoteLine } from "@remixicon/react";
 
+import t from "@/app/lib/i18n";
 export default async function NotesPage({
   searchParams,
 }: {
@@ -44,21 +45,21 @@ export default async function NotesPage({
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Notes</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.notes")}</h1>
           <p className="text-muted-foreground">
-            Manage your personal and shared notes
+            {t("crm.manage_your_personal_and_shared_notes")}
           </p>
         </div>
         <Button>
           <RiAddLine className="w-4 h-4 mr-2" />
-          Create Note
+          {t("crm.create_note")}
         </Button>
       </div>
 
       {notes.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-12 border border-dashed rounded-lg bg-muted/10 h-64">
           <RiStickyNoteLine className="w-10 h-10 text-muted-foreground mb-4" />
-          <p className="text-lg font-medium">No notes found</p>
+          <p className="text-lg font-medium">{t("crm.no_notes_found")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -101,14 +102,14 @@ export default async function NotesPage({
       <div className="flex items-center justify-center gap-2 mt-4">
         {page > 1 && (
           <Button variant="outline" asChild>
-            <Link href={`?page=${page - 1}`}>Previous</Link>
+            <Link href={`?page=${page - 1}`}>{t("crm.previous")}</Link>
           </Button>
         )}
         <Button variant="outline" disabled>
           {page}
         </Button>
         <Button variant="outline" asChild>
-          <Link href={`?page=${page + 1}`}>Next</Link>
+          <Link href={`?page=${page + 1}`}>{t("crm.next")}</Link>
         </Button>
       </div>
     </div>

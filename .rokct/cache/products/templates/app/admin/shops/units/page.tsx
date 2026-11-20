@@ -38,6 +38,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ShopUnitsPage() {
   const [loading, setLoading] = useState(true);
   const [units, setUnits] = useState<any[]>([]);
@@ -68,26 +69,26 @@ export default function ShopUnitsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Shop Units</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("products.shop_units")}</h2>
         <p className="text-muted-foreground">
-          View all shop units registered in the system.
+          {t("products.view_all_shop_units_registered_in_the_system")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Units</CardTitle>
+          <CardTitle>{t("products.all_units")}</CardTitle>
           <CardDescription>
-            List of units (e.g., kg, pcs) used by shops.
+            {t("products.list_of_units_e_g_kg_pcs_used_by_shops")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Shop</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("products.name")}</TableHead>
+                <TableHead>{t("products.shop")}</TableHead>
+                <TableHead>{t("products.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -108,7 +109,7 @@ export default function ShopUnitsPage() {
                     colSpan={3}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No shop units found.
+                    {t("products.no_shop_units_found")}
                   </TableCell>
                 </TableRow>
               )}

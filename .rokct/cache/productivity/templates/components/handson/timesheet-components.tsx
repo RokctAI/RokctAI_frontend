@@ -34,17 +34,18 @@ import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import tr from "@/app/lib/i18n";
 export function TimesheetList({ items }: { items: any[] }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Timesheets</h1>
-          <p className="text-muted-foreground">Log time.</p>
+          <h1 className="text-2xl font-bold">{tr("productivity.timesheets")}</h1>
+          <p className="text-muted-foreground">{tr("productivity.log_time")}</p>
         </div>
         <Link href="/handson/all/work_management/projects/timesheet/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> Log Time
+            <RiAddLine className="mr-2 h-4 w-4" /> {tr("productivity.log_time")}
           </Button>
         </Link>
       </div>
@@ -52,10 +53,10 @@ export function TimesheetList({ items }: { items: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Start Date</TableHead>
-              <TableHead>Total Hours</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{tr("productivity.name")}</TableHead>
+              <TableHead>{tr("productivity.start_date")}</TableHead>
+              <TableHead>{tr("productivity.total_hours")}</TableHead>
+              <TableHead>{tr("productivity.status")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -94,11 +95,11 @@ export function TimesheetForm() {
 
   return (
     <div className="max-w-xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Timesheet</h1>
+      <h1 className="text-2xl font-bold">{tr("productivity.new_timesheet")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Activity Type</Label>
+            <Label>{tr("productivity.activity_type")}</Label>
             <Input
               value={activity}
               onChange={(e) => setActivity(e.target.value)}
@@ -106,7 +107,7 @@ export function TimesheetForm() {
             />
           </div>
           <div>
-            <Label>Hours</Label>
+            <Label>{tr("productivity.hours")}</Label>
             <Input
               type="number"
               value={hours}
@@ -114,13 +115,13 @@ export function TimesheetForm() {
             />
           </div>
           <div>
-            <Label>Project (Optional)</Label>
+            <Label>{tr("productivity.project_optional")}</Label>
             <Input
               value={project}
               onChange={(e) => setProject(e.target.value)}
             />
           </div>
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleSubmit}>{tr("productivity.submit")}</Button>
         </CardContent>
       </Card>
     </div>

@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 // --- GENERIC LIST ---
 export function ShopFloorList({
   title,
@@ -50,7 +51,7 @@ export function ShopFloorList({
         </div>
         <Link href={newItemUrl}>
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new")}
           </Button>
         </Link>
       </div>
@@ -90,13 +91,13 @@ export function WorkstationForm() {
     <div className="max-w-md mx-auto">
       <Card>
         <CardContent className="pt-4">
-          <Label>Workstation Name</Label>
+          <Label>{t("erp.workstation_name")}</Label>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="mb-4"
           />
-          <Button onClick={handleSubmit}>Save</Button>
+          <Button onClick={handleSubmit}>{t("erp.save")}</Button>
         </CardContent>
       </Card>
     </div>
@@ -121,13 +122,13 @@ export function OperationForm() {
     <div className="max-w-md mx-auto">
       <Card>
         <CardContent className="pt-4">
-          <Label>Operation Name</Label>
+          <Label>{t("erp.operation_name")}</Label>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="mb-4"
           />
-          <Button onClick={handleSubmit}>Save</Button>
+          <Button onClick={handleSubmit}>{t("erp.save")}</Button>
         </CardContent>
       </Card>
     </div>
@@ -160,18 +161,18 @@ export function JobCardForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Work Order</Label>
+            <Label>{t("erp.work_order")}</Label>
             <Input value={wo} onChange={(e) => setWO(e.target.value)} />
           </div>
           <div>
-            <Label>Operation</Label>
+            <Label>{t("erp.operation")}</Label>
             <Input value={op} onChange={(e) => setOp(e.target.value)} />
           </div>
           <div>
-            <Label>Workstation</Label>
+            <Label>{t("erp.workstation")}</Label>
             <Input value={ws} onChange={(e) => setWs(e.target.value)} />
           </div>
-          <Button onClick={handleSubmit}>Create Job Card</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_job_card")}</Button>
         </CardContent>
       </Card>
     </div>
@@ -205,16 +206,16 @@ export function DowntimeEntryForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Workstation</Label>
+            <Label>{t("erp.workstation")}</Label>
             <Input value={ws} onChange={(e) => setWs(e.target.value)} />
           </div>
           <div>
-            <Label>Reason</Label>
+            <Label>{t("erp.reason")}</Label>
             <Input value={reason} onChange={(e) => setReason(e.target.value)} />
           </div>
           <div className="flex gap-2">
             <div className="flex-1">
-              <Label>From</Label>
+              <Label>{t("erp.from")}</Label>
               <Input
                 type="datetime-local"
                 value={from}
@@ -222,7 +223,7 @@ export function DowntimeEntryForm() {
               />
             </div>
             <div className="flex-1">
-              <Label>To</Label>
+              <Label>{t("erp.to")}</Label>
               <Input
                 type="datetime-local"
                 value={to}
@@ -230,7 +231,7 @@ export function DowntimeEntryForm() {
               />
             </div>
           </div>
-          <Button onClick={handleSubmit}>Log Downtime</Button>
+          <Button onClick={handleSubmit}>{t("erp.log_downtime")}</Button>
         </CardContent>
       </Card>
     </div>

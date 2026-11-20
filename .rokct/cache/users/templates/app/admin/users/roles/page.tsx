@@ -29,6 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function AdminRolesPage() {
   const [roles, setRoles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,20 +58,20 @@ export default function AdminRolesPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Role Management</h1>
+      <h1 className="text-3xl font-bold">{t("users.role_management")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Role Name</TableHead>
+              <TableHead>{t("users.role_name")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {roles.length === 0 ? (
               <TableRow>
                 <TableCell className="text-center h-24">
-                  No roles found.
+                  {t("users.no_roles_found")}
                 </TableCell>
               </TableRow>
             ) : (

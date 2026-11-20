@@ -63,18 +63,18 @@ export function AssetCapitalizationList() {
     });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{t("erp.loading")}</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Asset Capitalizations</h2>
+        <h2 className="text-2xl font-bold">{t("erp.asset_capitalizations")}</h2>
         <Button
           onClick={() =>
             router.push("/handson/all/financials/assets/capitalization/new")
           }
         >
-          <RiAddLine className="h-4 w-4 mr-2" /> New Entry
+          <RiAddLine className="h-4 w-4 mr-2" /> {t("erp.new_entry")}
         </Button>
       </div>
       <Card>
@@ -82,9 +82,9 @@ export function AssetCapitalizationList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Target Asset</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.type")}</TableHead>
+                <TableHead>{t("erp.target_asset")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -134,11 +134,11 @@ export function AssetCapitalizationForm() {
       </Button>
       <Card>
         <CardHeader>
-          <CardTitle>New Asset Capitalization</CardTitle>
+          <CardTitle>{t("erp.new_asset_capitalization")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Posting Date</Label>
+            <Label>{t("erp.posting_date")}</Label>
             <Input
               type="date"
               value={formData.posting_date}
@@ -148,7 +148,7 @@ export function AssetCapitalizationForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Stock Item to Capitalize</Label>
+            <Label>{t("erp.stock_item_to_capitalize")}</Label>
             <Select
               value={formData.stock_items[0].item_code}
               onValueChange={(v) =>
@@ -159,7 +159,7 @@ export function AssetCapitalizationForm() {
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Item" />
+                <SelectValue placeholder={t("erp.select_item")} />
               </SelectTrigger>
               <SelectContent>
                 {items.map((i) => (
@@ -193,18 +193,18 @@ export function AssetRepairList() {
     });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{t("erp.loading")}</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Asset Repairs</h2>
+        <h2 className="text-2xl font-bold">{t("erp.asset_repairs")}</h2>
         <Button
           onClick={() =>
             router.push("/handson/all/financials/assets/repair/new")
           }
         >
-          <RiAddLine className="h-4 w-4 mr-2" /> New Repair
+          <RiAddLine className="h-4 w-4 mr-2" /> {t("erp.new_repair")}
         </Button>
       </div>
       <Card>
@@ -212,10 +212,10 @@ export function AssetRepairList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Asset</TableHead>
-                <TableHead>Cost</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.asset")}</TableHead>
+                <TableHead>{t("erp.cost")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -267,11 +267,11 @@ export function AssetRepairForm() {
       </Button>
       <Card>
         <CardHeader>
-          <CardTitle>New Asset Repair</CardTitle>
+          <CardTitle>{t("erp.new_asset_repair")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Asset</Label>
+            <Label>{t("erp.asset")}</Label>
             <Select
               value={formData.asset}
               onValueChange={(v) => setFormData({ ...formData, asset: v })}
@@ -289,7 +289,7 @@ export function AssetRepairForm() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Failure Date</Label>
+            <Label>{t("erp.failure_date")}</Label>
             <Input
               type="date"
               value={formData.failure_date}
@@ -299,7 +299,7 @@ export function AssetRepairForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Repair Cost</Label>
+            <Label>{t("erp.repair_cost")}</Label>
             <Input
               type="number"
               value={formData.total_repair_cost}
@@ -312,7 +312,7 @@ export function AssetRepairForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Description</Label>
+            <Label>{t("erp.description")}</Label>
             <Input
               value={formData.description}
               onChange={(e) =>
@@ -321,7 +321,7 @@ export function AssetRepairForm() {
             />
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
-            Submit
+            {t("erp.submit")}
           </Button>
         </CardContent>
       </Card>
@@ -343,18 +343,18 @@ export function AssetMovementList() {
     });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>{t("erp.loading")}</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Asset Movements</h2>
+        <h2 className="text-2xl font-bold">{t("erp.asset_movements")}</h2>
         <Button
           onClick={() =>
             router.push("/handson/all/financials/assets/movement/new")
           }
         >
-          <RiAddLine className="h-4 w-4 mr-2" /> New Movement
+          <RiAddLine className="h-4 w-4 mr-2" /> {t("erp.new_movement")}
         </Button>
       </div>
       <Card>
@@ -362,9 +362,9 @@ export function AssetMovementList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Purpose</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.date")}</TableHead>
+                <TableHead>{t("erp.purpose")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -414,11 +414,11 @@ export function AssetMovementForm() {
       </Button>
       <Card>
         <CardHeader>
-          <CardTitle>New Asset Movement</CardTitle>
+          <CardTitle>{t("erp.new_asset_movement")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Date</Label>
+            <Label>{t("erp.date")}</Label>
             <Input
               type="date"
               value={formData.transaction_date}
@@ -428,7 +428,7 @@ export function AssetMovementForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label>Asset to Move</Label>
+            <Label>{t("erp.asset_to_move")}</Label>
             <Select
               value={formData.assets[0].asset}
               onValueChange={(v) =>
@@ -451,7 +451,7 @@ export function AssetMovementForm() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Target Location</Label>
+            <Label>{t("erp.target_location")}</Label>
              <Input
                placeholder={t('common.ph_warehouse')}
                value={formData.assets[0].target_location}
@@ -466,7 +466,7 @@ export function AssetMovementForm() {
             />
           </div>
           <Button className="w-full" onClick={handleSubmit} disabled={loading}>
-            Submit
+            {t("erp.submit")}
           </Button>
         </CardContent>
       </Card>

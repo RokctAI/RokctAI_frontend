@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 
 import { toBase64 } from "../../components/to-base64";
 
+import t from "@/app/lib/i18n";
 // Two or three brand colours in, a full WCAG-safe design system out.
 // Colours can be typed or picked from an uploaded logo.
 export default function NewDesignSystemPage() {
@@ -63,10 +64,10 @@ export default function NewDesignSystemPage() {
 
   return (
     <div className="max-w-2xl space-y-5 p-6">
-      <h1 className="text-2xl font-semibold">New design system</h1>
-      <input className="w-full rounded-md border p-2" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+      <h1 className="text-2xl font-semibold">{t("studio.new_design_system")}</h1>
+      <input className="w-full rounded-md border p-2" placeholder={t("studio.name")} value={name} onChange={(e) => setName(e.target.value)} />
       <div className="space-y-2">
-        <div className="text-sm">Brand colours (2 or 3)</div>
+        <div className="text-sm">{t("studio.brand_colours_2_or_3")}</div>
         <div className="flex flex-wrap gap-3">
           {seeds.map((hex, i) => (
             <input
@@ -76,12 +77,12 @@ export default function NewDesignSystemPage() {
               onChange={(e) => setSeeds((s) => s.map((x, j) => (j === i ? e.target.value : x)))}
             />
           ))}
-          {seeds.length < 3 && <Button variant="outline" onClick={() => setSeeds((s) => [...s, "#333333"])}>Add colour</Button>}
-          {seeds.length > 2 && <Button variant="outline" onClick={() => setSeeds((s) => s.slice(0, -1))}>Remove</Button>}
+          {seeds.length < 3 && <Button variant="outline" onClick={() => setSeeds((s) => [...s, "#333333"])}>{t("studio.add_colour")}</Button>}
+          {seeds.length > 2 && <Button variant="outline" onClick={() => setSeeds((s) => s.slice(0, -1))}>{t("studio.remove")}</Button>}
         </div>
       </div>
       <div className="space-y-2">
-        <div className="text-sm">Or pick them from a logo</div>
+        <div className="text-sm">{t("studio.or_pick_them_from_a_logo")}</div>
         <input type="file" accept=".png,.jpg,.jpeg,.webp,.svg" onChange={(e) => onLogo(e.target.files?.[0])} />
         <div className="flex flex-wrap gap-2">
           {palette.map((p) => (
@@ -95,7 +96,7 @@ export default function NewDesignSystemPage() {
           ))}
         </div>
       </div>
-      <Button disabled={!name.trim() || seeds.length < 2 || busy} onClick={create}>Create</Button>
+      <Button disabled={!name.trim() || seeds.length < 2 || busy} onClick={create}>{t("studio.create")}</Button>
     </div>
   );
 }

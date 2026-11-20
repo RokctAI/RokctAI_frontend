@@ -21,6 +21,7 @@ import { listDesignSystems } from "@/app/actions/studio/systems/actions";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 
 export default async function DesignSystemsPage() {
@@ -28,13 +29,13 @@ export default async function DesignSystemsPage() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Design systems</h1>
+        <h1 className="text-2xl font-semibold">{t("studio.design_systems")}</h1>
         <Link href="/studio/systems/new" className="text-sm underline">
-          New design system
+          {t("studio.new_design_system")}
         </Link>
       </div>
       {systems.length === 0 ? (
-        <p className="text-muted-foreground">No design systems yet.</p>
+        <p className="text-muted-foreground">{t("studio.no_design_systems_yet")}</p>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {systems.map((s) => (
@@ -42,7 +43,7 @@ export default async function DesignSystemsPage() {
               <Card className="hover:border-primary">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0">
                   <CardTitle className="text-base">{s.system_name || s.name}</CardTitle>
-                  {s.is_default ? <Badge>Default</Badge> : null}
+                  {s.is_default ? <Badge>{t("studio.default")}</Badge> : null}
                 </CardHeader>
               </Card>
             </Link>

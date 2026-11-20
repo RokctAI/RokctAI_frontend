@@ -1,0 +1,60 @@
+{
+  "en": {
+    "wallet": {
+      "amount": "Amount",
+      "balance": "Balance",
+      "card": "Card",
+      "current_balance": "Current Balance",
+      "date": "Date",
+      "enter_the_amount_you_want_to_add_to_your_wallet": "Enter the amount you want to add to your wallet.",
+      "id": "ID",
+      "list_of_all_wallet_transactions": "List of all wallet transactions.",
+      "manage_your_wallet_balance_and_view_transaction_": "Manage your wallet balance and view transaction history.",
+      "my_wallet": "My Wallet",
+      "no_history_found": "No history found.",
+      "no_saved_cards_save_a_card_first_to_top_up": "No saved cards. Save a card first to top up.",
+      "no_wallet_history_found": "No wallet history found.",
+      "no_wallets_found": "No wallets found.",
+      "platform_wallet": "Platform Wallet",
+      "recent_transactions_affecting_your_wallet_balanc": "Recent transactions affecting your wallet balance.",
+      "status": "Status",
+      "top_up_wallet": "Top Up Wallet",
+      "transaction_history": "Transaction History",
+      "type": "Type",
+      "user": "User",
+      "view_platform_wallet_transactions_and_history": "View platform wallet transactions and history.",
+      "wallet_history": "Wallet History",
+      "wallet_id": "Wallet ID",
+      "wallets": "Wallets"
+    }
+  },
+  "af": {
+    "wallet": {
+      "amount": "Bedrag",
+      "balance": "Saldo",
+      "card": "Kaart",
+      "current_balance": "Huidige saldo",
+      "date": "Datum",
+      "enter_the_amount_you_want_to_add_to_your_wallet": "Voer die bedrag in wat jy by jou beursie wil voeg.",
+      "id": "ID",
+      "list_of_all_wallet_transactions": "Lys van alle beursietransaksies.",
+      "manage_your_wallet_balance_and_view_transaction_": "Bestuur jou beursiesaldo en sien transaksiegeskiedenis.",
+      "my_wallet": "My beursie",
+      "no_history_found": "Geen geskiedenis gevind nie.",
+      "no_saved_cards_save_a_card_first_to_top_up": "Geen gestoorde kaarte nie. Stoor eers 'n kaart om aan te vul.",
+      "no_wallet_history_found": "Geen beursiegeskiedenis gevind nie.",
+      "no_wallets_found": "Geen beursies gevind nie.",
+      "platform_wallet": "Platformbeursie",
+      "recent_transactions_affecting_your_wallet_balanc": "Onlangse transaksies wat jou beursiesaldo raak.",
+      "status": "Status",
+      "top_up_wallet": "Vul beursie aan",
+      "transaction_history": "Transaksiegeskiedenis",
+      "type": "Tipe",
+      "user": "Gebruiker",
+      "view_platform_wallet_transactions_and_history": "Sien platformbeursietransaksies en -geskiedenis.",
+      "wallet_history": "Beursiegeskiedenis",
+      "wallet_id": "Beursie-ID",
+      "wallets": "Beursies"
+    }
+  }
+}

@@ -32,6 +32,7 @@ import { SiteCredit } from "@/components/custom/site-credit";
 import { PLATFORM_NAME } from "@/app/config/platform";
 import React from "react";
 
+import t from "@/app/lib/i18n";
 const P_ID = "password";
 
 /**
@@ -91,16 +92,16 @@ export function PaaSLogin({ tenantSite = null }: { tenantSite?: string | null })
         <div className="w-full max-w-md p-8 space-y-8 bg-gray-900 rounded-lg border border-gray-800">
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-bold tracking-tighter italic">
-              Login to <Branding />
+              {t("auth.login_to")} <Branding />
             </h1>
             <p className="text-gray-400">
-              Enter your credentials to access your dashboard.
+              {t("auth.enter_your_credentials_to_access_your_dashboard")}
             </p>
           </div>
 
           <form action={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
                 name="email"
@@ -111,7 +112,7 @@ export function PaaSLogin({ tenantSite = null }: { tenantSite?: string | null })
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor={P_ID}>Password</Label>
+              <Label htmlFor={P_ID}>{t("auth.password")}</Label>
               <Input
                 id={P_ID}
                 name="password"
@@ -125,7 +126,7 @@ export function PaaSLogin({ tenantSite = null }: { tenantSite?: string | null })
               type="submit"
               className="w-full bg-white text-black hover:bg-gray-200"
             >
-              Sign In
+              {t("auth.sign_in")}
             </Button>
           </form>
 
@@ -146,13 +147,13 @@ export function PaaSLogin({ tenantSite = null }: { tenantSite?: string | null })
             className="text-xs hover:underline underline-offset-4 text-gray-500"
             href="#"
           >
-            Terms of Service
+            {t("auth.terms_of_service")}
           </Link>
           <Link
             className="text-xs hover:underline underline-offset-4 text-gray-500"
             href="#"
           >
-            Privacy
+            {t("auth.privacy")}
           </Link>
         </nav>
       </footer>

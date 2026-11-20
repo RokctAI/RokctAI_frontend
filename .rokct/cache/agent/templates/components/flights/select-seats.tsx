@@ -19,6 +19,7 @@
 import type { AppendMessage } from "@/lib/agent-chat-messages";
 import cx from "classnames";
 
+import t from "@/app/lib/i18n";
 interface Seat {
   seatNumber: string;
   priceInUSD: number;
@@ -144,13 +145,13 @@ export function SelectSeats({
         <div className="flex flex-row items-center gap-2">
           <div className="size-4 bg-blue-500 rounded-sm" />
           <div className="text text-muted-foreground font-medium text-sm">
-            Available
+            {t("agent.available")}
           </div>
         </div>
         <div className="flex flex-row items-center gap-2">
           <div className="size-4 bg-gray-500 rounded-sm" />
           <div className="text text-muted-foreground font-medium text-sm">
-            Unavailable
+            {t("agent.unavailable")}
           </div>
         </div>
       </div>

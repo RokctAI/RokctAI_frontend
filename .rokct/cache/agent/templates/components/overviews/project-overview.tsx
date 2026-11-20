@@ -20,6 +20,7 @@ import { RiAccountCircleLine } from "@remixicon/react";
 import Image from "next/image";
 import React from "react";
 
+import t from "@/app/lib/i18n";
 // Based on the Project model from backend/slingbolt.com/app/Models/Project.php
 export interface ProjectOverviewProps {
   id: number;
@@ -65,7 +66,7 @@ export function ProjectOverview({
       {/* Progress Bar */}
       <div className="mb-4">
         <div className="flex justify-between text-sm text-zinc-400 mb-1">
-          <span>Progress</span>
+          <span>{t("agent.progress")}</span>
           <span>{project.progress}%</span>
         </div>
         <div className="w-full bg-zinc-700 rounded-full h-2">
@@ -82,15 +83,15 @@ export function ProjectOverview({
           <p className="text-lg font-semibold">
             ${new Intl.NumberFormat().format(project.budget)}
           </p>
-          <p className="text-xs text-zinc-400">Budget</p>
+          <p className="text-xs text-zinc-400">{t("agent.budget")}</p>
         </div>
         <div>
           <p className="text-lg font-semibold">{project.task_count}</p>
-          <p className="text-xs text-zinc-400">Tasks</p>
+          <p className="text-xs text-zinc-400">{t("agent.tasks")}</p>
         </div>
         <div>
           <p className="text-lg font-semibold">{project.users.length}</p>
-          <p className="text-xs text-zinc-400">Members</p>
+          <p className="text-xs text-zinc-400">{t("agent.members")}</p>
         </div>
       </div>
 
@@ -118,7 +119,7 @@ export function ProjectOverview({
           )}
         </div>
         <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-1 rounded-md text-sm">
-          View Project
+          {t("agent.view_project")}
         </button>
       </div>
     </div>

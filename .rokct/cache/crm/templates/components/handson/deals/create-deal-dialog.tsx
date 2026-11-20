@@ -30,6 +30,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import t from "@/app/lib/i18n";
 export function CreateDealDialog({ meta }: { meta: DocTypeMeta }) {
   const [open, setOpen] = useState(false);
 
@@ -37,14 +38,14 @@ export function CreateDealDialog({ meta }: { meta: DocTypeMeta }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <RiAddLine className="mr-2 h-4 w-4" /> Create Deal
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("crm.create_deal")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Deal</DialogTitle>
+          <DialogTitle>{t("crm.create_new_deal")}</DialogTitle>
           <DialogDescription>
-            Enter the details for the new deal.
+            {t("crm.enter_the_details_for_the_new_deal")}
           </DialogDescription>
         </DialogHeader>
         <GenericForm

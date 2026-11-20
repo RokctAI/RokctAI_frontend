@@ -20,6 +20,7 @@ import { listPrintJobs } from "@/app/actions/studio/print-jobs/actions";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 
 export default async function PrintJobsPage() {
@@ -27,13 +28,13 @@ export default async function PrintJobsPage() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Print jobs</h1>
+        <h1 className="text-2xl font-semibold">{t("studio.print_jobs")}</h1>
         <Link href="/studio/preflight" className="text-sm underline">
-          Check a client PDF
+          {t("studio.check_a_client_pdf")}
         </Link>
       </div>
       {jobs.length === 0 ? (
-        <p className="text-muted-foreground">No print jobs yet.</p>
+        <p className="text-muted-foreground">{t("studio.no_print_jobs_yet")}</p>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {jobs.map((job) => (

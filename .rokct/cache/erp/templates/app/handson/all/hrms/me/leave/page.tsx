@@ -67,6 +67,7 @@ import {
 } from "@/app/actions/handson/all/hrms/me/leave";
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 
+import t from "@/app/lib/i18n";
 const leaveSchema = z.object({
   employee: z.string().min(1, "Employee is required"),
   leave_type: z.string().min(1, "Leave Type is required"),
@@ -125,17 +126,17 @@ export default function LeavePage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Leave Applications</h1>
+        <h1 className="text-3xl font-bold">{t("erp.leave_applications")}</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Request
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_request")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Apply for Leave</DialogTitle>
-              <DialogDescription>Submit a new leave request.</DialogDescription>
+              <DialogTitle>{t("erp.apply_for_leave")}</DialogTitle>
+              <DialogDescription>{t("erp.submit_a_new_leave_request")}</DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form
@@ -147,14 +148,14 @@ export default function LeavePage() {
                   name="employee"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Employee</FormLabel>
+                      <FormLabel>{t("erp.employee")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Employee" />
+                            <SelectValue placeholder={t("erp.select_employee")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -175,26 +176,26 @@ export default function LeavePage() {
                   name="leave_type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Leave Type</FormLabel>
+                      <FormLabel>{t("erp.leave_type")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Type" />
+                            <SelectValue placeholder={t("erp.select_type")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="Casual Leave">
-                            Casual Leave
+                            {t("erp.casual_leave")}
                           </SelectItem>
-                          <SelectItem value="Sick Leave">Sick Leave</SelectItem>
+                          <SelectItem value="Sick Leave">{t("erp.sick_leave")}</SelectItem>
                           <SelectItem value="Earned Leave">
-                            Earned Leave
+                            {t("erp.earned_leave")}
                           </SelectItem>
                           <SelectItem value="Leave Without Pay">
-                            Leave Without Pay
+                            {t("erp.leave_without_pay")}
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -209,7 +210,7 @@ export default function LeavePage() {
                     name="from_date"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>From</FormLabel>
+                        <FormLabel>{t("erp.from")}</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
                         </FormControl>
@@ -222,7 +223,7 @@ export default function LeavePage() {
                     name="to_date"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>To</FormLabel>
+                        <FormLabel>{t("erp.to")}</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
                         </FormControl>
@@ -237,9 +238,9 @@ export default function LeavePage() {
                   name="reason"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Reason</FormLabel>
+                      <FormLabel>{t("erp.reason")}</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Optional" />
+                        <Input {...field} placeholder={t("erp.optional")} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -247,7 +248,7 @@ export default function LeavePage() {
                 />
 
                 <DialogFooter>
-                  <Button type="submit">Submit</Button>
+                  <Button type="submit">{t("erp.submit")}</Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -257,17 +258,17 @@ export default function LeavePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Applications</CardTitle>
+          <CardTitle>{t("erp.recent_applications")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Dates</TableHead>
-                <TableHead>Total Days</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.type")}</TableHead>
+                <TableHead>{t("erp.dates")}</TableHead>
+                <TableHead>{t("erp.total_days")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -277,7 +278,7 @@ export default function LeavePage() {
                     colSpan={5}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No applications found.
+                    {t("erp.no_applications_found")}
                   </TableCell>
                 </TableRow>
               ) : (

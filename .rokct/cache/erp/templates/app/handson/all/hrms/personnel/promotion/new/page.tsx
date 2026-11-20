@@ -39,6 +39,7 @@ import {
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 import { getDesignations } from "@/app/actions/handson/all/hrms/designations";
 
+import t from "@/app/lib/i18n";
 export default function NewPromotionPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -92,22 +93,22 @@ export default function NewPromotionPage() {
             <RiArrowLeftLine className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">Promote Employee</h1>
+        <h1 className="text-2xl font-bold">{t("erp.promote_employee")}</h1>
         <Button type="submit" disabled={loading}>
-          <RiSaveLine className="mr-2 h-4 w-4" /> Save
+          <RiSaveLine className="mr-2 h-4 w-4" /> {t("erp.save")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Promotion Details</CardTitle>
+          <CardTitle>{t("erp.promotion_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Employee</Label>
+            <Label>{t("erp.employee")}</Label>
             <Select value={employee} onValueChange={setEmployee}>
               <SelectTrigger>
-                <SelectValue placeholder="Select Employee" />
+                <SelectValue placeholder={t("erp.select_employee")} />
               </SelectTrigger>
               <SelectContent>
                 {employees.map((e) => (
@@ -120,10 +121,10 @@ export default function NewPromotionPage() {
           </div>
 
           <div>
-            <Label>New Designation</Label>
+            <Label>{t("erp.new_designation")}</Label>
             <Select value={newDesignation} onValueChange={setNewDesignation}>
               <SelectTrigger>
-                <SelectValue placeholder="Select New Rank" />
+                <SelectValue placeholder={t("erp.select_new_rank")} />
               </SelectTrigger>
               <SelectContent>
                 {designations.map((d) => (
@@ -136,7 +137,7 @@ export default function NewPromotionPage() {
           </div>
 
           <div>
-            <Label>Promotion Date</Label>
+            <Label>{t("erp.promotion_date")}</Label>
             <Input
               type="date"
               value={date}

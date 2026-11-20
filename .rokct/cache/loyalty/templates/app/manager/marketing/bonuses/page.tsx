@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/utils";
 
+import t from "@/app/lib/i18n";
 export default function BonusesPage() {
   const [bonuses, setBonuses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,24 +71,24 @@ export default function BonusesPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Bonuses</h1>
+        <h1 className="text-3xl font-bold">{t("loyalty.bonuses")}</h1>
         <p className="text-muted-foreground">
-          View bonuses awarded to your shop.
+          {t("loyalty.view_bonuses_awarded_to_your_shop")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Bonus History</CardTitle>
-          <CardDescription>List of all bonuses received.</CardDescription>
+          <CardTitle>{t("loyalty.bonus_history")}</CardTitle>
+          <CardDescription>{t("loyalty.list_of_all_bonuses_received")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Reason</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>{t("loyalty.date")}</TableHead>
+                <TableHead>{t("loyalty.reason")}</TableHead>
+                <TableHead className="text-right">{t("loyalty.amount")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -97,7 +98,7 @@ export default function BonusesPage() {
                     colSpan={3}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No bonuses found.
+                    {t("loyalty.no_bonuses_found")}
                   </TableCell>
                 </TableRow>
               ) : (

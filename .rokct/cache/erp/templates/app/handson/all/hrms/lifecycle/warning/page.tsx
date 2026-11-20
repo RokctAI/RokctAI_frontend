@@ -53,6 +53,7 @@ import {
 } from "@/app/actions/handson/all/crm/lifecycle";
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 
+import t from "@/app/lib/i18n";
 export default function WarningPage() {
   const [warnings, setWarnings] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
@@ -93,27 +94,27 @@ export default function WarningPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Disciplinary Actions</h1>
+          <h1 className="text-3xl font-bold">{t("erp.disciplinary_actions")}</h1>
           <p className="text-muted-foreground">
-            Manage employee warnings and disciplinary records.
+            {t("erp.manage_employee_warnings_and_disciplinary_record")}
           </p>
         </div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button variant="destructive">
-              <RiAddLine className="mr-2 h-4 w-4" /> Issue Warning
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.issue_warning")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Issue Warning</DialogTitle>
+              <DialogTitle>{t("erp.issue_warning")}</DialogTitle>
             </DialogHeader>
             <form onSubmit={onSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label>Employee</Label>
+                <Label>{t("erp.employee")}</Label>
                 <Select name="employee" required>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select Employee" />
+                    <SelectValue placeholder={t("erp.select_employee")} />
                   </SelectTrigger>
                   <SelectContent>
                     {employees.map((emp) => (
@@ -126,22 +127,22 @@ export default function WarningPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Level</Label>
+                  <Label>{t("erp.level")}</Label>
                   <Select name="warning_type" defaultValue="Verbal">
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Verbal">Verbal</SelectItem>
-                      <SelectItem value="Written">Written</SelectItem>
+                      <SelectItem value="Verbal">{t("erp.verbal")}</SelectItem>
+                      <SelectItem value="Written">{t("erp.written")}</SelectItem>
                       <SelectItem value="Final Warning">
-                        Final Warning
+                        {t("erp.final_warning")}
                       </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Date</Label>
+                  <Label>{t("erp.date")}</Label>
                   <Input
                     name="warning_date"
                     type="date"
@@ -151,7 +152,7 @@ export default function WarningPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Subject</Label>
+                <Label>{t("erp.subject")}</Label>
                 <Input
                   name="subject"
                   required
@@ -159,14 +160,14 @@ export default function WarningPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Description</Label>
+                <Label>{t("erp.description")}</Label>
                 <Textarea
                   name="description"
-                  placeholder="Details of the incident..."
+                  placeholder={t("erp.details_of_the_incident")}
                 />
               </div>
               <Button type="submit" variant="destructive" className="w-full">
-                Issue Warning
+                {t("erp.issue_warning")}
               </Button>
             </form>
           </DialogContent>
@@ -175,16 +176,16 @@ export default function WarningPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>History</CardTitle>
+          <CardTitle>{t("erp.history")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
-                <TableHead>Level</TableHead>
-                <TableHead>Subject</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.level")}</TableHead>
+                <TableHead>{t("erp.subject")}</TableHead>
+                <TableHead>{t("erp.date")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -219,7 +220,7 @@ export default function WarningPage() {
                     colSpan={4}
                     className="text-center text-muted-foreground h-24"
                   >
-                    No disciplinary records.
+                    {t("erp.no_disciplinary_records")}
                   </TableCell>
                 </TableRow>
               )}

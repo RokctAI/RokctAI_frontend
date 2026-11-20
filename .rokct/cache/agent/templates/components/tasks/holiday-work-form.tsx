@@ -77,7 +77,7 @@ export const HolidayWorkForm = ({
     <div className="flex flex-col gap-4 p-4 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-sm w-full max-w-md">
       <div className="flex flex-col">
         <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-          Upcoming Holiday
+          {t("agent.upcoming_holiday")}
         </span>
         <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
           {holidayName}
@@ -88,20 +88,20 @@ export const HolidayWorkForm = ({
       {step === "confirm" && (
         <div className="flex flex-col gap-3">
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Are you working on this day?
+            {t("agent.are_you_working_on_this_day")}
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => setStep("audience")}
               className="flex-1 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 flex justify-center items-center gap-2"
             >
-              <RiCheckLine className="w-4 h-4" /> Yes
+              <RiCheckLine className="w-4 h-4" /> {t("agent.yes")}
             </button>
             <button
               onClick={() => setStep("done")} // Logic: If No, we effectively do nothing or log removal? For now treating as "Done"
               className="flex-1 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 px-4 py-2 rounded-md text-sm font-medium hover:bg-zinc-200 dark:hover:bg-zinc-600 flex justify-center items-center gap-2"
             >
-              <RiCloseLine className="w-4 h-4" /> No
+              <RiCloseLine className="w-4 h-4" /> {t("agent.no")}
             </button>
           </div>
         </div>
@@ -110,7 +110,7 @@ export const HolidayWorkForm = ({
       {step === "audience" && (
         <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2">
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">Who is working?</label>
+            <label className="text-sm font-medium">{t("agent.who_is_working")}</label>
 
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -138,7 +138,7 @@ export const HolidayWorkForm = ({
             <div className="flex flex-col gap-2 max-h-32 overflow-y-auto border p-2 rounded-md bg-zinc-50 dark:bg-zinc-900">
               {availableDepts.length === 0 ? (
                 <span className="text-xs text-zinc-400">
-                  Loading departments...
+                  {t("agent.loading_departments")}
                 </span>
               ) : (
                 availableDepts.map((dept: any) => (
@@ -187,7 +187,7 @@ export const HolidayWorkForm = ({
             onClick={() => setStep("confirm")}
             className="text-xs text-zinc-400 hover:text-zinc-600 text-center"
           >
-            Back
+            {t("agent.back")}
           </button>
         </div>
       )}

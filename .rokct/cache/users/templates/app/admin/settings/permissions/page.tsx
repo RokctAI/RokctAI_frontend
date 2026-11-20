@@ -35,6 +35,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
+import t from "@/app/lib/i18n";
 export default function PermissionSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -84,10 +85,10 @@ export default function PermissionSettingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">
-            Permission Settings
+            {t("users.permission_settings")}
           </h2>
           <p className="text-muted-foreground">
-            Manage global system permissions and feature toggles.
+            {t("users.manage_global_system_permissions_and_feature_tog")}
           </p>
         </div>
         <Button onClick={handleSave} disabled={saving}>
@@ -100,13 +101,13 @@ export default function PermissionSettingsPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Order Management</CardTitle>
-            <CardDescription>Configure order processing rules.</CardDescription>
+            <CardTitle>{t("users.order_management")}</CardTitle>
+            <CardDescription>{t("users.configure_order_processing_rules")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="auto_approve_orders">
-                Auto Approve All Orders
+                {t("users.auto_approve_all_orders")}
               </Label>
               <Switch
                 id="auto_approve_orders"
@@ -116,7 +117,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="auto_approve_parcel_orders">
-                Auto Approve Parcel Orders
+                {t("users.auto_approve_parcel_orders")}
               </Label>
               <Switch
                 id="auto_approve_parcel_orders"
@@ -128,7 +129,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="require_phone_for_order">
-                Require Phone Number for Order
+                {t("users.require_phone_number_for_order")}
               </Label>
               <Switch
                 id="require_phone_for_order"
@@ -137,7 +138,7 @@ export default function PermissionSettingsPage() {
               />
             </div>
             <div className="flex items-center justify-between space-x-2">
-              <Label htmlFor="enable_group_orders">Enable Group Orders</Label>
+              <Label htmlFor="enable_group_orders">{t("users.enable_group_orders")}</Label>
               <Switch
                 id="enable_group_orders"
                 checked={settings.enable_group_orders}
@@ -146,7 +147,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="enable_auto_print_order">
-                Enable Auto-Print Order
+                {t("users.enable_auto_print_order")}
               </Label>
               <Switch
                 id="enable_auto_print_order"
@@ -159,12 +160,12 @@ export default function PermissionSettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Refund System</CardTitle>
-            <CardDescription>Manage refund capabilities.</CardDescription>
+            <CardTitle>{t("users.refund_system")}</CardTitle>
+            <CardDescription>{t("users.manage_refund_capabilities")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between space-x-2">
-              <Label htmlFor="enable_refund_system">Enable Refund System</Label>
+              <Label htmlFor="enable_refund_system">{t("users.enable_refund_system")}</Label>
               <Switch
                 id="enable_refund_system"
                 checked={settings.enable_refund_system}
@@ -173,7 +174,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="enable_refund_deletion">
-                Enable Refund Deletion
+                {t("users.enable_refund_deletion")}
               </Label>
               <Switch
                 id="enable_refund_deletion"
@@ -186,12 +187,12 @@ export default function PermissionSettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Delivery & Logistics</CardTitle>
-            <CardDescription>Configure delivery settings.</CardDescription>
+            <CardTitle>{t("users.delivery_logistics")}</CardTitle>
+            <CardDescription>{t("users.configure_delivery_settings")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between space-x-2">
-              <Label htmlFor="enable_parcel_system">Enable Parcel System</Label>
+              <Label htmlFor="enable_parcel_system">{t("users.enable_parcel_system")}</Label>
               <Switch
                 id="enable_parcel_system"
                 checked={settings.enable_parcel_system}
@@ -200,7 +201,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="enable_auto_assign_deliveryman">
-                Enable Auto-Assign Deliveryman
+                {t("users.enable_auto_assign_deliveryman")}
               </Label>
               <Switch
                 id="enable_auto_assign_deliveryman"
@@ -212,7 +213,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="enable_driver_to_edit_credentials">
-                Enable Driver to Edit Credentials
+                {t("users.enable_driver_to_edit_credentials")}
               </Label>
               <Switch
                 id="enable_driver_to_edit_credentials"
@@ -227,13 +228,13 @@ export default function PermissionSettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Vendor & Products</CardTitle>
-            <CardDescription>Manage vendor permissions.</CardDescription>
+            <CardTitle>{t("users.vendor_products")}</CardTitle>
+            <CardDescription>{t("users.manage_vendor_permissions")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="auto_approve_products">
-                Auto Approve Products
+                {t("users.auto_approve_products")}
               </Label>
               <Switch
                 id="auto_approve_products"
@@ -243,7 +244,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="auto_approve_categories">
-                Auto Approve Categories
+                {t("users.auto_approve_categories")}
               </Label>
               <Switch
                 id="auto_approve_categories"
@@ -253,7 +254,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="enable_vendor_subscriptions">
-                Enable Vendor Subscriptions
+                {t("users.enable_vendor_subscriptions")}
               </Label>
               <Switch
                 id="enable_vendor_subscriptions"
@@ -265,7 +266,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="enable_commission_model">
-                Enable Commission Model
+                {t("users.enable_commission_model")}
               </Label>
               <Switch
                 id="enable_commission_model"
@@ -278,17 +279,17 @@ export default function PermissionSettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Features & Modules</CardTitle>
-            <CardDescription>Toggle major system modules.</CardDescription>
+            <CardTitle>{t("users.features_modules")}</CardTitle>
+            <CardDescription>{t("users.toggle_major_system_modules")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between space-x-2 border-l-4 border-primary pl-4 bg-muted/50 p-2 rounded-r-md">
               <div className="space-y-0.5">
                 <Label htmlFor="enable_paas_lending" className="font-bold">
-                  Enable PaaS Lending
+                  {t("users.enable_paas_lending")}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Activates the lending and loan management module.
+                  {t("users.activates_the_lending_and_loan_management_module")}
                 </p>
               </div>
               <Switch
@@ -299,7 +300,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="enable_reservations">
-                Enable Reservation System
+                {t("users.enable_reservation_system")}
               </Label>
               <Switch
                 id="enable_reservations"
@@ -309,7 +310,7 @@ export default function PermissionSettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="enable_referral_earnings">
-                Enable Referral Earnings
+                {t("users.enable_referral_earnings")}
               </Label>
               <Switch
                 id="enable_referral_earnings"
@@ -318,7 +319,7 @@ export default function PermissionSettingsPage() {
               />
             </div>
             <div className="flex items-center justify-between space-x-2">
-              <Label htmlFor="blog_active">Blog Active</Label>
+              <Label htmlFor="blog_active">{t("users.blog_active")}</Label>
               <Switch
                 id="blog_active"
                 checked={settings.blog_active}
@@ -330,12 +331,12 @@ export default function PermissionSettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>System & Misc</CardTitle>
-            <CardDescription>Other system settings.</CardDescription>
+            <CardTitle>{t("users.system_misc")}</CardTitle>
+            <CardDescription>{t("users.other_system_settings")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between space-x-2">
-              <Label htmlFor="prompt_email_modal">Prompt Email Modal</Label>
+              <Label htmlFor="prompt_email_modal">{t("users.prompt_email_modal")}</Label>
               <Switch
                 id="prompt_email_modal"
                 checked={settings.prompt_email_modal}
@@ -343,7 +344,7 @@ export default function PermissionSettingsPage() {
               />
             </div>
             <div className="flex items-center justify-between space-x-2">
-              <Label htmlFor="aws_active">AWS Active</Label>
+              <Label htmlFor="aws_active">{t("users.aws_active")}</Label>
               <Switch
                 id="aws_active"
                 checked={settings.aws_active}

@@ -1,3 +1,11 @@
+## 1.1.0
+
+* feat(i18n): 87 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 10 files now go through
+  `t("productivity.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/productivity.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.0.4
 
 * fix(icons): templates use `@remixicon/react` (`Ri*Line`) instead of `lucide-react`; the manifest deps swap `lucide-react` for `@remixicon/react` ^4.6.0.

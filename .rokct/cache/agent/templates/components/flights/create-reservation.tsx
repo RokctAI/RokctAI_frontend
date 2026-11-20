@@ -16,6 +16,7 @@
 
 import { format } from "date-fns";
 
+import t from "@/app/lib/i18n";
 const SAMPLE = {
   seats: ["4C"],
   flightNumber: "EK413",
@@ -56,7 +57,7 @@ export function CreateReservation({ reservation = SAMPLE }) {
 
           <div className="flex flex-row gap-6">
             <div className="flex flex-col gap-1">
-              <div className="text font-medium sm:text-base text-sm">Seats</div>
+              <div className="text font-medium sm:text-base text-sm">{t("agent.seats")}</div>
               <div className="text-muted-foreground sm:text-base text-sm">
                 {reservation.seats.join(", ")}
               </div>
@@ -64,7 +65,7 @@ export function CreateReservation({ reservation = SAMPLE }) {
 
             <div className="flex flex-col gap-1">
               <div className="text sm:text-base text-sm font-medium">
-                Flight Number
+                {t("agent.flight_number")}
               </div>
               <div className="text sm:text-base text-sm text-muted-foreground">
                 {reservation.flightNumber}
@@ -72,7 +73,7 @@ export function CreateReservation({ reservation = SAMPLE }) {
             </div>
 
             <div className="flex flex-col gap-1">
-              <div className="text font-medium sm:text-base text-sm">Date</div>
+              <div className="text font-medium sm:text-base text-sm">{t("agent.date")}</div>
               <div className="text text-muted-foreground sm:text-base text-sm">
                 {format(new Date(reservation.arrival.timestamp), "dd LLL yyyy")}
               </div>

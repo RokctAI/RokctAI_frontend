@@ -36,6 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function PayoutRequestsPage() {
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,17 +73,17 @@ export default function PayoutRequestsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Payout Requests</h1>
+      <h1 className="text-3xl font-bold">{t("gateways.payout_requests")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>User/Shop</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t("gateways.date")}</TableHead>
+              <TableHead>{t("gateways.user_shop")}</TableHead>
+              <TableHead>{t("gateways.amount")}</TableHead>
+              <TableHead>{t("gateways.status")}</TableHead>
+              <TableHead className="text-right">{t("gateways.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -98,7 +99,7 @@ export default function PayoutRequestsPage() {
                   colSpan={5}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No payout requests found.
+                  {t("gateways.no_payout_requests_found")}
                 </TableCell>
               </TableRow>
             ) : (

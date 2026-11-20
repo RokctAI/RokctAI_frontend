@@ -29,6 +29,7 @@ import { SubmitButton } from "@/components/custom/submit-button";
 import { SiteShell, SiteShellLogo } from "@/components/custom/site-shell";
 import React from "react";
 
+import t from "@/app/lib/i18n";
 /** `next`: the same-site path to land on once signed in (auth_sdk 1.9.0). */
 export function LoginView({ next = null }: { next?: string | null } = {}) {
   const router = useRouter();
@@ -79,7 +80,7 @@ export function LoginView({ next = null }: { next?: string | null } = {}) {
               Welcome to {brandHeadingLabel(PLATFORM_NAME)}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Sign in to your account to continue
+              {t("auth.sign_in_to_your_account_to_continue")}
             </p>
           </div>
 
@@ -87,7 +88,7 @@ export function LoginView({ next = null }: { next?: string | null } = {}) {
           <div className="bg-card border border-border backdrop-blur-sm rounded-2xl shadow-xl p-8">
             <AuthForm action={handleSubmit} defaultEmail={email} mode="login">
               <SubmitButton className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 rounded-lg shadow-md transition-all duration-200 ease-in-out transform hover:scale-[1.02]">
-                Sign In
+                {t("auth.sign_in")}
               </SubmitButton>
             </AuthForm>
 
@@ -102,7 +103,7 @@ export function LoginView({ next = null }: { next?: string | null } = {}) {
                   href={withReturnPath("/register", next)}
                   className="font-semibold text-primary hover:text-primary/80"
                 >
-                  Create an account
+                  {t("auth.create_an_account")}
                 </Link>
               </div>
               <div className="mt-2 text-center text-xs">
@@ -110,7 +111,7 @@ export function LoginView({ next = null }: { next?: string | null } = {}) {
                   href={"/forgot" + "-password"}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  Forgot password?
+                  {t("auth.forgot_password")}
                 </Link>
               </div>
             </div>

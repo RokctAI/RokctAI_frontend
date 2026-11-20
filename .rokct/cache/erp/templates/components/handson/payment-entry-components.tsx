@@ -43,19 +43,20 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
+import tr from "@/app/lib/i18n";
 export function PaymentEntryList({ items }: { items: any[] }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Payment Entries</h1>
+          <h1 className="text-2xl font-bold">{tr("erp.payment_entries")}</h1>
           <p className="text-muted-foreground">
-            Incoming and Outgoing Payments.
+            {tr("erp.incoming_and_outgoing_payments")}
           </p>
         </div>
         <Link href="/handson/all/financials/accounts/payment-entry/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> Record Payment
+            <RiAddLine className="mr-2 h-4 w-4" /> {tr("erp.record_payment")}
           </Button>
         </Link>
       </div>
@@ -63,10 +64,10 @@ export function PaymentEntryList({ items }: { items: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Type</TableHead>
-              <TableHead>Party</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>{tr("erp.type")}</TableHead>
+              <TableHead>{tr("erp.party")}</TableHead>
+              <TableHead>{tr("erp.amount")}</TableHead>
+              <TableHead>{tr("erp.date")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -117,11 +118,11 @@ export function PaymentEntryForm() {
 
   return (
     <div className="max-w-md mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">Record Payment</h1>
+      <h1 className="text-2xl font-bold">{tr("erp.record_payment")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Payment Type</Label>
+            <Label>{tr("erp.payment_type")}</Label>
             <RadioGroup
               value={type}
               onValueChange={(v: any) => setType(v)}
@@ -129,18 +130,18 @@ export function PaymentEntryForm() {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Pay" id="r1" />
-                <Label htmlFor="r1">Pay (Out)</Label>
+                <Label htmlFor="r1">{tr("erp.pay_out")}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Receive" id="r2" />
-                <Label htmlFor="r2">Receive (In)</Label>
+                <Label htmlFor="r2">{tr("erp.receive_in")}</Label>
               </div>
             </RadioGroup>
           </div>
 
           <div className="flex gap-2">
             <div className="w-1/3">
-              <Label>Party Type</Label>
+              <Label>{tr("erp.party_type")}</Label>
               <Select
                 value={partyType}
                 onValueChange={(v: any) => setPartyType(v)}
@@ -149,19 +150,19 @@ export function PaymentEntryForm() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Supplier">Supplier</SelectItem>
-                  <SelectItem value="Customer">Customer</SelectItem>
+                  <SelectItem value="Supplier">{tr("erp.supplier")}</SelectItem>
+                  <SelectItem value="Customer">{tr("erp.customer")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex-1">
-              <Label>Party Name</Label>
+              <Label>{tr("erp.party_name")}</Label>
               <Input value={party} onChange={(e) => setParty(e.target.value)} />
             </div>
           </div>
 
           <div>
-            <Label>Amount</Label>
+            <Label>{tr("erp.amount")}</Label>
             <Input
               type="number"
               value={amount}

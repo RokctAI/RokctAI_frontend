@@ -37,6 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function EmailSubscribersPage() {
   const [loading, setLoading] = useState(true);
   const [subscribers, setSubscribers] = useState<any[]>([]);
@@ -67,23 +68,23 @@ export default function EmailSubscribersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Email Subscribers</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("promotions.email_subscribers")}</h2>
         <p className="text-muted-foreground">
-          View list of email newsletter subscribers.
+          {t("promotions.view_list_of_email_newsletter_subscribers")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Subscribers</CardTitle>
-          <CardDescription>List of all email subscribers.</CardDescription>
+          <CardTitle>{t("promotions.subscribers")}</CardTitle>
+          <CardDescription>{t("promotions.list_of_all_email_subscribers")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Email</TableHead>
-                <TableHead>Subscribed Date</TableHead>
+                <TableHead>{t("promotions.email")}</TableHead>
+                <TableHead>{t("promotions.subscribed_date")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -101,7 +102,7 @@ export default function EmailSubscribersPage() {
                     colSpan={2}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No subscribers found.
+                    {t("promotions.no_subscribers_found")}
                   </TableCell>
                 </TableRow>
               )}

@@ -1,3 +1,11 @@
+## 1.2.0
+
+* feat(i18n): 32 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 4 files now go through
+  `t("comms.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/comms.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 # Changelog
 
 ## 1.1.1

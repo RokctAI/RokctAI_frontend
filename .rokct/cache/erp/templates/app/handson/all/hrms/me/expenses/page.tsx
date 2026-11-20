@@ -68,6 +68,7 @@ import {
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 import { getCompanies } from "@/app/actions/handson/all/hrms/companies";
 
+import t from "@/app/lib/i18n";
 const expenseItemSchema = z.object({
   expense_type: z.string().min(1, "Type is required"),
   amount: z.coerce.number().min(0.01, "Amount must be positive"),
@@ -152,16 +153,16 @@ export default function ExpensesPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Expense Claims</h1>
+        <h1 className="text-3xl font-bold">{t("erp.expense_claims")}</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Claim
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_claim")}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>New Expense Claim</DialogTitle>
+              <DialogTitle>{t("erp.new_expense_claim")}</DialogTitle>
             </DialogHeader>
             <Form {...form}>
               <form
@@ -174,14 +175,14 @@ export default function ExpensesPage() {
                     name="employee"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Employee</FormLabel>
+                        <FormLabel>{t("erp.employee")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select" />
+                              <SelectValue placeholder={t("erp.select")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -201,14 +202,14 @@ export default function ExpensesPage() {
                     name="company"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Company</FormLabel>
+                        <FormLabel>{t("erp.company")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select" />
+                              <SelectValue placeholder={t("erp.select")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -230,7 +231,7 @@ export default function ExpensesPage() {
                   name="posting_date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Date</FormLabel>
+                      <FormLabel>{t("erp.date")}</FormLabel>
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
@@ -241,7 +242,7 @@ export default function ExpensesPage() {
 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <FormLabel>Expenses</FormLabel>
+                    <FormLabel>{t("erp.expenses")}</FormLabel>
                     <Button
                       type="button"
                       variant="outline"
@@ -250,7 +251,7 @@ export default function ExpensesPage() {
                         append({ expense_type: "", amount: 0, description: "" })
                       }
                     >
-                      Add Item
+                      {t("erp.add_item")}
                     </Button>
                   </div>
                   {fields.map((field, index) => (
@@ -264,24 +265,24 @@ export default function ExpensesPage() {
                           name={`expenses.${index}.expense_type`}
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-xs">Type</FormLabel>
+                              <FormLabel className="text-xs">{t("erp.type")}</FormLabel>
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
                               >
                                 <FormControl>
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Select" />
+                                    <SelectValue placeholder={t("erp.select")} />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="Travel">Travel</SelectItem>
-                                  <SelectItem value="Meals">Meals</SelectItem>
+                                  <SelectItem value="Travel">{t("erp.travel")}</SelectItem>
+                                  <SelectItem value="Meals">{t("erp.meals")}</SelectItem>
                                   <SelectItem value="Accommodation">
-                                    Accommodation
+                                    {t("erp.accommodation")}
                                   </SelectItem>
                                   <SelectItem value="Supplies">
-                                    Supplies
+                                    {t("erp.supplies")}
                                   </SelectItem>
                                 </SelectContent>
                               </Select>
@@ -295,7 +296,7 @@ export default function ExpensesPage() {
                           name={`expenses.${index}.amount`}
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-xs">Amount</FormLabel>
+                              <FormLabel className="text-xs">{t("erp.amount")}</FormLabel>
                               <FormControl>
                                 <Input type="number" {...field} />
                               </FormControl>
@@ -310,10 +311,10 @@ export default function ExpensesPage() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel className="text-xs">
-                                Description
+                                {t("erp.description")}
                               </FormLabel>
                               <FormControl>
-                                <Input {...field} placeholder="Details..." />
+                                <Input {...field} placeholder={t("erp.details")} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -326,7 +327,7 @@ export default function ExpensesPage() {
                           size="icon"
                           onClick={() => remove(index)}
                         >
-                          <span className="sr-only">Delete</span>
+                          <span className="sr-only">{t("erp.delete")}</span>
                           <span aria-hidden>×</span>
                         </Button>
                       </div>
@@ -335,7 +336,7 @@ export default function ExpensesPage() {
                 </div>
 
                 <DialogFooter>
-                  <Button type="submit">Submit Claim</Button>
+                  <Button type="submit">{t("erp.submit_claim")}</Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -345,16 +346,16 @@ export default function ExpensesPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Claims History</CardTitle>
+          <CardTitle>{t("erp.claims_history")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Employee</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Total Amount</TableHead>
+                <TableHead>{t("erp.date")}</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
+                <TableHead className="text-right">{t("erp.total_amount")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -364,7 +365,7 @@ export default function ExpensesPage() {
                     colSpan={4}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No claims found.
+                    {t("erp.no_claims_found")}
                   </TableCell>
                 </TableRow>
               ) : (

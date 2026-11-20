@@ -39,6 +39,7 @@ import {
 } from "@/app/actions/handson/all/hrms/travel";
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 
+import t from "@/app/lib/i18n";
 export default function NewTravelRequestPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -98,22 +99,22 @@ export default function NewTravelRequestPage() {
             <RiArrowLeftLine className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">New Travel Request</h1>
+        <h1 className="text-2xl font-bold">{t("erp.new_travel_request")}</h1>
         <Button type="submit" disabled={loading}>
-          <RiSaveLine className="mr-2 h-4 w-4" /> Submit Request
+          <RiSaveLine className="mr-2 h-4 w-4" /> {t("erp.submit_request")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Trip Details</CardTitle>
+          <CardTitle>{t("erp.trip_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Employee</Label>
+            <Label>{t("erp.employee")}</Label>
             <Select value={employee} onValueChange={setEmployee}>
               <SelectTrigger>
-                <SelectValue placeholder="Select Employee" />
+                <SelectValue placeholder={t("erp.select_employee")} />
               </SelectTrigger>
               <SelectContent>
                 {employees.map((e) => (
@@ -127,7 +128,7 @@ export default function NewTravelRequestPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Start Date</Label>
+              <Label>{t("erp.start_date")}</Label>
               <Input
                 type="date"
                 value={startDate}
@@ -135,7 +136,7 @@ export default function NewTravelRequestPage() {
               />
             </div>
             <div>
-              <Label>End Date</Label>
+              <Label>{t("erp.end_date")}</Label>
               <Input
                 type="date"
                 value={endDate}
@@ -145,7 +146,7 @@ export default function NewTravelRequestPage() {
           </div>
 
           <div>
-            <Label>Destination</Label>
+            <Label>{t("erp.destination")}</Label>
             <Input
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
@@ -154,11 +155,11 @@ export default function NewTravelRequestPage() {
           </div>
 
           <div>
-            <Label>Purpose/Description</Label>
+            <Label>{t("erp.purpose_description")}</Label>
             <Textarea
               value={purpose}
               onChange={(e) => setPurpose(e.target.value)}
-              placeholder="Client meeting with..."
+              placeholder={t("erp.client_meeting_with")}
               rows={3}
             />
           </div>

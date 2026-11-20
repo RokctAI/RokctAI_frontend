@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function CashbackRulesPage() {
   const [rules, setRules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,17 +51,17 @@ export default function CashbackRulesPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Cashback Rules</h1>
+      <h1 className="text-3xl font-bold">{t("loyalty.cashback_rules")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Min Order</TableHead>
-              <TableHead>Active</TableHead>
+              <TableHead>{t("loyalty.name")}</TableHead>
+              <TableHead>{t("loyalty.type")}</TableHead>
+              <TableHead>{t("loyalty.amount")}</TableHead>
+              <TableHead>{t("loyalty.min_order")}</TableHead>
+              <TableHead>{t("loyalty.active")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -76,7 +77,7 @@ export default function CashbackRulesPage() {
                   colSpan={5}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No cashback rules found.
+                  {t("loyalty.no_cashback_rules_found")}
                 </TableCell>
               </TableRow>
             ) : (

@@ -40,6 +40,7 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 // --- GENERIC LIST ---
 export function SimpleList({
   title,
@@ -57,7 +58,7 @@ export function SimpleList({
         {newItemUrl && (
           <Link href={newItemUrl}>
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new")}
             </Button>
           </Link>
         )}
@@ -101,17 +102,17 @@ export function EmailCampaignForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Campaign Name</Label>
+            <Label>{t("erp.campaign_name")}</Label>
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div>
-            <Label>Recipient (Lead Email)</Label>
+            <Label>{t("erp.recipient_lead_email")}</Label>
             <Input
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
             />
           </div>
-          <Button onClick={handleSubmit}>Create Campaign</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_campaign")}</Button>
         </CardContent>
       </Card>
     </div>
@@ -138,10 +139,10 @@ export function ContractForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Customer</Label>
+            <Label>{t("erp.customer")}</Label>
             <Input value={party} onChange={(e) => setParty(e.target.value)} />
           </div>
-          <Button onClick={handleSubmit}>Create Contract</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_contract")}</Button>
         </CardContent>
       </Card>
     </div>
@@ -168,18 +169,18 @@ export function SalesPartnerForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Partner Name</Label>
+            <Label>{t("erp.partner_name")}</Label>
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div>
-            <Label>Commission Rate (%)</Label>
+            <Label>{t("erp.commission_rate")}</Label>
             <Input
               type="number"
               value={rate}
               onChange={(e) => setRate(Number(e.target.value))}
             />
           </div>
-          <Button onClick={handleSubmit}>Create Partner</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_partner")}</Button>
         </CardContent>
       </Card>
     </div>
@@ -206,14 +207,14 @@ export function ProductBundleForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Parent Item (Bundle)</Label>
+            <Label>{t("erp.parent_item_bundle")}</Label>
             <Input value={parent} onChange={(e) => setParent(e.target.value)} />
           </div>
           <div>
-            <Label>Child Item</Label>
+            <Label>{t("erp.child_item")}</Label>
             <Input value={child} onChange={(e) => setChild(e.target.value)} />
           </div>
-          <Button onClick={handleSubmit}>Create Bundle</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_bundle")}</Button>
         </CardContent>
       </Card>
     </div>
@@ -241,18 +242,18 @@ export function ShippingRuleForm() {
       <Card>
         <CardContent className="pt-4 space-y-4">
           <div>
-            <Label>Label</Label>
+            <Label>{t("erp.label")}</Label>
             <Input value={label} onChange={(e) => setLabel(e.target.value)} />
           </div>
           <div>
-            <Label>Amount</Label>
+            <Label>{t("erp.amount")}</Label>
             <Input
               type="number"
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
             />
           </div>
-          <Button onClick={handleSubmit}>Create Rule</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_rule")}</Button>
         </CardContent>
       </Card>
     </div>

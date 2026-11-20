@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/select";
 import { createJobOpening } from "@/app/actions/handson/all/hrms/recruitment";
 
+import t from "@/app/lib/i18n";
 const formSchema = z.object({
   job_title: z.string().min(1, "Job title is required"),
   department: z.string().optional(),
@@ -89,9 +90,9 @@ export default function NewJobPage() {
           <RiArrowLeftLine className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Post New Job</h1>
+          <h1 className="text-2xl font-bold">{t("erp.post_new_job")}</h1>
           <p className="text-muted-foreground">
-            Create a new job opening for candidates to apply.
+            {t("erp.create_a_new_job_opening_for_candidates_to_apply")}
           </p>
         </div>
       </div>
@@ -107,7 +108,7 @@ export default function NewJobPage() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Job Title <span className="text-red-500">*</span>
+                  {t("erp.job_title")} <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="e.g. Senior Developer" {...field} />
@@ -123,7 +124,7 @@ export default function NewJobPage() {
               name="department"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Department</FormLabel>
+                  <FormLabel>{t("erp.department")}</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g. Engineering" {...field} />
                   </FormControl>
@@ -137,7 +138,7 @@ export default function NewJobPage() {
               name="designation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Designation</FormLabel>
+                  <FormLabel>{t("erp.designation")}</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g. Software Engineer" {...field} />
                   </FormControl>
@@ -153,7 +154,7 @@ export default function NewJobPage() {
               name="vacancies"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Vacancies</FormLabel>
+                  <FormLabel>{t("erp.vacancies")}</FormLabel>
                   <FormControl>
                     <Input type="number" min="1" {...field} />
                   </FormControl>
@@ -167,19 +168,19 @@ export default function NewJobPage() {
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>{t("erp.status")}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
+                        <SelectValue placeholder={t("erp.select_status")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="Open">Open</SelectItem>
-                      <SelectItem value="Closed">Closed</SelectItem>
+                      <SelectItem value="Open">{t("erp.open")}</SelectItem>
+                      <SelectItem value="Closed">{t("erp.closed")}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -193,10 +194,10 @@ export default function NewJobPage() {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Job Description</FormLabel>
+                <FormLabel>{t("erp.job_description")}</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Describe the role responsibilities and requirements..."
+                    placeholder={t("erp.describe_the_role_responsibilities_and_requireme")}
                     className="min-h-[150px]"
                     {...field}
                   />
@@ -212,7 +213,7 @@ export default function NewJobPage() {
               variant="outline"
               onClick={() => router.back()}
             >
-              Cancel
+              {t("erp.cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
               {loading ? (

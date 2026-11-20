@@ -15,10 +15,11 @@
  */
 
 import { SalesPartnerForm } from "@/components/handson/commercial-extras-components";
+import t from "@/app/lib/i18n";
 export default function Page() {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">New Sales Partner</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("erp.new_sales_partner")}</h1>
       <SalesPartnerForm />
     </div>
   );

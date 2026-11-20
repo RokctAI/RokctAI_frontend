@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,17 +52,17 @@ export default function TransactionsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Transactions</h1>
+      <h1 className="text-3xl font-bold">{t("gateways.transactions")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>{t("gateways.id")}</TableHead>
+              <TableHead>{t("gateways.date")}</TableHead>
+              <TableHead>{t("gateways.user")}</TableHead>
+              <TableHead>{t("gateways.type")}</TableHead>
+              <TableHead className="text-right">{t("gateways.amount")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -77,7 +78,7 @@ export default function TransactionsPage() {
                   colSpan={5}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No transactions found.
+                  {t("gateways.no_transactions_found")}
                 </TableCell>
               </TableRow>
             ) : (

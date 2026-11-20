@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+
+* feat(i18n): 60 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 5 files now go through
+  `t("loyalty.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/loyalty.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.2.1
 
 * fix(icons): icons come from `@remixicon/react` (the fleet's one icon set)

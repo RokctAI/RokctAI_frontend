@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.27.0
+
+* feat(i18n): 127 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 34 files now go through
+  `t("agent.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/agent.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
+## 1.26.3
+
+* style: landing opportunities and funding search drop spinners and pulse, pricing buttons press at 0.97, named transition properties (Ray, 2026-11-14). Style only.
+
 ## 1.26.2
 
 rokct.ai auth links (Ray, 2026-11-11: "this blue link create an account").

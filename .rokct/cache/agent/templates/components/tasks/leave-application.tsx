@@ -19,6 +19,7 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
 
+import t from "@/app/lib/i18n";
 interface LeaveApplicationProps {
   leave_type?: string;
   from_date?: string;
@@ -67,7 +68,7 @@ export function LeaveApplication({
       <h3 className="font-bold text-lg text-blue-400">🌴 Apply for Leave</h3>
 
       <div className="space-y-1">
-        <label className="text-xs text-zinc-400">Leave Type</label>
+        <label className="text-xs text-zinc-400">{t("agent.leave_type")}</label>
         <select
           value={formData.leave_type}
           onChange={(e) =>
@@ -75,16 +76,16 @@ export function LeaveApplication({
           }
           className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-1"
         >
-          <option>Privilege Leave</option>
-          <option>Casual Leave</option>
-          <option>Sick Leave</option>
-          <option>Leave Without Pay</option>
+          <option>{t("agent.privilege_leave")}</option>
+          <option>{t("agent.casual_leave")}</option>
+          <option>{t("agent.sick_leave")}</option>
+          <option>{t("agent.leave_without_pay")}</option>
         </select>
       </div>
 
       <div className="grid grid-cols-2 gap-2">
         <div className="space-y-1">
-          <label className="text-xs text-zinc-400">From</label>
+          <label className="text-xs text-zinc-400">{t("agent.from")}</label>
           <input
             type="date"
             value={formData.from_date}
@@ -95,7 +96,7 @@ export function LeaveApplication({
           />
         </div>
         <div className="space-y-1">
-          <label className="text-xs text-zinc-400">To</label>
+          <label className="text-xs text-zinc-400">{t("agent.to")}</label>
           <input
             type="date"
             value={formData.to_date}
@@ -108,12 +109,12 @@ export function LeaveApplication({
       </div>
 
       <div className="space-y-1">
-        <label className="text-xs text-zinc-400">Reason</label>
+        <label className="text-xs text-zinc-400">{t("agent.reason")}</label>
         <textarea
           value={formData.reason}
           onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
           className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-1 h-16 resize-none"
-          placeholder="Taking a break..."
+          placeholder={t("agent.taking_a_break")}
         />
       </div>
 

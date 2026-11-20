@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
+import t from "@/app/lib/i18n";
 interface Order {
   name: string;
   user: string;
@@ -74,7 +75,7 @@ export default function OrdersPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Orders</h1>
+      <h1 className="text-3xl font-bold">{t("orders.orders")}</h1>
 
       <div className="flex space-x-2 overflow-x-auto pb-2">
         {STATUSES.map((status) => (
@@ -93,12 +94,12 @@ export default function OrdersPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t("orders.order_id")}</TableHead>
+              <TableHead>{t("orders.customer")}</TableHead>
+              <TableHead>{t("orders.amount")}</TableHead>
+              <TableHead>{t("orders.status")}</TableHead>
+              <TableHead>{t("orders.date")}</TableHead>
+              <TableHead className="text-right">{t("orders.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -111,7 +112,7 @@ export default function OrdersPage() {
             ) : orders.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center h-24">
-                  No orders found.
+                  {t("orders.no_orders_found")}
                 </TableCell>
               </TableRow>
             ) : (

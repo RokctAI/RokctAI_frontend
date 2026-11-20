@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import t from "@/app/lib/i18n";
 export default function SellerPaymentsPage() {
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,22 +56,22 @@ export default function SellerPaymentsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Seller Payments</h1>
+      <h1 className="text-3xl font-bold">{t("gateways.seller_payments")}</h1>
 
       <Tabs defaultValue="Pending" value={status} onValueChange={setStatus}>
         <TabsList>
-          <TabsTrigger value="Pending">Pending</TabsTrigger>
-          <TabsTrigger value="Completed">Completed</TabsTrigger>
+          <TabsTrigger value="Pending">{t("gateways.pending")}</TabsTrigger>
+          <TabsTrigger value="Completed">{t("gateways.completed")}</TabsTrigger>
         </TabsList>
 
         <div className="mt-4 rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Shop</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("gateways.date")}</TableHead>
+                <TableHead>{t("gateways.shop")}</TableHead>
+                <TableHead>{t("gateways.amount")}</TableHead>
+                <TableHead>{t("gateways.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -86,7 +87,7 @@ export default function SellerPaymentsPage() {
                     colSpan={4}
                     className="h-24 text-center text-muted-foreground"
                   >
-                    No payments found.
+                    {t("gateways.no_payments_found")}
                   </TableCell>
                 </TableRow>
               ) : (

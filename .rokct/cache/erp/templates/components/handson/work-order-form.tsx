@@ -30,6 +30,7 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 
+import t from "@/app/lib/i18n";
 interface WorkOrderFormProps {
   initialData?: any;
   isEdit?: boolean;
@@ -113,11 +114,11 @@ export function WorkOrderForm({
 
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
+          <CardTitle>{t("erp.details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="item">Item to Manufacture</Label>
+            <Label htmlFor="item">{t("erp.item_to_manufacture")}</Label>
             <Input
               id="item"
               placeholder="e.g. Finished Product X"
@@ -128,7 +129,7 @@ export function WorkOrderForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bom">BOM No.</Label>
+            <Label htmlFor="bom">{t("erp.bom_no")}</Label>
             <Input
               id="bom"
               placeholder="e.g. BOM-Item-001"
@@ -137,13 +138,13 @@ export function WorkOrderForm({
               readOnly={isEdit}
             />
             <p className="text-xs text-muted-foreground">
-              Enter the BOM Name accurately.
+              {t("erp.enter_the_bom_name_accurately")}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="qty">Quantity</Label>
+              <Label htmlFor="qty">{t("erp.quantity")}</Label>
               <Input
                 id="qty"
                 type="number"
@@ -153,7 +154,7 @@ export function WorkOrderForm({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="date">Planned Start Date</Label>
+              <Label htmlFor="date">{t("erp.planned_start_date")}</Label>
               <Input
                 id="date"
                 type="date"

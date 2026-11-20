@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 const TEXT_FIELDS: [string, string][] = [
   ["inbox", "Inbox folder (on the server)"],
   ["outbox", "Outbox folder (on the server)"],
@@ -65,7 +66,7 @@ export default function HotFolderPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">Hot folder</h1>
+      <h1 className="text-2xl font-semibold">{t("studio.hot_folder")}</h1>
       <Card>
         <CardContent className="grid gap-4 pt-6 md:grid-cols-2">
           <label className="flex items-center gap-2 text-sm">
@@ -74,7 +75,7 @@ export default function HotFolderPage() {
               checked={!!cfg.enabled}
               onChange={(e) => setCfg({ ...cfg, enabled: e.target.checked })}
             />
-            Process the inbox automatically
+            {t("studio.process_the_inbox_automatically")}
           </label>
           <span />
           {TEXT_FIELDS.map(([key, label]) => (
@@ -88,13 +89,13 @@ export default function HotFolderPage() {
             </label>
           ))}
           <label className="space-y-1 text-sm">
-            <span className="text-muted-foreground">Impose onto</span>
+            <span className="text-muted-foreground">{t("studio.impose_onto")}</span>
             <select
               className="w-full rounded-md border px-3 py-2"
               value={cfg.sheet ?? ""}
               onChange={(e) => setCfg({ ...cfg, sheet: e.target.value })}
             >
-              <option value="">No imposition</option>
+              <option value="">{t("studio.no_imposition")}</option>
               {sheets.map((s) => (
                 <option key={s}>{s}</option>
               ))}
@@ -103,7 +104,7 @@ export default function HotFolderPage() {
         </CardContent>
       </Card>
       <div className="flex gap-3">
-        <Button variant="outline" onClick={save}>Save</Button>
+        <Button variant="outline" onClick={save}>{t("studio.save")}</Button>
         <Button onClick={run} disabled={busy}>
           {busy && <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />}
           Run now
@@ -111,10 +112,10 @@ export default function HotFolderPage() {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Last run</CardTitle>
+          <CardTitle className="text-base">{t("studio.last_run")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          {(cfg.last_run ?? []).length === 0 && <p className="text-muted-foreground">Nothing processed yet.</p>}
+          {(cfg.last_run ?? []).length === 0 && <p className="text-muted-foreground">{t("studio.nothing_processed_yet")}</p>}
           {(cfg.last_run ?? []).map((r: any) => (
             <div key={r.source} className="space-y-1">
               <div className="flex items-center gap-2">

@@ -1,6 +1,6 @@
 {
   "name": "comms_sdk",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "installs": [
     {
       "from": "templates/app/admin/content/notifications/page.tsx",
@@ -25,6 +25,10 @@
     {
       "from": "templates/app/actions/comms/whatsapp.ts",
       "to": "app/actions/comms/whatsapp.ts"
+    },
+    {
+      "from": "templates/app/lib/i18n/sdk/comms.json",
+      "to": "app/lib/i18n/sdk/comms.json"
     }
   ],
   "dependencies": {

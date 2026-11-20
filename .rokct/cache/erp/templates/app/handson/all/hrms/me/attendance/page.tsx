@@ -84,6 +84,7 @@ import {
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 import { getCompanies } from "@/app/actions/handson/all/hrms/companies";
 
+import t from "@/app/lib/i18n";
 const attendanceSchema = z.object({
   employee: z.string().min(1, "Employee is required"),
   attendance_date: z.date({ required_error: "Date is required" }),
@@ -161,16 +162,16 @@ export default function AttendancePage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Attendance</h1>
+        <h1 className="text-3xl font-bold">{t("erp.attendance")}</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button>Mark Attendance</Button>
+            <Button>{t("erp.mark_attendance")}</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Mark Attendance</DialogTitle>
+              <DialogTitle>{t("erp.mark_attendance")}</DialogTitle>
               <DialogDescription>
-                Record daily attendance for an employee.
+                {t("erp.record_daily_attendance_for_an_employee")}
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -183,14 +184,14 @@ export default function AttendancePage() {
                   name="employee"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Employee</FormLabel>
+                      <FormLabel>{t("erp.employee")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Employee" />
+                            <SelectValue placeholder={t("erp.select_employee")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -211,7 +212,7 @@ export default function AttendancePage() {
                   name="attendance_date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Date</FormLabel>
+                      <FormLabel>{t("erp.date")}</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -225,7 +226,7 @@ export default function AttendancePage() {
                               {field.value ? (
                                 format(field.value, "PPP")
                               ) : (
-                                <span>Pick a date</span>
+                                <span>{t("erp.pick_a_date")}</span>
                               )}
                               <RiCalendarLine className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -253,21 +254,21 @@ export default function AttendancePage() {
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Status</FormLabel>
+                      <FormLabel>{t("erp.status")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Status" />
+                            <SelectValue placeholder={t("erp.status")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Present">Present</SelectItem>
-                          <SelectItem value="Absent">Absent</SelectItem>
-                          <SelectItem value="Half Day">Half Day</SelectItem>
-                          <SelectItem value="On Leave">On Leave</SelectItem>
+                          <SelectItem value="Present">{t("erp.present")}</SelectItem>
+                          <SelectItem value="Absent">{t("erp.absent")}</SelectItem>
+                          <SelectItem value="Half Day">{t("erp.half_day")}</SelectItem>
+                          <SelectItem value="On Leave">{t("erp.on_leave")}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -280,14 +281,14 @@ export default function AttendancePage() {
                   name="company"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company</FormLabel>
+                      <FormLabel>{t("erp.company")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Company" />
+                            <SelectValue placeholder={t("erp.company")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -304,7 +305,7 @@ export default function AttendancePage() {
                 />
 
                 <DialogFooter>
-                  <Button type="submit">Save</Button>
+                  <Button type="submit">{t("erp.save")}</Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -314,15 +315,15 @@ export default function AttendancePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Attendance History</CardTitle>
+          <CardTitle>{t("erp.attendance_history")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Employee</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.date")}</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -332,7 +333,7 @@ export default function AttendancePage() {
                     colSpan={3}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No records found.
+                    {t("erp.no_records_found")}
                   </TableCell>
                 </TableRow>
               ) : (

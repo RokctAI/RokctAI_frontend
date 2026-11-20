@@ -39,6 +39,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { Slider } from "@/components/ui/slider";
 
+import t from "@/app/lib/i18n";
 interface ProjectFormProps {
   initialData?: any;
   isEdit?: boolean;
@@ -119,11 +120,11 @@ export function ProjectForm({ initialData, isEdit = false }: ProjectFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Project Details</CardTitle>
+          <CardTitle>{t("productivity.project_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="projectName">Project Name</Label>
+            <Label htmlFor="projectName">{t("productivity.project_name")}</Label>
             <Input
               id="projectName"
               placeholder="e.g. Website Overhaul"
@@ -134,28 +135,28 @@ export function ProjectForm({ initialData, isEdit = false }: ProjectFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">{t("productivity.status")}</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Status" />
+                  <SelectValue placeholder={t("productivity.select_status")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Open">Open</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                  <SelectItem value="Open">{t("productivity.open")}</SelectItem>
+                  <SelectItem value="Completed">{t("productivity.completed")}</SelectItem>
+                  <SelectItem value="Cancelled">{t("productivity.cancelled")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="priority">Priority</Label>
+              <Label htmlFor="priority">{t("productivity.priority")}</Label>
               <Select value={priority} onValueChange={setPriority}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Priority" />
+                  <SelectValue placeholder={t("productivity.select_priority")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Low">Low</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Low">{t("productivity.low")}</SelectItem>
+                  <SelectItem value="Medium">{t("productivity.medium")}</SelectItem>
+                  <SelectItem value="High">{t("productivity.high")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -163,7 +164,7 @@ export function ProjectForm({ initialData, isEdit = false }: ProjectFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="startDate">Expected Start Date</Label>
+              <Label htmlFor="startDate">{t("productivity.expected_start_date")}</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -172,7 +173,7 @@ export function ProjectForm({ initialData, isEdit = false }: ProjectFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate">Expected End Date</Label>
+              <Label htmlFor="endDate">{t("productivity.expected_end_date")}</Label>
               <Input
                 id="endDate"
                 type="date"
@@ -184,7 +185,7 @@ export function ProjectForm({ initialData, isEdit = false }: ProjectFormProps) {
 
           <div className="space-y-4 pt-4">
             <div className="flex justify-between">
-              <Label>Progress</Label>
+              <Label>{t("productivity.progress")}</Label>
               <span className="text-sm text-muted-foreground">
                 {percentComplete}%
               </span>

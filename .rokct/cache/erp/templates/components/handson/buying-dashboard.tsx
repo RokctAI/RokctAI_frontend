@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PurchaseOrderList } from "./purchase-order-list";
 import { SupplierList } from "./supplier-list";
 
+import t from "@/app/lib/i18n";
 interface BuyingDashboardProps {
   orders: any[];
   suppliers: any[];
@@ -34,8 +35,8 @@ export function BuyingDashboard({
   return (
     <Tabs defaultValue="orders" className="w-full space-y-4">
       <TabsList>
-        <TabsTrigger value="orders">Purchase Orders</TabsTrigger>
-        <TabsTrigger value="suppliers">Suppliers</TabsTrigger>
+        <TabsTrigger value="orders">{t("erp.purchase_orders")}</TabsTrigger>
+        <TabsTrigger value="suppliers">{t("erp.suppliers")}</TabsTrigger>
       </TabsList>
       <TabsContent value="orders">
         <PurchaseOrderList orders={orders} canEdit={canEdit} />

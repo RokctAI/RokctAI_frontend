@@ -29,6 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function CurrenciesPage() {
   const [currencies, setCurrencies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,17 +50,17 @@ export default function CurrenciesPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Currencies</h1>
+      <h1 className="text-3xl font-bold">{t("base.currencies")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Symbol</TableHead>
-              <TableHead>Code</TableHead>
-              <TableHead>Exchange Rate</TableHead>
-              <TableHead>Active</TableHead>
+              <TableHead>{t("base.name")}</TableHead>
+              <TableHead>{t("base.symbol")}</TableHead>
+              <TableHead>{t("base.code")}</TableHead>
+              <TableHead>{t("base.exchange_rate")}</TableHead>
+              <TableHead>{t("base.active")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -75,7 +76,7 @@ export default function CurrenciesPage() {
                   colSpan={5}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No currencies found.
+                  {t("base.no_currencies_found")}
                 </TableCell>
               </TableRow>
             ) : (

@@ -1,6 +1,6 @@
 {
   "name": "users_sdk",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "installs": [
     {
       "from": "templates/app/actions/users/admin/customers.ts",
@@ -25,6 +25,10 @@
     {
       "from": "templates/app/actions/users/customers.ts",
       "to": "app/actions/users/customers.ts"
+    },
+    {
+      "from": "templates/app/lib/i18n/sdk/users.json",
+      "to": "app/lib/i18n/sdk/users.json"
     }
   ],
   "dependencies": {
@@ -35,6 +39,7 @@
   "integrations": [],
   "requires": [
     "app/actions/base/admin/settings.ts",
+    "app/lib/i18n/index.ts",
     "app/services/base/platform-gateway.ts",
     "components/ui/badge.tsx",
     "components/ui/button.tsx",

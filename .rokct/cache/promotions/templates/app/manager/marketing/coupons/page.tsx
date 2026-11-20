@@ -55,6 +55,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function CouponsPage() {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -158,32 +159,32 @@ export default function CouponsPage() {
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Coupons</h1>
+          <h1 className="text-3xl font-bold">{t("promotions.coupons")}</h1>
           <p className="text-muted-foreground">
-            Manage discount coupons for your shop.
+            {t("promotions.manage_discount_coupons_for_your_shop")}
           </p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
           <RiAddLine className="mr-2 size-4" />
-          Create Coupon
+          {t("promotions.create_coupon")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Active Coupons</CardTitle>
+          <CardTitle>{t("promotions.active_coupons")}</CardTitle>
           <CardDescription>
-            List of all coupons available for your customers.
+            {t("promotions.list_of_all_coupons_available_for_your_customers")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Expires At</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t("promotions.code")}</TableHead>
+                <TableHead>{t("promotions.quantity")}</TableHead>
+                <TableHead>{t("promotions.expires_at")}</TableHead>
+                <TableHead className="text-right">{t("promotions.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -193,7 +194,7 @@ export default function CouponsPage() {
                     colSpan={4}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No coupons found.
+                    {t("promotions.no_coupons_found")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -246,7 +247,7 @@ export default function CouponsPage() {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="code" className="text-right">
-                Code
+                {t("promotions.code")}
               </Label>
               <Input
                 id="code"
@@ -258,7 +259,7 @@ export default function CouponsPage() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="quantity" className="text-right">
-                Quantity
+                {t("promotions.quantity")}
               </Label>
               <Input
                 id="quantity"
@@ -271,7 +272,7 @@ export default function CouponsPage() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="expiredAt" className="text-right">
-                Expires At
+                {t("promotions.expires_at")}
               </Label>
               <Input
                 id="expiredAt"

@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/sidebar";
 import { signOut } from "next-auth/react";
 
+import t from "@/app/lib/i18n";
 export function NavUser({ user }: { user: any }) {
   const { isMobile } = useSidebar();
 
@@ -59,7 +60,7 @@ export function NavUser({ user }: { user: any }) {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.image} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{t("base.cn")}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
@@ -78,7 +79,7 @@ export function NavUser({ user }: { user: any }) {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.image} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{t("base.cn")}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>
@@ -90,28 +91,28 @@ export function NavUser({ user }: { user: any }) {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <RiSparklingLine />
-                Upgrade to Pro
+                {t("base.upgrade_to_pro")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <RiVerifiedBadgeLine />
-                Account
+                {t("base.account")}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <RiBankCardLine />
-                Billing
+                {t("base.billing")}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <RiNotification3Line />
-                Notifications
+                {t("base.notifications")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>
               <RiLogoutBoxRLine />
-              Log out
+              {t("base.log_out")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

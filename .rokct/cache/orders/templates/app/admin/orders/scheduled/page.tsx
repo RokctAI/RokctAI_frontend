@@ -38,6 +38,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ScheduledOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<any[]>([]);
@@ -68,29 +69,29 @@ export default function ScheduledOrdersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Scheduled Orders</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("orders.scheduled_orders")}</h2>
         <p className="text-muted-foreground">
-          View and manage scheduled orders and bookings.
+          {t("orders.view_and_manage_scheduled_orders_and_bookings")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Bookings</CardTitle>
+          <CardTitle>{t("orders.all_bookings")}</CardTitle>
           <CardDescription>
-            List of all bookings and scheduled orders.
+            {t("orders.list_of_all_bookings_and_scheduled_orders")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Shop</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Guests</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("orders.id")}</TableHead>
+                <TableHead>{t("orders.user")}</TableHead>
+                <TableHead>{t("orders.shop")}</TableHead>
+                <TableHead>{t("orders.date")}</TableHead>
+                <TableHead>{t("orders.guests")}</TableHead>
+                <TableHead>{t("orders.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -112,7 +113,7 @@ export default function ScheduledOrdersPage() {
                     colSpan={6}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No scheduled orders found.
+                    {t("orders.no_scheduled_orders_found")}
                   </TableCell>
                 </TableRow>
               )}

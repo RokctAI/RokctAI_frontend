@@ -31,6 +31,7 @@ import {
 } from "@remixicon/react";
 import { notFound } from "next/navigation";
 
+import t from "@/app/lib/i18n";
 export default async function OrganizationDetails({
   params,
 }: {
@@ -79,7 +80,7 @@ export default async function OrganizationDetails({
         {/* Main Info Card */}
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Details</CardTitle>
+            <CardTitle>{t("crm.details")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Links */}
@@ -107,7 +108,7 @@ export default async function OrganizationDetails({
             {/* Description */}
             {org.description && (
               <div className="bg-muted/30 p-4 rounded-md">
-                <h3 className="font-semibold mb-2">About</h3>
+                <h3 className="font-semibold mb-2">{t("crm.about")}</h3>
                 <p className="whitespace-pre-wrap text-sm">{org.description}</p>
               </div>
             )}
@@ -117,7 +118,7 @@ export default async function OrganizationDetails({
               <div className="p-4 border rounded-md">
                 <div className="flex items-center gap-2 mb-2 font-medium">
                   <RiMapPinLine className="w-4 h-4 text-muted-foreground" />
-                  <span>Primary Address</span>
+                  <span>{t("crm.primary_address")}</span>
                 </div>
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                   {org.primary_address}
@@ -132,15 +133,15 @@ export default async function OrganizationDetails({
           {/* System Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">System Info</CardTitle>
+              <CardTitle className="text-base">{t("crm.system_info")}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground">Created On</span>
+                <span className="text-muted-foreground">{t("crm.created_on")}</span>
                 <span>{new Date(org.creation).toLocaleString()}</span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground">Last Modified</span>
+                <span className="text-muted-foreground">{t("crm.last_modified")}</span>
                 <span>{new Date(org.modified).toLocaleString()}</span>
               </div>
             </CardContent>

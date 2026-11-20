@@ -32,6 +32,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 export function BankClearanceTool({ payments }: { payments: any[] }) {
   // We reuse the payments list but add a date picker action
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -54,9 +55,9 @@ export function BankClearanceTool({ payments }: { payments: any[] }) {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Bank Clearance</h1>
+        <h1 className="text-2xl font-bold">{t("erp.bank_clearance")}</h1>
         <p className="text-muted-foreground">
-          Match system payments with bank statement dates.
+          {t("erp.match_system_payments_with_bank_statement_dates")}
         </p>
       </div>
 
@@ -65,11 +66,11 @@ export function BankClearanceTool({ payments }: { payments: any[] }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Payment</TableHead>
-                <TableHead>Party</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Clearance Date</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead>{t("erp.payment")}</TableHead>
+                <TableHead>{t("erp.party")}</TableHead>
+                <TableHead>{t("erp.amount")}</TableHead>
+                <TableHead>{t("erp.clearance_date")}</TableHead>
+                <TableHead>{t("erp.action")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -81,7 +82,7 @@ export function BankClearanceTool({ payments }: { payments: any[] }) {
                   <TableCell>
                     {p.clearance_date || (
                       <span className="text-muted-foreground italic">
-                        Pending
+                        {t("erp.pending")}
                       </span>
                     )}
                   </TableCell>
@@ -91,7 +92,7 @@ export function BankClearanceTool({ payments }: { payments: any[] }) {
                       size="sm"
                       onClick={() => setSelectedId(p.name)}
                     >
-                      Update
+                      {t("erp.update")}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -103,7 +104,7 @@ export function BankClearanceTool({ payments }: { payments: any[] }) {
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>Update Clearance</CardTitle>
+              <CardTitle>{t("erp.update_clearance")}</CardTitle>
             </CardHeader>
             <CardContent>
               {selectedId ? (
@@ -112,7 +113,7 @@ export function BankClearanceTool({ payments }: { payments: any[] }) {
                     Selected: {selectedId}
                   </div>
                   <div>
-                    <Label>Bank Date</Label>
+                    <Label>{t("erp.bank_date")}</Label>
                     <Input
                       type="date"
                       value={date}
@@ -121,16 +122,16 @@ export function BankClearanceTool({ payments }: { payments: any[] }) {
                   </div>
                   <div className="flex gap-2">
                     <Button onClick={handleUpdate} className="flex-1">
-                      Save
+                      {t("erp.save")}
                     </Button>
                     <Button variant="ghost" onClick={() => setSelectedId(null)}>
-                      Cancel
+                      {t("erp.cancel")}
                     </Button>
                   </div>
                 </div>
               ) : (
                 <div className="text-sm text-muted-foreground py-8 text-center">
-                  Select a payment to update.
+                  {t("erp.select_a_payment_to_update")}
                 </div>
               )}
             </CardContent>

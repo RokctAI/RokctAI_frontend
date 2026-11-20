@@ -142,16 +142,16 @@ export function IssueForm({
             </h1>
           </div>
           <Button type="submit" disabled={loading}>
-            <RiSaveLine className="mr-2 h-4 w-4" /> Save Details
+            <RiSaveLine className="mr-2 h-4 w-4" /> {t("crm.save_details")}
           </Button>
         </div>
         <Card>
           <CardHeader>
-            <CardTitle>Ticket Details</CardTitle>
+            <CardTitle>{t("crm.ticket_details")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Subject</Label>
+              <Label>{t("crm.subject")}</Label>
                <Input
                  value={subject}
                  onChange={(e) => setSubject(e.target.value)}
@@ -160,36 +160,36 @@ export function IssueForm({
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Status</Label>
+                <Label>{t("crm.status")}</Label>
                 <Select value={status} onValueChange={setStatus}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Open">Open</SelectItem>
-                    <SelectItem value="Replied">Replied</SelectItem>
-                    <SelectItem value="Hold">Hold</SelectItem>
-                    <SelectItem value="Closed">Closed</SelectItem>
+                    <SelectItem value="Open">{t("crm.open")}</SelectItem>
+                    <SelectItem value="Replied">{t("crm.replied")}</SelectItem>
+                    <SelectItem value="Hold">{t("crm.hold")}</SelectItem>
+                    <SelectItem value="Closed">{t("crm.closed")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label>Priority</Label>
+                <Label>{t("crm.priority")}</Label>
                 <Select value={priority} onValueChange={setPriority}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Low">Low</SelectItem>
-                    <SelectItem value="Medium">Medium</SelectItem>
-                    <SelectItem value="High">High</SelectItem>
-                    <SelectItem value="Urgent">Urgent</SelectItem>
+                    <SelectItem value="Low">{t("crm.low")}</SelectItem>
+                    <SelectItem value="Medium">{t("crm.medium")}</SelectItem>
+                    <SelectItem value="High">{t("crm.high")}</SelectItem>
+                    <SelectItem value="Urgent">{t("crm.urgent")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div>
-              <Label>Raised By (Email)</Label>
+              <Label>{t("crm.raised_by_email")}</Label>
               <Input
                 value={raisedBy}
                 onChange={(e) => setRaisedBy(e.target.value)}
@@ -197,7 +197,7 @@ export function IssueForm({
               />
             </div>
             <div>
-              <Label>Description</Label>
+              <Label>{t("crm.description")}</Label>
                <Textarea
                  value={description}
                  onChange={(e) => setDescription(e.target.value)}
@@ -214,7 +214,7 @@ export function IssueForm({
         <Card className="bg-slate-50 border-slate-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <RiMessage2Line className="h-5 w-5" /> Discussion
+              <RiMessage2Line className="h-5 w-5" /> {t("crm.discussion")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -222,7 +222,7 @@ export function IssueForm({
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
               {comments.length === 0 ? (
                 <p className="text-center text-muted-foreground italic text-sm">
-                  No comments yet.
+                  {t("crm.no_comments_yet")}
                 </p>
               ) : (
                 comments.map((c) => (

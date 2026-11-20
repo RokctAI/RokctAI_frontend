@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function SubscribersPage() {
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,14 +51,14 @@ export default function SubscribersPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Email Subscribers</h1>
+      <h1 className="text-3xl font-bold">{t("promotions.email_subscribers")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Email</TableHead>
-              <TableHead>Subscribed On</TableHead>
+              <TableHead>{t("promotions.email")}</TableHead>
+              <TableHead>{t("promotions.subscribed_on")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -73,7 +74,7 @@ export default function SubscribersPage() {
                   colSpan={2}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No subscribers found.
+                  {t("promotions.no_subscribers_found")}
                 </TableCell>
               </TableRow>
             ) : (

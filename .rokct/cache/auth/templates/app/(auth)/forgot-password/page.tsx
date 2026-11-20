@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
       <div className="flex-1 flex flex-col items-center justify-center bg-background text-foreground p-4">
         <h1 className="text-4xl font-bold mb-4">{t("auth.forgot_password")}</h1>
         <p className="text-lg">
-          This is a placeholder page for the forgot password functionality.
+          {t("auth.this_is_a_placeholder_page_for_the_forgot_passwo")}
         </p>
       </div>
     </SiteShell>

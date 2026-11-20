@@ -19,6 +19,7 @@
 import type { AppendMessage } from "@/lib/agent-chat-messages";
 import { differenceInHours, format } from "date-fns";
 
+import t from "@/app/lib/i18n";
 const SAMPLE = {
   flights: [
     {
@@ -156,7 +157,7 @@ export function ListFlights({
               </div>
             </div>
             <div className="text-xs sm:text-sm text-muted-foreground flex flex-row">
-              Round Trip
+              {t("agent.round_trip")}
             </div>
           </div>
         </div>

@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/utils";
 
+import t from "@/app/lib/i18n";
 export default function PayoutsPage() {
   const [payouts, setPayouts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,27 +72,27 @@ export default function PayoutsPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Payouts</h1>
+        <h1 className="text-3xl font-bold">{t("gateways.payouts")}</h1>
         <p className="text-muted-foreground">
-          View your payout history from the platform.
+          {t("gateways.view_your_payout_history_from_the_platform")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Payout History</CardTitle>
+          <CardTitle>{t("gateways.payout_history")}</CardTitle>
           <CardDescription>
-            List of all payouts processed to your account.
+            {t("gateways.list_of_all_payouts_processed_to_your_account")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Payout ID</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>{t("gateways.date")}</TableHead>
+                <TableHead>{t("gateways.payout_id")}</TableHead>
+                <TableHead>{t("gateways.status")}</TableHead>
+                <TableHead className="text-right">{t("gateways.amount")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -101,7 +102,7 @@ export default function PayoutsPage() {
                     colSpan={4}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No payouts found.
+                    {t("gateways.no_payouts_found")}
                   </TableCell>
                 </TableRow>
               ) : (

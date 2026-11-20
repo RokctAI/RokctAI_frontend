@@ -63,20 +63,20 @@ export function BlanketOrderList() {
     return (
       <div className="text-center p-4">
         <RiLoader4Line className="animate-spin inline mr-2" />
-        Loading...
+        {t("erp.loading")}
       </div>
     );
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Blanket Orders</h2>
+        <h2 className="text-2xl font-bold">{t("erp.blanket_orders")}</h2>
         <Button
           onClick={() =>
             router.push("/handson/all/supply_chain/buying/blanket-order/new")
           }
         >
-          <RiAddLine className="mr-2 h-4 w-4" /> New Blanket Order
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_blanket_order")}
         </Button>
       </div>
       <Card>
@@ -84,10 +84,10 @@ export function BlanketOrderList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Supplier</TableHead>
-                <TableHead>To Date</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.supplier")}</TableHead>
+                <TableHead>{t("erp.to_date")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -97,7 +97,7 @@ export function BlanketOrderList() {
                     colSpan={4}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No blanket orders found.
+                    {t("erp.no_blanket_orders_found")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -163,16 +163,16 @@ export function BlanketOrderForm() {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <RiArrowLeftLine className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold">New Blanket Order</h1>
+        <h1 className="text-2xl font-bold">{t("erp.new_blanket_order")}</h1>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Order Details</CardTitle>
+          <CardTitle>{t("erp.order_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Supplier</Label>
+              <Label>{t("erp.supplier")}</Label>
               <Select
                 value={formData.supplier}
                 onValueChange={(v) => setFormData({ ...formData, supplier: v })}
@@ -190,7 +190,7 @@ export function BlanketOrderForm() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Valid To</Label>
+              <Label>{t("erp.valid_to")}</Label>
               <Input
                 type="date"
                 value={formData.to_date}
@@ -202,18 +202,18 @@ export function BlanketOrderForm() {
           </div>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Items</h3>
+              <h3 className="text-lg font-semibold">{t("erp.items")}</h3>
               <Button variant="outline" size="sm" onClick={handleAddItem}>
-                <RiAddLine className="h-4 w-4 mr-2" /> Add Item
+                <RiAddLine className="h-4 w-4 mr-2" /> {t("erp.add_item")}
               </Button>
             </div>
             <div className="border rounded-md">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Item</TableHead>
-                    <TableHead className="w-[100px]">Qty</TableHead>
-                    <TableHead className="w-[150px]">Rate</TableHead>
+                    <TableHead>{t("erp.item")}</TableHead>
+                    <TableHead className="w-[100px]">{t("erp.qty")}</TableHead>
+                    <TableHead className="w-[150px]">{t("erp.rate")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -229,7 +229,7 @@ export function BlanketOrderForm() {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Item" />
+                            <SelectValue placeholder={t("erp.item")} />
                           </SelectTrigger>
                           <SelectContent>
                             {items.map((i) => (

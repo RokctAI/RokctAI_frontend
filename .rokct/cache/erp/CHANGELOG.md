@@ -1,3 +1,12 @@
+## 1.1.0
+
+* feat(i18n): every hardcoded screen label, heading, button, placeholder
+  and empty-state line in the ERP pages (658 strings, 101 files) now goes
+  through `t("erp.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/erp.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229). Four files that already
+  use a local `t` import it as `tr`.
+
 ## 1.0.2
 
 * fix(icons): lucide-react icons replaced with `@remixicon/react`

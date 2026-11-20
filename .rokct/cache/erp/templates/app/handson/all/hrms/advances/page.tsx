@@ -39,6 +39,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { getEmployeeAdvances } from "@/app/actions/handson/all/hrms/advances";
 
+import t from "@/app/lib/i18n";
 export default function AdvancesPage() {
   const [advances, setAdvances] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,44 +79,44 @@ export default function AdvancesPage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center">
             <RiWalletLine className="mr-3 h-8 w-8" />
-            Employee Advances
+            {t("erp.employee_advances")}
           </h1>
           <p className="text-muted-foreground">
-            Manage cash advances and repayments.
+            {t("erp.manage_cash_advances_and_repayments")}
           </p>
         </div>
         <Link href="/handson/all/hr/advances/new">
           <Button>
             <RiAddLine className="mr-2 h-4 w-4" />
-            New Advance
+            {t("erp.new_advance")}
           </Button>
         </Link>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Advances History</CardTitle>
+          <CardTitle>{t("erp.advances_history")}</CardTitle>
           <CardDescription>
-            Recent advance requests and their status.
+            {t("erp.recent_advance_requests_and_their_status")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Purpose</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead className="text-right">Paid</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.date")}</TableHead>
+                <TableHead>{t("erp.purpose")}</TableHead>
+                <TableHead className="text-right">{t("erp.amount")}</TableHead>
+                <TableHead className="text-right">{t("erp.paid")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-4">
-                    Loading...
+                    {t("erp.loading")}
                   </TableCell>
                 </TableRow>
               ) : advances.length > 0 ? (
@@ -156,7 +157,7 @@ export default function AdvancesPage() {
                     colSpan={6}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No employee advances found.
+                    {t("erp.no_employee_advances_found")}
                   </TableCell>
                 </TableRow>
               )}

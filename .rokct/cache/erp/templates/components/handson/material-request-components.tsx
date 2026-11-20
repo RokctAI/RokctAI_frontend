@@ -45,6 +45,7 @@ import {
 } from "@/app/actions/handson/all/accounting/inventory/logistics";
 import { getItems } from "@/app/actions/handson/all/accounting/inventory/item";
 
+import t from "@/app/lib/i18n";
 export function MaterialRequestList() {
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,20 +62,20 @@ export function MaterialRequestList() {
     return (
       <div className="text-center p-4">
         <RiLoader4Line className="animate-spin inline mr-2" />
-        Loading requests...
+        {t("erp.loading_requests")}
       </div>
     );
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Material Requests</h2>
+        <h2 className="text-2xl font-bold">{t("erp.material_requests")}</h2>
         <Button
           onClick={() =>
             router.push("/handson/all/supply_chain/stock/material-request/new")
           }
         >
-          <RiAddLine className="mr-2 h-4 w-4" /> New Request
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_request")}
         </Button>
       </div>
       <Card>
@@ -82,10 +83,10 @@ export function MaterialRequestList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.name")}</TableHead>
+                <TableHead>{t("erp.type")}</TableHead>
+                <TableHead>{t("erp.date")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -95,7 +96,7 @@ export function MaterialRequestList() {
                     colSpan={4}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No material requests found.
+                    {t("erp.no_material_requests_found")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -168,17 +169,17 @@ export function MaterialRequestForm() {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <RiArrowLeftLine className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold">New Material Request</h1>
+        <h1 className="text-2xl font-bold">{t("erp.new_material_request")}</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Request Details</CardTitle>
+          <CardTitle>{t("erp.request_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Date</Label>
+              <Label>{t("erp.date")}</Label>
               <Input
                 type="date"
                 value={formData.transaction_date}
@@ -188,7 +189,7 @@ export function MaterialRequestForm() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Type</Label>
+              <Label>{t("erp.type")}</Label>
               <Select
                 value={formData.material_request_type}
                 onValueChange={(v) =>
@@ -199,12 +200,12 @@ export function MaterialRequestForm() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Purchase">Purchase</SelectItem>
+                  <SelectItem value="Purchase">{t("erp.purchase")}</SelectItem>
                   <SelectItem value="Material Transfer">
-                    Material Transfer
+                    {t("erp.material_transfer")}
                   </SelectItem>
-                  <SelectItem value="Material Issue">Material Issue</SelectItem>
-                  <SelectItem value="Manufacture">Manufacture</SelectItem>
+                  <SelectItem value="Material Issue">{t("erp.material_issue")}</SelectItem>
+                  <SelectItem value="Manufacture">{t("erp.manufacture")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -212,18 +213,18 @@ export function MaterialRequestForm() {
 
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Items</h3>
+              <h3 className="text-lg font-semibold">{t("erp.items")}</h3>
               <Button variant="outline" size="sm" onClick={handleAddItem}>
-                <RiAddLine className="h-4 w-4 mr-2" /> Add Item
+                <RiAddLine className="h-4 w-4 mr-2" /> {t("erp.add_item")}
               </Button>
             </div>
             <div className="border rounded-md">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Item</TableHead>
-                    <TableHead className="w-[100px]">Qty</TableHead>
-                    <TableHead className="w-[150px]">Required By</TableHead>
+                    <TableHead>{t("erp.item")}</TableHead>
+                    <TableHead className="w-[100px]">{t("erp.qty")}</TableHead>
+                    <TableHead className="w-[150px]">{t("erp.required_by")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -239,7 +240,7 @@ export function MaterialRequestForm() {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Item" />
+                            <SelectValue placeholder={t("erp.select_item")} />
                           </SelectTrigger>
                           <SelectContent>
                             {items.map((i) => (

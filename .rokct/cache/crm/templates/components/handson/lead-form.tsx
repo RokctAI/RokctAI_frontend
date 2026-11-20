@@ -38,6 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import t from "@/app/lib/i18n";
 interface LeadFormProps {
   initialData?: any;
   isEdit?: boolean;
@@ -112,11 +113,11 @@ export function LeadForm({ initialData, isEdit = false }: LeadFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Lead Details</CardTitle>
+          <CardTitle>{t("crm.lead_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="leadName">Lead Name (Person)</Label>
+            <Label htmlFor="leadName">{t("crm.lead_name_person")}</Label>
             <Input
               id="leadName"
               placeholder="e.g. John Doe"
@@ -126,7 +127,7 @@ export function LeadForm({ initialData, isEdit = false }: LeadFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="companyName">Company Name (Optional)</Label>
+            <Label htmlFor="companyName">{t("crm.company_name_optional")}</Label>
             <Input
               id="companyName"
               placeholder="e.g. Acme Corp"
@@ -137,7 +138,7 @@ export function LeadForm({ initialData, isEdit = false }: LeadFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("crm.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -147,7 +148,7 @@ export function LeadForm({ initialData, isEdit = false }: LeadFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="mobile">Mobile</Label>
+              <Label htmlFor="mobile">{t("crm.mobile")}</Label>
               <Input
                 id="mobile"
                 value={mobile}
@@ -157,20 +158,20 @@ export function LeadForm({ initialData, isEdit = false }: LeadFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label>Status</Label>
+            <Label>{t("crm.status")}</Label>
             <Select value={status} onValueChange={setStatus}>
               <SelectTrigger>
-                <SelectValue placeholder="Select Status" />
+                <SelectValue placeholder={t("crm.select_status")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Lead">Lead</SelectItem>
-                <SelectItem value="Open">Open</SelectItem>
-                <SelectItem value="Replied">Replied</SelectItem>
-                <SelectItem value="Opportunity">Opportunity</SelectItem>
-                <SelectItem value="Quotation">Quotation</SelectItem>
-                <SelectItem value="Lost">Lost</SelectItem>
-                <SelectItem value="Interested">Interested</SelectItem>
-                <SelectItem value="Converted">Converted</SelectItem>
+                <SelectItem value="Lead">{t("crm.lead")}</SelectItem>
+                <SelectItem value="Open">{t("crm.open")}</SelectItem>
+                <SelectItem value="Replied">{t("crm.replied")}</SelectItem>
+                <SelectItem value="Opportunity">{t("crm.opportunity")}</SelectItem>
+                <SelectItem value="Quotation">{t("crm.quotation")}</SelectItem>
+                <SelectItem value="Lost">{t("crm.lost")}</SelectItem>
+                <SelectItem value="Interested">{t("crm.interested")}</SelectItem>
+                <SelectItem value="Converted">{t("crm.converted")}</SelectItem>
               </SelectContent>
             </Select>
           </div>

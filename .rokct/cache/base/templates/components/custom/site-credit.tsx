@@ -15,7 +15,7 @@
  */
 
 // The site credit (base_sdk 1.54.0): `© <year> <site name>` then `Built
-// with ♥ by ROKCT` (Ray, 2026-10-31: "all site will be copyright sitename
+// with ♥ by Cortex Media` (the maker since 1.61.0; Ray, 2026-10-31: "all site will be copyright sitename
 // then built with love (as heart) by ROKCT"). The one piece every footer
 // draws its last line with - base's FooterChromeRow, and any home SDK
 // footer that draws its own markup imports it from
@@ -26,7 +26,7 @@
 // data (a local-data site's `site.json`) passes `siteName`. The year is
 // the current one unless `year` is given. The heart is an image of its
 // own (`role="img"`, `aria-label="love"`), so a screen reader says "Built
-// with love by ROKCT". The type and the separator are the footer's: the
+// with love by Cortex Media". The type and the separator are the footer's: the
 // component names no font, size or colour - `className` carries the
 // footer's own classes and `separator` its own mark - so each site keeps
 // its identity. Server-safe and directive-free: no state, no effects.

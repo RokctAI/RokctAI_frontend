@@ -45,6 +45,7 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 
+import t from "@/app/lib/i18n";
 interface PurchaseOrderFormProps {
   initialData?: any;
   isEdit?: boolean;
@@ -169,11 +170,11 @@ export function PurchaseOrderForm({
 
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
+          <CardTitle>{t("erp.details")}</CardTitle>
         </CardHeader>
         <CardContent className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="supplier">Supplier</Label>
+            <Label htmlFor="supplier">{t("erp.supplier")}</Label>
             <Input
               id="supplier"
               placeholder="e.g. Test Supplier"
@@ -181,11 +182,11 @@ export function PurchaseOrderForm({
               onChange={(e) => setSupplier(e.target.value)}
             />
             <p className="text-xs text-muted-foreground">
-              Type exact Supplier Name
+              {t("erp.type_exact_supplier_name")}
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="date">Date</Label>
+            <Label htmlFor="date">{t("erp.date")}</Label>
             <Input
               id="date"
               type="date"
@@ -198,19 +199,19 @@ export function PurchaseOrderForm({
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Items</CardTitle>
+          <CardTitle>{t("erp.items")}</CardTitle>
           <Button type="button" variant="outline" size="sm" onClick={addItem}>
-            <RiAddLine className="mr-2 h-4 w-4" /> Add Item
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.add_item")}
           </Button>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[40%]">Item Code</TableHead>
-                <TableHead className="w-[20%]">Quantity</TableHead>
-                <TableHead className="w-[20%]">Rate</TableHead>
-                <TableHead className="w-[10%] text-right">Amount</TableHead>
+                <TableHead className="w-[40%]">{t("erp.item_code")}</TableHead>
+                <TableHead className="w-[20%]">{t("erp.quantity")}</TableHead>
+                <TableHead className="w-[20%]">{t("erp.rate")}</TableHead>
+                <TableHead className="w-[10%] text-right">{t("erp.amount")}</TableHead>
                 <TableHead className="w-[10%]"></TableHead>
               </TableRow>
             </TableHeader>
@@ -221,7 +222,7 @@ export function PurchaseOrderForm({
                     colSpan={5}
                     className="text-center text-muted-foreground"
                   >
-                    No items added.
+                    {t("erp.no_items_added")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -229,7 +230,7 @@ export function PurchaseOrderForm({
                   <TableRow key={index}>
                     <TableCell>
                       <Input
-                        placeholder="Item Code"
+                        placeholder={t("erp.item_code")}
                         value={item.item_code}
                         onChange={(e) =>
                           updateItem(index, "item_code", e.target.value)
@@ -278,7 +279,7 @@ export function PurchaseOrderForm({
           </Table>
           <div className="flex justify-end mt-4">
             <div className="flex gap-8 text-lg font-bold">
-              <span>Total:</span>
+              <span>{t("erp.total")}</span>
               <span>{calculateTotal().toLocaleString()}</span>
             </div>
           </div>

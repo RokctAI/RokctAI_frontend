@@ -184,7 +184,7 @@ export default function CategoriesPage() {
                 <TableHead>
                   {t("app.paas.dashboard.products.categories.col_sort")}
                 </TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">{t("products.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

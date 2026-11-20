@@ -1,3 +1,11 @@
+## 1.1.0
+
+* feat(i18n): 216 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 38 files now go through
+  `t("crm.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/crm.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.0.4
 
 * The CRM record actions and the contact service call the scoped

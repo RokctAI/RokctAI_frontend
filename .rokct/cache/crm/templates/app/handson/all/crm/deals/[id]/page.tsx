@@ -38,6 +38,7 @@ import {
 } from "@remixicon/react";
 import { notFound } from "next/navigation";
 
+import t from "@/app/lib/i18n";
 export default async function DealDetails({
   params,
 }: {
@@ -54,10 +55,10 @@ export default async function DealDetails({
   if (!deal) {
     return (
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-red-500">Deal Not Found</h1>
+        <h1 className="text-2xl font-bold text-red-500">{t("crm.deal_not_found")}</h1>
         <Button asChild variant="link" className="pl-0 mt-4">
           <Link href="/handson/all/crm/deals">
-            <RiArrowLeftLine className="w-4 h-4 mr-2" /> Back to Deals
+            <RiArrowLeftLine className="w-4 h-4 mr-2" /> {t("crm.back_to_deals")}
           </Link>
         </Button>
       </div>
@@ -112,7 +113,7 @@ export default async function DealDetails({
           <div className="text-2xl font-bold">
             {formatCurrency(deal.annual_revenue, deal.currency)}
           </div>
-          <div className="text-sm text-muted-foreground">Value</div>
+          <div className="text-sm text-muted-foreground">{t("crm.value")}</div>
         </div>
       </div>
 
@@ -120,7 +121,7 @@ export default async function DealDetails({
         {/* Main Info Card */}
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
+            <CardTitle>{t("crm.overview")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Key Metrics */}
@@ -129,7 +130,7 @@ export default async function DealDetails({
                 <RiBuilding2Line className="w-5 h-5 text-muted-foreground" />
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Organization
+                    {t("crm.organization")}
                   </div>
                   <div className="font-semibold">
                     {deal.organization || "-"}
@@ -140,7 +141,7 @@ export default async function DealDetails({
                 <RiPercentLine className="w-5 h-5 text-muted-foreground" />
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Probability
+                    {t("crm.probability")}
                   </div>
                   <div className="font-semibold">{deal.probability || 0}%</div>
                 </div>
@@ -150,7 +151,7 @@ export default async function DealDetails({
             {/* Description/Notes */}
             {deal.description && (
               <div className="bg-muted/30 p-4 rounded-md">
-                <h3 className="font-semibold mb-2">Description</h3>
+                <h3 className="font-semibold mb-2">{t("crm.description")}</h3>
                 <p className="whitespace-pre-wrap text-sm">
                   {deal.description}
                 </p>
@@ -160,7 +161,7 @@ export default async function DealDetails({
             {/* Lost Reason */}
             {deal.status === "Lost" && deal.lost_reason && (
               <div className="bg-destructive/10 p-4 rounded-md border border-destructive/20 text-destructive-foreground">
-                <h3 className="font-semibold mb-1">Lost Reason</h3>
+                <h3 className="font-semibold mb-1">{t("crm.lost_reason")}</h3>
                 <p>{deal.lost_reason}</p>
               </div>
             )}
@@ -172,7 +173,7 @@ export default async function DealDetails({
           {/* Deal Owner */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Deal Owner</CardTitle>
+              <CardTitle className="text-base">{t("crm.deal_owner")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
@@ -197,11 +198,11 @@ export default async function DealDetails({
           {/* Dates & System Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">System Info</CardTitle>
+              <CardTitle className="text-base">{t("crm.system_info")}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground">Close Date</span>
+                <span className="text-muted-foreground">{t("crm.close_date")}</span>
                 <span>
                   {deal.expected_closing_date
                     ? new Date(deal.expected_closing_date).toLocaleDateString()
@@ -209,11 +210,11 @@ export default async function DealDetails({
                 </span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground">Created On</span>
+                <span className="text-muted-foreground">{t("crm.created_on")}</span>
                 <span>{new Date(deal.creation).toLocaleString()}</span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground">Last Modified</span>
+                <span className="text-muted-foreground">{t("crm.last_modified")}</span>
                 <span>{new Date(deal.modified).toLocaleString()}</span>
               </div>
             </CardContent>

@@ -17,13 +17,14 @@
 import { getLandedCostVouchers } from "@/app/actions/handson/all/accounting/inventory/stock";
 import { SimpleList } from "@/components/handson/stock-advanced-components";
 import { TableRow, TableCell } from "@/components/ui/table";
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 export default async function Page() {
   const data = await getLandedCostVouchers();
   return (
     <div className="p-6">
       <SimpleList
-        title="Landed Cost Vouchers"
+        title={t("erp.landed_cost_vouchers")}
         items={data}
         newItemUrl="/handson/all/supply_chain/stock/landed-cost/new"
         headers={["Name", "Date", "Total"]}

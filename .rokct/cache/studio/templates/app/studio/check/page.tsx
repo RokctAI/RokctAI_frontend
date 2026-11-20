@@ -32,6 +32,7 @@ import { toBase64 } from "../components/to-base64";
 
 
 
+import t from "@/app/lib/i18n";
 // Check any artwork against the brand, then fix it (trace + snap to the
 // design system) without generating anything new.
 export default function CheckArtworkPage() {
@@ -73,7 +74,7 @@ export default function CheckArtworkPage() {
 
   return (
     <div className="max-w-3xl space-y-5 p-6">
-      <h1 className="text-2xl font-semibold">Check artwork</h1>
+      <h1 className="text-2xl font-semibold">{t("studio.check_artwork")}</h1>
       <SystemFormatFields system={system} onSystem={setSystem} format={format} onFormat={setFormat} allowNoFormat />
       <input type="file" accept=".png,.jpg,.jpeg,.webp,.svg" onChange={(e) => onFile(e.target.files?.[0])} />
       {busy && <RiLoader4Line className="h-5 w-5 animate-spin" />}
@@ -88,7 +89,7 @@ export default function CheckArtworkPage() {
               </li>
             ))}
           </ul>
-          <Button disabled={busy} onClick={fix}>Fix to brand</Button>
+          <Button disabled={busy} onClick={fix}>{t("studio.fix_to_brand")}</Button>
         </div>
       )}
     </div>

@@ -34,6 +34,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
+import t from "@/app/lib/i18n";
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -118,17 +119,17 @@ export default function SettingsPage() {
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-8">
-      <h1 className="text-3xl font-bold">Shop Settings</h1>
+      <h1 className="text-3xl font-bold">{t("merchants.shop_settings")}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle>General Information</CardTitle>
-            <CardDescription>Basic details about your shop.</CardDescription>
+            <CardTitle>{t("merchants.general_information")}</CardTitle>
+            <CardDescription>{t("merchants.basic_details_about_your_shop")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Shop Name</Label>
+              <Label htmlFor="title">{t("merchants.shop_name")}</Label>
               <Input
                 id="title"
                 name="title"
@@ -138,7 +139,7 @@ export default function SettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t("merchants.description")}</Label>
               <Textarea
                 id="description"
                 name="description"
@@ -149,7 +150,7 @@ export default function SettingsPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone">{t("merchants.phone")}</Label>
                 <Input
                   id="phone"
                   name="phone"
@@ -158,7 +159,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="address">{t("merchants.address")}</Label>
                 <Input
                   id="address"
                   name="address"
@@ -172,15 +173,15 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Delivery & Pricing</CardTitle>
+            <CardTitle>{t("merchants.delivery_pricing")}</CardTitle>
             <CardDescription>
-              Configure delivery times and pricing rules.
+              {t("merchants.configure_delivery_times_and_pricing_rules")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="delivery_time_from">Delivery Time From</Label>
+                <Label htmlFor="delivery_time_from">{t("merchants.delivery_time_from")}</Label>
                 <Input
                   id="delivery_time_from"
                   name="delivery_time_from"
@@ -190,7 +191,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="delivery_time_to">Delivery Time To</Label>
+                <Label htmlFor="delivery_time_to">{t("merchants.delivery_time_to")}</Label>
                 <Input
                   id="delivery_time_to"
                   name="delivery_time_to"
@@ -200,7 +201,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="delivery_time_type">Unit</Label>
+                <Label htmlFor="delivery_time_type">{t("merchants.unit")}</Label>
                 <select
                   id="delivery_time_type"
                   name="delivery_time_type"
@@ -208,15 +209,15 @@ export default function SettingsPage() {
                   onChange={handleChange}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value="minutes">Minutes</option>
-                  <option value="hours">Hours</option>
-                  <option value="days">Days</option>
+                  <option value="minutes">{t("merchants.minutes")}</option>
+                  <option value="hours">{t("merchants.hours")}</option>
+                  <option value="days">{t("merchants.days")}</option>
                 </select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="min_amount">Minimum Order Amount</Label>
+                <Label htmlFor="min_amount">{t("merchants.minimum_order_amount")}</Label>
                 <Input
                   id="min_amount"
                   name="min_amount"
@@ -226,7 +227,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="tax">Tax (%)</Label>
+                <Label htmlFor="tax">{t("merchants.tax")}</Label>
                 <Input
                   id="tax"
                   name="tax"
@@ -241,14 +242,14 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Images</CardTitle>
+            <CardTitle>{t("merchants.images")}</CardTitle>
             <CardDescription>
-              Update your shop logo and cover photo.
+              {t("merchants.update_your_shop_logo_and_cover_photo")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="logo_img">Logo URL</Label>
+              <Label htmlFor="logo_img">{t("merchants.logo_url")}</Label>
               <Input
                 id="logo_img"
                 name="logo_img"
@@ -258,7 +259,7 @@ export default function SettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="background_img">Cover Photo URL</Label>
+              <Label htmlFor="background_img">{t("merchants.cover_photo_url")}</Label>
               <Input
                 id="background_img"
                 name="background_img"
@@ -272,17 +273,17 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Payment Settings</CardTitle>
+            <CardTitle>{t("merchants.payment_settings")}</CardTitle>
             <CardDescription>
-              Configure accepted payment methods.
+              {t("merchants.configure_accepted_payment_methods")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <Label className="text-base">Cash on Delivery (COD)</Label>
+                <Label className="text-base">{t("merchants.cash_on_delivery_cod")}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Allow customers to pay with cash upon delivery.
+                  {t("merchants.allow_customers_to_pay_with_cash_upon_delivery")}
                 </p>
               </div>
               <Switch
@@ -300,12 +301,12 @@ export default function SettingsPage() {
             {saving ? (
               <>
                 <RiLoader4Line className="mr-2 size-4 animate-spin" />
-                Saving...
+                {t("merchants.saving")}
               </>
             ) : (
               <>
                 <RiSaveLine className="mr-2 size-4" />
-                Save Changes
+                {t("merchants.save_changes")}
               </>
             )}
           </Button>

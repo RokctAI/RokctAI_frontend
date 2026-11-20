@@ -134,14 +134,14 @@ export default function PrivacyPolicyPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Privacy Policy</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t("base.privacy_policy")}</h2>
           <p className="text-muted-foreground">
-            Manage Privacy Policies for your platform.
+            {t("base.manage_privacy_policies_for_your_platform")}
           </p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
           <RiAddLine className="mr-2 size-4" />
-          Add Policy
+          {t("base.add_policy")}
         </Button>
       </div>
 
@@ -191,7 +191,7 @@ export default function PrivacyPolicyPage() {
         ))}
         {policies.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
-            No Privacy Policies found. Create one to get started.
+            {t("base.no_privacy_policies_found_create_one_to_get_star")}
           </div>
         )}
       </div>
@@ -210,7 +210,7 @@ export default function PrivacyPolicyPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Title</Label>
+              <Label>{t("base.title")}</Label>
               <Input
                 value={formData.title}
                 onChange={(e) =>
@@ -220,7 +220,7 @@ export default function PrivacyPolicyPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Content</Label>
+              <Label>{t("base.content")}</Label>
               <Textarea
                 value={formData.content}
                 onChange={(e) =>
@@ -238,15 +238,15 @@ export default function PrivacyPolicyPage() {
                     setFormData({ ...formData, active: checked ? 1 : 0 })
                   }
                 />
-                <Label>Active</Label>
+                <Label>{t("base.active")}</Label>
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
+              {t("base.cancel")}
             </Button>
-            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleSave}>{t("base.save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

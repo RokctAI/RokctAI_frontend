@@ -47,6 +47,7 @@ import {
   getJobOpenings,
 } from "@/app/actions/handson/all/hrms/recruitment";
 
+import t from "@/app/lib/i18n";
 const formSchema = z.object({
   applicant_name: z.string().min(1, "Name is required"),
   email_id: z.string().email("Invalid email address"),
@@ -97,9 +98,9 @@ export default function NewCandidatePage() {
           <RiArrowLeftLine className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Add New Candidate</h1>
+          <h1 className="text-2xl font-bold">{t("erp.add_new_candidate")}</h1>
           <p className="text-muted-foreground">
-            Manually add a candidate application.
+            {t("erp.manually_add_a_candidate_application")}
           </p>
         </div>
       </div>
@@ -115,7 +116,7 @@ export default function NewCandidatePage() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Candidate Name <span className="text-red-500">*</span>
+                  {t("erp.candidate_name")} <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="e.g. Alice Smith" {...field} />
@@ -131,7 +132,7 @@ export default function NewCandidatePage() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Email Address <span className="text-red-500">*</span>
+                  {t("erp.email_address")} <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="e.g. alice@example.com" {...field} />
@@ -148,7 +149,7 @@ export default function NewCandidatePage() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Applying For <span className="text-red-500">*</span>
+                    {t("erp.applying_for")} <span className="text-red-500">*</span>
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -156,7 +157,7 @@ export default function NewCandidatePage() {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Job Opening" />
+                        <SelectValue placeholder={t("erp.select_job_opening")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -177,22 +178,22 @@ export default function NewCandidatePage() {
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>{t("erp.status")}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
+                        <SelectValue placeholder={t("erp.select_status")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="Open">Open</SelectItem>
-                      <SelectItem value="Replied">Replied</SelectItem>
-                      <SelectItem value="Hold">Hold</SelectItem>
-                      <SelectItem value="Accepted">Accepted</SelectItem>
-                      <SelectItem value="Rejected">Rejected</SelectItem>
+                      <SelectItem value="Open">{t("erp.open")}</SelectItem>
+                      <SelectItem value="Replied">{t("erp.replied")}</SelectItem>
+                      <SelectItem value="Hold">{t("erp.hold")}</SelectItem>
+                      <SelectItem value="Accepted">{t("erp.accepted")}</SelectItem>
+                      <SelectItem value="Rejected">{t("erp.rejected")}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -206,10 +207,10 @@ export default function NewCandidatePage() {
             name="cover_letter"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Cover Letter / Notes</FormLabel>
+                <FormLabel>{t("erp.cover_letter_notes")}</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Paste cover letter or internal notes here..."
+                    placeholder={t("erp.paste_cover_letter_or_internal_notes_here")}
                     className="min-h-[150px]"
                     {...field}
                   />
@@ -225,7 +226,7 @@ export default function NewCandidatePage() {
               variant="outline"
               onClick={() => router.back()}
             >
-              Cancel
+              {t("erp.cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
               {loading ? (

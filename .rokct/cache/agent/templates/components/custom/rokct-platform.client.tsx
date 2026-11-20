@@ -25,12 +25,13 @@ import { RiCheckLine } from "@remixicon/react";
 import { RK_MODULES } from "@/components/custom/landing/rokct-landing-content";
 import { RkCardView, RkIcon } from "@/components/custom/landing/rokct-ui";
 
+import t from "@/app/lib/i18n";
 export function RokctModules() {
   const [active, setActive] = useState(RK_MODULES[0]?.key ?? "");
 
   return (
     <div className="rk-mods rk-reveal">
-      <div className="rk-tabs" role="tablist" aria-label="Modules">
+      <div className="rk-tabs" role="tablist" aria-label={t("agent.modules")}>
         {RK_MODULES.map((mod) => (
           <button
             key={mod.key}

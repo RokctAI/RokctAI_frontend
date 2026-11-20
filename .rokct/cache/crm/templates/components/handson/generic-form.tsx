@@ -35,6 +35,7 @@ import { saveDoc } from "@/app/actions/handson/all/crm/crud";
 import { DocField, DocTypeMeta } from "@/app/actions/handson/all/crm/meta";
 import { RiLoader4Line } from "@remixicon/react";
 
+import t from "@/app/lib/i18n";
 interface GenericFormProps {
   doctype: string;
   meta: DocTypeMeta; // Pass meta from server component to avoid client-side fetch waterfall
@@ -141,7 +142,7 @@ export function GenericForm({
             />
             {errors[id] && (
               <span className="text-sm text-red-500">
-                This field is required
+                {t("crm.this_field_is_required")}
               </span>
             )}
           </div>
@@ -175,7 +176,7 @@ export function GenericForm({
             />
             {errors[id] && (
               <span className="text-sm text-red-500">
-                This field is required
+                {t("crm.this_field_is_required")}
               </span>
             )}
           </div>

@@ -26,6 +26,7 @@ import { getPrintJob, preparePrintJob, updatePrintJob } from "@/app/actions/stud
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 const FIELDS: [string, string, string][] = [
   ["quantity", "Quantity", "number"],
   ["stock", "Stock / paper", "text"],
@@ -85,7 +86,7 @@ export default function PrintJobPage({ params }: { params: Promise<{ job: string
       <h1 className="text-2xl font-semibold">{job.name}</h1>
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Job</CardTitle>
+          <CardTitle className="text-base">{t("studio.job")}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           {FIELDS.map(([key, label, type]) => (
@@ -102,13 +103,13 @@ export default function PrintJobPage({ params }: { params: Promise<{ job: string
             </label>
           ))}
           <label className="space-y-1 text-sm">
-            <span className="text-muted-foreground">Press sheet</span>
+            <span className="text-muted-foreground">{t("studio.press_sheet")}</span>
             <select
               className="w-full rounded-md border px-3 py-2"
               value={job.sheet ?? ""}
               onChange={(e) => set("sheet", e.target.value)}
             >
-              <option value="">No imposition</option>
+              <option value="">{t("studio.no_imposition")}</option>
               {Object.entries(sheets).map(([sheet, [w, h]]) => (
                 <option key={sheet} value={sheet}>
                   {sheet} ({w} x {h} mm)
@@ -120,7 +121,7 @@ export default function PrintJobPage({ params }: { params: Promise<{ job: string
       </Card>
       <div className="flex gap-3">
         <Button variant="outline" onClick={save} disabled={busy}>
-          Save
+          {t("studio.save")}
         </Button>
         <Button onClick={makeReady} disabled={busy}>
           {busy && <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />}
@@ -130,7 +131,7 @@ export default function PrintJobPage({ params }: { params: Promise<{ job: string
       {(job.press_pdf || job.ticket_pdf) && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Files</CardTitle>
+            <CardTitle className="text-base">{t("studio.files")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             {layout && (
@@ -141,9 +142,9 @@ export default function PrintJobPage({ params }: { params: Promise<{ job: string
               </p>
             )}
             <div className="flex flex-wrap gap-4">
-              {job.press_pdf && <a className="underline" href={job.press_pdf}>Press PDF</a>}
-              {job.imposed_pdf && <a className="underline" href={job.imposed_pdf}>Imposed sheet</a>}
-              {job.ticket_pdf && <a className="underline" href={job.ticket_pdf}>Job ticket</a>}
+              {job.press_pdf && <a className="underline" href={job.press_pdf}>{t("studio.press_pdf")}</a>}
+              {job.imposed_pdf && <a className="underline" href={job.imposed_pdf}>{t("studio.imposed_sheet")}</a>}
+              {job.ticket_pdf && <a className="underline" href={job.ticket_pdf}>{t("studio.job_ticket")}</a>}
             </div>
           </CardContent>
         </Card>

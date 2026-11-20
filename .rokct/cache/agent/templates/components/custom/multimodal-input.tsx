@@ -751,7 +751,7 @@ export function MultimodalInput({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56" side="top">
-              <DropdownMenuLabel>Add attachment</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("agent.add_attachment")}</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => {
                   setPendingAttachmentContext("document");
@@ -760,7 +760,7 @@ export function MultimodalInput({
                 className="cursor-pointer"
               >
                 <RiFileLine className="mr-2 h-4 w-4" />
-                <span>Document</span>
+                <span>{t("agent.document")}</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
@@ -770,7 +770,7 @@ export function MultimodalInput({
                 className="cursor-pointer"
               >
                 <RiFileTextLine className="mr-2 h-4 w-4" />
-                <span>Invoice</span>
+                <span>{t("agent.invoice")}</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
@@ -780,7 +780,7 @@ export function MultimodalInput({
                 className="cursor-pointer"
               >
                 <RiBillLine className="mr-2 h-4 w-4" />
-                <span>Receipt</span>
+                <span>{t("agent.receipt")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

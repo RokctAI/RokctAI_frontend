@@ -1,6 +1,6 @@
 {
   "name": "crm_sdk",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "installs": [
     {
       "from": "templates/app/handson/all/crm",
@@ -97,6 +97,10 @@
     {
       "from": "templates/components/custom/CompetitorMap.tsx",
       "to": "components/custom/CompetitorMap.tsx"
+    },
+    {
+      "from": "templates/app/lib/i18n/sdk/crm.json",
+      "to": "app/lib/i18n/sdk/crm.json"
     }
   ],
   "dependencies": {

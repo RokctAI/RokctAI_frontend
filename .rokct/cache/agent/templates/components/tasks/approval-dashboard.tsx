@@ -20,6 +20,7 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
+import t from "@/app/lib/i18n";
 type LeaveRequest = {
   name: string;
   employee_name: string;
@@ -102,7 +103,7 @@ export function ApprovalDashboard({
           {activeTab === "leaves" ? (
             leaves.length === 0 ? (
               <p className="text-zinc-500 text-center py-8">
-                No pending leave requests.
+                {t("agent.no_pending_leave_requests")}
               </p>
             ) : (
               leaves.map((leave) => (
@@ -138,7 +139,7 @@ export function ApprovalDashboard({
                       disabled={processing === leave.name}
                       className="flex-1 bg-red-900/20 hover:bg-red-900/40 text-red-300 py-1.5 rounded text-xs transition-colors border border-red-900/30"
                     >
-                      Reject
+                      {t("agent.reject")}
                     </button>
                     <button
                       onClick={() =>
@@ -155,7 +156,7 @@ export function ApprovalDashboard({
             )
           ) : expenses.length === 0 ? (
             <p className="text-zinc-500 text-center py-8">
-              No pending expense claims.
+              {t("agent.no_pending_expense_claims")}
             </p>
           ) : (
             expenses.map((expense) => (
@@ -191,7 +192,7 @@ export function ApprovalDashboard({
                     disabled={processing === expense.name}
                     className="flex-1 bg-red-900/20 hover:bg-red-900/40 text-red-300 py-1.5 rounded text-xs transition-colors border border-red-900/30"
                   >
-                    Reject
+                    {t("agent.reject")}
                   </button>
                   <button
                     onClick={() =>

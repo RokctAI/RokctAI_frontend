@@ -44,6 +44,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function PaymentPayloadsPage() {
   const [loading, setLoading] = useState(true);
   const [payloads, setPayloads] = useState<any[]>([]);
@@ -75,26 +76,26 @@ export default function PaymentPayloadsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Payment Payloads</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("gateways.payment_payloads")}</h2>
         <p className="text-muted-foreground">
-          View raw payment webhook payloads for debugging.
+          {t("gateways.view_raw_payment_webhook_payloads_for_debugging")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Payloads</CardTitle>
+          <CardTitle>{t("gateways.recent_payloads")}</CardTitle>
           <CardDescription>
-            A list of the most recent payment payloads received by the system.
+            {t("gateways.a_list_of_the_most_recent_payment_payloads_recei")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Preview</TableHead>
+                <TableHead>{t("gateways.id")}</TableHead>
+                <TableHead>{t("gateways.date")}</TableHead>
+                <TableHead>{t("gateways.preview")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -121,7 +122,7 @@ export default function PaymentPayloadsPage() {
                     colSpan={3}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No payment payloads found.
+                    {t("gateways.no_payment_payloads_found")}
                   </TableCell>
                 </TableRow>
               )}
@@ -136,7 +137,7 @@ export default function PaymentPayloadsPage() {
       >
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Payload Details</DialogTitle>
+            <DialogTitle>{t("gateways.payload_details")}</DialogTitle>
             <DialogDescription>
               {selectedPayload?.name} -{" "}
               {new Date(selectedPayload?.creation).toLocaleString()}

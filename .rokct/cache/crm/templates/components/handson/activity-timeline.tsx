@@ -20,6 +20,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RiMessage2Line, RiSettings3Line } from "@remixicon/react";
 
+import t from "@/app/lib/i18n";
 interface TimelineItem {
   id: string;
   type: "comment" | "system" | "email" | "version";
@@ -41,13 +42,13 @@ export function ActivityTimeline({ items }: ActivityTimelineProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Activity</CardTitle>
+        <CardTitle>{t("crm.activity")}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
           {items.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
-              No activity yet.
+              {t("crm.no_activity_yet")}
             </div>
           ) : (
             items.map((item, idx) => (

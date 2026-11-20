@@ -24,11 +24,12 @@
 // it shows results; clearing it brings the samples back.
 
 import React, { useCallback, useState } from "react";
-import { RiArrowRightUpLine, RiLoader4Line, RiSearchLine } from "@remixicon/react";
+import { RiArrowRightUpLine, RiSearchLine } from "@remixicon/react";
 
 import AgentOpportunitiesSection from "@/components/custom/landing/agent-opportunities";
 import { RK_FUNDING } from "@/components/custom/landing/rokct-landing-content";
 
+import t from "@/app/lib/i18n";
 export function RokctFinder({ signupUrl }: { signupUrl: string }) {
   const [text, setText] = useState("");
   const [query, setQuery] = useState("");
@@ -54,7 +55,7 @@ export function RokctFinder({ signupUrl }: { signupUrl: string }) {
       <form className="rk-input" role="search" onSubmit={submit}>
         <RiSearchLine className="rk-ico" aria-hidden="true" />
         <label htmlFor="rk-finder-q" className="rk-sr">
-          Describe your business to find funding and tenders
+          {t("agent.describe_your_business_to_find_funding_and_tende")}
         </label>
         <input
           id="rk-finder-q"
@@ -67,12 +68,8 @@ export function RokctFinder({ signupUrl }: { signupUrl: string }) {
           placeholder={RK_FUNDING.example}
           autoComplete="off"
         />
-        <button type="submit" className="rk-send" aria-label="Search">
-          {busy ? (
-            <RiLoader4Line className="rk-ico animate-spin" aria-hidden="true" />
-          ) : (
-            <RiArrowRightUpLine className="rk-ico" aria-hidden="true" />
-          )}
+        <button type="submit" className="rk-send" aria-label={t("agent.search")}>
+          <RiArrowRightUpLine className={busy ? "rk-ico opacity-40" : "rk-ico"} aria-hidden="true" />
         </button>
       </form>
       <div className="rk-live">

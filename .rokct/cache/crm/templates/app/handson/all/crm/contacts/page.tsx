@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { CreateContactDialog } from "@/components/handson/contacts/create-contact-dialog";
 import { getDocTypeMeta } from "@/app/actions/handson/all/crm/meta";
 
+import t from "@/app/lib/i18n";
 export default async function ContactsPage() {
   const [contactsRes, metaRes] = await Promise.all([
     getContacts(1, 50),
@@ -45,9 +46,9 @@ export default async function ContactsPage() {
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Contacts</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.contacts")}</h1>
           <p className="text-muted-foreground">
-            Manage your customer relationships.
+            {t("crm.manage_your_customer_relationships")}
           </p>
         </div>
         <CreateContactDialog meta={meta.data!} />
@@ -55,12 +56,12 @@ export default async function ContactsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Contacts</CardTitle>
+          <CardTitle>{t("crm.all_contacts")}</CardTitle>
         </CardHeader>
         <CardContent>
           {contacts.length === 0 ? (
             <div className="flex h-40 items-center justify-center text-muted-foreground">
-              No contacts found.
+              {t("crm.no_contacts_found")}
             </div>
           ) : (
             <div className="relative w-full overflow-auto">
@@ -68,19 +69,19 @@ export default async function ContactsPage() {
                 <thead className="[&_tr]:border-b">
                   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Name
+                      {t("crm.name")}
                     </th>
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Company
+                      {t("crm.company")}
                     </th>
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Email
+                      {t("crm.email")}
                     </th>
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Mobile
+                      {t("crm.mobile")}
                     </th>
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Status
+                      {t("crm.status")}
                     </th>
                   </tr>
                 </thead>

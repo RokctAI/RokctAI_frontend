@@ -89,7 +89,7 @@ export default function GeneralSettingsPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">General Settings</h1>
+        <h1 className="text-3xl font-bold">{t("base.general_settings")}</h1>
         <Button onClick={handleSave} disabled={saving}>
           {!saving && <RiSaveLine className="mr-2 size-4" />}
           Save Changes
@@ -99,11 +99,11 @@ export default function GeneralSettingsPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Business Information</CardTitle>
+            <CardTitle>{t("base.business_information")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Business Name</Label>
+              <Label>{t("base.business_name")}</Label>
               <Input
                 value={settings.business_name || ""}
                 onChange={(e) =>
@@ -112,7 +112,7 @@ export default function GeneralSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Trademark Symbol</Label>
+              <Label>{t("base.trademark_symbol")}</Label>
               <Select
                 value={settings.trademark_symbol || "Registered"}
                 onValueChange={(val) =>
@@ -125,15 +125,15 @@ export default function GeneralSettingsPage() {
                 <SelectContent>
                   <SelectItem value="Registered">Registered ®</SelectItem>
                   <SelectItem value="Trademark">Trademark ™</SelectItem>
-                  <SelectItem value="None">None</SelectItem>
+                  <SelectItem value="None">{t("base.none")}</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground">
-                Symbol shown next to the app name in the mobile apps.
+                {t("base.symbol_shown_next_to_the_app_name_in_the_mobile_")}
               </p>
             </div>
             <div className="space-y-2">
-              <Label>Phone</Label>
+              <Label>{t("base.phone")}</Label>
               <Input
                 value={settings.phone || ""}
                 onChange={(e) =>
@@ -142,7 +142,7 @@ export default function GeneralSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Default Shop</Label>
+              <Label>{t("base.default_shop")}</Label>
               <Select
                 value={settings.default_shop || ""}
                 onValueChange={(val) =>
@@ -169,7 +169,7 @@ export default function GeneralSettingsPage() {
               </p>
             </div>
             <div className="space-y-2">
-              <Label>Address</Label>
+              <Label>{t("base.address")}</Label>
               <Input
                 value={settings.address || ""}
                 onChange={(e) =>
@@ -182,11 +182,11 @@ export default function GeneralSettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Regional Settings</CardTitle>
+            <CardTitle>{t("base.regional_settings")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Country</Label>
+              <Label>{t("base.country")}</Label>
               <Input
                 value={settings.country || ""}
                 onChange={(e) =>
@@ -195,7 +195,7 @@ export default function GeneralSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Timezone</Label>
+              <Label>{t("base.timezone")}</Label>
               <Input
                 value={settings.timezone || ""}
                 onChange={(e) =>
@@ -204,7 +204,7 @@ export default function GeneralSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Currency Symbol</Label>
+              <Label>{t("base.currency_symbol")}</Label>
               <Input
                 value={settings.currency_symbol || ""}
                 onChange={(e) =>
@@ -217,7 +217,7 @@ export default function GeneralSettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>System Settings</CardTitle>
+            <CardTitle>{t("base.system_settings")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -231,14 +231,14 @@ export default function GeneralSettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Marketplace Settings</CardTitle>
+            <CardTitle>{t("base.marketplace_settings")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <Label className="text-base">Multi-Vendor Mode</Label>
+                <Label className="text-base">{t("base.multi_vendor_mode")}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Allow multiple shops/vendors on the platform.
+                  {t("base.allow_multiple_shops_vendors_on_the_platform")}
                 </p>
               </div>
               <Switch
@@ -254,7 +254,7 @@ export default function GeneralSettingsPage() {
 
             {!settings.enable_marketplace && (
               <div className="space-y-2 border-t pt-4">
-                <Label>Default Shop</Label>
+                <Label>{t("base.default_shop")}</Label>
                 <Select
                   value={settings.default_shop || ""}
                   onValueChange={(val) =>

@@ -19,6 +19,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 
+import t from "@/app/lib/i18n";
 export function AttendanceCard({ log_type }: { log_type?: "IN" | "OUT" }) {
   const [status, setStatus] = useState<
     "IDLE" | "LOCATING" | "MARKING" | "DONE"
@@ -80,7 +81,7 @@ export function AttendanceCard({ log_type }: { log_type?: "IN" | "OUT" }) {
   if (status === "DONE") {
     return (
       <div className="bg-emerald-900/20 border border-emerald-900 rounded-lg p-4 w-full max-w-sm text-sm text-white">
-        <h3 className="font-bold text-emerald-500 mb-2">Check-in Successful</h3>
+        <h3 className="font-bold text-emerald-500 mb-2">{t("agent.check_in_successful")}</h3>
         <p className="text-zinc-400">
           Marked at {new Date().toLocaleTimeString()} with location.
         </p>
@@ -94,7 +95,7 @@ export function AttendanceCard({ log_type }: { log_type?: "IN" | "OUT" }) {
         <h3 className="font-bold text-lg text-blue-400">📍 Attendance</h3>
         {coords && (
           <span className="text-xs bg-green-900 text-green-300 px-2 py-0.5 rounded">
-            GPS Locked
+            {t("agent.gps_locked")}
           </span>
         )}
       </div>

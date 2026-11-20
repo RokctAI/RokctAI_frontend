@@ -46,6 +46,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export default function PaymentMethodsPage() {
   const [methods, setMethods] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -162,7 +163,7 @@ export default function PaymentMethodsPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Payment Methods</h1>
+      <h1 className="text-3xl font-bold">{t("gateways.payment_methods")}</h1>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {methods.map((method) => (
@@ -189,7 +190,7 @@ export default function PaymentMethodsPage() {
                 onClick={() => handleManage(method.name)}
               >
                 <RiSettings3Line className="mr-2 size-4" />
-                Manage Configuration
+                {t("gateways.manage_configuration")}
               </Button>
             </CardContent>
           </Card>
@@ -200,9 +201,9 @@ export default function PaymentMethodsPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl bg-white dark:bg-slate-950 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Configure Payment Gateway</DialogTitle>
+            <DialogTitle>{t("gateways.configure_payment_gateway")}</DialogTitle>
             <DialogDescription>
-              Set the API Credentials and Sandbox mode for this gateway.
+              {t("gateways.set_the_api_credentials_and_sandbox_mode_for_thi")}
             </DialogDescription>
           </DialogHeader>
 
@@ -214,7 +215,7 @@ export default function PaymentMethodsPage() {
             <div className="space-y-6 py-4">
               {/* General Toggles */}
               <div className="flex items-center justify-between border p-4 rounded-lg">
-                <Label>Enabled</Label>
+                <Label>{t("gateways.enabled")}</Label>
                 <Switch
                   checked={!!editingGateway.enabled}
                   onCheckedChange={(c) =>
@@ -225,9 +226,9 @@ export default function PaymentMethodsPage() {
 
               <div className="flex items-center justify-between border p-4 rounded-lg">
                 <div className="space-y-0.5">
-                  <Label>Sandbox Mode</Label>
+                  <Label>{t("gateways.sandbox_mode")}</Label>
                   <p className="text-xs text-muted-foreground">
-                    Enable valid test credentials.
+                    {t("gateways.enable_valid_test_credentials")}
                   </p>
                 </div>
                 <Switch
@@ -244,15 +245,15 @@ export default function PaymentMethodsPage() {
               {/* Dynamic Settings Table */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Label className="text-base">Payload / Secrets</Label>
+                  <Label className="text-base">{t("gateways.payload_secrets")}</Label>
                   <Button variant="ghost" size="sm" onClick={addSetting}>
-                    <RiAddLine className="mr-2 size-4" /> Add Key
+                    <RiAddLine className="mr-2 size-4" /> {t("gateways.add_key")}
                   </Button>
                 </div>
 
                 {editingGateway.settings?.length === 0 && (
                   <p className="text-sm text-muted-foreground italic">
-                    No configuration keys added yet.
+                    {t("gateways.no_configuration_keys_added_yet")}
                   </p>
                 )}
 
@@ -261,7 +262,7 @@ export default function PaymentMethodsPage() {
                     (setting: any, index: number) => (
                       <div key={index} className="flex items-center gap-3">
                         <Input
-                          placeholder="Key (e.g. api_key)"
+                          placeholder={t("gateways.key_e_g_api_key")}
                           value={setting.key}
                           onChange={(e) =>
                             updateSetting(index, "key", e.target.value)
@@ -269,7 +270,7 @@ export default function PaymentMethodsPage() {
                           className="flex-1"
                         />
                         <Input
-                          placeholder="Value"
+                          placeholder={t("gateways.value")}
                           value={setting.value}
                           onChange={(e) =>
                             updateSetting(index, "value", e.target.value)
@@ -299,7 +300,7 @@ export default function PaymentMethodsPage() {
               onClick={() => setIsDialogOpen(false)}
               disabled={savingGateway}
             >
-              Cancel
+              {t("gateways.cancel")}
             </Button>
             <Button
               onClick={handleSaveGateway}

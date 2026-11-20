@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 interface Product {
   name: string;
   title: string;
@@ -74,11 +75,11 @@ export default function ProductsPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Products</h1>
+        <h1 className="text-3xl font-bold">{t("products.products")}</h1>
         <Link href="/manager/products/new">
           <Button>
             <RiAddCircleLine className="mr-2 size-4" />
-            Add Product
+            {t("products.add_product")}
           </Button>
         </Link>
       </div>
@@ -87,19 +88,19 @@ export default function ProductsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[80px]">Image</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="w-[80px]">{t("products.image")}</TableHead>
+              <TableHead>{t("products.name")}</TableHead>
+              <TableHead>{t("products.category")}</TableHead>
+              <TableHead>{t("products.price")}</TableHead>
+              <TableHead>{t("products.status")}</TableHead>
+              <TableHead className="text-right">{t("products.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {products.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center h-24">
-                  No products found.
+                  {t("products.no_products_found")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -116,7 +117,7 @@ export default function ProductsPage() {
                         />
                       ) : (
                         <div className="flex size-full items-center justify-center bg-gray-100 text-xs text-gray-400">
-                          No Img
+                          {t("products.no_img")}
                         </div>
                       )}
                     </div>

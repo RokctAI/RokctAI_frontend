@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { ViewToggle } from "@/components/handson/view-toggle";
 import { KanbanBoard } from "@/components/handson/kanban-board";
 
+import t from "@/app/lib/i18n";
 const LEAD_STATUSES = [
   "Lead",
   "Open",
@@ -73,13 +74,13 @@ export function LeadsClientView({ leads }: { leads: any[] }) {
         <Card className="glass-card shadow-xl border-none">
           <CardHeader>
             <CardTitle className="text-2xl font-bold tracking-tight">
-              Lead Directory
+              {t("crm.lead_directory")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {leads.length === 0 ? (
               <div className="flex h-40 items-center justify-center text-muted-foreground">
-                No leads found.
+                {t("crm.no_leads_found")}
               </div>
             ) : (
               <div className="relative w-full overflow-auto">
@@ -87,19 +88,19 @@ export function LeadsClientView({ leads }: { leads: any[] }) {
                   <thead className="[&_tr]:border-b">
                     <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                       <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                        Lead
+                        {t("crm.lead")}
                       </th>
                       <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                        Entity
+                        {t("crm.entity")}
                       </th>
                       <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                        Contact
+                        {t("crm.contact")}
                       </th>
                       <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                        Verification
+                        {t("crm.verification")}
                       </th>
                       <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                        Status
+                        {t("crm.status")}
                       </th>
                     </tr>
                   </thead>
@@ -154,14 +155,14 @@ export function LeadsClientView({ leads }: { leads: any[] }) {
                             {lead.kyc_status === "Verified" ? (
                               <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-100 px-2 py-0">
                                 <span className="h-1 w-1 rounded-full bg-emerald-500 mr-2" />
-                                KYC Verified
+                                {t("crm.kyc_verified")}
                               </Badge>
                             ) : (
                               <Badge
                                 variant="outline"
                                 className="text-amber-600 border-amber-200 px-2 py-0 bg-amber-50/50"
                               >
-                                Pending
+                                {t("crm.pending")}
                               </Badge>
                             )}
                           </div>

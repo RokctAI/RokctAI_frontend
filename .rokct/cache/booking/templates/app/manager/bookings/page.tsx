@@ -44,6 +44,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 interface Reservation {
   name: string;
   customer_name: string;
@@ -97,28 +98,28 @@ export default function BookingsPage() {
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Reservations</h1>
-          <p className="text-muted-foreground">Manage your table bookings.</p>
+          <h1 className="text-3xl font-bold">{t("booking.reservations")}</h1>
+          <p className="text-muted-foreground">{t("booking.manage_your_table_bookings")}</p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Bookings</CardTitle>
+          <CardTitle>{t("booking.all_bookings")}</CardTitle>
           <CardDescription>
-            View and manage all reservation requests.
+            {t("booking.view_and_manage_all_reservation_requests")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Customer</TableHead>
-                <TableHead>Date & Time</TableHead>
-                <TableHead>Guests</TableHead>
-                <TableHead>Table</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t("booking.customer")}</TableHead>
+                <TableHead>{t("booking.date_time")}</TableHead>
+                <TableHead>{t("booking.guests")}</TableHead>
+                <TableHead>{t("booking.table")}</TableHead>
+                <TableHead>{t("booking.status")}</TableHead>
+                <TableHead className="text-right">{t("booking.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -128,7 +129,7 @@ export default function BookingsPage() {
                     colSpan={6}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No reservations found.
+                    {t("booking.no_reservations_found")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -168,7 +169,7 @@ export default function BookingsPage() {
                               onClick={() =>
                                 handleStatusUpdate(res.name, "Approved")
                               }
-                              title="Approve"
+                              title={t("booking.approve")}
                             >
                               <RiCheckboxCircleLine className="size-4" />
                             </Button>
@@ -179,7 +180,7 @@ export default function BookingsPage() {
                               onClick={() =>
                                 handleStatusUpdate(res.name, "Rejected")
                               }
-                              title="Reject"
+                              title={t("booking.reject")}
                             >
                               <RiCloseCircleLine className="size-4" />
                             </Button>

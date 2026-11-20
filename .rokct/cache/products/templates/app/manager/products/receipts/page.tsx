@@ -37,6 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ReceiptsPage() {
   const [receipts, setReceipts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,24 +69,24 @@ export default function ReceiptsPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Recipes & Receipts</h1>
+        <h1 className="text-3xl font-bold">{t("products.recipes_receipts")}</h1>
         <p className="text-muted-foreground">
-          Manage product recipes and receipts.
+          {t("products.manage_product_recipes_and_receipts")}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Receipt List</CardTitle>
-          <CardDescription>All recipes/receipts available.</CardDescription>
+          <CardTitle>{t("products.receipt_list")}</CardTitle>
+          <CardDescription>{t("products.all_recipes_receipts_available")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created At</TableHead>
+                <TableHead>{t("products.name")}</TableHead>
+                <TableHead>{t("products.status")}</TableHead>
+                <TableHead>{t("products.created_at")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -95,7 +96,7 @@ export default function ReceiptsPage() {
                     colSpan={3}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No receipts found.
+                    {t("products.no_receipts_found")}
                   </TableCell>
                 </TableRow>
               ) : (

@@ -18,6 +18,7 @@
 
 import React, { useEffect, useRef } from "react";
 
+import t from "@/app/lib/i18n";
 interface CompetitorMapProps {
   apiKey?: string;
   competitorLocations?: any[];
@@ -266,9 +267,9 @@ export default function CompetitorMap({
     return (
       <div className="w-full h-full flex items-center justify-center bg-muted/20 border rounded-lg">
         <div className="text-center p-6">
-          <p className="text-lg font-semibold">Map Unavailable</p>
+          <p className="text-lg font-semibold">{t("crm.map_unavailable")}</p>
           <p className="text-sm text-muted-foreground mt-2">
-            Google Maps API Key is missing.
+            {t("crm.google_maps_api_key_is_missing")}
           </p>
         </div>
       </div>

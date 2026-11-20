@@ -157,7 +157,7 @@ export default function WorkingHoursPage() {
                   <>
                     <div className="flex items-center gap-2">
                       <Label htmlFor={`open-${index}`} className="sr-only">
-                        Opening Time
+                        {t("merchants.opening_time")}
                       </Label>
                       <Input
                         id={`open-${index}`}
@@ -172,7 +172,7 @@ export default function WorkingHoursPage() {
                     <span>{t("common.to")}</span>
                     <div className="flex items-center gap-2">
                       <Label htmlFor={`close-${index}`} className="sr-only">
-                        Closing Time
+                        {t("merchants.closing_time")}
                       </Label>
                       <Input
                         id={`close-${index}`}

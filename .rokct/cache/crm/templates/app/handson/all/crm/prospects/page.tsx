@@ -16,6 +16,7 @@
 
 import { getProspects } from "@/app/actions/handson/all/crm/prospects";
 
+import t from "@/app/lib/i18n";
 export default async function ProspectsPage() {
   const { data: prospects } = await getProspects();
 
@@ -23,9 +24,9 @@ export default async function ProspectsPage() {
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Prospects</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.prospects")}</h1>
           <p className="text-muted-foreground">
-            Manage potential customers and market segments.
+            {t("crm.manage_potential_customers_and_market_segments")}
           </p>
         </div>
       </div>

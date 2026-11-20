@@ -42,6 +42,7 @@ import {
 } from "@/app/actions/merchants/invites";
 import { getCurrentSession } from "@/app/(auth)/actions";
 
+import t from "@/app/lib/i18n";
 interface Invite {
   name: string;
   user: string;
@@ -102,25 +103,25 @@ export default function InvitesPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Invites</h1>
-        <p className="text-muted-foreground">Manage your invitations.</p>
+        <h1 className="text-3xl font-bold">{t("merchants.invites")}</h1>
+        <p className="text-muted-foreground">{t("merchants.manage_your_invitations")}</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Received Invitations</CardTitle>
+          <CardTitle>{t("merchants.received_invitations")}</CardTitle>
           <CardDescription>
-            Accept or reject invitations to join shops.
+            {t("merchants.accept_or_reject_invitations_to_join_shops")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t("merchants.user")}</TableHead>
+                <TableHead>{t("merchants.role")}</TableHead>
+                <TableHead>{t("merchants.status")}</TableHead>
+                <TableHead className="text-right">{t("merchants.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -130,7 +131,7 @@ export default function InvitesPage() {
                     colSpan={4}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No invites found.
+                    {t("merchants.no_invites_found")}
                   </TableCell>
                 </TableRow>
               ) : (

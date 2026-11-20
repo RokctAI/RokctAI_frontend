@@ -52,6 +52,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import t from "@/app/lib/i18n";
 export default function LeaveDashboard() {
   const [applications, setApplications] = useState<any[]>([]);
   const [allocations, setAllocations] = useState<any[]>([]);
@@ -112,26 +113,26 @@ export default function LeaveDashboard() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Leave Management</h1>
+          <h1 className="text-3xl font-bold">{t("erp.leave_management")}</h1>
           <p className="text-muted-foreground">
-            Track balances, requests, and holidays.
+            {t("erp.track_balances_requests_and_holidays")}
           </p>
         </div>
         <div className="flex space-x-2">
           <Link href="/handson/all/hr/leave/holidays">
             <Button variant="outline">
-              <RiCalendarLine className="mr-2 h-4 w-4" /> Holidays
+              <RiCalendarLine className="mr-2 h-4 w-4" /> {t("erp.holidays")}
             </Button>
           </Link>
           <Link href="/handson/all/hr/leave/holidays">
             <Button variant="outline">
-              <RiCalendarLine className="mr-2 h-4 w-4" /> Holidays
+              <RiCalendarLine className="mr-2 h-4 w-4" /> {t("erp.holidays")}
             </Button>
           </Link>
           {canApply && (
             <Link href="/handson/all/hr/leave/new">
               <Button>
-                <RiAddLine className="mr-2 h-4 w-4" /> Apply Leave
+                <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.apply_leave")}
               </Button>
             </Link>
           )}
@@ -141,14 +142,14 @@ export default function LeaveDashboard() {
       {/* Balances Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Leave Balances</h2>
+          <h2 className="text-xl font-semibold">{t("erp.leave_balances")}</h2>
           <div className="w-[300px]">
             <Select
               value={selectedEmployee}
               onValueChange={setSelectedEmployee}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Employee to view balances" />
+                <SelectValue placeholder={t("erp.select_employee_to_view_balances")} />
               </SelectTrigger>
               <SelectContent>
                 {employees.map((e) => (
@@ -190,7 +191,7 @@ export default function LeaveDashboard() {
             ))
           ) : (
             <div className="col-span-4 text-center py-8 text-muted-foreground bg-muted/50 rounded-lg">
-              No allocations found for this employee.
+              {t("erp.no_allocations_found_for_this_employee")}
             </div>
           )}
         </div>
@@ -199,27 +200,27 @@ export default function LeaveDashboard() {
       {/* Recent Applications Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Applications</CardTitle>
+          <CardTitle>{t("erp.recent_applications")}</CardTitle>
           <CardDescription>
-            History of leave requests across the organization.
+            {t("erp.history_of_leave_requests_across_the_organizatio")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Dates</TableHead>
-                <TableHead>Days</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.type")}</TableHead>
+                <TableHead>{t("erp.dates")}</TableHead>
+                <TableHead>{t("erp.days")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-4">
-                    Loading...
+                    {t("erp.loading")}
                   </TableCell>
                 </TableRow>
               ) : applications.length > 0 ? (
@@ -237,7 +238,7 @@ export default function LeaveDashboard() {
                       {format(new Date(app.to_date), "MMM d, yyyy")}
                       {app.half_day === 1 && (
                         <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 px-1 rounded">
-                          Half Day
+                          {t("erp.half_day")}
                         </span>
                       )}
                     </TableCell>
@@ -255,7 +256,7 @@ export default function LeaveDashboard() {
                     colSpan={5}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No leave applications found.
+                    {t("erp.no_leave_applications_found")}
                   </TableCell>
                 </TableRow>
               )}

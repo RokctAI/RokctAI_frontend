@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+
+* feat(i18n): 53 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 18 files now go through
+  `t("products.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/products.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.2.2
 
 * fix(icons): icons come from `@remixicon/react` (the fleet's one icon set)

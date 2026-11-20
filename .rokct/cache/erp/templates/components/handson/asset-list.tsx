@@ -39,6 +39,7 @@ import { deleteAsset } from "@/app/actions/handson/all/accounting/assets";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 interface AssetListProps {
   assets: any[];
   employees?: any[];
@@ -73,21 +74,21 @@ export function AssetList({ assets, employees = [] }: AssetListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Asset Name</TableHead>
-              <TableHead>Item Code</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Custodian</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Purchase Date</TableHead>
-              <TableHead className="text-right">Value</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("erp.asset_name")}</TableHead>
+              <TableHead>{t("erp.item_code")}</TableHead>
+              <TableHead>{t("erp.location")}</TableHead>
+              <TableHead>{t("erp.custodian")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
+              <TableHead>{t("erp.purchase_date")}</TableHead>
+              <TableHead className="text-right">{t("erp.value")}</TableHead>
+              <TableHead className="w-[100px]">{t("erp.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredAssets.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="h-24 text-center">
-                  No assets found.
+                  {t("erp.no_assets_found")}
                 </TableCell>
               </TableRow>
             ) : (

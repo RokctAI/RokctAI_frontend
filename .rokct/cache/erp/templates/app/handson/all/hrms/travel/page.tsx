@@ -36,6 +36,7 @@ import { getTravelRequests } from "@/app/actions/handson/all/hrms/travel";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 export default function TravelPage() {
   const [requests, setRequests] = useState<any[]>([]);
 
@@ -52,14 +53,14 @@ export default function TravelPage() {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Travel & Trips</h1>
+          <h1 className="text-3xl font-bold">{t("erp.travel_trips")}</h1>
           <p className="text-muted-foreground">
-            Manage business travel requests and itineraries.
+            {t("erp.manage_business_travel_requests_and_itineraries")}
           </p>
         </div>
         <Link href="/handson/all/hr/travel/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Travel Request
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_travel_request")}
           </Button>
         </Link>
       </div>
@@ -68,7 +69,7 @@ export default function TravelPage() {
         {requests.length === 0 ? (
           <div className="col-span-full text-center py-12 text-muted-foreground border rounded-lg bg-slate-50 flex flex-col items-center gap-2">
             <RiPlaneLine className="h-10 w-10 opacity-20" />
-            No travel requests found.
+            {t("erp.no_travel_requests_found")}
           </div>
         ) : (
           requests.map((req) => (

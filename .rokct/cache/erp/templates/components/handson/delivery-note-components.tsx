@@ -32,24 +32,25 @@ import { createDeliveryNote } from "@/app/actions/handson/all/accounting/selling
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
+import t from "@/app/lib/i18n";
 export function DeliveryNoteList({ notes }: { notes: any[] }) {
   return (
     <div>
       <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold">Delivery Notes</h1>
+        <h1 className="text-2xl font-bold">{t("erp.delivery_notes")}</h1>
         <Link href="/handson/all/commercial/selling/delivery-note/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> Ship Goods
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.ship_goods")}
           </Button>
         </Link>
       </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Customer</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Total</TableHead>
+            <TableHead>{t("erp.name")}</TableHead>
+            <TableHead>{t("erp.customer")}</TableHead>
+            <TableHead>{t("erp.date")}</TableHead>
+            <TableHead>{t("erp.total")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -86,13 +87,13 @@ export function DeliveryNoteForm() {
 
   return (
     <div className="max-w-xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Delivery</h1>
+      <h1 className="text-2xl font-bold">{t("erp.new_delivery")}</h1>
       <Input
-        placeholder="Customer"
+        placeholder={t("erp.customer")}
         value={customer}
         onChange={(e) => setCustomer(e.target.value)}
       />
-      <Button onClick={handleSubmit}>Save Delivery</Button>
+      <Button onClick={handleSubmit}>{t("erp.save_delivery")}</Button>
     </div>
   );
 }

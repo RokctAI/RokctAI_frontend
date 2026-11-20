@@ -17,13 +17,14 @@
 import { getStockReconciliations } from "@/app/actions/handson/all/accounting/inventory/stock";
 import { SimpleList } from "@/components/handson/stock-advanced-components";
 import { TableRow, TableCell } from "@/components/ui/table";
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 export default async function Page() {
   const data = await getStockReconciliations();
   return (
     <div className="p-6">
       <SimpleList
-        title="Stock Reconciliation"
+        title={t("erp.stock_reconciliation")}
         items={data}
         newItemUrl="/handson/all/supply_chain/stock/reconciliation/new"
         headers={["Name", "Purpose", "Date"]}

@@ -35,17 +35,18 @@ import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export function PurchaseInvoiceList({ invoices }: { invoices: any[] }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Purchase Invoices</h1>
-          <p className="text-muted-foreground">Bills from Suppliers.</p>
+          <h1 className="text-2xl font-bold">{t("erp.purchase_invoices")}</h1>
+          <p className="text-muted-foreground">{t("erp.bills_from_suppliers")}</p>
         </div>
         <Link href="/handson/all/financials/accounts/purchase-invoice/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Invoice
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_invoice")}
           </Button>
         </Link>
       </div>
@@ -53,11 +54,11 @@ export function PurchaseInvoiceList({ invoices }: { invoices: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Supplier</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.supplier")}</TableHead>
+              <TableHead>{t("erp.date")}</TableHead>
+              <TableHead>{t("erp.total")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -100,24 +101,24 @@ export function PurchaseInvoiceForm() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Purchase Invoice</h1>
+      <h1 className="text-2xl font-bold">{t("erp.new_purchase_invoice")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Supplier</Label>
+            <Label>{t("erp.supplier")}</Label>
             <Input
               value={supplier}
               onChange={(e) => setSupplier(e.target.value)}
-              placeholder="Supplier Name"
+              placeholder={t("erp.supplier_name")}
             />
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <Label>Item</Label>
+              <Label>{t("erp.item")}</Label>
               <Input value={item} onChange={(e) => setItem(e.target.value)} />
             </div>
             <div className="w-24">
-              <Label>Qty</Label>
+              <Label>{t("erp.qty")}</Label>
               <Input
                 type="number"
                 value={qty}
@@ -125,7 +126,7 @@ export function PurchaseInvoiceForm() {
               />
             </div>
             <div className="w-32">
-              <Label>Rate</Label>
+              <Label>{t("erp.rate")}</Label>
               <Input
                 type="number"
                 value={rate}
@@ -133,7 +134,7 @@ export function PurchaseInvoiceForm() {
               />
             </div>
           </div>
-          <Button onClick={handleSubmit}>Create Invoice</Button>
+          <Button onClick={handleSubmit}>{t("erp.create_invoice")}</Button>
         </CardContent>
       </Card>
     </div>

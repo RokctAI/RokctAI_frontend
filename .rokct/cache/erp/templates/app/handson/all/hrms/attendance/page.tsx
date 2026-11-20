@@ -59,6 +59,7 @@ import {
   checkOut,
 } from "@/app/actions/handson/all/hrms/attendance";
 
+import t from "@/app/lib/i18n";
 export default function AttendancePage() {
   const [employees, setEmployees] = useState<any[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<string>("");
@@ -161,10 +162,10 @@ export default function AttendancePage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center">
             <RiTimeLine className="mr-3 h-8 w-8" />
-            Attendance
+            {t("erp.attendance")}
           </h1>
           <p className="text-muted-foreground">
-            Manage daily check-ins and view history.
+            {t("erp.manage_daily_check_ins_and_view_history")}
           </p>
         </div>
       </div>
@@ -173,20 +174,20 @@ export default function AttendancePage() {
         {/* Employee Selector & Action Card */}
         <Card className="md:col-span-1 border-primary/20 shadow-md">
           <CardHeader>
-            <CardTitle>Daily Action</CardTitle>
+            <CardTitle>{t("erp.daily_action")}</CardTitle>
             <CardDescription>
-              Select employee to mark attendance.
+              {t("erp.select_employee_to_mark_attendance")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Select Employee</label>
+              <label className="text-sm font-medium">{t("erp.select_employee")}</label>
               <Select
                 value={selectedEmployee}
                 onValueChange={setSelectedEmployee}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Employee" />
+                  <SelectValue placeholder={t("erp.select_employee")} />
                 </SelectTrigger>
                 <SelectContent>
                   {employees.map((e) => (
@@ -217,7 +218,7 @@ export default function AttendancePage() {
                       className="w-full max-w-xs cursor-default hover:bg-background"
                       size="lg"
                     >
-                      Completed for Today
+                      {t("erp.completed_for_today")}
                     </Button>
                   ) : (
                     <Button
@@ -228,7 +229,7 @@ export default function AttendancePage() {
                       className="w-full max-w-xs bg-orange-100 text-orange-700 hover:bg-orange-200"
                     >
                       <RiLogoutBoxRLine className="mr-2 h-5 w-5" />
-                      Check Out
+                      {t("erp.check_out")}
                     </Button>
                   )
                 ) : (
@@ -239,7 +240,7 @@ export default function AttendancePage() {
                     className="w-full max-w-xs bg-green-600 hover:bg-green-700"
                   >
                     <RiLoginBoxLine className="mr-2 h-5 w-5" />
-                    Check In
+                    {t("erp.check_in")}
                   </Button>
                 )}
               </div>
@@ -257,21 +258,21 @@ export default function AttendancePage() {
         {/* Summary / Stats (Placeholder for now) */}
         <Card>
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
-            <CardDescription>Attendance statistics.</CardDescription>
+            <CardTitle>{t("erp.overview")}</CardTitle>
+            <CardDescription>{t("erp.attendance_statistics")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
-                <span className="text-sm">Days Present (This Month)</span>
+                <span className="text-sm">{t("erp.days_present_this_month")}</span>
                 <span className="font-bold">--</span>
               </div>
               <div className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
-                <span className="text-sm">Late Entries</span>
+                <span className="text-sm">{t("erp.late_entries")}</span>
                 <span className="font-bold">--</span>
               </div>
               <div className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
-                <span className="text-sm">Average Hours</span>
+                <span className="text-sm">{t("erp.average_hours")}</span>
                 <span className="font-bold">--</span>
               </div>
             </div>
@@ -284,26 +285,26 @@ export default function AttendancePage() {
         <CardHeader>
           <CardTitle className="flex items-center">
             <RiHistoryLine className="mr-2 h-5 w-5" />
-            Attendance Log
+            {t("erp.attendance_log")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>In Type</TableHead>
-                <TableHead>Out Time</TableHead>
-                <TableHead>Hours</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.date")}</TableHead>
+                <TableHead>{t("erp.in_type")}</TableHead>
+                <TableHead>{t("erp.out_time")}</TableHead>
+                <TableHead>{t("erp.hours")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-4">
-                    Loading...
+                    {t("erp.loading")}
                   </TableCell>
                 </TableRow>
               ) : history.length > 0 ? (
@@ -339,7 +340,7 @@ export default function AttendancePage() {
                     colSpan={6}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No attendance records found.
+                    {t("erp.no_attendance_records_found")}
                   </TableCell>
                 </TableRow>
               )}

@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export default function EmailSettingsPage() {
   const [settings, setSettings] = useState<any>({});
   const [loading, setLoading] = useState(true);
@@ -54,41 +55,41 @@ export default function EmailSettingsPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Email Provider Settings</h1>
+        <h1 className="text-3xl font-bold">{t("comms.email_provider_settings")}</h1>
         <Button>
           <RiSaveLine className="mr-2 size-4" />
-          Save Changes
+          {t("comms.save_changes")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>SMTP Configuration</CardTitle>
+          <CardTitle>{t("comms.smtp_configuration")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>SMTP Host</Label>
+              <Label>{t("comms.smtp_host")}</Label>
               <Input defaultValue={settings.smtp_host} />
             </div>
             <div className="space-y-2">
-              <Label>SMTP Port</Label>
+              <Label>{t("comms.smtp_port")}</Label>
               <Input defaultValue={settings.smtp_port} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Username</Label>
+              <Label>{t("comms.username")}</Label>
               <Input defaultValue={settings.smtp_username} />
             </div>
             <div className="space-y-2">
-              <Label>Password</Label>
+              <Label>{t("comms.password")}</Label>
               <Input type="password" defaultValue={settings.smtp_password} /> //
               placeholder
             </div>
           </div>
           <div className="space-y-2">
-            <Label>From Email</Label>
+            <Label>{t("comms.from_email")}</Label>
             <Input defaultValue={settings.from_email} />
           </div>
         </CardContent>

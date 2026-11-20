@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { RiPhoneLine } from "@remixicon/react";
 
+import t from "@/app/lib/i18n";
 export default async function CallLogsPage({
   searchParams,
 }: {
@@ -66,9 +67,9 @@ export default async function CallLogsPage({
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Call Logs</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.call_logs")}</h1>
           <p className="text-muted-foreground">
-            History of all incoming and outgoing calls
+            {t("crm.history_of_all_incoming_and_outgoing_calls")}
           </p>
         </div>
       </div>
@@ -78,11 +79,11 @@ export default async function CallLogsPage({
           <TableHeader>
             <TableRow>
               <TableHead className="w-[50px]"></TableHead>
-              <TableHead>Time</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Duration</TableHead>
-              <TableHead>Owner</TableHead>
+              <TableHead>{t("crm.time")}</TableHead>
+              <TableHead>{t("crm.type")}</TableHead>
+              <TableHead>{t("crm.status")}</TableHead>
+              <TableHead>{t("crm.duration")}</TableHead>
+              <TableHead>{t("crm.owner")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -92,7 +93,7 @@ export default async function CallLogsPage({
                   colSpan={6}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No call logs found.
+                  {t("crm.no_call_logs_found")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -127,14 +128,14 @@ export default async function CallLogsPage({
       <div className="flex items-center justify-center gap-2 mt-4">
         {page > 1 && (
           <Button variant="outline" asChild>
-            <Link href={`?page=${page - 1}`}>Previous</Link>
+            <Link href={`?page=${page - 1}`}>{t("crm.previous")}</Link>
           </Button>
         )}
         <Button variant="outline" disabled>
           {page}
         </Button>
         <Button variant="outline" asChild>
-          <Link href={`?page=${page + 1}`}>Next</Link>
+          <Link href={`?page=${page + 1}`}>{t("crm.next")}</Link>
         </Button>
       </div>
     </div>

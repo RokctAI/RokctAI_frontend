@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function AdminWalletPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,24 +60,24 @@ export default function AdminWalletPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Wallet History</h1>
+      <h1 className="text-3xl font-bold">{t("wallet.wallet_history")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Wallet ID</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("wallet.date")}</TableHead>
+              <TableHead>{t("wallet.wallet_id")}</TableHead>
+              <TableHead>{t("wallet.type")}</TableHead>
+              <TableHead>{t("wallet.amount")}</TableHead>
+              <TableHead>{t("wallet.status")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {history.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center h-24">
-                  No wallet history found.
+                  {t("wallet.no_wallet_history_found")}
                 </TableCell>
               </TableRow>
             ) : (

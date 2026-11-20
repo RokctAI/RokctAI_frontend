@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import t from "@/app/lib/i18n";
 const ORDER_TYPES = [
   { id: "all", label: "All Orders" },
   { id: "Delivery", label: "Delivery" },
@@ -64,7 +65,7 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Order Management</h1>
+      <h1 className="text-3xl font-bold">{t("orders.order_management")}</h1>
 
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full justify-start overflow-x-auto">
@@ -79,13 +80,13 @@ export default function AdminOrdersPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Order ID</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Shop</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("orders.order_id")}</TableHead>
+                <TableHead>{t("orders.date")}</TableHead>
+                <TableHead>{t("orders.shop")}</TableHead>
+                <TableHead>{t("orders.customer")}</TableHead>
+                <TableHead>{t("orders.type")}</TableHead>
+                <TableHead>{t("orders.total")}</TableHead>
+                <TableHead>{t("orders.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -101,7 +102,7 @@ export default function AdminOrdersPage() {
                     colSpan={7}
                     className="h-24 text-center text-muted-foreground"
                   >
-                    No orders found.
+                    {t("orders.no_orders_found")}
                   </TableCell>
                 </TableRow>
               ) : (

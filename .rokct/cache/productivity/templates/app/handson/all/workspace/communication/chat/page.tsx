@@ -32,6 +32,7 @@ import { getSessionCompanyContext } from "@/app/actions/company";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
+import t from "@/app/lib/i18n";
 export default function ChatPage() {
   const [messages, setMessages] = useState<CommentData[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -103,10 +104,10 @@ export default function ChatPage() {
       <div>
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <RiChat1Line className="h-8 w-8 text-primary" />
-          Team Chat
+          {t("productivity.team_chat")}
         </h1>
         <p className="text-muted-foreground">
-          General channel for Company announcements and watercooler talk.
+          {t("productivity.general_channel_for_company_announcements_and_wa")}
         </p>
       </div>
 

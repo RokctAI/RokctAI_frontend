@@ -34,27 +34,28 @@ import { toast } from "sonner";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export function AssetValueAdjustmentList({ items }: { items: any[] }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Asset Revaluation</h1>
-          <p className="text-muted-foreground">Adjust asset values.</p>
+          <h1 className="text-2xl font-bold">{t("erp.asset_revaluation")}</h1>
+          <p className="text-muted-foreground">{t("erp.adjust_asset_values")}</p>
         </div>
         <Link href="/handson/all/financials/assets/value-adjustment/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Adjustment
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_adjustment")}
           </Button>
         </Link>
       </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Asset</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>New Value</TableHead>
+            <TableHead>{t("erp.name")}</TableHead>
+            <TableHead>{t("erp.asset")}</TableHead>
+            <TableHead>{t("erp.date")}</TableHead>
+            <TableHead>{t("erp.new_value")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -92,22 +93,22 @@ export function AssetValueAdjustmentForm() {
 
   return (
     <div className="max-w-xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">Adjust Value</h1>
+      <h1 className="text-2xl font-bold">{t("erp.adjust_value")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Asset</Label>
+            <Label>{t("erp.asset")}</Label>
             <Input value={asset} onChange={(e) => setAsset(e.target.value)} />
           </div>
           <div>
-            <Label>New Value</Label>
+            <Label>{t("erp.new_value")}</Label>
             <Input
               type="number"
               value={newValue}
               onChange={(e) => setNewValue(Number(e.target.value))}
             />
           </div>
-          <Button onClick={handleSubmit}>Save</Button>
+          <Button onClick={handleSubmit}>{t("erp.save")}</Button>
         </CardContent>
       </Card>
     </div>

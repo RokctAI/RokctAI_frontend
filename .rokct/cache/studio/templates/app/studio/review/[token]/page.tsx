@@ -21,6 +21,7 @@ import { use, useEffect, useState } from "react";
 import { getReview, submitReview } from "@/app/actions/studio/proofs/actions";
 import { Button } from "@/components/ui/button";
 
+import t from "@/app/lib/i18n";
 // Public page: the link in proof emails. No login; the token is the key.
 export default function ReviewPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = use(params);
@@ -45,7 +46,7 @@ export default function ReviewPage({ params }: { params: Promise<{ token: string
 
   if (review === undefined) return <p className="p-6">Loading your proof…</p>;
   if (review === null)
-    return <p className="p-6">This review link is invalid, expired or has been withdrawn.</p>;
+    return <p className="p-6">{t("studio.this_review_link_is_invalid_expired_or_has_been_")}</p>;
 
   const answered = done ?? (review.status !== "Pending" ? review.status : null);
   return (
@@ -54,7 +55,7 @@ export default function ReviewPage({ params }: { params: Promise<{ token: string
       {review.svg && (
         // Engine-generated SVG, rendered sandboxed: no scripts run in the preview.
         <iframe
-          title="Proof"
+          title={t("studio.proof")}
           sandbox=""
           className="h-[60vh] w-full rounded-md border bg-white"
           srcDoc={`<html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh">${review.svg.replace("<svg", '<svg style="max-width:100%;max-height:100%"')}</body></html>`}
@@ -71,17 +72,17 @@ export default function ReviewPage({ params }: { params: Promise<{ token: string
           <textarea
             className="w-full rounded-md border p-3"
             rows={3}
-            placeholder="Changes or comments (optional)"
+            placeholder={t("studio.changes_or_comments_optional")}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
           <div className="flex flex-wrap gap-3">
-            <Button onClick={() => decide("Approved")}>Approve</Button>
+            <Button onClick={() => decide("Approved")}>{t("studio.approve")}</Button>
             <Button variant="outline" onClick={() => decide("Changes Requested")}>
-              Request changes
+              {t("studio.request_changes")}
             </Button>
             <Button variant="outline" onClick={() => decide("Rejected")}>
-              Reject
+              {t("studio.reject")}
             </Button>
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}

@@ -17,11 +17,12 @@
 
 "use client";
 
+import t from "@/app/lib/i18n";
 /** Engine-generated SVG, sandboxed: no scripts run in the preview. */
 export function SvgPreview({ svg, className }: { svg: string; className?: string }) {
   return (
     <iframe
-      title="Preview"
+      title={t("studio.preview")}
       sandbox=""
       className={className ?? "h-64 w-full rounded-md border bg-white"}
       srcDoc={`<html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh">${svg.replace("<svg", '<svg style="max-width:100%;max-height:100%"')}</body></html>`}

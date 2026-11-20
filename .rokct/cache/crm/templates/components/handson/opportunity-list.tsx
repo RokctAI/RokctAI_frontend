@@ -39,6 +39,7 @@ import { deleteOpportunity } from "@/app/actions/handson/all/crm/deals";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 interface OpportunityListProps {
   opportunities: any[];
 }
@@ -69,16 +70,16 @@ export function OpportunityList({ opportunities }: OpportunityListProps) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Opportunities</h1>
+          <h1 className="text-2xl font-bold">{t("crm.opportunities")}</h1>
           <p className="text-muted-foreground">
-            Manage sales opportunities and deals.
+            {t("crm.manage_sales_opportunities_and_deals")}
           </p>
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search Opportunities..."
+              placeholder={t("crm.search_opportunities")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
@@ -86,7 +87,7 @@ export function OpportunityList({ opportunities }: OpportunityListProps) {
           </div>
           <Link href="/handson/all/commercial/crm/opportunities/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Opportunity
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("crm.new_opportunity")}
             </Button>
           </Link>
         </div>
@@ -96,11 +97,11 @@ export function OpportunityList({ opportunities }: OpportunityListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Party</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("crm.party")}</TableHead>
+              <TableHead>{t("crm.type")}</TableHead>
+              <TableHead>{t("crm.status")}</TableHead>
+              <TableHead>{t("crm.date")}</TableHead>
+              <TableHead className="w-[100px]">{t("crm.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -110,7 +111,7 @@ export function OpportunityList({ opportunities }: OpportunityListProps) {
                   colSpan={5}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No opportunities found.
+                  {t("crm.no_opportunities_found")}
                 </TableCell>
               </TableRow>
             ) : (

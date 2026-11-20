@@ -20,20 +20,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { JobOpeningList } from "@/components/handson/job-opening-list";
 import { JobApplicantList } from "@/components/handson/job-applicant-list";
 
+import t from "@/app/lib/i18n";
 export default function RecruitmentPage() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Recruitment</h1>
+        <h1 className="text-3xl font-bold">{t("erp.recruitment")}</h1>
         <p className="text-muted-foreground">
-          Manage job openings and track candidates.
+          {t("erp.manage_job_openings_and_track_candidates")}
         </p>
       </div>
 
       <Tabs defaultValue="jobs" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="jobs">Job Openings</TabsTrigger>
-          <TabsTrigger value="candidates">Candidates</TabsTrigger>
+          <TabsTrigger value="jobs">{t("erp.job_openings")}</TabsTrigger>
+          <TabsTrigger value="candidates">{t("erp.candidates")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="jobs" className="space-y-4">

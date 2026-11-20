@@ -38,6 +38,7 @@ import { getSeparations } from "@/app/actions/handson/all/hrms/separations";
 import { format } from "date-fns";
 import { verifyHrRole } from "@/app/lib/roles";
 
+import t from "@/app/lib/i18n";
 export default function PersonnelPage() {
   const [promotions, setPromotions] = useState<any[]>([]);
   const [separations, setSeparations] = useState<any[]>([]);
@@ -59,28 +60,28 @@ export default function PersonnelPage() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Personnel Management</h1>
+        <h1 className="text-3xl font-bold">{t("erp.personnel_management")}</h1>
         <p className="text-muted-foreground">
-          Manage employee lifecycle: Promotions, Resignations, and Transfers.
+          {t("erp.manage_employee_lifecycle_promotions_resignation")}
         </p>
       </div>
 
       <Tabs defaultValue="promotions" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="promotions">Promotions</TabsTrigger>
-          <TabsTrigger value="separations">Resignations & Exits</TabsTrigger>
+          <TabsTrigger value="promotions">{t("erp.promotions")}</TabsTrigger>
+          <TabsTrigger value="separations">{t("erp.resignations_exits")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="promotions" className="space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <RiArrowRightUpLine className="h-5 w-5 text-green-600" />
-              <h2 className="text-xl font-semibold">Employee Promotions</h2>
+              <h2 className="text-xl font-semibold">{t("erp.employee_promotions")}</h2>
             </div>
             {canEdit && (
               <Link href="/handson/all/hr/personnel/promotion/new">
                 <Button>
-                  <RiAddLine className="mr-2 h-4 w-4" /> Promote Employee
+                  <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.promote_employee")}
                 </Button>
               </Link>
             )}
@@ -88,7 +89,7 @@ export default function PersonnelPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {promotions.length === 0 ? (
               <div className="col-span-full text-center py-10 text-muted-foreground border rounded-lg bg-slate-50">
-                No promotions recorded yet.
+                {t("erp.no_promotions_recorded_yet")}
               </div>
             ) : (
               promotions.map((p) => (
@@ -103,7 +104,7 @@ export default function PersonnelPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                      Promoted To
+                      {t("erp.promoted_to")}
                     </div>
                     <div className="font-semibold text-primary">
                       {p.new_designation}
@@ -120,13 +121,13 @@ export default function PersonnelPage() {
             <div className="flex items-center gap-2">
               <RiUserUnfollowLine className="h-5 w-5 text-red-600" />
               <h2 className="text-xl font-semibold">
-                Resignations & Terminations
+                {t("erp.resignations_terminations")}
               </h2>
             </div>
             {canEdit && (
               <Link href="/handson/all/hr/personnel/separation/new">
                 <Button variant="destructive">
-                  <RiAddLine className="mr-2 h-4 w-4" /> Record Exit
+                  <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.record_exit")}
                 </Button>
               </Link>
             )}
@@ -134,7 +135,7 @@ export default function PersonnelPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {separations.length === 0 ? (
               <div className="col-span-full text-center py-10 text-muted-foreground border rounded-lg bg-slate-50">
-                No resignations recorded yet.
+                {t("erp.no_resignations_recorded_yet")}
               </div>
             ) : (
               separations.map((s) => (

@@ -18,13 +18,14 @@ import { getShopFloorItems } from "@/app/actions/handson/all/accounting/manufact
 import { ShopFloorList } from "@/components/handson/shop-floor-components";
 import { TableRow, TableCell } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 export default async function Page() {
   const data = await getShopFloorItems("Workstation");
   return (
     <div className="p-6">
       <ShopFloorList
-        title="Workstations"
+        title={t("erp.workstations")}
         items={data}
         newItemUrl="/handson/all/supply_chain/manufacturing/shop-floor/workstation/new"
         headers={["Name", "Capacity"]}

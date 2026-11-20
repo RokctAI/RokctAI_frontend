@@ -32,20 +32,20 @@ export function PurchaseReceiptList({ receipts }: { receipts: any[] }) {
   return (
     <div>
       <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold">Purchase Receipts</h1>
+        <h1 className="text-2xl font-bold">{t("erp.purchase_receipts")}</h1>
         <Link href="/handson/all/supply_chain/buying/receipt/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> Receive Goods
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.receive_goods")}
           </Button>
         </Link>
       </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Supplier</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Total</TableHead>
+            <TableHead>{t("erp.name")}</TableHead>
+            <TableHead>{t("erp.supplier")}</TableHead>
+            <TableHead>{t("erp.date")}</TableHead>
+            <TableHead>{t("erp.total")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -69,6 +69,7 @@ import { createPurchaseReceipt } from "@/app/actions/handson/all/accounting/buyi
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
+import t from "@/app/lib/i18n";
 export function PurchaseReceiptForm() {
   const router = useRouter();
   const [supplier, setSupplier] = useState("");
@@ -91,39 +92,39 @@ export function PurchaseReceiptForm() {
 
   return (
     <div className="max-w-xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Purchase Receipt</h1>
+      <h1 className="text-2xl font-bold">{t("erp.new_purchase_receipt")}</h1>
       <div className="space-y-2 border p-4 rounded bg-white">
         <div>
-          <label className="text-sm font-medium">Supplier</label>
+          <label className="text-sm font-medium">{t("erp.supplier")}</label>
           <Input
-            placeholder="Supplier Name"
+            placeholder={t("erp.supplier_name")}
             value={supplier}
             onChange={(e) => setSupplier(e.target.value)}
           />
         </div>
         <div>
-          <label className="text-sm font-medium">Item Code</label>
+          <label className="text-sm font-medium">{t("erp.item_code")}</label>
           <Input
-            placeholder="Item Code"
+            placeholder={t("erp.item_code")}
             value={item}
             onChange={(e) => setItem(e.target.value)}
           />
         </div>
         <div className="flex gap-4">
           <div className="flex-1">
-            <label className="text-sm font-medium">Qty</label>
+            <label className="text-sm font-medium">{t("erp.qty")}</label>
             <Input
               type="number"
-              placeholder="Qty"
+              placeholder={t("erp.qty")}
               value={qty}
               onChange={(e) => setQty(Number(e.target.value))}
             />
           </div>
           <div className="flex-1">
-            <label className="text-sm font-medium">Rate</label>
+            <label className="text-sm font-medium">{t("erp.rate")}</label>
             <Input
               type="number"
-              placeholder="Rate"
+              placeholder={t("erp.rate")}
               value={rate}
               onChange={(e) => setRate(Number(e.target.value))}
             />
@@ -131,7 +132,7 @@ export function PurchaseReceiptForm() {
         </div>
       </div>
       <Button onClick={handleSubmit} className="w-full">
-        Create Receipt
+        {t("erp.create_receipt")}
       </Button>
     </div>
   );

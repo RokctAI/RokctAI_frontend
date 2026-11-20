@@ -1,6 +1,6 @@
 {
   "name": "wallet_sdk",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "installs": [
     {
       "from": "templates/app/admin/business/wallet/page.tsx",
@@ -17,6 +17,10 @@
     {
       "from": "templates/app/manager/finance/wallet/page.tsx",
       "to": "app/manager/finance/wallet/page.tsx"
+    },
+    {
+      "from": "templates/app/lib/i18n/sdk/wallet.json",
+      "to": "app/lib/i18n/sdk/wallet.json"
     }
   ],
   "dependencies": {
@@ -30,6 +34,7 @@
     "app/actions/gateways/admin/finance.ts",
     "app/actions/gateways/finance.ts",
     "app/actions/users/admin/customers.ts",
+    "app/lib/i18n/index.ts",
     "components/ui/badge.tsx",
     "components/ui/button.tsx",
     "components/ui/card.tsx",

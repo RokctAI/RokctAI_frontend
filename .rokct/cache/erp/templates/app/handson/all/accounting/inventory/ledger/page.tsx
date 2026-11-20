@@ -17,13 +17,14 @@
 import { getStockLedgerEntries } from "@/app/actions/handson/all/accounting/inventory/stock";
 import { SimpleList } from "@/components/handson/stock-advanced-components";
 import { TableRow, TableCell } from "@/components/ui/table";
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 export default async function Page() {
   const data = await getStockLedgerEntries();
   return (
     <div className="p-6">
       <SimpleList
-        title="Stock Ledger"
+        title={t("erp.stock_ledger")}
         items={data}
         headers={["Item", "Qty", "Rate", "Voucher"]}
         renderRow={(i: any) => (

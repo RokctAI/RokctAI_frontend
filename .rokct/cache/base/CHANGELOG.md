@@ -1,4 +1,28 @@
+## 1.63.0
+
+* feat(deps): shared npm versions, like Dart's base SDK. New `versions`
+  map in the manifest; the installer sets each listed version on any
+  package a shell already uses (never adds one). Values come from
+  RokctAI_frontend main. Bump versions here instead of per-shell
+  Dependabot PRs.
+
+## 1.62.0
+
+* feat(i18n): 170 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 29 files now go through
+  `t("base.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/base.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 # Changelog
+
+## 1.61.0
+
+* feat(footer): the site credit names Cortex Media (Ray, 2026-11-20:
+  "update all footers of all our nextjs sites to Cortex Media. some still
+  say Built with ♥ by ROKCT"). `SITE_CREDIT_MAKER` is now `"Cortex Media"`,
+  so every footer drawn with `SiteCredit` or `siteCreditLine` reads
+  `© <year> <site name> · Built with ♥ by Cortex Media`. Words only.
 
 ## 1.60.1
 

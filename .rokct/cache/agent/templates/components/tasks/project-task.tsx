@@ -22,6 +22,7 @@ import React from "react";
 
 import { getProjects } from "@/app/actions/handson/all/projects/projects";
 
+import t from "@/app/lib/i18n";
 export interface ProjectTaskProps {
   id: number;
   name: string;
@@ -129,7 +130,7 @@ export function ProjectTask({ task }: { task: ProjectTaskProps }) {
             )
           ) : (
             <span className="text-xs text-zinc-500 italic mr-2">
-              Unassigned
+              {t("agent.unassigned")}
             </span>
           )}
         </div>
@@ -142,7 +143,7 @@ export function ProjectTask({ task }: { task: ProjectTaskProps }) {
                   onClick={() => setIsSelectingProject(true)}
                   className="bg-zinc-700 hover:bg-zinc-600 text-white px-2 py-1 rounded text-xs"
                 >
-                  Link Project
+                  {t("agent.link_project")}
                 </button>
               ) : (
                 <select
@@ -150,7 +151,7 @@ export function ProjectTask({ task }: { task: ProjectTaskProps }) {
                   onChange={(e) => setSelectedProject(e.target.value)}
                   value={selectedProject || ""}
                 >
-                  <option value="">Project...</option>
+                  <option value="">{t("agent.project")}</option>
                   {projects.map((p: any) => (
                     <option key={p.name} value={p.name}>
                       {p.project_name}
@@ -165,7 +166,7 @@ export function ProjectTask({ task }: { task: ProjectTaskProps }) {
                   onClick={() => setIsSelectingUser(true)}
                   className="bg-zinc-700 hover:bg-zinc-600 text-white px-2 py-1 rounded text-xs"
                 >
-                  Assign
+                  {t("agent.assign")}
                 </button>
               ) : (
                 <select
@@ -173,7 +174,7 @@ export function ProjectTask({ task }: { task: ProjectTaskProps }) {
                   onChange={(e) => setSelectedAssignee(e.target.value)}
                   value={selectedAssignee || ""}
                 >
-                  <option value="">User...</option>
+                  <option value="">{t("agent.user")}</option>
                   {users.map((u: any) => (
                     <option key={u.email} value={u.email}>
                       {u.full_name || u.email}
@@ -192,7 +193,7 @@ export function ProjectTask({ task }: { task: ProjectTaskProps }) {
                 }
                 className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm"
               >
-                Accept
+                {t("agent.accept")}
               </button>
             </div>
           )}

@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function PageSetupPage() {
   const [pages, setPages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,16 +51,16 @@ export default function PageSetupPage() {
 
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Page Setup</h1>
+      <h1 className="text-3xl font-bold">{t("base.page_setup")}</h1>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Route</TableHead>
-              <TableHead>Last Updated</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t("base.title")}</TableHead>
+              <TableHead>{t("base.route")}</TableHead>
+              <TableHead>{t("base.last_updated")}</TableHead>
+              <TableHead>{t("base.status")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -75,7 +76,7 @@ export default function PageSetupPage() {
                   colSpan={4}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No pages found.
+                  {t("base.no_pages_found")}
                 </TableCell>
               </TableRow>
             ) : (

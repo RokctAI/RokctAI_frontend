@@ -18,6 +18,7 @@
 
 import React, { useState } from "react";
 
+import t from "@/app/lib/i18n";
 interface ResignationProps {
   onConfirm?: (data: any) => void;
   onCancel?: () => void;
@@ -48,9 +49,9 @@ export function ResignationConfirmation({
   if (isConfirmed) {
     return (
       <div className="bg-red-900/20 border border-red-900 rounded-lg p-4 w-full max-w-sm text-sm text-white">
-        <h3 className="font-bold text-red-500 mb-2">Resignation Submitted</h3>
+        <h3 className="font-bold text-red-500 mb-2">{t("agent.resignation_submitted")}</h3>
         <p className="text-zinc-400">
-          Your resignation has been filed. HR will be in touch shortly.
+          {t("agent.your_resignation_has_been_filed_hr_will_be_in_to")}
         </p>
       </div>
     );
@@ -66,7 +67,7 @@ export function ResignationConfirmation({
 
       <div className="space-y-1">
         <label className="text-xs text-zinc-400">
-          Proposed Last Working Day
+          {t("agent.proposed_last_working_day")}
         </label>
         <input
           type="date"
@@ -77,12 +78,12 @@ export function ResignationConfirmation({
       </div>
 
       <div className="space-y-1">
-        <label className="text-xs text-zinc-400">Reason (Optional)</label>
+        <label className="text-xs text-zinc-400">{t("agent.reason_optional")}</label>
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-1 h-16 resize-none"
-          placeholder="I have decided to move on..."
+          placeholder={t("agent.i_have_decided_to_move_on")}
         />
       </div>
 
@@ -91,7 +92,7 @@ export function ResignationConfirmation({
           onClick={onCancel}
           className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white rounded py-2"
         >
-          Cancel
+          {t("agent.cancel")}
         </button>
         <button
           onClick={handleSubmit}

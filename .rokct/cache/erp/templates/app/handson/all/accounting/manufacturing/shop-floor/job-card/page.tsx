@@ -19,13 +19,14 @@ import { ShopFloorList } from "@/components/handson/shop-floor-components";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 export default async function Page() {
   const data = await getShopFloorItems("Job Card");
   return (
     <div className="p-6">
       <ShopFloorList
-        title="Job Cards"
+        title={t("erp.job_cards")}
         items={data}
         newItemUrl="/handson/all/supply_chain/manufacturing/shop-floor/job-card/new"
         headers={["Name", "Work Order", "Operation", "Station", "Status"]}

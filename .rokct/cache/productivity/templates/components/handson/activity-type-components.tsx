@@ -34,17 +34,18 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import tr from "@/app/lib/i18n";
 export function ActivityTypeList({ items }: { items: any[] }) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Activity Types</h1>
-          <p className="text-muted-foreground">Billable work types.</p>
+          <h1 className="text-2xl font-bold">{tr("productivity.activity_types")}</h1>
+          <p className="text-muted-foreground">{tr("productivity.billable_work_types")}</p>
         </div>
         <Link href="/handson/all/work_management/projects/activity-type/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Type
+            <RiAddLine className="mr-2 h-4 w-4" /> {tr("productivity.new_type")}
           </Button>
         </Link>
       </div>
@@ -52,8 +53,8 @@ export function ActivityTypeList({ items }: { items: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Activity Type</TableHead>
-              <TableHead>Default Rate</TableHead>
+              <TableHead>{tr("productivity.activity_type")}</TableHead>
+              <TableHead>{tr("productivity.default_rate")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,22 +89,22 @@ export function ActivityTypeForm() {
 
   return (
     <div className="max-w-md mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Activity Type</h1>
+      <h1 className="text-2xl font-bold">{tr("productivity.new_activity_type")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Name</Label>
+            <Label>{tr("productivity.name")}</Label>
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div>
-            <Label>Rate</Label>
+            <Label>{tr("productivity.rate")}</Label>
             <Input
               type="number"
               value={rate}
               onChange={(e) => setRate(Number(e.target.value))}
             />
           </div>
-          <Button onClick={handleSubmit}>Save</Button>
+          <Button onClick={handleSubmit}>{tr("productivity.save")}</Button>
         </CardContent>
       </Card>
     </div>

@@ -42,6 +42,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import tr from "@/app/lib/i18n";
 export function TaskList({ tasks }: { tasks: any[] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const filtered = tasks.filter((t) =>
@@ -52,12 +53,12 @@ export function TaskList({ tasks }: { tasks: any[] }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Tasks</h1>
-          <p className="text-muted-foreground">Manage project tasks.</p>
+          <h1 className="text-2xl font-bold">{tr("productivity.tasks")}</h1>
+          <p className="text-muted-foreground">{tr("productivity.manage_project_tasks")}</p>
         </div>
         <Link href="/handson/all/work_management/projects/task/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Task
+            <RiAddLine className="mr-2 h-4 w-4" /> {tr("productivity.new_task")}
           </Button>
         </Link>
       </div>
@@ -65,11 +66,11 @@ export function TaskList({ tasks }: { tasks: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Subject</TableHead>
-              <TableHead>Project</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Due Date</TableHead>
+              <TableHead>{tr("productivity.subject")}</TableHead>
+              <TableHead>{tr("productivity.project")}</TableHead>
+              <TableHead>{tr("productivity.status")}</TableHead>
+              <TableHead>{tr("productivity.priority")}</TableHead>
+              <TableHead>{tr("productivity.due_date")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -108,18 +109,18 @@ export function TaskForm() {
 
   return (
     <div className="max-w-xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Task</h1>
+      <h1 className="text-2xl font-bold">{tr("productivity.new_task")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Subject</Label>
+            <Label>{tr("productivity.subject")}</Label>
             <Input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
             />
           </div>
           <div>
-            <Label>Project (Optional)</Label>
+            <Label>{tr("productivity.project_optional")}</Label>
             <Input
               value={project}
               onChange={(e) => setProject(e.target.value)}
@@ -127,33 +128,33 @@ export function TaskForm() {
           </div>
           <div className="flex gap-4">
             <div className="flex-1">
-              <Label>Status</Label>
+              <Label>{tr("productivity.status")}</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Open">Open</SelectItem>
-                  <SelectItem value="Working">Working</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
+                  <SelectItem value="Open">{tr("productivity.open")}</SelectItem>
+                  <SelectItem value="Working">{tr("productivity.working")}</SelectItem>
+                  <SelectItem value="Completed">{tr("productivity.completed")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex-1">
-              <Label>Priority</Label>
+              <Label>{tr("productivity.priority")}</Label>
               <Select value={priority} onValueChange={setPriority}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Low">Low</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Low">{tr("productivity.low")}</SelectItem>
+                  <SelectItem value="Medium">{tr("productivity.medium")}</SelectItem>
+                  <SelectItem value="High">{tr("productivity.high")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
-          <Button onClick={handleSubmit}>Create Task</Button>
+          <Button onClick={handleSubmit}>{tr("productivity.create_task")}</Button>
         </CardContent>
       </Card>
     </div>

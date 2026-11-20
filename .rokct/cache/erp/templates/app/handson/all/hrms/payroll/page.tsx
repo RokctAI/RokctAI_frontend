@@ -40,6 +40,7 @@ import { format } from "date-fns";
 import { getSalarySlips } from "@/app/actions/handson/all/hrms/payroll";
 import { verifyHrRole } from "@/app/lib/roles";
 
+import t from "@/app/lib/i18n";
 export default function PayrollPage() {
   const [slips, setSlips] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,36 +78,36 @@ export default function PayrollPage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center">
             <RiMoneyDollarBoxLine className="mr-3 h-8 w-8" />
-            Payroll
+            {t("erp.payroll")}
           </h1>
           <p className="text-muted-foreground">
-            Manage salary slips and view payroll history.
+            {t("erp.manage_salary_slips_and_view_payroll_history")}
           </p>
         </div>
         {canProcess && (
           <Button>
-            <RiMoneyDollarBoxLine className="mr-2 h-4 w-4" /> Process Payroll
+            <RiMoneyDollarBoxLine className="mr-2 h-4 w-4" /> {t("erp.process_payroll")}
           </Button>
         )}
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Salary Slips</CardTitle>
+          <CardTitle>{t("erp.salary_slips")}</CardTitle>
           <CardDescription>
-            Recent salary slips generated for employees.
+            {t("erp.recent_salary_slips_generated_for_employees")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
-                <TableHead>Period</TableHead>
-                <TableHead className="text-right">Gross Pay</TableHead>
-                <TableHead className="text-right">Deductions</TableHead>
-                <TableHead className="text-right">Net Pay</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.period")}</TableHead>
+                <TableHead className="text-right">{t("erp.gross_pay")}</TableHead>
+                <TableHead className="text-right">{t("erp.deductions")}</TableHead>
+                <TableHead className="text-right">{t("erp.net_pay")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
@@ -114,7 +115,7 @@ export default function PayrollPage() {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-4">
-                    Loading...
+                    {t("erp.loading")}
                   </TableCell>
                 </TableRow>
               ) : slips.length > 0 ? (
@@ -168,7 +169,7 @@ export default function PayrollPage() {
                     colSpan={7}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No salary slips found.
+                    {t("erp.no_salary_slips_found")}
                   </TableCell>
                 </TableRow>
               )}

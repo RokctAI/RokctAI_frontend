@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 
 import { toBase64 } from "../components/to-base64";
 
+import t from "@/app/lib/i18n";
 const SCOPES = ["Full Suite", "Plan Chapters", "Pitch Deck", "Financial Model", "Briefs"];
 
 // Business documents (plan, pitch deck, financial model, briefs) built
@@ -65,9 +66,9 @@ export default function DocumentsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">Documents</h1>
+      <h1 className="text-2xl font-semibold">{t("studio.documents")}</h1>
       <div className="max-w-2xl space-y-3 rounded-md border p-4">
-        <input className="w-full rounded-md border p-2" placeholder="Business name" value={business} onChange={(e) => setBusiness(e.target.value)} />
+        <input className="w-full rounded-md border p-2" placeholder={t("studio.business_name")} value={business} onChange={(e) => setBusiness(e.target.value)} />
         <select className="w-full rounded-md border p-2" value={scope} onChange={(e) => setScope(e.target.value)}>
           {SCOPES.map((s) => (
             <option key={s}>{s}</option>
@@ -77,7 +78,7 @@ export default function DocumentsPage() {
           <span>Answered questions.md</span>
           <input type="file" accept=".md" onChange={(e) => setQuestions(e.target.files?.[0] ?? null)} />
         </label>
-        <Button disabled={!business.trim() || busy} onClick={create}>Create</Button>
+        <Button disabled={!business.trim() || busy} onClick={create}>{t("studio.create")}</Button>
       </div>
       <div className="space-y-2">
         {rows.map((r) => (

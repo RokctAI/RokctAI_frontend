@@ -1,3 +1,11 @@
+## 1.13.0
+
+* feat(i18n): 16 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 4 files now go through
+  `t("auth.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/auth.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.12.1
 
 - Inputs on the login and register cards are bordered (`border-input` on `bg-background`) instead of borderless `bg-muted`, so they read in any site shell.

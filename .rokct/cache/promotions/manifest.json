@@ -1,6 +1,6 @@
 {
   "name": "promotions_sdk",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "installs": [
     {
       "from": "templates/app/actions/promotions/admin/marketing.ts",
@@ -45,6 +45,10 @@
     {
       "from": "templates/app/manager/marketing/coupons/page.tsx",
       "to": "app/manager/marketing/coupons/page.tsx"
+    },
+    {
+      "from": "templates/app/lib/i18n/sdk/promotions.json",
+      "to": "app/lib/i18n/sdk/promotions.json"
     }
   ],
   "dependencies": {

@@ -4011,7 +4011,7 @@ class TestSiteCredit(unittest.TestCase):
         self.assertNotRegex(code, re.compile(r"\btext-(xs|sm|base|lg)\b"), "the footer owns the type")
         rules = read(SITE_CREDIT_RULES)
         for needle in (
-            'export const SITE_CREDIT_MAKER = "ROKCT";',
+            'export const SITE_CREDIT_MAKER = "Cortex Media";',
             'export const SITE_CREDIT_HEART = "\u2665";',
             'export const SITE_CREDIT_SEPARATOR = " \u00b7 ";',
             '  builtWith: "Built with",',

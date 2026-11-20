@@ -20,6 +20,7 @@ import { getDocTypeMeta } from "@/app/actions/handson/all/crm/meta";
 import { getDeals } from "@/app/actions/handson/all/crm/deals";
 import { DealsClientView } from "@/components/handson/deals/deals-client-view";
 
+import t from "@/app/lib/i18n";
 export default async function DealsPage() {
   const [dealsRes, metaRes] = await Promise.all([
     getDeals(1, 50),
@@ -32,8 +33,8 @@ export default async function DealsPage() {
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Deals</h1>
-          <p className="text-muted-foreground">Manage your sales pipeline.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.deals")}</h1>
+          <p className="text-muted-foreground">{t("crm.manage_your_sales_pipeline")}</p>
         </div>
         <CreateDealDialog meta={meta.data!} />
       </div>

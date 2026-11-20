@@ -17,8 +17,10 @@
 // The credit every Rokct site ends its footer with (base_sdk 1.54.0). Ray,
 // 2026-10-31: "all site will be copyright sitename then built with love
 // (as heart) by ROKCT". So the line is the SITE's own name, never the
-// legal entity - `© 2026 Polaris · Built with ♥ by ROKCT` - and the maker
-// is always ROKCT.
+// legal entity - `© 2026 Polaris · Built with ♥ by Cortex Media` - and the
+// maker is the same on every site. Since 1.61.0 the maker is Cortex Media
+// (Ray, 2026-11-20: "update all footers of all our nextjs sites to Cortex
+// Media. some still say Built with ♥ by ROKCT").
 //
 // The pure half: the words, the year rule and the plain-text line, with no
 // JSX and no product name, so a home SDK's footer that draws its own
@@ -27,7 +29,7 @@
 // its own with the word `love` for a screen reader.
 
 /** Who built the site. Fixed by the ruling: every site, the same maker. */
-export const SITE_CREDIT_MAKER = "ROKCT";
+export const SITE_CREDIT_MAKER = "Cortex Media";
 
 /** The heart glyph drawn between the words (aria-labelled `love`). */
 export const SITE_CREDIT_HEART = "♥";
@@ -74,14 +76,14 @@ export function siteCopyright(siteName: string | null | undefined, year?: number
   return `© ${resolveCreditYear(year, now)} ${name}`;
 }
 
-/** `Built with ♥ by ROKCT`, in the shell's words when it passes any. */
+/** `Built with ♥ by Cortex Media`, in the shell's words when it passes any. */
 export function siteCreditText(labels: Partial<SiteCreditLabels> = {}): string {
   const words = { ...SITE_CREDIT_LABELS, ...labels };
   return `${words.builtWith} ${SITE_CREDIT_HEART} ${words.by} ${SITE_CREDIT_MAKER}`;
 }
 
 /**
- * The whole line as plain text: `© 2026 Polaris · Built with ♥ by ROKCT`
+ * The whole line as plain text: `© 2026 Polaris · Built with ♥ by Cortex Media`
  * (the copyright, the separator, the credit), or the credit alone when the
  * site has no name.
  */

@@ -39,6 +39,7 @@ import {
 import { deleteQuotation } from "@/app/actions/handson/all/accounting/selling/quotation";
 import { toast } from "sonner";
 
+import t from "@/app/lib/i18n";
 interface QuotationListProps {
   quotations: any[]; // Using any for flex from API response
 }
@@ -70,12 +71,12 @@ export function QuotationList({ quotations }: QuotationListProps) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Quotations</h1>
+        <h1 className="text-2xl font-bold">{t("erp.quotations")}</h1>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search..."
+              placeholder={t("erp.search")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
@@ -83,7 +84,7 @@ export function QuotationList({ quotations }: QuotationListProps) {
           </div>
           <Link href="/handson/all/commercial/selling/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Quotation
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_quotation")}
             </Button>
           </Link>
         </div>
@@ -93,12 +94,12 @@ export function QuotationList({ quotations }: QuotationListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Total</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.customer")}</TableHead>
+              <TableHead>{t("erp.date")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
+              <TableHead className="text-right">{t("erp.total")}</TableHead>
+              <TableHead className="w-[100px]">{t("erp.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -108,7 +109,7 @@ export function QuotationList({ quotations }: QuotationListProps) {
                   colSpan={6}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No quotations found.
+                  {t("erp.no_quotations_found")}
                 </TableCell>
               </TableRow>
             ) : (

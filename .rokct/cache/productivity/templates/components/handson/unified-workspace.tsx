@@ -25,6 +25,7 @@ import { WorkItemCard } from "@/components/handson/work-item-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RiLoader4Line } from "@remixicon/react";
 
+import t from "@/app/lib/i18n";
 export function UnifiedWorkspace() {
   const [loading, setLoading] = useState(true);
   const [allItems, setAllItems] = useState<any[]>([]);
@@ -78,32 +79,32 @@ export function UnifiedWorkspace() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">My Workspace</h1>
+        <h1 className="text-2xl font-bold">{t("productivity.my_workspace")}</h1>
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> New Item
+              <Plus className="mr-2 h-4 w-4" /> {t("productivity.new_item")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create New Work Item</DialogTitle>
+              <DialogTitle>{t("productivity.create_new_work_item")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label>Type</Label>
+                <Label>{t("productivity.type")}</Label>
                 <Select
                   value={createType}
                   onValueChange={(v: any) => setCreateType(v)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder={t("productivity.select_type")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="todo">ToDo</SelectItem>
-                    <SelectItem value="task">Task</SelectItem>
-                    <SelectItem value="note">Note</SelectItem>
+                    <SelectItem value="todo">{t("productivity.todo")}</SelectItem>
+                    <SelectItem value="task">{t("productivity.task")}</SelectItem>
+                    <SelectItem value="note">{t("productivity.note")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -124,20 +125,20 @@ export function UnifiedWorkspace() {
               {createType !== "note" && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Priority</Label>
+                    <Label>{t("productivity.priority")}</Label>
                     <Select value={priority} onValueChange={setPriority}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Low">Low</SelectItem>
-                        <SelectItem value="Medium">Medium</SelectItem>
-                        <SelectItem value="High">High</SelectItem>
+                        <SelectItem value="Low">{t("productivity.low")}</SelectItem>
+                        <SelectItem value="Medium">{t("productivity.medium")}</SelectItem>
+                        <SelectItem value="High">{t("productivity.high")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Due Date</Label>
+                    <Label>{t("productivity.due_date")}</Label>
                     <Input
                       type="date"
                       value={dueDate}
@@ -186,7 +187,7 @@ export function UnifiedWorkspace() {
         <TabsContent value="crm" className="space-y-4">
           {crmItems.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground bg-slate-50 rounded-lg">
-              No CRM tasks found.
+              {t("productivity.no_crm_tasks_found")}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

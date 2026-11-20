@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 export default function SocialSettingsPage() {
   const [settings, setSettings] = useState<any>({});
   const [loading, setLoading] = useState(true);
@@ -54,41 +55,41 @@ export default function SocialSettingsPage() {
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Social Media Settings</h1>
+        <h1 className="text-3xl font-bold">{t("base.social_media_settings")}</h1>
         <Button>
           <RiSaveLine className="mr-2 size-4" />
-          Save Changes
+          {t("base.save_changes")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Social Links</CardTitle>
+          <CardTitle>{t("base.social_links")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Facebook URL</Label>
+            <Label>{t("base.facebook_url")}</Label>
             <Input
               defaultValue={settings.facebook_url}
               placeholder="https://facebook.com/..."
             />
           </div>
           <div className="space-y-2">
-            <Label>Twitter URL</Label>
+            <Label>{t("base.twitter_url")}</Label>
             <Input
               defaultValue={settings.twitter_url}
               placeholder="https://twitter.com/..."
             />
           </div>
           <div className="space-y-2">
-            <Label>Instagram URL</Label>
+            <Label>{t("base.instagram_url")}</Label>
             <Input
               defaultValue={settings.instagram_url}
               placeholder="https://instagram.com/..."
             />
           </div>
           <div className="space-y-2">
-            <Label>LinkedIn URL</Label>
+            <Label>{t("base.linkedin_url")}</Label>
             <Input
               defaultValue={settings.linkedin_url}
               placeholder="https://linkedin.com/..."

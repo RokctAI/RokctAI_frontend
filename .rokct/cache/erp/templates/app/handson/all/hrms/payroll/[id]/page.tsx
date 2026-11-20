@@ -32,6 +32,7 @@ import { RiPrinterLine } from "@remixicon/react";
 import { getSalarySlip } from "@/app/actions/handson/all/hrms/payroll";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import t from "@/app/lib/i18n";
 export default function SalarySlipPage() {
   const params = useParams();
   const router = useRouter();
@@ -57,16 +58,16 @@ export default function SalarySlipPage() {
       </div>
     );
   if (!slip)
-    return <div className="p-8 text-center">Salary Slip not found</div>;
+    return <div className="p-8 text-center">{t("erp.salary_slip_not_found")}</div>;
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 mb-10">
       <div className="flex justify-between items-center print:hidden">
         <Button variant="outline" onClick={() => router.back()}>
-          Back to List
+          {t("erp.back_to_list")}
         </Button>
         <Button onClick={() => window.print()}>
-          <RiPrinterLine className="mr-2 h-4 w-4" /> Print Slip
+          <RiPrinterLine className="mr-2 h-4 w-4" /> {t("erp.print_slip")}
         </Button>
       </div>
 
@@ -87,15 +88,15 @@ export default function SalarySlipPage() {
           {/* Employee Info Header */}
           <div className="grid grid-cols-2 gap-8 text-sm">
             <div className="space-y-1">
-              <div className="text-muted-foreground">Employee Name</div>
+              <div className="text-muted-foreground">{t("erp.employee_name")}</div>
               <div className="font-semibold text-lg">{slip.employee_name}</div>
               <div className="text-muted-foreground">{slip.designation}</div>
               <div className="text-muted-foreground">{slip.department}</div>
             </div>
             <div className="space-y-1 text-right">
-              <div className="text-muted-foreground">Slip ID</div>
+              <div className="text-muted-foreground">{t("erp.slip_id")}</div>
               <div className="font-mono">{slip.name}</div>
-              <div className="text-muted-foreground mt-2">Bank Account</div>
+              <div className="text-muted-foreground mt-2">{t("erp.bank_account")}</div>
               <div className="font-mono">{slip.bank_account_no || "-"}</div>
             </div>
           </div>
@@ -107,7 +108,7 @@ export default function SalarySlipPage() {
             {/* Earnings Column */}
             <div className="space-y-4">
               <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">
-                Earnings
+                {t("erp.earnings")}
               </h3>
               <div className="space-y-2">
                 {slip.earnings?.map((earning: any, i: number) => (
@@ -124,7 +125,7 @@ export default function SalarySlipPage() {
               </div>
               <Separator />
               <div className="flex justify-between font-semibold">
-                <span>Gross Pay</span>
+                <span>{t("erp.gross_pay")}</span>
                 <span>
                   {slip.gross_pay?.toLocaleString("en-US", {
                     style: "currency",
@@ -137,7 +138,7 @@ export default function SalarySlipPage() {
             {/* Deductions Column */}
             <div className="space-y-4">
               <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">
-                Deductions
+                {t("erp.deductions")}
               </h3>
               <div className="space-y-2">
                 {slip.deductions?.map((deduction: any, i: number) => (
@@ -153,13 +154,13 @@ export default function SalarySlipPage() {
                 ))}
                 {(!slip.deductions || slip.deductions.length === 0) && (
                   <div className="text-sm text-muted-foreground italic">
-                    No deductions
+                    {t("erp.no_deductions")}
                   </div>
                 )}
               </div>
               <Separator />
               <div className="flex justify-between font-semibold text-red-600">
-                <span>Total Deduction</span>
+                <span>{t("erp.total_deduction")}</span>
                 <span>
                   {slip.total_deduction?.toLocaleString("en-US", {
                     style: "currency",
@@ -176,7 +177,7 @@ export default function SalarySlipPage() {
           <div className="bg-muted/30 p-6 rounded-lg flex justify-between items-center">
             <div className="space-y-1">
               <div className="text-sm font-medium uppercase text-muted-foreground">
-                Net Payable
+                {t("erp.net_payable")}
               </div>
               <div className="text-xs text-muted-foreground italic">
                 {slip.total_in_words}

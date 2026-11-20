@@ -24,6 +24,7 @@ import { listTemplates } from "@/app/actions/studio/requests/actions";
 import type { PosterTemplate } from "@/app/actions/studio/requests/types";
 import { Button } from "@/components/ui/button";
 
+import tr from "@/app/lib/i18n";
 export type PosterItem = { title: string; price: string; photo?: File };
 
 export type PosterValues = {
@@ -123,13 +124,13 @@ export function TemplateFields({
             <div key={i} className="flex flex-wrap items-center gap-2">
               <input
                 className="flex-1 rounded-md border p-2"
-                placeholder="Name"
+                placeholder={tr("studio.name")}
                 value={item.title}
                 onChange={(e) => set({ items: value.items.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)) })}
               />
               <input
                 className="w-28 rounded-md border p-2"
-                placeholder="Price"
+                placeholder={tr("studio.price")}
                 value={item.price}
                 onChange={(e) => set({ items: value.items.map((x, j) => (j === i ? { ...x, price: e.target.value } : x)) })}
               />
@@ -147,13 +148,13 @@ export function TemplateFields({
           ))}
           <Button variant="outline" onClick={() => set({ items: [...value.items, { title: "", price: "" }] })}>
             <RiAddLine className="mr-2 h-4 w-4" />
-            Add item
+            {tr("studio.add_item")}
           </Button>
         </div>
       )}
       {chosen?.slots.some((s) => s.slot === "background") && (
         <label className="block space-y-1">
-          <span className="text-sm">Background idea (optional, made by AI)</span>
+          <span className="text-sm">{tr("studio.background_idea_optional_made_by_ai")}</span>
           <input
             className="w-full rounded-md border p-2"
             placeholder="e.g. soft blurred market stalls"

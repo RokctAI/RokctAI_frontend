@@ -71,7 +71,7 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Sales Invoices</h1>
+        <h1 className="text-2xl font-bold">{t("erp.sales_invoices")}</h1>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -84,7 +84,7 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
           </div>
           <Link href="/handson/all/financials/accounts/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Invoice
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_invoice")}
             </Button>
           </Link>
         </div>
@@ -94,13 +94,13 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Posting Date</TableHead>
-              <TableHead>Due Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Total</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.customer")}</TableHead>
+              <TableHead>{t("erp.posting_date")}</TableHead>
+              <TableHead>{t("erp.due_date")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
+              <TableHead className="text-right">{t("erp.total")}</TableHead>
+              <TableHead className="w-[100px]">{t("erp.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -110,7 +110,7 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
                   colSpan={7}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No invoices found.
+                  {t("erp.no_invoices_found")}
                 </TableCell>
               </TableRow>
             ) : (

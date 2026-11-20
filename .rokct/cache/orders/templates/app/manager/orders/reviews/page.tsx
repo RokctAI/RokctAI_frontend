@@ -30,6 +30,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,9 +71,9 @@ export default function ReviewsPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Product Reviews</h1>
+        <h1 className="text-3xl font-bold">{t("orders.product_reviews")}</h1>
         <p className="text-muted-foreground">
-          Customer reviews for your products.
+          {t("orders.customer_reviews_for_your_products")}
         </p>
       </div>
 
@@ -80,7 +81,7 @@ export default function ReviewsPage() {
         {reviews.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
-              No reviews found.
+              {t("orders.no_reviews_found")}
             </CardContent>
           </Card>
         ) : (

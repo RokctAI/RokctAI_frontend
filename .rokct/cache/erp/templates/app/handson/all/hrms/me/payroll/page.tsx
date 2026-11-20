@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/card";
 import { getSalarySlips } from "@/app/actions/handson/all/hrms/payroll";
 
+import t from "@/app/lib/i18n";
 export default function PayrollPage() {
   const [payslips, setPayslips] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,22 +62,22 @@ export default function PayrollPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Payroll</h1>
+        <h1 className="text-3xl font-bold">{t("erp.payroll")}</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Payslips</CardTitle>
-          <CardDescription>View recent salary slips.</CardDescription>
+          <CardTitle>{t("erp.payslips")}</CardTitle>
+          <CardDescription>{t("erp.view_recent_salary_slips")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
-                <TableHead>Period</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Net Pay</TableHead>
+                <TableHead>{t("erp.employee")}</TableHead>
+                <TableHead>{t("erp.period")}</TableHead>
+                <TableHead>{t("erp.status")}</TableHead>
+                <TableHead className="text-right">{t("erp.net_pay")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -86,7 +87,7 @@ export default function PayrollPage() {
                     colSpan={4}
                     className="text-center h-24 text-muted-foreground"
                   >
-                    No payslips found.
+                    {t("erp.no_payslips_found")}
                   </TableCell>
                 </TableRow>
               ) : (

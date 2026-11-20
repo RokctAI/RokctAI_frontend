@@ -27,6 +27,7 @@ import {
   Cell,
 } from "recharts";
 
+import t from "@/app/lib/i18n";
 interface AnalyticsData {
   name: string;
   value: number;
@@ -42,7 +43,7 @@ export function AnalyticsCard({
   if (!data || data.length === 0) {
     return (
       <div className="text-zinc-500 text-sm">
-        No data available for analytics.
+        {t("agent.no_data_available_for_analytics")}
       </div>
     );
   }
@@ -91,7 +92,7 @@ export function AnalyticsCard({
       </div>
 
       <div className="mt-2 text-xs text-zinc-500 text-center">
-        Top Departments by Leave Days (YTD)
+        {t("agent.top_departments_by_leave_days_ytd")}
       </div>
     </div>
   );

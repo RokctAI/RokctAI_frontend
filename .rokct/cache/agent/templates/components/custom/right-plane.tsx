@@ -33,6 +33,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 
+import tr from "@/app/lib/i18n";
 interface RightPaneProps extends React.ComponentProps<typeof Sidebar> {
   activeModule: string;
   isDemo?: boolean;
@@ -252,13 +253,13 @@ function RightPlaneContent({
                   </div>
                   {loading ? (
                     <div className="p-4 text-xs text-muted-foreground">
-                      Loading...
+                      {tr("agent.loading")}
                     </div>
                   ) : (
                     <div className="divide-y">
                       {approvals.length === 0 ? (
                         <div className="p-4 text-xs text-muted-foreground">
-                          No pending approvals
+                          {tr("agent.no_pending_approvals")}
                         </div>
                       ) : (
                         approvals.map((doc) => (
@@ -299,18 +300,18 @@ function RightPlaneContent({
                   <div className="p-4 border-b bg-muted/20">
                     <h3 className="font-semibold text-sm flex items-center gap-2">
                       <RiBriefcaseLine className="h-4 w-4 text-blue-500" />
-                      Active Quotations
+                      {tr("agent.active_quotations")}
                     </h3>
                   </div>
                   {loading ? (
                     <div className="p-4 text-xs text-muted-foreground">
-                      Loading...
+                      {tr("agent.loading")}
                     </div>
                   ) : (
                     <div className="divide-y">
                       {quotations.length === 0 ? (
                         <div className="p-4 text-xs text-muted-foreground">
-                          No active quotations
+                          {tr("agent.no_active_quotations")}
                         </div>
                       ) : (
                         quotations.map((doc) => (
@@ -348,13 +349,13 @@ function RightPlaneContent({
 
               {activeModule === "CRM" && (
                 <div className="p-8 text-center text-sm text-muted-foreground">
-                  No active deals.
+                  {tr("agent.no_active_deals")}
                 </div>
               )}
 
               {!["HR", "CRM", "SCM"].includes(activeModule) && (
                 <div className="p-8 text-center text-sm text-muted-foreground">
-                  Select a module to see relevant data.
+                  {tr("agent.select_a_module_to_see_relevant_data")}
                 </div>
               )}
             </TabsContent>
@@ -363,9 +364,9 @@ function RightPlaneContent({
               value="notes"
               className="m-0 h-full p-4 data-[state=inactive]:hidden"
             >
-              <h3 className="font-semibold text-lg mb-2">My Notes</h3>
+              <h3 className="font-semibold text-lg mb-2">{tr("agent.my_notes")}</h3>
               <div className="text-sm text-muted-foreground">
-                No active notes. Click to add.
+                {tr("agent.no_active_notes_click_to_add")}
               </div>
             </TabsContent>
 
@@ -373,7 +374,7 @@ function RightPlaneContent({
               value="tasks"
               className="m-0 h-full p-4 data-[state=inactive]:hidden"
             >
-              <h3 className="font-semibold text-lg mb-2">My Tasks</h3>
+              <h3 className="font-semibold text-lg mb-2">{tr("agent.my_tasks")}</h3>
               {demoTasks.length > 0 ? (
                 <div className="divide-y border rounded-md">
                   {demoTasks.map((t) => (
@@ -404,7 +405,7 @@ function RightPlaneContent({
                 </div>
               ) : (
                 <div className="text-sm text-muted-foreground">
-                  No active tasks.
+                  {tr("agent.no_active_tasks")}
                 </div>
               )}
             </TabsContent>
@@ -416,7 +417,7 @@ function RightPlaneContent({
               <div className="p-4 border-b bg-muted/20 flex justify-between items-center">
                 <h3 className="font-semibold text-sm flex items-center gap-2">
                   <CalendarIcon className="h-4 w-4 text-red-500" />
-                  Upcoming Events
+                  {tr("agent.upcoming_events")}
                 </h3>
                 <Badge variant="secondary" className="text-[10px]">
                   {events.length}
@@ -424,11 +425,11 @@ function RightPlaneContent({
               </div>
               {calendarLoading ? (
                 <div className="p-8 text-center text-sm text-muted-foreground">
-                  Loading events...
+                  {tr("agent.loading_events")}
                 </div>
               ) : events.length === 0 ? (
                 <div className="p-8 text-center text-sm text-muted-foreground">
-                  No upcoming events.
+                  {tr("agent.no_upcoming_events")}
                 </div>
               ) : (
                 <div className="divide-y">

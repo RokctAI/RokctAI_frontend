@@ -53,6 +53,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export default function ReferralsPage() {
   const [loading, setLoading] = useState(true);
   const [referrals, setReferrals] = useState<any[]>([]);
@@ -113,28 +114,28 @@ export default function ReferralsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Referrals</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t("loyalty.referrals")}</h2>
           <p className="text-muted-foreground">
-            Manage user referrals and codes.
+            {t("loyalty.manage_user_referrals_and_codes")}
           </p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <RiAddLine className="mr-2 size-4" />
-              Add Referral
+              {t("loyalty.add_referral")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Referral</DialogTitle>
+              <DialogTitle>{t("loyalty.add_new_referral")}</DialogTitle>
               <DialogDescription>
-                Manually add a referral record.
+                {t("loyalty.manually_add_a_referral_record")}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label>Referrer (User Email)</Label>
+                <Label>{t("loyalty.referrer_user_email")}</Label>
                 <Input
                   value={formData.referrer}
                   onChange={(e) =>
@@ -144,7 +145,7 @@ export default function ReferralsPage() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label>Referred User (User Email)</Label>
+                <Label>{t("loyalty.referred_user_user_email")}</Label>
                 <Input
                   value={formData.referred_user}
                   onChange={(e) =>
@@ -154,7 +155,7 @@ export default function ReferralsPage() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label>Referral Code</Label>
+                <Label>{t("loyalty.referral_code")}</Label>
                 <Input
                   value={formData.referral_code}
                   onChange={(e) =>
@@ -165,7 +166,7 @@ export default function ReferralsPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleCreate}>Create Referral</Button>
+              <Button onClick={handleCreate}>{t("loyalty.create_referral")}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -173,19 +174,19 @@ export default function ReferralsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Referrals</CardTitle>
+          <CardTitle>{t("loyalty.all_referrals")}</CardTitle>
           <CardDescription>
-            List of all referrals in the system.
+            {t("loyalty.list_of_all_referrals_in_the_system")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Referrer</TableHead>
-                <TableHead>Referred User</TableHead>
-                <TableHead>Code</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t("loyalty.referrer")}</TableHead>
+                <TableHead>{t("loyalty.referred_user")}</TableHead>
+                <TableHead>{t("loyalty.code")}</TableHead>
+                <TableHead className="text-right">{t("loyalty.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -211,7 +212,7 @@ export default function ReferralsPage() {
                     colSpan={4}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No referrals found.
+                    {t("loyalty.no_referrals_found")}
                   </TableCell>
                 </TableRow>
               )}

@@ -80,6 +80,7 @@ import { getDepartments } from "@/app/actions/handson/all/hrms/departments";
 import { getDesignations } from "@/app/actions/handson/all/hrms/designations";
 import { getCompanies } from "@/app/actions/handson/all/hrms/companies";
 
+import t from "@/app/lib/i18n";
 const employeeSchema = z.object({
   first_name: z.string().min(1, "First Name is required"),
   last_name: z.string().optional(),
@@ -188,10 +189,10 @@ export default function EmployeesPage() {
       <div className="flex justify-between items-center px-2">
         <div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
-            My Professional Profile
+            {t("erp.my_professional_profile")}
           </h1>
           <p className="text-muted-foreground">
-            Manage your credentials and bank-level verification status.
+            {t("erp.manage_your_credentials_and_bank_level_verificat")}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -200,7 +201,7 @@ export default function EmployeesPage() {
             className="glass py-1 px-3 border-emerald-200 text-emerald-700 bg-emerald-50/50"
           >
             <span className="h-2 w-2 rounded-full bg-emerald-500 mr-2 animate-pulse" />
-            System Active
+            {t("erp.system_active")}
           </Badge>
         </div>
       </div>
@@ -210,10 +211,10 @@ export default function EmployeesPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-xl font-bold">
-                Employee Record
+                {t("erp.employee_record")}
               </CardTitle>
               <CardDescription>
-                Official employment and verification data.
+                {t("erp.official_employment_and_verification_data")}
               </CardDescription>
             </div>
           </div>
@@ -223,12 +224,12 @@ export default function EmployeesPage() {
             <Table>
               <TableHeader className="bg-slate-50/50">
                 <TableRow>
-                  <TableHead className="font-bold">Identity & Name</TableHead>
-                  <TableHead className="font-bold">Role & Dept</TableHead>
-                  <TableHead className="font-bold">Financial Trust</TableHead>
-                  <TableHead className="font-bold">Employment</TableHead>
+                  <TableHead className="font-bold">{t("erp.identity_name")}</TableHead>
+                  <TableHead className="font-bold">{t("erp.role_dept")}</TableHead>
+                  <TableHead className="font-bold">{t("erp.financial_trust")}</TableHead>
+                  <TableHead className="font-bold">{t("erp.employment")}</TableHead>
                   <TableHead className="text-right font-bold">
-                    Actions
+                    {t("erp.actions")}
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -239,7 +240,7 @@ export default function EmployeesPage() {
                       colSpan={5}
                       className="text-center h-48 text-muted-foreground italic"
                     >
-                      No profile data available.
+                      {t("erp.no_profile_data_available")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -256,7 +257,7 @@ export default function EmployeesPage() {
                             </span>
                             {emp.id_verified && (
                               <div
-                                title="Identity Verified (South Africa)"
+                                title={t("erp.identity_verified_south_africa")}
                                 className="bg-emerald-100 p-0.5 rounded-full"
                               >
                                 <svg
@@ -304,7 +305,7 @@ export default function EmployeesPage() {
                                 variant="outline"
                                 className="text-[10px] py-0 h-4 bg-slate-50 border-none"
                               >
-                                Tax Recorded
+                                {t("erp.tax_recorded")}
                               </Badge>
                             )}
                           </div>
@@ -341,7 +342,7 @@ export default function EmployeesPage() {
                           onClick={() => openDialog(emp)}
                         >
                           <RiPencilLine className="h-4 w-4 mr-2" />
-                          Edit Profile
+                          {t("erp.edit_profile")}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -356,9 +357,9 @@ export default function EmployeesPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Edit Profile</DialogTitle>
+            <DialogTitle>{t("erp.edit_profile")}</DialogTitle>
             <DialogDescription>
-              Enter the details of the employee.
+              {t("erp.enter_the_details_of_the_employee")}
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
@@ -369,7 +370,7 @@ export default function EmployeesPage() {
                   name="first_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>First Name</FormLabel>
+                      <FormLabel>{t("erp.first_name")}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -382,7 +383,7 @@ export default function EmployeesPage() {
                   name="last_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Last Name</FormLabel>
+                      <FormLabel>{t("erp.last_name")}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -397,7 +398,7 @@ export default function EmployeesPage() {
                 name="contact_email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("erp.email")}</FormLabel>
                     <FormControl>
                       <Input {...field} type="email" />
                     </FormControl>
@@ -412,14 +413,14 @@ export default function EmployeesPage() {
                   name="company"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company</FormLabel>
+                      <FormLabel>{t("erp.company")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Company" />
+                            <SelectValue placeholder={t("erp.select_company")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -439,20 +440,20 @@ export default function EmployeesPage() {
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Status</FormLabel>
+                      <FormLabel>{t("erp.status")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Status" />
+                            <SelectValue placeholder={t("erp.status")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Active">Active</SelectItem>
-                          <SelectItem value="Left">Left</SelectItem>
-                          <SelectItem value="Suspended">Suspended</SelectItem>
+                          <SelectItem value="Active">{t("erp.active")}</SelectItem>
+                          <SelectItem value="Left">{t("erp.left")}</SelectItem>
+                          <SelectItem value="Suspended">{t("erp.suspended")}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -467,14 +468,14 @@ export default function EmployeesPage() {
                   name="department"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Department</FormLabel>
+                      <FormLabel>{t("erp.department")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select" />
+                            <SelectValue placeholder={t("erp.select")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -494,14 +495,14 @@ export default function EmployeesPage() {
                   name="designation"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Designation</FormLabel>
+                      <FormLabel>{t("erp.designation")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select" />
+                            <SelectValue placeholder={t("erp.select")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -523,7 +524,7 @@ export default function EmployeesPage() {
                 name="date_of_joining"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date of Joining</FormLabel>
+                    <FormLabel>{t("erp.date_of_joining")}</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
@@ -533,7 +534,7 @@ export default function EmployeesPage() {
               />
 
               <DialogFooter>
-                <Button type="submit">Save</Button>
+                <Button type="submit">{t("erp.save")}</Button>
               </DialogFooter>
             </form>
           </Form>

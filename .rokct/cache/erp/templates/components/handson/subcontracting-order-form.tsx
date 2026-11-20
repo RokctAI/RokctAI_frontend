@@ -40,6 +40,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import t from "@/app/lib/i18n";
 export function SubcontractingOrderForm({
   initialData,
   isEdit = false,
@@ -96,30 +97,30 @@ export function SubcontractingOrderForm({
         </div>
         {!isEdit && (
           <Button type="submit" disabled={loading}>
-            <RiSaveLine className="mr-2 h-4 w-4" /> Save
+            <RiSaveLine className="mr-2 h-4 w-4" /> {t("erp.save")}
           </Button>
         )}
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
+          <CardTitle>{t("erp.details")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <Label>Supplier (Job Worker)</Label>
+          <Label>{t("erp.supplier_job_worker")}</Label>
           <Input
             value={supplier}
             onChange={(e) => setSupplier(e.target.value)}
-            placeholder="Supplier Name"
+            placeholder={t("erp.supplier_name")}
             readOnly={isEdit}
           />
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row justify-between">
-          <CardTitle>Items</CardTitle>
+          <CardTitle>{t("erp.items")}</CardTitle>
           {!isEdit && (
             <Button type="button" size="sm" onClick={addItem}>
-              <RiAddLine className="h-4 w-4" /> Add
+              <RiAddLine className="h-4 w-4" /> {t("erp.add")}
             </Button>
           )}
         </CardHeader>
@@ -127,8 +128,8 @@ export function SubcontractingOrderForm({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Item</TableHead>
-                <TableHead>Qty</TableHead>
+                <TableHead>{t("erp.item")}</TableHead>
+                <TableHead>{t("erp.qty")}</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>

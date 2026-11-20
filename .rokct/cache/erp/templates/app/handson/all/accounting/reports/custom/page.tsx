@@ -133,7 +133,7 @@ export default function FinancialDashboard() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">Financial Reports</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("erp.financial_reports")}</h1>
         <div className="flex gap-2">
           <Select value={period} onValueChange={setPeriod}>
             <SelectTrigger className="w-[180px]">
@@ -155,9 +155,9 @@ export default function FinancialDashboard() {
 
       <Tabs defaultValue="pnl" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="pnl">Profit & Loss</TabsTrigger>
-          <TabsTrigger value="balance-sheet">Balance Sheet</TabsTrigger>
-          {/* <TabsTrigger value="cash-flow">Cash Flow</TabsTrigger> */}
+          <TabsTrigger value="pnl">{t("erp.profit_loss")}</TabsTrigger>
+          <TabsTrigger value="balance-sheet">{t("erp.balance_sheet")}</TabsTrigger>
+          {/* <TabsTrigger value="cash-flow">{t("erp.cash_flow")}</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="pnl" className="space-y-4">
@@ -165,7 +165,7 @@ export default function FinancialDashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Total Income
+                  {t("erp.total_income")}
                 </CardTitle>
                 <RiMoneyDollarCircleLine className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -176,13 +176,13 @@ export default function FinancialDashboard() {
                     currency: currency,
                   }).format(pnlData?.income || 0)}
                 </div>
-                <p className="text-xs text-muted-foreground">Year to Date</p>
+                <p className="text-xs text-muted-foreground">{t("erp.year_to_date")}</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Total Expenses
+                  {t("erp.total_expenses")}
                 </CardTitle>
                 <RiShoppingCartLine className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -193,13 +193,13 @@ export default function FinancialDashboard() {
                     currency: currency,
                   }).format(pnlData?.expense || 0)}
                 </div>
-                <p className="text-xs text-muted-foreground">Year to Date</p>
+                <p className="text-xs text-muted-foreground">{t("erp.year_to_date")}</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Net Profit
+                  {t("erp.net_profit")}
                 </CardTitle>
                 <RiArrowRightUpLine className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -217,15 +217,15 @@ export default function FinancialDashboard() {
                     currency: currency,
                   }).format(pnlData?.profit || 0)}
                 </div>
-                <p className="text-xs text-muted-foreground">Net Income</p>
+                <p className="text-xs text-muted-foreground">{t("erp.net_income")}</p>
               </CardContent>
             </Card>
           </div>
 
           <Card className="col-span-4">
             <CardHeader>
-              <CardTitle>Income vs Expense</CardTitle>
-              <CardDescription>Profitability Analysis</CardDescription>
+              <CardTitle>{t("erp.income_vs_expense")}</CardTitle>
+              <CardDescription>{t("erp.profitability_analysis")}</CardDescription>
             </CardHeader>
             <CardContent className="pl-2 h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -270,7 +270,7 @@ export default function FinancialDashboard() {
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Assets</CardTitle>
+                <CardTitle>{t("erp.assets")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-blue-600">
@@ -283,7 +283,7 @@ export default function FinancialDashboard() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Liabilities</CardTitle>
+                <CardTitle>{t("erp.liabilities")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-orange-600">
@@ -297,7 +297,7 @@ export default function FinancialDashboard() {
           </div>
           <Card>
             <CardHeader>
-              <CardTitle>Equity</CardTitle>
+              <CardTitle>{t("erp.equity")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">

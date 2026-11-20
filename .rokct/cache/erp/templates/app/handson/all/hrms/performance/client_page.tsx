@@ -72,6 +72,7 @@ import {
   createAppraisal,
 } from "@/app/actions/handson/all/hrms/performance";
 
+import t from "@/app/lib/i18n";
 const goalSchema = z.object({
   employee: z.string().min(1, "Employee is required"),
   goal: z.string().min(1, "Goal description is required"),
@@ -146,15 +147,15 @@ export default function ClientPerformancePage({
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Performance Management</h1>
+        <h1 className="text-3xl font-bold">{t("erp.performance_management")}</h1>
         {activeTab === "goals" && (
           <Button onClick={() => setIsGoalDialogOpen(true)}>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Goal
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_goal")}
           </Button>
         )}
         {activeTab === "appraisals" && (
           <Button onClick={() => setIsAppraisalDialogOpen(true)}>
-            <RiAddLine className="mr-2 h-4 w-4" /> Schedule Appraisal
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.schedule_appraisal")}
           </Button>
         )}
       </div>
@@ -165,23 +166,23 @@ export default function ClientPerformancePage({
         className="w-full"
       >
         <TabsList>
-          <TabsTrigger value="goals">Employee Goals</TabsTrigger>
-          <TabsTrigger value="appraisals">Appraisals</TabsTrigger>
+          <TabsTrigger value="goals">{t("erp.employee_goals")}</TabsTrigger>
+          <TabsTrigger value="appraisals">{t("erp.appraisals")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="goals" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Goals</CardTitle>
+              <CardTitle>{t("erp.all_goals")}</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Goal</TableHead>
-                    <TableHead>Dates</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>{t("erp.employee")}</TableHead>
+                    <TableHead>{t("erp.goal")}</TableHead>
+                    <TableHead>{t("erp.dates")}</TableHead>
+                    <TableHead>{t("erp.status")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -191,7 +192,7 @@ export default function ClientPerformancePage({
                         colSpan={4}
                         className="text-center h-24 text-muted"
                       >
-                        No goals found
+                        {t("erp.no_goals_found")}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -219,16 +220,16 @@ export default function ClientPerformancePage({
         <TabsContent value="appraisals" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Appraisals</CardTitle>
+              <CardTitle>{t("erp.appraisals")}</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Cycle</TableHead>
-                    <TableHead>Score</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>{t("erp.employee")}</TableHead>
+                    <TableHead>{t("erp.cycle")}</TableHead>
+                    <TableHead>{t("erp.score")}</TableHead>
+                    <TableHead>{t("erp.status")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -238,7 +239,7 @@ export default function ClientPerformancePage({
                         colSpan={4}
                         className="text-center h-24 text-muted"
                       >
-                        No appraisals found
+                        {t("erp.no_appraisals_found")}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -266,7 +267,7 @@ export default function ClientPerformancePage({
       <Dialog open={isGoalDialogOpen} onOpenChange={setIsGoalDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>New Goal</DialogTitle>
+            <DialogTitle>{t("erp.new_goal")}</DialogTitle>
           </DialogHeader>
           <Form {...goalForm}>
             <form
@@ -278,14 +279,14 @@ export default function ClientPerformancePage({
                 name="employee"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Employee</FormLabel>
+                    <FormLabel>{t("erp.employee")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select" />
+                          <SelectValue placeholder={t("erp.select")} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -305,7 +306,7 @@ export default function ClientPerformancePage({
                 name="goal"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Goal</FormLabel>
+                    <FormLabel>{t("erp.goal")}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -319,7 +320,7 @@ export default function ClientPerformancePage({
                   name="start_date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Start</FormLabel>
+                      <FormLabel>{t("erp.start")}</FormLabel>
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
@@ -332,7 +333,7 @@ export default function ClientPerformancePage({
                   name="end_date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>End</FormLabel>
+                      <FormLabel>{t("erp.end")}</FormLabel>
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
@@ -342,7 +343,7 @@ export default function ClientPerformancePage({
                 />
               </div>
               <DialogFooter>
-                <Button type="submit">Save</Button>
+                <Button type="submit">{t("erp.save")}</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -356,7 +357,7 @@ export default function ClientPerformancePage({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>New Appraisal</DialogTitle>
+            <DialogTitle>{t("erp.new_appraisal")}</DialogTitle>
           </DialogHeader>
           <Form {...appraisalForm}>
             <form
@@ -368,14 +369,14 @@ export default function ClientPerformancePage({
                 name="employee"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Employee</FormLabel>
+                    <FormLabel>{t("erp.employee")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select" />
+                          <SelectValue placeholder={t("erp.select")} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -395,7 +396,7 @@ export default function ClientPerformancePage({
                 name="appraisal_cycle"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cycle (e.g., 2024-Q1)</FormLabel>
+                    <FormLabel>{t("erp.cycle_e_g_2024_q1")}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -408,22 +409,22 @@ export default function ClientPerformancePage({
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel>{t("erp.status")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select" />
+                          <SelectValue placeholder={t("erp.select")} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Scheduled">Scheduled</SelectItem>
+                        <SelectItem value="Scheduled">{t("erp.scheduled")}</SelectItem>
                         <SelectItem value="Pending Review">
-                          Pending Review
+                          {t("erp.pending_review")}
                         </SelectItem>
-                        <SelectItem value="Completed">Completed</SelectItem>
+                        <SelectItem value="Completed">{t("erp.completed")}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -431,7 +432,7 @@ export default function ClientPerformancePage({
                 )}
               />
               <DialogFooter>
-                <Button type="submit">Schedule</Button>
+                <Button type="submit">{t("erp.schedule")}</Button>
               </DialogFooter>
             </form>
           </Form>

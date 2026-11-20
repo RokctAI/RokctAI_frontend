@@ -39,6 +39,7 @@ import { deletePurchaseInvoice } from "@/app/actions/handson/all/accounting/purc
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 interface PurchaseInvoiceListProps {
   invoices: any[];
 }
@@ -70,16 +71,16 @@ export function PurchaseInvoiceList({ invoices }: PurchaseInvoiceListProps) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Purchase Invoices</h1>
+          <h1 className="text-2xl font-bold">{t("erp.purchase_invoices")}</h1>
           <p className="text-sm text-muted-foreground">
-            Manage your bills and payments to suppliers
+            {t("erp.manage_your_bills_and_payments_to_suppliers")}
           </p>
         </div>
         <div className="flex gap-4">
           <div className="relative w-64">
             <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search..."
+              placeholder={t("erp.search")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
@@ -87,7 +88,7 @@ export function PurchaseInvoiceList({ invoices }: PurchaseInvoiceListProps) {
           </div>
           <Link href="/handson/all/financials/accounts/purchase-invoice/new">
             <Button>
-              <RiAddLine className="mr-2 h-4 w-4" /> New Bill
+              <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_bill")}
             </Button>
           </Link>
         </div>
@@ -97,13 +98,13 @@ export function PurchaseInvoiceList({ invoices }: PurchaseInvoiceListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Supplier</TableHead>
-              <TableHead>Posting Date</TableHead>
-              <TableHead>Due Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Total</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.supplier")}</TableHead>
+              <TableHead>{t("erp.posting_date")}</TableHead>
+              <TableHead>{t("erp.due_date")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
+              <TableHead className="text-right">{t("erp.total")}</TableHead>
+              <TableHead className="w-[100px]">{t("erp.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -113,7 +114,7 @@ export function PurchaseInvoiceList({ invoices }: PurchaseInvoiceListProps) {
                   colSpan={7}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No purchase invoices found.
+                  {t("erp.no_purchase_invoices_found")}
                 </TableCell>
               </TableRow>
             ) : (

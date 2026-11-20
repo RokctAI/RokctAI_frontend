@@ -18,6 +18,7 @@
 
 import React from "react";
 
+import t from "@/app/lib/i18n";
 type Announcement = {
   name: string;
   subject: string;
@@ -32,7 +33,7 @@ export function AnnouncementCard({
   announcements: Announcement[];
 }) {
   if (!announcements || announcements.length === 0) {
-    return <div className="text-zinc-500 text-sm">No new announcements.</div>;
+    return <div className="text-zinc-500 text-sm">{t("agent.no_new_announcements")}</div>;
   }
 
   return (
@@ -57,7 +58,7 @@ export function AnnouncementCard({
             <line x1="8" x2="16" y1="22" y2="22" />
           </svg>
         </div>
-        <h3 className="font-bold text-amber-200 text-sm">Announcements</h3>
+        <h3 className="font-bold text-amber-200 text-sm">{t("agent.announcements")}</h3>
       </div>
 
       <div className="space-y-4">

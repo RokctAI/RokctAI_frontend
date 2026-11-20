@@ -224,7 +224,7 @@ export default function ParcelOrdersPage() {
                               onClick={() =>
                                 handleStatusUpdate(order.name, "Accepted")
                               }
-                              title="Accept"
+                              title={t("orders.accept")}
                             >
                               <RiCheckboxCircleLine className="size-4" />
                             </Button>
@@ -235,7 +235,7 @@ export default function ParcelOrdersPage() {
                               onClick={() =>
                                 handleStatusUpdate(order.name, "Canceled")
                               }
-                              title="Cancel"
+                              title={t("orders.cancel")}
                             >
                               <RiCloseCircleLine className="size-4" />
                             </Button>

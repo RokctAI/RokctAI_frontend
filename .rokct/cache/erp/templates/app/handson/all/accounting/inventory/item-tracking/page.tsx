@@ -22,6 +22,7 @@ import { SimpleList } from "@/components/handson/stock-advanced-components";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 export default async function Page() {
   const batches = await getBatches();
@@ -29,15 +30,15 @@ export default async function Page() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Item Tracking</h1>
+      <h1 className="text-2xl font-bold mb-6">{t("erp.item_tracking")}</h1>
       <Tabs defaultValue="batches">
         <TabsList>
-          <TabsTrigger value="batches">Batches</TabsTrigger>
-          <TabsTrigger value="serials">Serial Nos</TabsTrigger>
+          <TabsTrigger value="batches">{t("erp.batches")}</TabsTrigger>
+          <TabsTrigger value="serials">{t("erp.serial_nos")}</TabsTrigger>
         </TabsList>
         <TabsContent value="batches">
           <SimpleList
-            title="Batches"
+            title={t("erp.batches")}
             items={batches}
             headers={["Batch ID", "Item", "Expiry"]}
             renderRow={(i: any) => (
@@ -51,7 +52,7 @@ export default async function Page() {
         </TabsContent>
         <TabsContent value="serials">
           <SimpleList
-            title="Serial Nos"
+            title={t("erp.serial_nos")}
             items={serials}
             headers={["Serial No", "Item", "Status"]}
             renderRow={(i: any) => (

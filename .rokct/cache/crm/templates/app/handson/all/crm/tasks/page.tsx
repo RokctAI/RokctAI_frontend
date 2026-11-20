@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+import t from "@/app/lib/i18n";
 export default async function TasksPage() {
   const result = await getTasks(1, 50);
   const tasks = result.data;
@@ -46,24 +47,24 @@ export default async function TasksPage() {
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.tasks")}</h1>
           <p className="text-muted-foreground">
-            Manage your daily tasks and priorities.
+            {t("crm.manage_your_daily_tasks_and_priorities")}
           </p>
         </div>
         <Button asChild>
-          <Link href="/handson/all/crm/tasks/new">Create Task</Link>
+          <Link href="/handson/all/crm/tasks/new">{t("crm.create_task")}</Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Tasks</CardTitle>
+          <CardTitle>{t("crm.all_tasks")}</CardTitle>
         </CardHeader>
         <CardContent>
           {tasks.length === 0 ? (
             <div className="flex h-40 items-center justify-center text-muted-foreground">
-              No tasks found.
+              {t("crm.no_tasks_found")}
             </div>
           ) : (
             <div className="relative w-full overflow-auto">
@@ -71,19 +72,19 @@ export default async function TasksPage() {
                 <thead className="[&_tr]:border-b">
                   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Title
+                      {t("crm.title")}
                     </th>
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Assigned To
+                      {t("crm.assigned_to")}
                     </th>
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Priority
+                      {t("crm.priority")}
                     </th>
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Due Date
+                      {t("crm.due_date")}
                     </th>
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Status
+                      {t("crm.status")}
                     </th>
                   </tr>
                 </thead>

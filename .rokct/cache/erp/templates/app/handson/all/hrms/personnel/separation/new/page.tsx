@@ -39,6 +39,7 @@ import {
 } from "@/app/actions/handson/all/hrms/separations";
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 
+import t from "@/app/lib/i18n";
 export default function NewSeparationPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -88,22 +89,22 @@ export default function NewSeparationPage() {
             <RiArrowLeftLine className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">Record Resignation</h1>
+        <h1 className="text-2xl font-bold">{t("erp.record_resignation")}</h1>
         <Button type="submit" disabled={loading} variant="destructive">
-          <RiSaveLine className="mr-2 h-4 w-4" /> Submit
+          <RiSaveLine className="mr-2 h-4 w-4" /> {t("erp.submit")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Separation Details</CardTitle>
+          <CardTitle>{t("erp.separation_details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Employee</Label>
+            <Label>{t("erp.employee")}</Label>
             <Select value={employee} onValueChange={setEmployee}>
               <SelectTrigger>
-                <SelectValue placeholder="Select Employee" />
+                <SelectValue placeholder={t("erp.select_employee")} />
               </SelectTrigger>
               <SelectContent>
                 {employees.map((e) => (
@@ -116,7 +117,7 @@ export default function NewSeparationPage() {
           </div>
 
           <div>
-            <Label>Resignation Date</Label>
+            <Label>{t("erp.resignation_date")}</Label>
             <Input
               type="date"
               value={date}
@@ -125,11 +126,11 @@ export default function NewSeparationPage() {
           </div>
 
           <div>
-            <Label>Reason for Leaving</Label>
+            <Label>{t("erp.reason_for_leaving")}</Label>
             <Textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Explain the reason..."
+              placeholder={t("erp.explain_the_reason")}
               rows={4}
             />
           </div>

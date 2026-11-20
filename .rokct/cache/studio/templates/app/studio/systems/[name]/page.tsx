@@ -25,6 +25,7 @@ import { getDesignSystem } from "@/app/actions/studio/systems/actions";
 import type { DesignSystem } from "@/app/actions/studio/systems/types";
 import { Button } from "@/components/ui/button";
 
+import tr from "@/app/lib/i18n";
 export default function DesignSystemPage({ params }: { params: Promise<{ name: string }> }) {
   const { name } = use(params);
   const [system, setSystem] = useState<DesignSystem | null>(null);
@@ -48,12 +49,12 @@ export default function DesignSystemPage({ params }: { params: Promise<{ name: s
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">{system.system_name}</h1>
         <div className="flex items-center gap-3">
-          {book && <a className="text-sm underline" href={book}>Brand book PDF</a>}
-          <Button variant="outline" onClick={makeBrandbook}>Make brand book</Button>
+          {book && <a className="text-sm underline" href={book}>{tr("studio.brand_book_pdf")}</a>}
+          <Button variant="outline" onClick={makeBrandbook}>{tr("studio.make_brand_book")}</Button>
         </div>
       </div>
       <section className="space-y-2">
-        <h2 className="font-medium">Colours</h2>
+        <h2 className="font-medium">{tr("studio.colours")}</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
           {system.tokens.map((t) => (
             <div key={t.name} className="space-y-1 text-sm">
@@ -65,7 +66,7 @@ export default function DesignSystemPage({ params }: { params: Promise<{ name: s
         </div>
       </section>
       <section className="space-y-2">
-        <h2 className="font-medium">Fonts</h2>
+        <h2 className="font-medium">{tr("studio.fonts")}</h2>
         <ul className="text-sm">
           {system.fonts.map((f) => (
             <li key={f.name}>

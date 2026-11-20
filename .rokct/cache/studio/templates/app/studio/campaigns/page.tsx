@@ -21,6 +21,7 @@ import { listCampaigns } from "@/app/actions/studio/campaigns/actions";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export const dynamic = "force-dynamic";
 
 export default async function CampaignsPage() {
@@ -28,13 +29,13 @@ export default async function CampaignsPage() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Campaigns</h1>
+        <h1 className="text-2xl font-semibold">{t("studio.campaigns")}</h1>
         <Link href="/studio/campaigns/new" className="text-sm underline">
-          New campaign
+          {t("studio.new_campaign")}
         </Link>
       </div>
       {campaigns.length === 0 ? (
-        <p className="text-muted-foreground">No campaigns yet.</p>
+        <p className="text-muted-foreground">{t("studio.no_campaigns_yet")}</p>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {campaigns.map((c) => (

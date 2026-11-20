@@ -40,14 +40,14 @@ export function CostCenterList({ items }: { items: any[] }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Cost Centers</h1>
+          <h1 className="text-2xl font-bold">{t("erp.cost_centers")}</h1>
           <p className="text-muted-foreground">
-            Track profitability by department/project.
+            {t("erp.track_profitability_by_department_project")}
           </p>
         </div>
         <Link href="/handson/all/financials/accounts/cost-center/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Cost Center
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_cost_center")}
           </Button>
         </Link>
       </div>
@@ -55,8 +55,8 @@ export function CostCenterList({ items }: { items: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Parent</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.parent")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -92,22 +92,22 @@ export function CostCenterForm() {
 
   return (
     <div className="max-w-md mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Cost Center</h1>
+      <h1 className="text-2xl font-bold">{t("erp.new_cost_center")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Name</Label>
+            <Label>{t("erp.name")}</Label>
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div>
-            <Label>Parent Cost Center</Label>
+            <Label>{t("erp.parent_cost_center")}</Label>
                <Input
                  value={parent}
                  onChange={(e) => setParent(e.target.value)}
                  placeholder={t('common.ph_cost_center')}
                />
           </div>
-          <Button onClick={handleSubmit}>Save</Button>
+          <Button onClick={handleSubmit}>{t("erp.save")}</Button>
         </CardContent>
       </Card>
     </div>

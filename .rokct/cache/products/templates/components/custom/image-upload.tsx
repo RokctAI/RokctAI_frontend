@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import t from "@/app/lib/i18n";
 interface ImageUploadProps {
   value?: string;
   onChange: (url: string) => void;
@@ -98,7 +99,7 @@ export function ImageUpload({
 
       {preview ? (
         <div className="relative w-full h-48 border rounded-lg overflow-hidden bg-muted">
-          <Image src={preview} alt="Preview" fill className="object-contain" />
+          <Image src={preview} alt={t("products.preview")} fill className="object-contain" />
           <Button
             type="button"
             variant="destructive"
@@ -121,10 +122,10 @@ export function ImageUpload({
               <>
                 <ImageIcon className="size-12 text-muted-foreground mb-2" />
                 <p className="text-sm text-muted-foreground">
-                  Click to upload or drag and drop
+                  {t("products.click_to_upload_or_drag_and_drop")}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  PNG, JPG, GIF up to 5MB
+                  {t("products.png_jpg_gif_up_to_5mb")}
                 </p>
               </>
             )}

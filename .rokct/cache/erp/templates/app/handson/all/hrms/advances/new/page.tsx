@@ -55,6 +55,7 @@ import { toast } from "sonner";
 import { getEmployees } from "@/app/actions/handson/all/hrms/employees";
 import { createEmployeeAdvance } from "@/app/actions/handson/all/hrms/advances";
 
+import t from "@/app/lib/i18n";
 const formSchema = z.object({
   employee: z.string().min(1, "Employee is required"),
   posting_date: z.date({ required_error: "Date is required" }),
@@ -107,18 +108,18 @@ export default function NewAdvancePage() {
     }
   }
 
-  if (loading) return <div className="p-8">Loading form data...</div>;
+  if (loading) return <div className="p-8">{t("erp.loading_form_data")}</div>;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 mb-10">
       <div>
-        <h1 className="text-3xl font-bold">New Advance Request</h1>
-        <p className="text-muted-foreground">Request a cash advance.</p>
+        <h1 className="text-3xl font-bold">{t("erp.new_advance_request")}</h1>
+        <p className="text-muted-foreground">{t("erp.request_a_cash_advance")}</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Request Details</CardTitle>
+          <CardTitle>{t("erp.request_details")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -128,14 +129,14 @@ export default function NewAdvancePage() {
                 name="employee"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Employee</FormLabel>
+                    <FormLabel>{t("erp.employee")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select Employee" />
+                          <SelectValue placeholder={t("erp.select_employee")} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -157,7 +158,7 @@ export default function NewAdvancePage() {
                   name="posting_date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Date</FormLabel>
+                      <FormLabel>{t("erp.date")}</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -171,7 +172,7 @@ export default function NewAdvancePage() {
                               {field.value ? (
                                 format(field.value, "PPP")
                               ) : (
-                                <span>Pick a date</span>
+                                <span>{t("erp.pick_a_date")}</span>
                               )}
                               <RiCalendarLine className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -199,7 +200,7 @@ export default function NewAdvancePage() {
                   name="advance_amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Amount</FormLabel>
+                      <FormLabel>{t("erp.amount")}</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -219,10 +220,10 @@ export default function NewAdvancePage() {
                 name="purpose"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Purpose</FormLabel>
+                    <FormLabel>{t("erp.purpose")}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Reason for advance..."
+                        placeholder={t("erp.reason_for_advance")}
                         className="resize-none"
                         {...field}
                       />
@@ -244,7 +245,7 @@ export default function NewAdvancePage() {
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel>Repay from Salary</FormLabel>
+                      <FormLabel>{t("erp.repay_from_salary")}</FormLabel>
                       <FormDescription>
                         Unclaimed amounts will be deducted from future salary
                         slips.

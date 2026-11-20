@@ -47,12 +47,12 @@ export function BudgetList({ items }: { items: any[] }) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Budgets</h1>
-          <p className="text-muted-foreground">Spending limits.</p>
+          <h1 className="text-2xl font-bold">{t("erp.budgets")}</h1>
+          <p className="text-muted-foreground">{t("erp.spending_limits")}</p>
         </div>
         <Link href="/handson/all/financials/accounts/budget/new">
           <Button>
-            <RiAddLine className="mr-2 h-4 w-4" /> New Budget
+            <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.new_budget")}
           </Button>
         </Link>
       </div>
@@ -60,10 +60,10 @@ export function BudgetList({ items }: { items: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Against</TableHead>
-              <TableHead>Target</TableHead>
-              <TableHead>Year</TableHead>
+              <TableHead>{t("erp.name")}</TableHead>
+              <TableHead>{t("erp.against")}</TableHead>
+              <TableHead>{t("erp.target")}</TableHead>
+              <TableHead>{t("erp.year")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -105,15 +105,15 @@ export function BudgetForm() {
 
   return (
     <div className="max-w-md mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">New Budget</h1>
+      <h1 className="text-2xl font-bold">{t("erp.new_budget")}</h1>
       <Card>
         <CardContent className="space-y-4 pt-4">
           <div>
-            <Label>Fiscal Year</Label>
+            <Label>{t("erp.fiscal_year")}</Label>
             <Input value={year} onChange={(e) => setYear(e.target.value)} />
           </div>
           <div>
-            <Label>Cost Center</Label>
+            <Label>{t("erp.cost_center")}</Label>
                <Input
                  value={center}
                  onChange={(e) => setCenter(e.target.value)}
@@ -122,9 +122,9 @@ export function BudgetForm() {
           </div>
 
           <div className="p-4 border rounded bg-muted/20">
-            <Label className="font-bold mb-2 block">Limit</Label>
+            <Label className="font-bold mb-2 block">{t("erp.limit")}</Label>
             <div>
-              <Label>Account</Label>
+              <Label>{t("erp.account")}</Label>
                <Input
                  value={account}
                  onChange={(e) => setAccount(e.target.value)}
@@ -133,7 +133,7 @@ export function BudgetForm() {
                />
             </div>
             <div>
-              <Label>Max Amount</Label>
+              <Label>{t("erp.max_amount")}</Label>
               <Input
                 type="number"
                 value={amount}
@@ -143,7 +143,7 @@ export function BudgetForm() {
           </div>
 
           <Button onClick={handleSubmit} className="w-full">
-            Set Budget
+            {t("erp.set_budget")}
           </Button>
         </CardContent>
       </Card>

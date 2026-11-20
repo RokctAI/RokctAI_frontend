@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 function toBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -77,7 +78,7 @@ export default function PreflightPage() {
   const open = report?.findings.filter((f) => !f.fixed) ?? [];
   return (
     <div className="space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">Check a client PDF</h1>
+      <h1 className="text-2xl font-semibold">{t("studio.check_a_client_pdf")}</h1>
       <input type="file" accept="application/pdf" onChange={(e) => onFile(e.target.files?.[0])} />
       {busy && <RiLoader4Line className="h-5 w-5 animate-spin" />}
       {report && (
@@ -104,12 +105,12 @@ export default function PreflightPage() {
                 <input
                   className="w-32 rounded-md border px-3 py-2"
                   type="number"
-                  placeholder="Quantity"
+                  placeholder={t("studio.quantity")}
                   value={quantity ?? ""}
                   onChange={(e) => setQuantity(Number(e.target.value) || undefined)}
                 />
-                <Button onClick={impose} disabled={busy}>Impose</Button>
-                {imposed && <a className="underline" href={imposed}>Imposed sheet</a>}
+                <Button onClick={impose} disabled={busy}>{t("studio.impose")}</Button>
+                {imposed && <a className="underline" href={imposed}>{t("studio.imposed_sheet")}</a>}
               </div>
             )}
           </CardContent>

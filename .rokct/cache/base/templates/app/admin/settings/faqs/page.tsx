@@ -164,7 +164,7 @@ export default function FAQsPage() {
                 <div>
                   <CardTitle className="text-lg">{faq.question}</CardTitle>
                   <CardDescription className="mt-1">
-                    Type: <span className="capitalize">{faq.type}</span> •
+                    {t("base.type")} <span className="capitalize">{faq.type}</span> •
                     Status:{" "}
                     <span
                       className={faq.active ? "text-green-600" : "text-red-600"}
@@ -257,10 +257,10 @@ export default function FAQsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="web">Web</SelectItem>
-                    <SelectItem value="mobile">Mobile</SelectItem>
-                    <SelectItem value="driver">Driver</SelectItem>
-                    <SelectItem value="seller">Seller</SelectItem>
+                    <SelectItem value="web">{t("base.web")}</SelectItem>
+                    <SelectItem value="mobile">{t("base.mobile")}</SelectItem>
+                    <SelectItem value="driver">{t("base.driver")}</SelectItem>
+                    <SelectItem value="seller">{t("base.seller")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

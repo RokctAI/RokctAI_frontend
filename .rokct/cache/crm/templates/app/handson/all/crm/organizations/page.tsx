@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { CreateOrganizationDialog } from "@/components/handson/organizations/create-organization-dialog";
 import { getDocTypeMeta } from "@/app/actions/handson/all/crm/meta";
 
+import t from "@/app/lib/i18n";
 export default async function OrganizationsPage() {
   const [orgsRes, metaRes] = await Promise.all([
     getOrganizations(1, 50),
@@ -40,20 +41,20 @@ export default async function OrganizationsPage() {
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Organizations</h1>
-          <p className="text-muted-foreground">Track companies and accounts.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("crm.organizations")}</h1>
+          <p className="text-muted-foreground">{t("crm.track_companies_and_accounts")}</p>
         </div>
         <CreateOrganizationDialog meta={meta.data!} />
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Organizations</CardTitle>
+          <CardTitle>{t("crm.all_organizations")}</CardTitle>
         </CardHeader>
         <CardContent>
           {organizations.length === 0 ? (
             <div className="flex h-40 items-center justify-center text-muted-foreground">
-              No organizations found.
+              {t("crm.no_organizations_found")}
             </div>
           ) : (
             <div className="relative w-full overflow-auto">
@@ -61,13 +62,13 @@ export default async function OrganizationsPage() {
                 <thead className="[&_tr]:border-b">
                   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Organization
+                      {t("crm.organization")}
                     </th>
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Website
+                      {t("crm.website")}
                     </th>
                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">
-                      Created
+                      {t("crm.created")}
                     </th>
                   </tr>
                 </thead>

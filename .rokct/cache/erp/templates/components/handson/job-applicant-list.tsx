@@ -33,6 +33,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { getJobApplicants } from "@/app/actions/handson/all/hrms/recruitment";
 
+import t from "@/app/lib/i18n";
 export function JobApplicantList() {
   const router = useRouter();
   const [applicants, setApplicants] = useState<any[]>([]);
@@ -79,7 +80,7 @@ export function JobApplicantList() {
         <div className="relative w-72">
           <RiSearchLine className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search candidates..."
+            placeholder={t("erp.search_candidates")}
             className="pl-8"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -90,7 +91,7 @@ export function JobApplicantList() {
             router.push("/handson/all/hr/recruitment/candidates/new")
           }
         >
-          <RiAddLine className="mr-2 h-4 w-4" /> Add Candidate
+          <RiAddLine className="mr-2 h-4 w-4" /> {t("erp.add_candidate")}
         </Button>
       </div>
 
@@ -98,18 +99,18 @@ export function JobApplicantList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Candidate Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Applied For</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Applied On</TableHead>
+              <TableHead>{t("erp.candidate_name")}</TableHead>
+              <TableHead>{t("erp.email")}</TableHead>
+              <TableHead>{t("erp.applied_for")}</TableHead>
+              <TableHead>{t("erp.status")}</TableHead>
+              <TableHead className="text-right">{t("erp.applied_on")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8">
-                  Loading...
+                  {t("erp.loading")}
                 </TableCell>
               </TableRow>
             ) : filteredApplicants.length === 0 ? (
@@ -118,7 +119,7 @@ export function JobApplicantList() {
                   colSpan={5}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No candidates found.
+                  {t("erp.no_candidates_found")}
                 </TableCell>
               </TableRow>
             ) : (

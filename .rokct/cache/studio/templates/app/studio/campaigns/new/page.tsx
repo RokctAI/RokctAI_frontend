@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 
 import { SystemFormatFields } from "../../components/system-format-fields";
 
+import t from "@/app/lib/i18n";
 // One approved master design re-laid out for many formats.
 export default function NewCampaignPage() {
   const router = useRouter();
@@ -65,14 +66,14 @@ export default function NewCampaignPage() {
 
   return (
     <div className="max-w-3xl space-y-5 p-6">
-      <h1 className="text-2xl font-semibold">New campaign</h1>
-      <input className="w-full rounded-md border p-2" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
-      <textarea className="w-full rounded-md border p-3" rows={3} placeholder="Brief" value={brief} onChange={(e) => setBrief(e.target.value)} />
+      <h1 className="text-2xl font-semibold">{t("studio.new_campaign")}</h1>
+      <input className="w-full rounded-md border p-2" placeholder={t("studio.title")} value={title} onChange={(e) => setTitle(e.target.value)} />
+      <textarea className="w-full rounded-md border p-3" rows={3} placeholder={t("studio.brief")} value={brief} onChange={(e) => setBrief(e.target.value)} />
       <SystemFormatFields system={system} onSystem={setSystem} />
       <label className="block space-y-1 text-sm">
-        <span>Master design</span>
+        <span>{t("studio.master_design")}</span>
         <select className="w-full rounded-md border p-2" value={master} onChange={(e) => setMaster(e.target.value)}>
-          <option value="">Link later</option>
+          <option value="">{t("studio.link_later")}</option>
           {requests.map((r) => (
             <option key={r.name} value={r.name}>
               {r.title || r.name}
@@ -81,7 +82,7 @@ export default function NewCampaignPage() {
         </select>
       </label>
       <div className="space-y-2">
-        <div className="text-sm">Formats</div>
+        <div className="text-sm">{t("studio.formats")}</div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {formats.map((f) => (
             <label key={f.name} className="flex items-center gap-2 text-sm">
@@ -95,7 +96,7 @@ export default function NewCampaignPage() {
           ))}
         </div>
       </div>
-      <Button disabled={picked.length === 0 || busy} onClick={create}>Create</Button>
+      <Button disabled={picked.length === 0 || busy} onClick={create}>{t("studio.create")}</Button>
     </div>
   );
 }

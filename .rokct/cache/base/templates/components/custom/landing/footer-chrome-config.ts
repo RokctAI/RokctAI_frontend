@@ -337,7 +337,7 @@ export interface DownloadEntry {
 export interface FooterChromeConfig {
   /**
    * The site's own name, which the copyright line names (since 1.54.0:
-   * `© <year> <site name> · Built with ♥ by ROKCT`, Ray's ruling for every
+   * `© <year> <site name> · Built with ♥ by Cortex Media`, Ray's ruling for every
    * site). Absent or empty: the host's PLATFORM_NAME. A site that names
    * itself in data (a local-data site's `site.json`) passes it here.
    */

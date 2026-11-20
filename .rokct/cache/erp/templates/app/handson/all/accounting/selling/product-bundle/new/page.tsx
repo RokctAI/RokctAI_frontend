@@ -15,10 +15,11 @@
  */
 
 import { ProductBundleForm } from "@/components/handson/commercial-extras-components";
+import t from "@/app/lib/i18n";
 export default function Page() {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">New Product Bundle</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("erp.new_product_bundle")}</h1>
       <ProductBundleForm />
     </div>
   );

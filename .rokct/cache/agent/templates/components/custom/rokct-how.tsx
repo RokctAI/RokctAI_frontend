@@ -35,6 +35,7 @@ import type {
   PageSectionProps,
 } from "@/components/custom/landing/page-sections";
 
+import t from "@/app/lib/i18n";
 export const meta: PageSectionMeta = {
   order: 20,
   nav: [{ id: RK_ANCHORS.how, label: "How it works" }],
@@ -54,7 +55,7 @@ function HowDiagram() {
     <div className="rk-diagram rk-reveal" aria-hidden="true">
       <svg viewBox="0 0 1160 300">
         <rect className="rk-dg-box" x="0" y="96" width="250" height="108" rx="20" />
-        <text className="rk-dg-s" x="24" y="128">YOU ASK</text>
+        <text className="rk-dg-s" x="24" y="128">{t("agent.you_ask")}</text>
         <text className="rk-dg-t" x="24" y="158">&quot;Pay the supplier for</text>
         <text className="rk-dg-t" x="24" y="180">invoice 0089&quot;</text>
         <path className="rk-dg-flow" d="M250 150 H 430" />
@@ -65,7 +66,7 @@ function HowDiagram() {
         <text className="rk-dg-s" x="495" y="240" textAnchor="middle">ROK</text>
         <path className="rk-dg-flow" d="M560 150 H 700" />
         <rect className="rk-dg-box" x="700" y="20" width="250" height="260" rx="22" />
-        <text className="rk-dg-s" x="724" y="52">YOUR COMPANY SITE</text>
+        <text className="rk-dg-s" x="724" y="52">{t("agent.your_company_site")}</text>
         <g className="rk-dg-t" style={{ fontSize: "14px" }}>
           {modules.map(([x, y, w, label, lead]) => (
             <g key={label}>
@@ -80,8 +81,8 @@ function HowDiagram() {
         </g>
         <path className="rk-dg-line" d="M950 150 H 1010" />
         <rect className="rk-dg-box" x="1010" y="96" width="150" height="108" rx="20" />
-        <text className="rk-dg-s" x="1030" y="128">APPROVAL</text>
-        <text className="rk-dg-t" x="1030" y="158">Finance</text>
+        <text className="rk-dg-s" x="1030" y="128">{t("agent.approval")}</text>
+        <text className="rk-dg-t" x="1030" y="158">{t("agent.finance")}</text>
         <text className="rk-dg-t" x="1030" y="180">says yes</text>
       </svg>
     </div>

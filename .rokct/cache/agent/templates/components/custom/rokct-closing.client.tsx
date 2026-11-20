@@ -28,6 +28,7 @@ import { RiArrowRightLine } from "@remixicon/react";
 
 import { RK_FINAL } from "@/components/custom/landing/rokct-landing-content";
 
+import t from "@/app/lib/i18n";
 function useTypedPlaceholder(lines: readonly string[]): string {
   const [text, setText] = useState(lines[0] ?? "");
   useEffect(() => {
@@ -81,7 +82,7 @@ export function RokctAskBox({ target }: { target: string }) {
         placeholder={placeholder}
         autoComplete="off"
       />
-      <button type="submit" className="rk-send" aria-label="Ask ROK">
+      <button type="submit" className="rk-send" aria-label={t("agent.ask_rok")}>
         <RiArrowRightLine className="rk-ico" aria-hidden="true" />
       </button>
     </form>

@@ -30,6 +30,7 @@ import { SystemFormatFields } from "../../components/system-format-fields";
 import { emptyPoster, posterReady, TemplateFields } from "../../components/template-fields";
 import { toBase64 } from "../../components/to-base64";
 
+import tr from "@/app/lib/i18n";
 export default function NewRequestPage() {
   const router = useRouter();
   const [mode, setMode] = useState<"Uploaded Artwork" | "Generated" | "Template">("Uploaded Artwork");
@@ -86,7 +87,7 @@ export default function NewRequestPage() {
         : files.length > 0;
   return (
     <div className="max-w-2xl space-y-5 p-6">
-      <h1 className="text-2xl font-semibold">New design</h1>
+      <h1 className="text-2xl font-semibold">{tr("studio.new_design")}</h1>
       <div className="flex gap-2">
         {(["Uploaded Artwork", "Generated", "Template"] as const).map((m) => (
           <Button key={m} variant={mode === m ? "default" : "outline"} onClick={() => setMode(m)}>
@@ -94,17 +95,17 @@ export default function NewRequestPage() {
           </Button>
         ))}
       </div>
-      <input className="w-full rounded-md border p-2" placeholder="Title (optional)" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <input className="w-full rounded-md border p-2" placeholder={tr("studio.title_optional")} value={title} onChange={(e) => setTitle(e.target.value)} />
       {mode === "Template" ? (
         <TemplateFields value={poster} onChange={setPoster} onTemplates={setTemplates} />
       ) : mode === "Generated" ? (
-        <textarea className="w-full rounded-md border p-3" rows={4} placeholder="Describe the design" value={prompt} onChange={(e) => setPrompt(e.target.value)} />
+        <textarea className="w-full rounded-md border p-3" rows={4} placeholder={tr("studio.describe_the_design")} value={prompt} onChange={(e) => setPrompt(e.target.value)} />
       ) : (
         <input type="file" multiple accept=".png,.jpg,.jpeg,.webp,.svg" onChange={(e) => setFiles(Array.from(e.target.files ?? []))} />
       )}
       <SystemFormatFields system={system} onSystem={setSystem} format={format} onFormat={setFormat} />
       {mode === "Template" && (
-        <p className="text-sm text-muted-foreground">Posters use their template&apos;s A4 size; the format above is ignored.</p>
+        <p className="text-sm text-muted-foreground">{tr("studio.posters_use_their_template_apos_s_a4_size_the_fo")}</p>
       )}
       <Button disabled={!ready || busy} onClick={submit}>
         {busy && <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />}

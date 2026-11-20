@@ -24,6 +24,7 @@ import { getDocumentStatus, queueDocumentRequest } from "@/app/actions/studio/do
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+import tr from "@/app/lib/i18n";
 type Status = Awaited<ReturnType<typeof getDocumentStatus>>;
 
 export default function DocumentRequestPage({ params }: { params: Promise<{ name: string }> }) {
@@ -50,7 +51,7 @@ export default function DocumentRequestPage({ params }: { params: Promise<{ name
         {status.completeness != null && <span className="text-sm">{status.completeness}% complete</span>}
       </div>
       {status.status === "Draft" && (
-        <Button onClick={() => queueDocumentRequest(name).then(load)}>Start</Button>
+        <Button onClick={() => queueDocumentRequest(name).then(load)}>{tr("studio.start")}</Button>
       )}
       {status.error_message && <p className="text-sm text-destructive">{status.error_message}</p>}
       {status.warnings && <pre className="whitespace-pre-wrap text-sm text-muted-foreground">{status.warnings}</pre>}

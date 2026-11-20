@@ -43,6 +43,7 @@ import { OpportunityPublicService } from "@/app/services/public/opportunities";
 
 import { OpportunityList } from "../../opportunity-list";
 
+import tr from "@/app/lib/i18n";
 // As app/legal/[id]: the host's layout reads headers, so render per request.
 export const dynamic = "force-dynamic";
 
@@ -92,7 +93,7 @@ export default async function OpportunityPage({ params }: { params: Params }) {
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-12">
       <Link href="/opportunities" className="text-sm text-muted-foreground hover:underline">
-        All opportunities
+        {tr("agent.all_opportunities")}
       </Link>
       <p className="mt-4 text-sm uppercase tracking-wide text-muted-foreground">
         {KIND_LABEL[card.kind]}
@@ -112,19 +113,19 @@ export default async function OpportunityPage({ params }: { params: Params }) {
             rel="noopener noreferrer"
             className="mt-6 inline-flex rounded-md bg-primary px-5 py-2.5 font-medium text-primary-foreground hover:opacity-90"
           >
-            Apply
+            {tr("agent.apply")}
           </a>
         )
       )}
 
       {!closed && card.kind === "tenders" && (
         <div className="mt-6 rounded-lg border border-border px-4 py-4">
-          <p className="font-medium">TenderAssist, your tender officer on demand.</p>
+          <p className="font-medium">{tr("agent.tenderassist_your_tender_officer_on_demand")}</p>
           <Link
             href={bidHref(card.slug)}
             className="mt-3 inline-flex rounded-md border border-primary px-5 py-2.5 font-medium text-primary hover:bg-primary/10"
           >
-            Bid with TenderAssist
+            {tr("agent.bid_with_tenderassist")}
           </Link>
         </div>
       )}
@@ -164,10 +165,10 @@ export default async function OpportunityPage({ params }: { params: Params }) {
 
       {closed && (
         <section className="mt-12">
-          <h2 className="text-lg font-semibold">Still open</h2>
+          <h2 className="text-lg font-semibold">{tr("agent.still_open")}</h2>
           <OpportunityList items={stillOpen} />
           <Link href="/opportunities" className="mt-4 inline-block text-sm underline">
-            See all opportunities
+            {tr("agent.see_all_opportunities")}
           </Link>
         </section>
       )}

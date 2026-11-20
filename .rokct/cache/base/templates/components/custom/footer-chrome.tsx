@@ -66,7 +66,7 @@
 // Since 1.54.0 the copyright line is the SITE CREDIT (Ray, 2026-10-31:
 // "all site will be copyright sitename then built with love (as heart) by
 // ROKCT"): components/custom/site-credit.tsx draws `© <year> <site name>
-// · Built with ♥ by ROKCT`, the site's name from `config.siteName`, else
+// · Built with ♥ by Cortex Media`, the site's name from `config.siteName`, else
 // the host's PLATFORM_NAME - never the legal entity, so
 // `config.copyrightHolder` is no longer drawn. The credit is always there.
 

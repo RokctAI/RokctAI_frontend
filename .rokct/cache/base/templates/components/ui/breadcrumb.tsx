@@ -20,6 +20,7 @@ import { RiArrowRightSLine, RiMoreLine } from "@remixicon/react";
 
 import { cn } from "@/lib/utils";
 
+import t from "@/app/lib/i18n";
 const Breadcrumb = React.forwardRef<
   HTMLElement,
   React.ComponentPropsWithoutRef<"nav"> & {
@@ -115,7 +116,7 @@ const BreadcrumbEllipsis = ({
     {...props}
   >
     <RiMoreLine className="h-4 w-4" />
-    <span className="sr-only">More</span>
+    <span className="sr-only">{t("base.more")}</span>
   </span>
 );
 BreadcrumbEllipsis.displayName = "BreadcrumbEllipsis";

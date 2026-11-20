@@ -24,7 +24,7 @@
 // header at all except behind a burger. So:
 //
 //  - from the `lg` breakpoint up the bar is logo | section links and the
-//    groups' one trigger (nav[aria-label="Sections"]; since 1.18.0 it opens
+//    groups' one trigger (nav[aria-label={t("base.sections")}]; since 1.18.0 it opens
 //    ONE panel the width of the bar, anchored under it - the bar's
 //    backdrop-filter is that panel's containing block) | actions, theme
 //    toggle, auth - rokctai_frontend's chrome (fixed-height bar, blurred

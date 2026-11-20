@@ -22,6 +22,7 @@ import { getConstruction } from "@/app/actions/studio/prepress/actions";
 import type { Construction } from "@/app/actions/studio/prepress/types";
 import { Button } from "@/components/ui/button";
 
+import t from "@/app/lib/i18n";
 /**
  * Construction guides toggle for a candidate preview. Off by default;
  * when on, the overlay SVG replaces the preview and the notes list what
@@ -50,7 +51,7 @@ export function ConstructionPanel({
       {on && data ? (
         <>
           <iframe
-            title="Construction guides"
+            title={t("studio.construction_guides")}
             sandbox=""
             className="h-96 w-full rounded-md border bg-white"
             srcDoc={`<html><body style="margin:0">${data.overlay_svg.replace("<svg", '<svg style="width:100%;height:100%"')}</body></html>`}

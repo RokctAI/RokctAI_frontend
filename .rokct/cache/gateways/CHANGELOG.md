@@ -1,3 +1,11 @@
+## 1.2.0
+
+* feat(i18n): 63 hardcoded screen labels, headings, buttons,
+  placeholders and empty-state lines in 9 files now go through
+  `t("gateways.<key>")` from `@/app/lib/i18n`. The copy ships in
+  `app/lib/i18n/sdk/gateways.json` (English and Afrikaans), which the host's
+  compose step registers (RokctAI_frontend#229).
+
 ## 1.1.4
 
 * fix(icons): lucide-react icons replaced with `@remixicon/react`

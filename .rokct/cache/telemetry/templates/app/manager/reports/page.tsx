@@ -38,6 +38,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import t from "@/app/lib/i18n";
 export default function ReportsPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -69,16 +70,16 @@ export default function ReportsPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Analytics & Reports</h1>
+        <h1 className="text-3xl font-bold">{t("telemetry.analytics_reports")}</h1>
         <p className="text-muted-foreground">
-          View your shop's performance metrics and sales data.
+          {t("telemetry.view_your_shop_s_performance_metrics_and_sales_d")}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Earned</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("telemetry.total_earned")}</CardTitle>
             <RiMoneyDollarCircleLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -86,7 +87,7 @@ export default function ReportsPage() {
               ${(stats?.total_earned || 0).toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">
-              From delivered orders
+              {t("telemetry.from_delivered_orders")}
             </p>
           </CardContent>
         </Card>
@@ -94,7 +95,7 @@ export default function ReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Delivered Orders
+              {t("telemetry.delivered_orders")}
             </CardTitle>
             <RiShoppingCartLine className="size-4 text-muted-foreground" />
           </CardHeader>
@@ -103,28 +104,28 @@ export default function ReportsPage() {
               {stats?.delivered_orders_count || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              Successfully completed
+              {t("telemetry.successfully_completed")}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("telemetry.in_progress")}</CardTitle>
             <RiLineChartLine className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {stats?.progress_orders_count || 0}
             </div>
-            <p className="text-xs text-muted-foreground">Active orders</p>
+            <p className="text-xs text-muted-foreground">{t("telemetry.active_orders")}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Products
+              {t("telemetry.active_products")}
             </CardTitle>
             <RiArchiveLine className="size-4 text-muted-foreground" />
           </CardHeader>
@@ -142,13 +143,13 @@ export default function ReportsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>Revenue Breakdown</CardTitle>
-            <CardDescription>Earnings by category</CardDescription>
+            <CardTitle>{t("telemetry.revenue_breakdown")}</CardTitle>
+            <CardDescription>{t("telemetry.earnings_by_category")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                Delivery Fees
+                {t("telemetry.delivery_fees")}
               </span>
               <span className="font-medium">
                 ${(stats?.delivery_earned || 0).toFixed(2)}
@@ -156,14 +157,14 @@ export default function ReportsPage() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                Tax Collected
+                {t("telemetry.tax_collected")}
               </span>
               <span className="font-medium">
                 ${(stats?.tax_earned || 0).toFixed(2)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Commission</span>
+              <span className="text-sm text-muted-foreground">{t("telemetry.commission")}</span>
               <span className="font-medium">
                 ${(stats?.commission_earned || 0).toFixed(2)}
               </span>
@@ -173,8 +174,8 @@ export default function ReportsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Top Selling Products</CardTitle>
-            <CardDescription>Best performing items</CardDescription>
+            <CardTitle>{t("telemetry.top_selling_products")}</CardTitle>
+            <CardDescription>{t("telemetry.best_performing_items")}</CardDescription>
           </CardHeader>
           <CardContent>
             {stats?.top_selling_products &&
@@ -196,7 +197,7 @@ export default function ReportsPage() {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">
-                No sales data available
+                {t("telemetry.no_sales_data_available")}
               </p>
             )}
           </CardContent>
