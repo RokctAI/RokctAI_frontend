@@ -1,6 +1,7 @@
 {
   "name": "base_sdk",
-  "version": "1.63.0",
+  "version": "1.64.1",
+  "_comment_version_1_64_0": "1.63.0 -> 1.64.0: EN | AF language toggle in the header, desktop bar and phone menu (Ray, 2026-11-20). components/custom/language-toggle.tsx writes the rk-lang cookie, sets <html lang> and refreshes. It draws only in a host whose app/lib/i18n exports currentLocale (RokctAI_frontend with the language switch); older hosts are unchanged.",
   "_comment_version_1_63_0": "1.62.0 -> 1.63.0: shared npm versions (Ray, 2026-11-20: Next.js should use one version everywhere, like Dart's base SDK). New top-level \"versions\" map: the installer (The-Rokct-Protocol sdk_installer_base.py) sets each listed version on any package a shell already lists, and never adds a package. Taken from RokctAI_frontend main. Bump a version here, not with Dependabot in each shell.",
   "_comment_version_1_61_0": "1.60.1 -> 1.61.0: the site credit names Cortex Media (Ray, 2026-11-20: \"update all footers of all our nextjs sites to Cortex Media. some still say Built with ♥ by ROKCT\"). SITE_CREDIT_MAKER in components/custom/landing/site-credit.ts is now \"Cortex Media\", so every footer drawn with SiteCredit or siteCreditLine reads `© <year> <site name> · Built with ♥ by Cortex Media`. Words only; no API change.",
   "_comment_version_1_60_1": "1.60.1: style only. Site chrome animates named properties (no transition-all on the folds), honours reduced motion, store badges press at 0.97, skeleton no longer pulses. Nothing to install.",
@@ -76,6 +77,10 @@
     {
       "from": "templates/components/custom/header.tsx",
       "to": "components/custom/header.tsx"
+    },
+    {
+      "from": "templates/components/custom/language-toggle.tsx",
+      "to": "components/custom/language-toggle.tsx"
     },
     {
       "from": "templates/components/custom/header-auth-slot.tsx",

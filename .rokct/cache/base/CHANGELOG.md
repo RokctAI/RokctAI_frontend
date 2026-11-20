@@ -1,3 +1,16 @@
+# Changelog
+
+## 1.64.1
+
+* feat(i18n): English and Afrikaans copy for the 18 FAQ settings keys the admin page already calls (`app.paas.admin.settings.faqs.*`), so the page stops showing humanized keys. Copy ships in templates/app/lib/i18n/sdk/base.json.
+
+## 1.64.0
+
+* feat(header): EN | AF language toggle beside the theme button and in the
+  phone menu (Ray, 2026-11-20). It writes the rk-lang cookie, sets
+  <html lang> and refreshes. It shows only in a host whose i18n can switch
+  language.
+
 ## 1.63.0
 
 * feat(deps): shared npm versions, like Dart's base SDK. New `versions`
@@ -13,8 +26,6 @@
   `t("base.<key>")` from `@/app/lib/i18n`. The copy ships in
   `app/lib/i18n/sdk/base.json` (English and Afrikaans), which the host's
   compose step registers (RokctAI_frontend#229).
-
-# Changelog
 
 ## 1.61.0
 

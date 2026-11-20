@@ -185,6 +185,7 @@ import type { LandingNavItem } from "@/components/custom/landing/landing-config"
 import { SITE_METADATA } from "@/components/custom/landing/site-metadata";
 import type { SiteDataMode } from "@/lib/site-data/kinds";
 import { ThemeToggle } from "@/components/custom/theme-toggle";
+import { LanguageToggle } from "@/components/custom/language-toggle";
 import { cn } from "@/lib/utils";
 
 export interface HeaderProps {
@@ -775,6 +776,7 @@ export function Header({
 
           <div className="hidden items-center gap-3 lg:flex">
             <HeaderMenuActions actions={actions} />
+            <LanguageToggle />
             <ThemeToggle className="text-muted-foreground hover:text-foreground" />
             {auth}
           </div>
@@ -810,7 +812,10 @@ export function Header({
           <span className="text-2xl font-bold text-foreground">
             {t("header.menu")}
           </span>
-          <ThemeToggle className="text-muted-foreground hover:text-foreground" />
+          <div className="flex items-center gap-3">
+            <LanguageToggle />
+            <ThemeToggle className="text-muted-foreground hover:text-foreground" />
+          </div>
         </div>
 
         <HeaderMenuList

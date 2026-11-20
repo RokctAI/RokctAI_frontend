@@ -815,6 +815,7 @@ migrate_working_dir/
 /components/custom/landing/site-metadata.ts
 /components/custom/landing/site-shots.ts
 /components/custom/landing/testimonials-marquee.tsx
+/components/custom/language-toggle.tsx
 /components/custom/left-sidebar.tsx
 /components/custom/legal/legal-doc.tsx
 /components/custom/legal/legal-frame.tsx

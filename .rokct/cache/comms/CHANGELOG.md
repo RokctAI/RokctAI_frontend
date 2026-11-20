@@ -1,3 +1,7 @@
+## 1.2.1
+
+* feat(i18n): English and Afrikaans copy for the 14 WhatsApp settings keys the admin page already calls (`app.paas.admin.settings.*`), so the page stops showing humanized keys. Copy ships in templates/app/lib/i18n/sdk/comms.json.
+
 ## 1.2.0
 
 * feat(i18n): 32 hardcoded screen labels, headings, buttons,
