@@ -10,5 +10,10 @@
     "desktop": "latest/desktop-light.webp",
     "phone": "latest/phone-light.webp"
   },
-  "logo_back": "rokct"
+  "logo_back": "rokct",
+  "features": [
+    "Plain-words AI assistant that does the work",
+    "Approval step before any big action",
+    "One product on web, phone apps and WhatsApp"
+  ]
 }
