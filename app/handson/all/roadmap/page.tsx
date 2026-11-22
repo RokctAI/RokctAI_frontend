@@ -23,14 +23,9 @@ import {
   RiDeleteBinLine,
   RiAddLine,
   RiEditLine,
-  RiRobot2Line,
-  RiEyeLine,
-  RiEyeOffLine,
-  RiExternalLinkLine,
   RiGitPullRequestLine,
   RiMagicLine,
 } from "@remixicon/react";
-import { JulesInteractive } from "@/components/handson/JulesInteractive";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -78,7 +73,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { Switch } from "@/components/ui/switch";
 import t from "@/app/lib/i18n";
 import {
   getRoadmaps,
@@ -89,15 +83,7 @@ import {
   createRoadmapFeature,
   updateRoadmapFeature,
   deleteRoadmapFeature,
-  assignToJules,
-  getJulesSources,
-  triggerJules,
-  getGlobalSettings,
-  discoverRoadmapContext,
-  generateOneRoadmapIdeas,
 } from "@/app/actions/handson/all/roadmap/roadmap";
-
-const J_ID = `jules_api_id`;
 
 const ROADMAP_STATUSES = {
   IDEAS: "Ideas",
@@ -122,17 +108,7 @@ export default function UnifiedRoadmapPage() {
   >([]);
   const [editingFeature, setEditingFeature] = useState<any>(null);
   const [featureTags, setFeatureTags] = useState<{ tag: string }[]>([]);
-  const [isJulesDialogOpen, setIsJulesDialogOpen] = useState(false);
-  const [julesFeature, setJulesFeature] = useState<any>(null);
-  const [isAutoDiscovering, setIsAutoDiscovering] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState("");
-
-  // Jules & Repo States
-  const [sources, setSources] = useState<string[]>([]);
-  const [isJulesRunning, setIsJulesRunning] = useState(false);
-  const [tempApiKey, setTempApiKey] = useState(""); // For "Get Sources" check
-  const [showKey, setShowKey] = useState(false);
-  const [globalSettings, setGlobalSettings] = useState<any>(null);
 
   async function fetchData() {
     setLoading(true);
@@ -140,9 +116,6 @@ export default function UnifiedRoadmapPage() {
       const roadmapsData = await getRoadmaps();
 
       setRoadmaps(roadmapsData || []);
-
-      const settings = await getGlobalSettings();
-      setGlobalSettings(settings);
 
       if (roadmapsData && roadmapsData.length > 0) {
         const roadmapName = selectedRoadmap || roadmapsData[0].name;
@@ -180,17 +153,6 @@ export default function UnifiedRoadmapPage() {
     }
   }, [selectedRoadmap]);
 
-  async function handleFetchSources(apiKey: string) {
-    if (!apiKey) return;
-    try {
-      const res = await getJulesSources(apiKey);
-      setSources(res || []);
-      toast.success("Repositories fetched successfully");
-    } catch (e) {
-      toast.error("Invalid API Key or Network Error");
-    }
-  }
-
   async function handleSaveRoadmap(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -200,9 +162,6 @@ export default function UnifiedRoadmapPage() {
       status: formData.get("status"),
       github_status: formData.get("github_status"),
       source_repository: formData.get("source_repo"),
-      jules_api_key: formData.get("jules_api_key"),
-      require_jules_approval:
-        formData.get("require_jules_approval") === "on" ? 1 : 0,
       classifications: classifications,
     };
 
@@ -214,23 +173,6 @@ export default function UnifiedRoadmapPage() {
         await createRoadmap(data);
         toast.success("Roadmap created");
       }
-      // Auto-Trigger Discovery / Validation
-      try {
-        const roadmapName = editingRoadmap ? editingRoadmap.name : data.title; // Best guess for ID, ideally API returns ID
-        // Note: We need the actual ID. If createRoadmap returns nothing, we might miss new ones.
-        // Assuming Create returns data or we rely on name=title for now (slugified)
-        // Safest is to rely on user refresh or just fire for update.
-        // For now, let's fire if we have a name (Edit) or just try with title (Create)
-        await discoverRoadmapContext(
-          editingRoadmap ? editingRoadmap.name : data.title,
-        );
-        toast.success(
-          "Jules is validating your roadmap context in the background.",
-        );
-      } catch {
-        // Ignore discovery errors, don't block save flow
-      }
-
       setIsRoadmapDialogOpen(false);
       setEditingRoadmap(null);
       fetchData();
@@ -270,54 +212,6 @@ export default function UnifiedRoadmapPage() {
     }
   }
 
-  async function handleAssignToJules(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const explanation = formData.get("explanation") as string;
-
-    try {
-      await assignToJules(julesFeature.name, julesFeature.feature, explanation);
-      toast.success("Task assigned to Jules");
-      setIsJulesDialogOpen(false);
-      setJulesFeature(null);
-      if (selectedRoadmap) fetchFeatures(selectedRoadmap); // refresh to see status change
-    } catch (error) {
-      toast.error("Failed to assign task");
-    }
-  }
-
-  async function handleRunJules() {
-    setIsJulesRunning(true);
-    try {
-      await triggerJules();
-      toast.success("Jules started! Check 'AI Idea Sessions'.");
-    } catch {
-      toast.error("Failed to start Jules");
-    } finally {
-      setIsJulesRunning(false);
-    }
-  }
-
-  async function handleAutoDiscover() {
-    if (!editingRoadmap?.name) {
-      toast.error("Please save the Roadmap with a Repo & Key first.");
-      return;
-    }
-    setIsAutoDiscovering(true);
-    try {
-      const res = await discoverRoadmapContext(editingRoadmap.name);
-      toast.success(
-        res.message ||
-          "Jules is analyzing your repo. Check back in a few minutes.",
-      );
-      setIsRoadmapDialogOpen(false); // Close so they can see the list/refresh later
-    } catch (e: any) {
-      toast.error(e.message || "Discovery failed");
-    } finally {
-      setIsAutoDiscovering(false);
-    }
-  }
-
   if (loading && roadmaps.length === 0) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
@@ -332,22 +226,10 @@ export default function UnifiedRoadmapPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Roadmap</h1>
           <p className="text-muted-foreground">
-            Manage your product roadmap and Jules AI integration.
+            Manage your product roadmap.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            onClick={handleRunJules}
-            disabled={isJulesRunning}
-          >
-            {isJulesRunning ? (
-              <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <RiRobot2Line className="mr-2 h-4 w-4" />
-            )}
-            Run Jules Now
-          </Button>
           <Button
             variant="outline"
             size="icon"
@@ -380,8 +262,7 @@ export default function UnifiedRoadmapPage() {
                   {editingRoadmap ? "Edit Roadmap" : "Create Roadmap"}
                 </DialogTitle>
                 <DialogDescription>
-                  Configure your roadmap and link it to a repository for Jules
-                  AI.
+                  Configure your roadmap and link it to its repository.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSaveRoadmap} className="space-y-4">
@@ -488,7 +369,7 @@ export default function UnifiedRoadmapPage() {
                     {classifications.length === 0 && (
                       <p className="text-xs text-muted-foreground italic text-center py-2">
                         Add tags like "Stack: Flutter" or "Dependency: Frappe"
-                        to help Jules understand your project.
+                        to describe your project.
                       </p>
                     )}
                   </div>
@@ -506,113 +387,14 @@ export default function UnifiedRoadmapPage() {
                   />
                 </div>
 
-                <div className="space-y-4 border-t pt-4">
-                  <h4 className="text-sm font-medium leading-none">
-                    Jules AI Configuration
-                  </h4>
-
-                  <div className="space-y-2">
-                    <Label htmlFor={J_ID}>{t("auth.identifier")}</Label>
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Input
-                          id={J_ID}
-                          name="jules_api_key"
-                          type={showKey ? "text" : "password"}
-                          defaultValue={editingRoadmap?.jules_api_key}
-                          placeholder={
-                            editingRoadmap?.jules_api_key
-                              ? "••••••••••••••••"
-                              : "Enter your Jules API Key"
-                          }
-                          onChange={(e) => setTempApiKey(e.target.value)}
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                          onClick={() => setShowKey(!showKey)}
-                        >
-                          {showKey ? (
-                            <RiEyeOffLine className="h-4 w-4" />
-                          ) : (
-                            <RiEyeLine className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() =>
-                          handleFetchSources(
-                            tempApiKey ||
-                              editingRoadmap?.jules_api_key ||
-                              globalSettings?.jules_api_key,
-                          )
-                        }
-                      >
-                        Fetch Repos
-                      </Button>
-                    </div>
-                    <p className="text-[0.8rem] text-muted-foreground">
-                      {globalSettings?.jules_api_key
-                        ? "Using Global API Key. Enter a key below to override it."
-                        : "Enter your Jules API Key to get started."}
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="source_repo">Source Repository</Label>
-                    <Select
-                      name="source_repo"
-                      defaultValue={editingRoadmap?.source_repository}
-                    >
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={t("app.roadmap.select_repo")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {sources.length > 0 ? (
-                          sources.map((s) => (
-                            <SelectItem key={s} value={s}>
-                              {s}
-                            </SelectItem>
-                          ))
-                        ) : editingRoadmap?.source_repository ? (
-                          <SelectItem value={editingRoadmap.source_repository}>
-                            {editingRoadmap.source_repository}
-                          </SelectItem>
-                        ) : (
-                          <SelectItem value="none" disabled>
-                            Fetch repos first...
-                          </SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {(tempApiKey ||
-                    editingRoadmap?.jules_api_key ||
-                    globalSettings?.jules_api_key) && (
-                    <div className="flex items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="require_jules_approval">
-                          Require Plan Approval
-                        </Label>
-                        <p className="text-[0.8rem] text-muted-foreground">
-                          Force Jules to wait for your approval before writing
-                          code.
-                        </p>
-                      </div>
-                      <Switch
-                        id="require_jules_approval"
-                        name="require_jules_approval"
-                        defaultChecked={editingRoadmap?.require_jules_approval}
-                      />
-                    </div>
-                  )}
+                <div className="space-y-2 border-t pt-4">
+                  <Label htmlFor="source_repo">Source Repository</Label>
+                  <Input
+                    id="source_repo"
+                    name="source_repo"
+                    defaultValue={editingRoadmap?.source_repository}
+                    placeholder="https://github.com/owner/repo"
+                  />
                 </div>
 
                 <DialogFooter>
@@ -871,23 +653,6 @@ export default function UnifiedRoadmapPage() {
                     </div>
                   </div>
 
-                  {editingFeature?.jules_session_id && (
-                    <div className="space-y-2 pt-4 border-t">
-                      <Label className="text-sm font-semibold flex items-center gap-2">
-                        <RiRobot2Line className="h-4 w-4" /> Jules Interactive
-                        Session
-                      </Label>
-                      <JulesInteractive
-                        sessionId={editingFeature.jules_session_id}
-                        apiKey={
-                          globalSettings?.jules_api_key ||
-                          editingRoadmap?.jules_api_key
-                        }
-                        featureName={editingFeature.feature}
-                      />
-                    </div>
-                  )}
-
                   <DialogFooter>
                     <Button type="submit">
                       {editingFeature ? t("common.update") : t("common.create")}
@@ -956,32 +721,6 @@ export default function UnifiedRoadmapPage() {
                             <RiGitPullRequestLine className="h-4 w-4 text-orange-600" />
                           </Button>
                         )}
-                        {item.jules_session_id && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            title="Open Jules Session"
-                            onClick={() =>
-                              window.open(
-                                `https://jules.google.com/session/${item.jules_session_id}`,
-                                "_blank",
-                              )
-                            }
-                          >
-                            <RiExternalLinkLine className="h-4 w-4 text-blue-600" />
-                          </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          title="Assign to Jules"
-                          onClick={() => {
-                            setJulesFeature(item);
-                            setIsJulesDialogOpen(true);
-                          }}
-                        >
-                          <RiRobot2Line className="h-4 w-4 text-purple-600" />
-                        </Button>
                         {/* Edit/Delete Buttons */}
                       </TableCell>
                     </TableRow>
@@ -1012,30 +751,6 @@ export default function UnifiedRoadmapPage() {
                       <RiAddLine className="mr-2 h-4 w-4" />{" "}
                       {t("app.roadmap.view.btn_add_manually")}
                     </Button>
-                    <Button
-                      onClick={async () => {
-                        if (!selectedRoadmap) return;
-                        setIsJulesRunning(true);
-                        try {
-                          await generateOneRoadmapIdeas(selectedRoadmap);
-                          toast.success(
-                            "Jules is brainstorming! Check back in a few minutes.",
-                          );
-                        } catch (e) {
-                          toast.error("Failed to start idea generation");
-                        } finally {
-                          setIsJulesRunning(false);
-                        }
-                      }}
-                      disabled={isJulesRunning}
-                    >
-                      {isJulesRunning ? (
-                        <RiLoader4Line className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <RiRobot2Line className="mr-2 h-4 w-4" />
-                      )}
-                      {t("app.roadmap.view.btn_generate_ideas")}
-                    </Button>
                   </div>
                 </div>
               )}
@@ -1046,36 +761,6 @@ export default function UnifiedRoadmapPage() {
         {/* Roadmaps List Tab Content */}
       </Tabs>
 
-      {/* Jules Assign Dialog */}
-      <Dialog open={isJulesDialogOpen} onOpenChange={setIsJulesDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("app.roadmap.jules.assign_title")}</DialogTitle>
-            <DialogDescription>
-              {t("app.roadmap.jules.assign_desc")}
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleAssignToJules} className="space-y-4">
-            <div className="space-y-2">
-              <Label>{t("app.roadmap.jules.label_feature")}</Label>
-              <Input value={julesFeature?.feature || ""} disabled />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("app.roadmap.jules.label_instructions")}</Label>
-              <Textarea
-                name="explanation"
-                required
-                className="h-32"
-                placeholder={t("app.roadmap.jules.ph_instructions")}
-                defaultValue={julesFeature?.description}
-              />
-            </div>
-            <DialogFooter>
-              <Button type="submit">{t("app.roadmap.jules.btn_assign")}</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

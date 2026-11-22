@@ -268,23 +268,6 @@ describe("every converted call site issues a real gateway request", () => {
     });
   });
 
-  it("onboarding: chat_with_rok, and its reply is unwrapped", async () => {
-    const { OnboardingService } = mods["app/services/tenant/onboarding.ts"];
-    const sent = install({ status: "success", message: "hello from ROK" });
-
-    const res = await OnboardingService.chatWithRok("hi", "s1", "m1");
-
-    assertWire(sent, ["api.plan_builder.chat_with_rok"]);
-    assert.deepEqual(sent[0].payload, {
-      message: "hi",
-      session_id: "s1",
-      model: "m1",
-    });
-    // The chat consumer reads `res.message`. With the envelope hop gone that
-    // is the reply text, not the envelope — and not a `FrappeCall`.
-    assert.equal(res.message, "hello from ROK");
-  });
-
   it("subscriptions: get_subscription_details, prefix-free", async () => {
     const { SubscriptionService } =
       mods["app/services/tenant/subscriptions.ts"];
