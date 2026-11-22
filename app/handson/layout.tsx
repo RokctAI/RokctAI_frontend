@@ -59,6 +59,7 @@ import {
   RiGraduationCapLine,
   RiServerLine,
   RiToggleLine,
+  RiBugLine,
 } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
@@ -102,6 +103,13 @@ const controlItems = [
     title: "Feature switches",
     href: "/handson/control/feature-switches",
     icon: RiToggleLine,
+    roles: SYSTEM_ROLES,
+  },
+  {
+    // control_sdk 1.10.0 (Ray 2026-11-22): every tenant's errors, hub staff only.
+    title: "Errors",
+    href: "/handson/control/errors",
+    icon: RiBugLine,
     roles: SYSTEM_ROLES,
   },
   {
