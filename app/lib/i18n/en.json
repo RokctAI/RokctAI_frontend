@@ -1003,18 +1003,8 @@
             "status_assigned": "Assigned",
             "status_ready": "Ready",
             "no_features_title": "No Features Yet",
-            "no_features_desc": "Your roadmap is empty. You can add features manually or let Jules brainstorm ideas based on your architecture.",
-            "btn_add_manually": "Add Manually",
-            "btn_generate_ideas": "Generate Ideas",
-            "loading_jules": "Jules is brainstorming..."
-          },
-          "jules": {
-            "assign_title": "Assign to Jules AI",
-            "assign_desc": "Jules will use the API Key configured in this Roadmap's settings.",
-            "label_feature": "Feature",
-            "label_instructions": "Instructions",
-            "ph_instructions": "Please provide detailed instructions for Jules to implement this feature.",
-            "btn_assign": "Assign Task"
+            "no_features_desc": "Your roadmap is empty. Add features manually, or link a repository and merged pull requests move features to Done.",
+            "btn_add_manually": "Add Manually"
           }
         },
         "lending": {

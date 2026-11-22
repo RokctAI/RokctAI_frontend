@@ -67,32 +67,6 @@ export async function deleteRoadmapFeature(name: string) {
   return res;
 }
 
-export async function assignToJules(
-  docname: string,
-  feature: string,
-  explanation: string,
-) {
-  const res = await RoadmapService.assignToJules(docname, feature, explanation);
-  revalidatePath("/handson/all/roadmap");
-  return res;
-}
-
-export async function getJulesSources(apiKey?: string) {
-  return await RoadmapService.getJulesSources(apiKey);
-}
-
-export async function triggerJules() {
-  return await RoadmapService.triggerJules();
-}
-
-export async function discoverRoadmapContext(name: string) {
-  return await RoadmapService.discoverContext(name);
-}
-
-export async function generateOneRoadmapIdeas(name: string) {
-  return await RoadmapService.generateIdeas(name);
-}
-
 export async function setPublicRoadmap(roadmapName: string | null) {
   const res = await RoadmapService.setPublicRoadmap(roadmapName);
   revalidatePath("/handson/all/roadmap");
@@ -106,34 +80,4 @@ export async function getGlobalSettings() {
 
 export async function getPublicRoadmapSetting() {
   return await RoadmapService.getGlobalSettings();
-}
-
-// --- Interactive Jules ---
-
-export async function getJulesStatus(sessionId: string, apiKey?: string) {
-  return await RoadmapService.getJulesStatus(sessionId, apiKey);
-}
-
-export async function getJulesActivities(sessionId: string, apiKey?: string) {
-  return await RoadmapService.getJulesActivities(sessionId, apiKey);
-}
-
-export async function voteOnPlan(
-  sessionId: string,
-  action: "approve",
-  apiKey?: string,
-) {
-  const res = await RoadmapService.voteOnPlan(sessionId, action, apiKey);
-  revalidatePath("/handson/all/roadmap");
-  return res;
-}
-
-export async function sendJulesMessage(
-  sessionId: string,
-  message: string,
-  apiKey?: string,
-) {
-  const res = await RoadmapService.sendJulesMessage(sessionId, message, apiKey);
-  revalidatePath("/handson/all/roadmap");
-  return res;
 }
