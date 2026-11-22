@@ -588,6 +588,7 @@ migrate_working_dir/
 /app/legal/page.tsx
 /app/lib/fleet/demo.ts
 /app/lib/fleet/types.ts
+/app/lib/i18n/sdk-registry.ts
 /app/lib/i18n/sdk/agent.json
 /app/lib/i18n/sdk/auth.json
 /app/lib/i18n/sdk/base.json
@@ -963,6 +964,7 @@ migrate_working_dir/
 /components/tasks/set-reminder.tsx
 /components/tasks/task-stack.tsx
 /components/ui/date-range-picker.tsx
+/components/ui/skeleton.tsx
 /db/index.ts
 /db/migrate.ts
 /db/schema.ts
