@@ -58,6 +58,7 @@ import {
   RiUserFollowLine,
   RiGraduationCapLine,
   RiServerLine,
+  RiToggleLine,
 } from "@remixicon/react";
 
 import { Button } from "@/components/ui/button";
@@ -94,6 +95,13 @@ const controlItems = [
     title: "Fleet",
     href: "/handson/control/fleet",
     icon: RiServerLine,
+    roles: SYSTEM_ROLES,
+  },
+  {
+    // control_sdk 1.9.0 (Ray 2026-11-22): the hub's per-plan Sticks feature switches.
+    title: "Feature switches",
+    href: "/handson/control/feature-switches",
+    icon: RiToggleLine,
     roles: SYSTEM_ROLES,
   },
   {
