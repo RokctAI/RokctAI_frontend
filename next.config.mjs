@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // The division hider reads divisions/*.json at request time (agent_sdk
+  // 1.29.0): ship the folder with every server function.
+  outputFileTracingIncludes: { "/*": ["./divisions/**/*"] },
   experimental: {},
   images: {
     remotePatterns: [
