@@ -225,9 +225,7 @@ export default function UnifiedRoadmapPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Roadmap</h1>
-          <p className="text-muted-foreground">
-            Manage your product roadmap.
-          </p>
+          <p className="text-muted-foreground">Manage your product roadmap.</p>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -760,7 +758,6 @@ export default function UnifiedRoadmapPage() {
 
         {/* Roadmaps List Tab Content */}
       </Tabs>
-
     </div>
   );
 }
