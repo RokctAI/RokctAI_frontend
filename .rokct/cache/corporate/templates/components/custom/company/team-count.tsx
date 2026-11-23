@@ -28,6 +28,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export function sumTeamCounts(values: readonly (string | null | undefined)[]): number {
   return values.reduce((sum, value) => {
     const n = Number.parseInt(value ?? "", 10);
@@ -65,7 +66,7 @@ export function TeamCount({ members }: { members: number }) {
       hidden={count === 0}
       className="ml-3 inline-flex items-center rounded-md border border-current px-2 py-0.5 align-middle text-base font-semibold tabular-nums"
     >
-      {count}
+      {tx(count)}
     </span>
   );
 }

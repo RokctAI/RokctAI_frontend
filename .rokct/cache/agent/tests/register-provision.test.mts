@@ -37,6 +37,7 @@ import {
   gateway,
 } from './stubs/app/services/base/platform-gateway.ts';
 import { catalogue } from './stubs/lib/actions/getSubscriptionPlans.ts';
+import { onboardingSession } from './stubs/app/(auth)/agent-onboarding-session.ts';
 
 const CONTROL = 'https://control.rokct.invalid';
 const ADMIN = { apiKey: 'test-key', apiSecret: 'test-secret' };
@@ -94,6 +95,7 @@ describe('the provisioner', () => {
     process.env.ROKCT_BASE_URL = CONTROL;
     admin.answer = ADMIN;
     gateway.reset();
+    onboardingSession.reset();
     provisionAnswer = () => ({ site_name: 'a-company.rokct.invalid' });
     gateway.answer = (call) => {
       if (call.cmd !== PRICING_METADATA_CMD) return provisionAnswer(call);
@@ -188,6 +190,18 @@ describe('the provisioner', () => {
     assert.equal(outcome.status, 'success');
     if (outcome.status !== 'success') return;
     assert.equal(outcome.siteName, 'a-company.rokct.invalid');
+  });
+
+  it('keeps the hub onboarding session a tenant sign-up opened, for the email PIN step', async () => {
+    provisionAnswer = () => ({ site_name: 'a-company.rokct.invalid', onboarding_token: 'tok-1' });
+    const outcome = await provisioner.provision(submission({}));
+    assert.equal(outcome.status, 'success');
+    assert.equal(onboardingSession.token, 'tok-1');
+  });
+
+  it('keeps no onboarding session when the hub opened none', async () => {
+    await provisioner.provision(submission({}));
+    assert.equal(onboardingSession.token, null);
   });
 
   it('signs a tenant AI plan in as an onboarding login', async () => {

@@ -43,6 +43,7 @@ import { RkCardView, RkMark, rkBold } from "@/components/custom/landing/rokct-ui
 import t from "@/app/lib/i18n";
 import "@/components/custom/landing/rokct-landing.css";
 
+import { tx } from "@/app/lib/i18n/phrases";
 function prefersReducedMotion(): boolean {
   return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
@@ -72,7 +73,7 @@ export function RokctHeroWord({ words, intervalMs }: { words: readonly string[];
 
   return (
     <span className="rk-hl rk-rot">
-      <span className={phase}>{words[index]}</span>
+      <span className={phase}>{tx(words[index])}</span>
     </span>
   );
 }
@@ -172,18 +173,18 @@ export function RokctHeroConsole() {
           <RkMark className="rk-mark" />
         </div>
         <div>
-          <div className="rk-c-title">{RK_HERO.console.title}</div>
-          <div className="rk-c-sub">{RK_HERO.console.sub}</div>
+          <div className="rk-c-title">{tx(RK_HERO.console.title)}</div>
+          <div className="rk-c-sub">{tx(RK_HERO.console.sub)}</div>
         </div>
-        <span className="rk-c-tag">{RK_HERO.console.tag}</span>
+        <span className="rk-c-tag">{tx(RK_HERO.console.tag)}</span>
       </div>
       <div className="rk-c-body" aria-live="polite">
-        {shown.me && <div className="rk-msg rk-msg-me">{scenario.question}</div>}
+        {shown.me && <div className="rk-msg rk-msg-me">{tx(scenario.question)}</div>}
         {shown.working && (
           <div className="rk-msg rk-msg-rok">
             <span className="rk-work">
               <RiLoader4Line className="rk-ico" aria-hidden="true" />
-              {scenario.working}
+              {tx(scenario.working)}
             </span>
           </div>
         )}
@@ -199,13 +200,13 @@ export function RokctHeroConsole() {
               aria-pressed={s.key === shown.key}
               onClick={() => choose(i)}
             >
-              {s.chip}
+              {tx(s.chip)}
             </button>
           ))}
         </div>
         <div className="rk-input" aria-hidden="true">
           <span className="rk-t" data-placeholder={RK_HERO.console.placeholder}>
-            {typed}
+            {tx(typed)}
           </span>
           <span className="rk-send">
             <RiSendPlane2Fill className="rk-ico" />

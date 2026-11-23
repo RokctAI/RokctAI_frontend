@@ -43,6 +43,7 @@ import type {
   PageSectionProps,
 } from "@/components/custom/landing/page-sections";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export const meta: PageSectionMeta = {
   order: -1,
   nav: [{ id: RK_ANCHORS.ask, label: "Ask ROK" }],
@@ -58,30 +59,30 @@ export default function RokctHeroSection({ id, signupUrl }: PageSectionProps) {
         <div>
           <div className="rk-eyebrow">
             <span className="rk-dot" />
-            {RK_HERO.eyebrow}
+            {tx(RK_HERO.eyebrow)}
           </div>
           <h1 className="rk-h1">
             <RokctHeroWord words={RK_HERO.words} intervalMs={RK_HERO.wordIntervalMs} />
             <br />
-            {RK_HERO.tail[0]}
+            {tx(RK_HERO.tail[0])}
             <br />
-            {RK_HERO.tail[1]}
+            {tx(RK_HERO.tail[1])}
             <span className="rk-caret" aria-hidden="true" />
           </h1>
-          <p className="rk-lede">{RK_HERO.lede}</p>
+          <p className="rk-lede">{tx(RK_HERO.lede)}</p>
           <div className="rk-cta">
             <a className="rk-btn rk-btn-brand" href={signupUrl}>
-              {RK_HERO.primary} <RiArrowRightLine className="rk-ico" aria-hidden="true" />
+              {tx(RK_HERO.primary)} <RiArrowRightLine className="rk-ico" aria-hidden="true" />
             </a>
             <a className="rk-btn rk-btn-line" href={`#${RK_ANCHORS.platform}`}>
-              {RK_HERO.secondary}
+              {tx(RK_HERO.secondary)}
             </a>
           </div>
           <div className="rk-hero-meta">
             {RK_HERO.meta.map((item) => (
               <span key={item.text}>
                 <RkIcon name={item.icon} />
-                {item.text}
+                {tx(item.text)}
               </span>
             ))}
           </div>

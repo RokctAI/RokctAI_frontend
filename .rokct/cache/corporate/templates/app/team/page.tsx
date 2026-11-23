@@ -45,6 +45,7 @@ import { loadLegalIndex } from "@/components/custom/legal/load-legal-doc";
 import { SiteFrame } from "@/components/custom/site-frame";
 import { hasSiteData, readSiteData, siteDataMode } from "@/lib/site-data/read-site-data";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export const dynamic = "force-dynamic";
 
 export function generateMetadata(): Promise<Metadata> {
@@ -64,22 +65,22 @@ export default async function TeamPage() {
   const body = (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-12" data-team-page="">
       <h1 className="flex items-center text-3xl font-bold tracking-tight" data-team-title="">
-        {COMPANY_PAGES.team.label}
+        {tx(COMPANY_PAGES.team.label)}
         <TeamCount members={members.length} />
       </h1>
       <TeamGrid members={members} />
       <CompanySections sections={sections} session={session} dataMode={dataMode} />
       {empty && (
         <p className="opacity-70" data-empty-state="">
-          {COMPANY_EMPTY_STATE.team}
+          {tx(COMPANY_EMPTY_STATE.team)}
         </p>
       )}
     </div>
   );
-  if (!frame.registered) return <CompanyFrame page="team" terms={terms}>{body}</CompanyFrame>;
+  if (!frame.registered) return <CompanyFrame page="team" terms={terms}>{tx(body)}</CompanyFrame>;
   return (
     <SiteFrame frame={frame} page="team" session={session} dataMode={dataMode}>
-      {body}
+      {tx(body)}
     </SiteFrame>
   );
 }

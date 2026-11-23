@@ -31,17 +31,18 @@ import {
   type MarkdownInline,
 } from "@/components/custom/company/markdown-parser";
 
+import { tx } from "@/app/lib/i18n/phrases";
 function Inline({ nodes }: { nodes: MarkdownInline[] }) {
   return (
     <>
       {nodes.map((node, index) => {
         switch (node.type) {
           case "text":
-            return <React.Fragment key={index}>{node.text}</React.Fragment>;
+            return <React.Fragment key={index}>{tx(node.text)}</React.Fragment>;
           case "code":
             return (
               <code key={index} className="rounded bg-black/5 px-1 py-0.5 text-[0.9em] dark:bg-white/10">
-                {node.text}
+                {tx(node.text)}
               </code>
             );
           case "strong":
@@ -109,9 +110,9 @@ function Block({ block }: { block: MarkdownBlock }) {
         </li>
       ));
       return block.ordered ? (
-        <ol className="list-decimal space-y-1 pl-6">{items}</ol>
+        <ol className="list-decimal space-y-1 pl-6">{tx(items)}</ol>
       ) : (
-        <ul className="list-disc space-y-1 pl-6">{items}</ul>
+        <ul className="list-disc space-y-1 pl-6">{tx(items)}</ul>
       );
     }
     case "quote":
@@ -123,7 +124,7 @@ function Block({ block }: { block: MarkdownBlock }) {
     case "code":
       return (
         <pre className="overflow-x-auto rounded-lg bg-black/5 p-4 text-sm dark:bg-white/10">
-          <code>{block.text}</code>
+          <code>{tx(block.text)}</code>
         </pre>
       );
     case "rule":

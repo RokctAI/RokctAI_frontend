@@ -87,6 +87,8 @@ migrate_working_dir/
 /ai/local/projects/actions.ts
 /ai/local/tasks/actions.ts
 /app/(auth)/actions.ts
+/app/(auth)/agent-onboarding-pin.ts
+/app/(auth)/agent-onboarding-session.ts
 /app/(auth)/agent-register-actions.ts
 /app/(auth)/agent-register-helpers.ts
 /app/(auth)/agent-register-provision.ts
@@ -114,7 +116,6 @@ migrate_working_dir/
 /app/(chat)/api/history/route.ts
 /app/(chat)/api/reminders/pending/route.ts
 /app/(chat)/api/reservation/route.ts
-/app/(chat)/api/summarize/route.ts
 /app/(chat)/chat/\[id\]/page.tsx
 /app/(chat)/chat/page.tsx
 /app/(chat)/page.tsx
@@ -210,7 +211,6 @@ migrate_working_dir/
 /app/actions/handson/all/accounting/selling/extras.ts
 /app/actions/handson/all/agent/memory.ts
 /app/actions/handson/all/agent/plan.ts
-/app/actions/handson/all/agent/tasks.ts
 /app/actions/handson/all/crm/call_logs.ts
 /app/actions/handson/all/crm/campaigns.ts
 /app/actions/handson/all/crm/competitor.ts
@@ -267,6 +267,8 @@ migrate_working_dir/
 /app/actions/handson/all/projects/timesheets.ts
 /app/actions/handson/all/workspace/dashboard.ts
 /app/actions/handson/all/workspace/events.ts
+/app/actions/handson/control/errors/errors.ts
+/app/actions/handson/control/feature-switches/feature-switches.ts
 /app/actions/handson/control/fleet/fleet-actions.ts
 /app/actions/handson/control/fleet/fleet.ts
 /app/actions/loyalty/admin/customer-subscriptions.ts
@@ -578,22 +580,27 @@ migrate_working_dir/
 /app/handson/all/workspace/communication/chat/page.tsx
 /app/handson/all/workspace/communication/events/page.tsx
 /app/handson/all/workspace/page.tsx
+/app/handson/control/errors/page.tsx
+/app/handson/control/feature-switches/page.tsx
 /app/handson/control/fleet/\[docker\]/page.tsx
 /app/handson/control/fleet/fleet-actions-ui.tsx
 /app/handson/control/fleet/fleet-records-ui.tsx
 /app/handson/control/fleet/fleet-ui.tsx
 /app/handson/control/fleet/page.tsx
+/app/indexnow-key.txt/route.ts
 /app/landing/page.tsx
 /app/legal/\[id\]/page.tsx
 /app/legal/page.tsx
+/app/lib/ai-discovery.ts
 /app/lib/fleet/demo.ts
 /app/lib/fleet/types.ts
-/app/lib/i18n/sdk-registry.ts
+/app/lib/i18n/phrases.ts
 /app/lib/i18n/sdk/agent.json
 /app/lib/i18n/sdk/auth.json
 /app/lib/i18n/sdk/base.json
 /app/lib/i18n/sdk/booking.json
 /app/lib/i18n/sdk/comms.json
+/app/lib/i18n/sdk/control.json
 /app/lib/i18n/sdk/crm.json
 /app/lib/i18n/sdk/erp.json
 /app/lib/i18n/sdk/gateways.json
@@ -610,6 +617,7 @@ migrate_working_dir/
 /app/lib/intent-engine.ts
 /app/lib/session.ts
 /app/lib/site-metadata.ts
+/app/llms.txt/route.ts
 /app/manager/booking/reservations/\[id\]/page.tsx
 /app/manager/booking/reservations/page.tsx
 /app/manager/booking/tables/page.tsx
@@ -667,7 +675,6 @@ migrate_working_dir/
 /app/services/all/accounting/selling.ts
 /app/services/all/agent/memory.ts
 /app/services/all/agent/plan.ts
-/app/services/all/agent/tasks.ts
 /app/services/all/crm/commercial.ts
 /app/services/all/crm/contacts.ts
 /app/services/all/crm/deals.ts
@@ -710,6 +717,8 @@ migrate_working_dir/
 /app/services/base/telemetry.ts
 /app/services/base/tenant-host-control.ts
 /app/services/base/tenant-hosts.ts
+/app/services/control/errors.ts
+/app/services/control/feature-switches.ts
 /app/services/control/fleet-actions.ts
 /app/services/control/fleet.ts
 /app/services/control/global_settings.ts
@@ -742,6 +751,7 @@ migrate_working_dir/
 /app/studio/systems/new/page.tsx
 /app/studio/systems/page.tsx
 /app/styles/rokct-marquee.css
+/app/styles/rokct-rise.css
 /app/styles/rokct-scroll.css
 /app/team/page.tsx
 /app/twitter-image.tsx
@@ -752,6 +762,7 @@ migrate_working_dir/
 /components/custom/app-sidebar.tsx
 /components/custom/auth-form.tsx
 /components/custom/auth/agent-register-config.ts
+/components/custom/auth/agent-verify-pin-step.tsx
 /components/custom/auth/header-auth-buttons.tsx
 /components/custom/auth/register-registry.ts
 /components/custom/back-to-top.tsx
@@ -772,6 +783,8 @@ migrate_working_dir/
 /components/custom/header.tsx
 /components/custom/hero-view.tsx
 /components/custom/hero.tsx
+/components/custom/hub/hub-theme.css
+/components/custom/hub/hub-theme.tsx
 /components/custom/image-upload.tsx
 /components/custom/install-offer.tsx
 /components/custom/landing-content.tsx
@@ -785,6 +798,7 @@ migrate_working_dir/
 /components/custom/landing/back-to-top-style.ts
 /components/custom/landing/back-to-top.ts
 /components/custom/landing/brand-marks.ts
+/components/custom/landing/corp-links.ts
 /components/custom/landing/download-platform.ts
 /components/custom/landing/fonts/rokct/OFL.txt
 /components/custom/landing/fonts/rokct/bricolage-grotesque-latin-opsz-wdth-wght.woff2
@@ -806,6 +820,9 @@ migrate_working_dir/
 /components/custom/landing/page-sections.ts
 /components/custom/landing/plans-query.ts
 /components/custom/landing/platform-glyphs.tsx
+/components/custom/landing/rokct-corporate.css
+/components/custom/landing/rokct-divisions.server.ts
+/components/custom/landing/rokct-divisions.ts
 /components/custom/landing/rokct-fonts.ts
 /components/custom/landing/rokct-landing-classes.ts
 /components/custom/landing/rokct-landing-content.ts
@@ -839,6 +856,7 @@ migrate_working_dir/
 /components/custom/right-plane.tsx
 /components/custom/rokct-closing.client.tsx
 /components/custom/rokct-closing.tsx
+/components/custom/rokct-corporate.tsx
 /components/custom/rokct-funding.client.tsx
 /components/custom/rokct-funding.tsx
 /components/custom/rokct-hero.client.tsx
@@ -1008,6 +1026,7 @@ migrate_working_dir/
 /public/landing/agent/rk-policy.svg
 /public/landing/agent/rk-stock.svg
 /public/landing/agent/rk-till.svg
+/tour/fragments/control-feature-switches.tour.yaml
 /tour/fragments/control-fleet.tour.yaml
 /types/next-auth.d.ts
 # @rokct-composed-end

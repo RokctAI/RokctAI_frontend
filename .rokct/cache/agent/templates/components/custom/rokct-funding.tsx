@@ -34,6 +34,7 @@ import type {
   PageSectionProps,
 } from "@/components/custom/landing/page-sections";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export const meta: PageSectionMeta = {
   order: 30,
   nav: [{ id: RK_ANCHORS.funding, label: "Funding" }],
@@ -45,18 +46,18 @@ export default function RokctFundingSection({ id, signupUrl }: PageSectionProps)
       <RkMark className="rk-band-r" />
       <div className="rk-wrap rk-opp">
         <div className="rk-reveal">
-          <RkAsk>{RK_FUNDING.ask}</RkAsk>
+          <RkAsk>{tx(RK_FUNDING.ask)}</RkAsk>
           <h2 className="rk-h2">{rkLines(RK_FUNDING.heading)}</h2>
-          <p className="rk-lede">{RK_FUNDING.lede}</p>
+          <p className="rk-lede">{tx(RK_FUNDING.lede)}</p>
           <div className="rk-counts">
             {RK_FUNDING.counts.map((count) => (
               <div className="rk-count" key={count.label}>
-                <b>{count.n}</b>
-                <span>{count.label}</span>
+                <b>{tx(count.n)}</b>
+                <span>{tx(count.label)}</span>
               </div>
             ))}
           </div>
-          <div className="rk-src">{RK_FUNDING.source}</div>
+          <div className="rk-src">{tx(RK_FUNDING.source)}</div>
         </div>
         <RokctFinder signupUrl={signupUrl} />
       </div>

@@ -36,6 +36,7 @@ import type { PageSectionMeta, PageSectionProps } from "@/components/custom/land
 import { Wordmark } from "./site-art";
 import { isDataSite, siteKind, siteNav } from "./site-source";
 
+import { tx } from "@/app/lib/i18n/phrases";
 /** The version the chrome row prints when the deployment sets none. */
 export const SITE_FOOTER_VERSION = "1.0.0";
 
@@ -75,13 +76,13 @@ export async function SiteFooter({ id }: { id?: string }) {
                 />
               )
             )}
-            {site?.motto && <p className="mt-2 text-base font-semibold text-[var(--cs-ink)]">{site.motto}</p>}
-            {site?.footer?.line && <p className="cs-k">{site.footer.line}</p>}
+            {site?.motto && <p className="mt-2 text-base font-semibold text-[var(--cs-ink)]">{tx(site.motto)}</p>}
+            {site?.footer?.line && <p className="cs-k">{tx(site.footer.line)}</p>}
           </div>
-          <nav aria-label="Footer" className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm font-semibold sm:flex sm:flex-wrap">
+          <nav aria-label={tx("Footer")} className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm font-semibold sm:flex sm:flex-wrap">
             {links.map((link) => (
               <Link key={link.href} href={link.href} className="transition-colors hover:text-[var(--cs-ink)]">
-                {link.label}
+                {tx(link.label)}
               </Link>
             ))}
           </nav>

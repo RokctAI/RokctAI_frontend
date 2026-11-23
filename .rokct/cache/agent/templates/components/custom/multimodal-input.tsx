@@ -61,10 +61,9 @@ import { cn } from "@/lib/utils";
 import { getAttendanceStatus } from "@/app/actions/ai/hr";
 import { verifyCrmRole } from "@/app/lib/roles";
 
-// chat_with_rok takes the message, the session and the model, and no
-// attachments, so an uploaded file would reach nobody: the attach menu stays
-// off until the bridge accepts files (agent_sdk 1.20.0). The upload path
-// below is kept whole for that day.
+// The chat host takes no attachments, so an uploaded file would reach
+// nobody: the attach menu stays off until it accepts files (agent_sdk
+// 1.20.0). The upload path below is kept whole for that day.
 const ATTACHMENTS_ENABLED = false;
 
 const suggestedActions = [

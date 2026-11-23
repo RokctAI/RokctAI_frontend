@@ -26,6 +26,7 @@ import React from "react";
 
 import type { SiteTeamMember } from "@/lib/site-data/kinds";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export function initialsOf(name: string): string {
   return name
     .split(/\s+/)
@@ -60,8 +61,8 @@ function MemberCard({ member }: { member: SiteTeamMember }) {
         )}
       </div>
       <div>
-        <h2 className="text-lg font-semibold leading-tight">{member.name}</h2>
-        <p className="text-sm opacity-70">{member.role}</p>
+        <h2 className="text-lg font-semibold leading-tight">{tx(member.name)}</h2>
+        <p className="text-sm opacity-70">{tx(member.role)}</p>
       </div>
       {member.links && member.links.length > 0 && (
         <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
@@ -72,7 +73,7 @@ function MemberCard({ member }: { member: SiteTeamMember }) {
                 rel="noopener noreferrer"
                 className="underline-offset-4 hover:underline"
               >
-                {link.label}
+                {tx(link.label)}
               </a>
             </li>
           ))}

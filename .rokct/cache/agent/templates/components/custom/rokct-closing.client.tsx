@@ -29,6 +29,7 @@ import { RiArrowRightLine } from "@remixicon/react";
 import { RK_FINAL } from "@/components/custom/landing/rokct-landing-content";
 
 import t from "@/app/lib/i18n";
+import { tx } from "@/app/lib/i18n/phrases";
 function useTypedPlaceholder(lines: readonly string[]): string {
   const [text, setText] = useState(lines[0] ?? "");
   useEffect(() => {
@@ -73,7 +74,7 @@ export function RokctAskBox({ target }: { target: string }) {
   return (
     <form className="rk-input" onSubmit={submit}>
       <label htmlFor="rk-ask-q" className="rk-sr">
-        {RK_FINAL.label}
+        {tx(RK_FINAL.label)}
       </label>
       <input
         id="rk-ask-q"

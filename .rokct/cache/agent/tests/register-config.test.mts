@@ -84,8 +84,10 @@ describe('the register config', () => {
     }
   });
 
-  it('declares no post-account steps', () => {
-    assert.deepEqual(config.steps, []);
+  it('declares one post-account step, the hub email PIN, that cannot be skipped', () => {
+    assert.equal(config.steps?.length, 1);
+    assert.equal(config.steps?.[0].id, 'verify_email');
+    assert.equal(config.steps?.[0].skippable, false);
   });
 });
 

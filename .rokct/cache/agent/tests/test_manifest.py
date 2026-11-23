@@ -133,10 +133,11 @@ USE_CLIENT_RE = re.compile(r'^\s*["\']use client["\'];?\s*$', re.M)
 # with nothing client-only in them, which stay whole. 1.24.0: the
 # redesign's six sections and the live plan cards (pricing); the Merlin-era
 # sections are gone.
-SPLIT_SECTIONS = (
-    "rokct-hero", "rokct-platform", "rokct-funding", "pricing", "rokct-closing",
-)
-WHOLE_SECTIONS = ("rokct-how", "rokct-plans")
+# 1.29.0: the registry holds the one corporate section, a whole server
+# section. The earlier sections (rokct-hero, -platform, -how, -funding,
+# -plans, pricing, -closing) stay installed but unregistered.
+SPLIT_SECTIONS = ()
+WHOLE_SECTIONS = ("rokct-corporate",)
 
 
 def load_manifest():
@@ -304,6 +305,7 @@ class TestRegisterInjection(unittest.TestCase):
                 "@/app/config/platform",
                 "@/lib/actions/getSubscriptionPlans",
                 "@/app/(auth)/agent-register-actions",
+                "@/components/custom/auth/agent-verify-pin-step",
             ]),
         )
         # The registry is reached for its types only; the two server
@@ -329,7 +331,7 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn('t("auth.label_domain")', src)
         self.assertIn('title: "Create Account"', src)
         self.assertIn('cta: "Get Started"', src)
-        self.assertIn("steps: [],", src)
+        self.assertIn('id: "verify_email",', src)
 
     def test_provisioner_is_the_removed_control_flow(self):
         provision = read(PROVISION)
@@ -426,7 +428,9 @@ class TestRegisterInjection(unittest.TestCase):
         # ships, scoped to the landing root.
         css = [i for i in manifest["installs"] if i["from"].endswith(".css")]
         self.assertEqual(css, [{"from": "templates/components/custom/landing/rokct-landing.css",
-                                "to": "components/custom/landing/rokct-landing.css"}])
+                                "to": "components/custom/landing/rokct-landing.css"},
+                               {"from": "templates/components/custom/landing/rokct-corporate.css",
+                                "to": "components/custom/landing/rokct-corporate.css"}])
         self.assertIn(".rk-landing #hero {\n  display: none;", read(RK_CSS))
 
     def test_header_and_hero_surfaces_name_no_third_party_host(self):
@@ -455,7 +459,8 @@ class TestRegisterInjection(unittest.TestCase):
         brand = src[src.index("  brand: {"):src.index("  anchors: [...RK_HEADER_ANCHORS],")]
         self.assertIn("collapse: { delayMs: 1500, code: brandingCode },", brand)
         self.assertNotIn("badge: true", brand)
-        self.assertIn('export const RK_HEADER_ANCHORS = ["ask", "platform", "how", "funding", "plans"] as const;', src)
+        # 1.29.0: the corporate home's anchors (rokct-corporate.tsx RC_ANCHORS).
+        self.assertIn('export const RK_HEADER_ANCHORS = ["divisions", "platform", "products", "opportunities", "investors"] as const;', src)
         # The code comes from the shell's branding cache, as the old header
         # read it, then the visitor's time zone; never a network call.
         self.assertIn("getBrandingSync,", src)
@@ -471,13 +476,10 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn("fontSize: BRANDING_COUNTRY_SCALE,", src)
         self.assertIn("top: BRANDING_COUNTRY_Y_OFFSET,", src)
         # Each anchor is a section this SDK registers, with the header label.
-        anchors = {}
-        for name in ("rokct-hero", "rokct-platform", "rokct-how", "rokct-funding", "rokct-plans"):
-            anchors[name] = read(os.path.join(CUSTOM, f"{name}.tsx"))
-        content = read(RK_CONTENT)
-        for key in ("ask", "platform", "how", "funding", "plans"):
-            self.assertRegex(content, rf'\b{key}: "{key}"', key)
-        self.assertIn('nav: [{ id: RK_ANCHORS.ask, label: "Ask ROK" }],', anchors["rokct-hero"])
+        corp = read(os.path.join(CUSTOM, "rokct-corporate.tsx"))
+        for key in ("divisions", "platform", "products", "opportunities", "investors"):
+            self.assertRegex(corp, rf'\b{key}: "{key}"', key)
+            self.assertIn(f"{{ id: RC_ANCHORS.{key}, label:", corp)
 
     def test_product_plan_categories_leave_rokct(self):
         # 1.13.0: Telephony joins Hosting and paas in the one server-side
@@ -696,7 +698,7 @@ class TestRegisterInjection(unittest.TestCase):
         self.assertIn("## 1.19.1", latest)
         for word in ('"juvo platforms"', "use caps in logos", "`uppercase`"):
             self.assertIn(word, latest)
-        self.assertEqual(load_manifest()["version"], "1.27.1")
+        self.assertEqual(load_manifest()["version"], "1.31.0")
 
     def test_behaviour_under_node(self):
         node = shutil.which("node")
@@ -732,11 +734,6 @@ UNTYPED_CALL = re.compile(r"as any\)\.call\(")
 APP_PREFIXED_CMD = re.compile(r"[\"'`](rcore|paas)\.")
 TEMPLATE_SUFFIXES = (".ts", ".tsx", ".mts", ".js", ".jsx", ".mjs")
 TENANT_CMDS = {
-    "api.plan_builder.summarize_chat_session": (
-        os.path.join(TEMPLATES, "app", "(chat)", "api", "chat", "route.ts"),
-        os.path.join(TEMPLATES, "app", "(chat)", "api", "summarize", "route.ts"),
-        os.path.join(TEMPLATES, "app", "(chat)", "page.tsx"),
-    ),
     "tenant.api.log_frontend_error": (
         os.path.join(TEMPLATES, "app", "(chat)", "api", "error", "route.ts"),
     ),
@@ -756,19 +753,18 @@ FRAPPE_MANIFEST = os.path.join(SDK_ROOT, os.pardir, "frappe", "manifest.json")
 FRAPPE_SRC = os.path.join(SDK_ROOT, os.pardir, "frappe", "src")
 CONTROL_CMD_LITERAL = re.compile(r"[\"'`](control:[A-Za-z0-9_]+)[\"'`]")
 DOTTED_CONTROL_CMD = re.compile(r"\.call\(\s*[\"'`]control\.(?:control\.)?api\.")
-CONTROL_CMDS = {
-    "control:summarize_chat_session": (
-        os.path.join(TEMPLATES, "app", "(chat)", "api", "chat", "route.ts"),
-        os.path.join(TEMPLATES, "app", "(chat)", "api", "summarize", "route.ts"),
-        os.path.join(TEMPLATES, "app", "(chat)", "page.tsx"),
-    ),
-}
+# The ROK chat summaries (summarize_chat_session) were deleted with the
+# Frappe AI; no template calls an agent-owned control cmd any more.
+CONTROL_CMDS = {}
 CONTROL_CMDS_OF_OTHER_MODULES = {
     "control:log_frontend_error": "core telemetry/frappe manifest",
     "control:get_public_opportunities": "corporate tender/frappe manifest",
     "control:provision_service_subscription": "control/hooks.py override_whitelisted_methods",
     "control:provision_new_tenant": "control/hooks.py override_whitelisted_methods",
     "control:get_pricing_metadata": "control/hooks.py override_whitelisted_methods (allow_guest)",
+    "control:onboarding_state": "control onboarding/pulsar cmds_ported.py (guest)",
+    "control:onboarding_verify_pin": "control onboarding/pulsar cmds_ported.py (guest, control#272)",
+    "control:onboarding_resend_pin": "control onboarding/pulsar cmds_ported.py (guest, control#272)",
 }
 
 
@@ -812,19 +808,9 @@ class TestGatewayCalls(unittest.TestCase):
                     src = read(path)
                     self.assertIn(f'gatewayCall(client, "{cmd}", {{', src)
                     self.assertIn("@/app/lib/gateway-rpc", src)
-        # The three summaries read the target's return under Frappe's
-        # `message` envelope, which gatewayCall keeps.
-        for path in TENANT_CMDS["api.plan_builder.summarize_chat_session"]:
-            with self.subTest(file=os.path.relpath(path, SDK_ROOT)):
-                self.assertRegex(read(path), r"(sumRes|tenantRes)\?\.message")
-        # summarize_chat_session is this SDK's own tenant endpoint: the key
-        # the cmd is cut from is in the frappe half's manifest.
-        with open(os.path.join(SDK_ROOT, os.pardir, "frappe", "manifest.json"), encoding="utf-8") as f:
-            frappe_manifest = f.read()
-        self.assertIn('"{app_name}.api.plan_builder.summarize_chat_session"', frappe_manifest)
         self.assertNotIn("/api/method/rcore.", "".join(read(p) for p in template_sources()))
         # The agent services build their cmds from a prefix-free namespace.
-        for name, ns in (("plan.ts", "api.plan_builder"), ("memory.ts", "api"), ("tasks.ts", "api")):
+        for name, ns in (("plan.ts", "api.plan_builder"), ("memory.ts", "api")):
             with self.subTest(file=name):
                 self.assertIn(f'const NS = "{ns}";', read(os.path.join(TEMPLATES, "app", "services", "all", "agent", name)))
         # The control-side error sink is a `control:` cmd (core's telemetry
@@ -864,7 +850,6 @@ class TestGatewayCalls(unittest.TestCase):
         whitelist = control_whitelist()
         own = {k: v for k, v in whitelist.items() if k.startswith("control:")}
         self.assertEqual(set(own) & set(CONTROL_CMDS), set(CONTROL_CMDS))
-        self.assertIn("control:chat_with_rok", own)
         for key, target in own.items():
             with self.subTest(key=key):
                 self.assertEqual(target, whitelist[key.replace("control:", "control.api.")])
@@ -944,8 +929,9 @@ class TestRedesign(unittest.TestCase):
     sections, their order on the page, the one stylesheet and the three
     bundled faces."""
 
-    ORDER = (("rokct-hero", -1), ("rokct-platform", 10), ("rokct-how", 20), ("rokct-funding", 30),
-             ("rokct-plans", 40), ("pricing", 45), ("rokct-closing", 50))
+    # 1.29.0: the corporate home is one section; the seven earlier ones stay
+    # installed but unregistered.
+    ORDER = (("rokct-corporate", -1),)
 
     def test_sections_are_registered_in_page_order(self):
         manifest = load_manifest()
@@ -956,7 +942,7 @@ class TestRedesign(unittest.TestCase):
         for name, order in self.ORDER:
             with self.subTest(section=name):
                 self.assertIn(f"  order: {order},", read(os.path.join(CUSTOM, f"{name}.tsx")))
-        # The live plan cards stay, under the ladder, only when there are plans.
+        # pricing.tsx is unregistered since 1.29.0 but keeps its rules.
         pricing = read(os.path.join(CUSTOM, "pricing.tsx"))
         self.assertIn('  anchor: "prices",', pricing)
         self.assertIn("  renders: (ctx) => ctx.plans.length > 0,", pricing)
@@ -978,7 +964,7 @@ class TestRedesign(unittest.TestCase):
         importers = [f for f in os.listdir(CUSTOM) if f.endswith(".tsx")
                      and 'import "@/components/custom/landing/rokct-landing.css";' in read(os.path.join(CUSTOM, f))]
         # 1.26.0: the auth frame (site-shell.tsx) wears the landing too.
-        self.assertEqual(sorted(importers), ["rokct-hero.client.tsx", "site-shell.tsx"])
+        self.assertEqual(sorted(importers), ["rokct-corporate.tsx", "rokct-hero.client.tsx", "site-shell.tsx"])
 
     def test_the_faces_are_bundled_with_their_licence(self):
         files = sorted(os.listdir(RK_FONT_DIR))

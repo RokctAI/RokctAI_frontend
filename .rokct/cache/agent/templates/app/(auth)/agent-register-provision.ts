@@ -47,6 +47,7 @@
 // isServicePlan), because a RegisterField has no visibility rule.
 
 import { loadTenantLink } from "@/app/(auth)/tenant-link";
+import { rememberOnboardingToken } from "@/app/(auth)/agent-onboarding-session";
 import type {
   RegisterOutcome,
   RegisterProvisioner,
@@ -122,6 +123,10 @@ const agentRegisterProvisioner: RegisterProvisioner = {
           : await provisionNewTenant(input);
         if (!result.ok) return { status: "failed", error: result.error };
         siteName = result.siteName;
+        // The hub opened an onboarding session and emailed its PIN: keep the
+        // session so the register page's "Verify your email" step
+        // (components/custom/auth/agent-verify-pin-step.tsx) can check it.
+        if (result.onboardingToken) await rememberOnboardingToken(result.onboardingToken);
       } catch (e) {
         console.error("Provisioning Error:", e);
         return { status: "failed", error: "Provisioning exception occurred." };

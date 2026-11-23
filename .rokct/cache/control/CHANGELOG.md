@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.0
+
+* Hub feature switches screen (Ray 2026-11-22; layout approved on the render, hub Sticks theme). `/handson/control/feature-switches` shows the Sticks features (plugin building, plugins for unsupported services, voice calls, hands-on view) per plan with a switch each, and a Tenant overrides tab to set one tenant On, Off or back to its plan; the overrides list shows each one against its plan. Cmds: `control:get_feature_switches`, `control:set_plan_feature`, `control:set_tenant_feature` (agent#687, System Manager only). Drawn with agent_sdk's hub theme (`components/custom/hub/hub-theme`, agent_sdk >= 1.29.0). Afrikaans phrase book `app/lib/i18n/sdk/control.json`; tour fragment `control-feature-switches`. Sidebar entry in the shell's `app/handson/layout.tsx` controlItems.
+
 ## 1.8.0
 
 * Move rollback on the board (hubs gap item 11, spec 7.3). The **Moves**

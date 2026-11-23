@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.31.0
+
+* The ROK chat callers of the deleted Frappe AI are gone (Ray 2026-11-22). The chat route answers only through the agent host; tenant and hub chat say "Chat is available in Sticks". Chat summaries, the session roll and the archive on `/` are removed with `api/summarize`. `PlanBuilderService.chatWithRok`, `AiTaskService` (dispatch_ai_task, get_ai_result), `MemoryService.semanticSearch` and `getAvailableModels` are deleted; the memory page searches by module only.
+
+## 1.30.0
+
+* feat: rokct.ai is the corporate home of one technology company (Ray, 2026-11-21). `components/custom/rokct-corporate.tsx` is the one page section: divisions, the Rokct platform, products (TenderAssist, Rokct Pay, Supacharge, Sticks), Opportunities as a free public way in (links to `/opportunities`, no chat needed), and investors. It replaces the seven rokct-* sections and pricing in the registry. Their files stay installed but are now unused. The header anchors follow.
+* feat: the division hider. `landing/rokct-divisions.ts` lists a division only when a card in the shell's `divisions/` folder names it. Cards arrive the way Cortex Media showcase cards do: each division repo carries `.rokct/division.json`, and RokctAI/shared-workflows `division-announce.yml` opens a PR that copies it into the registry.
+* All words are trkeys `agent.corp_*`, in English and Afrikaans. Dark mode uses the rk tokens. Motion is transform and opacity only, and off under reduced motion.
+
+## 1.29.0
+
+* feat(auth): the hub's email PIN at sign-up (Ray 2026-11-22, approved pin3 renders). The register page gains a "Verify your email" step: a tenant sign-up's onboarding session (control provision_new_tenant's onboarding_token) is kept in an httpOnly cookie, and the step checks the emailed 6-digit code through control:onboarding_verify_pin, with "Send a new code" (control:onboarding_resend_pin) shown from the start and a one-minute wait after each send. No hub session (a Service plan) and the step passes through. Afrikaans phrases added. Needs control#272.
+* feat(hub): the hub theme in one place, components/custom/hub/hub-theme.css with the HubTheme wrapper: the Sticks tokens and faces (Ray: platform.rokct.ai takes the Sticks theme). Used by the PIN step and by subscriptions_sdk's feature switches screen.
+
+## 1.28.0
+
+* feat(i18n): the rokct.ai and Sticks landing pages read in Afrikaans when the visitor picks AF (Ray, 2026-11-21). Visible text goes through base_sdk 1.66.0's `tx()`, and 490 phrases of Afrikaans ship in `app/lib/i18n/sdk/agent.json` under `af.__phrases`. The Sticks block ships its own phrase book, `app/lib/i18n/sdk/sticks.json`. The Afrikaans is machine-drafted and needs a skim by a fluent speaker. Floor: base_sdk >= 1.66.0.
+
 ## 1.27.1
 
 * style: landing sections rise and fade in as they scroll into view (CSS

@@ -26,6 +26,7 @@
 
 import React from "react";
 
+import { tx } from "@/app/lib/i18n/phrases";
 /** One legal document as the page renders it. */
 export interface LegalDoc {
   /** The doc name - the `/legal/<name>` route id. */
@@ -69,10 +70,10 @@ export function LegalDocView({ doc, className = "" }: LegalDocProps) {
       data-legal-doc={doc.name}
     >
       <header className="mb-8 border-b border-black/10 dark:border-white/10 pb-6">
-        <h1 className="text-3xl font-bold tracking-tight">{doc.title}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{tx(doc.title)}</h1>
       </header>
       <div className="whitespace-pre-wrap break-words text-base leading-relaxed opacity-80">
-        {doc.body}
+        {tx(doc.body)}
       </div>
     </article>
   );

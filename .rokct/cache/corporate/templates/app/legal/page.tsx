@@ -38,6 +38,7 @@ import { loadLegalIndex } from "@/components/custom/legal/load-legal-doc";
 import { SiteFrame } from "@/components/custom/site-frame";
 import { siteDataMode } from "@/lib/site-data/read-site-data";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export const dynamic = "force-dynamic";
 
 export function generateMetadata(): Promise<Metadata> {
@@ -54,10 +55,10 @@ export default async function LegalIndexPage() {
   const body = (
     <section className="mx-auto w-full max-w-3xl px-4 py-12" data-legal-index="">
       <h1 className="mb-8 text-3xl font-bold tracking-tight">
-        {DEFAULT_LEGAL_GROUP_LABEL}
+        {tx(DEFAULT_LEGAL_GROUP_LABEL)}
       </h1>
       {terms.length === 0 ? (
-        <p className="opacity-70">No legal documents have been published yet.</p>
+        <p className="opacity-70">{tx("No legal documents have been published yet.")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {terms.map((term) => (
@@ -66,7 +67,7 @@ export default async function LegalIndexPage() {
                 href={legalDocHref(term.name)}
                 className="text-lg underline-offset-4 hover:underline"
               >
-                {term.title}
+                {tx(term.title)}
               </Link>
             </li>
           ))}
@@ -74,10 +75,10 @@ export default async function LegalIndexPage() {
       )}
     </section>
   );
-  if (!frame.registered) return <LegalFrame terms={terms} indexLink={false}>{body}</LegalFrame>;
+  if (!frame.registered) return <LegalFrame terms={terms} indexLink={false}>{tx(body)}</LegalFrame>;
   return (
     <SiteFrame frame={frame} page="legal" session={session} dataMode={dataMode}>
-      {body}
+      {tx(body)}
     </SiteFrame>
   );
 }

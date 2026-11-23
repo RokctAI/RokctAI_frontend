@@ -37,11 +37,13 @@ import { PLATFORM_NAME } from "@/app/config/platform";
 import {
   SITE_CREDIT_HEART,
   SITE_CREDIT_MAKER,
+  SITE_CREDIT_MAKER_URL,
   SITE_CREDIT_SEPARATOR,
   SITE_CREDIT_LABELS,
   siteCopyright,
   type SiteCreditLabels,
 } from "@/components/custom/landing/site-credit";
+import { tx } from "@/app/lib/i18n/phrases";
 
 export interface SiteCreditProps {
   /** The site's own name. Defaults to the host's PLATFORM_NAME. */
@@ -69,7 +71,8 @@ export function SiteCredit({
   heartClassName,
   as: Tag = "p",
 }: SiteCreditProps) {
-  const words = { ...SITE_CREDIT_LABELS, ...labels };
+  const merged = { ...SITE_CREDIT_LABELS, ...labels };
+  const words = { builtWith: tx(merged.builtWith), love: tx(merged.love), by: tx(merged.by) };
   const copyright = siteCopyright(siteName, year);
   return (
     <Tag className={className} data-site-credit="">
@@ -80,7 +83,16 @@ export function SiteCredit({
         <span role="img" aria-label={words.love} className={heartClassName}>
           {SITE_CREDIT_HEART}
         </span>{" "}
-        {words.by} {SITE_CREDIT_MAKER}
+        {words.by}{" "}
+        <a
+          href={SITE_CREDIT_MAKER_URL}
+          target="_blank"
+          rel="noopener"
+          data-site-credit-maker-link=""
+          className="text-inherit underline-offset-4 hover:underline focus-visible:underline"
+        >
+          {SITE_CREDIT_MAKER}
+        </a>
       </span>
     </Tag>
   );

@@ -31,6 +31,17 @@
 /** Who built the site. Fixed by the ruling: every site, the same maker. */
 export const SITE_CREDIT_MAKER = "Cortex Media";
 
+/**
+ * Where the maker's name links (base_sdk 1.65.0; Ray, 2026-11-21: "Cortex
+ * Media can be a link back to its website"). Cortex Media has no domain of
+ * its own yet, so this is the address its site is live on today. ONE place:
+ * when the real domain arrives, change it here, or set
+ * NEXT_PUBLIC_CORTEX_MEDIA_URL on a host to point there sooner.
+ */
+export const SITE_CREDIT_MAKER_URL =
+  (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_CORTEX_MEDIA_URL) ||
+  "https://hosting-beta-one.vercel.app";
+
 /** The heart glyph drawn between the words (aria-labelled `love`). */
 export const SITE_CREDIT_HEART = "♥";
 

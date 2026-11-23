@@ -72,23 +72,3 @@ export async function contactSupport(data: {
     };
   }
 }
-
-export async function getAvailableModels() {
-  const client = await getClient();
-  try {
-    // Gateway cmd = manifest alias key minus "{app_name}." (agent module
-    // manifest key: {app_name}.api.plan_builder.get_available_models — the
-    // doubled file-segment form was collapsed on agent main).
-    const res = await gatewayCall(
-      client,
-      "api.plan_builder.get_available_models",
-    );
-    if (res && res.message && (res.message.FREE || res.message.PAID)) {
-      return { success: true, models: res.message };
-    }
-    return { success: false, error: "Invalid models data returned from backend." };
-  } catch (e: any) {
-    console.error("Failed to fetch available models from backend:", e);
-    return { success: false, error: e?.message || "Failed to fetch available models." };
-  }
-}
