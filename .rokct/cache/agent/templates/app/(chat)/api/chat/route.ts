@@ -246,7 +246,7 @@ export async function POST(request: Request) {
 
     if (isEmployeePlan) {
       // Forward chat turns of Employee Plan users directly to Paperclip
-      const paperclipUrl = process.env.PAPERCLIP_API_URL || "https://platform.usesticks.com/paperclip/api/chat";
+      const paperclipUrl = process.env.PAPERCLIP_API_URL || "https://platform.rokct.ai/paperclip/api/chat";
       const paperclipRes = await fetch(paperclipUrl, {
         method: "POST",
         headers: {
