@@ -57,7 +57,7 @@ jobs:
       # Brain Endpoint — universal platform gateway; the shared workflow wraps
       # the request in a {cmd: "api.brain.generate_release_notes", payload} envelope
       # when the endpoint ends with rokct.platform.api
-      brain_endpoint: https://platform.rokct.ai/api/v1/method/rokct.platform.api
+      brain_endpoint: https://platform.usesticks.com/api/v1/method/rokct.platform.api
 
       # Environment configuration
       node-version: ${{ inputs.node-version || '24' }}
