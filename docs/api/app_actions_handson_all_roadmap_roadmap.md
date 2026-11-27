@@ -31,21 +31,6 @@ Source file: `app/actions/handson/all/roadmap/roadmap.ts`
 ### `function deleteRoadmapFeature(name: string)`
 *No documentation provided (generation failed).*
 
-### `function assignToJules(docname: string, feature: string, explanation: string,)`
-*No documentation provided (generation failed).*
-
-### `function getJulesSources(apiKey?: string)`
-*No documentation provided (generation failed).*
-
-### `function triggerJules()`
-*No documentation provided (generation failed).*
-
-### `function discoverRoadmapContext(name: string)`
-*No documentation provided (generation failed).*
-
-### `function generateOneRoadmapIdeas(name: string)`
-*No documentation provided (generation failed).*
-
 ### `function setPublicRoadmap(roadmapName: string | null)`
 *No documentation provided (generation failed).*
 
@@ -55,14 +40,3 @@ Source file: `app/actions/handson/all/roadmap/roadmap.ts`
 ### `function getPublicRoadmapSetting()`
 *No documentation provided (generation failed).*
 
-### `function getJulesStatus(sessionId: string, apiKey?: string)`
-*No documentation provided (generation failed).*
-
-### `function getJulesActivities(sessionId: string, apiKey?: string)`
-*No documentation provided (generation failed).*
-
-### `function voteOnPlan(sessionId: string, action: "approve", apiKey?: string,)`
-*No documentation provided (generation failed).*
-
-### `function sendJulesMessage(sessionId: string, message: string, apiKey?: string,)`
-*No documentation provided (generation failed).*
