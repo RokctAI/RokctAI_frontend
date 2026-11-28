@@ -87,6 +87,16 @@ export type RegisterOutcome =
       verifyEmail?: boolean;
     }
   | {
+      /**
+       * The plan is paid for before anything is made (auth_sdk 1.14.0): the
+       * page posts `fields` to `url` (a payment provider's hosted checkout,
+       * e.g. PayFast), which brings the visitor back to the home SDK's return
+       * page once paid. Nothing is signed in yet.
+       */
+      status: "payment";
+      payment: { url: string; fields: Record<string, string> };
+    }
+  | {
       status: "failed" | "user_exists" | "invalid_data";
       error?: string;
     };

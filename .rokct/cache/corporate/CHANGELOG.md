@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.8.0
+
+* feat(i18n): the company, legal and local-data site pages draw their words
+  through base_sdk 1.66.0's `tx()`, so a phrase book (`af.__phrases` in an
+  SDK copy file or the shell's own `app/lib/i18n/sdk/<name>.json`) turns
+  them Afrikaans when the visitor picks AF. Floor base_sdk >= 1.66.0.
+
 ## 1.7.2
 
 * **Hero bottles can be see-through** (Ray, 2026-11-02: "hero, bottles can

@@ -1,6 +1,8 @@
 {
   "name": "agent_sdk",
-  "version": "1.27.1",
+  "version": "1.32.0",
+  "_comment_version_1_29_0": "1.28.0 -> 1.29.0: the hub's email PIN (Ray 2026-11-22, pin3 renders approved, 'This theme'). The register config gains one post-account step, verify_email (components/custom/auth/agent-verify-pin-step.tsx): a tenant sign-up's onboarding_token (control provision_new_tenant) is kept in an httpOnly cookie (app/(auth)/agent-onboarding-session.ts) and the step checks the emailed code through control:onboarding_verify_pin / control:onboarding_resend_pin (app/(auth)/agent-onboarding-pin.ts); no hub session = the step passes through. New components/custom/hub/ holds the hub theme in one place (hub-theme.css + HubTheme, the Sticks tokens); subscriptions_sdk's feature switches screen uses it too. Needs control with control#272.",
+  "_comment_version_1_28_0": "1.27.1 -> 1.28.0: rokct.ai and Sticks landing copy in Afrikaans (Ray, 2026-11-21: \"translate all texts in all our websites\"). Visible text in the rokct-* and sticks landing files goes through base_sdk 1.66.0's tx() (app/lib/i18n/phrases.ts), and the Afrikaans phrase book ships in app/lib/i18n/sdk/agent.json under af.__phrases. The sticks block ships its own phrase book, app/lib/i18n/sdk/sticks.json. Floor: base_sdk >= 1.66.0.",
   "_comment_version_1_27_1": "1.27.1: landing sections rise and fade in as they scroll into view (CSS scroll-driven, no JS, off under reduced motion; Ray 2026-11-20 motion pass). Nothing to install.",
   "_comment_version_1_26_3": "1.26.3: style only (motion pass, Ray 2026-11-14). landing opportunities and funding search drop spinners and pulse, pricing buttons press at 0.97, named transition properties. Nothing to install.",
   "_comment_version_1_26_2": "1.26.1 -> 1.26.2: rokct.ai auth links (Create an account, Sign in, Forgot password?) take the brand yellow instead of the indigo accent, light and dark, with a yellow hover/focus fill.",
@@ -117,6 +119,34 @@
     {
       "from": "templates/app/(auth)/agent-register-actions.ts",
       "to": "app/(auth)/agent-register-actions.ts"
+    },
+    {
+      "from": "templates/app/(auth)/agent-onboarding-session.ts",
+      "to": "app/(auth)/agent-onboarding-session.ts"
+    },
+    {
+      "from": "templates/app/(auth)/agent-onboarding-pin.ts",
+      "to": "app/(auth)/agent-onboarding-pin.ts"
+    },
+    {
+      "from": "templates/components/custom/auth/agent-verify-pin-step.tsx",
+      "to": "components/custom/auth/agent-verify-pin-step.tsx"
+    },
+    {
+      "from": "templates/app/(auth)/agent-paid-signup.ts",
+      "to": "app/(auth)/agent-paid-signup.ts"
+    },
+    {
+      "from": "templates/app/(auth)/register/paid/page.tsx",
+      "to": "app/(auth)/register/paid/page.tsx"
+    },
+    {
+      "from": "templates/components/custom/auth/agent-paid-signup.tsx",
+      "to": "components/custom/auth/agent-paid-signup.tsx"
+    },
+    {
+      "from": "templates/components/custom/hub",
+      "to": "components/custom/hub"
     },
     {
       "from": "templates/components/custom/pricing.tsx",
@@ -281,6 +311,26 @@
     {
       "from": "templates/app/lib/i18n/sdk/agent.json",
       "to": "app/lib/i18n/sdk/agent.json"
+    },
+    {
+      "from": "templates/components/custom/rokct-corporate.tsx",
+      "to": "components/custom/rokct-corporate.tsx"
+    },
+    {
+      "from": "templates/components/custom/landing/rokct-corporate.css",
+      "to": "components/custom/landing/rokct-corporate.css"
+    },
+    {
+      "from": "templates/components/custom/landing/corp-links.ts",
+      "to": "components/custom/landing/corp-links.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/rokct-divisions.ts",
+      "to": "components/custom/landing/rokct-divisions.ts"
+    },
+    {
+      "from": "templates/components/custom/landing/rokct-divisions.server.ts",
+      "to": "components/custom/landing/rokct-divisions.server.ts"
     }
   ],
   "dependencies": {
@@ -318,37 +368,7 @@
     {
       "target": "components/custom/landing/page-sections.ts",
       "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-hero\", load: () => import(\"@/components/custom/rokct-hero\") },"
-    },
-    {
-      "target": "components/custom/landing/page-sections.ts",
-      "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-platform\", load: () => import(\"@/components/custom/rokct-platform\") },"
-    },
-    {
-      "target": "components/custom/landing/page-sections.ts",
-      "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-how\", load: () => import(\"@/components/custom/rokct-how\") },"
-    },
-    {
-      "target": "components/custom/landing/page-sections.ts",
-      "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-funding\", load: () => import(\"@/components/custom/rokct-funding\") },"
-    },
-    {
-      "target": "components/custom/landing/page-sections.ts",
-      "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-plans\", load: () => import(\"@/components/custom/rokct-plans\") },"
-    },
-    {
-      "target": "components/custom/landing/page-sections.ts",
-      "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"pricing\", load: () => import(\"@/components/custom/pricing\") },"
-    },
-    {
-      "target": "components/custom/landing/page-sections.ts",
-      "placeholder": "// @rokct-sdk-page-sections-start",
-      "replacement": "  { id: \"rokct-closing\", load: () => import(\"@/components/custom/rokct-closing\") },"
+      "replacement": "  { id: \"rokct-corporate\", load: () => import(\"@/components/custom/rokct-corporate\") },"
     },
     {
       "target": "components/custom/landing/header-menu.ts",
@@ -382,6 +402,7 @@
     }
   ],
   "requires": [
+    "app/lib/i18n/phrases.ts",
     "app/(auth)/auth.ts",
     "app/(auth)/actions.ts",
     "app/(auth)/tenant-link.ts",
@@ -482,6 +503,10 @@
       "common": false,
       "installs": [
         {
+          "from": "templates/sticks/app/lib/i18n/sdk/sticks.json",
+          "to": "app/lib/i18n/sdk/sticks.json"
+        },
+        {
           "from": "templates/sticks/app/page.tsx",
           "to": "app/page.tsx"
         },
@@ -560,6 +585,7 @@
         }
       ],
       "requires": [
+        "app/lib/i18n/phrases.ts",
         "components/custom/site-credit.tsx",
         "components/custom/landing/site-credit.ts",
         "components/custom/landing/site-metadata.ts",
@@ -569,5 +595,6 @@
         "app/config/platform.ts"
       ]
     }
-  }
+  },
+  "_comment_version_1_30_0": "1.30.0: rokct.ai becomes the corporate home of one technology company (Ray, 2026-11-21): components/custom/rokct-corporate.tsx is the ONE page section (divisions, platform, products, Opportunities for people, investors), replacing the seven rokct-* sections and pricing in the page-sections registry. The old section files stay installed but unregistered (unused; deleting them is Ray's call). Divisions pass the hider (landing/rokct-divisions.ts): a division is listed only when a card in the shell's divisions/ folder names it; cards arrive like CORTEX showcase cards, by RokctAI/shared-workflows division-announce.yml from each division repo's .rokct/division.json. All words are trkeys agent.corp_* (EN and AF)."
 }

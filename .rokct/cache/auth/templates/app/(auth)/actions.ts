@@ -83,9 +83,12 @@ export type ActionState = {
     | "failed"
     | "invalid_data"
     | "user_exists"
-    | "verify_email";
+    | "verify_email"
+    | "payment";
   /** With `verify_email`: the site the account was created on, for the code step. */
   siteName?: string | null;
+  /** With `payment`: the hosted checkout the page posts the visitor to. */
+  payment?: { url: string; fields: Record<string, string> };
 };
 
 export async function login(
@@ -176,6 +179,9 @@ export async function register(
       values,
       tenantSite,
     });
+    if (outcome.status === "payment") {
+      return { status: "payment", payment: outcome.payment };
+    }
     if (outcome.status !== "success") {
       return { status: outcome.status, error: outcome.error };
     }

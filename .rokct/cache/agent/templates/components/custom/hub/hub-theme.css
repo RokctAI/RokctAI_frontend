@@ -1,0 +1,52 @@
+/*
+ * The hub's theme (platform.usesticks.com), in ONE place. Ray 2026-11-22: the hub
+ * takes the Sticks theme (the hub may later move to a Sticks domain), "This
+ * theme" on the pin3 renders. The values are the Sticks landing's
+ * (sticks/components/custom/landing/sticks-landing.css .stx), so a Sticks
+ * colour change is made there and here together. Every hub screen wraps in
+ * <HubTheme> (./hub-theme.tsx) and styles only with these tokens and the
+ * .hub-* classes below: the email PIN step (agent_sdk) and the feature
+ * switches screen (subscriptions_sdk app/admin/hub/feature-switches).
+ */
+.hub{
+  --paper:#F4F1EA; --card:#FFFFFF; --ink:#1B1916; --ink2:#55504A; --ink3:#8A847B;
+  --line:#DCD5C8; --ring:#EC7A3C; --onring:#1B1916; --ok:#2E7D4F; --no:#B3412E;
+  --display:var(--font-stx-display),'Montserrat',ui-sans-serif,system-ui,sans-serif;
+  --body:var(--font-stx-body),'Nunito',ui-sans-serif,system-ui,sans-serif;
+  color-scheme:light;background:var(--paper);color:var(--ink);font:400 16px/1.55 var(--body);
+  -webkit-font-smoothing:antialiased;
+}
+.dark .hub{
+  --paper:#161412; --card:#24211D; --ink:#F2EEE6; --ink2:#BDB6AA; --ink3:#8C857A;
+  --line:#35302A; --ring:#EC7A3C; --onring:#161412; --ok:#6CC08A; --no:#F08A72;
+  color-scheme:dark;
+}
+.hub h1,.hub h2,.hub h3{font-family:var(--display);font-weight:700;letter-spacing:-.01em}
+.hub-kicker{color:var(--ring);font:600 13px/1 var(--body);letter-spacing:.16em;text-transform:uppercase}
+.hub-muted{color:var(--ink2)}
+.hub-card{background:var(--card);border:1px solid var(--line);border-radius:18px}
+.hub-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:16px 24px;
+  font:800 16px/1 var(--display);background:var(--ink);color:var(--paper);border:2px solid var(--ink);cursor:pointer;
+  transition:transform .12s ease,opacity .12s ease}
+.hub-btn:active{transform:scale(.97)}
+.hub-btn:disabled{opacity:.55;cursor:default}
+.hub-btn-quiet{background:transparent;color:var(--ink)}
+.hub-input{width:100%;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:inherit}
+.hub-input:focus{outline:2px solid var(--ring);outline-offset:1px}
+.hub-pin{display:flex;gap:10px;justify-content:center}
+.hub-pin input{width:100%;max-width:58px;height:58px;text-align:center;font:700 24px/1 var(--display);background:var(--paper);color:var(--ink);
+  border:1px solid var(--line);border-radius:14px}
+.hub-pin input:focus{outline:none;border-color:var(--ring);box-shadow:0 0 0 4px color-mix(in srgb,var(--ring) 22%,transparent)}
+.hub-pin.is-error input{border-color:var(--no)}
+.hub-label{font:800 13px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.hub-error{color:var(--no)}
+.hub-ok{color:var(--ok)}
+.hub-switch{position:relative;width:44px;height:24px;border-radius:999px;background:var(--line);border:0;cursor:pointer;flex:none}
+.hub-switch::after{content:"";position:absolute;top:4px;left:4px;width:16px;height:16px;border-radius:50%;background:var(--ink3);transition:left .15s ease}
+.hub-switch[aria-checked="true"]{background:var(--ring)}
+.hub-switch[aria-checked="true"]::after{left:24px;background:var(--onring)}
+.hub-switch:disabled{opacity:.55;cursor:default}
+.hub-tabs{display:flex;gap:8px}
+.hub-tab{border-radius:999px;padding:8px 18px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 15px/1 var(--body);cursor:pointer}
+.hub-tab[aria-selected="true"]{background:var(--ring);border-color:var(--ring);color:var(--onring)}
+@media (prefers-reduced-motion:reduce){.hub-btn,.hub-switch::after{transition:none}}

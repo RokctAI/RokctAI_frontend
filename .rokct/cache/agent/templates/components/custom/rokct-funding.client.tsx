@@ -30,6 +30,7 @@ import AgentOpportunitiesSection from "@/components/custom/landing/agent-opportu
 import { RK_FUNDING } from "@/components/custom/landing/rokct-landing-content";
 
 import t from "@/app/lib/i18n";
+import { tx } from "@/app/lib/i18n/phrases";
 export function RokctFinder({ signupUrl }: { signupUrl: string }) {
   const [text, setText] = useState("");
   const [query, setQuery] = useState("");
@@ -86,16 +87,16 @@ export function RokctFinder({ signupUrl }: { signupUrl: string }) {
         <div style={{ marginTop: 8 }}>
           {RK_FUNDING.samples.map((sample) => (
             <div className="rk-res" key={sample.title}>
-              <span className={sample.gold ? "rk-k rk-gold" : "rk-k"}>{sample.kind}</span>
+              <span className={sample.gold ? "rk-k rk-gold" : "rk-k"}>{tx(sample.kind)}</span>
               <span>
-                <b>{sample.title}</b>
-                <small>{sample.sub}</small>
+                <b>{tx(sample.title)}</b>
+                <small>{tx(sample.sub)}</small>
               </span>
               <span className="rk-when">
                 {sample.when.map((line, i) => (
                   <React.Fragment key={line}>
                     {i > 0 && <br />}
-                    {line}
+                    {tx(line)}
                   </React.Fragment>
                 ))}
               </span>

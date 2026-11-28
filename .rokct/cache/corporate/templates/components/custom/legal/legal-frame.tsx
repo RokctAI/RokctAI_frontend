@@ -37,6 +37,7 @@ import {
   type PublicTerm,
 } from "@/components/custom/landing/legal-links";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export interface LegalFrameProps {
   /** The published documents, for the footer's Legal row. */
   terms: readonly PublicTerm[];
@@ -54,18 +55,18 @@ export function LegalFrame({ terms, indexLink = true, children }: LegalFrameProp
     <div className="flex min-h-screen flex-col" data-legal-frame="">
       <header className="border-b border-black/10 dark:border-white/10">
         <nav
-          aria-label="Legal pages"
+          aria-label={tx("Legal pages")}
           className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-4 text-sm"
         >
           <Link href="/" className="font-bold tracking-tight">
-            {PLATFORM_NAME}
+            {tx(PLATFORM_NAME)}
           </Link>
           {indexLink && (
             <Link
               href={LEGAL_ROUTE}
               className="opacity-70 hover:opacity-100 underline-offset-4 hover:underline"
             >
-              {DEFAULT_LEGAL_GROUP_LABEL}
+              {tx(DEFAULT_LEGAL_GROUP_LABEL)}
             </Link>
           )}
         </nav>

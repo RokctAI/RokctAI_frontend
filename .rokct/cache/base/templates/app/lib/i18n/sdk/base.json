@@ -401,6 +401,11 @@
           }
         }
       }
+    },
+    "__phrases": {
+      "Built with": "Gebou met",
+      "by": "deur",
+      "love": "liefde"
     }
   }
 }

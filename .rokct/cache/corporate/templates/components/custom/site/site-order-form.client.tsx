@@ -28,6 +28,7 @@ import type { SiteOrder, SitePriceTier } from "@/lib/site-data/kinds";
 
 import { Bottle, WhatsAppGlyph } from "./site-art";
 
+import { tx } from "@/app/lib/i18n/phrases";
 /** The tier a quantity falls in: the highest minQty not above it, else the lowest. */
 export function tierFor(tiers: SitePriceTier[], qty: number): SitePriceTier | undefined {
   const sorted = [...tiers].sort((a, b) => (a.minQty ?? 0) - (b.minQty ?? 0));
@@ -74,26 +75,26 @@ export function SiteOrderForm({ order, tiers, chat }: { order: SiteOrder; tiers:
     >
       <div className="grid gap-4">
         <label className="cs-field">
-          <span>{fields.business.label}</span>
+          <span>{tx(fields.business.label)}</span>
           <input className="cs-input" value={business} onChange={(e) => setBusiness(e.target.value)} placeholder={fields.business.placeholder} maxLength={40} />
         </label>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="cs-field">
-            <span>{fields.quantity.label}</span>
+            <span>{tx(fields.quantity.label)}</span>
             <input className="cs-input" inputMode="numeric" value={qty} onChange={(e) => setQty(e.target.value.replace(/\D/g, ""))} placeholder={fields.quantity.placeholder} />
           </label>
           <label className="cs-field">
-            <span>{fields.phone.label}</span>
+            <span>{tx(fields.phone.label)}</span>
             <input className="cs-input" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={fields.phone.placeholder} />
           </label>
         </div>
         <label className="cs-field">
-          <span>{fields.area.label}</span>
+          <span>{tx(fields.area.label)}</span>
           <input className="cs-input" value={area} onChange={(e) => setArea(e.target.value)} placeholder={fields.area.placeholder} />
         </label>
         {fields.file && (
           <label className="cs-field">
-            <span>{fields.file.label}</span>
+            <span>{tx(fields.file.label)}</span>
             <span className="cs-file relative">
               <input type="file" accept="image/*,.pdf" onChange={(e) => setFileName(e.target.files?.[0]?.name ?? "")} />
               <b>{fields.file.button ?? "Choose file"}</b>
@@ -104,19 +105,19 @@ export function SiteOrderForm({ order, tiers, chat }: { order: SiteOrder; tiers:
         <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
           <button type="submit" className="cs-btn cs-btn-brand">
             <WhatsAppGlyph />
-            {order.submit}
+            {tx(order.submit)}
           </button>
-          {order.fine && <p className="cs-fine">{order.fine}</p>}
+          {order.fine && <p className="cs-fine">{tx(order.fine)}</p>}
         </div>
       </div>
       {preview && (
         <aside className="cs-preview sm:w-[180px]">
-          {preview.heading && <small>{preview.heading}</small>}
+          {preview.heading && <small>{tx(preview.heading)}</small>}
           <Bottle id="order-preview" label={{ ...preview.label, name: business.trim() || preview.placeholderName }} height={240} />
           {previewTier && (
             <div className="text-center">
-              <div className="cs-num text-3xl text-white">{previewTier.price}</div>
-              {previewTier.previewNote && <div className="text-xs font-semibold opacity-80">{previewTier.previewNote}</div>}
+              <div className="cs-num text-3xl text-white">{tx(previewTier.price)}</div>
+              {previewTier.previewNote && <div className="text-xs font-semibold opacity-80">{tx(previewTier.previewNote)}</div>}
             </div>
           )}
         </aside>

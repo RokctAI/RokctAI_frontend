@@ -1,6 +1,6 @@
 {
   "name": "control_sdk",
-  "version": "1.8.0",
+  "version": "1.10.0",
   "installs": [],
   "dependencies": {},
   "devDependencies": {},
@@ -32,8 +32,40 @@
           "to": "docs/guides/control-fleet-board.md"
         },
         {
+          "from": "templates/app/handson/control/feature-switches",
+          "to": "app/handson/control/feature-switches"
+        },
+        {
+          "from": "templates/app/actions/handson/control/feature-switches",
+          "to": "app/actions/handson/control/feature-switches"
+        },
+        {
+          "from": "templates/app/services/control/feature-switches.ts",
+          "to": "app/services/control/feature-switches.ts"
+        },
+        {
+          "from": "templates/app/lib/i18n/sdk/control.json",
+          "to": "app/lib/i18n/sdk/control.json"
+        },
+        {
+          "from": "templates/tour/fragments/control-feature-switches.tour.yaml",
+          "to": "tour/fragments/control-feature-switches.tour.yaml"
+        },
+        {
           "from": "templates/tour/fragments/control-fleet.tour.yaml",
           "to": "tour/fragments/control-fleet.tour.yaml"
+        },
+        {
+          "from": "templates/app/handson/control/errors",
+          "to": "app/handson/control/errors"
+        },
+        {
+          "from": "templates/app/actions/handson/control/errors",
+          "to": "app/actions/handson/control/errors"
+        },
+        {
+          "from": "templates/app/services/control/errors.ts",
+          "to": "app/services/control/errors.ts"
         }
       ],
       "dependencies": {
@@ -47,6 +79,8 @@
         "app/(auth)/auth.ts",
         "app/lib/role_constants.ts",
         "app/services/control/base.ts",
+        "app/lib/i18n/phrases.ts",
+        "components/custom/hub/hub-theme.tsx",
         "components/ui/button.tsx",
         "components/ui/card.tsx",
         "components/ui/dialog.tsx",

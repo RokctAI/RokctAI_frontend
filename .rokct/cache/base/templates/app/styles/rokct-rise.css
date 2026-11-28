@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
+ * Shared scroll entrance (Ray, 2026-11-22: motion on every Next.js site).
+ * Each landing section's content rises 12px and fades in as it scrolls
+ * into view. CSS only, no JS: browsers without scroll timelines and
+ * visitors with reduced motion see the page unchanged. Sites whose home
+ * SDK already draws its own entrance (Sticks, Supacharge, Juvo, Cortex
+ * Media, Polaris) are skipped so nothing animates twice. A section can
+ * opt out with class "rk-no-rise".
+ */
+
+@keyframes rk-base-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    body:not(:has(.stx, .sc-landing, .jv, .st, .px-landing))
+      main
+      section:not(.rk-no-rise)
+      > *
+      > * {
+      animation: rk-base-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+  }
+}

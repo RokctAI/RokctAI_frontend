@@ -55,7 +55,7 @@ describe('agent-header-menu: the redesign\'s header (1.24.0)', () => {
   });
 
   it('links to the five sections, in order, and to nothing else', () => {
-    assert.deepEqual(RK_HEADER_ANCHORS, ['ask', 'platform', 'how', 'funding', 'plans']);
+    assert.deepEqual(RK_HEADER_ANCHORS, ['divisions', 'platform', 'products', 'opportunities', 'investors']);
     assert.deepEqual(menu.anchors, [...RK_HEADER_ANCHORS]);
     assert.deepEqual(menu.links, []);
     assert.deepEqual(menu.groups, []);

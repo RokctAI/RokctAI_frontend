@@ -24,14 +24,6 @@ import { BaseService, ServiceOptions } from "@/app/services/common/base";
 // site). The manifest and this file must stay in lockstep.
 const NS = "api.plan_builder";
 
-export interface RokChatReply {
-  status: string;
-  message: string;
-  tool_calls?: unknown[] | null;
-  session_id?: string | null;
-  trace_id?: string;
-}
-
 export interface CommitPlanResult {
   status?: string;
   message?: string;
@@ -39,21 +31,6 @@ export interface CommitPlanResult {
 }
 
 export class PlanBuilderService {
-  /** Chat with the ROK agent (plan-builder conversational gateway). */
-  static async chatWithRok(
-    message: string,
-    sessionId?: string,
-    model?: string,
-    options?: ServiceOptions,
-  ): Promise<RokChatReply | null> {
-    const response = await BaseService.call(
-      `${NS}.chat_with_rok`,
-      { message, session_id: sessionId, model },
-      options,
-    );
-    return response?.message || null;
-  }
-
   /**
    * Commit a strategic plan. Pass either `planData` (a JSON string payload)
    * or `profileType` + `instanceName` for compiled markdown deliverables.
