@@ -47,6 +47,7 @@ import { loadLegalIndex } from "@/components/custom/legal/load-legal-doc";
 import { SiteFrame } from "@/components/custom/site-frame";
 import { hasSiteData, readSiteData, siteDataMode } from "@/lib/site-data/read-site-data";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export const dynamic = "force-dynamic";
 
 export function generateMetadata(): Promise<Metadata> {
@@ -73,15 +74,15 @@ export default async function AboutPage() {
       <CompanySections sections={sections} session={session} dataMode={dataMode} />
       {empty && (
         <p className="mx-auto w-full max-w-3xl opacity-70" data-empty-state="">
-          {COMPANY_EMPTY_STATE.about}
+          {tx(COMPANY_EMPTY_STATE.about)}
         </p>
       )}
     </div>
   );
-  if (!frame.registered) return <CompanyFrame page="about" terms={terms}>{body}</CompanyFrame>;
+  if (!frame.registered) return <CompanyFrame page="about" terms={terms}>{tx(body)}</CompanyFrame>;
   return (
     <SiteFrame frame={frame} page="about" session={session} dataMode={dataMode}>
-      {body}
+      {tx(body)}
     </SiteFrame>
   );
 }

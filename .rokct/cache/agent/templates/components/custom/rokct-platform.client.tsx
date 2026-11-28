@@ -26,6 +26,7 @@ import { RK_MODULES } from "@/components/custom/landing/rokct-landing-content";
 import { RkCardView, RkIcon } from "@/components/custom/landing/rokct-ui";
 
 import t from "@/app/lib/i18n";
+import { tx } from "@/app/lib/i18n/phrases";
 export function RokctModules() {
   const [active, setActive] = useState(RK_MODULES[0]?.key ?? "");
 
@@ -47,8 +48,8 @@ export function RokctModules() {
               <RkIcon name={mod.icon} />
             </span>
             <span>
-              <b>{mod.name}</b>
-              <small>{mod.blurb}</small>
+              <b>{tx(mod.name)}</b>
+              <small>{tx(mod.blurb)}</small>
             </span>
           </button>
         ))}
@@ -64,29 +65,29 @@ export function RokctModules() {
           >
             <div>
               <div className="rk-big">
-                <q>{mod.quote}</q>
+                <q>{tx(mod.quote)}</q>
               </div>
               <ul>
                 {mod.points.map((point) => (
                   <li key={point}>
                     <RiCheckLine className="rk-ico" aria-hidden="true" />
-                    {point}
+                    {tx(point)}
                   </li>
                 ))}
               </ul>
               <div className="rk-tags">
                 {mod.tags.map((tag) => (
                   <span key={tag} className="rk-tag">
-                    {tag}
+                    {tx(tag)}
                   </span>
                 ))}
               </div>
             </div>
             <div className="rk-viz">
-              <div className="rk-msg rk-msg-me">{mod.ask}</div>
+              <div className="rk-msg rk-msg-me">{tx(mod.ask)}</div>
               {mod.reply && (
                 <div className="rk-msg rk-msg-rok" style={{ fontSize: "14.5px" }}>
-                  {mod.reply}
+                  {tx(mod.reply)}
                 </div>
               )}
               <RkCardView card={mod.card} />

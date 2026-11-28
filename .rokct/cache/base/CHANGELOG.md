@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.70.0
+
+* The Cortex Media credit link now defaults to https://cortexagency.co (Ray, 2026-11-21). `NEXT_PUBLIC_CORTEX_MEDIA_URL` still overrides it.
+
+## 1.69.0
+
+* fix(brand): every client site's footer credit reads `Built with ♥ by CORTEX` (Ray, 2026-11-21: "There is no cortex media"). `SITE_CREDIT_MAKER` is `CORTEX`.
+
+## 1.68.0
+
+* feat(seo): every composed site serves /llms.txt (what the site is, for AI
+  crawlers) and /indexnow-key.txt (its public IndexNow key, derived from the
+  host). The weekly site refresh pings IndexNow with the sitemap, so Bing and
+  the AI search that reads it find new pages sooner (Ray, 3 and 11 Nov).
+
+## 1.67.0
+
+* feat(motion): shared scroll entrance on every landing (Ray, 2026-11-22). app/styles/rokct-rise.css, imported by the landing page, makes section content rise and fade in as it scrolls into view. CSS only; reduced motion is respected; sites that already animate are skipped; a section opts out with `rk-no-rise`.
+
+## 1.66.0
+
+* feat(i18n): `tx()` phrase translation for landing copy, in app/lib/i18n/phrases.ts (Ray, 2026-11-21: "translate all texts in all our websites"). Each SDK can ship a phrase book in its copy file, `"af": { "__phrases": { "<English>": "<Afrikaans>" } }`. tx(value) returns the Afrikaans when the visitor reads AF, and returns anything else unchanged.
+
+## 1.65.0
+
+* feat(footer): "Cortex Media" in the site credit is now a link to the Cortex Media site (Ray, 2026-11-21). There is no domain yet, so it points at the address the site is live on today (`SITE_CREDIT_MAKER_URL` in components/custom/landing/site-credit.ts, one place; a host can override it with NEXT_PUBLIC_CORTEX_MEDIA_URL). It opens in a new tab and keeps the footer's own colour, with an underline on hover.
+
 ## 1.64.1
 
 * feat(i18n): English and Afrikaans copy for the 18 FAQ settings keys the admin page already calls (`app.paas.admin.settings.faqs.*`), so the page stops showing humanized keys. Copy ships in templates/app/lib/i18n/sdk/base.json.

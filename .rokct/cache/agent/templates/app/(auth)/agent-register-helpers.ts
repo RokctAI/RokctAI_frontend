@@ -156,8 +156,38 @@ export interface ProvisionInput {
 }
 
 export type ProvisionResult =
-  | { ok: true; siteName: string | null }
+  | {
+      ok: true;
+      siteName: string | null;
+      onboardingToken?: string | null;
+      /** A paid plan: the hub holds the sign-up until this checkout is paid (PayFast). */
+      payment?: { url: string; fields: Record<string, string> } | null;
+      paymentClaim?: string | null;
+    }
   | { ok: false; error: string };
+
+/** A paid plan's held sign-up (control payfast_billing): the checkout to post and the browser's claim. */
+function paymentFrom(provisionData: unknown): {
+  payment?: { url: string; fields: Record<string, string> };
+  paymentClaim?: string;
+} {
+  const d = provisionData && typeof provisionData === "object" ? (provisionData as Record<string, any>) : {};
+  const p = d.payment;
+  if (d.status !== "payment_required" || !p || typeof p.url !== "string" || typeof d.payment_claim !== "string") return {};
+  if (!/^https:\/\//.test(p.url) || !p.fields || typeof p.fields !== "object") return {};
+  const fields: Record<string, string> = {};
+  for (const [k, v] of Object.entries(p.fields)) fields[k] = String(v);
+  return { payment: { url: p.url, fields }, paymentClaim: d.payment_claim };
+}
+
+/** The hub onboarding session a tenant provisioning answer opens (control#204), when it names one. */
+function onboardingTokenFrom(provisionData: unknown): string | null {
+  const token =
+    provisionData && typeof provisionData === "object"
+      ? (provisionData as { onboarding_token?: unknown }).onboarding_token
+      : null;
+  return typeof token === "string" && token ? token : null;
+}
 
 /** The site a provisioning answer names: `site_name`, else the answer itself when it is one. */
 function siteFrom(provisionData: unknown): string | null {
@@ -249,7 +279,12 @@ export async function provisionNewTenant(
         timeout: PROVISIONING_TIMEOUT_MS,
       },
     );
-    return { ok: true, siteName: siteFrom(provisionData) };
+    return {
+      ok: true,
+      siteName: siteFrom(provisionData),
+      onboardingToken: onboardingTokenFrom(provisionData),
+      ...paymentFrom(provisionData),
+    };
   } catch (e) {
     if (e instanceof PlatformGatewayError && e.reason === "http_error") {
       return { ok: false, error: "Tenant Provisioning failed" };

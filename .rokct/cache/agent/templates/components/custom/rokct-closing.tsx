@@ -39,6 +39,7 @@ import type {
 } from "@/components/custom/landing/page-sections";
 
 import t from "@/app/lib/i18n";
+import { tx } from "@/app/lib/i18n/phrases";
 export const meta: PageSectionMeta = {
   order: 50,
   nav: [],
@@ -52,16 +53,16 @@ export default function RokctClosingSection({ id, session, signupUrl }: PageSect
       <section className="rk-s rk-flush" id={id}>
         <div className="rk-wrap rk-addr">
           <div className="rk-reveal">
-            <RkAsk>{RK_SITE.ask}</RkAsk>
+            <RkAsk>{tx(RK_SITE.ask)}</RkAsk>
             <h2 className="rk-h2">{rkLines(RK_SITE.heading)}</h2>
-            <p className="rk-lede">{RK_SITE.lede}</p>
+            <p className="rk-lede">{tx(RK_SITE.lede)}</p>
             <ul className="rk-addr-list">
               {RK_SITE.points.map((point) => (
                 <li key={point.title}>
                   <RkIcon name={point.icon} />
                   <span>
-                    <b>{point.title}</b>
-                    {point.text}
+                    <b>{tx(point.title)}</b>
+                    {tx(point.text)}
                   </span>
                 </li>
               ))}
@@ -76,7 +77,7 @@ export default function RokctClosingSection({ id, session, signupUrl }: PageSect
               </span>
               <span className="rk-b-url">
                 <RkIcon name="lock" />
-                <b>{RK_SITE.browser.url}</b>
+                <b>{tx(RK_SITE.browser.url)}</b>
               </span>
             </div>
             <div className="rk-b-body">
@@ -86,20 +87,20 @@ export default function RokctClosingSection({ id, session, signupUrl }: PageSect
                     <RkIcon name={dom.icon} />
                   </span>
                   <span>
-                    <b>{dom.name}</b>
-                    <small>{dom.sub}</small>
+                    <b>{tx(dom.name)}</b>
+                    <small>{tx(dom.sub)}</small>
                   </span>
-                  <RkPill tone={dom.pill.tone}>{dom.pill.text}</RkPill>
+                  <RkPill tone={dom.pill.tone}>{tx(dom.pill.text)}</RkPill>
                 </div>
               ))}
               <div className="rk-track">
                 {RK_SITE.browser.track.map((step) => (
                   <span key={step.text} className={step.state ? `rk-${step.state}` : undefined}>
-                    {step.text}
+                    {tx(step.text)}
                   </span>
                 ))}
               </div>
-              <div className="rk-msg rk-msg-rok">{RK_SITE.browser.note}</div>
+              <div className="rk-msg rk-msg-rok">{tx(RK_SITE.browser.note)}</div>
             </div>
           </div>
         </div>
@@ -107,10 +108,10 @@ export default function RokctClosingSection({ id, session, signupUrl }: PageSect
 
       <section className="rk-s rk-flush">
         <div className="rk-wrap">
-          <RkAsk className="rk-reveal">{RK_WHERE.ask}</RkAsk>
+          <RkAsk className="rk-reveal">{tx(RK_WHERE.ask)}</RkAsk>
           <div className="rk-s-head rk-reveal">
             <h2 className="rk-h2">{rkLines(RK_WHERE.heading)}</h2>
-            <p className="rk-lede">{RK_WHERE.lede}</p>
+            <p className="rk-lede">{tx(RK_WHERE.lede)}</p>
           </div>
           <div className="rk-where rk-reveal">
             {RK_WHERE.doors.map((door) => (
@@ -123,8 +124,8 @@ export default function RokctClosingSection({ id, session, signupUrl }: PageSect
                     {door.live ? RK_WHERE.available : RK_WHERE.soon}
                   </span>
                 </div>
-                <h3 className="rk-h3">{door.name}</h3>
-                <p>{door.text}</p>
+                <h3 className="rk-h3">{tx(door.name)}</h3>
+                <p>{tx(door.text)}</p>
               </div>
             ))}
           </div>
@@ -134,17 +135,17 @@ export default function RokctClosingSection({ id, session, signupUrl }: PageSect
       <section className="rk-s rk-flush">
         <div className="rk-wrap rk-faq">
           <div className="rk-reveal">
-            <RkAsk>{RK_FAQ.ask}</RkAsk>
+            <RkAsk>{tx(RK_FAQ.ask)}</RkAsk>
             <h2 className="rk-h2">{rkLines(RK_FAQ.heading)}</h2>
           </div>
           <div className="rk-reveal">
             {RK_FAQ.items.map((item, i) => (
               <details key={item.q} open={i === 0}>
                 <summary>
-                  {item.q}
+                  {tx(item.q)}
                   <RiAddLine className="rk-ico" aria-hidden="true" />
                 </summary>
-                <p>{item.a}</p>
+                <p>{tx(item.a)}</p>
               </details>
             ))}
           </div>
@@ -155,15 +156,15 @@ export default function RokctClosingSection({ id, session, signupUrl }: PageSect
         <div className="rk-wrap rk-reveal">
           <div className="rk-eyebrow">
             <span className="rk-dot" />
-            {RK_FINAL.eyebrow}
+            {tx(RK_FINAL.eyebrow)}
           </div>
           <h2 className="rk-h2">
-            {RK_FINAL.heading[0]}
+            {tx(RK_FINAL.heading[0])}
             <br />
-            <span className="rk-hl">{RK_FINAL.heading[1]}</span>
+            <span className="rk-hl">{tx(RK_FINAL.heading[1])}</span>
           </h2>
           <RokctAskBox target={signedIn ? "/chat" : signupUrl} />
-          <p className="rk-note">{RK_FINAL.note}</p>
+          <p className="rk-note">{tx(RK_FINAL.note)}</p>
         </div>
       </section>
     </>

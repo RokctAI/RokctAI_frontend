@@ -1,0 +1,14 @@
+# Guided tour fragment: control persona, hub feature switches (Ray 2026-11-22).
+# Included by the shell's tour manifest once it lands, like control-fleet.
+fragment: control-feature-switches
+persona: control
+requires_role: System Manager
+steps:
+  - id: switches_plans
+    route: /handson/control/feature-switches
+    target: '[data-tour="feature-switches-plans"]'
+    caption: Turn a Sticks feature on or off for every tenant on a plan. Tenants pick it up on their next subscription check.
+  - id: switches_overrides
+    route: /handson/control/feature-switches
+    target: '[data-tour="feature-switches-overrides"]'
+    caption: Tenants that differ from their plan. Open Tenant overrides to set one tenant On, Off, or back to its plan.

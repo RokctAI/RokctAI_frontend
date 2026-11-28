@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2026 ROKCT INTELLIGENCE (PTY) LTD
+ * SPDX-License-Identifier: AGPL-3.0-only
+ *
+ * The corporate rokct.ai home (rokct-corporate.tsx). Built on the rk tokens
+ * of rokct-landing.css, so light and dark follow the shell's theme. Motion
+ * (Emil Kowalski's rules): only transform and opacity, ease-out, 160-240ms
+ * for hover, a short rise as sections enter (scroll-driven, no JS), and
+ * nothing at all under prefers-reduced-motion. No spinners, no shimmers.
+ */
+.rk-landing .rc { color: var(--rk-ink); background: var(--rk-bg); font-family: var(--rk-sans); }
+.rk-landing .rc-wrap { max-width: var(--rk-max); margin: 0 auto; padding-left: var(--rk-gut); padding-right: var(--rk-gut); }
+.rk-landing .rc-kicker { font-family: var(--rk-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--rk-ink-3); }
+.rk-landing .rc-mute { color: var(--rk-ink-3); }
+.rk-landing .rc-hero { display: grid; grid-template-columns: 1.5fr 1fr; gap: 64px; padding-top: 96px; padding-bottom: 88px; }
+.rk-landing .rc-hero .rc-kicker { margin-bottom: 28px; }
+.rk-landing .rc-h1 { font-family: var(--rk-display); font-size: clamp(52px, 7vw, 104px); line-height: .95; letter-spacing: -.05em; font-weight: 500; text-wrap: balance; }
+.rk-landing .rc-intro { font-size: 20px; line-height: 1.5; color: var(--rk-ink-2); max-width: 430px; align-self: end; }
+.rk-landing .rc-facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rk-line); border-bottom: 1px solid var(--rk-line); }
+.rk-landing .rc-facts > div { padding: 28px 24px 32px; border-right: 1px solid var(--rk-line); }
+.rk-landing .rc-facts > div:first-child { padding-left: 0; }
+.rk-landing .rc-facts > div:last-child { border-right: 0; }
+.rk-landing .rc-facts b { display: block; font-family: var(--rk-display); font-size: 40px; font-weight: 500; letter-spacing: -.03em; margin-top: 10px; font-variant-numeric: tabular-nums; }
+.rk-landing .rc-s { padding-top: 88px; padding-bottom: 88px; border-bottom: 1px solid var(--rk-line); }
+.rk-landing .rc-flat { border-bottom: 0; }
+.rk-landing .rc-head { display: grid; grid-template-columns: 300px 1fr; gap: 48px; margin-bottom: 48px; }
+.rk-landing .rc-h2 { font-family: var(--rk-display); font-size: clamp(32px, 3.6vw, 48px); letter-spacing: -.035em; font-weight: 500; line-height: 1.04; text-wrap: balance; }
+.rk-landing .rc-big { font-size: clamp(40px, 4.6vw, 64px); margin-top: 20px; }
+.rk-landing .rc-lede { margin-top: 16px; font-size: 18px; line-height: 1.55; color: var(--rk-ink-2); max-width: 560px; }
+.rk-landing .rc-rows { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--rk-line); }
+.rk-landing .rc-row { display: grid; grid-template-columns: 300px 48px 1fr 40px; align-items: center; padding: 22px 0; border-top: 1px solid var(--rk-line); font-size: 17px; color: inherit; text-decoration: none; }
+.rk-landing a.rc-row .rc-n { transition: transform 200ms cubic-bezier(.23, 1, .32, 1); }
+.rk-landing a.rc-row:hover .rc-n { transform: translateX(6px); }
+.rk-landing .rc-n { font-family: var(--rk-display); font-size: 30px; letter-spacing: -.025em; font-weight: 500; }
+.rk-landing .rc-num { font-family: var(--rk-mono); font-size: 12px; color: var(--rk-ink-3); }
+.rk-landing .rc-ar { justify-self: end; color: var(--rk-ink-3); }
+.rk-landing .rc-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rk-line); }
+.rk-landing .rc-cell { padding: 28px 24px 8px 0; margin-right: 24px; border-right: 1px solid var(--rk-line); color: inherit; text-decoration: none; }
+.rk-landing .rc-cell:last-child { border-right: 0; margin-right: 0; }
+.rk-landing .rc-cell p { color: var(--rk-ink-2); line-height: 1.5; }
+.rk-landing .rc-h3 { font-family: var(--rk-display); font-size: 26px; font-weight: 500; letter-spacing: -.02em; margin: 14px 0 10px; }
+.rk-landing .rc-link .rc-h3 { transition: transform 200ms cubic-bezier(.23, 1, .32, 1); }
+.rk-landing .rc-link:hover .rc-h3 { transform: translateX(4px); }
+.rk-landing .rc-cta { display: flex; align-items: center; }
+.rk-landing .rc-band { background: var(--rk-bg-2); }
+.rk-landing .rc-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--rk-ink); color: var(--rk-bg); padding: 12px 20px; border-radius: 999px; font-size: 14px; font-weight: 500; text-decoration: none; transition: transform 160ms cubic-bezier(.23, 1, .32, 1); }
+.rk-landing .rc-btn:active { transform: scale(.97); }
+.rk-landing .rc-btn-acc { background: var(--rk-brand); color: var(--rk-on-brand); margin-top: 36px; }
+.rk-landing .rc-dark { background: var(--rk-ink); color: var(--rk-bg); }
+.rk-landing .rc-dark .rc-kicker, .rk-landing .rc-dark .rc-lede { color: color-mix(in srgb, var(--rk-bg) 62%, transparent); }
+.rk-landing .rc-inv { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; padding-top: 96px; padding-bottom: 96px; }
+.rk-landing .rc-facts-list { list-style: none; margin: 0; padding: 0; align-self: end; }
+.rk-landing .rc-facts-list li { display: flex; justify-content: space-between; gap: 24px; border-top: 1px solid color-mix(in srgb, var(--rk-bg) 18%, transparent); padding: 18px 0; font-size: 17px; }
+.rk-landing .rc-facts-list span { color: color-mix(in srgb, var(--rk-bg) 62%, transparent); text-align: right; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .rk-landing .rc-s > * { animation: rc-rise linear both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
+  }
+}
+@keyframes rc-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) {
+  .rk-landing .rc-hero, .rk-landing .rc-head, .rk-landing .rc-inv { grid-template-columns: 1fr; gap: 24px; }
+  .rk-landing .rc-facts, .rk-landing .rc-grid { grid-template-columns: 1fr 1fr; }
+  .rk-landing .rc-row { grid-template-columns: 1fr 40px; }
+  .rk-landing .rc-row .rc-num, .rk-landing .rc-row > span:nth-child(3) { grid-column: 1; }
+}

@@ -45,6 +45,7 @@ import {
 
 import type { RkCard, RkTone } from "./rokct-landing-content";
 
+import { tx } from "@/app/lib/i18n/phrases";
 /** The R of rokct.ai's mark (public/images/logo.svg without the registered sign). */
 export const RK_R_PATH =
   "M818 10c17,0 34,1 50,1l779 317c45,57 80,120 105,188l-62 706c-2,4 -4,7 -7,11 -73,111 -175,198 -306,260l257 375 -27 306 -418 0 -393 -575 -244 0 139 -1589 127 0zm-532 2164l-277 0 0 -2164 467 0 -190 2164z";
@@ -118,21 +119,21 @@ export function RkCardView({ card }: { card: RkCard }) {
   return (
     <div className="rk-card">
       <div className="rk-card-h">
-        <span>{card.title}</span>
+        <span>{tx(card.title)}</span>
         {typeof card.meta === "string" ? (
-          <span>{card.meta}</span>
+          <span>{tx(card.meta)}</span>
         ) : card.meta ? (
-          <RkPill tone={card.meta.tone}>{card.meta.text}</RkPill>
+          <RkPill tone={card.meta.tone}>{tx(card.meta.text)}</RkPill>
         ) : null}
       </div>
       {card.rows.map((row) => (
         <div className="rk-row" key={row.label}>
           <span>
-            {row.label}
-            {row.sub && <small>{row.sub}</small>}
+            {tx(row.label)}
+            {row.sub && <small>{tx(row.sub)}</small>}
           </span>
           {row.pill ? (
-            <RkPill tone={row.pill.tone}>{row.pill.text}</RkPill>
+            <RkPill tone={row.pill.tone}>{tx(row.pill.text)}</RkPill>
           ) : row.bar !== undefined ? (
             <span className="rk-bar">
               <i style={{ width: `${row.bar}%` }} />
@@ -140,7 +141,7 @@ export function RkCardView({ card }: { card: RkCard }) {
           ) : (
             <span />
           )}
-          {row.value ? <span className="rk-num">{row.value}</span> : <span />}
+          {row.value ? <span className="rk-num">{tx(row.value)}</span> : <span />}
         </div>
       ))}
       {card.actions && card.actions.length > 0 && (
@@ -148,7 +149,7 @@ export function RkCardView({ card }: { card: RkCard }) {
           {card.actions.map((action) => (
             <span key={action.label} className={action.solid ? "rk-mini rk-mini-solid" : "rk-mini"}>
               {action.icon && <RkIcon name={action.icon} />}
-              {action.label}
+              {tx(action.label)}
             </span>
           ))}
         </div>

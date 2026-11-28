@@ -32,6 +32,7 @@ import type {
   PageSectionProps,
 } from "@/components/custom/landing/page-sections";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export const meta: PageSectionMeta = {
   order: 40,
   nav: [{ id: RK_ANCHORS.plans, label: "Plans" }],
@@ -42,22 +43,22 @@ export default function RokctPlansSection({ id, plans, signupUrl }: PageSectionP
   return (
     <section className="rk-s" id={id}>
       <div className="rk-wrap">
-        <RkAsk className="rk-reveal">{RK_PLANS.ask}</RkAsk>
+        <RkAsk className="rk-reveal">{tx(RK_PLANS.ask)}</RkAsk>
         <div className="rk-s-head rk-reveal">
           <h2 className="rk-h2">{rkLines(RK_PLANS.heading)}</h2>
-          <p className="rk-lede">{RK_PLANS.lede}</p>
+          <p className="rk-lede">{tx(RK_PLANS.lede)}</p>
         </div>
         <div className="rk-ladder rk-reveal">
           {RK_PLANS.rungs.map((rung) => (
             <div className="rk-rung" key={rung.level}>
-              <span className="rk-lvl">{rung.level}</span>
-              <h3 className="rk-h3">{rung.name}</h3>
-              <p>{rung.text}</p>
+              <span className="rk-lvl">{tx(rung.level)}</span>
+              <h3 className="rk-h3">{tx(rung.name)}</h3>
+              <p>{tx(rung.text)}</p>
               <ul className="rk-r-list">
                 {rung.items.map((item) => (
                   <li key={item}>
                     <RiCheckLine className="rk-ico" aria-hidden="true" />
-                    {item}
+                    {tx(item)}
                   </li>
                 ))}
               </ul>
@@ -67,10 +68,10 @@ export default function RokctPlansSection({ id, plans, signupUrl }: PageSectionP
         <div className="rk-plans-foot rk-reveal">
           <span>
             <RiMoneyDollarCircleLine className="rk-ico" aria-hidden="true" />
-            &nbsp; {RK_PLANS.foot}
+            {tx("&nbsp;")}{" "}{tx(RK_PLANS.foot)}
           </span>
           <a className="rk-btn rk-btn-brand" href={pricesHref}>
-            {RK_PLANS.cta} <RiArrowRightLine className="rk-ico" aria-hidden="true" />
+            {tx(RK_PLANS.cta)} <RiArrowRightLine className="rk-ico" aria-hidden="true" />
           </a>
         </div>
       </div>

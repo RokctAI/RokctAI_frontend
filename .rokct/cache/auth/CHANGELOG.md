@@ -1,3 +1,11 @@
+## 1.14.0
+
+* feat(register): a provisioner may answer `status: "payment"` with a hosted
+  checkout (`url` + `fields`); the register page posts the visitor straight to
+  it, so a paid plan is paid for before anything is made (Sticks web sign-ups
+  pay with PayFast first, Ray 2026-11-27). New keys `auth.taking_you_to_payment`
+  and `auth.continue_to_payment` (EN + AF).
+
 ## 1.13.0
 
 * feat(i18n): 16 hardcoded screen labels, headings, buttons,

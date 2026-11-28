@@ -43,8 +43,8 @@
 // Client-safe: data and thunks. The two option loaders call server actions
 // (a "use server" module is a reference on the client, never its code).
 //
-// rokct.ai's flow had no post-account steps, so `steps` is empty and the
-// page finishes on the account.
+// One post-account step: the hub's email PIN (agent-verify-pin-step.tsx),
+// which passes straight through when sign-up opened no hub session.
 
 import type {
   RegisterConfig,
@@ -146,7 +146,18 @@ const AGENT_REGISTER_CONFIG: RegisterConfig = {
       placeholder: t("auth.ph_domain"),
     },
   ],
-  steps: [],
+  // The hub's email PIN (control#272): a tenant sign-up opened an
+  // onboarding session and the hub emailed a code; the visitor types it
+  // here while the site builds. Without a hub session it passes straight
+  // through, so a Service plan never sees it.
+  steps: [
+    {
+      id: "verify_email",
+      label: "Verify your email",
+      skippable: false,
+      load: () => import("@/components/custom/auth/agent-verify-pin-step"),
+    },
+  ],
 };
 
 export default AGENT_REGISTER_CONFIG;

@@ -44,6 +44,7 @@ import type { SiteSize } from "./site-sizes";
 import { sizeBottleSvg, type SizeMl } from "./site-sizes-art";
 import { svgElements } from "./site-svg";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export interface SiteHeroLink {
   label: string;
   href: string;
@@ -87,12 +88,12 @@ function HeroTag({ tag, className, style }: { tag: NonNullable<SiteHeroSection["
   const [line, ...more] = (tag.text ?? "").split("\n");
   return (
     <div className={className} style={style} data-tag="tpl">
-      <b>{tag.price}</b>
-      {line && <span>{line}</span>}
+      <b>{tx(tag.price)}</b>
+      {line && <span>{tx(line)}</span>}
       {more.filter(Boolean).map((m) => (
         <em key={m} className="cs-hero-tag-line">
           <TruckGlyph />
-          {m}
+          {tx(m)}
         </em>
       ))}
     </div>
@@ -121,15 +122,15 @@ function HeroCopy({
   const H = heading;
   return (
     <>
-      {eyebrow && <p className="cs-hero-eyebrow cs-rise">{eyebrow}</p>}
+      {eyebrow && <p className="cs-hero-eyebrow cs-rise">{tx(eyebrow)}</p>}
       <H className="cs-hero-h1 cs-rise">
         {lines.map((line, i) => (
           <span key={`${i}-${line}`} className={`block ${i === accentLine ? "accent" : ""}`}>
-            {line}
+            {tx(line)}
           </span>
         ))}
       </H>
-      {lede && <p className="cs-hero-lede cs-rise d1">{lede}</p>}
+      {lede && <p className="cs-hero-lede cs-rise d1">{tx(lede)}</p>}
       {(cta || secondary) && (
         <div className="cs-rise d2 flex flex-col gap-3 sm:flex-row">
           {cta && <HeroLink link={cta} className="cs-btn cs-btn-white" glyph />}
@@ -139,7 +140,7 @@ function HeroCopy({
       {facts && facts.length > 0 && (
         <ul className="cs-hero-facts cs-rise d3">
           {facts.map((fact) => (
-            <li key={fact}>{fact}</li>
+            <li key={fact}>{tx(fact)}</li>
           ))}
         </ul>
       )}
@@ -349,8 +350,8 @@ function LoopHero({ data, loop }: { data: SiteHeroFormData; loop: SiteHeroLoopDa
             </div>
             {bottles.map(({ size }) => (
               <div key={size.ml} className="cs-loop-tag" data-tag={SIZE_TAG[size.ml]} style={tagStyle(SIZE_TAG[size.ml])} aria-hidden="true">
-                <b>{size.name}</b>
-                {size.note && <small>{size.note}</small>}
+                <b>{tx(size.name)}</b>
+                {size.note && <small>{tx(size.note)}</small>}
               </div>
             ))}
             {hero.tag && <HeroTag tag={hero.tag} className="cs-loop-tag price" style={tagStyle("tpl")} />}
@@ -366,13 +367,13 @@ function HeroLink({ link, className, glyph }: { link: SiteHeroLink; className: s
     return (
       <a href={link.href} className={className} target="_blank" rel="noopener">
         {glyph && link.chat && <WhatsAppGlyph />}
-        {link.label}
+        {tx(link.label)}
       </a>
     );
   }
   return (
     <Link href={link.href} className={className}>
-      {link.label}
+      {tx(link.label)}
     </Link>
   );
 }
@@ -391,15 +392,15 @@ export default function SiteHeroForm({ hero: config }: HeroFormProps) {
       {variant === "poster" && <div aria-hidden="true" className="cs-hero-stripes" />}
       <div className="cs-hero-grid">
         <div className="flex flex-col gap-7">
-          {hero.eyebrow && <p className="cs-hero-eyebrow cs-rise">{hero.eyebrow}</p>}
+          {hero.eyebrow && <p className="cs-hero-eyebrow cs-rise">{tx(hero.eyebrow)}</p>}
           <h1 className="cs-hero-h1 cs-rise">
             {hero.lines.map((line, i) => (
               <span key={`${i}-${line}`} className={`block ${i === hero.accentLine ? "accent" : ""}`}>
-                {line}
+                {tx(line)}
               </span>
             ))}
           </h1>
-          {hero.lede && <p className="cs-hero-lede cs-rise d1">{hero.lede}</p>}
+          {hero.lede && <p className="cs-hero-lede cs-rise d1">{tx(hero.lede)}</p>}
           {(cta || secondary) && (
             <div className="cs-rise d2 flex flex-col gap-3 sm:flex-row">
               {cta && <HeroLink link={cta} className="cs-btn cs-btn-white" glyph />}
@@ -409,7 +410,7 @@ export default function SiteHeroForm({ hero: config }: HeroFormProps) {
           {hero.facts && hero.facts.length > 0 && (
             <ul className="cs-hero-facts cs-rise d3">
               {hero.facts.map((fact) => (
-                <li key={fact}>{fact}</li>
+                <li key={fact}>{tx(fact)}</li>
               ))}
             </ul>
           )}

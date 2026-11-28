@@ -44,6 +44,7 @@ import { siteKind, whatsappHref } from "./site-source";
 import { siteSizes, sliderFrom, srLabelOf } from "./site-sizes";
 import { SiteOwnSizes } from "./site-own-sizes.client";
 
+import { tx } from "@/app/lib/i18n/phrases";
 function toneClass(tone: SiteSectionTone | undefined, fallback: SiteSectionTone = "paper"): string {
   const t = tone ?? fallback;
   return t === "paper" ? "" : `cs-tone-${t}`;
@@ -52,8 +53,8 @@ function toneClass(tone: SiteSectionTone | undefined, fallback: SiteSectionTone 
 function Heading({ eyebrow, heading, className = "" }: { eyebrow?: string; heading: string; className?: string }) {
   return (
     <>
-      {eyebrow && <p className={`cs-eyebrow ${className}`}>{eyebrow}</p>}
-      <h2 className="cs-display cs-h2">{heading}</h2>
+      {eyebrow && <p className={`cs-eyebrow ${className}`}>{tx(eyebrow)}</p>}
+      <h2 className="cs-display cs-h2">{tx(heading)}</h2>
     </>
   );
 }
@@ -64,8 +65,8 @@ export function SiteIntro({ id, s }: { id?: string; s: SiteIntroSection }) {
     <section id={id} className={`cs-intro ${plain ? "plain" : "stamp"} w-full py-14 md:py-20 ${toneClass(s.tone)}`}>
       <div className={`container mx-auto grid max-w-6xl items-center gap-10 px-4 xl:px-0 ${plain ? "" : "md:grid-cols-[1fr_auto] md:gap-16"}`}>
         <p className="text-xl leading-relaxed text-[var(--cs-ink)] md:text-[1.6rem] md:leading-snug">
-          {s.year && <span className="cs-display mr-2 text-[2.6rem] text-[var(--cs-brand-text)] md:text-[3.4rem]">{s.year}</span>}
-          {s.text}
+          {s.year && <span className="cs-display mr-2 text-[2.6rem] text-[var(--cs-brand-text)] md:text-[3.4rem]">{tx(s.year)}</span>}
+          {tx(s.text)}
         </p>
         {!plain && s.stamp && (
           <div className="justify-self-center md:justify-self-end">
@@ -93,8 +94,8 @@ export function SiteSteps({ id, s }: { id?: string; s: SiteStepsSection }) {
                 <span className="n">{String(i + 1).padStart(2, "0")}</span>
                 <StepGlyph icon={step.icon} n={i} />
               </div>
-              <h3>{step.title}</h3>
-              {step.text && <p>{step.text}</p>}
+              <h3>{tx(step.title)}</h3>
+              {step.text && <p>{tx(step.text)}</p>}
             </li>
           ))}
         </ol>
@@ -115,7 +116,7 @@ export function SitePricing({ id, s, site }: { id?: string; s: SitePricingSectio
           <div className="flex flex-col gap-5">
             <Heading eyebrow={s.eyebrow} heading={s.heading} />
           </div>
-          {s.note && <p className="cs-lede lg:pb-2">{s.note}</p>}
+          {s.note && <p className="cs-lede lg:pb-2">{tx(s.note)}</p>}
         </div>
 
         <div className={`grid gap-4 ${tiers.length > 2 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
@@ -124,14 +125,14 @@ export function SitePricing({ id, s, site }: { id?: string; s: SitePricingSectio
             const words = (
               <>
                 <div className="flex items-center justify-between gap-3">
-                  <h3>{tier.name}</h3>
-                  {tier.best && pricing?.bestLabel && <span className="cs-chip sun">{pricing.bestLabel}</span>}
+                  <h3>{tx(tier.name)}</h3>
+                  {tier.best && pricing?.bestLabel && <span className="cs-chip sun">{tx(pricing.bestLabel)}</span>}
                 </div>
                 <div className={tier.art ? "flex flex-col gap-3" : "flex items-end gap-3"}>
-                  <span className="price">{tier.price}</span>
-                  {tier.unit && <span className={`unit ${tier.art ? "" : "pb-2"}`}>{tier.unit}</span>}
+                  <span className="price">{tx(tier.price)}</span>
+                  {tier.unit && <span className={`unit ${tier.art ? "" : "pb-2"}`}>{tx(tier.unit)}</span>}
                 </div>
-                {tier.detail && <p>{tier.detail}</p>}
+                {tier.detail && <p>{tx(tier.detail)}</p>}
                 {tier.fine && (
                   <p className="fine">
                     {tier.fine.strong && <b>{fillPriceWords(tier.fine.strong, { price: tier.price, perCase: pricing?.perCase })}</b>}
@@ -146,7 +147,7 @@ export function SitePricing({ id, s, site }: { id?: string; s: SitePricingSectio
                     rel="noopener"
                     className={`cs-btn mt-auto self-start ${tier.best ? "cs-btn-white" : "cs-btn-brand"}`}
                   >
-                    {pricing.ctaLabel}
+                    {tx(pricing.ctaLabel)}
                   </a>
                 )}
               </>
@@ -155,7 +156,7 @@ export function SitePricing({ id, s, site }: { id?: string; s: SitePricingSectio
               <article key={tier.name} className={`cs-card cs-tier ${tier.best ? "best" : ""} ${tier.art ? "has-art" : ""}`}>
                 {tier.art ? (
                   <>
-                    <div className="words">{words}</div>
+                    <div className="words">{tx(words)}</div>
                     <div className="art">
                       <SiteArtView art={tier.art} id={`tier-${i}-art`} height={480} />
                     </div>
@@ -171,9 +172,9 @@ export function SitePricing({ id, s, site }: { id?: string; s: SitePricingSectio
         {s.own && (
           <div className="cs-own grid items-center gap-8 overflow-hidden md:grid-cols-[1fr_auto]">
             <div className="flex flex-col gap-4">
-              {s.own.eyebrow && <p className="cs-eyebrow">{s.own.eyebrow}</p>}
-              <h3 className="cs-display text-4xl md:text-5xl">{s.own.heading}</h3>
-              {s.own.text && <p className="cs-lede max-w-xl">{s.own.text}</p>}
+              {s.own.eyebrow && <p className="cs-eyebrow">{tx(s.own.eyebrow)}</p>}
+              <h3 className="cs-display text-4xl md:text-5xl">{tx(s.own.heading)}</h3>
+              {s.own.text && <p className="cs-lede max-w-xl">{tx(s.own.text)}</p>}
             </div>
             {s.own.art && ownSizes.length > 0 ? (
               // 1.7.0: the site's own sizes (data/products.json), each its own bottle at true relative scale.
@@ -199,7 +200,7 @@ export function SiteGallery({ id, s }: { id?: string; s: SiteGallerySection }) {
       <div className="container mx-auto flex max-w-6xl flex-col gap-12 px-4 xl:px-0">
         <div className="flex flex-col gap-5 text-center md:mx-auto md:max-w-2xl md:items-center">
           <Heading eyebrow={s.eyebrow} heading={s.heading} />
-          {s.blurb && <p className="cs-lede">{s.blurb}</p>}
+          {s.blurb && <p className="cs-lede">{tx(s.blurb)}</p>}
         </div>
         <ul className={`grid gap-3 sm:gap-4 ${grid ? "sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-2 lg:grid-cols-4"}`}>
           {s.items.map((item, i) => (
@@ -207,8 +208,8 @@ export function SiteGallery({ id, s }: { id?: string; s: SiteGallerySection }) {
               <div className="shelf">
                 <SiteArtView art={item.art} id={`use-${i}`} height={grid ? 320 : 250} />
               </div>
-              <h3>{item.title}</h3>
-              {item.text && <p>{item.text}</p>}
+              <h3>{tx(item.title)}</h3>
+              {item.text && <p>{tx(item.text)}</p>}
             </li>
           ))}
         </ul>
@@ -230,13 +231,13 @@ export function SiteFacts({ id, s }: { id?: string; s: SiteFactsSection }) {
         <div className={`grid gap-10 lg:items-start lg:gap-16 ${s.table ? "lg:grid-cols-[0.95fr_1.05fr]" : ""}`}>
           <div className="flex flex-col gap-6">
             <Heading eyebrow={s.eyebrow} heading={s.heading} />
-            {s.blurb && <p className="cs-lede max-w-xl">{s.blurb}</p>}
+            {s.blurb && <p className="cs-lede max-w-xl">{tx(s.blurb)}</p>}
             {s.stats && s.stats.length > 0 && (
               <div className="mt-2 flex gap-4">
                 {s.stats.map((stat) => (
                   <div key={stat.label} className="cs-big-stat">
-                    <small>{stat.label}</small>
-                    <b>{stat.value}</b>
+                    <small>{tx(stat.label)}</small>
+                    <b>{tx(stat.value)}</b>
                   </div>
                 ))}
               </div>
@@ -245,16 +246,16 @@ export function SiteFacts({ id, s }: { id?: string; s: SiteFactsSection }) {
           {s.table && (
             <figure className="cs-comp">
               <figcaption>
-                <span>{s.table.heading}</span>
-                {s.table.note && <small>{s.table.note}</small>}
+                <span>{tx(s.table.heading)}</span>
+                {s.table.note && <small>{tx(s.table.note)}</small>}
               </figcaption>
               <dl>
                 {s.table.rows.map((r) => (
                   <div key={r.name}>
                     <dt>
-                      {r.name} {r.symbol && <span>{r.symbol}</span>}
+                      {tx(r.name)} {r.symbol && <span>{tx(r.symbol)}</span>}
                     </dt>
-                    <dd>{r.value}</dd>
+                    <dd>{tx(r.value)}</dd>
                   </div>
                 ))}
               </dl>
@@ -265,8 +266,8 @@ export function SiteFacts({ id, s }: { id?: string; s: SiteFactsSection }) {
           <ol className="cs-chain">
             {s.chain.map((step) => (
               <li key={step.label}>
-                <small>{step.label}</small>
-                <b>{step.value}</b>
+                <small>{tx(step.label)}</small>
+                <b>{tx(step.value)}</b>
               </li>
             ))}
           </ol>
@@ -286,7 +287,7 @@ export function SiteOrder({ id, s, site }: { id?: string; s: SiteOrderSection; s
         <div className="cs-card grid gap-10 overflow-hidden p-7 md:grid-cols-[0.9fr_1.1fr] md:p-12">
           <div className="flex flex-col gap-5">
             <Heading eyebrow={s.eyebrow} heading={s.heading} />
-            {s.blurb && <p className="cs-lede">{s.blurb}</p>}
+            {s.blurb && <p className="cs-lede">{tx(s.blurb)}</p>}
           </div>
           {order && <SiteOrderForm order={order} tiers={pricing?.tiers ?? []} chat={whatsappHref(site)} />}
         </div>
@@ -303,8 +304,8 @@ export function SiteContact({ id, s, site }: { id?: string; s: SiteContactSectio
       <div className="container mx-auto grid max-w-6xl items-center gap-10 px-4 md:grid-cols-[1fr_auto] xl:px-0">
         <div className="flex flex-col gap-5">
           <Heading eyebrow={s.eyebrow} heading={s.heading} />
-          {s.blurb && <p className="cs-lede max-w-xl">{s.blurb}</p>}
-          {s.note && <p className={`text-sm ${band ? "text-white/75" : "text-[var(--cs-sec)]"}`}>{s.note}</p>}
+          {s.blurb && <p className="cs-lede max-w-xl">{tx(s.blurb)}</p>}
+          {s.note && <p className={`text-sm ${band ? "text-white/75" : "text-[var(--cs-sec)]"}`}>{tx(s.note)}</p>}
         </div>
         {site?.whatsapp && (
           <a
@@ -315,10 +316,10 @@ export function SiteContact({ id, s, site }: { id?: string; s: SiteContactSectio
             style={{ color: "var(--cs-l-ink)" }}
           >
             <span className="text-xs font-bold uppercase tracking-[0.18em] opacity-60">{s.card?.label ?? "WhatsApp"}</span>
-            <span className="cs-num text-5xl md:text-6xl">{site.whatsapp.display}</span>
+            <span className="cs-num text-5xl md:text-6xl">{tx(site.whatsapp.display)}</span>
             {s.card?.action && (
               <span className="mt-2 inline-flex items-center gap-2 text-sm font-bold" style={{ color: "var(--cs-brand)" }}>
-                {s.card.action}
+                {tx(s.card.action)}
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M3 8h10M9 4l4 4-4 4" />
                 </svg>

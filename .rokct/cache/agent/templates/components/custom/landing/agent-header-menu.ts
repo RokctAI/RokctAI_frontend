@@ -124,7 +124,7 @@ import t from "@/app/lib/i18n";
 export const RK_MARK = "/landing/agent/rk-mark.svg";
 
 /** The in-page links, in the header's order: section ids from the redesign's meta.nav. */
-export const RK_HEADER_ANCHORS = ["ask", "platform", "how", "funding", "plans"] as const;
+export const RK_HEADER_ANCHORS = ["divisions", "platform", "products", "opportunities", "investors"] as const;
 
 /** `t(key)`, or `fallback` when the dictionary has no such key. */
 function word(key: string, fallback: string): string {

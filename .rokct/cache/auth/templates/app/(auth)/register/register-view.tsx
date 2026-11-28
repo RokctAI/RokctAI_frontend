@@ -27,6 +27,7 @@
 import {
   Suspense,
   useEffect,
+  useRef,
   useState,
   type ComponentType,
   type FormEvent,
@@ -282,6 +283,7 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled, next = null }: R
   };
 
   const needsCode = state?.status === "verify_email" && !verified;
+  const payment = state?.status === "payment" ? state.payment : undefined;
   const done = state?.status === "success" || (state?.status === "verify_email" && verified);
 
   const onVerified = () => {
@@ -296,6 +298,7 @@ function RegisterViewInner({ copy, fields, hasSteps, prefilled, next = null }: R
         openLoginPopup={() => handleNavigation(withReturnPath("/login", next))}
         openSignupPopup={() => handleNavigation("/register")}
     >
+      {payment && <PaymentHandoff payment={payment} />}
 
       <div className="flex-1 flex flex-col items-center justify-center bg-background p-4">
         <div className="w-full max-w-md space-y-8">
@@ -381,5 +384,26 @@ export function RegisterView(props: RegisterViewProps) {
     <Suspense fallback={<RegisterSkeleton />}>
       <RegisterViewInner {...props} />
     </Suspense>
+  );
+}
+
+/**
+ * auth_sdk 1.14.0: a plan paid for before anything is made. Posts the
+ * provider's checkout form at once (a plain form post, as hosted checkouts
+ * such as PayFast require); the button is there if the browser blocks it.
+ */
+function PaymentHandoff({ payment }: { payment: { url: string; fields: Record<string, string> } }) {
+  const form = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    form.current?.submit();
+  }, [payment]);
+  return (
+    <form ref={form} method="POST" action={payment.url} className="flex flex-col items-center gap-3 p-6 text-center">
+      {Object.entries(payment.fields).map(([name, value]) => (
+        <input key={name} type="hidden" name={name} value={value} />
+      ))}
+      <p className="text-muted-foreground">{t("auth.taking_you_to_payment")}</p>
+      <button type="submit" className="underline">{t("auth.continue_to_payment")}</button>
+    </form>
   );
 }

@@ -17,58 +17,35 @@
 "use client";
 
 import React, { useState } from "react";
-import { RiBrainLine, RiLoader4Line, RiSearchLine, RiSparklingLine } from "@remixicon/react";
+import { RiBrainLine, RiLoader4Line, RiSearchLine } from "@remixicon/react";
 import t from "@/app/lib/i18n";
-import {
-  searchEngrams,
-  semanticSearchEngrams,
-} from "@/app/actions/handson/all/agent/memory";
-import {
-  EngramSearchResult,
-  EngramSemanticResult,
-} from "@/app/services/all/agent/memory";
-
-type SearchMode = "metadata" | "semantic";
+import { searchEngrams } from "@/app/actions/handson/all/agent/memory";
+import { EngramSearchResult } from "@/app/services/all/agent/memory";
 
 export default function AgentMemoryPage() {
-  const [mode, setMode] = useState<SearchMode>("semantic");
   const [query, setQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [metadataResults, setMetadataResults] = useState<EngramSearchResult[]>([]);
-  const [semanticResults, setSemanticResults] = useState<EngramSemanticResult[]>(
-    [],
-  );
 
   async function handleSearch(e?: React.FormEvent) {
     e?.preventDefault();
     setIsSearching(true);
     setError(null);
 
-    if (mode === "semantic") {
-      if (!query.trim()) {
-        setIsSearching(false);
-        return;
-      }
-      const result = await semanticSearchEngrams(query.trim(), 10);
-      setSemanticResults(result.data);
-      setError(result.error || null);
-    } else {
-      const result = await searchEngrams({
-        module: query.trim() || undefined,
-        limit: 20,
-      });
-      setMetadataResults(result.data);
-      setError(result.error || null);
-    }
+    const result = await searchEngrams({
+      module: query.trim() || undefined,
+      limit: 20,
+    });
+    setMetadataResults(result.data);
+    setError(result.error || null);
 
     setHasSearched(true);
     setIsSearching(false);
   }
 
-  const results: Array<EngramSearchResult | EngramSemanticResult> =
-    mode === "semantic" ? semanticResults : metadataResults;
+  const results: EngramSearchResult[] = metadataResults;
 
   return (
     <div className="space-y-6 p-4 md:p-8 max-w-4xl mx-auto">
@@ -83,36 +60,13 @@ export default function AgentMemoryPage() {
         onSubmit={handleSearch}
         className="flex flex-col sm:flex-row gap-3 sm:items-center"
       >
-        <div className="inline-flex rounded-xl border border-gray-200 bg-white p-1 w-fit">
-          {(["semantic", "metadata"] as const).map((value) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setMode(value)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                mode === value
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              {value === "semantic"
-                ? t("app.agent.tab_semantic")
-                : t("app.agent.tab_metadata")}
-            </button>
-          ))}
-        </div>
-
         <div className="relative flex-1">
           <RiSearchLine className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={
-              mode === "semantic"
-                ? t("app.agent.semantic_placeholder")
-                : t("app.agent.metadata_placeholder")
-            }
+            placeholder={t("app.agent.metadata_placeholder")}
             className="pl-9 pr-3 py-2 rounded-xl border border-gray-200 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -124,8 +78,6 @@ export default function AgentMemoryPage() {
         >
           {isSearching ? (
             <RiLoader4Line className="w-4 h-4 animate-spin" />
-          ) : mode === "semantic" ? (
-            <RiSparklingLine className="w-4 h-4" />
           ) : (
             <RiSearchLine className="w-4 h-4" />
           )}
@@ -185,12 +137,6 @@ export default function AgentMemoryPage() {
               <div className="flex items-center gap-3 text-xs text-gray-400 mt-2">
                 {"last_activity_date" in engram && engram.last_activity_date && (
                   <span>{engram.last_activity_date}</span>
-                )}
-                {"distance" in engram && (
-                  <span>
-                    {t("app.agent.relevance")}{" "}
-                    {(1 - engram.distance).toFixed(3)}
-                  </span>
                 )}
               </div>
             </div>

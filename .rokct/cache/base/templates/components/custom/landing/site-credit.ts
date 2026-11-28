@@ -17,8 +17,8 @@
 // The credit every Rokct site ends its footer with (base_sdk 1.54.0). Ray,
 // 2026-10-31: "all site will be copyright sitename then built with love
 // (as heart) by ROKCT". So the line is the SITE's own name, never the
-// legal entity - `© 2026 Polaris · Built with ♥ by Cortex Media` - and the
-// maker is the same on every site. Since 1.61.0 the maker is Cortex Media
+// legal entity - `© 2026 Polaris · Built with ♥ by CORTEX` - and the
+// maker is the same on every site. Since 1.61.0 the maker is CORTEX
 // (Ray, 2026-11-20: "update all footers of all our nextjs sites to Cortex
 // Media. some still say Built with ♥ by ROKCT").
 //
@@ -29,7 +29,18 @@
 // its own with the word `love` for a screen reader.
 
 /** Who built the site. Fixed by the ruling: every site, the same maker. */
-export const SITE_CREDIT_MAKER = "Cortex Media";
+export const SITE_CREDIT_MAKER = "CORTEX";
+
+/**
+ * Where the maker's name links (base_sdk 1.65.0; Ray, 2026-11-21: "Cortex
+ * Media can be a link back to its website"). CORTEX has no domain of
+ * its own yet, so this is the address its site is live on today. ONE place:
+ * when the real domain arrives, change it here, or set
+ * NEXT_PUBLIC_CORTEX_MEDIA_URL on a host to point there sooner.
+ */
+export const SITE_CREDIT_MAKER_URL =
+  (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_CORTEX_MEDIA_URL) ||
+  "https://cortexagency.co";
 
 /** The heart glyph drawn between the words (aria-labelled `love`). */
 export const SITE_CREDIT_HEART = "♥";
@@ -76,14 +87,14 @@ export function siteCopyright(siteName: string | null | undefined, year?: number
   return `© ${resolveCreditYear(year, now)} ${name}`;
 }
 
-/** `Built with ♥ by Cortex Media`, in the shell's words when it passes any. */
+/** `Built with ♥ by CORTEX`, in the shell's words when it passes any. */
 export function siteCreditText(labels: Partial<SiteCreditLabels> = {}): string {
   const words = { ...SITE_CREDIT_LABELS, ...labels };
   return `${words.builtWith} ${SITE_CREDIT_HEART} ${words.by} ${SITE_CREDIT_MAKER}`;
 }
 
 /**
- * The whole line as plain text: `© 2026 Polaris · Built with ♥ by Cortex Media`
+ * The whole line as plain text: `© 2026 Polaris · Built with ♥ by CORTEX`
  * (the copyright, the separator, the credit), or the credit alone when the
  * site has no name.
  */

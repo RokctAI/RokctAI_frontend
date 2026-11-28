@@ -108,9 +108,23 @@ def load_manifest():
         return json.load(f)
 
 
+def untx(src):
+    """The source as written before the AF phrase pass (1.44.0) wrapped
+    display text in tx(): tx(expr) reads as expr and a {tx("words")} child
+    as the words, so assertions about the markup keep reading it."""
+    src = src.replace('import { tx } from "@/app/lib/i18n/phrases";\n', "")
+    src = re.sub(r'\{" "\}\{tx\((".*?")\)\}\{" "\}', lambda m: " " + json.loads(m.group(1)) + " ", src)
+    src = re.sub(r'\{" "\}\{tx\((".*?")\)\}', lambda m: " " + json.loads(m.group(1)), src)
+    src = re.sub(r'\{tx\((".*?")\)\}\{" "\}', lambda m: json.loads(m.group(1)) + " ", src)
+    src = re.sub(r'=\{tx\((".*?")\)\}', lambda m: "=" + m.group(1), src)
+    src = re.sub(r'\{tx\((".*?")\)\}', lambda m: json.loads(m.group(1)), src)
+    src = re.sub(r'\btx\(([\w.\[\]"\']+)\)', r"\1", src)
+    return src
+
+
 def read(path):
     with open(path, encoding="utf-8") as f:
-        return f.read()
+        return untx(f.read())
 
 
 def code_of(path):
@@ -140,7 +154,7 @@ class TestCorporateNextjs(unittest.TestCase):
     def test_identity_and_version(self):
         self.assertEqual(self.manifest["name"], "corporate_sdk")
         self.assertRegex(self.manifest["version"], r"^\d+\.\d+\.\d+$")
-        self.assertEqual(self.manifest["version"], "1.7.2")
+        self.assertEqual(self.manifest["version"], "1.8.0")
         self.assertIn("sdk_name = 'corporate_sdk'", read(INSTALL_PY))
         self.assertTrue(read(INSTALL_PY).startswith("# " + LICENSE_HEAD))
         # Same shape as the sibling halves: one flat installs list, no
@@ -790,7 +804,7 @@ class TestSiteCredit(unittest.TestCase):
             run = subprocess.run([node, "--experimental-strip-types", "--no-warnings", probe],
                                  capture_output=True, text=True, timeout=60, cwd=tmp)
         self.assertEqual(run.returncode, 0, run.stderr)
-        self.assertEqual(run.stdout.strip(), "\u00a9 2026 Example Bakehouse \u00b7 Built with \u2665 by ROKCT")
+        self.assertEqual(run.stdout.strip(), "\u00a9 2026 Example Bakehouse \u00b7 Built with \u2665 by Cortex Media")
 
 
 class TestSouthRiverRender(unittest.TestCase):
@@ -1001,7 +1015,7 @@ class TestHeroBottleAsks(unittest.TestCase):
     SITE = os.path.join(TEMPLATES, "components", "custom", "site")
 
     def test_version(self):
-        self.assertEqual(load_manifest()["version"], "1.7.2")
+        self.assertGreaterEqual(tuple(int(n) for n in load_manifest()["version"].split(".")), (1, 7, 2))
         self.assertIn("## 1.7.2", read(CHANGELOG).split("## 1.7.1")[0])
         self.assertIn("Since 1.7.2", load_manifest()["_comment"]["about"])
 
