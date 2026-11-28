@@ -20,7 +20,6 @@ import { auth } from "@/app/(auth)/auth";
 import {
   Engram,
   EngramSearchResult,
-  EngramSemanticResult,
   MemoryService,
 } from "@/app/services/all/agent/memory";
 
@@ -62,26 +61,6 @@ export async function searchEngrams(params: {
     return {
       data: [] as EngramSearchResult[],
       error: "Failed to search Brain memory",
-    };
-  }
-}
-
-export async function semanticSearchEngrams(
-  query: string,
-  limit = 5,
-  involvedUser?: string,
-) {
-  if (!(await verifySession()))
-    return { data: [] as EngramSemanticResult[], error: "Unauthorized" };
-
-  try {
-    const data = await MemoryService.semanticSearch(query, limit, involvedUser);
-    return { data };
-  } catch (e) {
-    console.error("Failed to run semantic search", e);
-    return {
-      data: [] as EngramSemanticResult[],
-      error: "Failed to run semantic search",
     };
   }
 }

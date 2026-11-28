@@ -30,6 +30,7 @@ import { isDataSite, siteKind } from "./site-source";
 import { SITE_ROOT_CLASS, siteThemeStylesheet } from "./site-theme";
 import { SiteThemeClasses } from "./site-theme.client";
 
+import { tx } from "@/app/lib/i18n/phrases";
 const theme = siteKind("theme");
 const ROOT_CLASSES: readonly string[] = [SITE_ROOT_CLASS, ...siteFontClasses(theme)];
 
@@ -47,7 +48,7 @@ export default function SiteThemeSection(_props: PageSectionProps) {
   return (
     <>
       {/* React writes a <style> child as raw CSS, escaping only a closing style tag. */}
-      {css && <style data-site-theme="">{css}</style>}
+      {css && <style data-site-theme="">{tx(css)}</style>}
       <SiteThemeClasses classes={ROOT_CLASSES} />
     </>
   );

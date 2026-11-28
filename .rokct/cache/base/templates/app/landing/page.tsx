@@ -39,6 +39,7 @@
 // so a composed shell has it on /landing with no host edit.
 
 import "@/app/styles/rokct-scroll.css";
+import "@/app/styles/rokct-rise.css";
 
 import React from "react";
 

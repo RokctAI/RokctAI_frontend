@@ -38,15 +38,6 @@ export interface EngramSearchResult {
   last_activity_date: string | null;
 }
 
-export interface EngramSemanticResult {
-  name: string;
-  reference_doctype: string;
-  reference_name: string;
-  reference_title: string | null;
-  summary: string | null;
-  distance: number;
-}
-
 export class MemoryService {
   /** Fetch the Engram (memory record) for a specific document. */
   static async query(
@@ -80,21 +71,6 @@ export class MemoryService {
         involved_user: params.involvedUser,
         limit: params.limit ?? 20,
       },
-      options,
-    );
-    return response?.message || [];
-  }
-
-  /** pgvector similarity search over Engram embeddings. */
-  static async semanticSearch(
-    query: string,
-    limit = 5,
-    involvedUser?: string,
-    options?: ServiceOptions,
-  ): Promise<EngramSemanticResult[]> {
-    const response = await BaseService.call(
-      `${NS}.semantic_search`,
-      { query, limit, involved_user: involvedUser },
       options,
     );
     return response?.message || [];

@@ -26,6 +26,7 @@ import type { SiteSize } from "./site-sizes";
 import { sizeBottleSvg, type SizeBottleOpts } from "./site-sizes-art";
 import { svgElements } from "./site-svg";
 
+import { tx } from "@/app/lib/i18n/phrases";
 /** px per viewBox unit of the own-label sizes row. */
 const OWN_UNIT = 0.3;
 
@@ -40,8 +41,8 @@ export function SiteOwnSizes({ sizes, label }: { sizes: SiteSize[]; label: Pick<
               {svgElements(b.svg)}
             </span>
             <figcaption>
-              <b>{size.name}</b>
-              {size.note && <span>{size.note}</span>}
+              <b>{tx(size.name)}</b>
+              {size.note && <span>{tx(size.note)}</span>}
             </figcaption>
           </div>
         );

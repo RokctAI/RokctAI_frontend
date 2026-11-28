@@ -86,6 +86,7 @@ import { SticksAsk, SticksFeed, SticksHeader } from "./sticks-landing.client";
 import { tourScreen, type Downloads, type TourScreen } from "./sticks-sources";
 import { loadDownloads, loadTourScreens } from "./sticks-sources.server";
 
+import { tx } from "@/app/lib/i18n/phrases";
 function I({ children }: { children: ReactNode }) {
   return <i aria-hidden="true">{children}</i>;
 }
@@ -93,9 +94,9 @@ function I({ children }: { children: ReactNode }) {
 function Marked({ before, mark, after }: { before: string; mark: string; after: string }) {
   return (
     <>
-      {before}
-      <span className="mk">{mark}</span>
-      {after}
+      {tx(before)}
+      <span className="mk">{tx(mark)}</span>
+      {tx(after)}
     </>
   );
 }
@@ -169,8 +170,8 @@ function DownloadRow({ downloads }: { downloads: Downloads }) {
         {platforms.map((p) =>
           p.href ? (
             <a key={p.key} className={p.primary ? "btn btn-dl" : "btn btn-ghost"} href={p.href} rel="noopener" data-download={p.key}>
-              <I>{p.icon}</I>
-              {p.label}
+              <I>{tx(p.icon)}</I>
+              {tx(p.label)}
             </a>
           ) : (
             <span
@@ -179,9 +180,9 @@ function DownloadRow({ downloads }: { downloads: Downloads }) {
               aria-disabled="true"
               data-download={p.key}
             >
-              <I>{p.icon}</I>
-              {p.label}
-              <small>{STICKS_DOWNLOAD.soon}</small>
+              <I>{tx(p.icon)}</I>
+              {tx(p.label)}
+              <small>{tx(STICKS_DOWNLOAD.soon)}</small>
             </span>
           ),
         )}
@@ -190,14 +191,14 @@ function DownloadRow({ downloads }: { downloads: Downloads }) {
         <I>
           <RiGithubLine />
         </I>
-        <span>{note}</span>
+        <span>{tx(note)}</span>
         <span aria-hidden="true">·</span>
         {soon ? (
           <a href={downloads.releaseUrl} rel="noopener">
-            {STICKS_DOWNLOAD.watch}
+            {tx(STICKS_DOWNLOAD.watch)}
           </a>
         ) : (
-          <span>{STICKS_DOWNLOAD.platforms}</span>
+          <span>{tx(STICKS_DOWNLOAD.platforms)}</span>
         )}
       </div>
     </div>
@@ -212,15 +213,15 @@ function AndroidButton({ downloads }: { downloads: Downloads }) {
       <I>
         <RiAndroidFill />
       </I>
-      {STICKS_DOWNLOAD.android}
+      {tx(STICKS_DOWNLOAD.android)}
     </a>
   ) : (
     <span className="btn is-soon" aria-disabled="true" data-download="android">
       <I>
         <RiAndroidFill />
       </I>
-      {STICKS_DOWNLOAD.android}
-      <small>{STICKS_DOWNLOAD.soon}</small>
+      {tx(STICKS_DOWNLOAD.android)}
+      <small>{tx(STICKS_DOWNLOAD.soon)}</small>
     </span>
   );
 }
@@ -243,19 +244,19 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                 <I>
                   <RiAndroidLine />
                 </I>
-                {STICKS_HERO.eyebrow}
+                {tx(STICKS_HERO.eyebrow)}
               </span>
               <h1 id="hero-h">
                 <Marked before={STICKS_HERO.before} mark={STICKS_HERO.mark} after={STICKS_HERO.after} />
               </h1>
-              <p className="lede">{STICKS_HERO.lede}</p>
+              <p className="lede">{tx(STICKS_HERO.lede)}</p>
               <DownloadRow downloads={downloads} />
             </div>
             <div className="crowd" role="img" aria-label={STICKS_HERO.crowdLabel}>
               <CrowdPicture eager />
               <span className="you-ring" aria-hidden="true" />
               <span className="you-tag" aria-hidden="true">
-                {STICKS_HERO.tag}
+                {tx(STICKS_HERO.tag)}
               </span>
             </div>
           </div>
@@ -270,12 +271,12 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                   <I>
                     <RiShieldCheckLine />
                   </I>
-                  {STICKS_RULES.eyebrow}
+                  {tx(STICKS_RULES.eyebrow)}
                 </span>
                 <h2 id="rules-h">
-                  {STICKS_RULES.title[0]}
+                  {tx(STICKS_RULES.title[0])}
                   <br />
-                  {STICKS_RULES.title[1]}
+                  {tx(STICKS_RULES.title[1])}
                 </h2>
               </div>
               <div className="rule-list">
@@ -286,8 +287,8 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                       <I>
                         <Icon />
                       </I>
-                      <b>{rule.title}</b>
-                      <p>{rule.body}</p>
+                      <b>{tx(rule.title)}</b>
+                      <p>{tx(rule.body)}</p>
                     </div>
                   );
                 })}
@@ -305,13 +306,13 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                   <I>
                     <RiTeamLine />
                   </I>
-                  {STICKS_MEET.eyebrow}
+                  {tx(STICKS_MEET.eyebrow)}
                 </span>
                 <h2 id="meet-h">
                   <Marked before={STICKS_MEET.before} mark={STICKS_MEET.mark} after={STICKS_MEET.after} />
                 </h2>
               </div>
-              <p>{STICKS_MEET.body}</p>
+              <p>{tx(STICKS_MEET.body)}</p>
             </div>
             <div className="meet-grid">
               <div className="roles">
@@ -319,9 +320,9 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                   <article className={r.featured ? "role feat" : "role"} key={r.role}>
                     <StickHead stick={r.stick} size={r.featured ? 84 : 64} mood="happy" />
                     <div>
-                      {r.featured && <span className="tag">{STICKS_MEET.startHere}</span>}
-                      <h3>{r.role}</h3>
-                      <p>{r.duty}</p>
+                      {r.featured && <span className="tag">{tx(STICKS_MEET.startHere)}</span>}
+                      <h3>{tx(r.role)}</h3>
+                      <p>{tx(r.duty)}</p>
                     </div>
                   </article>
                 ))}
@@ -331,30 +332,30 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                   <Phone shot={screen(STICKS_MEET.screen.step)} alt={STICKS_MEET.screen.alt} />
                   <div className="hire" aria-label={hire.label}>
                     <div className="board-top">
-                      <b>{hire.title}</b>
-                      <span className="live">{hire.status}</span>
+                      <b>{tx(hire.title)}</b>
+                      <span className="live">{tx(hire.status)}</span>
                     </div>
                     <div className="hire-who">
                       <StickHead stick="sipho" size={54} />
                       <div>
-                        <b>{hire.name}</b>
-                        <span>{hire.role}</span>
+                        <b>{tx(hire.name)}</b>
+                        <span>{tx(hire.role)}</span>
                       </div>
                     </div>
                     <dl>
                       {hire.facts.map(([k, v]) => (
                         <div key={k}>
-                          <dt>{k}</dt>
-                          <dd>{v}</dd>
+                          <dt>{tx(k)}</dt>
+                          <dd>{tx(v)}</dd>
                         </div>
                       ))}
                       <div>
-                        <dt>{hire.askLabel}</dt>
+                        <dt>{tx(hire.askLabel)}</dt>
                         <dd className="ask">
                           <I>
                             <RiHandHeartLine />
                           </I>
-                          {hire.ask}
+                          {tx(hire.ask)}
                         </dd>
                       </div>
                     </dl>
@@ -362,13 +363,13 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                       {hire.steps.map((step) => (
                         <li key={step.text} className={step.done ? undefined : "now"}>
                           <I>{step.done ? <RiCheckboxCircleFill /> : <RiLoader4Line />}</I>
-                          {step.text}
+                          {tx(step.text)}
                         </li>
                       ))}
                     </ol>
                   </div>
                 </div>
-                <Real>{STICKS_MEET.real}</Real>
+                <Real>{tx(STICKS_MEET.real)}</Real>
               </div>
             </div>
           </div>
@@ -382,13 +383,13 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                 <I>
                   <RiPulseLine />
                 </I>
-                {STICKS_FEED.eyebrow}
+                {tx(STICKS_FEED.eyebrow)}
               </span>
               <h2 id="feed-h">
                 <Marked before={STICKS_FEED.before} mark={STICKS_FEED.mark} after={STICKS_FEED.after} />
               </h2>
               {STICKS_FEED.paragraphs.map((p) => (
-                <p key={p}>{p}</p>
+                <p key={p}>{tx(p)}</p>
               ))}
               <ul className="checks">
                 {STICKS_FEED.checks.map((c) => (
@@ -396,22 +397,22 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                     <I>
                       <RiCheckboxCircleFill />
                     </I>
-                    {c}
+                    {tx(c)}
                   </li>
                 ))}
               </ul>
             </div>
             <div className="board" aria-label={STICKS_FEED.boardLabel}>
               <div className="board-top">
-                <b>{STICKS_FEED.board}</b>
-                <span className="live">{STICKS_FEED.live}</span>
+                <b>{tx(STICKS_FEED.board)}</b>
+                <span className="live">{tx(STICKS_FEED.live)}</span>
               </div>
               <div className="shifts">
                 {STICKS_FEED.team.map((t) => (
                   <div className={`shift ${t.state}`} key={t.name}>
                     <StickHead stick={t.stick} size={46} mood={t.state === "off" ? "sleep" : "calm"} />
-                    {t.name}
-                    <span className="st">{t.label}</span>
+                    {tx(t.name)}
+                    <span className="st">{tx(t.label)}</span>
                   </div>
                 ))}
               </div>
@@ -420,7 +421,7 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                 <I>
                   <RiInformationLine />
                 </I>
-                {STICKS_FEED.note}
+                {tx(STICKS_FEED.note)}
               </div>
             </div>
           </div>
@@ -435,19 +436,19 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                 <I>
                   <RiQuestionAnswerLine />
                 </I>
-                {STICKS_ASK.eyebrow}
+                {tx(STICKS_ASK.eyebrow)}
               </span>
               <h2 id="asks-h">
                 <Marked before={STICKS_ASK.before} mark={STICKS_ASK.mark} after={STICKS_ASK.after} />
               </h2>
               {STICKS_ASK.paragraphs.map((p) => (
-                <p key={p}>{p}</p>
+                <p key={p}>{tx(p)}</p>
               ))}
               <div className="ask-phones">
                 {STICKS_ASK.screens.map((s) => (
                   <figure key={s.step}>
                     <Phone shot={screen(s.step)} alt={s.alt} />
-                    <Real icon={s.icon}>{s.caption}</Real>
+                    <Real icon={s.icon}>{tx(s.caption)}</Real>
                   </figure>
                 ))}
               </div>
@@ -463,12 +464,12 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                 <I>
                   <RiChat3Line />
                 </I>
-                {STICKS_BETWEEN.eyebrow}
+                {tx(STICKS_BETWEEN.eyebrow)}
               </span>
               <h2 id="bw-h">
                 <Marked before={STICKS_BETWEEN.before} mark={STICKS_BETWEEN.mark} after={STICKS_BETWEEN.after} />
               </h2>
-              <p>{STICKS_BETWEEN.body}</p>
+              <p>{tx(STICKS_BETWEEN.body)}</p>
               <div className="lines">
                 {STICKS_BETWEEN.lines.map((line) => {
                   const Icon = LINE_ICONS[line.icon as keyof typeof LINE_ICONS];
@@ -478,8 +479,8 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                         <Icon />
                       </I>
                       <div>
-                        <b>{line.title}</b>
-                        <span>{line.body}</span>
+                        <b>{tx(line.title)}</b>
+                        <span>{tx(line.body)}</span>
                       </div>
                     </div>
                   );
@@ -490,7 +491,7 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
               {STICKS_BETWEEN.screens.map((s) => (
                 <figure key={s.step}>
                   <Phone shot={screen(s.step)} alt={s.alt} />
-                  <Real>{s.caption}</Real>
+                  <Real>{tx(s.caption)}</Real>
                 </figure>
               ))}
             </div>
@@ -506,11 +507,11 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                   <I>
                     <RiApps2Line />
                   </I>
-                  {STICKS_GALLERY.eyebrow}
+                  {tx(STICKS_GALLERY.eyebrow)}
                 </span>
-                <h2 id="gal-h">{STICKS_GALLERY.title}</h2>
+                <h2 id="gal-h">{tx(STICKS_GALLERY.title)}</h2>
               </div>
-              <p>{STICKS_GALLERY.body}</p>
+              <p>{tx(STICKS_GALLERY.body)}</p>
             </div>
           </div>
           <div className="gal" tabIndex={0} role="region" aria-label={STICKS_GALLERY.label}>
@@ -518,8 +519,8 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
               <figure key={s.step}>
                 <Phone shot={screen(s.step)} alt={`${s.title}: ${s.body}`} eager />
                 <figcaption>
-                  <b>{s.title}</b>
-                  <span>{s.body}</span>
+                  <b>{tx(s.title)}</b>
+                  <span>{tx(s.body)}</span>
                 </figcaption>
               </figure>
             ))}
@@ -535,11 +536,11 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                   <I>
                     <RiRouteLine />
                   </I>
-                  {STICKS_HOW.eyebrow}
+                  {tx(STICKS_HOW.eyebrow)}
                 </span>
-                <h2 id="how-h">{STICKS_HOW.title}</h2>
+                <h2 id="how-h">{tx(STICKS_HOW.title)}</h2>
               </div>
-              <p>{STICKS_HOW.body}</p>
+              <p>{tx(STICKS_HOW.body)}</p>
             </div>
             <ol className="steps">
               {STICKS_HOW.steps.map((step, i) => {
@@ -553,8 +554,8 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
                     <i className="big" aria-hidden="true">
                       <Icon />
                     </i>
-                    <h3>{step.title}</h3>
-                    <p>{step.body}</p>
+                    <h3>{tx(step.title)}</h3>
+                    <p>{tx(step.body)}</p>
                     {last && <AndroidButton downloads={downloads} />}
                   </li>
                 );
@@ -569,8 +570,8 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
             <CrowdPicture />
           </div>
           <div className="wrap">
-            <h2 id="final-h">{STICKS_FINAL.title}</h2>
-            <p>{STICKS_FINAL.body}</p>
+            <h2 id="final-h">{tx(STICKS_FINAL.title)}</h2>
+            <p>{tx(STICKS_FINAL.body)}</p>
             <DownloadRow downloads={downloads} />
           </div>
         </section>
@@ -582,7 +583,7 @@ export async function SticksLanding({ fontClassName }: { fontClassName: string }
           <nav className="f-links" aria-label={STICKS_SITE_NAME}>
             {STICKS_FOOTER.links.map((l) => (
               <a key={l.href} href={l.href}>
-                {l.label}
+                {tx(l.label)}
               </a>
             ))}
           </nav>

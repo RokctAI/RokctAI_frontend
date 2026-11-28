@@ -59,6 +59,7 @@ import {
   feedTime,
 } from "./sticks-landing-config";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export function SticksHeader() {
   const [scrolled, setScrolled] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
@@ -75,12 +76,12 @@ export function SticksHeader() {
       <div className="wrap bar">
         <a className="brand" href="/" aria-label={STICKS_HEADER.home}>
           <SticksMark className="brand-mark" />
-          {STICKS_SITE_NAME}
+          {tx(STICKS_SITE_NAME)}
         </a>
         <nav className="nav-links" aria-label={STICKS_HEADER.sections}>
           {STICKS_NAV.map((item) => (
             <a key={item.href} href={item.href}>
-              {item.label}
+              {tx(item.label)}
             </a>
           ))}
         </nav>
@@ -99,7 +100,7 @@ export function SticksHeader() {
             <i aria-hidden="true">
               <RiDownload2Line />
             </i>
-            <span>{STICKS_HEADER.getApp}</span>
+            <span>{tx(STICKS_HEADER.getApp)}</span>
           </a>
         </div>
       </div>
@@ -150,16 +151,16 @@ export function SticksFeed() {
             <StickHead stick={e.stick} size={40} />
             <div>
               <div className="who">
-                {e.name}
-                <span>{e.role}</span>
+                {tx(e.name)}
+                <span>{tx(e.role)}</span>
               </div>
-              <div className="what">{e.what}</div>
+              <div className="what">{tx(e.what)}</div>
               {e.pill && Pill && (
                 <span className={`pill ${e.pill}`}>
                   <i aria-hidden="true">
                     <Pill />
                   </i>
-                  {STICKS_FEED.pills[e.pill]}
+                  {tx(STICKS_FEED.pills[e.pill])}
                 </span>
               )}
             </div>
@@ -181,21 +182,21 @@ export function SticksAsk() {
   const Outcome = answer ? OUTCOME_ICONS[answer] : null;
   return (
     <div className="askcard">
-      <span className="try">{card.tryIt}</span>
+      <span className="try">{tx(card.tryIt)}</span>
       <div className="ask-head">
         <div>
           <span className="chip">
             <i aria-hidden="true">
               <RiMailLine />
             </i>
-            {card.chip}
+            {tx(card.chip)}
           </span>
-          <h3>{card.title}</h3>
+          <h3>{tx(card.title)}</h3>
           <div className="due">
             <i aria-hidden="true">
               <RiTimeLine />
             </i>
-            {card.due}
+            {tx(card.due)}
           </div>
         </div>
         <StickHead stick="tumi" size={72} />
@@ -205,8 +206,8 @@ export function SticksAsk() {
           <span className="n-wrap" key={c.name}>
             <span className="n">
               <StickHead stick={c.stick} size={38} />
-              {c.name}
-              <small>{c.did}</small>
+              {tx(c.name)}
+              <small>{tx(c.did)}</small>
             </span>
             <i className="to" aria-hidden="true">
               <RiArrowRightLine />
@@ -219,28 +220,28 @@ export function SticksAsk() {
               <RiUser3Fill />
             </i>
           </span>
-          {card.you.name}
-          <small>{card.you.did}</small>
+          {tx(card.you.name)}
+          <small>{tx(card.you.did)}</small>
         </span>
       </div>
-      <p className="ask-why">{card.why}</p>
+      <p className="ask-why">{tx(card.why)}</p>
       <div className="mail">
         <div className="row">
-          <span>{card.to[0]}</span>
-          <b>{card.to[1]}</b>
+          <span>{tx(card.to[0])}</span>
+          <b>{tx(card.to[1])}</b>
         </div>
         <div className="row">
-          <span>{card.subject[0]}</span>
-          <b>{card.subject[1]}</b>
+          <span>{tx(card.subject[0])}</span>
+          <b>{tx(card.subject[1])}</b>
         </div>
         <div className="body">
-          {card.body}
+          {tx(card.body)}
           <br />
           <span className="attach">
             <i aria-hidden="true">
               <RiFilePdf2Line />
             </i>
-            {card.attachment}
+            {tx(card.attachment)}
           </span>
         </div>
       </div>
@@ -248,7 +249,7 @@ export function SticksAsk() {
         <i aria-hidden="true">
           <RiLockLine />
         </i>
-        {card.guard}
+        {tx(card.guard)}
       </div>
       {answer === null ? (
         <div className="ask-btns">
@@ -256,19 +257,19 @@ export function SticksAsk() {
             <i aria-hidden="true">
               <RiSendPlaneFill />
             </i>
-            {card.send}
+            {tx(card.send)}
           </button>
           <button type="button" onClick={() => setAnswer("ed")}>
             <i aria-hidden="true">
               <RiEditLine />
             </i>
-            {card.edit}
+            {tx(card.edit)}
           </button>
           <button type="button" onClick={() => setAnswer("no")}>
             <i aria-hidden="true">
               <RiCloseLine />
             </i>
-            {card.no}
+            {tx(card.no)}
           </button>
         </div>
       ) : null}
@@ -278,13 +279,13 @@ export function SticksAsk() {
             <i aria-hidden="true">
               <Outcome />
             </i>
-            <span>{card.outcomes[answer]}</span>
+            <span>{tx(card.outcomes[answer])}</span>
           </>
         ) : null}
       </div>
       {answer !== null && (
         <button type="button" className="reset" onClick={() => setAnswer(null)}>
-          {card.again}
+          {tx(card.again)}
         </button>
       )}
     </div>

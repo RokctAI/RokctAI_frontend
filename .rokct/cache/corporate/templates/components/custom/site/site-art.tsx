@@ -42,6 +42,7 @@ import React from "react";
 
 import type { SiteArt, SiteLabel, SiteStepIcon } from "@/lib/site-data/kinds";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export type SiteBottleSize = "500 ml" | "1.25 L";
 
 function bodyPath(extra: number) {
@@ -102,7 +103,7 @@ function LabelFace({ label, size }: { label: SiteLabel; size: SiteBottleSize }) 
       <line x1="62" y1="332" x2="158" y2="332" stroke={fg} strokeOpacity="0.5" strokeWidth="1" />
       {label.sub && (
         <text x="110" y="352" textAnchor="middle" fontFamily="var(--cs-font-sans-stack)" fontWeight="600" fontSize="12" fill={fg} opacity="0.85">
-          {label.sub}
+          {tx(label.sub)}
         </text>
       )}
       {label.footer && (
@@ -407,7 +408,7 @@ export function Bottle({
         <filter id={`${id}-blur`} x="-20%" y="-50%" width="140%" height="200%">
           <feGaussianBlur stdDeviation="5" />
         </filter>
-        {roll && <style>{roll}</style>}
+        {roll && <style>{tx(roll)}</style>}
       </defs>
 
       <ellipse cx="112" cy={604 + extra} rx="78" ry="9" fill="#1a0508" opacity="0.35" filter={`url(#${id}-blur)`} />
@@ -566,10 +567,10 @@ export function Wordmark({ wordmark, name, className }: { wordmark: { lead: stri
   return (
     <span className={`cs-wordmark ${className ?? ""}`} aria-label={name} role="img">
       <b aria-hidden="true">
-        {wordmark.lead}
-        {wordmark.mark && <sup>{wordmark.mark}</sup>}
+        {tx(wordmark.lead)}
+        {wordmark.mark && <sup>{tx(wordmark.mark)}</sup>}
       </b>
-      {wordmark.rest && <span aria-hidden="true">{wordmark.rest}</span>}
+      {wordmark.rest && <span aria-hidden="true">{tx(wordmark.rest)}</span>}
     </span>
   );
 }
@@ -590,7 +591,7 @@ export function Stamp({ id, lines, size = 150, center = "" }: { id: string; line
         </textPath>
       </text>
       <text x="100" y="113" textAnchor="middle" fontFamily="var(--cs-font-display-stack)" style={{ fontStyle: "var(--cs-display-style)" }} fontWeight="900" fontSize="36" fill="var(--cs-on-brand)">
-        {center}
+        {tx(center)}
       </text>
     </svg>
   );

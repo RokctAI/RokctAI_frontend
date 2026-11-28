@@ -30,6 +30,7 @@ import type {
   PageSectionProps,
 } from "@/components/custom/landing/page-sections";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export const meta: PageSectionMeta = {
   order: 10,
   nav: [{ id: RK_ANCHORS.platform, label: "Platform" }],
@@ -39,10 +40,10 @@ export default function RokctPlatformSection({ id }: PageSectionProps) {
   return (
     <section className="rk-s" id={id}>
       <div className="rk-wrap">
-        <RkAsk className="rk-reveal">{RK_PLATFORM.ask}</RkAsk>
+        <RkAsk className="rk-reveal">{tx(RK_PLATFORM.ask)}</RkAsk>
         <div className="rk-s-head rk-reveal">
           <h2 className="rk-h2">{rkLines(RK_PLATFORM.heading)}</h2>
-          <p className="rk-lede">{RK_PLATFORM.lede}</p>
+          <p className="rk-lede">{tx(RK_PLATFORM.lede)}</p>
         </div>
         <RokctModules />
       </div>

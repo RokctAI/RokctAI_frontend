@@ -81,22 +81,7 @@ export function Chat({
   const [selectedModelId, setSelectedModelId] = useState<string>(
     AI_MODELS.FREE.id,
   );
-  const [availableModels, setAvailableModels] = useState<any>(AI_MODELS);
-
-  useEffect(() => {
-    async function loadModels() {
-      try {
-        const { getAvailableModels } = await import("@/app/actions/ai/tenant");
-        const res = await getAvailableModels();
-        if (res.success && res.models) {
-          setAvailableModels(res.models);
-        }
-      } catch (err) {
-        console.warn("Failed to load models dynamically from backend:", err);
-      }
-    }
-    loadModels();
-  }, []);
+  const [availableModels] = useState<any>(AI_MODELS);
 
   const [activeModule, setActiveModule] = useState<string>("HR");
   const [isLeftOpen, setIsLeftOpen] = useState(true);

@@ -15,7 +15,7 @@
  */
 
 // The site credit (base_sdk 1.54.0): `© <year> <site name>` then `Built
-// with ♥ by Cortex Media` (the maker since 1.61.0; Ray, 2026-10-31: "all site will be copyright sitename
+// with ♥ by CORTEX` (the maker since 1.61.0; Ray, 2026-10-31: "all site will be copyright sitename
 // then built with love (as heart) by ROKCT"). The one piece every footer
 // draws its last line with - base's FooterChromeRow, and any home SDK
 // footer that draws its own markup imports it from
@@ -26,7 +26,7 @@
 // data (a local-data site's `site.json`) passes `siteName`. The year is
 // the current one unless `year` is given. The heart is an image of its
 // own (`role="img"`, `aria-label="love"`), so a screen reader says "Built
-// with love by Cortex Media". The type and the separator are the footer's: the
+// with love by CORTEX". The type and the separator are the footer's: the
 // component names no font, size or colour - `className` carries the
 // footer's own classes and `separator` its own mark - so each site keeps
 // its identity. Server-safe and directive-free: no state, no effects.
@@ -37,11 +37,13 @@ import { PLATFORM_NAME } from "@/app/config/platform";
 import {
   SITE_CREDIT_HEART,
   SITE_CREDIT_MAKER,
+  SITE_CREDIT_MAKER_URL,
   SITE_CREDIT_SEPARATOR,
   SITE_CREDIT_LABELS,
   siteCopyright,
   type SiteCreditLabels,
 } from "@/components/custom/landing/site-credit";
+import { tx } from "@/app/lib/i18n/phrases";
 
 export interface SiteCreditProps {
   /** The site's own name. Defaults to the host's PLATFORM_NAME. */
@@ -69,7 +71,8 @@ export function SiteCredit({
   heartClassName,
   as: Tag = "p",
 }: SiteCreditProps) {
-  const words = { ...SITE_CREDIT_LABELS, ...labels };
+  const merged = { ...SITE_CREDIT_LABELS, ...labels };
+  const words = { builtWith: tx(merged.builtWith), love: tx(merged.love), by: tx(merged.by) };
   const copyright = siteCopyright(siteName, year);
   return (
     <Tag className={className} data-site-credit="">
@@ -80,7 +83,16 @@ export function SiteCredit({
         <span role="img" aria-label={words.love} className={heartClassName}>
           {SITE_CREDIT_HEART}
         </span>{" "}
-        {words.by} {SITE_CREDIT_MAKER}
+        {words.by}{" "}
+        <a
+          href={SITE_CREDIT_MAKER_URL}
+          target="_blank"
+          rel="noopener"
+          data-site-credit-maker-link=""
+          className="text-inherit underline-offset-4 hover:underline focus-visible:underline"
+        >
+          {SITE_CREDIT_MAKER}
+        </a>
       </span>
     </Tag>
   );

@@ -240,6 +240,18 @@ class TestRegisterLocalLinkKept(unittest.TestCase):
     2026-09-08 - the local store is the multi-tenancy feature; slimming it
     is a per-shell switch, never a deletion)."""
 
+    def test_payment_handoff_renders_where_the_payment_state_lives(self):
+        """1.14.0: the checkout handoff uses `payment`, which only RegisterViewInner declares (from its action
+        state); rendered in any other component it is an undefined name."""
+        src = read(os.path.join(TEMPLATES, "app", "(auth)", "register", "register-view.tsx"))
+        uses = [m.start() for m in re.finditer(r"<PaymentHandoff payment=\{payment\}", src)]
+        self.assertEqual(len(uses), 1)
+        owner = list(re.finditer(r"^function (\w+)", src[: uses[0]], re.M))[-1].group(1)
+        self.assertEqual(owner, "RegisterViewInner")
+        declared = src.index("const payment = state?.status === \"payment\"")
+        self.assertLess(src.rfind("function RegisterViewInner"), declared)
+        self.assertLess(declared, uses[0])
+
     def test_register_links_the_account_locally_after_any_provisioner(self):
         src = read(os.path.join(AUTH_GROUP, "actions.ts"))
         self.assertIn('import { linkRegisteredAccount } from "./register-link";', src)

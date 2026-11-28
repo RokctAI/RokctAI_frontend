@@ -28,11 +28,6 @@ import {
   turnText,
 } from "@/lib/agent-chat-messages";
 
-// Threshold logic: 20 messages (10 conversation turns). Past it the session
-// rolls: its summary becomes the new session's memory, the new session
-// starts from that summary plus this turn, and the client moves to it.
-const ROLLING_THRESHOLD = 20;
-
 /** A 403 for the browser. `X-Rok-Refusal: quota` marks the daily free
  * quota (the bridges' "Quota Exceeded:" refusal), the one refusal the chat
  * answers by switching to the offline flow; seat and plan refusals only
@@ -90,55 +85,6 @@ function forbiddenMessage(e: any): string {
   return "Your conversational ROK quota is complete.";
 }
 
-/** Summarizes a session through the tenant or control bridge; "" on failure. */
-async function summarizeSession(
-  isBusiness: boolean,
-  sessionId: string,
-  messages: Array<{ role: string; content: string }>,
-): Promise<string> {
-  try {
-    if (isBusiness) {
-      const { getClient } = await import("@/app/lib/client");
-      const { gatewayCall } = await import("@/app/lib/gateway-rpc");
-      const client = await getClient();
-      const sumRes = await gatewayCall(client, "api.plan_builder.summarize_chat_session", {
-        session_id: sessionId,
-        messages: JSON.stringify(messages),
-      });
-      return sumRes?.message?.summary || "";
-    }
-    const { ControlBaseService } = await import("@/app/services/control/base");
-    const sumRes = await ControlBaseService.call("control:summarize_chat_session", {
-      session_id: sessionId,
-      messages: JSON.stringify(messages),
-    });
-    return sumRes?.message?.summary || "";
-  } catch (err) {
-    console.error("Failed to summarize session:", err);
-    return "";
-  }
-}
-
-/** Stores a summary as the user's Golden Thread memory; true once saved. */
-async function saveLastSummary(userId: string, summary: string): Promise<boolean> {
-  try {
-    const { db } = await import("@/db");
-    const { user: userTable } = await import("@/db/schema");
-    const { eq } = await import("drizzle-orm");
-
-    const dbUser = await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1);
-    const currentData = (dbUser[0]?.onboardingData as Record<string, any>) || {};
-    await db
-      .update(userTable)
-      .set({ onboardingData: { ...currentData, lastSummary: summary } })
-      .where(eq(userTable.id, userId));
-    return true;
-  } catch (err) {
-    console.error("Failed to save summary context:", err);
-    return false;
-  }
-}
-
 // Token rotation and renewal are handled by getAuthenticatedTokens() which calls refreshTokens() before expiry.
 export async function POST(request: Request) {
   const { id, messages, model } = await request.json();
@@ -188,65 +134,19 @@ export async function POST(request: Request) {
   }
   const coreMessages = turns.map((t) => ({ role: t.role, content: turnText(t.text, t.files) }));
 
-  const isBusiness = !!session.user.siteName;
   let responseMessage = "";
   let chatRes: any = null;
   let newSessionId: string | null = null;
-  const shouldRoll = coreMessages.length >= ROLLING_THRESHOLD;
 
   try {
-    let messageToSend = userMessage;
-
-    // First message in a session: Fetch the last rolled context summary as the Golden Thread
-    if (coreMessages.length === 1 && !shouldRoll) {
-      try {
-        const { db } = await import("@/db");
-        const { user: userTable } = await import("@/db/schema");
-        const { eq } = await import("drizzle-orm");
-
-        const dbUser = await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1);
-
-        const lastSummary = (dbUser[0]?.onboardingData as any)?.lastSummary;
-        if (lastSummary) {
-          console.log(`[Golden Thread Context] Injecting memory from previous sessions.`);
-          messageToSend = `[SYSTEM MEMORY blueprinted from completed sessions]:\n${lastSummary}\n\n[USER NEW MESSAGE]:\n${userMessage}`;
-        }
-      } catch (err) {
-        console.error("Failed to query and inject golden thread context:", err);
-      }
-    }
-
-    // If rolling session, summarize old context and inject it as Golden Thread memory
-    // An empty summary does not roll: the session stays whole and the roll
-    // is tried again on the next turn.
-    if (shouldRoll) {
-      const summary = await summarizeSession(isBusiness, id, coreMessages);
-      if (summary) {
-        const { generateUUID } = await import("@/lib/utils");
-        newSessionId = generateUUID();
-        console.log(`[Session Roll] Threshold reached. Transitioning ${id} -> ${newSessionId}`);
-        messageToSend = `[SYSTEM MEMORY blueprinted from completed session ${id}]:\n${summary}\n\n[USER NEW MESSAGE]:\n${userMessage}`;
-
-        // Delete the old raw chat only once its summary is saved, so a failed
-        // summary never loses the conversation.
-        const saved = await saveLastSummary(userId, summary);
-        if (saved && ownsExistingChat) {
-          try {
-            await deleteChatById({ id, userId });
-            console.log(`[Auto-Clean] Cleaned up completed session ${id} from local logs.`);
-          } catch (err) {
-            console.error("Failed to clean up old session:", err);
-          }
-        }
-      }
-    }
+    const messageToSend = userMessage;
 
     const activeSessionId = newSessionId || id;
     const isEmployeePlan = session.user.plan === "Employee Plan" || session.user.subscriptionTier === "Employee Plan";
 
     if (isEmployeePlan) {
       // Forward chat turns of Employee Plan users directly to Paperclip
-      const paperclipUrl = process.env.PAPERCLIP_API_URL || "https://platform.rokct.ai/paperclip/api/chat";
+      const paperclipUrl = process.env.PAPERCLIP_API_URL || "https://platform.usesticks.com/paperclip/api/chat";
       const paperclipRes = await fetch(paperclipUrl, {
         method: "POST",
         headers: {
@@ -272,12 +172,9 @@ export async function POST(request: Request) {
       } else {
         throw new Error("Failed to communicate with Paperclip agent host.");
       }
-    } else if (isBusiness) {
-      const { OnboardingService } = await import("@/app/services/tenant/onboarding");
-      chatRes = await OnboardingService.chatWithRok(messageToSend, activeSessionId, model);
     } else {
-      const { OnboardingService } = await import("@/app/services/control/onboarding");
-      chatRes = await OnboardingService.chatWithRok(messageToSend, activeSessionId, model);
+      // Only the agent host answers here. Tenant and hub chat moved to Sticks.
+      return new Response("Chat is available in Sticks.", { status: 503 });
     }
 
     // The backend bridges answer failures with {status: "error", message};
@@ -289,33 +186,6 @@ export async function POST(request: Request) {
     }
     responseMessage = chatRes.message;
 
-    // Onboarding Completion Detection: if completed, trigger an immediate session roll
-    const lowered = responseMessage.toLowerCase();
-    const isOnboardingComplete =
-      lowered.includes("committed successfully") ||
-      lowered.includes("database plan updated") ||
-      lowered.includes("plan on a page committed");
-
-    if (isOnboardingComplete && !newSessionId) {
-      const fullMessagesHistory = [...coreMessages, { role: "assistant", content: responseMessage }];
-      const onboardingSummary = await summarizeSession(isBusiness, id, fullMessagesHistory);
-      // Like the threshold roll: no summary, no roll.
-      if (onboardingSummary) {
-        const { generateUUID } = await import("@/lib/utils");
-        newSessionId = generateUUID();
-        console.log(`[Onboarding Complete Roll] Onboarding completed. Auto-rolling ${id} -> ${newSessionId}`);
-        // Delete the onboarding chat session only once its summary is saved.
-        const saved = await saveLastSummary(userId, onboardingSummary);
-        if (saved && ownsExistingChat) {
-          try {
-            await deleteChatById({ id, userId });
-            console.log(`[Auto-Clean] Cleaned up onboarding session ${id} from logs.`);
-          } catch (err) {
-            console.error("Failed to clean up onboarding session:", err);
-          }
-        }
-      }
-    }
   } catch (e: any) {
     console.error("ROK Chat failed:", e);
     // Quota, seat-limit and plan refusals come back from the bridges as 403.

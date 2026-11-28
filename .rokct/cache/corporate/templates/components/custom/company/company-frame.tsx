@@ -38,6 +38,7 @@ import {
 } from "@/components/custom/landing/legal-links";
 import { COMPANY_PAGES, type CompanyPage } from "@/components/custom/company/company-pages";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export interface CompanyFrameProps {
   /** The page being framed: its own link is drawn as the current one. */
   page: CompanyPage;
@@ -56,11 +57,11 @@ export function CompanyFrame({ page, terms, children }: CompanyFrameProps) {
     <div className="flex min-h-screen flex-col" data-company-frame={page}>
       <header className="border-b border-black/10 dark:border-white/10">
         <nav
-          aria-label="Company pages"
+          aria-label={tx("Company pages")}
           className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4 text-sm"
         >
           <Link href="/" className="font-bold tracking-tight">
-            {PLATFORM_NAME}
+            {tx(PLATFORM_NAME)}
           </Link>
           <div className="flex items-center gap-5">
             {pages.map(([key, info]) => (
@@ -74,7 +75,7 @@ export function CompanyFrame({ page, terms, children }: CompanyFrameProps) {
                     : "opacity-70 hover:opacity-100 underline-offset-4 hover:underline"
                 }
               >
-                {info.label}
+                {tx(info.label)}
               </Link>
             ))}
             {terms.length > 0 && (
@@ -82,7 +83,7 @@ export function CompanyFrame({ page, terms, children }: CompanyFrameProps) {
                 href={LEGAL_ROUTE}
                 className="opacity-70 hover:opacity-100 underline-offset-4 hover:underline"
               >
-                {DEFAULT_LEGAL_GROUP_LABEL}
+                {tx(DEFAULT_LEGAL_GROUP_LABEL)}
               </Link>
             )}
           </div>

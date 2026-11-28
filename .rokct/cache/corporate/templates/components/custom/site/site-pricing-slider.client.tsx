@@ -27,6 +27,7 @@ import type { SitePriceSlider } from "@/lib/site-data/kinds";
 
 import { fillPriceWords } from "./site-price";
 
+import { tx } from "@/app/lib/i18n/phrases";
 export function SitePricingSlider({ slider, price, perCase }: { slider: SitePriceSlider; price: string; perCase?: number }) {
   const [n, setN] = useState(slider.min);
   const inputId = useId();
@@ -37,7 +38,7 @@ export function SitePricingSlider({ slider, price, perCase }: { slider: SitePric
     <div className="cs-slider">
       <div className="row">
         <label htmlFor={inputId} className="k">
-          {slider.label}
+          {tx(slider.label)}
         </label>
         {slider.count && (
           <span className="count" aria-live="polite">
@@ -58,17 +59,17 @@ export function SitePricingSlider({ slider, price, perCase }: { slider: SitePric
           style={{ ["--fill" as string]: `${fill}%` }}
         />
         <div className="ends" aria-hidden="true">
-          <span>{slider.min}</span>
-          <span>{slider.max}</span>
+          <span>{tx(slider.min)}</span>
+          <span>{tx(slider.max)}</span>
         </div>
       </div>
       <div className="row total">
         <div>
-          {slider.total && <span className="k">{slider.total}</span>}
+          {slider.total && <span className="k">{tx(slider.total)}</span>}
           {slider.breakdown && <small>{fillPriceWords(slider.breakdown, words)}</small>}
         </div>
         <output htmlFor={inputId} aria-live="polite">
-          {total}
+          {tx(total)}
         </output>
       </div>
     </div>
