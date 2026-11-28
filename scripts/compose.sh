@@ -574,7 +574,9 @@ def write_composed_gitignore_block():
     the way a Dart shell's lib/ is, so the block is per path. Paths git
     already tracks are left out - an ignore rule is a no-op on a tracked
     file and would only mislead - and reported so the collision is visible."""
-    files = installed_files_from_state()
+    files = dict(installed_files_from_state())
+    # written by compose itself (write_sdk_i18n_registry), not by an installer, so the install record lacks it
+    files.setdefault("app/lib/i18n/sdk-registry.ts", "compose.sh")
     tracked = tracked_paths()
     ignored, collisions = [], []
     for rel in sorted(files):
